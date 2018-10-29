@@ -1,0 +1,65 @@
+[
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "help"
+    ],
+    "name": "help step"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "http://manifest_url"
+    ],
+    "name": "init --manifest-url http://manifest_url"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "http://manifest_url",
+      "--manifest-branch",
+      "mybranch",
+      "--groups",
+      "group1,group2",
+      "--depth",
+      "10",
+      "--repo-url",
+      "http://repo_url"
+    ],
+    "infra_step": true,
+    "name": "init --manifest-url http://manifest_url --manifest-branch mybranch --groups group1,group2 --depth 10 --repo-url http://repo_url"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "sync"
+    ],
+    "name": "sync"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "99",
+      "--no-tags",
+      "--optimized-fetch",
+      "--cache-dir",
+      "/tmp/cache"
+    ],
+    "infra_step": true,
+    "name": "sync --force-sync --detach --current-branch --jobs 99 --no-tags --optimized-fetch --cache-dir /tmp/cache"
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]
