@@ -1,0 +1,16 @@
+[
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chromium.googlesource.com/chromiumos/manifest"
+    ],
+    "name": "init --manifest-url https://chromium.googlesource.com/chromiumos/manifest"
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]

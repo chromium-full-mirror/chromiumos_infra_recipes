@@ -6,6 +6,7 @@
   * [repo](#recipe_modules-repo) &mdash; Common steps for recipes that use repo for source control.
 
 **[Recipes](#Recipes)**
+  * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
 ## Recipe Modules
 
@@ -66,6 +67,13 @@ Returns:
   See 'step.__call__'.
 ## Recipes
 
+### *recipes* / [prototype](/recipes/prototype.py)
+
+[DEPS](/recipes/prototype.py#8): [repo](#recipe_modules-repo)
+
+Recipe for prototyping Chrome OS builders.
+
+&mdash; **def [RunSteps](/recipes/prototype.py#13)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo)
