@@ -1,0 +1,23 @@
+[
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--help"
+    ],
+    "name": "cros_sdk --help"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "PATH=/bin",
+      "--",
+      "ls"
+    ],
+    "name": "(cros_sdk) ls"
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]

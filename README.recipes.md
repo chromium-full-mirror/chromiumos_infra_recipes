@@ -3,13 +3,50 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
+  * [cros_sdk](#recipe_modules-cros_sdk) &mdash; Steps for calling cros_sdk.
   * [repo](#recipe_modules-repo) &mdash; Common steps for recipes that use repo for source control.
 
 **[Recipes](#Recipes)**
+  * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
 ## Recipe Modules
 
+### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
+
+[DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Steps for calling cros_sdk.
+
+#### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Provides steps for cros_sdk operations.
+
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#18)(self, args, name=None, \*\*kwargs):**
+
+Executes 'cros_sdk' with the supplied arguments.
+
+Args:
+  * args (list): A list of arguments to supply to 'cros_sdk'.
+  * name (str): The name of the step. If None, generate from the args.
+  * kwargs: Keyword arguments to pass to the 'step' call.
+
+Returns:
+  See 'step.__call__'.
+
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#14)(self):**
+
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#33)(self, cmd, env=None, \*\*kwargs):**
+
+Runs a command in a cros_sdk chroot.
+
+Args:
+  * cmd (list): A command and arguments to run.
+  * env (dict): A dict of environment variables to pass to the command.
+  * kwargs: Keyword arguments to pass to __call__.
+
+Returns:
+  See 'step.__call__'.
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
 [DEPS](/recipe_modules/repo/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -20,7 +57,7 @@ Common steps for recipes that use repo for source control.
 
 Provides steps for repo operations.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/repo/api.py#26)(self, args, name=None, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/repo/api.py#20)(self, args, name=None, \*\*kwargs):**
 
 Executes 'repo' with the supplied arguments.
 
@@ -32,7 +69,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#41)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None, \*\*kwargs):**
+&mdash; **def [init](/recipe_modules/repo/api.py#35)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None, \*\*kwargs):**
 
 Executes 'repo init' with the given arguments.
 
@@ -47,9 +84,9 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#20)(self):**
+&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#16)(self):**
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#69)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None, \*\*kwargs):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#63)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None, \*\*kwargs):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -67,6 +104,11 @@ Returns:
   See 'step.__call__'.
 ## Recipes
 
+### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
+
+[DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk)
+
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#11)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
 [DEPS](/recipes/prototype.py#8): [repo](#recipe_modules-repo)

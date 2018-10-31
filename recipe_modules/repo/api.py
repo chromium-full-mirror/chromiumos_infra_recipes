@@ -13,15 +13,9 @@ from recipe_engine import recipe_api
 class RepoApi(recipe_api.RecipeApi):
   """Provides steps for repo operations."""
 
-  def __init__(self, **kwargs):
-    super(RepoApi, self).__init__(**kwargs)
-    self._repo_path = None
-
   @property
   def repo_path(self):
-    if self._repo_path is None:
-      self._repo_path = self.m.depot_tools.package_repo_resource('repo')
-    return self._repo_path
+    return self.m.depot_tools.package_repo_resource('repo')
 
   def __call__(self, args, name=None, **kwargs):
     """Executes 'repo' with the supplied arguments.
