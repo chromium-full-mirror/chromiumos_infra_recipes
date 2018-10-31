@@ -126,6 +126,18 @@
   },
   {
     "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[CACHE]/cros_chroot",
+      "--",
+      "./update_chroot"
+    ],
+    "cwd": "[START_DIR]/chromiumos",
+    "name": "(cros_sdk) ./update_chroot"
+  },
+  {
+    "cmd": [
       "sudo",
       "umount",
       "[START_DIR]/chromiumos"

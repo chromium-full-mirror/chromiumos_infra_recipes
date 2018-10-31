@@ -10,6 +10,7 @@ DEPS = [
     'overlayfs',
     'repo',
     'repo_cache',
+
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
@@ -26,7 +27,7 @@ def RunSteps(api):
   repo_work_path = api.path['start_dir'].join('chromiumos')
   api.file.ensure_directory('repo work dir', repo_work_path)
   with api.overlayfs.context('repo', repo_cache_path, repo_work_path):
-    pass
+    api.cros_sdk.run(['./update_chroot'])
 
 
 def GenTests(api):

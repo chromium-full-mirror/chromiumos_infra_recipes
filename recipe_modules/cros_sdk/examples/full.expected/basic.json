@@ -2,13 +2,19 @@
   {
     "cmd": [
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[CACHE]/cros_chroot",
       "--help"
     ],
-    "name": "cros_sdk --help"
+    "name": "get cros_sdk help"
   },
   {
     "cmd": [
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[CACHE]/cros_chroot",
       "PATH=/bin",
       "--",
       "ls"

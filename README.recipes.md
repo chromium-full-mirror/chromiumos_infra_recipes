@@ -18,7 +18,7 @@
 
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
-[DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Steps for calling cros_sdk.
 
@@ -26,13 +26,14 @@ Steps for calling cros_sdk.
 
 Provides steps for cros_sdk operations.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#18)(self, args, name=None, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#18)(self, name, args, chroot_path=None, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
 Args:
   * args (list): A list of arguments to supply to 'cros_sdk'.
   * name (str): The name of the step. If None, generate from the args.
+  * chroot_path (str): Path to the chroot. Defaults to a cache dir.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
@@ -40,7 +41,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#14)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#33)(self, cmd, env=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#35)(self, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -185,7 +186,7 @@ Args:
 
 Recipe for prototyping Chrome OS builders.
 
-&mdash; **def [RunSteps](/recipes/prototype.py#22)(api):**
+&mdash; **def [RunSteps](/recipes/prototype.py#23)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo)

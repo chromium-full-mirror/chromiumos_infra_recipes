@@ -9,7 +9,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.cros_sdk(['--help'])
+  api.cros_sdk('get cros_sdk help', ['--help'])
   api.cros_sdk.run(['ls'], env={'PATH': '/bin'})
 
 
