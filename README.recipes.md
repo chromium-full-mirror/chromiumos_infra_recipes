@@ -6,12 +6,14 @@
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; Steps for calling cros_sdk.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; Steps for managing OverlayFS mounts.
   * [repo](#recipe_modules-repo) &mdash; Common steps for recipes that use repo for source control.
+  * [repo_cache](#recipe_modules-repo_cache) &mdash; Steps for managing a repo cache.
 
 **[Recipes](#Recipes)**
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
+  * [repo_cache:examples/full](#recipes-repo_cache_examples_full)
 ## Recipe Modules
 
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
@@ -146,6 +148,25 @@ Args:
 
 Returns:
   See 'step.__call__'.
+### *recipe_modules* / [repo\_cache](/recipe_modules/repo_cache)
+
+[DEPS](/recipe_modules/repo_cache/__init__.py#1): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Steps for managing a repo cache.
+
+#### **class [RepoCacheApi](/recipe_modules/repo_cache/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Provides steps for repo cache operations.
+
+&mdash; **def [ensure\_fresh\_cache](/recipe_modules/repo_cache/api.py#23)(self, cache_name, manifest_url, init_opts=None, sync_opts=None):**
+
+Ensure the specified repo cache exists and is fresh.
+
+Args:
+  * cache_name (str): Name of the repo cache.
+  * manifest_url (str): URL to init the repo cache manifest from.
+  * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
+  * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
 ## Recipes
 
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
@@ -160,16 +181,21 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
-[DEPS](/recipes/prototype.py#8): [repo](#recipe_modules-repo)
+[DEPS](/recipes/prototype.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for prototyping Chrome OS builders.
 
-&mdash; **def [RunSteps](/recipes/prototype.py#13)(api):**
+&mdash; **def [RunSteps](/recipes/prototype.py#22)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo)
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#11)(api):**
+### *recipes* / [repo\_cache:examples/full](/recipe_modules/repo_cache/examples/full.py)
+
+[DEPS](/recipe_modules/repo_cache/examples/full.py#6): [repo\_cache](#recipe_modules-repo_cache)
+
+&mdash; **def [RunSteps](/recipe_modules/repo_cache/examples/full.py#11)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-depot_tools
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-context

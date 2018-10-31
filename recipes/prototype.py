@@ -6,12 +6,27 @@
 """Recipe for prototyping Chrome OS builders."""
 
 DEPS = [
+    'cros_sdk',
+    'overlayfs',
     'repo',
+    'repo_cache',
+    'recipe_engine/context',
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/step',
 ]
+
+MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
 
 
 def RunSteps(api):
-  api.repo.init('https://chromium.googlesource.com/chromiumos/manifest')
+  repo_cache_path = api.repo_cache.ensure_fresh_cache(
+      'chromiumos', MANIFEST_URL, init_opts=dict(groups=['path:chromite']))
+
+  repo_work_path = api.path['start_dir'].join('chromiumos')
+  api.file.ensure_directory('repo work dir', repo_work_path)
+  with api.overlayfs.context('repo', repo_cache_path, repo_work_path):
+    pass
 
 
 def GenTests(api):

@@ -29,7 +29,7 @@ class RepoApi(recipe_api.RecipeApi):
       See 'step.__call__'.
     """
     if name is None:
-      name = ' '.join(args)
+      name = 'repo %s' % args[0]
     return self.m.step(name, [self.repo_path] + args, **kwargs)
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None,
