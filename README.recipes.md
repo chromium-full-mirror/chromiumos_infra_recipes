@@ -4,10 +4,12 @@
 
 **[Recipe Modules](#Recipe-Modules)**
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; Steps for calling cros_sdk.
+  * [overlayfs](#recipe_modules-overlayfs) &mdash; Steps for managing OverlayFS mounts.
   * [repo](#recipe_modules-repo) &mdash; Common steps for recipes that use repo for source control.
 
 **[Recipes](#Recipes)**
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
+  * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
 ## Recipe Modules
@@ -47,6 +49,48 @@ Args:
 
 Returns:
   See 'step.__call__'.
+### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
+
+[DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Steps for managing OverlayFS mounts.
+
+#### **class [OverlayfsApi](/recipe_modules/overlayfs/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&emsp; **@property**<br>&mdash; **def [base\_work\_path](/recipe_modules/overlayfs/api.py#18)(self):**
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/overlayfs/api.py#65)(self, name, lowerdir_path, mount_path):**
+
+Return a context in a mounted OverlayFS.
+
+The returned context will see a mounted OverlayFS as with 'mount', with the
+cwd set to the mount_path. The OverlayFS will be unmounted when the context
+exits.
+
+Args:
+  * name (str): An alphanumeric name for the mount, used for display and
+      implementation details. Should usually be unique within a recipe.
+  * lowerdir_path (Path): Path to the OverlayFS "lowerdir". See mount(8)
+      "Mount options for overlay".
+  * mount_path (Path): Path to mount the OverlayFS at.
+
+&mdash; **def [mount](/recipe_modules/overlayfs/api.py#22)(self, name, lowerdir_path, mount_path):**
+
+Mount an OverlayFS.
+
+Args:
+  * name (str): An alphanumeric name for the mount, used for display and
+      implementation details. Should usually be unique within a recipe.
+  * lowerdir_path (Path): Path to the OverlayFS "lowerdir". See mount(8)
+      "Mount options for overlay".
+  * mount_path (Path): Path to mount the OverlayFS at.
+
+&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#55)(self, name, mount_path):**
+
+Unmount an OverlayFS.
+
+Args:
+  * mount_path (Path): Path to unmount the OverlayFS from.
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
 [DEPS](/recipe_modules/repo/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -109,6 +153,11 @@ Returns:
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk)
 
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#11)(api):**
+### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
+
+[DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
 [DEPS](/recipes/prototype.py#8): [repo](#recipe_modules-repo)
@@ -123,5 +172,9 @@ Recipe for prototyping Chrome OS builders.
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#11)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-depot_tools
+[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-context
+[recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-file
+[recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-path
+[recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-properties
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-step
 [recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/recipe_engine/recipe_api.py#1012

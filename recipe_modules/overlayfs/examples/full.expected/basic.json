@@ -1,0 +1,76 @@
+[
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/upperdir"
+    ],
+    "infra_step": true,
+    "name": "mount overlay mymount.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/workdir"
+    ],
+    "infra_step": true,
+    "name": "mount overlay mymount.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=mymount",
+      "overlay",
+      "[START_DIR]/mount"
+    ],
+    "infra_step": true,
+    "name": "mount overlay mymount.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pwd"
+    ],
+    "cwd": "[START_DIR]/mount",
+    "name": "in mount"
+  },
+  {
+    "cmd": [
+      "sudo",
+      "umount",
+      "[START_DIR]/mount"
+    ],
+    "infra_step": true,
+    "name": "unmount overlay mymount"
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]
