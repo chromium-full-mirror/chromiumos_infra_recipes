@@ -1,4 +1,5 @@
 DEPS = [
-    'depot_tools/depot_tools',
     'recipe_engine/step',
+
+    'depot_tools/depot_tools',
 ]

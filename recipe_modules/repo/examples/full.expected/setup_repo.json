@@ -30,7 +30,6 @@
       "--repo-url",
       "http://repo_url"
     ],
-    "infra_step": true,
     "name": "repo init (2)"
   },
   {
@@ -54,7 +53,6 @@
       "--cache-dir",
       "/tmp/cache"
     ],
-    "infra_step": true,
     "name": "repo sync (2)"
   },
   {

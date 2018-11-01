@@ -3,10 +3,10 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
-  * [cros_sdk](#recipe_modules-cros_sdk) &mdash; Steps for calling cros_sdk.
-  * [overlayfs](#recipe_modules-overlayfs) &mdash; Steps for managing OverlayFS mounts.
-  * [repo](#recipe_modules-repo) &mdash; Common steps for recipes that use repo for source control.
-  * [repo_cache](#recipe_modules-repo_cache) &mdash; Steps for managing a repo cache.
+  * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
+  * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
+  * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
+  * [repo_cache](#recipe_modules-repo_cache) &mdash; API for working with repo repository caches.
 
 **[Recipes](#Recipes)**
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
@@ -20,20 +20,20 @@
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-Steps for calling cros_sdk.
+API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 #### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-Provides steps for cros_sdk operations.
+A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#18)(self, name, args, chroot_path=None, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#19)(self, name, args, chroot_path=None, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
 Args:
+  * name (str): The name of the step.
   * args (list): A list of arguments to supply to 'cros_sdk'.
-  * name (str): The name of the step. If None, generate from the args.
-  * chroot_path (str): Path to the chroot. Defaults to a cache dir.
+  * chroot_path (str|Path): Path to the chroot. Defaults to a cache dir.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
@@ -41,7 +41,9 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#14)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#35)(self, cmd, env=None, \*\*kwargs):**
+Returns a Path to the cros_sdk script.
+
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#36)(self, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -56,13 +58,19 @@ Returns:
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-Steps for managing OverlayFS mounts.
+API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
 
-#### **class [OverlayfsApi](/recipe_modules/overlayfs/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+See: https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt
 
-&emsp; **@property**<br>&mdash; **def [base\_work\_path](/recipe_modules/overlayfs/api.py#18)(self):**
+#### **class [OverlayfsApi](/recipe_modules/overlayfs/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/overlayfs/api.py#65)(self, name, lowerdir_path, mount_path):**
+A module for interacting with OverlayFS mounts.
+
+&emsp; **@property**<br>&mdash; **def [base\_work\_path](/recipe_modules/overlayfs/api.py#22)(self):**
+
+Returns a Path to the base work directory for this module.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/overlayfs/api.py#70)(self, name, lowerdir_path, mount_path):**
 
 Return a context in a mounted OverlayFS.
 
@@ -77,7 +85,7 @@ Args:
       "Mount options for overlay".
   * mount_path (Path): Path to mount the OverlayFS at.
 
-&mdash; **def [mount](/recipe_modules/overlayfs/api.py#22)(self, name, lowerdir_path, mount_path):**
+&mdash; **def [mount](/recipe_modules/overlayfs/api.py#27)(self, name, lowerdir_path, mount_path):**
 
 Mount an OverlayFS.
 
@@ -88,7 +96,7 @@ Args:
       "Mount options for overlay".
   * mount_path (Path): Path to mount the OverlayFS at.
 
-&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#55)(self, name, mount_path):**
+&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#60)(self, name, mount_path):**
 
 Unmount an OverlayFS.
 
@@ -98,25 +106,26 @@ Args:
 
 [DEPS](/recipe_modules/repo/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-Common steps for recipes that use repo for source control.
+API for working with the 'repo' VCS tool.
 
-#### **class [RepoApi](/recipe_modules/repo/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+See: https://chromium.googlesource.com/external/repo/
 
-Provides steps for repo operations.
+#### **class [RepoApi](/recipe_modules/repo/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/repo/api.py#20)(self, args, name=None, \*\*kwargs):**
+A module for interacting with the repo tool.
+
+&mdash; **def [\_\_call\_\_](/recipe_modules/repo/api.py#23)(self, args, name=None):**
 
 Executes 'repo' with the supplied arguments.
 
 Args:
   * args (list): A list of arguments to supply to 'repo'.
   * name (str): The name of the step. If None, generate from the args.
-  * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#35)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None, \*\*kwargs):**
+&mdash; **def [init](/recipe_modules/repo/api.py#37)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
 
 Executes 'repo init' with the given arguments.
 
@@ -126,14 +135,10 @@ Args:
   * groups (list): Groups to checkout (see `repo init --groups`).
   * depth (int): Create a shallow clone of the given depth.
   * repo_url (str): URL of the repo repository.
-  * kwargs: Keyword arguments to pass to the 'step' call.
 
-Returns:
-  See 'step.__call__'.
+&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#19)(self):**
 
-&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#16)(self):**
-
-&mdash; **def [sync](/recipe_modules/repo/api.py#63)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None, \*\*kwargs):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#61)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -145,21 +150,19 @@ Args:
   * no_tags (bool): Don't fetch tags.
   * optimized_fetch (bool): Only fetch projects if revision doesn't exist.
   * cache_dir (Path): Use git-cache with this cache directory.
-  * kwargs: Keyword arguments to pass to the 'step' call.
-
-Returns:
-  See 'step.__call__'.
 ### *recipe_modules* / [repo\_cache](/recipe_modules/repo_cache)
 
 [DEPS](/recipe_modules/repo_cache/__init__.py#1): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-Steps for managing a repo cache.
+API for working with repo repository caches.
 
-#### **class [RepoCacheApi](/recipe_modules/repo_cache/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+This is mostly a wrapper around the 'repo' module.
 
-Provides steps for repo cache operations.
+#### **class [RepoCacheApi](/recipe_modules/repo_cache/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [ensure\_fresh\_cache](/recipe_modules/repo_cache/api.py#23)(self, cache_name, manifest_url, init_opts=None, sync_opts=None):**
+A module for managing repo repository caches.
+
+&mdash; **def [ensure\_fresh\_cache](/recipe_modules/repo_cache/api.py#26)(self, cache_name, manifest_url, init_opts=None, sync_opts=None):**
 
 Ensure the specified repo cache exists and is fresh.
 

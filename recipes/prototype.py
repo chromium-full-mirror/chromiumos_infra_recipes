@@ -6,15 +6,15 @@
 """Recipe for prototyping Chrome OS builders."""
 
 DEPS = [
-    'cros_sdk',
-    'overlayfs',
-    'repo',
-    'repo_cache',
-
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
+
+    'cros_sdk',
+    'overlayfs',
+    'repo',
+    'repo_cache',
 ]
 
 MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'

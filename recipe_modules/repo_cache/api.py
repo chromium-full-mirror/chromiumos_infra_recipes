@@ -3,7 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Steps for managing a repo cache."""
+"""API for working with repo repository caches.
+
+This is mostly a wrapper around the 'repo' module.
+"""
 
 from recipe_engine import recipe_api
 
@@ -18,7 +21,7 @@ DEFAULT_CACHE_SYNC_OPTS = dict(
 
 
 class RepoCacheApi(recipe_api.RecipeApi):
-  """Provides steps for repo cache operations."""
+  """A module for managing repo repository caches."""
 
   def ensure_fresh_cache(self, cache_name, manifest_url, init_opts=None,
                          sync_opts=None):

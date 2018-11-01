@@ -3,25 +3,26 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Steps for calling cros_sdk."""
+"""API for interacting with cros_sdk, the interface to the CrOS SDK."""
 
 from recipe_engine import recipe_api
 
 
 class CrosSdkApi(recipe_api.RecipeApi):
-  """Provides steps for cros_sdk operations."""
+  """A module for interacting with cros_sdk."""
 
   @property
   def cros_sdk_path(self):
+    """Returns a Path to the cros_sdk script."""
     return self.m.depot_tools.package_repo_resource('cros_sdk')
 
   def __call__(self, name, args, chroot_path=None, **kwargs):
     """Executes 'cros_sdk' with the supplied arguments.
 
     Args:
+      * name (str): The name of the step.
       * args (list): A list of arguments to supply to 'cros_sdk'.
-      * name (str): The name of the step. If None, generate from the args.
-      * chroot_path (str): Path to the chroot. Defaults to a cache dir.
+      * chroot_path (str|Path): Path to the chroot. Defaults to a cache dir.
       * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:

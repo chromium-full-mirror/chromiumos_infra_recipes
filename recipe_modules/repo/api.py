@@ -3,7 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Common steps for recipes that use repo for source control."""
+"""API for working with the 'repo' VCS tool.
+
+See: https://chromium.googlesource.com/external/repo/
+"""
 
 import types
 
@@ -11,29 +14,28 @@ from recipe_engine import recipe_api
 
 
 class RepoApi(recipe_api.RecipeApi):
-  """Provides steps for repo operations."""
+  """A module for interacting with the repo tool."""
 
   @property
   def repo_path(self):
     return self.m.depot_tools.package_repo_resource('repo')
 
-  def __call__(self, args, name=None, **kwargs):
+  def __call__(self, args, name=None):
     """Executes 'repo' with the supplied arguments.
 
     Args:
       * args (list): A list of arguments to supply to 'repo'.
       * name (str): The name of the step. If None, generate from the args.
-      * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
       See 'step.__call__'.
     """
     if name is None:
       name = 'repo %s' % args[0]
-    return self.m.step(name, [self.repo_path] + args, **kwargs)
+    return self.m.step(name, [self.repo_path] + args)
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None,
-           depth=None, repo_url=None, **kwargs):
+           depth=None, repo_url=None):
     """Executes 'repo init' with the given arguments.
 
     Args:
@@ -42,10 +44,6 @@ class RepoApi(recipe_api.RecipeApi):
       * groups (list): Groups to checkout (see `repo init --groups`).
       * depth (int): Create a shallow clone of the given depth.
       * repo_url (str): URL of the repo repository.
-      * kwargs: Keyword arguments to pass to the 'step' call.
-
-    Returns:
-      See 'step.__call__'.
     """
     assert _kwonly is (), 'init accepts only 1 positional arg'
     cmd = ['init', '--manifest-url', manifest_url]
@@ -58,11 +56,11 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--depth', '%d' % depth]
     if repo_url is not None:
       cmd += ['--repo-url', repo_url]
-    return self(cmd, **kwargs)
+    self(cmd)
 
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, no_tags=False,
-           optimized_fetch=False, cache_dir=None, **kwargs):
+           optimized_fetch=False, cache_dir=None):
     """Executes 'repo sync' with the given arguments.
 
     Args:
@@ -73,10 +71,6 @@ class RepoApi(recipe_api.RecipeApi):
       * no_tags (bool): Don't fetch tags.
       * optimized_fetch (bool): Only fetch projects if revision doesn't exist.
       * cache_dir (Path): Use git-cache with this cache directory.
-      * kwargs: Keyword arguments to pass to the 'step' call.
-
-    Returns:
-      See 'step.__call__'.
     """
     assert _kwonly is (), 'sync accepts no positional args'
     cmd = ['sync']
@@ -94,4 +88,4 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--optimized-fetch']
     if cache_dir is not None:
       cmd += ['--cache-dir', cache_dir]
-    return self(cmd, **kwargs)
+    self(cmd)

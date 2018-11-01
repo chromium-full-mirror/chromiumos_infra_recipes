@@ -3,7 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Steps for managing OverlayFS mounts."""
+"""API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
+
+See: https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt
+"""
 
 import collections
 import contextlib
@@ -14,9 +17,11 @@ from recipe_engine import recipe_api
 
 
 class OverlayfsApi(recipe_api.RecipeApi):
+  """A module for interacting with OverlayFS mounts."""
 
   @property
   def base_work_path(self):
+    """Returns a Path to the base work directory for this module."""
     return self.m.path['cleanup'].join('overlayfs')
 
   def mount(self, name, lowerdir_path, mount_path):
