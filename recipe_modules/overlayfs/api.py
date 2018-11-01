@@ -53,7 +53,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
           'x-chromeos-overlay.name=%s' % name,
       ])
       return self.m.step('mount', [
-          'sudo', 'mount', '-t', 'overlay', '--options', mount_options,
+          'sudo', '-n', 'mount', '-t', 'overlay', '--options', mount_options,
           'overlay', mount_path
       ])
 

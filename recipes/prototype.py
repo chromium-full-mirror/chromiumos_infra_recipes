@@ -22,7 +22,7 @@ MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
 
 def RunSteps(api):
   repo_cache_path = api.repo_cache.ensure_fresh_cache(
-      'chromiumos', MANIFEST_URL, init_opts=dict(groups=['path:chromite']))
+      'chromiumos', MANIFEST_URL, init_opts=dict(groups=['minilayout']))
 
   repo_work_path = api.path['start_dir'].join('chromiumos')
   api.file.ensure_directory('repo work dir', repo_work_path)
