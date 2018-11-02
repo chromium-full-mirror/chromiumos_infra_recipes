@@ -4,7 +4,7 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CACHE]/cros_chroot",
+      "/chroot",
       "--help"
     ],
     "name": "get cros_sdk help"
@@ -14,12 +14,12 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CACHE]/cros_chroot",
+      "/chroot",
       "PATH=/bin",
       "--",
       "ls"
     ],
-    "name": "(cros_sdk) ls"
+    "name": "ls in chroot"
   },
   {
     "name": "$result",

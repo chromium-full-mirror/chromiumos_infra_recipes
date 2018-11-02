@@ -66,25 +66,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "repo work dir"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
       "[CLEANUP]/overlayfs/upperdir"
     ],
     "infra_step": true,
-    "name": "mount overlay repo.create upperdir",
+    "name": "mount overlay master.create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -102,7 +87,25 @@
       "[CLEANUP]/overlayfs/workdir"
     ],
     "infra_step": true,
-    "name": "mount overlay repo.create workdir",
+    "name": "mount overlay master.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_master"
+    ],
+    "infra_step": true,
+    "name": "mount overlay master.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -114,12 +117,87 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=repo",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=master",
+      "overlay",
+      "[START_DIR]/chromiumos_master"
+    ],
+    "infra_step": true,
+    "name": "mount overlay master.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/upperdir"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master",
+    "infra_step": true,
+    "name": "mount overlay workspace.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/workdir"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master",
+    "infra_step": true,
+    "name": "mount overlay workspace.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master",
+    "infra_step": true,
+    "name": "mount overlay workspace.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=workspace",
       "overlay",
       "[START_DIR]/chromiumos"
     ],
+    "cwd": "[START_DIR]/chromiumos_master",
     "infra_step": true,
-    "name": "mount overlay repo.mount",
+    "name": "mount overlay workspace.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -129,12 +207,17 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CACHE]/cros_chroot",
+      "[START_DIR]/chroot",
       "--",
-      "./update_chroot"
+      "egencache",
+      "--update",
+      "--repo",
+      "chromiumos",
+      "--jobs",
+      "32"
     ],
     "cwd": "[START_DIR]/chromiumos",
-    "name": "(cros_sdk) ./update_chroot"
+    "name": "regen_portage_cache chromiumos"
   },
   {
     "cmd": [
@@ -142,8 +225,18 @@
       "umount",
       "[START_DIR]/chromiumos"
     ],
+    "cwd": "[START_DIR]/chromiumos_master",
     "infra_step": true,
-    "name": "unmount overlay repo"
+    "name": "unmount overlay workspace"
+  },
+  {
+    "cmd": [
+      "sudo",
+      "umount",
+      "[START_DIR]/chromiumos_master"
+    ],
+    "infra_step": true,
+    "name": "unmount overlay master"
   },
   {
     "name": "$result",

@@ -4,13 +4,14 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'cros_sdk',
+    'cros',
 ]
 
 
 def RunSteps(api):
-  api.cros_sdk('get cros_sdk help', '/chroot', ['--help'])
-  api.cros_sdk.run('ls in chroot', '/chroot', ['ls'], env={'PATH': '/bin'})
+  api.cros.set_config()
+  _ = api.cros.master_src_path
+  api.cros.regen_portage_cache('my_overlay')
 
 
 def GenTests(api):

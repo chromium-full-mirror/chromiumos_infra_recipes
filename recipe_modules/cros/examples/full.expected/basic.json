@@ -1,0 +1,24 @@
+[
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/chroot",
+      "--",
+      "egencache",
+      "--update",
+      "--repo",
+      "my_overlay",
+      "--jobs",
+      "32"
+    ],
+    "cwd": "[START_DIR]/chromiumos",
+    "name": "regen_portage_cache my_overlay"
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]

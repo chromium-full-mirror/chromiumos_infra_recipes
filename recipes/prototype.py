@@ -10,8 +10,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
-
-    'cros_sdk',
+    'cros',
     'overlayfs',
     'repo',
     'repo_cache',
@@ -21,13 +20,19 @@ MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
 
 
 def RunSteps(api):
+  # Cache the chroot.
+  # TODO(lannm): Need to cleanup or use another overlay (?)
+  api.cros.set_config(CHROOT_PATH=api.path['cache'].join('cros_chroot'))
+
   repo_cache_path = api.repo_cache.ensure_fresh_cache(
       'chromiumos', MANIFEST_URL, init_opts=dict(groups=['minilayout']))
 
-  repo_work_path = api.path['start_dir'].join('chromiumos')
-  api.file.ensure_directory('repo work dir', repo_work_path)
-  with api.overlayfs.context('repo', repo_cache_path, repo_work_path):
-    api.cros_sdk.run(['./update_chroot'])
+  master_path = api.cros.master_src_path
+  workspace_path = api.cros.workspace_src_path
+
+  with api.overlayfs.context('master', repo_cache_path, master_path), \
+        api.overlayfs.context('workspace', repo_cache_path, workspace_path):
+    api.cros.regen_portage_cache('chromiumos')
 
 
 def GenTests(api):

@@ -32,18 +32,20 @@ class OverlayfsApi(recipe_api.RecipeApi):
           implementation details. Should usually be unique within a recipe.
       * lowerdir_path (Path): Path to the OverlayFS "lowerdir". See mount(8)
           "Mount options for overlay".
-      * mount_path (Path): Path to mount the OverlayFS at.
+      * mount_path (Path): Path to mount the OverlayFS at. Will be created if
+          it doesn't exist.
 
     """
     assert name.isalnum()
     with self.m.context(name_prefix='mount overlay %s' % name,
                         increment_nest_level=True, infra_steps=True):
-      # Create overlayfs working directories.
+      # Create overlayfs directories.
       work_base = self.base_work_path
       upperdir_path = work_base.join('upperdir')
       self.m.file.ensure_directory('create upperdir', upperdir_path)
       workdir_path = work_base.join('workdir')
       self.m.file.ensure_directory('create workdir', workdir_path)
+      self.m.file.ensure_directory('create mount path', mount_path)
 
       # Do mount.
       mount_options = ','.join([
@@ -52,7 +54,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
           'workdir=%s' % workdir_path,
           'x-chromeos-overlay.name=%s' % name,
       ])
-      return self.m.step('mount', [
+      self.m.step('mount', [
           'sudo', '-n', 'mount', '-t', 'overlay', '--options', mount_options,
           'overlay', mount_path
       ])
@@ -64,8 +66,8 @@ class OverlayfsApi(recipe_api.RecipeApi):
       * mount_path (Path): Path to unmount the OverlayFS from.
 
     """
-    return self.m.step('unmount overlay %s' % name,
-                       ['sudo', 'umount', mount_path], infra_step=True)
+    self.m.step('unmount overlay %s' % name, ['sudo', 'umount', mount_path],
+                infra_step=True)
 
   @contextlib.contextmanager
   def context(self, name, lowerdir_path, mount_path):
@@ -80,7 +82,8 @@ class OverlayfsApi(recipe_api.RecipeApi):
           implementation details. Should usually be unique within a recipe.
       * lowerdir_path (Path): Path to the OverlayFS "lowerdir". See mount(8)
           "Mount options for overlay".
-      * mount_path (Path): Path to mount the OverlayFS at.
+      * mount_path (Path): Path to mount the OverlayFS at. Will be created if
+          it doesn't exist.
 
     """
     self.mount(name, lowerdir_path, mount_path)
