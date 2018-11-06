@@ -28,7 +28,7 @@
       "--manifest-url",
       "https://chromium.googlesource.com/chromiumos/manifest",
       "--groups",
-      "path:chromite"
+      "minilayout"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
@@ -113,6 +113,7 @@
   {
     "cmd": [
       "sudo",
+      "-n",
       "mount",
       "-t",
       "overlay",
@@ -187,6 +188,7 @@
   {
     "cmd": [
       "sudo",
+      "-n",
       "mount",
       "-t",
       "overlay",
@@ -207,7 +209,7 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[START_DIR]/chroot",
+      "[CACHE]/cros_chroot",
       "--",
       "egencache",
       "--update",
