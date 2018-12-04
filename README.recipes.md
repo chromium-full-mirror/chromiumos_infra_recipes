@@ -3,6 +3,7 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
+  * [changes](#recipe_modules-changes) &mdash; APIs for managing CrOS code changes.
   * [cros](#recipe_modules-cros) &mdash; APIs for running CrOS infra scripts.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
@@ -10,6 +11,7 @@
   * [repo_cache](#recipe_modules-repo_cache) &mdash; API for working with repo repository caches.
 
 **[Recipes](#Recipes)**
+  * [changes:examples/full](#recipes-changes_examples_full)
   * [cros:examples/full](#recipes-cros_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
@@ -18,6 +20,26 @@
   * [repo_cache:examples/full](#recipes-repo_cache_examples_full)
 ## Recipe Modules
 
+### *recipe_modules* / [changes](/recipe_modules/changes)
+
+[DEPS](/recipe_modules/changes/__init__.py#1): [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+APIs for managing CrOS code changes.
+
+#### **class [ChangesApi](/recipe_modules/changes/api.py#38)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for CrOS code change helpers.
+
+&mdash; **def [\_\_init\_\_](/recipe_modules/changes/api.py#41)(self, \*args, \*\*kwargs):**
+
+Initialize ChangeApi.
+
+&mdash; **def [get\_changes](/recipe_modules/changes/api.py#56)(self, cache=True):**
+
+Fetch and return Changes for this build.
+
+Args:
+  cache (bool): If True, may return cached change information.
 ### *recipe_modules* / [cros](/recipe_modules/cros)
 
 [DEPS](/recipe_modules/cros/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -215,6 +237,11 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
 ## Recipes
 
+### *recipes* / [changes:examples/full](/recipe_modules/changes/examples/full.py)
+
+[DEPS](/recipe_modules/changes/examples/full.py#6): [changes](#recipe_modules-changes), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/changes/examples/full.py#13)(api):**
 ### *recipes* / [cros:examples/full](/recipe_modules/cros/examples/full.py)
 
 [DEPS](/recipe_modules/cros/examples/full.py#6): [cros](#recipe_modules-cros)
@@ -249,6 +276,8 @@ Recipe for prototyping Chrome OS builders.
 &mdash; **def [RunSteps](/recipe_modules/repo_cache/examples/full.py#11)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-gerrit
+[recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-buildbucket
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-file
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-path
