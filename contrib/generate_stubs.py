@@ -11,17 +11,24 @@ import subprocess
 
 def main():
   here = os.path.dirname(__file__)
-  repo_root = os.path.join(here, '..')
-  stubs_root = os.path.abspath(os.path.join(here, 'stubs'))
 
+  repo_root = os.path.abspath(os.path.join(here, '..'))
   os.chdir(repo_root)
 
   output = subprocess.check_output(['./recipes.py', 'doc', '--kind', 'jsonpb'])
 
   data = json.loads(output)
 
+  dep_packages = set()
+
+  stubs_root = os.path.abspath(os.path.join(here, 'stubs'))
+
   for name, module in data['recipe_modules'].items():
-    deps = [dep['name'] for dep in module['deps']['module_links']]
+    deps = []
+    for dep in module['deps']['module_links']:
+      deps.append(dep['name'])
+      dep_packages.add(dep['package'])
+
     if not deps:
       print('No DEPS for %s; skipping' % name)
       continue
@@ -46,5 +53,26 @@ def main():
       stub.write('class %s:\n' % module['api_class']['name'])
       stub.write('  m: ModuleDeps')
 
+  recipe_deps_root = os.path.join(repo_root, '.recipe_deps')
+  deps_root = os.path.abspath(os.path.join(here, 'deps'))
+  recipe_deps_relpath = os.path.relpath(recipe_deps_root, deps_root)
+
+  if not os.path.exists(deps_root):
+    os.mkdir(deps_root)
+    os.symlink(
+        os.path.join(recipe_deps_relpath, 'recipe_engine'),
+        os.path.join(deps_root, 'recipe_engine'))
+
+  for pkg in dep_packages:
+    spec_data = data['specs'][pkg]
+    if pkg == data['project_id']:
+      continue
+    link_target = os.path.join(recipe_deps_relpath, pkg,
+                               spec_data['recipes_path'], 'recipe_modules')
+    link_path = os.path.join(deps_root, '%s_modules' % pkg)
+    if not os.path.exists(link_path):
+      os.symlink(link_target, link_path)
+
+
 if __name__ == '__main__':
-    main()
+  main()
