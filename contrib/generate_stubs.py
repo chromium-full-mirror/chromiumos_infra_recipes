@@ -10,7 +10,7 @@ import subprocess
 
 
 def main():
-  here = os.path.dirname(__file__)
+  here = os.path.abspath(os.path.dirname(__file__))
 
   repo_root = os.path.abspath(os.path.join(here, '..'))
   os.chdir(repo_root)
