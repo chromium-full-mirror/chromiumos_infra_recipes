@@ -42,27 +42,38 @@ Args:
   cache (bool): If True, may return cached change information.
 ### *recipe_modules* / [cros](/recipe_modules/cros)
 
-[DEPS](/recipe_modules/cros/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for running CrOS infra scripts.
 
-#### **class [CrosApi](/recipe_modules/cros/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosApi](/recipe_modules/cros/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module forCrOS infra script steps.
 
-&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros/api.py#41)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros/api.py#38)(self):**
 
 Returns the Path where the CrOS SDK chroot should be.
 
-&mdash; **def [get\_config\_defaults](/recipe_modules/cros/api.py#17)(self):**
+&mdash; **def [find\_project\_path](/recipe_modules/cros/api.py#58)(self, project, branch):**
 
-&emsp; **@property**<br>&mdash; **def [master\_src\_path](/recipe_modules/cros/api.py#24)(self):**
+Find the source path for a given project.
+
+Args:
+  project (str): The project name to find a source path for.
+  branch (str): The branch name to find a source path for.
+
+Returns:
+  The path value for the found project.
+
+&mdash; **def [get\_config\_defaults](/recipe_modules/cros/api.py#14)(self):**
+
+&emsp; **@property**<br>&mdash; **def [master\_src\_path](/recipe_modules/cros/api.py#21)(self):**
 
 Returns the Path where the master branch repo should be checked out.
 
 'Unbranched' infra scripts will be executed from here.
 
-&mdash; **def [regen\_portage\_cache](/recipe_modules/cros/api.py#61)(self, repo_name, jobs=32):**
+&mdash; **def [regen\_portage\_cache](/recipe_modules/cros/api.py#79)(self, repo_name, jobs=32):**
 
 Regenerate the portage cache with 'egencache' in the chroot.
 
@@ -70,7 +81,7 @@ Args:
   repo_name (str): Portage repo name, passed to 'egencache --repo'.
   jobs (int): Parallel processes to run, passed to 'egencache --jobs'.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_src\_path](/recipe_modules/cros/api.py#32)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_src\_path](/recipe_modules/cros/api.py#29)(self):**
 
 Returns the Path where the repo branch under test should be checked out.
 
@@ -282,5 +293,6 @@ Recipe for prototyping Chrome OS builders.
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-file
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-properties
+[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-raw_io
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-step
 [recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/recipe_engine/recipe_api.py#1012

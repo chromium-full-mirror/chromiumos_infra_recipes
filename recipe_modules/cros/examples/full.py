@@ -11,6 +11,7 @@ DEPS = [
 def RunSteps(api):
   api.cros.set_config()
   _ = api.cros.master_src_path
+  assert api.cros.find_project_path('my/project', 'branch1') == 'src/project'
   api.cros.regen_portage_cache('my_overlay')
 
 

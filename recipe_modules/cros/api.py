@@ -5,9 +5,6 @@
 
 """APIs for running CrOS infra scripts."""
 
-import collections
-import os.path
-
 from recipe_engine import recipe_api
 
 
@@ -49,7 +46,7 @@ class CrosApi(recipe_api.RecipeApi):
     Args:
       * name (str): The name of the step.
       * chroot_path (str|Path): Path to the chroot.
-      * cmd (list): A command and arguments to run.
+      * cmd (list[str]): A command and arguments to run.
       * kwargs: Keyword arguments to pass to cros_sdk.run.
 
     Returns:
@@ -57,6 +54,27 @@ class CrosApi(recipe_api.RecipeApi):
     """
     with self.m.context(cwd=self.workspace_src_path):
       return self.m.cros_sdk.run(name, self.chroot_path, cmd, **kwargs)
+
+  def find_project_path(self, project, branch):
+    """Find the source path for a given project.
+
+    Args:
+      project (str): The project name to find a source path for.
+      branch (str): The branch name to find a source path for.
+
+    Returns:
+      The path value for the found project.
+    """
+    with self.m.context(cwd=self.master_src_path):
+      cmd = [
+          'chromite/scripts/find_project_path', '--project', project,
+          '--branch', branch
+      ]
+      return self.m.step(
+          'find %s [%s]' % (project, branch), cmd,
+          stdout=self.m.raw_io.output(), step_test_data=
+          lambda: self.m.raw_io.test_api.stream_output('src/project')
+      ).stdout.strip()
 
   def regen_portage_cache(self, repo_name, jobs=32):
     """Regenerate the portage cache with 'egencache' in the chroot.

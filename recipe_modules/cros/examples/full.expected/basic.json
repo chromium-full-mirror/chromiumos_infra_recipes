@@ -1,6 +1,18 @@
 [
   {
     "cmd": [
+      "chromite/scripts/find_project_path",
+      "--project",
+      "my/project",
+      "--branch",
+      "branch1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master",
+    "name": "find my/project [branch1]",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",

@@ -27,12 +27,12 @@ class Change(object):
     self.number = int(gerrit_change_info['_number'])
 
     self.patchset = patchset
-    self._host = host
+    self.host = host
 
   @property
   def url(self):
     """Returns a URL where this Change can be viewed."""
-    return 'https://%s/%d' % (self._host, self.number)
+    return 'https://%s/%d' % (self.host, self.number)
 
 
 class ChangesApi(recipe_api.RecipeApi):
@@ -46,7 +46,7 @@ class ChangesApi(recipe_api.RecipeApi):
   def _get_change(self, gerrit_change):
     """Fetch and return a single Change from Gerrit."""
     query_params = [('change', str(gerrit_change.change))]
-    infos = self.m.gerrit.get_changes(gerrit_change.host,
+    infos = self.m.gerrit.get_changes('https://%s' % gerrit_change.host,
                                       query_params=query_params,
                                       o_params=['ALL_REVISIONS'], limit=1)
     assert len(infos) == 1, 'expected 1 result, got %r' % infos
