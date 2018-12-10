@@ -209,7 +209,7 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CACHE]/cros_chroot",
+      "[CACHE]/cros_chroot/chroot",
       "--",
       "egencache",
       "--update",
