@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "prepare repo cache simple_cache"
+    "name": "prepare repo cache"
   },
   {
     "cmd": [
@@ -13,10 +13,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/simple_cache"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
-    "name": "prepare repo cache simple_cache.cache dir",
+    "name": "prepare repo cache.cache dir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -26,66 +26,11 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://manifest"
+      "https://chromium.googlesource.com/chromiumos/manifest"
     ],
-    "cwd": "[CACHE]/simple_cache",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "prepare repo cache simple_cache.repo init",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
-      "sync",
-      "--force-sync",
-      "--detach",
-      "--current-branch",
-      "--jobs",
-      "32",
-      "--no-tags",
-      "--optimized-fetch"
-    ],
-    "cwd": "[CACHE]/simple_cache",
-    "infra_step": true,
-    "name": "prepare repo cache simple_cache.repo sync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "prepare repo cache complex_cache"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/complex_cache"
-    ],
-    "infra_step": true,
-    "name": "prepare repo cache complex_cache.cache dir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://manifest"
-    ],
-    "cwd": "[CACHE]/complex_cache",
-    "infra_step": true,
-    "name": "prepare repo cache complex_cache.repo init",
+    "name": "prepare repo cache.repo init",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -101,9 +46,9 @@
       "--no-tags",
       "--optimized-fetch"
     ],
-    "cwd": "[CACHE]/complex_cache",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "prepare repo cache complex_cache.repo sync",
+    "name": "prepare repo cache.repo sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

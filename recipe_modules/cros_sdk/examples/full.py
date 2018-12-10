@@ -4,13 +4,15 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/path',
     'cros_sdk',
 ]
 
 
 def RunSteps(api):
-  api.cros_sdk('get cros_sdk help', '/chroot', ['--help'])
-  api.cros_sdk.run('ls in chroot', '/chroot', ['ls'], env={'PATH': '/bin'})
+  api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
+  api.cros_sdk('get cros_sdk help', ['--help'])
+  api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'})
 
 
 def GenTests(api):

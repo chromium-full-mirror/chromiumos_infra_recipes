@@ -20,7 +20,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
   """A module for interacting with OverlayFS mounts."""
 
   @property
-  def base_work_path(self):
+  def _base_work_path(self):
     """Returns a Path to the base work directory for this module."""
     return self.m.path['cleanup'].join('overlayfs')
 
@@ -40,7 +40,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
     with self.m.context(name_prefix='mount overlay %s' % name,
                         increment_nest_level=True, infra_steps=True):
       # Create overlayfs directories.
-      work_base = self.base_work_path
+      work_base = self._base_work_path
       upperdir_path = work_base.join('upperdir')
       self.m.file.ensure_directory('create upperdir', upperdir_path)
       workdir_path = work_base.join('workdir')

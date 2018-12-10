@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "prepare repo cache chromiumos"
+    "name": "prepare repo cache"
   },
   {
     "cmd": [
@@ -16,7 +16,7 @@
       "[CACHE]/chromiumos"
     ],
     "infra_step": true,
-    "name": "prepare repo cache chromiumos.cache dir",
+    "name": "prepare repo cache.cache dir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -32,7 +32,7 @@
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "prepare repo cache chromiumos.repo init",
+    "name": "prepare repo cache.repo init",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -51,7 +51,7 @@
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "prepare repo cache chromiumos.repo sync",
+    "name": "prepare repo cache.repo sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -176,7 +176,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos"
+      "[START_DIR]/chromiumos_workspace"
     ],
     "cwd": "[START_DIR]/chromiumos_master",
     "infra_step": true,
@@ -195,7 +195,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos"
+      "[START_DIR]/chromiumos_workspace"
     ],
     "cwd": "[START_DIR]/chromiumos_master",
     "infra_step": true,
@@ -218,14 +218,14 @@
       "--jobs",
       "32"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "regen_portage_cache chromiumos"
   },
   {
     "cmd": [
       "sudo",
       "umount",
-      "[START_DIR]/chromiumos"
+      "[START_DIR]/chromiumos_workspace"
     ],
     "cwd": "[START_DIR]/chromiumos_master",
     "infra_step": true,

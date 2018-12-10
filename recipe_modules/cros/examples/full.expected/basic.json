@@ -16,7 +16,7 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[START_DIR]/chroot",
+      "[START_DIR]/cros_sdk/chroot",
       "--",
       "egencache",
       "--update",
@@ -25,7 +25,7 @@
       "--jobs",
       "32"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "regen_portage_cache my_overlay"
   },
   {

@@ -4,7 +4,7 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "/chroot",
+      "[CLEANUP]/test/chroot",
       "--help"
     ],
     "name": "get cros_sdk help"
@@ -14,7 +14,7 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "/chroot",
+      "[CLEANUP]/test/chroot",
       "PATH=/bin",
       "--",
       "ls"

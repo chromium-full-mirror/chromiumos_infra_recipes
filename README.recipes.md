@@ -50,11 +50,7 @@ APIs for running CrOS infra scripts.
 
 A module forCrOS infra script steps.
 
-&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros/api.py#38)(self):**
-
-Returns the Path where the CrOS SDK chroot should be.
-
-&mdash; **def [find\_project\_path](/recipe_modules/cros/api.py#58)(self, project, branch):**
+&mdash; **def [find\_project\_path](/recipe_modules/cros/api.py#40)(self, project, branch):**
 
 Find the source path for a given project.
 
@@ -65,15 +61,11 @@ Args:
 Returns:
   The path value for the found project.
 
-&mdash; **def [get\_config\_defaults](/recipe_modules/cros/api.py#14)(self):**
+&mdash; **def [initialize](/recipe_modules/cros/api.py#14)(self):**
 
-&emsp; **@property**<br>&mdash; **def [master\_src\_path](/recipe_modules/cros/api.py#21)(self):**
+&emsp; **@property**<br>&mdash; **def [master\_path](/recipe_modules/cros/api.py#18)(self):**
 
-Returns the Path where the master branch repo should be checked out.
-
-'Unbranched' infra scripts will be executed from here.
-
-&mdash; **def [regen\_portage\_cache](/recipe_modules/cros/api.py#79)(self, repo_name, jobs=32):**
+&mdash; **def [regen\_portage\_cache](/recipe_modules/cros/api.py#61)(self, repo_name, jobs=32):**
 
 Regenerate the portage cache with 'egencache' in the chroot.
 
@@ -81,12 +73,7 @@ Args:
   repo_name (str): Portage repo name, passed to 'egencache --repo'.
   jobs (int): Parallel processes to run, passed to 'egencache --jobs'.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_src\_path](/recipe_modules/cros/api.py#29)(self):**
-
-Returns the Path where the repo branch under test should be checked out.
-
-The CrOS SDK will be executed from here, along with any other 'branched'
-infra scripts.
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros/api.py#22)(self):**
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -97,30 +84,39 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#19)(self, name, chroot_path, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#31)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
 Args:
   * name (str): The name of the step.
-  * chroot_path (str|Path): Path to the chroot.
   * args (list): A list of arguments to supply to 'cros_sdk'.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#14)(self):**
+&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#18)(self, chroot_parent_path):**
+
+Configure CrosSdkApi.
+
+Args:
+  chroot_parent_path (Path): Parent for chroot directory.
+
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#26)(self):**
 
 Returns a Path to the cros_sdk script.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#34)(self, name, chroot_path, cmd, env=None, \*\*kwargs):**
+&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#14)(self):**
+
+Initialize CrosSdkApi.
+
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#50)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
 Args:
   * name (str): The name of the step.
-  * chroot_path (str|Path): Path to the chroot.
   * cmd (list): A command and arguments to run.
   * env (dict): A dict of environment variables to pass to the command.
   * kwargs: Keyword arguments to pass to __call__.
@@ -138,10 +134,6 @@ See: https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt
 #### **class [OverlayfsApi](/recipe_modules/overlayfs/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with OverlayFS mounts.
-
-&emsp; **@property**<br>&mdash; **def [base\_work\_path](/recipe_modules/overlayfs/api.py#22)(self):**
-
-Returns a Path to the base work directory for this module.
 
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/overlayfs/api.py#72)(self, name, lowerdir_path, mount_path):**
 
@@ -233,19 +225,21 @@ API for working with repo repository caches.
 
 This is mostly a wrapper around the 'repo' module.
 
-#### **class [RepoCacheApi](/recipe_modules/repo_cache/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RepoCacheApi](/recipe_modules/repo_cache/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for managing repo repository caches.
 
-&mdash; **def [ensure\_fresh\_cache](/recipe_modules/repo_cache/api.py#26)(self, cache_name, manifest_url, init_opts=None, sync_opts=None):**
+&mdash; **def [ensure\_fresh\_cache](/recipe_modules/repo_cache/api.py#39)(self, init_opts=None, sync_opts=None):**
 
-Ensure the specified repo cache exists and is fresh.
+Ensure the configured repo cache exists and is fresh.
 
 Args:
-  * cache_name (str): Name of the repo cache.
-  * manifest_url (str): URL to init the repo cache manifest from.
   * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+
+&emsp; **@property**<br>&mdash; **def [path](/recipe_modules/repo_cache/api.py#34)(self):**
+
+Return the configured repo cache path.
 ## Recipes
 
 ### *recipes* / [changes:examples/full](/recipe_modules/changes/examples/full.py)
@@ -255,14 +249,14 @@ Args:
 &mdash; **def [RunSteps](/recipe_modules/changes/examples/full.py#13)(api):**
 ### *recipes* / [cros:examples/full](/recipe_modules/cros/examples/full.py)
 
-[DEPS](/recipe_modules/cros/examples/full.py#6): [cros](#recipe_modules-cros)
+[DEPS](/recipe_modules/cros/examples/full.py#6): [cros](#recipe_modules-cros), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/cros/examples/full.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros/examples/full.py#12)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
-[DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk)
+[DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#12)(api):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -270,11 +264,11 @@ Args:
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
-[DEPS](/recipes/prototype.py#8): [cros](#recipe_modules-cros), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/prototype.py#8): [changes](#recipe_modules-changes), [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for prototyping Chrome OS builders.
 
-&mdash; **def [RunSteps](/recipes/prototype.py#22)(api):**
+&mdash; **def [RunSteps](/recipes/prototype.py#25)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo)

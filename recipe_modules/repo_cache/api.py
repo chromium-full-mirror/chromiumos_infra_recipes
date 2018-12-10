@@ -10,6 +10,9 @@ This is mostly a wrapper around the 'repo' module.
 
 from recipe_engine import recipe_api
 
+DEFAULT_CACHE_NAME = 'chromiumos'
+DEFAULT_MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
+
 DEFAULT_CACHE_SYNC_OPTS = dict(
     current_branch=True,
     detach=True,
@@ -23,23 +26,28 @@ DEFAULT_CACHE_SYNC_OPTS = dict(
 class RepoCacheApi(recipe_api.RecipeApi):
   """A module for managing repo repository caches."""
 
-  def ensure_fresh_cache(self, cache_name, manifest_url, init_opts=None,
-                         sync_opts=None):
-    """Ensure the specified repo cache exists and is fresh.
+  def __init__(self, *args, **kwargs):
+    super(RepoCacheApi, self).__init__(*args, **kwargs)
+    self.cache_name = DEFAULT_CACHE_NAME
+    self.manifest_url = DEFAULT_MANIFEST_URL
+
+  @property
+  def path(self):
+    """Return the configured repo cache path."""
+    return self.m.path['cache'].join(self.cache_name)
+
+  def ensure_fresh_cache(self, init_opts=None, sync_opts=None):
+    """Ensure the configured repo cache exists and is fresh.
 
     Args:
-      * cache_name (str): Name of the repo cache.
-      * manifest_url (str): URL to init the repo cache manifest from.
       * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
     """
     init_opts = init_opts or {}
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
 
-    cache_path = self.m.path['cache'].join(cache_name)
-    with self.m.step.nest('prepare repo cache %s' % cache_name):
-      self.m.file.ensure_directory('cache dir', cache_path)
-      with self.m.context(cwd=cache_path, infra_steps=True):
-        self.m.repo.init(manifest_url, **init_opts)
+    with self.m.step.nest('prepare repo cache'):
+      self.m.file.ensure_directory('cache dir', self.path)
+      with self.m.context(cwd=self.path, infra_steps=True):
+        self.m.repo.init(self.manifest_url, **init_opts)
         self.m.repo.sync(**sync_opts)
-    return cache_path

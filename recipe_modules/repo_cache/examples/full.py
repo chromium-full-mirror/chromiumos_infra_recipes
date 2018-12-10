@@ -9,10 +9,9 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.repo_cache.ensure_fresh_cache('simple_cache', 'https://manifest')
-  api.repo_cache.ensure_fresh_cache('complex_cache', 'https://manifest',
-                                    init_opts=dict(manifest_branch='branchy'),
-                                    sync_opts=dict(current_branch=False))
+  api.repo_cache.ensure_fresh_cache(
+      init_opts=dict(manifest_branch='branchy'),
+      sync_opts=dict(current_branch=False))
 
 
 def GenTests(api):
