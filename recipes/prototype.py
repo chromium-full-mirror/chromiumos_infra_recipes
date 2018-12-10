@@ -21,8 +21,11 @@ MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
 
 def RunSteps(api):
   # Cache the chroot.
+  # NOTE: This path must appear one level under the named cache dir to avoid
+  # permissions issues with named cache management.
+  chroot_path = api.path['cache'].join('cros_chroot').join('chroot')
   # TODO(lannm): Need to cleanup or use another overlay (?)
-  api.cros.set_config(CHROOT_PATH=api.path['cache'].join('cros_chroot'))
+  api.cros.set_config(CHROOT_PATH=chroot_path)
 
   repo_cache_path = api.repo_cache.ensure_fresh_cache(
       'chromiumos', MANIFEST_URL, init_opts=dict(groups=['minilayout']))
