@@ -1,0 +1,130 @@
+[
+  {
+    "cmd": [],
+    "name": "attempt 1 of 2"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote",
+      "refs/heads/ref:"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 2.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 2.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 2.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "remote",
+      "HEAD:refs/heads/ref"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 2.git push",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "step returned non-zero exit code: 1",
+      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "attempt 2 of 2"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote",
+      "refs/heads/ref:"
+    ],
+    "infra_step": true,
+    "name": "attempt 2 of 2.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 2 of 2.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 2 of 2.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "remote",
+      "HEAD:refs/heads/ref"
+    ],
+    "infra_step": true,
+    "name": "attempt 2 of 2.git push",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "step returned non-zero exit code: 1",
+      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "name": "$result",
+    "reason": "The transaction could not be completed in the allowed number of retries.",
+    "recipe_result": null,
+    "status_code": 1
+  }
+]

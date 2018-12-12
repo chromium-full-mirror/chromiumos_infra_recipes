@@ -1,0 +1,264 @@
+[
+  {
+    "cmd": [],
+    "name": "attempt 1 of 2"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote",
+      "refs/heads/ref:"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 2.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 2.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 2.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "remote",
+      "HEAD:refs/heads/ref"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 2.git push",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "step returned non-zero exit code: 1",
+      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "attempt 2 of 2"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote",
+      "refs/heads/ref:"
+    ],
+    "infra_step": true,
+    "name": "attempt 2 of 2.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 2 of 2.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 2 of 2.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "remote",
+      "HEAD:refs/heads/ref"
+    ],
+    "infra_step": true,
+    "name": "attempt 2 of 2.git push",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "attempt 1 of 3",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote",
+      "refs/heads/ref:"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 3.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 3.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 3.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "attempt 1 of 3 (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote",
+      "refs/heads/ref:"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 3.git fetch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 3.git rev-parse (2)",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 3.git checkout (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "data",
+      "file/path.txt"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 3.write file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--message",
+      "Update file",
+      "--",
+      "file/path.txt"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 3.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "remote",
+      "HEAD:refs/heads/ref"
+    ],
+    "infra_step": true,
+    "name": "attempt 1 of 3.git push",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]

@@ -6,6 +6,8 @@
   * [changes](#recipe_modules-changes) &mdash; APIs for managing CrOS code changes.
   * [cros](#recipe_modules-cros) &mdash; APIs for running CrOS infra scripts.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
+  * [git](#recipe_modules-git) &mdash; API for working with git.
+  * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [repo_cache](#recipe_modules-repo_cache) &mdash; API for working with repo repository caches.
@@ -15,6 +17,8 @@
   * [changes:examples/full](#recipes-changes_examples_full)
   * [cros:examples/full](#recipes-cros_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
+  * [git:examples/full](#recipes-git_examples_full)
+  * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
@@ -124,6 +128,119 @@ Args:
 
 Returns:
   See 'step.__call__'.
+### *recipe_modules* / [git](/recipe_modules/git)
+
+[DEPS](/recipe_modules/git/__init__.py#1): [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for working with git.
+
+#### **class [GitApi](/recipe_modules/git/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for interacting with git.
+
+&mdash; **def [checkout](/recipe_modules/git/api.py#67)(self, commit, force=False):**
+
+Runs 'git checkout'.
+
+Args:
+  * commit (str): The commit (technically "tree-like") to checkout.
+  * force (bool): If True, throw away local changes (--force).
+
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#80)(self, commit):**
+
+Runs 'git cherry-pick'.
+
+Args:
+  * commit (str): The commit to cherry pick.
+
+&mdash; **def [commit\_files](/recipe_modules/git/api.py#88)(self, files, message):**
+
+Runs 'git commit' with the given files.
+
+Args:
+  * files (list[str|Path]): A list of file paths to commit.
+  * message (str): The commit message.
+
+&mdash; **def [fetch](/recipe_modules/git/api.py#37)(self, remote, refspecs=None):**
+
+Runs 'git fetch'.
+
+Args:
+  * remote (str): The remote repository to fetch from.
+  * refspecs (list[str]): The refspecs to fetch.
+
+&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#49)(self, remote, ref):**
+
+Fetch a single remote ref with 'git fetch'.
+
+Args:
+  * remote (str): The remote repository to fetch from.
+  * ref (str): The ref to fetch.
+
+Returns:
+  str: The commit ID of the fetched ref.
+
+&mdash; **def [push](/recipe_modules/git/api.py#97)(self, remote, refspec, capture_stdout=False):**
+
+Runs 'git push'.
+
+Args:
+  remote (str): The remote repository to push to.
+  refspec (str): The refspec to push.
+  capture_stdout (bool): If True, return stdout in step data.
+
+Returns:
+  StepData: See 'step.__call__'.
+### *recipe_modules* / [git\_txn](/recipe_modules/git_txn)
+
+[DEPS](/recipe_modules/git_txn/__init__.py#1): [git](#recipe_modules-git), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for updating remote git repositories transactionally.
+
+#### **class [GitTxnApi](/recipe_modules/git_txn/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for executing git transactions.
+
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#26)(self, remote, ref, update_callback, retries=3):**
+
+Transactionally update a remote git repository ref.
+
+The |ref| will be fetched from |remote| and checked out. Then
+|update_callback| will be called and should update the checked out HEAD by
+e.g. committing a new change. Then this new HEAD will be pushed back to the
+|remote| |ref|. If this push fails because the remote ref was modified in
+the meantime, the process will repeat up to |retries| times.
+
+Args:
+  remote (str): The remote repository to update.
+  ref (str): The remote ref to update. If it does not start with 'refs/' it
+      will be treated as a branch name.
+  update_callback (callable): The callback function that will update the
+      local repo's HEAD. The callback is passed no arguments. If the
+      callback returns False the update will be cancelled but succeed.
+  retries (int): Number of update attempts to make before failing.
+
+Raises:
+  TooManyAttempts: if the number of attempts exceeds |retries|.
+
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#79)(self, remote, ref, message, dest, data, \*\*kwargs):**
+
+Transactionally update a file in a remote git repository ref.
+
+See 'self.update_ref'. Instead of running a callback, this will attempt to
+update the contents of a file.
+
+Args:
+  remote (str): The remote repository to update.
+  ref (str): The remote ref to update. If it does not start with 'refs/' it
+      will be treated as a branch name.
+  message (str): The commit message to use.
+  dest (Path): The path of the file to write.
+  data (str): The data to write.
+  kwargs: See 'self.update_ref'.
+
+Raises:
+  TooManyAttempts: if the number of attempts exceeds |retries|.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -275,6 +392,18 @@ The annealing builders run in serial and do the following:
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#12)(api):**
+### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
+
+[DEPS](/recipe_modules/git/examples/full.py#8): [git](#recipe_modules-git)
+
+&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#13)(api):**
+### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
+
+[DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+&mdash; **def [RunSteps](/recipe_modules/git_txn/examples/full.py#12)(api):**
+
+&mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

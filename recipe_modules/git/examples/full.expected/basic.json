@@ -1,0 +1,82 @@
+[
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote"
+    ],
+    "infra_step": true,
+    "name": "git fetch"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote",
+      "refs/heads/branch:"
+    ],
+    "infra_step": true,
+    "name": "git fetch (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "master"
+    ],
+    "infra_step": true,
+    "name": "git checkout"
+  },
+  {
+    "cmd": [
+      "git",
+      "cherry-pick",
+      "branch"
+    ],
+    "infra_step": true,
+    "name": "git cherry-pick"
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--message",
+      "Updated README\n\nMuch better now.",
+      "--",
+      "README.md"
+    ],
+    "infra_step": true,
+    "name": "git commit"
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "origin",
+      "HEAD:master"
+    ],
+    "infra_step": true,
+    "name": "git push",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]
