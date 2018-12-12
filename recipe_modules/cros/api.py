@@ -67,3 +67,13 @@ class CrosApi(recipe_api.RecipeApi):
     """
     cmd = ['egencache', '--update', '--repo', repo_name, '--jobs', '%d' % jobs]
     self._chroot_step('regen_portage_cache %s' % repo_name, cmd)
+
+  def uprev_portage_packages(self):
+    """Uprevs portage packages for all boards."""
+    cmd = [
+      'chromite/bin/cros_mark_as_stable', 'commit',
+      '--buildroot', self.workspace_path,
+      '--overlay-type', 'both'
+    ]
+    with self.m.context(cwd=self.workspace_path):
+      return self.m.step('uprev portage packages', cmd)

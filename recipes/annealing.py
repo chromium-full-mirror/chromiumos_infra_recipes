@@ -16,6 +16,13 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 """
 
+# Need a (module?) to do uprevs. It will run something like:
+#   chromite/bin/cros_mark_as_stable
+#     commit
+#     --all
+#     --buildroot /b/swarming/wlO4tKB/ir/cache/cbuild/repository
+#     --overlay-type both
+
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',

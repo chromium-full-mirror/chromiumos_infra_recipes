@@ -78,6 +78,10 @@ Args:
   repo_name (str): Portage repo name, passed to 'egencache --repo'.
   jobs (int): Parallel processes to run, passed to 'egencache --jobs'.
 
+&mdash; **def [uprev\_portage\_packages](/recipe_modules/cros/api.py#71)(self):**
+
+Uprevs portage packages for all boards.
+
 &emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros/api.py#22)(self):**
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
@@ -362,7 +366,7 @@ Return the configured repo cache path.
 
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#19): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#26): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -376,7 +380,7 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#34)(api):**
+&mdash; **def [RunSteps](/recipes/annealing.py#41)(api):**
 ### *recipes* / [changes:examples/full](/recipe_modules/changes/examples/full.py)
 
 [DEPS](/recipe_modules/changes/examples/full.py#6): [changes](#recipe_modules-changes), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
