@@ -11,6 +11,7 @@
   * [repo_cache](#recipe_modules-repo_cache) &mdash; API for working with repo repository caches.
 
 **[Recipes](#Recipes)**
+  * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [changes:examples/full](#recipes-changes_examples_full)
   * [cros:examples/full](#recipes-cros_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
@@ -242,6 +243,23 @@ Args:
 Return the configured repo cache path.
 ## Recipes
 
+### *recipes* / [annealing](/recipes/annealing.py)
+
+[DEPS](/recipes/annealing.py#19): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for the Chrome OS annealing builders.
+
+The annealing builders run in serial and do the following:
+
+1. Checkout ToT
+2. Rewind (i.e. checkout an ancestor) projects with missing dependencies; this
+   prevents a bad tree state due to e.g. Gerrit replication latency.
+3. Uprev portage packages (for each board)
+4. Make a manifest snapshot (aka "revlocked manifest"), and push it
+5. Perform post-submit tasks like:
+  * push metadata for e.g. Goldeneye, findit
+
+&mdash; **def [RunSteps](/recipes/annealing.py#34)(api):**
 ### *recipes* / [changes:examples/full](/recipe_modules/changes/examples/full.py)
 
 [DEPS](/recipe_modules/changes/examples/full.py#6): [changes](#recipe_modules-changes), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -264,11 +282,11 @@ Return the configured repo cache path.
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
-[DEPS](/recipes/prototype.py#8): [changes](#recipe_modules-changes), [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/prototype.py#8): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for prototyping Chrome OS builders.
 
-&mdash; **def [RunSteps](/recipes/prototype.py#25)(api):**
+&mdash; **def [RunSteps](/recipes/prototype.py#23)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo)

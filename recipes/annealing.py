@@ -22,6 +22,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
     'cros',
+    'cros_sdk',
     'overlayfs',
     'repo',
     'repo_cache',
@@ -32,17 +33,13 @@ MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
 
 def RunSteps(api):
   # Cache the chroot.
-  api.cros.set_config(CHROOT_PATH=api.path['cache'].join('cros_chroot'))
+  api.cros_sdk.configure(chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
-  repo_cache_path = api.repo_cache.ensure_fresh_cache(
-      'chromiumos', MANIFEST_URL, init_opts=dict(groups=['minilayout']))
-
-  master_path = api.cros.master_src_path
-  workspace_path = api.cros.workspace_src_path
-
-  with api.overlayfs.context('master', repo_cache_path, master_path), \
-        api.overlayfs.context('workspace', repo_cache_path, workspace_path):
-    api.cros.regen_portage_cache('chromiumos')
+  # Refresh and mount repo cache.
+  api.repo_cache.ensure_fresh_cache(init_opts=dict(groups=['minilayout']))
+  with api.overlayfs.context('master', api.repo_cache.path, api.cros.master_path), \
+        api.overlayfs.context('workspace', api.repo_cache.path, api.cros.workspace_path):
+    api.cros.regen_portage_cache(repo_name='chromiumos')
 
 
 def GenTests(api):
