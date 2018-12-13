@@ -2,17 +2,11 @@
   {
     "cmd": [
       "RECIPE_PACKAGE_REPO[depot_tools]/repo",
-      "help"
-    ],
-    "name": "help step"
-  },
-  {
-    "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
       "http://manifest_url"
     ],
+    "infra_step": true,
     "name": "repo init"
   },
   {
@@ -30,6 +24,7 @@
       "--repo-url",
       "http://repo_url"
     ],
+    "infra_step": true,
     "name": "repo init (2)"
   },
   {
@@ -37,6 +32,7 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/repo",
       "sync"
     ],
+    "infra_step": true,
     "name": "repo sync"
   },
   {
@@ -53,7 +49,18 @@
       "--cache-dir",
       "/tmp/cache"
     ],
+    "infra_step": true,
     "name": "repo sync (2)"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "infra_step": true,
+    "name": "repo manifest",
+    "stdout": "/path/to/tmp/"
   },
   {
     "name": "$result",

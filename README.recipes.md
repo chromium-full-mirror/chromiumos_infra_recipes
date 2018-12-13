@@ -293,7 +293,7 @@ Args:
   * mount_path (Path): Path to unmount the OverlayFS from.
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
-[DEPS](/recipe_modules/repo/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/repo/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with the 'repo' VCS tool.
 
@@ -303,18 +303,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 A module for interacting with the repo tool.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/repo/api.py#23)(self, args, name=None):**
-
-Executes 'repo' with the supplied arguments.
-
-Args:
-  * args (list): A list of arguments to supply to 'repo'.
-  * name (str): The name of the step. If None, generate from the args.
-
-Returns:
-  See 'step.__call__'.
-
-&mdash; **def [init](/recipe_modules/repo/api.py#37)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
+&mdash; **def [init](/recipe_modules/repo/api.py#44)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
 
 Executes 'repo init' with the given arguments.
 
@@ -325,9 +314,16 @@ Args:
   * depth (int): Create a shallow clone of the given depth.
   * repo_url (str): URL of the repo repository.
 
+&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#100)(self):**
+
+Uses repo to create a manifest snapshot and returns it as a string.
+
+Returns:
+  str: The manifest XML as a string.
+
 &emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#19)(self):**
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#61)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#68)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -366,7 +362,7 @@ Return the configured repo cache path.
 
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#26): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#26): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -380,7 +376,7 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#41)(api):**
+&mdash; **def [RunSteps](/recipes/annealing.py#42)(api):**
 ### *recipes* / [changes:examples/full](/recipe_modules/changes/examples/full.py)
 
 [DEPS](/recipe_modules/changes/examples/full.py#6): [changes](#recipe_modules-changes), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

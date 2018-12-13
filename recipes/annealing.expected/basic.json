@@ -223,6 +223,127 @@
   },
   {
     "cmd": [
+      "chromite/bin/cros_mark_as_stable",
+      "commit",
+      "--buildroot",
+      "[START_DIR]/chromiumos_workspace",
+      "--overlay-type",
+      "both"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "uprev portage packages"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "repo manifest",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "attempt 1 of 3"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "refs/heads/master:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "attempt 1 of 3.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "attempt 1 of 3.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "attempt 1 of 3.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "TEST XML",
+      "manifest/snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "attempt 1 of 3.write file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--message",
+      "Annealing manifest snapshot",
+      "--",
+      "manifest/snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "attempt 1 of 3.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "cros",
+      "HEAD:refs/heads/master"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "attempt 1 of 3.git push",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
       "sudo",
       "umount",
       "[START_DIR]/chromiumos_workspace"

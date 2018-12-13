@@ -20,19 +20,26 @@ class RepoApi(recipe_api.RecipeApi):
   def repo_path(self):
     return self.m.depot_tools.package_repo_resource('repo')
 
-  def __call__(self, args, name=None):
+  def _step(self, args, name=None, **kwargs):
     """Executes 'repo' with the supplied arguments.
 
     Args:
       * args (list): A list of arguments to supply to 'repo'.
       * name (str): The name of the step. If None, generate from the args.
+      * kwargs: See 'step.__call__'.
 
     Returns:
-      See 'step.__call__'.
+      StepData: See 'step.__call__'.
     """
     if name is None:
-      name = 'repo %s' % args[0]
-    return self.m.step(name, [self.repo_path] + args)
+      name = 'repo'
+      # Add first non-flag argument to name.
+      for arg in args:
+        if isinstance(arg, types.StringTypes) and arg[:1] != '-':
+          name += ' ' + arg
+          break
+    kwargs.setdefault('infra_step', True)
+    return self.m.step(name, [self.repo_path] + args, **kwargs)
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None,
            depth=None, repo_url=None):
@@ -56,7 +63,7 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--depth', '%d' % depth]
     if repo_url is not None:
       cmd += ['--repo-url', repo_url]
-    self(cmd)
+    self._step(cmd)
 
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, no_tags=False,
@@ -88,4 +95,16 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--optimized-fetch']
     if cache_dir is not None:
       cmd += ['--cache-dir', cache_dir]
-    self(cmd)
+    self._step(cmd)
+
+  def manifest_snapshot(self):
+    """Uses repo to create a manifest snapshot and returns it as a string.
+
+    Returns:
+      str: The manifest XML as a string.
+    """
+    step_test_data = lambda: self.m.raw_io.test_api.stream_output('TEST XML')
+    step_data = self._step(['manifest', '-r'],
+                           stdout=self.m.raw_io.output(),
+                           step_test_data=step_test_data)
+    return step_data.stdout.strip()

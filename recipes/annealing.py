@@ -30,6 +30,7 @@ DEPS = [
     'recipe_engine/step',
     'cros',
     'cros_sdk',
+    'git_txn',
     'overlayfs',
     'repo',
     'repo_cache',
@@ -46,7 +47,13 @@ def RunSteps(api):
   api.repo_cache.ensure_fresh_cache(init_opts=dict(groups=['minilayout']))
   with api.overlayfs.context('master', api.repo_cache.path, api.cros.master_path), \
         api.overlayfs.context('workspace', api.repo_cache.path, api.cros.workspace_path):
+    # TODO(athilenius): Need to git-push the uprevs
     api.cros.regen_portage_cache(repo_name='chromiumos')
+    api.cros.uprev_portage_packages()
+    snapshot_xml = api.repo.manifest_snapshot()
+    api.git_txn.update_ref_write_file('cros', 'master',
+                                      'Annealing manifest snapshot',
+                                      'manifest/snapshot.xml', snapshot_xml)
 
 
 def GenTests(api):
