@@ -29,19 +29,19 @@
 
 ### *recipe_modules* / [changes](/recipe_modules/changes)
 
-[DEPS](/recipe_modules/changes/__init__.py#1): [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/changes/__init__.py#1): [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for managing CrOS code changes.
 
-#### **class [ChangesApi](/recipe_modules/changes/api.py#38)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChangesApi](/recipe_modules/changes/api.py#66)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS code change helpers.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/changes/api.py#41)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/changes/api.py#69)(self, \*args, \*\*kwargs):**
 
 Initialize ChangeApi.
 
-&mdash; **def [get\_changes](/recipe_modules/changes/api.py#56)(self, cache=True):**
+&mdash; **def [get\_changes](/recipe_modules/changes/api.py#85)(self, cache=True):**
 
 Fetch and return Changes for this build.
 
@@ -403,7 +403,7 @@ The annealing builders run in serial and do the following:
 
 [DEPS](/recipe_modules/changes/examples/full.py#6): [changes](#recipe_modules-changes), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/changes/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/changes/examples/full.py#12)(api):**
 ### *recipes* / [cros:examples/full](/recipe_modules/cros/examples/full.py)
 
 [DEPS](/recipe_modules/cros/examples/full.py#6): [cros](#recipe_modules-cros), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -459,6 +459,7 @@ Recipe for prototyping Chrome OS builders.
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-buildbucket
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-file
+[recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-json
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-properties
 [recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-raw_io

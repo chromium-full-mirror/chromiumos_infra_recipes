@@ -53,7 +53,7 @@
   },
   {
     "name": "$result",
-    "recipe_result": null,
-    "status_code": 0
+    "reason": "Uncaught Exception: ValueError('gerrit_change_info has no patchset 9',)",
+    "status_code": -1
   }
 ]
