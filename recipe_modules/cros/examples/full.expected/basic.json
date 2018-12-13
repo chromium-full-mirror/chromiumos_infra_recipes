@@ -41,6 +41,17 @@
     "name": "uprev portage packages"
   },
   {
+    "cmd": [
+      "chromite/bin/cros_mark_as_stable",
+      "push",
+      "--buildroot",
+      "[START_DIR]/chromiumos_workspace",
+      "--dryrun"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "push portage package uprevs"
+  },
+  {
     "name": "$result",
     "recipe_result": null,
     "status_code": 0
