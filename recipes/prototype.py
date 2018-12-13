@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/step',
     'cros',
     'cros_sdk',
+    'dev',
     'overlayfs',
     'repo',
     'repo_cache',
@@ -21,6 +22,8 @@ MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
 
 
 def RunSteps(api):
+  # Set dryrun by default, for now
+  api.dev.configure(dryrun=True)
   # Cache the chroot.
   # TODO(lannm): Need to cleanup or use another overlay (?)
   api.cros_sdk.configure(chroot_parent_path=api.path['cache'].join('cros_chroot'))

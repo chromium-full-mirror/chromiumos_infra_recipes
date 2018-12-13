@@ -32,6 +32,8 @@ class GitApi(recipe_api.RecipeApi):
           name += ' ' + arg
           break
     kwargs.setdefault('infra_step', True)
+    if self.m.dev.dryrun:
+      args += ['--dryrun']
     return self.m.step(name, ['git'] + args, **kwargs)
 
   def fetch(self, remote, refspecs=None):

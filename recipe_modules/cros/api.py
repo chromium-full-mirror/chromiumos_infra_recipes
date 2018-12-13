@@ -75,5 +75,7 @@ class CrosApi(recipe_api.RecipeApi):
       '--buildroot', self.workspace_path,
       '--overlay-type', 'both'
     ]
+    if self.m.dev.dryrun:
+      cmd += ['--dryrun']
     with self.m.context(cwd=self.workspace_path):
       return self.m.step('uprev portage packages', cmd)
