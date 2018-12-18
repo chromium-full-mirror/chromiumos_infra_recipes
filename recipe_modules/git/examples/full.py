@@ -6,6 +6,7 @@
 from recipe_engine import recipe_api
 
 DEPS = [
+    'dev',
     'git',
 ]
 
@@ -16,6 +17,8 @@ def RunSteps(api):
   api.git.checkout('master', force=True)
   api.git.cherry_pick('branch')
   api.git.commit_files(['README.md'], 'Updated README\n\nMuch better now.')
+  api.git.push('origin', 'HEAD:master', capture_stdout=True)
+  api.dev.configure(dryrun=True)
   api.git.push('origin', 'HEAD:master', capture_stdout=True)
 
 

@@ -75,6 +75,22 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "origin",
+      "HEAD:master",
+      "--dryrun"
+    ],
+    "infra_step": true,
+    "name": "git push (2)",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "name": "$result",
     "recipe_result": null,
     "status_code": 0

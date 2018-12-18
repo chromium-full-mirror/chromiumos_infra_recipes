@@ -406,9 +406,9 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/changes/examples/full.py#12)(api):**
 ### *recipes* / [cros:examples/full](/recipe_modules/cros/examples/full.py)
 
-[DEPS](/recipe_modules/cros/examples/full.py#6): [cros](#recipe_modules-cros), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/cros/examples/full.py#6): [cros](#recipe_modules-cros), [dev](#recipe_modules-dev), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/cros/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros/examples/full.py#13)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -421,9 +421,9 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/dev/examples/full.py#13)(api):**
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
-[DEPS](/recipe_modules/git/examples/full.py#8): [git](#recipe_modules-git)
+[DEPS](/recipe_modules/git/examples/full.py#8): [dev](#recipe_modules-dev), [git](#recipe_modules-git)
 
-&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#14)(api):**
 ### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
 
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
