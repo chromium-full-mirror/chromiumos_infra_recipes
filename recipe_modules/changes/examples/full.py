@@ -17,7 +17,9 @@ def RunSteps(api):
   assert change.git_fetch_url == 'https://chromium.googlesource.com/chromium/src'
   assert change.git_fetch_ref == 'refs/changes/27/91827/1'
   assert change.subject == 'Change title'
-  assert change.view_url == 'https://chromium-review.googlesource.com/91827'
+  assert change.short_host == 'chromium', change.short_host
+  assert change.display_id == 'chromium:91827'
+  assert change.display_url == 'https://chromium-review.googlesource.com/91827'
 
 
 def GenTests(api):

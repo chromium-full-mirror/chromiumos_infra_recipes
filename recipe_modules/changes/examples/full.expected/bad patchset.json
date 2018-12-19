@@ -1,5 +1,9 @@
 [
   {
+    "cmd": [],
+    "name": "get changes"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -20,8 +24,9 @@
       "PATH": "<PATH>:RECIPE_PACKAGE_REPO[depot_tools]"
     },
     "infra_step": true,
-    "name": "gerrit changes",
+    "name": "get changes.gerrit changes",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"_number\": 91827, @@@",

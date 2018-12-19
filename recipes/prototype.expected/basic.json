@@ -205,21 +205,14 @@
     ]
   },
   {
-    "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "--",
-      "egencache",
-      "--update",
-      "--repo",
-      "chromiumos",
-      "--jobs",
-      "32"
-    ],
+    "cmd": [],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "regen_portage_cache chromiumos"
+    "name": "get changes"
+  },
+  {
+    "cmd": [],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "cherry-pick changes"
   },
   {
     "cmd": [

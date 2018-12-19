@@ -8,6 +8,10 @@
 from recipe_engine import recipe_api
 
 
+# Strip these suffixes from hosts for "short" host display.
+SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
+
+
 class Change(object):
   """Change represents a single CrOS change (i.e. Gerrit patchset)."""
 
@@ -33,6 +37,19 @@ class Change(object):
       raise ValueError('gerrit_change_info has no patchset %d' % patchset)
 
   @property
+  def short_host(self):
+    """Returns the "short host" name for this Change.
+
+    This will be the full host name if it does not match a common host suffix.
+    """
+    host = self.host
+    for suffix in SHORT_HOST_SUFFIXES:
+      if host.endswith(suffix):
+        host = host[:-len(suffix)]
+        break
+    return host
+
+  @property
   def project(self):
     """Returns the Change project."""
     return self._gerrit_change['project']
@@ -48,7 +65,12 @@ class Change(object):
     return self._gerrit_change['subject']
 
   @property
-  def view_url(self):
+  def display_id(self):
+    """Returns a unique ID for this Change for UI purposes."""
+    return '%s:%d' % (self.short_host, self._gerrit_change['_number'])
+
+  @property
+  def display_url(self):
     """Returns a URL where this Change can be viewed."""
     return 'https://%s/%d' % (self.host, self._gerrit_change['_number'])
 
@@ -91,5 +113,9 @@ class ChangesApi(recipe_api.RecipeApi):
     # TODO(lannm): See if we can batch these requests per-host.
     if not cache or self._changes is None:
       gerrit_changes = self.m.buildbucket.build.input.gerrit_changes
-      self._changes = [self._get_change(x) for x in gerrit_changes]
+      with self.m.step.nest('get changes') as step_data:
+        self._changes = [self._get_change(x) for x in gerrit_changes]
+        for change in self._changes:
+          display_text = '%s - %s' % (change.display_id, change.subject)
+          step_data.presentation.links[display_text] = change.display_url
     return self._changes

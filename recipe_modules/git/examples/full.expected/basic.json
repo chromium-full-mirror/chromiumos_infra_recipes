@@ -79,9 +79,9 @@
       "git",
       "push",
       "--porcelain",
+      "--dryrun",
       "origin",
-      "HEAD:master",
-      "--dryrun"
+      "HEAD:master"
     ],
     "infra_step": true,
     "name": "git push (2)",

@@ -9,7 +9,17 @@ from recipe_engine import recipe_api
 
 
 class CrosApi(recipe_api.RecipeApi):
-  """A module forCrOS infra script steps."""
+  """A module for CrOS infra script steps.
+
+  These steps will run in one of two CrOS source checkouts:
+
+  * The "master" checkout is a recent version of the source which should not be
+    modified (apart from incidental changes like caching) during a build.
+    "Top of tree" logic will run from this checkout.
+
+  * The "workspace" checkout is where the build is processed. It will contain
+    the target base checkout and any modifications made by the build.
+  """
 
   def initialize(self):
     self._master_path = self.m.path['start_dir'].join('chromiumos_master')
@@ -29,7 +39,7 @@ class CrosApi(recipe_api.RecipeApi):
     Args:
       * name (str): The name of the step.
       * cmd (list[str]): A command and arguments to run.
-      * kwargs: Keyword arguments to pass to cros_sdk.run.
+      * kwargs: Keyword arguments to pass to 'cros_sdk.run'.
 
     Returns:
       See 'step.__call__'.
@@ -57,6 +67,20 @@ class CrosApi(recipe_api.RecipeApi):
           stdout=self.m.raw_io.output(), step_test_data=
           lambda: self.m.raw_io.test_api.stream_output('src/project'))
       return step_data.stdout.strip()
+
+  def cherry_pick_changes(self, changes):
+    """Apply changes to the workspace.
+
+    Args:
+      changes (list[change.Change]): A list of Changes to cherry-pick.
+    """
+    with self.m.step.nest('cherry-pick changes'):
+      for change in changes:
+        project_path = self.find_project_path(change.project, change.branch)
+        with self.m.context(self.workspace_path.join(project_path)):
+          commit_id = self.m.git.fetch_ref(change.git_fetch_url,
+                                           change.git_fetch_ref)
+          self.m.git.cherry_pick(commit_id)
 
   def regen_portage_cache(self, repo_name, jobs=32):
     """Regenerate the portage cache with 'egencache' in the chroot.

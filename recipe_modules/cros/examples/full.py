@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/path',
+    'changes',
     'cros',
     'dev',
 ]
@@ -12,6 +13,7 @@ DEPS = [
 
 def RunSteps(api):
   assert api.cros.find_project_path('my/project', 'branch1') == 'src/project'
+  api.cros.cherry_pick_changes(api.changes.get_changes())
   api.cros.regen_portage_cache('my_overlay')
   api.cros.uprev_portage_packages()
   api.cros.push_portage_package_uprevs()
@@ -21,4 +23,5 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic') +  #
+         api.changes.buildbucket_gerrit_change())

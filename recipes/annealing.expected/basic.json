@@ -277,8 +277,7 @@
       "git",
       "fetch",
       "https://chromium-review.googlesource.com/chromiumos/infra/recipes",
-      "refs/heads/manifest-prototype:",
-      "--dryrun"
+      "refs/heads/manifest-prototype:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -291,8 +290,7 @@
     "cmd": [
       "git",
       "rev-parse",
-      "FETCH_HEAD",
-      "--dryrun"
+      "FETCH_HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -307,8 +305,7 @@
       "git",
       "checkout",
       "--force",
-      "FETCH_HEAD",
-      "--dryrun"
+      "FETCH_HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -342,8 +339,7 @@
       "--message",
       "Annealing manifest snapshot",
       "--",
-      "[START_DIR]/chromiumos_workspace/manifest/snapshot.xml",
-      "--dryrun"
+      "[START_DIR]/chromiumos_workspace/manifest/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -357,9 +353,9 @@
       "git",
       "push",
       "--porcelain",
+      "--dryrun",
       "https://chromium-review.googlesource.com/chromiumos/infra/recipes",
-      "HEAD:refs/heads/manifest-prototype",
-      "--dryrun"
+      "HEAD:refs/heads/manifest-prototype"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,

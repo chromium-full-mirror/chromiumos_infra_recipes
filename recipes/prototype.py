@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
+    'changes',
     'cros',
     'cros_sdk',
     'dev',
@@ -32,7 +33,8 @@ def RunSteps(api):
   api.repo_cache.ensure_fresh_cache(init_opts=dict(groups=['minilayout']))
   with api.overlayfs.context('master', api.repo_cache.path, api.cros.master_path), \
         api.overlayfs.context('workspace', api.repo_cache.path, api.cros.workspace_path):
-    api.cros.regen_portage_cache(repo_name='chromiumos')
+    changes = api.changes.get_changes()
+    api.cros.cherry_pick_changes(changes)
 
 
 def GenTests(api):

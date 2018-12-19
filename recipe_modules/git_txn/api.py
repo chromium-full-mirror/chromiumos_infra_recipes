@@ -32,6 +32,8 @@ class GitTxnApi(recipe_api.RecipeApi):
     |remote| |ref|. If this push fails because the remote ref was modified in
     the meantime, the process will repeat up to |retries| times.
 
+    This step expects to be run with `cwd` inside a git repo.
+
     Args:
       remote (str): The remote repository to update.
       ref (str): The remote ref to update. If it does not start with 'refs/' it
