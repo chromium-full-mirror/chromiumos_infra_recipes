@@ -257,7 +257,7 @@
   {
     "cmd": [],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "attempt 1 of 3"
+    "name": "git transaction"
   },
   {
     "cmd": [
@@ -268,7 +268,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "attempt 1 of 3.git fetch",
+    "name": "git transaction.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -281,7 +281,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "attempt 1 of 3.git rev-parse",
+    "name": "git transaction.git rev-parse",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -296,7 +296,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "attempt 1 of 3.git checkout",
+    "name": "git transaction.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -314,7 +314,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "attempt 1 of 3.write file",
+    "name": "git transaction.write file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -330,7 +330,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "attempt 1 of 3.git commit",
+    "name": "git transaction.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -345,7 +345,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "attempt 1 of 3.git push",
+    "name": "git transaction.git push",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

@@ -17,7 +17,10 @@ def RunSteps(api):
 
 
 def attempt_git_step(api, attempt, git_subcmd, retcode=0, stdout=None):
-  return api.step_data('attempt %d of 2.git %s' % (attempt, git_subcmd),
+  message = 'git transaction'
+  if attempt > 1:
+    message += ' retry 1 of 1'
+  return api.step_data('%s.git %s' % (message, git_subcmd),
                        retcode=retcode, stdout=api.raw_io.output(stdout))
 
 

@@ -48,8 +48,11 @@ class GitTxnApi(recipe_api.RecipeApi):
       ref = 'refs/heads/%s' % ref
     last_commit = None
     for i in range(retries):
+      message = 'git transaction'
+      if i > 0:
+        message += ' retry %d of %d' % (attempt, retries - 1)
       attempt = i + 1
-      with self.m.step.nest('attempt %d of %d' % (attempt, retries)) as step:
+      with self.m.step.nest(message) as step:
         fetched_commit = self.m.git.fetch_ref(remote, ref)
 
         # After the first attempt, make sure the fetched revision changes each
