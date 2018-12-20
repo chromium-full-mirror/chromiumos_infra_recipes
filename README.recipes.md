@@ -180,7 +180,7 @@ API for working with git.
 
 A module for interacting with git.
 
-&mdash; **def [checkout](/recipe_modules/git/api.py#67)(self, commit, force=False):**
+&mdash; **def [checkout](/recipe_modules/git/api.py#80)(self, commit, force=False):**
 
 Runs 'git checkout'.
 
@@ -188,14 +188,14 @@ Args:
   * commit (str): The commit (technically "tree-like") to checkout.
   * force (bool): If True, throw away local changes (--force).
 
-&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#80)(self, commit):**
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#93)(self, commit):**
 
 Runs 'git cherry-pick'.
 
 Args:
   * commit (str): The commit to cherry pick.
 
-&mdash; **def [commit\_files](/recipe_modules/git/api.py#88)(self, files, message):**
+&mdash; **def [commit\_files](/recipe_modules/git/api.py#101)(self, files, message):**
 
 Runs 'git commit' with the given files.
 
@@ -203,7 +203,18 @@ Args:
   * files (list[str|Path]): A list of file paths to commit.
   * message (str): The commit message.
 
-&mdash; **def [fetch](/recipe_modules/git/api.py#37)(self, remote, refspecs=None):**
+&mdash; **def [diff\_check](/recipe_modules/git/api.py#37)(self, path):**
+
+Check if the given file changed from HEAD.
+
+Args:
+  * path (str|Path): The file path to check for changes (diff --quiet)
+
+Returns:
+  bool: True if the file changed from HEAD, False otherwise.
+  
+
+&mdash; **def [fetch](/recipe_modules/git/api.py#50)(self, remote, refspecs=None):**
 
 Runs 'git fetch'.
 
@@ -211,7 +222,7 @@ Args:
   * remote (str): The remote repository to fetch from.
   * refspecs (list[str]): The refspecs to fetch.
 
-&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#49)(self, remote, ref):**
+&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#62)(self, remote, ref):**
 
 Fetch a single remote ref with 'git fetch'.
 
@@ -222,7 +233,7 @@ Args:
 Returns:
   str: The commit ID of the fetched ref.
 
-&mdash; **def [push](/recipe_modules/git/api.py#97)(self, remote, refspec, capture_stdout=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#110)(self, remote, refspec, capture_stdout=False):**
 
 Runs 'git push'.
 
@@ -264,10 +275,13 @@ Args:
       callback returns False the update will be cancelled but succeed.
   retries (int): Number of update attempts to make before failing.
 
+Returns:
+  bool: True if the transaction succeeded, false if it explicitly aborts.
+
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#84)(self, remote, ref, message, dest, data, \*\*kwargs):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#87)(self, remote, ref, message, dest, data, \*\*kwargs):**
 
 Transactionally update a file in a remote git repository ref.
 
@@ -282,6 +296,9 @@ Args:
   dest (Path): The path of the file to write.
   data (str): The data to write.
   kwargs: See 'self.update_ref'.
+
+Returns:
+  bool: True if the transaction succeeded, false if the file didn't change.
 
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.

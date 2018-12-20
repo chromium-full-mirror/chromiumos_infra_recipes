@@ -43,6 +43,9 @@ class GitTxnApi(recipe_api.RecipeApi):
           callback returns False the update will be cancelled but succeed.
       retries (int): Number of update attempts to make before failing.
 
+    Returns:
+      bool: True if the transaction succeeded, false if it explicitly aborts.
+
     Raises:
       TooManyAttempts: if the number of attempts exceeds |retries|.
     """
@@ -67,11 +70,11 @@ class GitTxnApi(recipe_api.RecipeApi):
 
         if update_callback() is False:
           step.presentation.step_text = 'Transaction aborted without failure.'
-          return
+          return False
 
         try:
           self.m.git.push(remote, 'HEAD:%s' % ref, capture_stdout=True)
-          return
+          return True
         except recipe_api.StepFailure as ex:
           # Only retry on 'remote rejected' errors.
           if ex.retcode == 1 and '[remote rejected]' in ex.result.stdout:
@@ -96,10 +99,15 @@ class GitTxnApi(recipe_api.RecipeApi):
       data (str): The data to write.
       kwargs: See 'self.update_ref'.
 
+    Returns:
+      bool: True if the transaction succeeded, false if the file didn't change.
+
     Raises:
       TooManyAttempts: if the number of attempts exceeds |retries|.
     """
     def update_callback():
       self.m.file.write_raw('write file', dest, data)
+      if not self.m.git.diff_check(dest):
+        return False
       self.m.git.commit_files([dest], message)
-    self.update_ref(remote, ref, update_callback, **kwargs)
+    return self.update_ref(remote, ref, update_callback, **kwargs)

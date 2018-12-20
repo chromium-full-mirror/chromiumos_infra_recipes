@@ -55,67 +55,6 @@
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "step returned non-zero exit code: 1",
-      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "git transaction retry 1 of 1"
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "remote",
-      "refs/heads/ref:"
-    ],
-    "infra_step": true,
-    "name": "git transaction retry 1 of 1.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "infra_step": true,
-    "name": "git transaction retry 1 of 1.git rev-parse",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "infra_step": true,
-    "name": "git transaction retry 1 of 1.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "--porcelain",
-      "remote",
-      "HEAD:refs/heads/ref"
-    ],
-    "infra_step": true,
-    "name": "git transaction retry 1 of 1.git push",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -167,10 +106,7 @@
   },
   {
     "cmd": [],
-    "name": "git transaction (3)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
+    "name": "git transaction (3)"
   },
   {
     "cmd": [
@@ -240,6 +176,37 @@
     "name": "git transaction.git diff-index",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--message",
+      "Update file",
+      "--",
+      "file/path.txt"
+    ],
+    "infra_step": true,
+    "name": "git transaction.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "remote",
+      "HEAD:refs/heads/ref"
+    ],
+    "infra_step": true,
+    "name": "git transaction.git push (2)",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

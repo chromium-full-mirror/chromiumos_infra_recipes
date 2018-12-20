@@ -20,6 +20,7 @@ def RunSteps(api):
   api.git.push('origin', 'HEAD:master', capture_stdout=True)
   api.dev.configure(dryrun=True)
   api.git.push('origin', 'HEAD:master', capture_stdout=True)
+  api.git.diff_check('some/file/path')
 
 
 def GenTests(api):

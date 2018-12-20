@@ -74,3 +74,11 @@ def GenTests(api):
       retcode=1,
       stdout='!	HEAD:refs/fake	[remote rejected]',
   )
+
+  yield api.test('update ref has diff') + attempt_git_step(
+      api,
+      1,
+      'diff-index',
+      retcode=1,
+  )
+

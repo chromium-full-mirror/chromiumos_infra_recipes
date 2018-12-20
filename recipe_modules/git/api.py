@@ -34,6 +34,19 @@ class GitApi(recipe_api.RecipeApi):
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, ['git'] + args, **kwargs)
 
+  def diff_check(self, path):
+    """Check if the given file changed from HEAD.
+
+    Args:
+      * path (str|Path): The file path to check for changes (diff --quiet)
+
+    Returns:
+      bool: True if the file changed from HEAD, False otherwise.
+      """
+    cmd = ['diff-index', '--quiet', 'HEAD', path]
+    return self._step(cmd, ok_ret=(0, 1)).retcode != 0
+
+
   def fetch(self, remote, refspecs=None):
     """Runs 'git fetch'.
 
