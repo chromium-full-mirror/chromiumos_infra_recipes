@@ -124,6 +124,6 @@ class GitApi(recipe_api.RecipeApi):
       args += ['--porcelain']
       stdout = self.m.raw_io.output(add_output_log=True)
     if self.m.dev.dryrun:
-      args += ['--dryrun']
+      args += ['--dry-run']
     args += [remote, refspec]
     return self._step(args, stdout=stdout)

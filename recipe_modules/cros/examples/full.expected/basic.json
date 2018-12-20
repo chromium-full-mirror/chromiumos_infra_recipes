@@ -164,10 +164,13 @@
   },
   {
     "cmd": [
+      "vpython",
       "chromite/bin/cros_mark_as_stable",
       "push",
       "--buildroot",
-      "[START_DIR]/chromiumos_workspace"
+      "[START_DIR]/chromiumos_workspace",
+      "--overlay-type",
+      "both"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "push portage package uprevs"
@@ -189,10 +192,13 @@
   },
   {
     "cmd": [
+      "vpython",
       "chromite/bin/cros_mark_as_stable",
       "push",
       "--buildroot",
       "[START_DIR]/chromiumos_workspace",
+      "--overlay-type",
+      "both",
       "--dryrun"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

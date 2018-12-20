@@ -79,7 +79,7 @@
       "git",
       "push",
       "--porcelain",
-      "--dryrun",
+      "--dry-run",
       "origin",
       "HEAD:master"
     ],
