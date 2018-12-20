@@ -30,8 +30,10 @@
   },
   {
     "cmd": [
+      "vpython",
       "chromite/bin/cros_mark_as_stable",
       "commit",
+      "--all",
       "--buildroot",
       "[START_DIR]/chromiumos_workspace",
       "--overlay-type",
@@ -52,8 +54,10 @@
   },
   {
     "cmd": [
+      "vpython",
       "chromite/bin/cros_mark_as_stable",
       "commit",
+      "--all",
       "--buildroot",
       "[START_DIR]/chromiumos_workspace",
       "--overlay-type",

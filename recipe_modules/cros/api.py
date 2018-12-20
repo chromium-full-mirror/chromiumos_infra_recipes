@@ -71,7 +71,9 @@ class CrosApi(recipe_api.RecipeApi):
   def uprev_portage_packages(self):
     """Uprevs portage packages for all boards."""
     cmd = [
-      'chromite/bin/cros_mark_as_stable', 'commit',
+      'vpython','chromite/bin/cros_mark_as_stable',
+      'commit',
+      '--all',
       '--buildroot', self.workspace_path,
       '--overlay-type', 'both'
     ]

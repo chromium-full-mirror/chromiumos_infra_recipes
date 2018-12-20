@@ -26,9 +26,7 @@
       "RECIPE_PACKAGE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chromium.googlesource.com/chromiumos/manifest",
-      "--groups",
-      "minilayout"
+      "https://chromium.googlesource.com/chromiumos/manifest"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
@@ -223,12 +221,15 @@
   },
   {
     "cmd": [
+      "vpython",
       "chromite/bin/cros_mark_as_stable",
       "commit",
+      "--all",
       "--buildroot",
       "[START_DIR]/chromiumos_workspace",
       "--overlay-type",
-      "both"
+      "both",
+      "--dryrun"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "uprev portage packages"
@@ -238,10 +239,16 @@
       "chromite/bin/cros_mark_as_stable",
       "push",
       "--buildroot",
-      "[START_DIR]/chromiumos_workspace"
+      "[START_DIR]/chromiumos_workspace",
+      "--dryrun"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "push portage package uprevs"
+  },
+  {
+    "cmd": [],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "update annealing manifest"
   },
   {
     "cmd": [
@@ -251,24 +258,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "repo manifest",
-    "stdout": "/path/to/tmp/"
+    "name": "update annealing manifest.repo manifest",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "git transaction"
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "cros",
-      "refs/heads/master:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "git transaction.git fetch",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "update annealing manifest.git transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -276,15 +275,31 @@
   {
     "cmd": [
       "git",
-      "rev-parse",
-      "FETCH_HEAD"
+      "fetch",
+      "https://chromium-review.googlesource.com/chromiumos/infra/recipes",
+      "refs/heads/manifest-prototype:",
+      "--dryrun"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "git transaction.git rev-parse",
+    "name": "update annealing manifest.git transaction.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD",
+      "--dryrun"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "update annealing manifest.git transaction.git rev-parse",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -292,13 +307,14 @@
       "git",
       "checkout",
       "--force",
-      "FETCH_HEAD"
+      "FETCH_HEAD",
+      "--dryrun"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "git transaction.git checkout",
+    "name": "update annealing manifest.git transaction.git checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -310,13 +326,13 @@
       "/path/to/tmp/json",
       "copy",
       "TEST XML",
-      "manifest/snapshot.xml"
+      "[START_DIR]/chromiumos_workspace/manifest/snapshot.xml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "git transaction.write file",
+    "name": "update annealing manifest.git transaction.write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -326,13 +342,14 @@
       "--message",
       "Annealing manifest snapshot",
       "--",
-      "manifest/snapshot.xml"
+      "[START_DIR]/chromiumos_workspace/manifest/snapshot.xml",
+      "--dryrun"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "git transaction.git commit",
+    "name": "update annealing manifest.git transaction.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -340,15 +357,16 @@
       "git",
       "push",
       "--porcelain",
-      "cros",
-      "HEAD:refs/heads/master"
+      "https://chromium-review.googlesource.com/chromiumos/infra/recipes",
+      "HEAD:refs/heads/manifest-prototype",
+      "--dryrun"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "git transaction.git push",
+    "name": "update annealing manifest.git transaction.git push",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
