@@ -60,7 +60,29 @@
     ],
     "infra_step": true,
     "name": "repo manifest",
-    "stdout": "/path/to/tmp/"
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@TEST XML@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "manifest diff",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@manifest diff failed; no repo root found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "diffmanifests",
+      "../../../snapshot_a.xml",
+      "../../../snapshot_b.xml"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "infra_step": true,
+    "name": "manifest diff (2)"
   },
   {
     "name": "$result",

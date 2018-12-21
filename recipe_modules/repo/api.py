@@ -8,6 +8,7 @@
 See: https://chromium.googlesource.com/external/repo/
 """
 
+import os
 import types
 
 from recipe_engine import recipe_api
@@ -105,6 +106,38 @@ class RepoApi(recipe_api.RecipeApi):
     """
     step_test_data = lambda: self.m.raw_io.test_api.stream_output('TEST XML')
     step_data = self._step(['manifest', '-r'],
-                           stdout=self.m.raw_io.output(),
+                           stdout=self.m.raw_io.output(add_output_log=True),
                            step_test_data=step_test_data)
     return step_data.stdout.strip()
+
+  def _find_root(self):
+    """Starting from cwd, find an ancestor with a '.repo' subdir."""
+    candidate = self.m.context.cwd.join()  # .join() makes a copy to mutate
+    while candidate.pieces:
+      if self.m.path.exists(candidate.join('.repo')):
+        return candidate
+      candidate.pieces = candidate.pieces[:-1]
+    return None
+
+  def diffmanifests(self, old_manifest_path, new_manifest_path):
+    """Informational step that logs a "manifest diff".
+
+    Args:
+      old_manifest_path (Path): Path to old manifest file.
+      new_manifest_path (Path): Path to new manifest file.
+    """
+    name = 'manifest diff'
+    # Manifest paths must be relative to the current repo .repo/manifests dir.
+    repo_root = self._find_root()
+    if repo_root is None:
+      step = self.m.step(name, [])
+      step.presentation.step_text = 'manifest diff failed; no repo root found'
+      return
+    manifests_dir = self.m.path.abspath(repo_root.join('.repo', 'manifests'))
+
+    cmd = [
+        'diffmanifests',
+        os.path.relpath(str(old_manifest_path), manifests_dir),
+        os.path.relpath(str(new_manifest_path), manifests_dir),
+    ]
+    self._step(cmd, name=name)
