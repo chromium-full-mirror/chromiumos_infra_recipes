@@ -14,12 +14,6 @@ DEPS = [
 def RunSteps(api):
   assert api.cros.find_project_path('my/project', 'branch1') == 'src/project'
   api.cros.cherry_pick_changes(api.changes.get_changes())
-  api.cros.regen_portage_cache('my_overlay')
-  api.cros.uprev_portage_packages()
-  api.cros.push_portage_package_uprevs()
-  api.dev.configure(dryrun=True)
-  api.cros.uprev_portage_packages()
-  api.cros.push_portage_package_uprevs()
 
 
 def GenTests(api):
