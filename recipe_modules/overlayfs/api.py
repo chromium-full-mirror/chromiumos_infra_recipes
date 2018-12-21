@@ -19,6 +19,11 @@ from recipe_engine import recipe_api
 class OverlayfsApi(recipe_api.RecipeApi):
   """A module for interacting with OverlayFS mounts."""
 
+  def __init__(self, *args, **kwargs):
+    """Initialize OverlayfsApi."""
+    super(OverlayfsApi, self).__init__(*args, **kwargs)
+    self._cleanup_stack = [[]]
+
   @property
   def _base_work_path(self):
     """Returns a Path to the base work directory for this module."""
@@ -36,7 +41,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
           it doesn't exist.
 
     """
-    assert name.isalnum()
+    assert name.isalnum(), 'overlayfs mount names must be alphanumeric'
     with self.m.context(name_prefix='mount overlay %s' % name,
                         increment_nest_level=True, infra_steps=True):
       # Create overlayfs directories.
@@ -58,37 +63,47 @@ class OverlayfsApi(recipe_api.RecipeApi):
           'sudo', '-n', 'mount', '-t', 'overlay', '--options', mount_options,
           'overlay', mount_path
       ])
+      self._cleanup_mount(name, mount_path)
 
   def unmount(self, name, mount_path):
     """Unmount an OverlayFS.
 
     Args:
+      * name (str): The name used for |mount|.
       * mount_path (Path): Path to unmount the OverlayFS from.
 
     """
     self.m.step('unmount overlay %s' % name, ['sudo', 'umount', mount_path],
                 infra_step=True)
 
+    self._cleanup_unmount(name, mount_path)
+
   @contextlib.contextmanager
-  def context(self, name, lowerdir_path, mount_path):
-    """Return a context in a mounted OverlayFS.
-
-    The returned context will see a mounted OverlayFS as with 'mount', with the
-    cwd set to the mount_path. The OverlayFS will be unmounted when the context
-    exits.
-
-    Args:
-      * name (str): An alphanumeric name for the mount, used for display and
-          implementation details. Should usually be unique within a recipe.
-      * lowerdir_path (Path): Path to the OverlayFS "lowerdir". See mount(8)
-          "Mount options for overlay".
-      * mount_path (Path): Path to mount the OverlayFS at. Will be created if
-          it doesn't exist.
-
-    """
-    self.mount(name, lowerdir_path, mount_path)
+  def cleanup_context(self):
+    """Returns a context that cleans up any overlayfs mounts created in it."""
+    cleanup_mounts = []
+    self._cleanup_stack.append(cleanup_mounts)
     try:
-      with self.m.context(cwd=mount_path):
-        yield
+      yield
     finally:
-      self.unmount(name, mount_path)
+      if cleanup_mounts:
+        with self.m.step.nest('clean up overlayfs mounts'):
+          for name, mount_path in list(cleanup_mounts):
+            self.unmount(name, mount_path)
+      self._cleanup_stack.pop()
+
+  def _cleanup_mount(self, name, mount_path):
+    """Track mount for cleanup_context."""
+    self._cleanup_stack[-1].append((name, mount_path))
+
+  def _cleanup_unmount(self, name, mount_path):
+    """Track unmount for cleanup_context."""
+    item = (name, mount_path)
+    for mounts in reversed(self._cleanup_stack):
+      if item in mounts:
+        mounts.remove(item)
+        break
+    else:
+      # Unmount succeeded, so just warn that something odd has happened.
+      self.m.step.active_result.presentation.step_text += (
+          '<br/>[WARNING: overlayfs unmount bookkeeping error for %s]' % name)

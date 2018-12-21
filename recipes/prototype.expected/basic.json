@@ -140,7 +140,6 @@
       "0777",
       "[CLEANUP]/overlayfs/upperdir"
     ],
-    "cwd": "[START_DIR]/chromiumos_master",
     "infra_step": true,
     "name": "mount overlay workspace.create upperdir",
     "~followup_annotations": [
@@ -159,7 +158,6 @@
       "0777",
       "[CLEANUP]/overlayfs/workdir"
     ],
-    "cwd": "[START_DIR]/chromiumos_master",
     "infra_step": true,
     "name": "mount overlay workspace.create workdir",
     "~followup_annotations": [
@@ -178,7 +176,6 @@
       "0777",
       "[START_DIR]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_master",
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
     "~followup_annotations": [
@@ -197,7 +194,6 @@
       "overlay",
       "[START_DIR]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_master",
     "infra_step": true,
     "name": "mount overlay workspace.mount",
     "~followup_annotations": [
@@ -206,23 +202,15 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "get changes"
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "cherry-pick changes"
   },
   {
-    "cmd": [
-      "sudo",
-      "umount",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "cwd": "[START_DIR]/chromiumos_master",
-    "infra_step": true,
-    "name": "unmount overlay workspace"
+    "cmd": [],
+    "name": "clean up overlayfs mounts"
   },
   {
     "cmd": [
@@ -231,7 +219,22 @@
       "[START_DIR]/chromiumos_master"
     ],
     "infra_step": true,
-    "name": "unmount overlay master"
+    "name": "clean up overlayfs mounts.unmount overlay master",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "umount",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "name": "$result",

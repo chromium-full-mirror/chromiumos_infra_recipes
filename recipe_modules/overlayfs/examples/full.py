@@ -12,9 +12,30 @@ DEPS = [
 
 def RunSteps(api):
   lowerdir_path = api.path['cache'].join('lowerdir')
-  mount_path = api.path['start_dir'].join('mount')
-  with api.overlayfs.context('mymount', lowerdir_path, mount_path):
-    api.step('in mount', ['pwd'])
+  mount_a = api.path['start_dir'].join('mount_a')
+  mount_b = api.path['start_dir'].join('mount_b')
+  mount_c = api.path['start_dir'].join('mount_c')
+
+  # Multiple mounts
+  with api.overlayfs.cleanup_context():
+    api.overlayfs.mount('a', lowerdir_path, mount_a)
+    api.overlayfs.mount('b', lowerdir_path, mount_b)
+    api.overlayfs.mount('c', lowerdir_path, mount_c)
+
+  # Nested mount contexts
+  with api.overlayfs.cleanup_context():
+    api.overlayfs.mount('a', lowerdir_path, mount_a)
+    with api.overlayfs.cleanup_context():
+      with api.overlayfs.cleanup_context():
+        api.overlayfs.mount('b', lowerdir_path, mount_b)
+      api.overlayfs.mount('c', lowerdir_path, mount_c)
+
+  # Empty context
+  with api.overlayfs.cleanup_context():
+    pass
+
+  # Unmount warning
+  api.overlayfs.unmount('fake', api.path['start_dir'].join('fake'))
 
 
 def GenTests(api):

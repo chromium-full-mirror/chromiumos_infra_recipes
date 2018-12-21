@@ -314,23 +314,15 @@ See: https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt
 
 A module for interacting with OverlayFS mounts.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/overlayfs/api.py#72)(self, name, lowerdir_path, mount_path):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/overlayfs/api.py#22)(self, \*args, \*\*kwargs):**
 
-Return a context in a mounted OverlayFS.
+Initialize OverlayfsApi.
 
-The returned context will see a mounted OverlayFS as with 'mount', with the
-cwd set to the mount_path. The OverlayFS will be unmounted when the context
-exits.
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#81)(self):**
 
-Args:
-  * name (str): An alphanumeric name for the mount, used for display and
-      implementation details. Should usually be unique within a recipe.
-  * lowerdir_path (Path): Path to the OverlayFS "lowerdir". See mount(8)
-      "Mount options for overlay".
-  * mount_path (Path): Path to mount the OverlayFS at. Will be created if
-      it doesn't exist.
+Returns a context that cleans up any overlayfs mounts created in it.
 
-&mdash; **def [mount](/recipe_modules/overlayfs/api.py#27)(self, name, lowerdir_path, mount_path):**
+&mdash; **def [mount](/recipe_modules/overlayfs/api.py#32)(self, name, lowerdir_path, mount_path):**
 
 Mount an OverlayFS.
 
@@ -342,11 +334,12 @@ Args:
   * mount_path (Path): Path to mount the OverlayFS at. Will be created if
       it doesn't exist.
 
-&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#62)(self, name, mount_path):**
+&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#68)(self, name, mount_path):**
 
 Unmount an OverlayFS.
 
 Args:
+  * name (str): The name used for |mount|.
   * mount_path (Path): Path to unmount the OverlayFS from.
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
@@ -477,7 +470,7 @@ The annealing builders run in serial and do the following:
 
 Recipe for prototyping Chrome OS builders.
 
-&mdash; **def [RunSteps](/recipes/prototype.py#25)(api):**
+&mdash; **def [RunSteps](/recipes/prototype.py#29)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo)
