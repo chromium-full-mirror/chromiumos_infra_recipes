@@ -16,13 +16,6 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 """
 
-# Need a (module?) to do uprevs. It will run something like:
-#   chromite/bin/cros_mark_as_stable
-#     commit
-#     --all
-#     --buildroot /b/swarming/wlO4tKB/ir/cache/cbuild/repository
-#     --overlay-type both
-
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
@@ -43,8 +36,8 @@ MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
 
 def RunSteps(api):
   with api.overlayfs.cleanup_context():
-    # Set annealing into dryrun mode by default. Comment / uncomment as needed for
-    # testing.
+    # Set annealing into dryrun mode by default. Comment / uncomment as needed
+    # for testing.
     api.dev.configure(dryrun=True)
 
     # Cache the chroot.
@@ -57,10 +50,12 @@ def RunSteps(api):
     api.overlayfs.mount('workspace', api.repo_cache.path,
                         api.cros.workspace_path)
 
-    # Do some annealing.
+    # Portage uprev packages.
     api.cros_build.regen_portage_cache(repo_name='chromiumos')
     api.cros_build.uprev_portage_packages()
     api.cros_build.push_portage_package_uprevs()
+
+    # Create a manifest snapshot and commit it.
     with api.step.nest('update annealing manifest'):
       snapshot_xml = api.repo.manifest_snapshot()
       with api.context(cwd=api.cros.workspace_path.join('manifest')):
