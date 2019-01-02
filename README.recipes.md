@@ -23,6 +23,7 @@
   * [dev:examples/full](#recipes-dev_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
+  * [mini_annealing](#recipes-mini_annealing) &mdash; Recipe for the Chrome OS mini-annealing builders.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
@@ -433,7 +434,7 @@ Return the configured repo cache path.
 
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#26): [cros](#recipe_modules-cros), [cros\_build](#recipe_modules-cros_build), [cros\_sdk](#recipe_modules-cros_sdk), [dev](#recipe_modules-dev), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#19): [cros](#recipe_modules-cros), [cros\_build](#recipe_modules-cros_build), [cros\_sdk](#recipe_modules-cros_sdk), [dev](#recipe_modules-dev), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -447,7 +448,7 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#44)(api):**
+&mdash; **def [RunSteps](/recipes/annealing.py#37)(api):**
 ### *recipes* / [changes:examples/full](/recipe_modules/changes/examples/full.py)
 
 [DEPS](/recipe_modules/changes/examples/full.py#6): [changes](#recipe_modules-changes), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -485,6 +486,20 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/git_txn/examples/full.py#12)(api):**
 
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
+### *recipes* / [mini\_annealing](/recipes/mini_annealing.py)
+
+[DEPS](/recipes/mini_annealing.py#16): [cros](#recipe_modules-cros), [cros\_build](#recipe_modules-cros_build), [cros\_sdk](#recipe_modules-cros_sdk), [dev](#recipe_modules-dev), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for the Chrome OS mini-annealing builders.
+
+The mini annealing builder is a subset of the full annealing builder and simply
+snapshots ToT.
+
+1. Checkout ToT
+4. Make a manifest snapshot (aka "revlocked manifest"), and push it
+   to `chromiumos/manifest` on the `annealing-test` branch.
+
+&mdash; **def [RunSteps](/recipes/mini_annealing.py#34)(api):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
