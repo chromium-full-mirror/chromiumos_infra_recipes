@@ -16,6 +16,8 @@
       "--chroot",
       "[CLEANUP]/test/chroot",
       "PATH=/bin",
+      "--workspace",
+      "[CLEANUP]/workspace",
       "--",
       "ls"
     ],

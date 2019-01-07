@@ -125,11 +125,11 @@ Uprevs portage packages for all boards.
 
 API for interacting with cros_sdk, the interface to the CrOS SDK.
 
-#### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#31)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#36)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -141,22 +141,22 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#18)(self, chroot_parent_path):**
+&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#23)(self, chroot_parent_path):**
 
 Configure CrosSdkApi.
 
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#26)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#31)(self):**
 
 Returns a Path to the cros_sdk script.
 
-&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#14)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#19)(self):**
 
 Initialize CrosSdkApi.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#50)(self, name, cmd, env=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#55)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -164,10 +164,22 @@ Args:
   * name (str): The name of the step.
   * cmd (list): A command and arguments to run.
   * env (dict): A dict of environment variables to pass to the command.
+  * workspace (Path): A path to mount to the chroot's workspace directory.
   * kwargs: Keyword arguments to pass to __call__.
 
 Returns:
   See 'step.__call__'.
+
+&mdash; **def [workspace\_path\_to\_chroot](/recipe_modules/cros_sdk/api.py#76)(self, workspace_root, workspace_path):**
+
+Translate a workspace path to its mounted chroot equivalent.
+
+Args:
+  * workspace_root (Path): The path to be passed to cros_sdk --workspace.
+  * workspace_path (Path): A child of |workspace_root|, to be translated.
+
+Returns:
+  str: The translated path, which will be valid within the cros_sdk chroot.
 ### *recipe_modules* / [dev](/recipe_modules/dev)
 
 API for development config.

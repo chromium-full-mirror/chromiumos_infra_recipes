@@ -10,9 +10,16 @@ DEPS = [
 
 
 def RunSteps(api):
+  workspace = api.path['cleanup'].join('workspace')
+
   api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
   api.cros_sdk('get cros_sdk help', ['--help'])
-  api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'})
+  api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},
+                   workspace=workspace)
+
+  workspace_file = workspace.join('inner', 'file')
+  chroot_path = api.cros_sdk.workspace_path_to_chroot(workspace, workspace_file)
+  assert chroot_path == '/mnt/host/workspace/inner/file'
 
 
 def GenTests(api):
