@@ -1,0 +1,60 @@
+[
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--workspace",
+      "[CLEANUP]",
+      "--",
+      "src/scripts/cros_generate_update_payload",
+      "--image",
+      "../../chroot/image_path/image.img",
+      "--output",
+      "workspace/generate_payloads/name",
+      "--kern_path",
+      "workspace/generate_payloads/kern.bin",
+      "--root_pretruncate_path",
+      "workspace/generate_payloads/root.bin"
+    ],
+    "name": "Generate full payload"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--",
+      "src/scripts/cros_generate_update_payload",
+      "--image",
+      "../../chroot/image_path/image.img",
+      "--output",
+      "workspace/generate_payloads/name",
+      "--src_image",
+      "../../chroot/image_path/image.img"
+    ],
+    "name": "Generate delta payload"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--",
+      "src/scripts/cros_generate_stateful_update_payload",
+      "--image",
+      "../../chroot/image_path/image.img",
+      "--output",
+      "workspace/generate_payloads"
+    ],
+    "name": "Generate stateful payload"
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]

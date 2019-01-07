@@ -33,6 +33,10 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """Returns a Path to the cros_sdk script."""
     return self.m.depot_tools.package_repo_resource('cros_sdk')
 
+  @property
+  def chroot_path(self):
+    return self._chroot_path
+
   def __call__(self, name, args, **kwargs):
     """Executes 'cros_sdk' with the supplied arguments.
 
@@ -48,7 +52,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
         self.cros_sdk_path,
         '--nouse-image',
         '--chroot',
-        self._chroot_path,
+        self.chroot_path,
     ] + args
     return self.m.step(name, cmd, **kwargs)
 

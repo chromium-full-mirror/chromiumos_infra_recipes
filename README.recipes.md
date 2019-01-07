@@ -13,6 +13,7 @@
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
+  * [payloads](#recipe_modules-payloads)
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [repo_cache](#recipe_modules-repo_cache) &mdash; API for working with repo repository caches.
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
@@ -30,10 +31,12 @@
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [mini_annealing](#recipes-mini_annealing) &mdash; Recipe for the Chrome OS mini-annealing builders.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
+  * [payloads:examples/full](#recipes-payloads_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
   * [repo_cache:examples/full](#recipes-repo_cache_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
+  * [upload_artifacts](#recipes-upload_artifacts)
 ## Recipe Modules
 
 ### *recipe_modules* / [build\_api](/recipe_modules/build_api)
@@ -144,7 +147,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#36)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#40)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -155,6 +158,8 @@ Args:
 
 Returns:
   See 'step.__call__'.
+
+&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros_sdk/api.py#36)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#23)(self, chroot_parent_path):**
 
@@ -171,7 +176,7 @@ Returns a Path to the cros_sdk script.
 
 Initialize CrosSdkApi.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#55)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#59)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -185,7 +190,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [workspace\_path\_to\_chroot](/recipe_modules/cros_sdk/api.py#76)(self, workspace_root, workspace_path):**
+&mdash; **def [workspace\_path\_to\_chroot](/recipe_modules/cros_sdk/api.py#80)(self, workspace_root, workspace_path):**
 
 Translate a workspace path to its mounted chroot equivalent.
 
@@ -466,6 +471,43 @@ Unmount an OverlayFS.
 Args:
   * name (str): The name used for |mount|.
   * mount_path (Path): Path to unmount the OverlayFS from.
+### *recipe_modules* / [payloads](/recipe_modules/payloads)
+
+[DEPS](/recipe_modules/payloads/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+#### **class [PayloadsApi](/recipe_modules/payloads/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for payload generation steps
+
+&mdash; **def [generate\_delta](/recipe_modules/payloads/api.py#55)(self, image_path, output_filename):**
+
+Generates delta payload for hw testing.
+
+Args:
+  * image_path (Path): The path to the image
+      to generate payloads to. Must be subdir of chroot.
+  * output_filename (str): Output filename.
+
+&mdash; **def [generate\_full](/recipe_modules/payloads/api.py#28)(self, image_path, output_filename, kern_filename, root_filename):**
+
+Generates full payload for hw testing.
+
+Args:
+  * image_path (Path): The path to the image
+      to generate payloads to. Must be subdir of chroot.
+  * output_filename (str): Output filename.
+  * kern_filename (str): Out KERN filename.
+  * root_filename (str): Out ROOT filename.
+
+&mdash; **def [generate\_stateful](/recipe_modules/payloads/api.py#76)(self, image_path):**
+
+Generates stateful payload for hw testing.
+
+Args:
+  * image_path (Path): The path to the image
+      to generate payloads to. Must be subdir of chroot.
+
+&emsp; **@property**<br>&mdash; **def [payload\_path](/recipe_modules/payloads/api.py#24)(self):**
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
 [DEPS](/recipe_modules/repo/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -668,6 +710,11 @@ snapshots ToT.
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
+### *recipes* / [payloads:examples/full](/recipe_modules/payloads/examples/full.py)
+
+[DEPS](/recipe_modules/payloads/examples/full.py#6): [payloads](#recipe_modules-payloads), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/payloads/examples/full.py#11)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
 [DEPS](/recipes/prototype.py#8): [changes](#recipe_modules-changes), [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [dev](#recipe_modules-dev), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -690,9 +737,21 @@ Recipe for prototyping Chrome OS builders.
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
+### *recipes* / [upload\_artifacts](/recipes/upload_artifacts.py)
+
+[DEPS](/recipes/upload_artifacts.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [payloads](#recipe_modules-payloads), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipes/upload_artifacts.py#22)(api):**
+
+&mdash; **def [compress\_file](/recipes/upload_artifacts.py#72)(python, name, src, dest):**
+
+&mdash; **def [delta\_filename](/recipes/upload_artifacts.py#65)(os_version, build_target):**
+
+&mdash; **def [full\_filename](/recipes/upload_artifacts.py#60)(os_version, build_target):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-gerrit
+[recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-buildbucket
 [recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-cipd
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-context
@@ -700,6 +759,7 @@ Recipe for prototyping Chrome OS builders.
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-json
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-properties
+[recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-python
 [recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-raw_io
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-step
 [recipe_engine/recipe_modules/tempfile]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-tempfile
