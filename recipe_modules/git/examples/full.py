@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import recipe_api
-
 DEPS = [
     'dev',
     'git',
@@ -22,6 +20,12 @@ def RunSteps(api):
   api.git.push('origin', 'HEAD:master', capture_stdout=True)
   api.git.diff_check('some/file/path')
 
+  with api.git.head_context():
+    pass
+
 
 def GenTests(api):
   yield api.test('basic')
+
+  yield (api.test('detached HEAD') +  #
+         api.step_data('git symbolic-ref', retcode=1))

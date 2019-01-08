@@ -5,6 +5,7 @@
 
 """API for working with git."""
 
+import contextlib
 import types
 
 from recipe_engine import recipe_api
@@ -13,12 +14,13 @@ from recipe_engine import recipe_api
 class GitApi(recipe_api.RecipeApi):
   """A module for interacting with git."""
 
-  def _step(self, args, name=None, **kwargs):
+  def _step(self, args, name=None, test_stdout=None, **kwargs):
     """Executes 'git' with the supplied arguments.
 
     Args:
       * args (list): A list of arguments to supply to 'git'.
       * name (str): The name of the step. If None, generate from the args.
+      * test_stdout (str): Data to return as stdout when testing.
       * kwargs: See 'step.__call__'.
 
     Returns:
@@ -31,6 +33,11 @@ class GitApi(recipe_api.RecipeApi):
         if isinstance(arg, types.StringTypes) and arg[:1] != '-':
           name += ' ' + arg
           break
+    if test_stdout is not None:
+      assert 'step_test_data' not in kwargs, 'test_stdout with step_test_data'
+      kwargs['step_test_data'] = (
+          lambda: self.m.raw_io.test_api.stream_output(test_stdout))
+
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, ['git'] + args, **kwargs)
 
@@ -45,7 +52,6 @@ class GitApi(recipe_api.RecipeApi):
       """
     cmd = ['diff-index', '--quiet', 'HEAD', path]
     return self._step(cmd, ok_ret=(0, 1)).retcode != 0
-
 
   def fetch(self, remote, refspecs=None):
     """Runs 'git fetch'.
@@ -71,10 +77,9 @@ class GitApi(recipe_api.RecipeApi):
     """
     self.fetch(remote, ['%s:' % ref])
 
-    step_test_data = lambda: self.m.raw_io.test_api.stream_output('deadbeef\n')
     step_data = self._step(['rev-parse', 'FETCH_HEAD'],
                            stdout=self.m.raw_io.output(),
-                           step_test_data=step_test_data)
+                           test_stdout='deadbeef\n')
     return step_data.stdout.strip()
 
   def checkout(self, commit, force=False):
@@ -127,3 +132,25 @@ class GitApi(recipe_api.RecipeApi):
       args += ['--dry-run']
     args += [remote, refspec]
     return self._step(args, stdout=stdout)
+
+  def current_head(self):
+    """Return the current HEAD branch name or commit (if detached)."""
+    step_data = self._step(['symbolic-ref', '--short', 'HEAD'], ok_ret=(0, 1),
+                           stdout=self.m.raw_io.output(),
+                           test_stdout='master\n')
+    if step_data.retcode == 0:
+      return step_data.stdout.strip()
+
+    # Detached HEAD; return commit.
+    step_data = self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
+                           test_stdout='deadbeef\n')
+    return step_data.stdout.strip()
+
+  @contextlib.contextmanager
+  def head_context(self):
+    """Returns a context that will revert HEAD when it exits."""
+    head = self.current_head()
+    try:
+      yield
+    finally:
+      self.checkout(head)

@@ -115,8 +115,18 @@
   {
     "cmd": [
       "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (2)",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
-      "master"
+      "deadbeef"
     ],
     "infra_step": true,
     "name": "git checkout (2)"
