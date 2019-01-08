@@ -3,6 +3,7 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
+  * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
   * [changes](#recipe_modules-changes) &mdash; APIs for managing CrOS code changes.
   * [cros](#recipe_modules-cros) &mdash; APIs for CrOS CI.
@@ -20,6 +21,7 @@
 
 **[Recipes](#Recipes)**
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
+  * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
   * [changes:examples/full](#recipes-changes_examples_full)
   * [cros:examples/full](#recipes-cros_examples_full)
@@ -39,6 +41,21 @@
   * [upload_artifacts](#recipes-upload_artifacts)
 ## Recipe Modules
 
+### *recipe_modules* / [artifacts](/recipe_modules/artifacts)
+
+[DEPS](/recipe_modules/artifacts/__init__.py#1): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file]
+
+#### **class [ArtifactsApi](/recipe_modules/artifacts/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [upload](/recipe_modules/artifacts/api.py#13)(self, path, builder, build_id, gs_buckets):**
+
+Uploads artifacts to Google storage.
+
+Args:
+  * path (Path): Directory containing artifacts.
+  * builder (str): Builder name.
+  * build_id (str): Buildbucket build id.
+  * gs_buckets (list[str]): Buckets to upload artifacts.
 ### *recipe_modules* / [build\_api](/recipe_modules/build_api)
 
 [DEPS](/recipe_modules/build_api/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
@@ -644,6 +661,11 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 
 &mdash; **def [RunSteps](/recipes/annealing.py#37)(api):**
+### *recipes* / [artifacts:examples/full](/recipe_modules/artifacts/examples/full.py)
+
+[DEPS](/recipe_modules/artifacts/examples/full.py#5): [artifacts](#recipe_modules-artifacts), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/artifacts/examples/full.py#14)(api):**
 ### *recipes* / [build\_api:examples/full](/recipe_modules/build_api/examples/full.py)
 
 [DEPS](/recipe_modules/build_api/examples/full.py#7): [build\_api](#recipe_modules-build_api)
@@ -739,18 +761,19 @@ Recipe for prototyping Chrome OS builders.
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
 ### *recipes* / [upload\_artifacts](/recipes/upload_artifacts.py)
 
-[DEPS](/recipes/upload_artifacts.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [payloads](#recipe_modules-payloads), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/upload_artifacts.py#6): [artifacts](#recipe_modules-artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [payloads](#recipe_modules-payloads), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipes/upload_artifacts.py#22)(api):**
+&mdash; **def [RunSteps](/recipes/upload_artifacts.py#25)(api):**
 
-&mdash; **def [compress\_file](/recipes/upload_artifacts.py#72)(python, name, src, dest):**
+&mdash; **def [compress\_file](/recipes/upload_artifacts.py#82)(python, name, src, dest):**
 
-&mdash; **def [delta\_filename](/recipes/upload_artifacts.py#65)(os_version, build_target):**
+&mdash; **def [delta\_filename](/recipes/upload_artifacts.py#75)(os_version, build_target):**
 
-&mdash; **def [full\_filename](/recipes/upload_artifacts.py#60)(os_version, build_target):**
+&mdash; **def [full\_filename](/recipes/upload_artifacts.py#70)(os_version, build_target):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-gerrit
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-gsutil
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-buildbucket
 [recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-cipd

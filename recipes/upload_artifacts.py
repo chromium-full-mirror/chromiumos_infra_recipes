@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/archive',
+    'recipe_engine/buildbucket',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -12,7 +13,9 @@ DEPS = [
     'recipe_engine/step',
     'cros_sdk',
     'payloads',
+    'artifacts'
 ]
+
 
 PREFIX = 'chromeos'
 SUFFIX = 'dev.bin'
@@ -57,6 +60,13 @@ def RunSteps(api):
     compress_file(api.python, 'archive partition %s' % partition,
                   src, dest)
 
+  # upload
+  api.artifacts.upload(
+      archive_path,
+      api.properties['buildername'],
+      api.properties['build_id'],
+      api.properties.get('gs_buckets'))
+
 def full_filename(os_version, build_target):
   # Full payload names look something like this:
   # chromeos_R37-5952.0.2014_06_12_2302-a1_link_full_dev.bin
@@ -86,7 +96,10 @@ def GenTests(api):
     api.properties(
         image_path=api.path['start_dir'].join('chroot', 'images', 'image.img'),
         os_version='R37-5952.0.2014_06_12_2302-a1',
-        build_target='build_target'
+        build_target='build_target',
+        buildername='builder',
+        build_id='123456',
+        gs_buckets=None
     ) +
     api.step_data('archive partition KERN', retcode=0) +
     api.step_data('archive partition ROOT', retcode=0)
