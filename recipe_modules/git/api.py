@@ -135,8 +135,8 @@ class GitApi(recipe_api.RecipeApi):
 
   def current_head(self):
     """Return the current HEAD branch name or commit (if detached)."""
-    step_data = self._step(['symbolic-ref', '--short', 'HEAD'], ok_ret=(0, 1),
-                           stdout=self.m.raw_io.output(),
+    step_data = self._step(['symbolic-ref', '--short', 'HEAD'],
+                           ok_ret=(0, 1, 128), stdout=self.m.raw_io.output(),
                            test_stdout='master\n')
     if step_data.retcode == 0:
       return step_data.stdout.strip()
