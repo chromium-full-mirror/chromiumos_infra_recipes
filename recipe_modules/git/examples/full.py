@@ -19,6 +19,8 @@ def RunSteps(api):
   api.dev.configure(dryrun=True)
   api.git.push('origin', 'HEAD:master', capture_stdout=True)
   api.git.diff_check('some/file/path')
+  [commit] = api.git.log('START_REF', 'END_REF')
+  assert commit.rev == 'deadbeef' and commit.message == 'message'
 
   with api.git.head_context():
     pass

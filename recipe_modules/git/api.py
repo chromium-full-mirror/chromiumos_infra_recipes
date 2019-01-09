@@ -7,8 +7,12 @@
 
 import contextlib
 import types
+from collections import namedtuple
 
 from recipe_engine import recipe_api
+
+
+Commit = namedtuple('Commit', ['rev', 'message'])
 
 
 class GitApi(recipe_api.RecipeApi):
@@ -155,3 +159,24 @@ class GitApi(recipe_api.RecipeApi):
       yield
     finally:
       self.checkout(head)
+
+  def log(self, from_rev, to_rev):
+    """Returns all the `Commit` between `from_rev` and `to_rev`.
+
+    Args:
+      from_rev (str): From revision
+      to_rev (str): To revision
+
+    Returns:
+      List(Commit) A list of commit metas.
+    """
+    step_data = self._step(
+        ['log', '--pretty', '%H%x1E%B%x00', '%s...%s' % (from_rev, to_rev)],
+        stdout=self.m.raw_io.output(),
+        test_stdout='deadbeef\x1Emessage\x00')
+    stdout = step_data.stdout.strip().rstrip('\x00')
+    commits = []
+    for record in stdout.split('\x00'):
+      ref, message = record.split('\x1E')
+      commits.append(Commit(ref, message))
+    return commits
