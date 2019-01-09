@@ -23,12 +23,31 @@ def RunSteps(api):
   snapshot_a = api.path['start_dir'].join('snapshot_a.xml')
   snapshot_b = api.path['start_dir'].join('snapshot_b.xml')
   with api.context(cwd=api.path['start_dir']):
-    api.repo.diffmanifests(snapshot_a, snapshot_b)
+    api.repo.diff_manifests_informational(snapshot_a, snapshot_b)
 
   repo_root = api.path['start_dir'].join('repo')
   api.path.mock_add_paths(repo_root.join('.repo'))
   with api.context(cwd=repo_root.join('subdir')):
-    api.repo.diffmanifests(snapshot_a, snapshot_b)
+    api.repo.diff_manifests_informational(snapshot_a, snapshot_b)
+
+  from_manifest = """
+    <manifest>
+      <project path="SAMPLE" revision="FROM_REV"/>
+      <project path="NO_CHANGE" revision="NO_CHANGE_REV"/>
+      <project path="DELETED" revision="REV"/>
+    </manifest>
+  """
+
+  to_manifest = """
+    <manifest>
+      <project path="SAMPLE" revision="TO_REV"/>
+      <project path="NO_CHANGE" revision="NO_CHANGE_REV"/>
+    </manifest>
+  """
+
+  [diff] = api.repo.diff_manifests(from_manifest, to_manifest)
+  assert diff.path == 'SAMPLE' and diff.from_rev == 'FROM_REV' and \
+         diff.to_rev == 'TO_REV'
 
 
 def GenTests(api):

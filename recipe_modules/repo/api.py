@@ -8,10 +8,15 @@
 See: https://chromium.googlesource.com/external/repo/
 """
 
+from collections import namedtuple
 import os
 import types
 
 from recipe_engine import recipe_api
+from xml.etree import cElementTree as ElementTree
+
+
+ManifestDiff = namedtuple('ManifestDiff', ['path', 'from_rev', 'to_rev'])
 
 
 class RepoApi(recipe_api.RecipeApi):
@@ -110,6 +115,46 @@ class RepoApi(recipe_api.RecipeApi):
                            step_test_data=step_test_data)
     return step_data.stdout.strip()
 
+  def diff_manifests(self, from_manifest_str, to_manifest_str):
+    """Diffs the two manifests and returns an array of differences.
+
+    Given the two manifest XML strings, generates an array of `ManifestDiff`.
+    This only returns **CHANGED** projects, it skips over projects that were
+    added or deleted.
+
+    Args:
+      * from_manifest_str (str): The from manifest XML string
+      * to_manifest_str (str):The to manifest XML string.
+
+    Returns:
+      List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
+      changed project (excludes added/removed projects).
+    """
+    def project_paths(xml_data):
+      xml = ElementTree.fromstring(xml_data)
+      attrs = [proj.attrib for proj in xml.iterfind ('project')]
+      # Make sure `path` is set, use `name` if `path` is missing
+      for attr in attrs:
+        attr['path'] = attr.get('path', attr.get('name'))
+      # Key them by path
+      return {attr['path']: attr for attr in attrs}
+
+    from_paths = project_paths(from_manifest_str)
+    to_paths = project_paths(to_manifest_str)
+    changes = []
+    for from_path, from_attrs in from_paths.items():
+      if from_path not in to_paths:
+        # Project was deleted, we don't care. Move on, nothing to see here!
+        continue
+      from_revision = from_attrs['revision']
+      to_revision = to_paths[from_path]['revision']
+      if from_revision == to_revision:
+        # The revision didn't change (aka no CLs landed between the last
+        # snapshot and this one for that path.
+        continue
+      changes.append(ManifestDiff(from_path, from_revision, to_revision))
+    return changes
+
   def _find_root(self):
     """Starting from cwd, find an ancestor with a '.repo' subdir."""
     candidate = self.m.context.cwd.join()  # .join() makes a copy to mutate
@@ -119,7 +164,7 @@ class RepoApi(recipe_api.RecipeApi):
       candidate.pieces = candidate.pieces[:-1]
     return None
 
-  def diffmanifests(self, old_manifest_path, new_manifest_path):
+  def diff_manifests_informational(self, old_manifest_path, new_manifest_path):
     """Informational step that logs a "manifest diff".
 
     Args:

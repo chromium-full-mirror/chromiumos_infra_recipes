@@ -395,11 +395,27 @@ API for working with the 'repo' VCS tool.
 
 See: https://chromium.googlesource.com/external/repo/
 
-#### **class [RepoApi](/recipe_modules/repo/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RepoApi](/recipe_modules/repo/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with the repo tool.
 
-&mdash; **def [diffmanifests](/recipe_modules/repo/api.py#122)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#118)(self, from_manifest_str, to_manifest_str):**
+
+Diffs the two manifests and returns an array of differences.
+
+Given the two manifest XML strings, generates an array of `ManifestDiff`.
+This only returns **CHANGED** projects, it skips over projects that were
+added or deleted.
+
+Args:
+  * from_manifest_str (str): The from manifest XML string
+  * to_manifest_str (str):The to manifest XML string.
+
+Returns:
+  List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
+  changed project (excludes added/removed projects).
+
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#167)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -407,7 +423,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#45)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
+&mdash; **def [init](/recipe_modules/repo/api.py#50)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
 
 Executes 'repo init' with the given arguments.
 
@@ -418,16 +434,16 @@ Args:
   * depth (int): Create a shallow clone of the given depth.
   * repo_url (str): URL of the repo repository.
 
-&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#101)(self):**
+&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#106)(self):**
 
 Uses repo to create a manifest snapshot and returns it as a string.
 
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#20)(self):**
+&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#25)(self):**
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#69)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#74)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
 
 Executes 'repo sync' with the given arguments.
 
