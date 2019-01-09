@@ -78,7 +78,7 @@ def GenTests(api):
   yield api.test('update ref has diff') + attempt_git_step(
       api,
       1,
-      'diff-index',
+      'ls-files',
       retcode=1,
   )
 

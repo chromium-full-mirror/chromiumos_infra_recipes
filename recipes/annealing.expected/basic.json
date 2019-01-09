@@ -335,14 +335,13 @@
   {
     "cmd": [
       "git",
-      "diff-index",
-      "--quiet",
-      "HEAD",
+      "ls-files",
+      "--error-unmatch",
       "[START_DIR]/chromiumos_workspace/manifest/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "update annealing manifest.git transaction.git diff-index",
+    "name": "update annealing manifest.git transaction.git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

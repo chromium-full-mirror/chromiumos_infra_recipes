@@ -238,10 +238,11 @@ Return the current HEAD branch name or commit (if detached).
 Check if the given file changed from HEAD.
 
 Args:
-  * path (str|Path): The file path to check for changes (diff --quiet)
+  * path (str|Path): The file path to check for changes.
 
 Returns:
-  bool: True if the file changed from HEAD, False otherwise.
+  bool: True if the file changed from HEAD (or doesn't exists), False
+      otherwise.
   
 
 &mdash; **def [fetch](/recipe_modules/git/api.py#56)(self, remote, refspecs=None):**

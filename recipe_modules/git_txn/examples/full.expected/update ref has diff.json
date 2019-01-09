@@ -167,13 +167,12 @@
   {
     "cmd": [
       "git",
-      "diff-index",
-      "--quiet",
-      "HEAD",
+      "ls-files",
+      "--error-unmatch",
       "file/path.txt"
     ],
     "infra_step": true,
-    "name": "git transaction.git diff-index",
+    "name": "git transaction.git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
