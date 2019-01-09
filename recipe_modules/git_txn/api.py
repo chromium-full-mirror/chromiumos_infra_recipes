@@ -109,5 +109,6 @@ class GitTxnApi(recipe_api.RecipeApi):
       self.m.file.write_raw('write file', dest, data)
       if not self.m.git.diff_check(dest):
         return False
+      self.m.git.add(dest)
       self.m.git.commit_files([dest], message)
     return self.update_ref(remote, ref, update_callback, **kwargs)

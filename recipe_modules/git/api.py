@@ -45,6 +45,17 @@ class GitApi(recipe_api.RecipeApi):
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, ['git'] + args, **kwargs)
 
+  def add(self, path):
+    """Add/stage a path.
+
+    Stages `path` for commit. Note that this will fail if the file is tracked
+    and not modified, which you can use `diff_check` to check for.
+
+    Args:
+      * path (str|Path): The file path to stage.
+    """
+    self._step(['add', path])
+
   def diff_check(self, path):
     """Check if the given file changed from HEAD.
 

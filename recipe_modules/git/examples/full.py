@@ -21,6 +21,7 @@ def RunSteps(api):
   api.git.diff_check('some/file/path')
   [commit] = api.git.log('START_REF', 'END_REF')
   assert commit.rev == 'deadbeef' and commit.message == 'message'
+  api.git.add('some/file/path')
 
   with api.git.head_context():
     pass

@@ -180,6 +180,18 @@
   {
     "cmd": [
       "git",
+      "add",
+      "file/path.txt"
+    ],
+    "infra_step": true,
+    "name": "git transaction.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "commit",
       "--message",
       "Update file",

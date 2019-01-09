@@ -115,6 +115,15 @@
   {
     "cmd": [
       "git",
+      "add",
+      "some/file/path"
+    ],
+    "infra_step": true,
+    "name": "git add"
+  },
+  {
+    "cmd": [
+      "git",
       "symbolic-ref",
       "--short",
       "HEAD"
