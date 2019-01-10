@@ -3,6 +3,7 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
+  * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
   * [changes](#recipe_modules-changes) &mdash; APIs for managing CrOS code changes.
   * [cros](#recipe_modules-cros) &mdash; APIs for CrOS CI.
   * [cros_build](#recipe_modules-cros_build) &mdash; APIs for CrOS Build.
@@ -17,6 +18,7 @@
 
 **[Recipes](#Recipes)**
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
+  * [build_api:examples/full](#recipes-build_api_examples_full)
   * [changes:examples/full](#recipes-changes_examples_full)
   * [cros:examples/full](#recipes-cros_examples_full)
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
@@ -32,6 +34,15 @@
   * [support:examples/full](#recipes-support_examples_full)
 ## Recipe Modules
 
+### *recipe_modules* / [build\_api](/recipe_modules/build_api)
+
+[DEPS](/recipe_modules/build_api/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
+
+API for working with the protobuf-based Build API.
+
+#### **class [BuildApiApi](/recipe_modules/build_api/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for CrOS Build API steps.
 ### *recipe_modules* / [changes](/recipe_modules/changes)
 
 [DEPS](/recipe_modules/changes/__init__.py#1): [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -535,6 +546,11 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 
 &mdash; **def [RunSteps](/recipes/annealing.py#37)(api):**
+### *recipes* / [build\_api:examples/full](/recipe_modules/build_api/examples/full.py)
+
+[DEPS](/recipe_modules/build_api/examples/full.py#7): [build\_api](#recipe_modules-build_api)
+
+&mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#20)(api):**
 ### *recipes* / [changes:examples/full](/recipe_modules/changes/examples/full.py)
 
 [DEPS](/recipe_modules/changes/examples/full.py#6): [changes](#recipe_modules-changes), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -625,4 +641,5 @@ Recipe for prototyping Chrome OS builders.
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-properties
 [recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-raw_io
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-step
+[recipe_engine/recipe_modules/tempfile]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-tempfile
 [recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/recipe_engine/recipe_api.py#1012

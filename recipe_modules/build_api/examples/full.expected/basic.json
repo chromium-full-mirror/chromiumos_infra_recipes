@@ -1,0 +1,66 @@
+[
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "FAKE JSON",
+      "[TMP_BASE]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "write input file"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--workspace",
+      "[TMP_BASE]/build_api_messages_tmp_1",
+      "--",
+      "/mnt/host/source/chromite/api/build_api",
+      "--input-json",
+      "/mnt/host/workspace/input_proto.json",
+      "--output-json",
+      "/mnt/host/workspace/output_proto.json",
+      "chromite.api.group"
+    ],
+    "name": "build_api chromite.api.group"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[TMP_BASE]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read output file"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[TMP_BASE]/build_api_messages_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "rmtree [TMP_BASE]/build_api_messages_tmp_1"
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]
