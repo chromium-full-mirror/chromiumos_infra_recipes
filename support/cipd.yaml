@@ -1,0 +1,5 @@
+package: chromiumos/infra/recipes/support
+description: Support tools for chromiumos recipes.
+install_mode: copy
+data:
+  - file: gerrit-fetch-changes/gerrit-fetch-changes

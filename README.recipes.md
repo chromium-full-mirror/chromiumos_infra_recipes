@@ -13,6 +13,7 @@
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [repo_cache](#recipe_modules-repo_cache) &mdash; API for working with repo repository caches.
+  * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
 
 **[Recipes](#Recipes)**
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
@@ -28,6 +29,7 @@
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
   * [repo_cache:examples/full](#recipes-repo_cache_examples_full)
+  * [support:examples/full](#recipes-support_examples_full)
 ## Recipe Modules
 
 ### *recipe_modules* / [changes](/recipe_modules/changes)
@@ -488,6 +490,32 @@ Args:
 &emsp; **@property**<br>&mdash; **def [path](/recipe_modules/repo_cache/api.py#34)(self):**
 
 Return the configured repo cache path.
+### *recipe_modules* / [support](/recipe_modules/support)
+
+[DEPS](/recipe_modules/support/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+APIs for running recipes/support tools.
+
+#### **class [SupportApi](/recipe_modules/support/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for support tool steps.
+
+&mdash; **def [call](/recipe_modules/support/api.py#41)(self, tool, input_data):**
+
+Run a tool from the support package.
+
+Args:
+  tool (str): Tool name.
+  input_data: Data to be passed as input to the tool (serialized to JSON).
+
+Returns:
+  Data passed as output from the tool (deserialized from JSON).
+
+&mdash; **def [ensure\_package\_installed](/recipe_modules/support/api.py#23)(self):**
+
+Ensure the CIPD support package is installed.
+
+&mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
 ## Recipes
 
 ### *recipes* / [annealing](/recipes/annealing.py)
@@ -580,10 +608,16 @@ Recipe for prototyping Chrome OS builders.
 [DEPS](/recipe_modules/repo_cache/examples/full.py#6): [repo\_cache](#recipe_modules-repo_cache)
 
 &mdash; **def [RunSteps](/recipe_modules/repo_cache/examples/full.py#11)(api):**
+### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
+
+[DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
+
+&mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/cb629a482b3d3c13e46a66031ba4c0cc3679d200/recipes/README.recipes.md#recipe_modules-gerrit
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-buildbucket
+[recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-cipd
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-file
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/04620158d8f45c68cc8bc39e30ce4a85c368046a/README.recipes.md#recipe_modules-json
