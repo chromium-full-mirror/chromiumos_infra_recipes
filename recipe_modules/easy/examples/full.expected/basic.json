@@ -1,0 +1,35 @@
+[
+  {
+    "cmd": [
+      "cat"
+    ],
+    "name": "passthru"
+  },
+  {
+    "cmd": [
+      "gzip"
+    ],
+    "name": "raw",
+    "stdin": "uncompressed",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "jq"
+    ],
+    "name": "json",
+    "stdin": "{\"a\": 1}",
+    "stdout": "/path/to/tmp/json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"b\": 2@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]

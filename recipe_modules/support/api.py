@@ -50,7 +50,5 @@ class SupportApi(recipe_api.RecipeApi):
     """
     self.ensure_package_installed()
     tool_path = self._support_root.join(tool, tool)
-    step_data = self.m.step(tool, [tool_path],
-                            stdin=self.m.json.input(input_data),
-                            stdout=self.m.json.output())
-    return step_data.stdout
+    return self.m.easy.stdout_json_step(tool, [tool_path],
+                                        stdin_json=input_data)

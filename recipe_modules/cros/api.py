@@ -49,11 +49,8 @@ class CrosApi(recipe_api.RecipeApi):
         branch
     ]
     with self.m.context(cwd=self.master_path):
-      step_data = self.m.step(
-          'find %s [%s]' % (project, branch), cmd,
-          stdout=self.m.raw_io.output(), step_test_data=
-          lambda: self.m.raw_io.test_api.stream_output('src/project'))
-      return step_data.stdout.strip()
+      return self.m.easy.stdout_step('find %s [%s]' % (project, branch), cmd,
+                                     test_stdout='src/project').strip()
 
   def cherry_pick_changes(self, changes):
     """Apply changes to the workspace.

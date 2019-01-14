@@ -9,6 +9,7 @@
   * [cros_build](#recipe_modules-cros_build) &mdash; APIs for CrOS Build.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [dev](#recipe_modules-dev) &mdash; API for development config.
+  * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
@@ -24,6 +25,7 @@
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [dev:examples/full](#recipes-dev_examples_full)
+  * [easy:examples/full](#recipes-easy_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [mini_annealing](#recipes-mini_annealing) &mdash; Recipe for the Chrome OS mini-annealing builders.
@@ -65,7 +67,7 @@ Args:
   cache (bool): If True, may return cached change information.
 ### *recipe_modules* / [cros](/recipe_modules/cros)
 
-[DEPS](/recipe_modules/cros/__init__.py#1): [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for CrOS CI.
 
@@ -73,7 +75,7 @@ APIs for CrOS CI.
 
 A module for CrOS CI steps.
 
-&mdash; **def [cherry\_pick\_changes](/recipe_modules/cros/api.py#58)(self, changes):**
+&mdash; **def [cherry\_pick\_changes](/recipe_modules/cros/api.py#55)(self, changes):**
 
 Apply changes to the workspace.
 
@@ -209,6 +211,60 @@ Args:
   * dryrun (bool): If True, run all module in a dryrun mode.
 
 &emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/dev/api.py#27)(self):**
+### *recipe_modules* / [easy](/recipe_modules/easy)
+
+[DEPS](/recipe_modules/easy/__init__.py#1): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+APIs for easy steps.
+
+#### **class [EasyApi](/recipe_modules/easy/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for easy steps.
+
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#65)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+
+Runs an easy.step and returns stdout data deserialized from JSON.
+
+Args:
+  * name (str): The name of the step.
+  * cmd (list[str]): The command to run.
+  * step_test_data (func): See 'step.__call__'.
+  * test_stdout (dict|list): Data to return in tests.
+  * kwargs: Keyword arguments to pass to the 'step' call.
+
+Returns:
+  Tuple[dict|list, StepData]: A tuple of (stdout data, step data).
+
+&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#42)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+
+Runs an easy.step and returns stdout data.
+
+Args:
+  * name (str): The name of the step.
+  * cmd (list[str]): The command to run.
+  * step_test_data (func): See 'step.__call__'.
+  * test_stdout (str): Data to return in tests.
+  * kwargs: Keyword arguments to pass to the 'step' call.
+
+Returns:
+  Tuple[str, StepData]: A tuple of (stdout data, step data).
+
+&mdash; **def [step](/recipe_modules/easy/api.py#14)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
+
+Convenience features on top of the normal 'step' call.
+
+At most one of |stdin|, |stdin_data|, or |stdin_json| may be specified.
+
+Args:
+  * name (str): The name of the step.
+  * cmd (list[str]): The command to run.
+  * stdin (Placeholder): Placeholder to read step stdin from.
+  * stdin_data (str): Bytes to pass to stdin.
+  * stdin_json (dict|list): Object to JSON-serialize to stdin.
+  * kwargs: Keyword arguments to pass to the 'step' call.
+
+Returns:
+  See 'step.__call__'.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
 [DEPS](/recipe_modules/git/__init__.py#1): [dev](#recipe_modules-dev), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -503,7 +559,7 @@ Args:
 Return the configured repo cache path.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
-[DEPS](/recipe_modules/support/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for running recipes/support tools.
 
@@ -576,6 +632,11 @@ The annealing builders run in serial and do the following:
 [DEPS](/recipe_modules/dev/examples/full.py#8): [dev](#recipe_modules-dev)
 
 &mdash; **def [RunSteps](/recipe_modules/dev/examples/full.py#13)(api):**
+### *recipes* / [easy:examples/full](/recipe_modules/easy/examples/full.py)
+
+[DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
 [DEPS](/recipe_modules/git/examples/full.py#6): [dev](#recipe_modules-dev), [git](#recipe_modules-git)
