@@ -38,7 +38,6 @@ type Change struct {
 type Changes []*Change
 
 type Options struct {
-	// NOTE: This won't work until crrev.com/c/1407409 lands.
 	IncludeFiles bool `json:"include_files"`
 }
 

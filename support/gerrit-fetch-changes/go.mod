@@ -9,7 +9,7 @@ require (
 	github.com/julienschmidt/httprouter v1.2.0 // indirect
 	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
-	go.chromium.org/luci v0.0.0-20190110214721-8bf314193c64
+	go.chromium.org/luci v0.0.0-20190114200033-fb39777d1b49
 )
 
 replace chromium.googlesource.com/chromiumos/infra/recipes/support/cli => ../cli
