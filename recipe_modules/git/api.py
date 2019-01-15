@@ -182,7 +182,7 @@ class GitApi(recipe_api.RecipeApi):
       List(Commit) A list of commit metas.
     """
     step_data = self._step(
-        ['log', '--pretty', '%H%x1E%B%x00', '%s...%s' % (from_rev, to_rev)],
+        ['log', '--pretty=%H%x1E%B%x00', '%s...%s' % (from_rev, to_rev)],
         stdout=self.m.raw_io.output(),
         test_stdout='deadbeef\x1Emessage\x00')
     stdout = step_data.stdout.strip().rstrip('\x00')
@@ -191,3 +191,15 @@ class GitApi(recipe_api.RecipeApi):
       ref, message = record.split('\x1E')
       commits.append(Commit(ref, message))
     return commits
+
+  def is_reachable(self, revision):
+    """Check if the given revision is reachable from HEAD.
+
+    Args:
+      revision (str): A git revision to search for.
+
+    Returns:
+      bool: True if the revision can be reached from HEAD.
+    """
+    cmd = ['merge-base', '--is-ancestor', revision, 'HEAD']
+    return self._step(cmd, ok_ret=(0, 128)).retcode == 0

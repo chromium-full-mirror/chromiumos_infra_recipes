@@ -104,8 +104,7 @@
     "cmd": [
       "git",
       "log",
-      "--pretty",
-      "%H%x1E%B%x00",
+      "--pretty=%H%x1E%B%x00",
       "START_REF...END_REF"
     ],
     "infra_step": true,
@@ -120,6 +119,17 @@
     ],
     "infra_step": true,
     "name": "git add"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "deadbeef",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git merge-base"
   },
   {
     "cmd": [

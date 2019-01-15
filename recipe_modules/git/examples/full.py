@@ -22,6 +22,7 @@ def RunSteps(api):
   [commit] = api.git.log('START_REF', 'END_REF')
   assert commit.rev == 'deadbeef' and commit.message == 'message'
   api.git.add('some/file/path')
+  api.git.is_reachable('deadbeef')
 
   with api.git.head_context():
     pass

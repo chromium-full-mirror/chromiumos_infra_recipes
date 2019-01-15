@@ -369,6 +369,16 @@ Returns:
 
 Returns a context that will revert HEAD when it exits.
 
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#195)(self, revision):**
+
+Check if the given revision is reachable from HEAD.
+
+Args:
+  revision (str): A git revision to search for.
+
+Returns:
+  bool: True if the revision can be reached from HEAD.
+
 &mdash; **def [log](/recipe_modules/git/api.py#174)(self, from_rev, to_rev):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
