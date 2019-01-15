@@ -38,12 +38,13 @@ class SupportApi(recipe_api.RecipeApi):
       self.m.cipd.ensure(self._support_root, ensure_file)
     self._ensured = True
 
-  def call(self, tool, input_data):
+  def call(self, tool, input_data, test_output_data=None):
     """Run a tool from the support package.
 
     Args:
       tool (str): Tool name.
       input_data: Data to be passed as input to the tool (serialized to JSON).
+      test_output_data (dict|list): Data to return in tests.
 
     Returns:
       Data passed as output from the tool (deserialized from JSON).
@@ -51,4 +52,5 @@ class SupportApi(recipe_api.RecipeApi):
     self.ensure_package_installed()
     tool_path = self._support_root.join(tool, tool)
     return self.m.easy.stdout_json_step(tool, [tool_path],
-                                        stdin_json=input_data)
+                                        stdin_json=input_data,
+                                        test_stdout=test_output_data)

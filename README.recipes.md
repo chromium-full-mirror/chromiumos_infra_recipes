@@ -636,13 +636,14 @@ APIs for running recipes/support tools.
 
 A module for support tool steps.
 
-&mdash; **def [call](/recipe_modules/support/api.py#41)(self, tool, input_data):**
+&mdash; **def [call](/recipe_modules/support/api.py#41)(self, tool, input_data, test_output_data=None):**
 
 Run a tool from the support package.
 
 Args:
   tool (str): Tool name.
   input_data: Data to be passed as input to the tool (serialized to JSON).
+  test_output_data (dict|list): Data to return in tests.
 
 Returns:
   Data passed as output from the tool (deserialized from JSON).
