@@ -62,7 +62,7 @@
     "name": "repo manifest",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@TEST XML@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

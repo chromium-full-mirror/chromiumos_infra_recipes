@@ -21,7 +21,9 @@ DEPS = [
   'cros',
   'cros_build',
   'cros_sdk',
+  'depends',
   'dev',
+  'git',
   'git_txn',
   'overlayfs',
   'repo',
@@ -29,13 +31,14 @@ DEPS = [
 ]
 
 MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
+MANIFEST_REF = 'annealing-test'
 
 
 def RunSteps(api):
   with api.overlayfs.cleanup_context():
     # Set annealing into dryrun mode by default. Comment / uncomment as needed
     # for testing.
-    api.dev.configure(dryrun=True)
+    api.dev.configure(dryrun=False)
 
     # Cache the chroot.
     api.cros_sdk.configure(
@@ -47,14 +50,17 @@ def RunSteps(api):
     api.overlayfs.mount('workspace', api.repo_cache.path,
                         api.cros.workspace_path)
 
-    # Create a manifest snapshot and commit it.
-    with api.step.nest('update annealing manifest'):
+    with api.context(cwd=api.cros.workspace_path.join('manifest')):
       snapshot_xml = api.repo.manifest_snapshot()
-      with api.context(cwd=api.cros.workspace_path.join('manifest')):
-        api.git_txn.update_ref_write_file(
-            'https://chromium-review.googlesource.com/chromiumos/manifest',
-            'annealing-test', 'Mini-annealing manifest snapshot',
-            api.cros.workspace_path.join('manifest/snapshot.xml'), snapshot_xml)
+      api.depends.ensure_manifest_cq_depends_fulfilled(MANIFEST_REF,
+                                                       snapshot_xml)
+
+      # Create, commit and push the actual snapshot.
+      api.git_txn.update_ref_write_file(MANIFEST_URL, MANIFEST_REF,
+                                        'Mini-annealing manifest snapshot',
+                                        api.cros.workspace_path.join(
+                                            'manifest/snapshot.xml'),
+                                        snapshot_xml)
 
 
 def GenTests(api):

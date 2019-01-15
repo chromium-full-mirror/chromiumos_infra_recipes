@@ -109,7 +109,8 @@ class RepoApi(recipe_api.RecipeApi):
     Returns:
       str: The manifest XML as a string.
     """
-    step_test_data = lambda: self.m.raw_io.test_api.stream_output('TEST XML')
+    step_test_data = lambda: self.m.raw_io.test_api.stream_output(
+      '<manifest></manifest>')
     step_data = self._step(['manifest', '-r'],
                            stdout=self.m.raw_io.output(add_output_log=True),
                            step_test_data=step_test_data)

@@ -1,0 +1,202 @@
+[
+  {
+    "cmd": [],
+    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "name": "ensure manifest cq-depends fulfilled",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@cq-depend missing locally@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "show",
+      "REF:[TMP_BASE]/foo_tmp_1/snapshot.xml"
+    ],
+    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git show",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%H%x1E%B%x00",
+      "FROM_REV...TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/SAMPLE",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git log",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_PACKAGE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "name": "ensure manifest cq-depends fulfilled.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "name": "ensure manifest cq-depends fulfilled.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
+    ],
+    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "name": "ensure manifest cq-depends fulfilled.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": \"12345\", \"host\": \"chromium\", \"patch_set\": -1}, {\"change_number\": \"67890\", \"host\": \"chrome-internal\", \"patch_set\": -1}]}",
+    "stdout": "/path/to/tmp/json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"BRANCH\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"CURRENT_REVISION\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"PROJECT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 1234, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": null@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "chromite/scripts/find_project_path",
+      "--project",
+      "PROJECT",
+      "--branch",
+      "BRANCH"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master",
+    "name": "ensure manifest cq-depends fulfilled.find PROJECT [BRANCH]",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "CURRENT_REVISION",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "name": "ensure manifest cq-depends fulfilled (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all cq-depends fulfilled@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "show",
+      "REF:[TMP_BASE]/foo_tmp_1/snapshot.xml"
+    ],
+    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git show (2)",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%H%x1E%B%x00",
+      "FROM_REV...TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/SAMPLE",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git log (2)",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[TMP_BASE]/foo_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "rmtree [TMP_BASE]/foo_tmp_1"
+  },
+  {
+    "name": "$result",
+    "recipe_result": null,
+    "status_code": 0
+  }
+]

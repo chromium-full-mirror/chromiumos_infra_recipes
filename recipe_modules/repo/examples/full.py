@@ -18,7 +18,7 @@ def RunSteps(api):
   api.repo.sync()
   api.repo.sync(force_sync=True, detach=True, current_branch=True, jobs=99,
                 no_tags=True, optimized_fetch=True, cache_dir='/tmp/cache')
-  assert api.repo.manifest_snapshot() == "TEST XML"
+  assert api.repo.manifest_snapshot() == "<manifest></manifest>"
 
   snapshot_a = api.path['start_dir'].join('snapshot_a.xml')
   snapshot_b = api.path['start_dir'].join('snapshot_b.xml')
