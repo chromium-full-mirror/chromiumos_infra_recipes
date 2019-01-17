@@ -11,7 +11,6 @@ from collections import namedtuple
 
 from recipe_engine import recipe_api
 
-
 Commit = namedtuple('Commit', ['rev', 'message'])
 
 
@@ -203,3 +202,21 @@ class GitApi(recipe_api.RecipeApi):
     """
     cmd = ['merge-base', '--is-ancestor', revision, 'HEAD']
     return self._step(cmd, ok_ret=(0, 128)).retcode == 0
+
+  def show_file(self, rev, path, test_contents=None):
+    """Returns the contents of the given file path at the given revision.
+
+    Args:
+      rev (str): The revision to return the contents from.
+      path (str): The file path to return the contents of.
+
+    Returns:
+      str: The contents of the file.
+      None: The file does not exist at the given revision.
+    """
+    step_data = self._step(['show', '%s:%s' % (rev, path)], ok_ret=(0, 128),
+                           stdout=self.m.raw_io.output(),
+                           test_stdout=test_contents)
+    if step_data.retcode != 0:
+      return None
+    return step_data.stdout

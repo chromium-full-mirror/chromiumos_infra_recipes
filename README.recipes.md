@@ -293,11 +293,11 @@ Returns:
 
 API for working with git.
 
-#### **class [GitApi](/recipe_modules/git/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitApi](/recipe_modules/git/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with git.
 
-&mdash; **def [add](/recipe_modules/git/api.py#48)(self, path):**
+&mdash; **def [add](/recipe_modules/git/api.py#47)(self, path):**
 
 Add/stage a path.
 
@@ -307,7 +307,7 @@ and not modified, which you can use `diff_check` to check for.
 Args:
   * path (str|Path): The file path to stage.
 
-&mdash; **def [checkout](/recipe_modules/git/api.py#101)(self, commit, force=False):**
+&mdash; **def [checkout](/recipe_modules/git/api.py#100)(self, commit, force=False):**
 
 Runs 'git checkout'.
 
@@ -315,14 +315,14 @@ Args:
   * commit (str): The commit (technically "tree-like") to checkout.
   * force (bool): If True, throw away local changes (--force).
 
-&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#114)(self, commit):**
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#113)(self, commit):**
 
 Runs 'git cherry-pick'.
 
 Args:
   * commit (str): The commit to cherry pick.
 
-&mdash; **def [commit\_files](/recipe_modules/git/api.py#122)(self, files, message):**
+&mdash; **def [commit\_files](/recipe_modules/git/api.py#121)(self, files, message):**
 
 Runs 'git commit' with the given files.
 
@@ -330,11 +330,11 @@ Args:
   * files (list[str|Path]): A list of file paths to commit.
   * message (str): The commit message.
 
-&mdash; **def [current\_head](/recipe_modules/git/api.py#152)(self):**
+&mdash; **def [current\_head](/recipe_modules/git/api.py#151)(self):**
 
 Return the current HEAD branch name or commit (if detached).
 
-&mdash; **def [diff\_check](/recipe_modules/git/api.py#59)(self, path):**
+&mdash; **def [diff\_check](/recipe_modules/git/api.py#58)(self, path):**
 
 Check if the given file changed from HEAD.
 
@@ -346,7 +346,7 @@ Returns:
       otherwise.
   
 
-&mdash; **def [fetch](/recipe_modules/git/api.py#72)(self, remote, refspecs=None):**
+&mdash; **def [fetch](/recipe_modules/git/api.py#71)(self, remote, refspecs=None):**
 
 Runs 'git fetch'.
 
@@ -354,7 +354,7 @@ Args:
   * remote (str): The remote repository to fetch from.
   * refspecs (list[str]): The refspecs to fetch.
 
-&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#84)(self, remote, ref):**
+&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#83)(self, remote, ref):**
 
 Fetch a single remote ref with 'git fetch'.
 
@@ -365,11 +365,11 @@ Args:
 Returns:
   str: The commit ID of the fetched ref.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#165)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#164)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#195)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#194)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -379,7 +379,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#174)(self, from_rev, to_rev):**
+&mdash; **def [log](/recipe_modules/git/api.py#173)(self, from_rev, to_rev):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -390,7 +390,7 @@ Args:
 Returns:
   List(Commit) A list of commit metas.
 
-&mdash; **def [push](/recipe_modules/git/api.py#131)(self, remote, refspec, capture_stdout=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#130)(self, remote, refspec, capture_stdout=False):**
 
 Runs 'git push'.
 
@@ -401,6 +401,18 @@ Args:
 
 Returns:
   StepData: See 'step.__call__'.
+
+&mdash; **def [show\_file](/recipe_modules/git/api.py#206)(self, rev, path, test_contents=None):**
+
+Returns the contents of the given file path at the given revision.
+
+Args:
+  rev (str): The revision to return the contents from.
+  path (str): The file path to return the contents of.
+
+Returns:
+  str: The contents of the file.
+  None: The file does not exist at the given revision.
 ### *recipe_modules* / [git\_txn](/recipe_modules/git_txn)
 
 [DEPS](/recipe_modules/git_txn/__init__.py#1): [git](#recipe_modules-git), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]

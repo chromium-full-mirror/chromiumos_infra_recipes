@@ -23,6 +23,7 @@ def RunSteps(api):
   assert commit.rev == 'deadbeef' and commit.message == 'message'
   api.git.add('some/file/path')
   api.git.is_reachable('deadbeef')
+  api.git.show_file('deadbeef', 'some/path')
 
   with api.git.head_context():
     pass
@@ -30,6 +31,9 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic')
+
+  yield (api.test('show_file path not found') +  #
+         api.step_data('git show', retcode=128))
 
   yield (api.test('detached HEAD') +  #
          api.step_data('git symbolic-ref', retcode=1))

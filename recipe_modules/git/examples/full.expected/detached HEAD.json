@@ -134,6 +134,16 @@
   {
     "cmd": [
       "git",
+      "show",
+      "deadbeef:some/path"
+    ],
+    "infra_step": true,
+    "name": "git show",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "git",
       "symbolic-ref",
       "--short",
       "HEAD"
