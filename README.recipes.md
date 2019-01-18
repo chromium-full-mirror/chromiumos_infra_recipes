@@ -15,6 +15,7 @@
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [payloads](#recipe_modules-payloads)
+  * [prpc](#recipe_modules-prpc) &mdash; API for working with the 'prpc' tool.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [repo_cache](#recipe_modules-repo_cache) &mdash; API for working with repo repository caches.
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
@@ -35,6 +36,7 @@
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [payloads:examples/full](#recipes-payloads_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
+  * [prpc:examples/full](#recipes-prpc_examples_full)
   * [repo:examples/full](#recipes-repo_examples_full)
   * [repo_cache:examples/full](#recipes-repo_cache_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
@@ -547,6 +549,43 @@ Args:
       to generate payloads to. Must be subdir of chroot.
 
 &emsp; **@property**<br>&mdash; **def [payload\_path](/recipe_modules/payloads/api.py#24)(self):**
+### *recipe_modules* / [prpc](/recipe_modules/prpc)
+
+[DEPS](/recipe_modules/prpc/__init__.py#1): [easy](#recipe_modules-easy), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools]
+
+API for working with the 'prpc' tool.
+
+#### **class [PrpcApi](/recipe_modules/prpc/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for interacting with the prpc tool.
+
+&mdash; **def [call\_json](/recipe_modules/prpc/api.py#21)(self, server, method, input_data, test_output_data=None):**
+
+Make a prpc call with JSON data.
+
+Args:
+  server (str): The host to make the call against.
+  method (str): The full method name (service.method) to call.
+  input_data (str): The input JSON message data.
+  test_output_data (str|func): The output data to return in a test.
+
+  Returns:
+    str: The output JSON message data.
+
+&mdash; **def [call\_proto](/recipe_modules/prpc/api.py#38)(self, server, method, input_msg, output_msg_type, test_output_msg=None):**
+
+Make a prpc call with proto Messages.
+
+Args:
+  server (str): The host to make the call against.
+  method (str): The full method name (service.method) to call.
+  input_msg (google.protobuf.message.Message): The input Message.
+  output_msg_type (type): The output Message type.
+  test_output_msg (google.protobuf.message.Message): The output Message to
+    return in a test.
+
+  Returns:
+    str: The output JSON message data.
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
 [DEPS](/recipe_modules/repo/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -767,6 +806,11 @@ snapshots ToT.
 Recipe for prototyping Chrome OS builders.
 
 &mdash; **def [RunSteps](/recipes/prototype.py#29)(api):**
+### *recipes* / [prpc:examples/full](/recipe_modules/prpc/examples/full.py)
+
+[DEPS](/recipe_modules/prpc/examples/full.py#6): [prpc](#recipe_modules-prpc), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/prpc/examples/full.py#12)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]

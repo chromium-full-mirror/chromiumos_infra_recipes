@@ -1,0 +1,19 @@
+[
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/prpc",
+      "call",
+      "-format",
+      "json",
+      "prpc.example.com",
+      "my.pkg.Method"
+    ],
+    "name": "prpc my.pkg.Method",
+    "stdin": "{\n  \"id\": \"12345\"\n}",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]
