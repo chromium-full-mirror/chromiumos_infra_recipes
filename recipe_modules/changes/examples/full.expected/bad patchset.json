@@ -57,8 +57,14 @@
     ]
   },
   {
-    "name": "$result",
-    "reason": "Uncaught Exception: ValueError('gerrit_change_info has no patchset 9',)",
-    "status_code": -1
+    "failure": {
+      "exception": {
+        "traceback": [
+          "<omitted by recipe engine>"
+        ]
+      },
+      "humanReason": "Uncaught Exception: ValueError('gerrit_change_info has no patchset 9',)"
+    },
+    "name": "$result"
   }
 ]

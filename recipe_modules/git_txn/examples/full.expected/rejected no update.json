@@ -91,9 +91,12 @@
     ]
   },
   {
-    "name": "$result",
-    "reason": "push rejected but remote ref was not updated",
-    "recipe_result": null,
-    "status_code": 1
+    "failure": {
+      "failure": {
+        "step": ""
+      },
+      "humanReason": "push rejected but remote ref was not updated"
+    },
+    "name": "$result"
   }
 ]
