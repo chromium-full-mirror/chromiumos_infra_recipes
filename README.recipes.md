@@ -5,6 +5,7 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
+  * [build_manager](#recipe_modules-build_manager) &mdash; API for managing multiple parallel "worker" Buildbucket builds.
   * [changes](#recipe_modules-changes) &mdash; APIs for managing CrOS code changes.
   * [cros](#recipe_modules-cros) &mdash; APIs for CrOS CI.
   * [cros_build](#recipe_modules-cros_build) &mdash; APIs for CrOS Build.
@@ -25,6 +26,7 @@
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
+  * [build_manager:examples/full](#recipes-build_manager_examples_full)
   * [changes:examples/full](#recipes-changes_examples_full)
   * [cros:examples/full](#recipes-cros_examples_full)
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
@@ -69,6 +71,23 @@ API for working with the protobuf-based Build API.
 #### **class [BuildApiApi](/recipe_modules/build_api/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS Build API steps.
+### *recipe_modules* / [build\_manager](/recipe_modules/build_manager)
+
+[DEPS](/recipe_modules/build_manager/__init__.py#1): [prpc](#recipe_modules-prpc), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for managing multiple parallel "worker" Buildbucket builds.
+
+#### **class [BuildManagerApi](/recipe_modules/build_manager/api.py#81)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for managing multiple parallel "worker" builds.
+
+&emsp; **@property**<br>&mdash; **def [build\_pb2](/recipe_modules/build_manager/api.py#84)(self):**
+
+Returns the build_pb2 module.
+
+&mdash; **def [new\_manager](/recipe_modules/build_manager/api.py#89)(self):**
+
+Create a new Manager.
 ### *recipe_modules* / [changes](/recipe_modules/changes)
 
 [DEPS](/recipe_modules/changes/__init__.py#1): [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -583,7 +602,7 @@ API for working with the 'prpc' tool.
 
 A module for interacting with the prpc tool.
 
-&mdash; **def [call\_json](/recipe_modules/prpc/api.py#21)(self, server, method, input_data, test_output_data=None):**
+&mdash; **def [call\_json](/recipe_modules/prpc/api.py#21)(self, server, method, input_data, test_output_data=None, name=None):**
 
 Make a prpc call with JSON data.
 
@@ -591,12 +610,13 @@ Args:
   server (str): The host to make the call against.
   method (str): The full method name (service.method) to call.
   input_data (str): The input JSON message data.
-  test_output_data (str|func): The output data to return in a test.
+  test_output_data (list|dict): The output data to return in a test.
+  name (str): The step name. Defaults to 'prpc <method>'.
 
   Returns:
     str: The output JSON message data.
 
-&mdash; **def [call\_proto](/recipe_modules/prpc/api.py#38)(self, server, method, input_msg, output_msg_type, test_output_msg=None):**
+&mdash; **def [call\_proto](/recipe_modules/prpc/api.py#41)(self, server, method, input_msg, output_msg_type, test_output_msg=None):**
 
 Make a prpc call with proto Messages.
 
@@ -757,6 +777,11 @@ The annealing builders run in serial and do the following:
 [DEPS](/recipe_modules/build_api/examples/full.py#7): [build\_api](#recipe_modules-build_api)
 
 &mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#20)(api):**
+### *recipes* / [build\_manager:examples/full](/recipe_modules/build_manager/examples/full.py)
+
+[DEPS](/recipe_modules/build_manager/examples/full.py#6): [build\_manager](#recipe_modules-build_manager), [recipe\_engine/json][recipe_engine/recipe_modules/json]
+
+&mdash; **def [RunSteps](/recipe_modules/build_manager/examples/full.py#14)(api):**
 ### *recipes* / [changes:examples/full](/recipe_modules/changes/examples/full.py)
 
 [DEPS](/recipe_modules/changes/examples/full.py#6): [changes](#recipe_modules-changes), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "cwd": "[CLEANUP]/foo_tmp_1",
     "name": "ensure manifest cq-depends fulfilled",
     "~followup_annotations": [
       "@@@STEP_TEXT@skipped, no existing manifest found@@@",
@@ -12,9 +12,9 @@
     "cmd": [
       "git",
       "show",
-      "REF:[TMP_BASE]/foo_tmp_1/snapshot.xml"
+      "REF:[CLEANUP]/foo_tmp_1/snapshot.xml"
     ],
-    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "cwd": "[CLEANUP]/foo_tmp_1",
     "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled.git show",
     "stdout": "/path/to/tmp/",
@@ -24,7 +24,7 @@
   },
   {
     "cmd": [],
-    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "cwd": "[CLEANUP]/foo_tmp_1",
     "name": "ensure manifest cq-depends fulfilled (2)",
     "~followup_annotations": [
       "@@@STEP_TEXT@all cq-depends fulfilled@@@"
@@ -34,9 +34,9 @@
     "cmd": [
       "git",
       "show",
-      "REF:[TMP_BASE]/foo_tmp_1/snapshot.xml"
+      "REF:[CLEANUP]/foo_tmp_1/snapshot.xml"
     ],
-    "cwd": "[TMP_BASE]/foo_tmp_1",
+    "cwd": "[CLEANUP]/foo_tmp_1",
     "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled.git show (2)",
     "stdout": "/path/to/tmp/",
@@ -67,14 +67,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[TMP_BASE]/foo_tmp_1"
+      "[CLEANUP]/foo_tmp_1"
     ],
     "infra_step": true,
-    "name": "rmtree [TMP_BASE]/foo_tmp_1"
+    "name": "rmtree [CLEANUP]/foo_tmp_1"
   },
   {
-    "name": "$result",
-    "recipe_result": null,
-    "status_code": 0
+    "jsonResult": null,
+    "name": "$result"
   }
 ]

@@ -18,22 +18,25 @@ class PrpcApi(recipe_api.RecipeApi):
     """Returns the path to the prpc tool."""
     return self.m.depot_tools.package_repo_resource('prpc')
 
-  def call_json(self, server, method, input_data, test_output_data=None):
+  def call_json(self, server, method, input_data, test_output_data=None,
+                name=None):
     """Make a prpc call with JSON data.
 
     Args:
       server (str): The host to make the call against.
       method (str): The full method name (service.method) to call.
       input_data (str): The input JSON message data.
-      test_output_data (str|func): The output data to return in a test.
+      test_output_data (list|dict): The output data to return in a test.
+      name (str): The step name. Defaults to 'prpc <method>'.
 
       Returns:
         str: The output JSON message data.
     """
-    name = 'prpc %s' % method
+    if name is None:
+      name = 'prpc %s' % method
     cmd = [self._prpc_path, 'call', '-format', 'json', server, method]
-    return self.m.easy.stdout_step(name, cmd, stdin_data=input_data,
-                                   test_stdout=test_output_data)
+    return self.m.easy.stdout_json_step(name, cmd, stdin_json=input_data,
+                                        test_stdout=test_output_data)
 
   def call_proto(self, server, method, input_msg, output_msg_type,
                  test_output_msg=None):

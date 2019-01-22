@@ -1,0 +1,108 @@
+[
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/prpc",
+      "call",
+      "-format",
+      "json",
+      "cr-buildbucket.appspot.com",
+      "buildbucket.v2.Builds.Batch"
+    ],
+    "name": "prpc buildbucket.v2.Builds.Batch failure_type",
+    "stdin": "{\"requests\": [{\"failure_type\": {}}]}",
+    "stdout": "/path/to/tmp/json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"error\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"code\": 99, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"message\": \"failed\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@buildbucket failures@Error:@@@",
+      "@@@STEP_LOG_LINE@buildbucket failures@{\"message\": \"failed\", \"code\": 99}@@@",
+      "@@@STEP_LOG_LINE@buildbucket failures@Request:@@@",
+      "@@@STEP_LOG_LINE@buildbucket failures@{}@@@",
+      "@@@STEP_LOG_END@buildbucket failures@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/prpc",
+      "call",
+      "-format",
+      "json",
+      "cr-buildbucket.appspot.com",
+      "buildbucket.v2.Builds.Batch"
+    ],
+    "name": "prpc buildbucket.v2.Builds.Batch bad_response_count",
+    "stdin": "{\"requests\": [{\"bad_response_count\": {}}]}",
+    "stdout": "/path/to/tmp/json",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@got 0 responses for 1 requests@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": []@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/prpc",
+      "call",
+      "-format",
+      "json",
+      "cr-buildbucket.appspot.com",
+      "buildbucket.v2.Builds.Batch"
+    ],
+    "name": "prpc buildbucket.v2.Builds.Batch schedule_build",
+    "stdin": "{\"requests\": [{\"schedule_build\": {\"builder\": {\"bucket\": \"test_bucket\", \"builder\": \"test_builder\", \"project\": \"test_project\"}}}]}",
+    "stdout": "/path/to/tmp/json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"schedule_build\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": 12345, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"update_time\": \"2019-01-01T10:00:20.021Z\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/prpc",
+      "call",
+      "-format",
+      "json",
+      "cr-buildbucket.appspot.com",
+      "buildbucket.v2.Builds.Batch"
+    ],
+    "name": "prpc buildbucket.v2.Builds.Batch get_build",
+    "stdin": "{\"requests\": [{\"get_build\": {\"id\": 12345}}]}",
+    "stdout": "/path/to/tmp/json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"get_build\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

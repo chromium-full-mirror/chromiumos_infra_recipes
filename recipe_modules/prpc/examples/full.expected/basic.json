@@ -9,8 +9,12 @@
       "my.pkg.Method"
     ],
     "name": "prpc my.pkg.Method",
-    "stdin": "{\n  \"id\": \"12345\"\n}",
-    "stdout": "/path/to/tmp/"
+    "stdin": "\"{\\n  \\\"id\\\": \\\"12345\\\"\\n}\"",
+    "stdout": "/path/to/tmp/json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@\"{\\n  \\\"id\\\": \\\"12345\\\"\\n}\"@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
   },
   {
     "jsonResult": null,
