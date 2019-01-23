@@ -14,6 +14,11 @@ DEPS = [
 
 
 def RunSteps(api):
+  from_manifest = """
+    <manifest>
+      <project path="SAMPLE" revision="FROM_REV"/>
+    </manifest>
+  """
   to_manifest = """
     <manifest>
       <project path="SAMPLE" revision="TO_REV"/>
@@ -23,11 +28,15 @@ def RunSteps(api):
   with api.tempfile.temp_dir('foo') as foo, api.context(cwd=foo):
 
     # No previous manifest case
-    api.depends.ensure_manifest_cq_depends_fulfilled('REF', to_manifest)
+    api.depends.ensure_manifest_cq_depends_fulfilled('URL', 'REF', to_manifest)
+
+    # No manifest change
+    api.depends.ensure_manifest_cq_depends_fulfilled('URL', 'REF',
+                                                     from_manifest)
 
     # With previous manifest case
     api.path.mock_add_paths(foo.join('snapshot.xml'))
-    api.depends.ensure_manifest_cq_depends_fulfilled('REF', to_manifest)
+    api.depends.ensure_manifest_cq_depends_fulfilled('URL', 'REF', to_manifest)
 
 
 def GenTests(api):

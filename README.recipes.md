@@ -218,7 +218,7 @@ APIs for checking that CQ-DEPEND has been fulfilled.
 
 A module for checking that CQ-DEPEND has been fulfilled.
 
-&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#120)(self, from_manifest_ref, to_manifest_str):**
+&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#58)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
 
 Checks that CQ-DEPENDS deps between manifests are met.
 

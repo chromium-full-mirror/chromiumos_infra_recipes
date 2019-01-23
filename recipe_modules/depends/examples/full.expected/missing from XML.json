@@ -11,8 +11,36 @@
   {
     "cmd": [
       "git",
+      "fetch",
+      "URL",
+      "REF:"
+    ],
+    "cwd": "[CLEANUP]/foo_tmp_1",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/foo_tmp_1",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "show",
-      "REF:[CLEANUP]/foo_tmp_1/snapshot.xml"
+      "FETCH_HEAD:snapshot.xml"
     ],
     "cwd": "[CLEANUP]/foo_tmp_1",
     "infra_step": true,
@@ -27,18 +55,99 @@
     "cwd": "[CLEANUP]/foo_tmp_1",
     "name": "ensure manifest cq-depends fulfilled (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all cq-depends fulfilled@@@"
+      "@@@STEP_TEXT@manifest did not change@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "URL",
+      "REF:"
+    ],
+    "cwd": "[CLEANUP]/foo_tmp_1",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git fetch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/foo_tmp_1",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git rev-parse (2)",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
       "git",
       "show",
-      "REF:[CLEANUP]/foo_tmp_1/snapshot.xml"
+      "FETCH_HEAD:snapshot.xml"
     ],
     "cwd": "[CLEANUP]/foo_tmp_1",
     "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled.git show (2)",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "cwd": "[CLEANUP]/foo_tmp_1",
+    "name": "ensure manifest cq-depends fulfilled (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@diff manifest@SAMPLE upreved from FROM_REV to TO_REV@@@",
+      "@@@STEP_LOG_END@diff manifest@@@",
+      "@@@STEP_LOG_LINE@gather cq-depend@No CQ-DEPEND found in any CLs@@@",
+      "@@@STEP_LOG_END@gather cq-depend@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "URL",
+      "REF:"
+    ],
+    "cwd": "[CLEANUP]/foo_tmp_1",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git fetch (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/foo_tmp_1",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git rev-parse (3)",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "show",
+      "FETCH_HEAD:snapshot.xml"
+    ],
+    "cwd": "[CLEANUP]/foo_tmp_1",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.git show (3)",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

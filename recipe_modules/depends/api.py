@@ -55,70 +55,8 @@ class DependsApi(recipe_api.RecipeApi):
                dep.startswith('*')]
     return public + private
 
-  def _ensure_cq_depends_fulfilled(self, from_manifest_str, to_manifest_str):
-    """Checks that all CQ-DEPENDS dependencies have been met.
-
-    Given the `from_manifest_str` and `to_manifest_str`, checks that all CLs
-    that landed between the two have fulfilled CQ-DEPEND entries (ie, all
-    CQ-DEPEND entries in all of those CLs exist locally in checkouts).
-
-    Args:
-      from_manifest_str (str): The from manifest XML string.
-      to_manifest_str (str): The to manifest XML string.
-
-    Returns:
-      bool: True if all deps are met, False otherwise.
-    """
-    manifest_diffs = self.m.repo.diff_manifests(from_manifest_str,
-                                                to_manifest_str)
-
-    # Gather all CQ-DEPEND entries in all change messages.
-    deps = self._gather_deps(manifest_diffs)
-
-    # Nothing needs to be checked if there are 0 deps
-    if len(deps) == 0:
-      return True
-
-    # Query Gerrit for each one of those deps to turn the CL number into a git
-    # change ref.
-    json_data = {
-      'changes': [
-        {'host': dep.host, 'change_number': dep.cl_number, 'patch_set': -1} for
-        dep in deps]}
-    test_data = {
-      'changes': [{
-        'info': {
-          'project': 'PROJECT',
-          'branch': 'BRANCH',
-          'current_revision': 'CURRENT_REVISION',
-        }
-      }, {'change_number': 1234, 'info': None}]
-    }
-    gerrit_results = self.m.support.call('gerrit-fetch-changes', json_data,
-                                         test_output_data=test_data)
-
-    # Ensure each change is in the local checkout.
-    for change in gerrit_results['changes']:
-      if change.get('info') is None:
-        results = self.m.step(
-            'gerrit query failure for cl %s' % change.get('change_number'), [])
-        results.presentation.status = self.m.step.WARNING
-        continue
-      project = change['info']['project']
-      branch = change['info']['branch']
-      rev = change['info']['current_revision']
-      path = self.m.cros.find_project_path(project, branch)
-
-      # Ensure that rev exists in the git repo at that path. Fail otherwise.
-      with self.m.context(cwd=self.m.cros.workspace_path.join(path)):
-        if not self.m.git.is_reachable(rev):
-          return False
-
-    # All the CLs in CQ-DEPEND are checkout out locally and are good to go!
-    return True
-
-  def ensure_manifest_cq_depends_fulfilled(self, from_manifest_ref,
-      to_manifest_str):
+  def ensure_manifest_cq_depends_fulfilled(self, from_manifest_url,
+      from_manifest_ref, to_manifest_str):
     """Checks that CQ-DEPENDS deps between manifests are met.
 
     Checks that all CQ-DEPENDS in all CLs between `from_manifest_*` to
@@ -131,8 +69,8 @@ class DependsApi(recipe_api.RecipeApi):
       to_manifest_str (str): The string XML for the to manifest.
     """
     with self.m.step.nest('ensure manifest cq-depends fulfilled') as step:
-      xml_path = self.m.context.cwd.join('snapshot.xml')
-      from_xml = self.m.git.show_file(from_manifest_ref, xml_path,
+      self.m.git.fetch_ref(from_manifest_url, from_manifest_ref)
+      from_xml = self.m.git.show_file('FETCH_HEAD', 'snapshot.xml',
                                       test_contents=MANIFEST_MOCK)
 
       if from_xml is None:
@@ -140,9 +78,82 @@ class DependsApi(recipe_api.RecipeApi):
         step.presentation.status = 'WARNING'
         return
 
-      if not self._ensure_cq_depends_fulfilled(from_xml, to_manifest_str):
-        step.presentation.step_text = 'cq-depend missing locally'
-        step.presentation.status = 'FAILURE'
+      manifest_diffs = self.m.repo.diff_manifests(from_xml, to_manifest_str)
+
+      # Short-circuit if the manifest didn't change.
+      if len(manifest_diffs) == 0:
+        step.presentation.step_text = 'manifest did not change'
         return
 
+      # Log the manifest diffs in human-readable form
+      manifest_diff_log = step.presentation.logs.setdefault('diff manifest', [])
+      for diff in manifest_diffs:
+        manifest_diff_log.append(
+            '%s upreved from %s to %s' % (
+            diff.path, diff.from_rev, diff.to_rev))
+
+      # Gather all CQ-DEPEND entries in all change messages.
+      deps = self._gather_deps(manifest_diffs)
+
+      dep_log = step.presentation.logs.setdefault('gather cq-depend', [])
+
+      # Nothing needs to be checked if there are 0 deps.
+      if len(deps) == 0:
+        dep_log.append('No CQ-DEPEND found in any CLs')
+        return True
+
+      for dep in deps:
+        dep_log.append('CL:%s on %s' % (dep.cl_number, dep.host))
+
+      # Query Gerrit for each one of those deps to turn the CL number into a git
+      # change ref.
+      json_data = {
+        'changes': [
+          {'host': dep.host, 'change_number': dep.cl_number, 'patch_set': -1}
+          for
+          dep in deps]}
+      test_data = {
+        'changes': [{
+          'info': {
+            'project': 'PROJECT',
+            'branch': 'BRANCH',
+            'current_revision': 'CURRENT_REVISION',
+          }
+        }, {'change_number': 1234, 'info': None}]
+      }
+      gerrit_results = self.m.support.call('gerrit-fetch-changes', json_data,
+                                           test_output_data=test_data)
+
+      # Log dep fulfilment in human-readable format as well
+      dep_local_log = step.presentation.logs.setdefault('dep local', [])
+
+      # Ensure each change is in the local checkout.
+      for change in gerrit_results['changes']:
+        if change.get('info') is None:
+          dep_local_log.append(
+            'gerrit query failure for cl %s' % change.get('change_number'))
+          step.presentation.status = self.m.step.WARNING
+          continue
+        project = change['info']['project']
+        branch = change['info']['branch']
+        rev = change['info']['current_revision']
+        path = self.m.cros.find_project_path(project, branch)
+
+        # Ensure that rev exists in the git repo at that path. Fail otherwise.
+        with self.m.context(cwd=self.m.cros.workspace_path.join(path)):
+
+          # Ensure the dep is reachable locally
+          if not self.m.git.is_reachable(rev):
+            dep_local_log.append(
+              'Unsatisfied dep! %s does not exist at %s on branch %s' % (
+              rev, path, branch))
+            step.presentation.step_text = 'cq-depend missing locally'
+            step.presentation.status = 'FAILURE'
+            return
+
+          # Dep is satisfied locally
+          dep_local_log.append(
+            '%s found at %s on branch %s' % (rev, path, branch))
+
+      # All deps satisfied
       step.presentation.step_text = 'all cq-depends fulfilled'
