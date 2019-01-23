@@ -165,6 +165,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "git transaction.diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "ls-files",
@@ -172,9 +179,23 @@
       "file/path.txt"
     ],
     "infra_step": true,
-    "name": "git transaction.git ls-files",
+    "name": "git transaction.diff check.git ls-files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff-index",
+      "--quiet",
+      "HEAD",
+      "file/path.txt"
+    ],
+    "infra_step": true,
+    "name": "git transaction.diff check.git diff-index",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

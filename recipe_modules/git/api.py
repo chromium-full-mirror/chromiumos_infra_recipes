@@ -65,8 +65,21 @@ class GitApi(recipe_api.RecipeApi):
       bool: True if the file changed from HEAD (or didn't exists), False
           otherwise.
       """
-    cmd = ['ls-files', '--error-unmatch', path]
-    return self._step(cmd, ok_ret=(0, 1)).retcode != 0
+    # Both `ls-files` and `diff-index` appear to be needed here. They return:
+    #  git ls-files --error-unmatch <FILE>
+    #    0 - no change & change
+    #    1 - untracked new file
+    #  git diff-index --quiet HEAD <FILE>
+    #    0 - no change to existing file
+    #    1 - change to existing file || staged new file
+    #    128 - other (missing file)
+    with self.m.step.nest('diff check'):
+      if self._step(['ls-files', '--error-unmatch', path],
+                    ok_ret=(0, 1)).retcode != 0:
+        return True
+
+      return self._step(['diff-index', '--quiet', 'HEAD', path],
+                        ok_ret=(0, 1)).retcode != 0
 
   def fetch(self, remote, refspecs=None):
     """Runs 'git fetch'.

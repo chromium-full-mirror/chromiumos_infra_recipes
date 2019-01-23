@@ -75,10 +75,16 @@ def GenTests(api):
       stdout='!	HEAD:refs/fake	[remote rejected]',
   )
 
-  yield api.test('update ref has diff') + attempt_git_step(
-      api,
-      1,
-      'ls-files',
+  yield api.test('update ref has diff has new file') + api.step_data(
+      'git transaction.diff check.git ls-files',
       retcode=1,
   )
+
+  yield api.test('update ref has diff has change') + api.step_data(
+      'git transaction.diff check.git ls-files',
+      retcode=0,
+  ) + api.step_data(
+      'git transaction.diff check.git diff-index',
+      retcode=1)
+
 

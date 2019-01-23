@@ -110,20 +110,6 @@
   {
     "cmd": [
       "git",
-      "diff-index",
-      "--quiet",
-      "HEAD",
-      "some/file/path"
-    ],
-    "infra_step": true,
-    "name": "diff check.git diff-index",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "log",
       "--pretty=%H%x1E%B%x00",
       "START_REF...END_REF"

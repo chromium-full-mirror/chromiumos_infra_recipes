@@ -106,10 +106,7 @@
   },
   {
     "cmd": [],
-    "name": "git transaction (3)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
+    "name": "git transaction (3)"
   },
   {
     "cmd": [
@@ -190,15 +187,44 @@
   {
     "cmd": [
       "git",
-      "diff-index",
-      "--quiet",
-      "HEAD",
+      "add",
       "file/path.txt"
     ],
     "infra_step": true,
-    "name": "git transaction.diff check.git diff-index",
+    "name": "git transaction.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--message",
+      "Update file",
+      "--",
+      "file/path.txt"
+    ],
+    "infra_step": true,
+    "name": "git transaction.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "remote",
+      "HEAD:refs/heads/ref"
+    ],
+    "infra_step": true,
+    "name": "git transaction.git push (2)",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

@@ -37,3 +37,8 @@ def GenTests(api):
 
   yield (api.test('detached HEAD') +  #
          api.step_data('git symbolic-ref', retcode=1))
+
+  yield api.test('diff_check has new file') + api.step_data(
+      'diff check.git ls-files',
+      retcode=1,
+  )
