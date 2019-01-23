@@ -64,13 +64,26 @@ Args:
   * gs_buckets (list[str]): Buckets to upload artifacts.
 ### *recipe_modules* / [build\_api](/recipe_modules/build_api)
 
-[DEPS](/recipe_modules/build_api/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
+[DEPS](/recipe_modules/build_api/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
 
 API for working with the protobuf-based Build API.
 
-#### **class [BuildApiApi](/recipe_modules/build_api/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildApiApi](/recipe_modules/build_api/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS Build API steps.
+
+&mdash; **def [call\_json](/recipe_modules/build_api/api.py#55)(self, service_method, input_dict, test_output_dict=None):**
+
+Call a Build API method with JSON serialization.
+
+Args:
+  service_method (str): The service/method path (ex.
+      chromium.api.Service/Method).
+  input_dict (dict): Input data.
+  test_output_dict (dict): Data to return during test.
+
+Returns:
+  dict: Output data.
 ### *recipe_modules* / [build\_manager](/recipe_modules/build_manager)
 
 [DEPS](/recipe_modules/build_manager/__init__.py#1): [prpc](#recipe_modules-prpc), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -780,9 +793,9 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/artifacts/examples/full.py#14)(api):**
 ### *recipes* / [build\_api:examples/full](/recipe_modules/build_api/examples/full.py)
 
-[DEPS](/recipe_modules/build_api/examples/full.py#7): [build\_api](#recipe_modules-build_api)
+[DEPS](/recipe_modules/build_api/examples/full.py#6): [build\_api](#recipe_modules-build_api)
 
-&mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#11)(api):**
 ### *recipes* / [build\_manager:examples/full](/recipe_modules/build_manager/examples/full.py)
 
 [DEPS](/recipe_modules/build_manager/examples/full.py#6): [build\_manager](#recipe_modules-build_manager), [recipe\_engine/json][recipe_engine/recipe_modules/json]
@@ -824,7 +837,7 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#12)(api):**
 
-&mdash; **def [assert\_equal](/recipe_modules/gerrit/examples/full.py#33)(got, want):**
+&mdash; **def [assert\_equal](/recipe_modules/gerrit/examples/full.py#34)(got, want):**
 
 Asserts that the two values are equal, or throws AssertionError.
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)

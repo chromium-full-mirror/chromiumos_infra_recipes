@@ -7,7 +7,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "FAKE JSON",
+      "{}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -27,9 +27,9 @@
       "/mnt/host/workspace/input_proto.json",
       "--output-json",
       "/mnt/host/workspace/output_proto.json",
-      "chromite.api.group"
+      "chromite.api.Service/Method"
     ],
-    "name": "build_api chromite.api.group"
+    "name": "build_api chromite.api.Service/Method"
   },
   {
     "cmd": [
