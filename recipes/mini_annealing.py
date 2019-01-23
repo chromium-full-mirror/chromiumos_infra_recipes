@@ -19,7 +19,6 @@ DEPS = [
   'recipe_engine/path',
   'recipe_engine/step',
   'cros',
-  'cros_build',
   'cros_sdk',
   'depends',
   'dev',

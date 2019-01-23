@@ -1,0 +1,46 @@
+[
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--",
+      "egencache",
+      "--update",
+      "--repo",
+      "my_overlay",
+      "--jobs",
+      "32"
+    ],
+    "name": "portage regen cache my_overlay"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "chromite/bin/cros_mark_as_stable",
+      "commit",
+      "--all",
+      "--buildroot",
+      "[START_DIR]/chromiumos_workspace",
+      "--overlay-type",
+      "both"
+    ],
+    "name": "uprev portage packages"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "chromite/bin/cros_mark_as_stable",
+      "push",
+      "--overlay-type",
+      "both",
+      "--dryrun"
+    ],
+    "name": "push portage package uprevs"
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

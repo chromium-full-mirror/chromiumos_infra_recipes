@@ -5,19 +5,16 @@
 
 DEPS = [
     'recipe_engine/path',
-    'cros_build',
     'dev',
+    'portage',
 ]
 
 
 def RunSteps(api):
-  api.cros_build.regen_portage_cache('my_overlay')
-  api.cros_build.uprev_portage_packages()
-  api.cros_build.push_portage_package_uprevs()
-
   api.dev.configure(dryrun=True)
-  api.cros_build.uprev_portage_packages()
-  api.cros_build.push_portage_package_uprevs()
+  api.portage.regen_cache('my_overlay')
+  api.portage.uprev_packages()
+  api.portage.push_package_uprevs()
 
 
 def GenTests(api):

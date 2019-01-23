@@ -212,8 +212,7 @@
       "--jobs",
       "32"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "regen_portage_cache chromiumos"
+    "name": "portage regen cache chromiumos"
   },
   {
     "cmd": [
@@ -224,10 +223,8 @@
       "--buildroot",
       "[START_DIR]/chromiumos_workspace",
       "--overlay-type",
-      "both",
-      "--dryrun"
+      "both"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "uprev portage packages"
   },
   {
@@ -235,13 +232,10 @@
       "vpython",
       "chromite/bin/cros_mark_as_stable",
       "push",
-      "--buildroot",
-      "[START_DIR]/chromiumos_workspace",
       "--overlay-type",
       "both",
       "--dryrun"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "push portage package uprevs"
   },
   {

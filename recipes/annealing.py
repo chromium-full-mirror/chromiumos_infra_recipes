@@ -22,11 +22,11 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
     'cros',
-    'cros_build',
     'cros_sdk',
     'dev',
     'git_txn',
     'overlayfs',
+    'portage',
     'repo',
     'repo_cache',
 ]
@@ -51,9 +51,10 @@ def RunSteps(api):
                         api.cros.workspace_path)
 
     # Portage uprev packages.
-    api.cros_build.regen_portage_cache(repo_name='chromiumos')
-    api.cros_build.uprev_portage_packages()
-    api.cros_build.push_portage_package_uprevs()
+    with api.context(cwd=api.cros.workspace_path):
+      api.portage.regen_cache(repo_name='chromiumos')
+      api.portage.uprev_packages()
+      api.portage.push_package_uprevs()
 
     # Create a manifest snapshot and commit it.
     with api.step.nest('update annealing manifest'):
