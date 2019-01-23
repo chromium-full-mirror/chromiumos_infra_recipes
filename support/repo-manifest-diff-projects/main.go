@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"chromium.googlesource.com/chromiumos/infra/recipes/support/cli"
-	"chromium.googlesource.com/chromiumos/infra/recipes/support/vcs/lib"
+	"chromium.googlesource.com/chromiumos/infra/recipes/support/internal/cli"
+	"chromium.googlesource.com/chromiumos/infra/recipes/support/internal/manifest"
 )
 
 type Input struct {
@@ -13,7 +13,7 @@ type Input struct {
 }
 
 type Output struct {
-	lib.ManifestDiff
+	manifest.ManifestDiff
 }
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	cli.MustUnmarshalInput(&input)
 
 	// Load from and to manifests
-	var fromManifest, toManifest lib.Manifest
+	var fromManifest, toManifest manifest.Manifest
 
 	if err := fromManifest.LoadFromXmlFile(input.FromPath); err != nil {
 		log.Fatal(err)

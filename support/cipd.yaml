@@ -3,3 +3,4 @@ description: Support tools for chromiumos recipes.
 install_mode: copy
 data:
   - file: gerrit-fetch-changes/gerrit-fetch-changes
+  - file: repo-manifest-diff-projects/repo-manifest-diff-projects

@@ -1,4 +1,4 @@
-module chromium.googlesource.com/chromiumos/infra/recipes/support/cli
+module chromium.googlesource.com/chromiumos/infra/recipes/support/internal/cli
 
 require (
 	github.com/maruel/subcommands v0.0.0-20181220013616-967e945be48b // indirect

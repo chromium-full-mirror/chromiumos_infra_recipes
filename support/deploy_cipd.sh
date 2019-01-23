@@ -2,6 +2,9 @@
 
 cd "$(dirname "$0")"
 
-(cd gerrit-fetch-changes && go build)
+for go_tool in gerrit-fetch-changes repo-manifest-diff-projects
+do
+  (cd "${go_tool}" && go build)
+done
 
 cipd create -pkg-def=cipd.yaml -ref latest -json-output deploy_cipd.json
