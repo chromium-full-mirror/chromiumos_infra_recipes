@@ -5,7 +5,6 @@
 
 DEPS = [
     'recipe_engine/path',
-    'changes',
     'cros_build',
     'dev',
 ]

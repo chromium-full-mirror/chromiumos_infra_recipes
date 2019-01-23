@@ -5,17 +5,16 @@
 
 DEPS = [
     'recipe_engine/path',
-    'changes',
     'cros',
     'dev',
+    'gerrit',
 ]
 
 
 def RunSteps(api):
   assert api.cros.find_project_path('my/project', 'branch1') == 'src/project'
-  api.cros.cherry_pick_changes(api.changes.get_changes())
+  api.cros.cherry_pick_changes([api.gerrit.test_api.test_patch_set()])
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.changes.buildbucket_gerrit_change())
+  yield api.test('basic')

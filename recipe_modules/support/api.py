@@ -44,7 +44,7 @@ class SupportApi(recipe_api.RecipeApi):
     Args:
       tool (str): Tool name.
       input_data: Data to be passed as input to the tool (serialized to JSON).
-      test_output_data (dict|list): Data to return in tests.
+      test_output_data (dict|list|Callable): Data to return in tests.
 
     Returns:
       Data passed as output from the tool (deserialized from JSON).

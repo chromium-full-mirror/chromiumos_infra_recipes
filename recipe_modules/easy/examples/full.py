@@ -14,7 +14,7 @@ def RunSteps(api):
   api.easy.step('passthru', ['cat'], ok_ret=(0, 1))
 
   stdout = api.easy.stdout_step('raw', ['gzip'], stdin_data='uncompressed',
-                                   test_stdout='compressed')
+                                   test_stdout=lambda: 'compressed')
   assert stdout == 'compressed'
 
   json_stdout = api.easy.stdout_json_step('json', ['jq'], stdin_json={'a': 1},

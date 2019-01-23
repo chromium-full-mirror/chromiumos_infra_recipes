@@ -6,13 +6,13 @@
   * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
   * [build_manager](#recipe_modules-build_manager) &mdash; API for managing multiple parallel "worker" Buildbucket builds.
-  * [changes](#recipe_modules-changes) &mdash; APIs for managing CrOS code changes.
   * [cros](#recipe_modules-cros) &mdash; APIs for CrOS CI.
   * [cros_build](#recipe_modules-cros_build) &mdash; APIs for CrOS Build.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [depends](#recipe_modules-depends) &mdash; APIs for checking that CQ-DEPEND has been fulfilled.
   * [dev](#recipe_modules-dev) &mdash; API for development config.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
+  * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
@@ -27,13 +27,13 @@
   * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
   * [build_manager:examples/full](#recipes-build_manager_examples_full)
-  * [changes:examples/full](#recipes-changes_examples_full)
   * [cros:examples/full](#recipes-cros_examples_full)
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dev:examples/full](#recipes-dev_examples_full)
   * [easy:examples/full](#recipes-easy_examples_full)
+  * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [mini_annealing](#recipes-mini_annealing) &mdash; Recipe for the Chrome OS mini-annealing builders.
@@ -88,26 +88,6 @@ Returns the build_pb2 module.
 &mdash; **def [new\_manager](/recipe_modules/build_manager/api.py#89)(self):**
 
 Create a new Manager.
-### *recipe_modules* / [changes](/recipe_modules/changes)
-
-[DEPS](/recipe_modules/changes/__init__.py#1): [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-APIs for managing CrOS code changes.
-
-#### **class [ChangesApi](/recipe_modules/changes/api.py#88)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for CrOS code change helpers.
-
-&mdash; **def [\_\_init\_\_](/recipe_modules/changes/api.py#91)(self, \*args, \*\*kwargs):**
-
-Initialize ChangeApi.
-
-&mdash; **def [get\_changes](/recipe_modules/changes/api.py#107)(self, cache=True):**
-
-Fetch and return Changes for this build.
-
-Args:
-  cache (bool): If True, may return cached change information.
 ### *recipe_modules* / [cros](/recipe_modules/cros)
 
 [DEPS](/recipe_modules/cros/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -118,12 +98,12 @@ APIs for CrOS CI.
 
 A module for CrOS CI steps.
 
-&mdash; **def [cherry\_pick\_changes](/recipe_modules/cros/api.py#55)(self, changes):**
+&mdash; **def [cherry\_pick\_changes](/recipe_modules/cros/api.py#55)(self, patch_sets):**
 
 Apply changes to the workspace.
 
 Args:
-  changes (list[change.Change]): A list of Changes to cherry-pick.
+  patch_sets (List[gerrit.PatchSet]): A list of patch sets to cherry-pick.
 
 &mdash; **def [find\_project\_path](/recipe_modules/cros/api.py#37)(self, project, branch):**
 
@@ -288,7 +268,7 @@ APIs for easy steps.
 
 A module for easy steps.
 
-&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#65)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#66)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data deserialized from JSON.
 
@@ -296,7 +276,7 @@ Args:
   * name (str): The name of the step.
   * cmd (list[str]): The command to run.
   * step_test_data (func): See 'step.__call__'.
-  * test_stdout (dict|list): Data to return in tests.
+  * test_stdout (dict|list|Callable): Data to return in tests.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
@@ -309,8 +289,8 @@ Runs an easy.step and returns stdout data.
 Args:
   * name (str): The name of the step.
   * cmd (list[str]): The command to run.
-  * step_test_data (func): See 'step.__call__'.
-  * test_stdout (str): Data to return in tests.
+  * step_test_data (Callable): See 'step.__call__'.
+  * test_stdout (str|Callable): Data to return in tests.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
@@ -332,6 +312,32 @@ Args:
 
 Returns:
   See 'step.__call__'.
+### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
+
+[DEPS](/recipe_modules/gerrit/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+APIs for managing Gerrit changes.
+
+#### **class [GerritApi](/recipe_modules/gerrit/api.py#80)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for Gerrit helpers.
+
+&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#83)(self, \*args, \*\*kwargs):**
+
+Initialize GerritApi.
+
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#103)(self, gerrit_changes, test_output_data=None):**
+
+Fetch and return PatchSets from Gerrit.
+
+The step fails if any patch set is not found.
+
+Args:
+  gerrit_changes (List[GerritChange]): Buildbucket GerritChanges to fetch.
+  test_output_data (dict): Test output for gerrit-fetch-changes.
+
+Returns:
+  List[PatchSet]: List of PatchSets in requested order.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
 [DEPS](/recipe_modules/git/__init__.py#1): [dev](#recipe_modules-dev), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -738,7 +744,7 @@ Run a tool from the support package.
 Args:
   tool (str): Tool name.
   input_data: Data to be passed as input to the tool (serialized to JSON).
-  test_output_data (dict|list): Data to return in tests.
+  test_output_data (dict|list|Callable): Data to return in tests.
 
 Returns:
   Data passed as output from the tool (deserialized from JSON).
@@ -782,21 +788,16 @@ The annealing builders run in serial and do the following:
 [DEPS](/recipe_modules/build_manager/examples/full.py#6): [build\_manager](#recipe_modules-build_manager), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/build_manager/examples/full.py#14)(api):**
-### *recipes* / [changes:examples/full](/recipe_modules/changes/examples/full.py)
-
-[DEPS](/recipe_modules/changes/examples/full.py#6): [changes](#recipe_modules-changes), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
-
-&mdash; **def [RunSteps](/recipe_modules/changes/examples/full.py#12)(api):**
 ### *recipes* / [cros:examples/full](/recipe_modules/cros/examples/full.py)
 
-[DEPS](/recipe_modules/cros/examples/full.py#6): [changes](#recipe_modules-changes), [cros](#recipe_modules-cros), [dev](#recipe_modules-dev), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/cros/examples/full.py#6): [cros](#recipe_modules-cros), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/cros/examples/full.py#14)(api):**
 ### *recipes* / [cros\_build:examples/full](/recipe_modules/cros_build/examples/full.py)
 
-[DEPS](/recipe_modules/cros_build/examples/full.py#6): [changes](#recipe_modules-changes), [cros\_build](#recipe_modules-cros_build), [dev](#recipe_modules-dev), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/cros_build/examples/full.py#6): [cros\_build](#recipe_modules-cros_build), [dev](#recipe_modules-dev), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build/examples/full.py#13)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -817,6 +818,15 @@ The annealing builders run in serial and do the following:
 [DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
+### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
+
+[DEPS](/recipe_modules/gerrit/examples/full.py#6): [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#12)(api):**
+
+&mdash; **def [assert\_equal](/recipe_modules/gerrit/examples/full.py#33)(got, want):**
+
+Asserts that the two values are equal, or throws AssertionError.
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
 [DEPS](/recipe_modules/git/examples/full.py#6): [dev](#recipe_modules-dev), [git](#recipe_modules-git)
@@ -855,7 +865,7 @@ snapshots ToT.
 &mdash; **def [RunSteps](/recipe_modules/payloads/examples/full.py#11)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
-[DEPS](/recipes/prototype.py#8): [changes](#recipe_modules-changes), [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [dev](#recipe_modules-dev), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/prototype.py#8): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for prototyping Chrome OS builders.
 
@@ -893,7 +903,6 @@ Recipe for prototyping Chrome OS builders.
 &mdash; **def [full\_filename](/recipes/upload_artifacts.py#70)(os_version, build_target):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/deab113bfb35941f9a173e3a424bc7a67a55affa/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/deab113bfb35941f9a173e3a424bc7a67a55affa/recipes/README.recipes.md#recipe_modules-gerrit
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/deab113bfb35941f9a173e3a424bc7a67a55affa/recipes/README.recipes.md#recipe_modules-gsutil
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/91c13923c1d136dc688527fa39583ef61a3277f7/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/91c13923c1d136dc688527fa39583ef61a3277f7/README.recipes.md#recipe_modules-buildbucket

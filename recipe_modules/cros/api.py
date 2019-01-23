@@ -52,16 +52,17 @@ class CrosApi(recipe_api.RecipeApi):
       return self.m.easy.stdout_step('find %s [%s]' % (project, branch), cmd,
                                      test_stdout='src/project').strip()
 
-  def cherry_pick_changes(self, changes):
+  def cherry_pick_changes(self, patch_sets):
     """Apply changes to the workspace.
 
     Args:
-      changes (list[change.Change]): A list of Changes to cherry-pick.
+      patch_sets (List[gerrit.PatchSet]): A list of patch sets to cherry-pick.
     """
     with self.m.step.nest('cherry-pick changes'):
-      for change in changes:
-        project_path = self.find_project_path(change.project, change.branch)
+      for patch_set in patch_sets:
+        project_path = self.find_project_path(patch_set.project,
+                                              patch_set.branch)
         with self.m.context(self.workspace_path.join(project_path)):
-          commit_id = self.m.git.fetch_ref(change.git_fetch_url,
-                                           change.git_fetch_ref)
+          commit_id = self.m.git.fetch_ref(patch_set.git_fetch_url,
+                                           patch_set.git_fetch_ref)
           self.m.git.cherry_pick(commit_id)

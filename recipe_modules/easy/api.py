@@ -46,8 +46,8 @@ class EasyApi(recipe_api.RecipeApi):
     Args:
       * name (str): The name of the step.
       * cmd (list[str]): The command to run.
-      * step_test_data (func): See 'step.__call__'.
-      * test_stdout (str): Data to return in tests.
+      * step_test_data (Callable): See 'step.__call__'.
+      * test_stdout (str|Callable): Data to return in tests.
       * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
@@ -56,8 +56,9 @@ class EasyApi(recipe_api.RecipeApi):
     assert step_test_data is None or test_stdout is None, \
       'step_test_data and test_stdout are mutually exclusive'
     if test_stdout is not None:
+      test_stdout = maybe_lazy_test_data(test_stdout)
       step_test_data = (
-          lambda: self.m.raw_io.test_api.stream_output(test_stdout))
+          lambda: self.m.raw_io.test_api.stream_output(test_stdout()))
     step_data = self.step(name, cmd, stdout=self.m.raw_io.output(),
                           step_test_data=step_test_data, **kwargs)
     return step_data.stdout
@@ -70,7 +71,7 @@ class EasyApi(recipe_api.RecipeApi):
       * name (str): The name of the step.
       * cmd (list[str]): The command to run.
       * step_test_data (func): See 'step.__call__'.
-      * test_stdout (dict|list): Data to return in tests.
+      * test_stdout (dict|list|Callable): Data to return in tests.
       * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
@@ -79,7 +80,16 @@ class EasyApi(recipe_api.RecipeApi):
     assert step_test_data is None or test_stdout is None, \
       'step_test_data and test_stdout are mutually exclusive'
     if test_stdout is not None:
-      step_test_data = (lambda: self.m.json.test_api.output_stream(test_stdout))
+      test_stdout = maybe_lazy_test_data(test_stdout)
+      step_test_data = (
+          lambda: self.m.json.test_api.output_stream(test_stdout()))
     step_data = self.step(name, cmd, stdout=self.m.json.output(),
                           step_test_data=step_test_data, **kwargs)
     return step_data.stdout
+
+
+def maybe_lazy_test_data(test_data):
+  """Wraps test_data in a lambda if it isn't already callable."""
+  if not hasattr(test_data, '__call__'):
+    return lambda: test_data
+  return test_data
