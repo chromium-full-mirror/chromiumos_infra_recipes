@@ -34,7 +34,7 @@ class PortageApi(recipe_api.RecipeApi):
         'commit',
         '--all',
         '--buildroot',
-        self.m.cros.workspace_path,
+        self.m.cros_source.workspace_path,
         '--overlay-type',
         'both',
     ]

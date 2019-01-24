@@ -6,8 +6,8 @@
   * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
   * [build_manager](#recipe_modules-build_manager) &mdash; API for managing multiple parallel "worker" Buildbucket builds.
-  * [cros](#recipe_modules-cros) &mdash; APIs for CrOS CI.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
+  * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [depends](#recipe_modules-depends) &mdash; APIs for checking that CQ-DEPEND has been fulfilled.
   * [dev](#recipe_modules-dev) &mdash; API for development config.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
@@ -27,8 +27,8 @@
   * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
   * [build_manager:examples/full](#recipes-build_manager_examples_full)
-  * [cros:examples/full](#recipes-cros_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
+  * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dev:examples/full](#recipes-dev_examples_full)
   * [easy:examples/full](#recipes-easy_examples_full)
@@ -101,50 +101,6 @@ Returns the build_pb2 module.
 &mdash; **def [new\_manager](/recipe_modules/build_manager/api.py#89)(self):**
 
 Create a new Manager.
-### *recipe_modules* / [cros](/recipe_modules/cros)
-
-[DEPS](/recipe_modules/cros/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-APIs for CrOS CI.
-
-#### **class [CrosApi](/recipe_modules/cros/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for CrOS CI steps.
-
-&mdash; **def [cherry\_pick\_changes](/recipe_modules/cros/api.py#55)(self, patch_sets):**
-
-Apply changes to the workspace.
-
-Args:
-  patch_sets (List[gerrit.PatchSet]): A list of patch sets to cherry-pick.
-
-&mdash; **def [find\_project\_path](/recipe_modules/cros/api.py#37)(self, project, branch):**
-
-Find the source path for a given project.
-
-Args:
-  project (str): The project name to find a source path for.
-  branch (str): The branch name to find a source path for.
-
-Returns:
-  The path value for the found project.
-
-&mdash; **def [initialize](/recipe_modules/cros/api.py#14)(self):**
-
-&emsp; **@property**<br>&mdash; **def [master\_path](/recipe_modules/cros/api.py#18)(self):**
-
-The "master" checkout path.
-
-This is a recent version of the source which should not be modified (apart
-from incidental changes like caching) during a build. "Top of tree" logic
-will run from this checkout.
-
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros/api.py#28)(self):**
-
-The "workspace" checkout path.
-
-This is where the build is processed. It will contain the target base
-checkout and any modifications made by the build.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -208,9 +164,85 @@ Args:
 
 Returns:
   str: The translated path, which will be valid within the cros_sdk chroot.
+### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
+
+[DEPS](/recipe_modules/cros_source/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for working with CrOS source.
+
+#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for CrOS-specific source steps.
+
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#62)(self, patch_sets):**
+
+Apply Gerrit patch sets to the workspace.
+
+Args:
+  patch_sets (List[gerrit.PatchSet]): A list of patch sets to cherry-pick.
+
+Returns:
+  List[ProjectCommit]: A list of commits from cherry-picked patch sets.
+
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#121)(self, archive_path):**
+
+Checkout the commits in the given archive file into the workspace.
+
+See 'create_project_commits_archive'. The local source tree must have all
+appropriate parent commits locally available to apply an archive.
+
+Args:
+  archive_path (Path): Path to the archive.
+
+Returns:
+  List[str]: List of project paths with commits in the archive.
+
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#85)(self, archive_path, project_commits):**
+
+Creates an archive with the given project commits from the workspace.
+
+This uses `git bundle` to efficiently store diffs. The recipient of this
+archive must have appropriate parent commits locally available to use
+this archive with 'checkout_project_commits_archive'.
+
+Args:
+  archive_path (Path): Path to archive file to create. Uses the 'archive'
+    module and inherits its archive type file extension detection.
+  project_commits (List[ProjectCommit]): Commits to add to archive. Must be
+    in patch application order.
+
+&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#44)(self, project, branch):**
+
+Find the source path for a given project.
+
+Args:
+  project (str): The project name to find a source path for.
+  branch (str): The branch name to find a source path for.
+
+Returns:
+  The path value for the found project.
+
+&mdash; **def [initialize](/recipe_modules/cros_source/api.py#20)(self):**
+
+Initialize CrosSourceApi.
+
+&emsp; **@property**<br>&mdash; **def [master\_path](/recipe_modules/cros_source/api.py#25)(self):**
+
+The "master" checkout path.
+
+This is a recent version of the source which should not be modified (apart
+from incidental changes like caching) during a build. "Top of tree" logic
+will run from this checkout.
+
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#35)(self):**
+
+The "workspace" checkout path.
+
+This is where the build is processed. It will contain the target base
+checkout and any modifications made by the build.
 ### *recipe_modules* / [depends](/recipe_modules/depends)
 
-[DEPS](/recipe_modules/depends/__init__.py#1): [cros](#recipe_modules-cros), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/depends/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for checking that CQ-DEPEND has been fulfilled.
 
@@ -268,7 +300,7 @@ Args:
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
-  Tuple[dict|list, StepData]: A tuple of (stdout data, step data).
+  dict|list: JSON-deserialized stdout data.
 
 &mdash; **def [stdout\_step](/recipe_modules/easy/api.py#42)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
 
@@ -282,7 +314,7 @@ Args:
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
-  Tuple[str, StepData]: A tuple of (stdout data, step data).
+  str: Raw stdout data.
 
 &mdash; **def [step](/recipe_modules/easy/api.py#14)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
 
@@ -361,7 +393,10 @@ Runs 'git cherry-pick'.
 Args:
   * commit (str): The commit to cherry pick.
 
-&mdash; **def [commit\_files](/recipe_modules/git/api.py#134)(self, files, message):**
+Returns:
+  str: The new cherry-picked commit ID.
+
+&mdash; **def [commit\_files](/recipe_modules/git/api.py#137)(self, files, message):**
 
 Runs 'git commit' with the given files.
 
@@ -369,9 +404,25 @@ Args:
   * files (list[str|Path]): A list of file paths to commit.
   * message (str): The commit message.
 
-&mdash; **def [current\_head](/recipe_modules/git/api.py#164)(self):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#247)(self, output_path, from_commit, to_ref):**
 
-Return the current HEAD branch name or commit (if detached).
+Creates a git bundle file.
+
+Creates a git bundle (see `man git-bundle`) containing the commits from
+|from_commit| (exclusive) to |to_ref| (inclusive).
+
+Args:
+  output_path (Path): Path to create bundle file at.
+  from_commit (str): Parent commit (exclusive) for bundle.
+  to_ref (str): Reference to put in bundle.
+
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#167)(self):**
+
+Returns the currently checked out branch name.
+
+Returns:
+  str: The branch name pointed to by HEAD.
+  None: If HEAD is detached.
 
 &mdash; **def [diff\_check](/recipe_modules/git/api.py#58)(self, path):**
 
@@ -404,11 +455,15 @@ Args:
 Returns:
   str: The commit ID of the fetched ref.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#177)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#181)(self):**
+
+Returns the HEAD commit ID.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#186)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#207)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#217)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -418,7 +473,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#186)(self, from_rev, to_rev):**
+&mdash; **def [log](/recipe_modules/git/api.py#196)(self, from_rev, to_rev):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -429,7 +484,7 @@ Args:
 Returns:
   List(Commit) A list of commit metas.
 
-&mdash; **def [push](/recipe_modules/git/api.py#143)(self, remote, refspec, capture_stdout=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#146)(self, remote, refspec, capture_stdout=False):**
 
 Runs 'git push'.
 
@@ -441,7 +496,7 @@ Args:
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#219)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#229)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -588,7 +643,7 @@ Args:
 &emsp; **@property**<br>&mdash; **def [payload\_path](/recipe_modules/payloads/api.py#24)(self):**
 ### *recipe_modules* / [portage](/recipe_modules/portage)
 
-[DEPS](/recipe_modules/portage/__init__.py#1): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [dev](#recipe_modules-dev), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/portage/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for CrOS Portage.
 
@@ -777,7 +832,7 @@ Ensure the CIPD support package is installed.
 
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#19): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [dev](#recipe_modules-dev), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [portage](#recipe_modules-portage), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#19): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [portage](#recipe_modules-portage), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -807,16 +862,16 @@ The annealing builders run in serial and do the following:
 [DEPS](/recipe_modules/build_manager/examples/full.py#6): [build\_manager](#recipe_modules-build_manager), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/build_manager/examples/full.py#14)(api):**
-### *recipes* / [cros:examples/full](/recipe_modules/cros/examples/full.py)
-
-[DEPS](/recipe_modules/cros/examples/full.py#6): [cros](#recipe_modules-cros), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [recipe\_engine/path][recipe_engine/recipe_modules/path]
-
-&mdash; **def [RunSteps](/recipe_modules/cros/examples/full.py#14)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#12)(api):**
+### *recipes* / [cros\_source:examples/full](/recipe_modules/cros_source/examples/full.py)
+
+[DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#13)(api):**
 ### *recipes* / [depends:examples/full](/recipe_modules/depends/examples/full.py)
 
 [DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
@@ -843,9 +898,9 @@ The annealing builders run in serial and do the following:
 Asserts that the two values are equal, or throws AssertionError.
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
-[DEPS](/recipe_modules/git/examples/full.py#6): [dev](#recipe_modules-dev), [git](#recipe_modules-git)
+[DEPS](/recipe_modules/git/examples/full.py#6): [dev](#recipe_modules-dev), [git](#recipe_modules-git), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#13)(api):**
 ### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
 
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -855,7 +910,7 @@ Asserts that the two values are equal, or throws AssertionError.
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [mini\_annealing](/recipes/mini_annealing.py)
 
-[DEPS](/recipes/mini_annealing.py#16): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [depends](#recipe_modules-depends), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/mini_annealing.py#16): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS mini-annealing builders.
 
@@ -884,11 +939,11 @@ snapshots ToT.
 &mdash; **def [RunSteps](/recipe_modules/portage/examples/full.py#13)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
-[DEPS](/recipes/prototype.py#8): [cros](#recipe_modules-cros), [cros\_sdk](#recipe_modules-cros_sdk), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/prototype.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for prototyping Chrome OS builders.
 
-&mdash; **def [RunSteps](/recipes/prototype.py#29)(api):**
+&mdash; **def [RunSteps](/recipes/prototype.py#26)(api):**
 ### *recipes* / [prpc:examples/full](/recipe_modules/prpc/examples/full.py)
 
 [DEPS](/recipe_modules/prpc/examples/full.py#6): [prpc](#recipe_modules-prpc), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

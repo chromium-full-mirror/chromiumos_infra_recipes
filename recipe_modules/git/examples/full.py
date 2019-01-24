@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/path',
     'dev',
     'git',
 ]
@@ -24,6 +25,7 @@ def RunSteps(api):
   api.git.add('some/file/path')
   api.git.is_reachable('deadbeef')
   api.git.show_file('deadbeef', 'some/path')
+  api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')
 
   with api.git.head_context():
     pass

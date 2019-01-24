@@ -14,19 +14,19 @@ snapshots ToT.
 """
 
 DEPS = [
-  'recipe_engine/context',
-  'recipe_engine/file',
-  'recipe_engine/path',
-  'recipe_engine/step',
-  'cros',
-  'cros_sdk',
-  'depends',
-  'dev',
-  'git',
-  'git_txn',
-  'overlayfs',
-  'repo',
-  'repo_cache',
+    'recipe_engine/context',
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/step',
+    'cros_sdk',
+    'cros_source',
+    'depends',
+    'dev',
+    'git',
+    'git_txn',
+    'overlayfs',
+    'repo',
+    'repo_cache',
 ]
 
 MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
@@ -46,20 +46,18 @@ def RunSteps(api):
     # Refresh and mount repo cache.
     api.repo_cache.ensure_fresh_cache()
     api.overlayfs.mount('workspace', api.repo_cache.path,
-                        api.cros.workspace_path)
+                        api.cros_source.workspace_path)
 
-    with api.context(cwd=api.cros.workspace_path.join('manifest')):
+    with api.context(cwd=api.cros_source.workspace_path.join('manifest')):
       snapshot_xml = api.repo.manifest_snapshot()
-      api.depends.ensure_manifest_cq_depends_fulfilled(MANIFEST_URL,
-                                                       MANIFEST_REF,
-                                                       snapshot_xml)
+      api.depends.ensure_manifest_cq_depends_fulfilled(
+          MANIFEST_URL, MANIFEST_REF, snapshot_xml)
 
       # Create, commit and push the actual snapshot.
-      api.git_txn.update_ref_write_file(MANIFEST_URL, MANIFEST_REF,
-                                        'Mini-annealing manifest snapshot',
-                                        api.cros.workspace_path.join(
-                                            'manifest/snapshot.xml'),
-                                        snapshot_xml)
+      api.git_txn.update_ref_write_file(
+          MANIFEST_URL, MANIFEST_REF, 'Mini-annealing manifest snapshot',
+          api.cros_source.workspace_path.join('manifest/snapshot.xml'),
+          snapshot_xml)
 
 
 def GenTests(api):

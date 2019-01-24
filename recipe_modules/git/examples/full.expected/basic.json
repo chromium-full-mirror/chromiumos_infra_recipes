@@ -165,6 +165,17 @@
   {
     "cmd": [
       "git",
+      "bundle",
+      "create",
+      "[START_DIR]/bundle",
+      "HEAD^..HEAD"
+    ],
+    "infra_step": true,
+    "name": "git bundle"
+  },
+  {
+    "cmd": [
+      "git",
       "symbolic-ref",
       "--short",
       "HEAD"

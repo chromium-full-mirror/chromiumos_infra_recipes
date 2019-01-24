@@ -261,7 +261,7 @@
   },
   {
     "cmd": [],
-    "name": "cherry-pick changes"
+    "name": "apply gerrit patch sets"
   },
   {
     "cmd": [],

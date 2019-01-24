@@ -37,7 +37,7 @@ class DependsApi(recipe_api.RecipeApi):
     for manifest_diff in manifest_diffs:
       # For each manifest diff, get a log of commits at that path
       with self.m.context(
-          cwd=self.m.cros.workspace_path.join(manifest_diff.path)):
+          cwd=self.m.cros_source.workspace_path.join(manifest_diff.path)):
         git_commits = self.m.git.log(manifest_diff.from_rev,
                                      manifest_diff.to_rev)
         for commit in git_commits:
@@ -137,10 +137,10 @@ class DependsApi(recipe_api.RecipeApi):
         project = change['info']['project']
         branch = change['info']['branch']
         rev = change['info']['current_revision']
-        path = self.m.cros.find_project_path(project, branch)
+        path = self.m.cros_source.find_project_path(project, branch)
 
         # Ensure that rev exists in the git repo at that path. Fail otherwise.
-        with self.m.context(cwd=self.m.cros.workspace_path.join(path)):
+        with self.m.context(cwd=self.m.cros_source.workspace_path.join(path)):
 
           # Ensure the dep is reachable locally
           if not self.m.git.is_reachable(rev):

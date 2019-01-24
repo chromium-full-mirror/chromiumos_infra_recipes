@@ -21,8 +21,8 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
-    'cros',
     'cros_sdk',
+    'cros_source',
     'dev',
     'git_txn',
     'overlayfs',
@@ -46,12 +46,13 @@ def RunSteps(api):
 
     # Refresh and mount repo cache.
     api.repo_cache.ensure_fresh_cache()
-    api.overlayfs.mount('master', api.repo_cache.path, api.cros.master_path)
+    api.overlayfs.mount('master', api.repo_cache.path,
+                        api.cros_source.master_path)
     api.overlayfs.mount('workspace', api.repo_cache.path,
-                        api.cros.workspace_path)
+                        api.cros_source.workspace_path)
 
     # Portage uprev packages.
-    with api.context(cwd=api.cros.workspace_path):
+    with api.context(cwd=api.cros_source.workspace_path):
       api.portage.regen_cache(repo_name='chromiumos')
       api.portage.uprev_packages()
       api.portage.push_package_uprevs()
@@ -59,11 +60,12 @@ def RunSteps(api):
     # Create a manifest snapshot and commit it.
     with api.step.nest('update annealing manifest'):
       snapshot_xml = api.repo.manifest_snapshot()
-      with api.context(cwd=api.cros.workspace_path.join('manifest')):
+      with api.context(cwd=api.cros_source.workspace_path.join('manifest')):
         api.git_txn.update_ref_write_file(
             'https://chromium-review.googlesource.com/chromiumos/infra/recipes',
             'manifest-prototype', 'Annealing manifest snapshot',
-            api.cros.workspace_path.join('manifest/snapshot.xml'), snapshot_xml)
+            api.cros_source.workspace_path.join('manifest/snapshot.xml'),
+            snapshot_xml)
 
 
 def GenTests(api):

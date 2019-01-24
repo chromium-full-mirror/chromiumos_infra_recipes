@@ -51,7 +51,7 @@ class EasyApi(recipe_api.RecipeApi):
       * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
-      Tuple[str, StepData]: A tuple of (stdout data, step data).
+      str: Raw stdout data.
     """
     assert step_test_data is None or test_stdout is None, \
       'step_test_data and test_stdout are mutually exclusive'
@@ -75,7 +75,7 @@ class EasyApi(recipe_api.RecipeApi):
       * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
-      Tuple[dict|list, StepData]: A tuple of (stdout data, step data).
+      dict|list: JSON-deserialized stdout data.
     """
     assert step_test_data is None or test_stdout is None, \
       'step_test_data and test_stdout are mutually exclusive'

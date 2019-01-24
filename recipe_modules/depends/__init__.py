@@ -4,7 +4,7 @@ DEPS = [
   'recipe_engine/path',
   'recipe_engine/step',
 
-  'cros',
+  'cros_source',
   'git',
   'repo',
   'support',

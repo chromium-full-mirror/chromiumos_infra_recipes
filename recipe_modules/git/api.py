@@ -161,23 +161,30 @@ class GitApi(recipe_api.RecipeApi):
     args += [remote, refspec]
     return self._step(args, stdout=stdout)
 
-  def current_head(self):
-    """Return the current HEAD branch name or commit (if detached)."""
+  def current_branch(self):
+    """Returns the currently checked out branch name.
+
+    Returns:
+      str: The branch name pointed to by HEAD.
+      None: If HEAD is detached.
+    """
     step_data = self._step(['symbolic-ref', '--short', 'HEAD'],
                            ok_ret=(0, 1, 128), stdout=self.m.raw_io.output(),
                            test_stdout='master\n')
-    if step_data.retcode == 0:
-      return step_data.stdout.strip()
-
-    # Detached HEAD; return commit.
-    step_data = self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
-                           test_stdout='deadbeef\n')
+    if step_data.retcode != 0:
+      return None
     return step_data.stdout.strip()
+
+  def head_commit(self):
+    """Returns the HEAD commit ID."""
+    return self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
+                      test_stdout='deadbeef\n').stdout.strip()
 
   @contextlib.contextmanager
   def head_context(self):
     """Returns a context that will revert HEAD when it exits."""
-    head = self.current_head()
+    # Try to return to a current branch, but fallback to detached commit ID.
+    head = self.current_branch() or self.head_commit()
     try:
       yield
     finally:
@@ -194,8 +201,8 @@ class GitApi(recipe_api.RecipeApi):
       List(Commit) A list of commit metas.
     """
     step_data = self._step(
-        ['log', '--pretty=%H%x1E%B%x00', '%s...%s' % (from_rev, to_rev)],
-        stdout=self.m.raw_io.output(),
+        ['log', '--pretty=%H%x1E%B%x00',
+         '%s...%s' % (from_rev, to_rev)], stdout=self.m.raw_io.output(),
         test_stdout='deadbeef\x1Emessage\x00')
     stdout = step_data.stdout.strip().rstrip('\x00')
     commits = []
@@ -233,3 +240,17 @@ class GitApi(recipe_api.RecipeApi):
     if step_data.retcode != 0:
       return None
     return step_data.stdout
+
+  def create_bundle(self, output_path, from_commit, to_ref):
+    """Creates a git bundle file.
+
+    Creates a git bundle (see `man git-bundle`) containing the commits from
+    |from_commit| (exclusive) to |to_ref| (inclusive).
+
+    Args:
+      output_path (Path): Path to create bundle file at.
+      from_commit (str): Parent commit (exclusive) for bundle.
+      to_ref (str): Reference to put in bundle.
+    """
+    revs = '%s..%s' % (from_commit, to_ref)
+    self._step(['bundle', 'create', output_path, revs])
