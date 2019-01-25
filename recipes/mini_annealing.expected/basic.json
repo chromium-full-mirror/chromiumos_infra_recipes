@@ -154,7 +154,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "annealing-test:"
+      "snapshot:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -204,7 +204,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "refs/heads/annealing-test:"
+      "refs/heads/snapshot:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,

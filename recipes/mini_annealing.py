@@ -30,7 +30,7 @@ DEPS = [
 ]
 
 MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
-MANIFEST_REF = 'annealing-test'
+MANIFEST_REF = 'snapshot'
 
 
 def RunSteps(api):
@@ -55,7 +55,7 @@ def RunSteps(api):
 
       # Create, commit and push the actual snapshot.
       api.git_txn.update_ref_write_file(
-          MANIFEST_URL, MANIFEST_REF, 'Mini-annealing manifest snapshot',
+          MANIFEST_URL, MANIFEST_REF, 'Annealing manifest snapshot',
           api.cros_source.workspace_path.join('manifest/snapshot.xml'),
           snapshot_xml)
 
