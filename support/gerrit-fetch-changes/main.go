@@ -13,7 +13,7 @@ import (
 	"go.chromium.org/luci/auth"
 	"go.chromium.org/luci/common/api/gerrit"
 
-	"chromium.googlesource.com/chromiumos/infra/recipes/support/internal/cli"
+	"support/internal/cli"
 )
 
 const (

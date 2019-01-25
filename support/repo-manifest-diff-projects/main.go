@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"chromium.googlesource.com/chromiumos/infra/recipes/support/internal/cli"
-	"chromium.googlesource.com/chromiumos/infra/recipes/support/internal/manifest"
+	"support/internal/cli"
+	"support/internal/manifest"
 )
 
 type Input struct {
