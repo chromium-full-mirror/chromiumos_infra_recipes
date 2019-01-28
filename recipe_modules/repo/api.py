@@ -16,11 +16,18 @@ from recipe_engine import recipe_api
 from xml.etree import cElementTree as ElementTree
 
 
+MANIFEST_MOCK = """
+    <manifest>
+      <project path="SAMPLE" revision="FROM_REV"/>
+    </manifest>
+  """
 ManifestDiff = namedtuple('ManifestDiff', ['path', 'from_rev', 'to_rev'])
 
 
 class RepoApi(recipe_api.RecipeApi):
   """A module for interacting with the repo tool."""
+
+  ManifestDiff = ManifestDiff
 
   @property
   def repo_path(self):
@@ -116,6 +123,40 @@ class RepoApi(recipe_api.RecipeApi):
                            step_test_data=step_test_data)
     return step_data.stdout.strip()
 
+  def diff_remote_and_local_manifests(self, from_manifest_url,
+      from_manifest_ref, to_manifest_str):
+    """Diffs the remote manifest against the local manifest string.
+
+    Diffs the 'snapshot.xml' at the given `from_manifest_url` at the ref
+    `from_manifest_ref` against the local `to_manifest_str`.
+
+    Args:
+      from_manifest_url (str): The manifest repo url to checkout.
+      from_manifest_ref (str): The manifest ref to checkout.
+      to_manifest_str (str): The string XML for the to manifest.
+
+    Returns:
+      List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
+      changed project (excludes added/removed projects).
+    """
+    with self.m.step.nest('diff remote and local manifest') as step:
+      self.m.git.fetch_ref(from_manifest_url, from_manifest_ref)
+      from_xml = self.m.git.show_file('FETCH_HEAD', 'snapshot.xml',
+                                      test_contents=MANIFEST_MOCK)
+
+      if from_xml is None:
+        step.presentation.step_text = 'no remote manifest found'
+        step.presentation.status = 'WARNING'
+        return None
+
+      diffs = self.m.repo.diff_manifests(from_xml, to_manifest_str)
+
+      if not diffs:
+        step.presentation.step_text = 'no manifest diffs from remote to local'
+        step.presentation.status = 'WARNING'
+
+      return diffs
+
   def diff_manifests(self, from_manifest_str, to_manifest_str):
     """Diffs the two manifests and returns an array of differences.
 
@@ -124,8 +165,8 @@ class RepoApi(recipe_api.RecipeApi):
     added or deleted.
 
     Args:
-      * from_manifest_str (str): The from manifest XML string
-      * to_manifest_str (str):The to manifest XML string.
+      from_manifest_str (str): The from manifest XML string
+      to_manifest_str (str):The to manifest XML string.
 
     Returns:
       List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing

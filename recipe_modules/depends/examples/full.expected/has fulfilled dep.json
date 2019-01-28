@@ -1,11 +1,17 @@
 [
   {
     "cmd": [],
-    "cwd": "[CLEANUP]/foo_tmp_1",
     "name": "ensure manifest cq-depends fulfilled",
     "~followup_annotations": [
+      "@@@STEP_TEXT@manifest did not change@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure manifest cq-depends fulfilled (2)",
+    "~followup_annotations": [
       "@@@STEP_TEXT@all cq-depends fulfilled@@@",
-      "@@@STEP_LOG_LINE@diff manifest@SAMPLE upreved from FROM_REV to TO_REV@@@",
+      "@@@STEP_LOG_LINE@diff manifest@PATH upreved from FROM_REV to TO_REV@@@",
       "@@@STEP_LOG_END@diff manifest@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@CL:12345 on chromium@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@CL:67890 on chrome-internal@@@",
@@ -19,53 +25,11 @@
   {
     "cmd": [
       "git",
-      "fetch",
-      "URL",
-      "REF:"
-    ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git rev-parse",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "show",
-      "FETCH_HEAD:snapshot.xml"
-    ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git show",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "log",
       "--pretty=%H%x1E%B%x00",
       "FROM_REV...TO_REV"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/SAMPLE",
+    "cwd": "[START_DIR]/chromiumos_workspace/PATH",
     "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled.git log",
     "stdout": "/path/to/tmp/",
@@ -81,7 +45,6 @@
       "RECIPE_PACKAGE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
     "name": "ensure manifest cq-depends fulfilled.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -105,7 +68,6 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
     "name": "ensure manifest cq-depends fulfilled.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -126,7 +88,6 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
     "name": "ensure manifest cq-depends fulfilled.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": \"12345\", \"host\": \"chromium\", \"patch_set\": -1}, {\"change_number\": \"67890\", \"host\": \"chrome-internal\", \"patch_set\": -1}]}",
     "stdout": "/path/to/tmp/json",
@@ -179,137 +140,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "name": "ensure manifest cq-depends fulfilled (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@manifest did not change@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "URL",
-      "REF:"
-    ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git fetch (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git rev-parse (2)",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "show",
-      "FETCH_HEAD:snapshot.xml"
-    ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git show (2)",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "name": "ensure manifest cq-depends fulfilled (3)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@diff manifest@SAMPLE upreved from FROM_REV to TO_REV@@@",
-      "@@@STEP_LOG_END@diff manifest@@@",
-      "@@@STEP_LOG_LINE@gather cq-depend@No CQ-DEPEND found in any CLs@@@",
-      "@@@STEP_LOG_END@gather cq-depend@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "URL",
-      "REF:"
-    ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git fetch (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git rev-parse (3)",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "show",
-      "FETCH_HEAD:snapshot.xml"
-    ],
-    "cwd": "[CLEANUP]/foo_tmp_1",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git show (3)",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "--pretty=%H%x1E%B%x00",
-      "FROM_REV...TO_REV"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/SAMPLE",
-    "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git log (2)",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/foo_tmp_1"
-    ],
-    "infra_step": true,
-    "name": "rmtree [CLEANUP]/foo_tmp_1"
   },
   {
     "jsonResult": null,

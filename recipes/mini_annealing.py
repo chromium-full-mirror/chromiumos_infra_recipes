@@ -17,6 +17,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_sdk',
     'cros_source',
@@ -50,10 +51,17 @@ def RunSteps(api):
 
     with api.context(cwd=api.cros_source.workspace_path.join('manifest')):
       snapshot_xml = api.repo.manifest_snapshot()
-      api.depends.ensure_manifest_cq_depends_fulfilled(
-          MANIFEST_URL, MANIFEST_REF, snapshot_xml)
+      manifest_diffs = api.repo.diff_remote_and_local_manifests(MANIFEST_URL,
+                                                                MANIFEST_REF,
+                                                                snapshot_xml)
 
-      # Create, commit and push the actual snapshot.
+      # Nothing interesting to be done if the manifest didn't change in any
+      # meaningful way.
+      # TODO(athilenius): It would be nice to set the 'Info' column here.
+      if not manifest_diffs:
+        return
+
+      api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
       api.git_txn.update_ref_write_file(
           MANIFEST_URL, MANIFEST_REF, 'Annealing manifest snapshot',
           api.cros_source.workspace_path.join('manifest/snapshot.xml'),
@@ -62,3 +70,13 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic')
+
+  yield api.test('has manifest change') + api.step_data(
+      'repo manifest',
+      stdout=api.raw_io.output(
+          '<manifest><project path="PATH" revision="TO_REV" /></manifest>')
+  ) + api.step_data(
+      'diff remote and local manifest.git show',
+      stdout=api.raw_io.output(
+          '<manifest><project path="PATH" revision="FROM_REV" /></manifest>')
+  )

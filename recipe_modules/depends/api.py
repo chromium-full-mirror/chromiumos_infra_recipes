@@ -11,11 +11,6 @@ from recipe_engine import recipe_api
 
 PRIVATE_HOST = 'chrome-internal'
 PUBLIC_HOST = 'chromium'
-MANIFEST_MOCK = """
-    <manifest>
-      <project path="SAMPLE" revision="FROM_REV"/>
-    </manifest>
-  """
 
 Dep = namedtuple('Dep', ['host', 'cl_number'])
 
@@ -55,31 +50,16 @@ class DependsApi(recipe_api.RecipeApi):
                dep.startswith('*')]
     return public + private
 
-  def ensure_manifest_cq_depends_fulfilled(self, from_manifest_url,
-      from_manifest_ref, to_manifest_str):
+  def ensure_manifest_cq_depends_fulfilled(self, manifest_diffs):
     """Checks that CQ-DEPENDS deps between manifests are met.
 
-    Checks that all CQ-DEPENDS in all CLs between `from_manifest_*` to
-    `to_manifest_str` are met. Note that the from manifest is checked out from
-    git at the CWD, where as the to_manifest_str is passed in by str (it is
-    assumed this will be generated from a repo snapshot).
+    Checks that all CQ-DEPENDS in all CLs in the given manifest diffs are met.
 
     Args:
-      from_manifest_ref (str): The manifest repo ref to checkout.
-      to_manifest_str (str): The string XML for the to manifest.
+      manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
+          namedtuples.
     """
     with self.m.step.nest('ensure manifest cq-depends fulfilled') as step:
-      self.m.git.fetch_ref(from_manifest_url, from_manifest_ref)
-      from_xml = self.m.git.show_file('FETCH_HEAD', 'snapshot.xml',
-                                      test_contents=MANIFEST_MOCK)
-
-      if from_xml is None:
-        step.presentation.step_text = 'skipped, no existing manifest found'
-        step.presentation.status = 'WARNING'
-        return
-
-      manifest_diffs = self.m.repo.diff_manifests(from_xml, to_manifest_str)
-
       # Short-circuit if the manifest didn't change.
       if len(manifest_diffs) == 0:
         step.presentation.step_text = 'manifest did not change'
@@ -100,7 +80,7 @@ class DependsApi(recipe_api.RecipeApi):
       # Nothing needs to be checked if there are 0 deps.
       if len(deps) == 0:
         dep_log.append('No CQ-DEPEND found in any CLs')
-        return True
+        return
 
       for dep in deps:
         dep_log.append('CL:%s on %s' % (dep.cl_number, dep.host))

@@ -246,22 +246,19 @@ checkout and any modifications made by the build.
 
 APIs for checking that CQ-DEPEND has been fulfilled.
 
-#### **class [DependsApi](/recipe_modules/depends/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [DependsApi](/recipe_modules/depends/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for checking that CQ-DEPEND has been fulfilled.
 
-&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#58)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
+&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#53)(self, manifest_diffs):**
 
 Checks that CQ-DEPENDS deps between manifests are met.
 
-Checks that all CQ-DEPENDS in all CLs between `from_manifest_*` to
-`to_manifest_str` are met. Note that the from manifest is checked out from
-git at the CWD, where as the to_manifest_str is passed in by str (it is
-assumed this will be generated from a repo snapshot).
+Checks that all CQ-DEPENDS in all CLs in the given manifest diffs are met.
 
 Args:
-  from_manifest_ref (str): The manifest repo ref to checkout.
-  to_manifest_str (str): The string XML for the to manifest.
+  manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
+      namedtuples.
 ### *recipe_modules* / [dev](/recipe_modules/dev)
 
 API for development config.
@@ -709,17 +706,17 @@ Args:
     str: The output JSON message data.
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
-[DEPS](/recipe_modules/repo/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/repo/__init__.py#1): [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with the 'repo' VCS tool.
 
 See: https://chromium.googlesource.com/external/repo/
 
-#### **class [RepoApi](/recipe_modules/repo/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RepoApi](/recipe_modules/repo/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with the repo tool.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#119)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#160)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -728,14 +725,14 @@ This only returns **CHANGED** projects, it skips over projects that were
 added or deleted.
 
 Args:
-  * from_manifest_str (str): The from manifest XML string
-  * to_manifest_str (str):The to manifest XML string.
+  from_manifest_str (str): The from manifest XML string
+  to_manifest_str (str):The to manifest XML string.
 
 Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#168)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#209)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -743,7 +740,23 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#50)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#126)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
+
+Diffs the remote manifest against the local manifest string.
+
+Diffs the 'snapshot.xml' at the given `from_manifest_url` at the ref
+`from_manifest_ref` against the local `to_manifest_str`.
+
+Args:
+  from_manifest_url (str): The manifest repo url to checkout.
+  from_manifest_ref (str): The manifest ref to checkout.
+  to_manifest_str (str): The string XML for the to manifest.
+
+Returns:
+  List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
+  changed project (excludes added/removed projects).
+
+&mdash; **def [init](/recipe_modules/repo/api.py#57)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
 
 Executes 'repo init' with the given arguments.
 
@@ -754,16 +767,16 @@ Args:
   * depth (int): Create a shallow clone of the given depth.
   * repo_url (str): URL of the repo repository.
 
-&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#106)(self):**
+&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#113)(self):**
 
 Uses repo to create a manifest snapshot and returns it as a string.
 
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#25)(self):**
+&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#32)(self):**
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#74)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#81)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -871,9 +884,9 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#13)(api):**
 ### *recipes* / [depends:examples/full](/recipe_modules/depends/examples/full.py)
 
-[DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
+[DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
 
-&mdash; **def [RunSteps](/recipe_modules/depends/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/depends/examples/full.py#17)(api):**
 ### *recipes* / [dev:examples/full](/recipe_modules/dev/examples/full.py)
 
 [DEPS](/recipe_modules/dev/examples/full.py#8): [dev](#recipe_modules-dev)
@@ -907,7 +920,7 @@ Asserts that the two values are equal, or throws AssertionError.
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [mini\_annealing](/recipes/mini_annealing.py)
 
-[DEPS](/recipes/mini_annealing.py#16): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/mini_annealing.py#16): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS mini-annealing builders.
 
@@ -918,7 +931,7 @@ snapshots ToT.
 4. Make a manifest snapshot (aka "revlocked manifest"), and push it
    to `chromiumos/manifest` on the `annealing-test` branch.
 
-&mdash; **def [RunSteps](/recipes/mini_annealing.py#36)(api):**
+&mdash; **def [RunSteps](/recipes/mini_annealing.py#37)(api):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

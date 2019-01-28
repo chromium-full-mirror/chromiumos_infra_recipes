@@ -49,6 +49,12 @@ def RunSteps(api):
   assert diff.path == 'SAMPLE' and diff.from_rev == 'FROM_REV' and \
          diff.to_rev == 'TO_REV'
 
+  api.repo.diff_remote_and_local_manifests('URL', 'REV', '<manifest />')
+
 
 def GenTests(api):
   yield api.test('setup_repo')
+
+  yield (api.test('missing from XML') +  #
+         api.step_data('diff remote and local manifest.git show',
+                       retcode=128))

@@ -88,7 +88,7 @@
     "cmd": [],
     "name": "diff remote and local manifest",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no manifest diffs from remote to local@@@",
+      "@@@STEP_TEXT@no remote manifest found@@@",
       "@@@STEP_WARNINGS@@@"
     ]
   },

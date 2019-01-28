@@ -10,41 +10,19 @@ DEPS = [
   'recipe_engine/tempfile',
 
   'depends',
+  'repo',
 ]
 
 
 def RunSteps(api):
-  from_manifest = """
-    <manifest>
-      <project path="SAMPLE" revision="FROM_REV"/>
-    </manifest>
-  """
-  to_manifest = """
-    <manifest>
-      <project path="SAMPLE" revision="TO_REV"/>
-    </manifest>
-  """
 
-  with api.tempfile.temp_dir('foo') as foo, api.context(cwd=foo):
+    api.depends.ensure_manifest_cq_depends_fulfilled([])
 
-    # No previous manifest case
-    api.depends.ensure_manifest_cq_depends_fulfilled('URL', 'REF', to_manifest)
-
-    # No manifest change
-    api.depends.ensure_manifest_cq_depends_fulfilled('URL', 'REF',
-                                                     from_manifest)
-
-    # With previous manifest case
-    api.path.mock_add_paths(foo.join('snapshot.xml'))
-    api.depends.ensure_manifest_cq_depends_fulfilled('URL', 'REF', to_manifest)
-
+    diffs = [api.repo.ManifestDiff('PATH', 'FROM_REV', 'TO_REV')]
+    api.depends.ensure_manifest_cq_depends_fulfilled(diffs)
 
 def GenTests(api):
   yield api.test('basic')
-
-  yield (api.test('missing from XML') +  #
-         api.step_data('ensure manifest cq-depends fulfilled.git show',
-                       retcode=128))
 
   yield (api.test('has fulfilled dep') +  #
          api.step_data('ensure manifest cq-depends fulfilled.git log',
