@@ -114,10 +114,27 @@
     "cmd": [
       "python",
       "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"project_paths\": [\"src/project\"]}",
+      "[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json"
+    ],
+    "infra_step": true,
+    "name": "create project commits archive.metadata.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
     "name": "create project commits archive.create archive",
-    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/project/bundle\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
+    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/project/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -151,17 +168,17 @@
   },
   {
     "cmd": [
-      "find",
-      ".",
-      "-name",
-      "bundle",
-      "-type",
-      "f",
-      "-print0"
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/metadata.json",
+      "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/projects",
-    "name": "checkout project commits archive.find bundles",
-    "stdout": "/path/to/tmp/",
+    "infra_step": true,
+    "name": "checkout project commits archive.metadata.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -170,10 +187,10 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/projects/a/b/c/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/bundle",
       "HEAD:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
+    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
     "infra_step": true,
     "name": "checkout project commits archive.git fetch",
     "~followup_annotations": [
@@ -186,7 +203,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
+    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
     "infra_step": true,
     "name": "checkout project commits archive.git rev-parse",
     "stdout": "/path/to/tmp/",
@@ -200,7 +217,7 @@
       "checkout",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
+    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
     "infra_step": true,
     "name": "checkout project commits archive.git checkout",
     "~followup_annotations": [
@@ -211,10 +228,10 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/projects/a/b/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/c/bundle",
       "HEAD:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
+    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
     "infra_step": true,
     "name": "checkout project commits archive.git fetch (2)",
     "~followup_annotations": [
@@ -227,7 +244,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
+    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
     "infra_step": true,
     "name": "checkout project commits archive.git rev-parse (2)",
     "stdout": "/path/to/tmp/",
@@ -241,7 +258,7 @@
       "checkout",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
+    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
     "infra_step": true,
     "name": "checkout project commits archive.git checkout (2)",
     "~followup_annotations": [

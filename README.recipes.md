@@ -184,7 +184,7 @@ Args:
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#121)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#128)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 

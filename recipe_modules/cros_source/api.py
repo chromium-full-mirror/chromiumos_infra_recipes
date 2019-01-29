@@ -5,7 +5,7 @@
 
 """API for working with CrOS source."""
 
-import os.path
+import json
 
 from collections import namedtuple
 
@@ -116,6 +116,13 @@ class CrosSourceApi(recipe_api.RecipeApi):
           self.m.git.create_bundle(bundle_path, base_commit_id, 'HEAD')
           package.with_file(bundle_path)
 
+      # A metadata.json file includes information about the included bundles.
+      metadata_path = archive_root.join('metadata.json')
+      metadata = {'project_paths': project_base_commits.keys()}
+      self.m.file.write_text('metadata.json', metadata_path,
+                             json.dumps(metadata))
+      package.with_file(metadata_path)
+
       package.archive('create archive', archive_path)
 
   def checkout_project_commits_archive(self, archive_path):
@@ -136,22 +143,17 @@ class CrosSourceApi(recipe_api.RecipeApi):
       archive_root = archive_workdir.join('archive')
       self.m.archive.extract('extract archive', archive_path, archive_root)
 
-      # Find all project bundle files extracted from archive.
-      project_bundles = {}
-      with self.m.context(cwd=archive_root.join('projects')):
-        find_stdout = self.m.easy.stdout_step(
-            'find bundles',
-            ['find', '.', '-name', 'bundle', '-type', 'f', '-print0'],
-            test_stdout='a/b/bundle\0a/b/c/bundle\0')
-        for bundle_relpath in find_stdout.rstrip('\0').split('\0'):
-          project_relpath = os.path.dirname(bundle_relpath)
-          bundle_path = self.m.context.cwd.join(bundle_relpath)
-          project_bundles[project_relpath] = bundle_path
+      metadata_path = archive_root.join('metadata.json')
+      metadata = json.loads(
+          self.m.file.read_text(
+              'metadata.json', metadata_path,
+              test_data='{"project_paths": ["a/b", "a/b/c"]}'))
 
       # Checkout bundles into their projects.
-      for project_relpath, bundle_path in project_bundles.items():
+      for project_relpath in metadata['project_paths']:
         with self.m.context(cwd=self.workspace_path.join(project_relpath)):
+          bundle_path = archive_root.join(project_relpath, 'bundle')
           self.m.git.fetch_ref(bundle_path, 'HEAD')
           self.m.git.checkout('FETCH_HEAD')
 
-      return project_bundles.keys()
+      return metadata['project_paths']
