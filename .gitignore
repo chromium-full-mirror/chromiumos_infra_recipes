@@ -1,4 +1,3 @@
 *.py[cod]
 /.recipe_deps/
 /bundle/
-/workdir/

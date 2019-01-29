@@ -1,0 +1,3 @@
+# This is the default working directory for `./recipes.py run`.
+*
+!.gitignore
