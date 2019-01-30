@@ -10,7 +10,6 @@
     "cmd": [],
     "name": "ensure manifest cq-depends fulfilled (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@cq-depend missing locally@@@",
       "@@@STEP_LOG_LINE@diff manifest@PATH upreved from FROM_REV to TO_REV@@@",
       "@@@STEP_LOG_END@diff manifest@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@CL:12345 on chromium@@@",
@@ -144,7 +143,12 @@
     ]
   },
   {
-    "jsonResult": null,
+    "failure": {
+      "failure": {
+        "step": ""
+      },
+      "humanReason": "cq-depend missing locally"
+    },
     "name": "$result"
   }
 ]

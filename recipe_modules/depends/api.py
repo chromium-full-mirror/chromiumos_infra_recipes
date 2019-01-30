@@ -46,8 +46,9 @@ class DependsApi(recipe_api.RecipeApi):
             deps += re.split(r'[\s,]+', dep_line)
     # Turn the deps into (host, cl) tuples
     public = [Dep(PUBLIC_HOST, dep) for dep in deps if not dep.startswith('*')]
-    private = [Dep(PRIVATE_HOST, dep[1:]) for dep in deps if
-               dep.startswith('*')]
+    private = [
+        Dep(PRIVATE_HOST, dep[1:]) for dep in deps if dep.startswith('*')
+    ]
     return public + private
 
   def ensure_manifest_cq_depends_fulfilled(self, manifest_diffs):
@@ -68,9 +69,8 @@ class DependsApi(recipe_api.RecipeApi):
       # Log the manifest diffs in human-readable form
       manifest_diff_log = step.presentation.logs.setdefault('diff manifest', [])
       for diff in manifest_diffs:
-        manifest_diff_log.append(
-            '%s upreved from %s to %s' % (
-            diff.path, diff.from_rev, diff.to_rev))
+        manifest_diff_log.append('%s upreved from %s to %s' %
+                                 (diff.path, diff.from_rev, diff.to_rev))
 
       # Gather all CQ-DEPEND entries in all change messages.
       deps = self._gather_deps(manifest_diffs)
@@ -88,18 +88,23 @@ class DependsApi(recipe_api.RecipeApi):
       # Query Gerrit for each one of those deps to turn the CL number into a git
       # change ref.
       json_data = {
-        'changes': [
-          {'host': dep.host, 'change_number': dep.cl_number, 'patch_set': -1}
-          for
-          dep in deps]}
+          'changes': [{
+              'host': dep.host,
+              'change_number': dep.cl_number,
+              'patch_set': -1
+          } for dep in deps]
+      }
       test_data = {
-        'changes': [{
-          'info': {
-            'project': 'my/project',
-            'branch': 'master',
-            'current_revision': 'deadbeef',
-          }
-        }, {'change_number': 1234, 'info': None}]
+          'changes': [{
+              'info': {
+                  'project': 'my/project',
+                  'branch': 'master',
+                  'current_revision': 'deadbeef',
+              }
+          }, {
+              'change_number': 1234,
+              'info': None
+          }]
       }
       gerrit_results = self.m.support.call('gerrit-fetch-changes', json_data,
                                            test_output_data=test_data)
@@ -111,7 +116,7 @@ class DependsApi(recipe_api.RecipeApi):
       for change in gerrit_results['changes']:
         if change.get('info') is None:
           dep_local_log.append(
-            'gerrit query failure for cl %s' % change.get('change_number'))
+              'gerrit query failure for cl %s' % change.get('change_number'))
           step.presentation.status = self.m.step.WARNING
           continue
         project = change['info']['project']
@@ -125,15 +130,14 @@ class DependsApi(recipe_api.RecipeApi):
           # Ensure the dep is reachable locally
           if not self.m.git.is_reachable(rev):
             dep_local_log.append(
-              'Unsatisfied dep! %s does not exist at %s on branch %s' % (
-              rev, path, branch))
-            step.presentation.step_text = 'cq-depend missing locally'
-            step.presentation.status = 'FAILURE'
-            return
+                'Unsatisfied dep! %s does not exist at %s on branch %s' %
+                (rev, path, branch))
+            step.presentation.status = self.m.step.FAILURE
+            raise self.m.step.StepFailure('cq-depend missing locally')
 
           # Dep is satisfied locally
           dep_local_log.append(
-            '%s found at %s on branch %s' % (rev, path, branch))
+              '%s found at %s on branch %s' % (rev, path, branch))
 
       # All deps satisfied
       step.presentation.step_text = 'all cq-depends fulfilled'

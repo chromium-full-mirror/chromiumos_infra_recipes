@@ -44,7 +44,6 @@
     "stdin": "{\"requests\": [{\"bad_response_count\": {}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
-      "@@@STEP_TEXT@got 0 responses for 1 requests@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": []@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",

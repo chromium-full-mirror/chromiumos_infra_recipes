@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/path',
+    'recipe_engine/step',
     'cros_source',
     'gerrit',
 ]
@@ -13,7 +14,10 @@ DEPS = [
 def RunSteps(api):
   _ = api.cros_source.master_path
 
-  api.cros_source.find_project_path('fake_project', 'fake_branch')
+  try:
+    api.cros_source.find_project_path('fake_project', 'fake_branch')
+  except api.step.StepFailure:
+    pass
 
   commits = api.cros_source.apply_gerrit_patch_sets(
       [api.gerrit.test_api.test_patch_set()])
@@ -22,6 +26,7 @@ def RunSteps(api):
   api.cros_source.create_project_commits_archive(archive_path, commits)
   projects = api.cros_source.checkout_project_commits_archive(archive_path)
   assert set(projects) == {'a/b', 'a/b/c'}, projects
+
 
 def GenTests(api):
   yield api.test('basic')

@@ -133,15 +133,20 @@ class GerritApi(recipe_api.RecipeApi):
                                          test_output_data=test_output_data)
 
     # Validate all results present.
-    call_presentation = self.m.step.active_result.presentation
     patch_sets = []
+    missing_responses = []
     for request, result in zip(requests, results['changes']):
       if result.get('revision_info') is None:
-        call_presentation.status = self.m.step.FAILURE
-        call_presentation.logs.setdefault(
-            'missing gerrit patch set', []).append(
-                'no Gerrit patch set found for input %r' % request)
-        patch_sets.append(None)
+        missing_responses.append(request)
       else:
         patch_sets.append(PatchSet(result))
+
+    if missing_responses:
+      presentation = self.m.step.active_result.presentation
+      presentation.status = self.m.step.FAILURE
+      presentation.logs['missing gerrit patch set'] = [
+          'no Gerrit patch set found for input %r' % r
+          for r in missing_responses
+      ]
+      raise self.m.step.StepFailure('missing gerrit patch(es)')
     return patch_sets

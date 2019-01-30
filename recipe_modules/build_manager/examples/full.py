@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/json',
+    'recipe_engine/step',
     'build_manager',
 ]
 
@@ -12,18 +13,24 @@ TEST_BUILD = {'id': 12345, 'update_time': '2019-01-01T10:00:20.021Z'}
 
 
 def RunSteps(api):
-  api.build_manager._buildbucket_batch(
-      'failure_type', [{}], test_response={
-          'responses': [{
-              'error': {
-                  'code': 99,
-                  'message': 'failed'
-              }
-          }]
-      })
+  try:
+    api.build_manager._buildbucket_batch(
+        'failure_type', [{}], test_response={
+            'responses': [{
+                'error': {
+                    'code': 99,
+                    'message': 'failed'
+                }
+            }]
+        })
+  except api.step.StepFailure:
+    pass
 
-  api.build_manager._buildbucket_batch('bad_response_count', [{}],
-                                       test_response={'responses': []})
+  try:
+    api.build_manager._buildbucket_batch('bad_response_count', [{}],
+                                         test_response={'responses': []})
+  except api.step.StepFailure:
+    pass
 
   m = api.build_manager.new_manager()
   m.poll()

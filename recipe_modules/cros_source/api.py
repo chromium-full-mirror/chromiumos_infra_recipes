@@ -57,11 +57,9 @@ class CrosSourceApi(recipe_api.RecipeApi):
       for project_info in self.m.repo.project_infos([project]):
         if project_info.branch == branch:
           return project_info.path
-      # Didn't find the project!
-      present = self.m.step.active_result.presentation
-      present.status = self.m.step.FAILURE
-      present.step_text = 'No path found for project %r branch %r' % (project,
-                                                                      branch)
+
+      raise self.m.step.StepFailure(
+          'No path found for project %r branch %r' % (project, branch))
 
   def apply_gerrit_patch_sets(self, patch_sets):
     """Apply Gerrit patch sets to the workspace.

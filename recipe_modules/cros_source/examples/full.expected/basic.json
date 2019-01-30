@@ -12,10 +12,8 @@
     "name": "repo forall",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_TEXT@No path found for project 'fake_project' branch 'refs/heads/fake_branch'@@@",
       "@@@STEP_LOG_LINE@raw_io.output@fake_project|src/fake_project|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

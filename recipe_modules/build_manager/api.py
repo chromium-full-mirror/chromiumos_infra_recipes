@@ -120,26 +120,30 @@ class BuildManagerApi(recipe_api.RecipeApi):
     batch_resp = self.m.prpc.call_json(BUILDBUCKET_SERVER, method, batch_req,
                                        name='prpc %s %s' % (method, batch_type),
                                        test_output_data=test_response)
-    call_presentation = self.m.step.active_result.presentation
 
     batch_resps = batch_resp['responses']
     if len(batch_resps) != len(requests):
-      call_presentation.status = self.m.step.FAILURE
-      call_presentation.step_text = 'got %d responses for %d requests' % (
-          len(batch_resps), len(requests))
+      self.m.step.active_result.presentation.status = self.m.step.FAILURE
+      raise self.m.step.InfraFailure('got %d responses for %d requests' %
+                                     (len(batch_resps), len(requests)))
 
     responses = []
+    failures = []
     for req, resp in zip(requests, batch_resps):
       if 'error' in resp:
-        present = self.m.step.active_result.presentation
-        present.status = self.m.step.FAILURE
-        failure = 'Error:\n%s\nRequest:\n%s' % (
+        failures.append('Error:\n%s\nRequest:\n%s' % (
             json.dumps(resp['error']),
             json.dumps(req),
-        )
-        present.logs.setdefault('buildbucket failures', []).append(failure)
-        continue
-      responses.append(resp[batch_type])
+        ))
+      else:
+        responses.append(resp[batch_type])
+
+    if failures:
+      presentation = self.m.step.active_result.presentation
+      presentation.status = self.m.step.FAILURE
+      presentation.logs['buildbucket failures'] = failures
+      raise self.m.step.InfraFailure('buildbucket batch failure')
+
     return responses
 
 

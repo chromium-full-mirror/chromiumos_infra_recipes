@@ -174,7 +174,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#66)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#64)(self, patch_sets):**
 
 Apply Gerrit patch sets to the workspace.
 
@@ -184,7 +184,7 @@ Args:
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#132)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#130)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -197,7 +197,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#89)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#87)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -250,7 +250,7 @@ APIs for checking that CQ-DEPEND has been fulfilled.
 
 A module for checking that CQ-DEPEND has been fulfilled.
 
-&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#53)(self, manifest_diffs):**
+&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#54)(self, manifest_diffs):**
 
 Checks that CQ-DEPENDS deps between manifests are met.
 
@@ -880,9 +880,9 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#11)(api):**
 ### *recipes* / [build\_manager:examples/full](/recipe_modules/build_manager/examples/full.py)
 
-[DEPS](/recipe_modules/build_manager/examples/full.py#6): [build\_manager](#recipe_modules-build_manager), [recipe\_engine/json][recipe_engine/recipe_modules/json]
+[DEPS](/recipe_modules/build_manager/examples/full.py#6): [build\_manager](#recipe_modules-build_manager), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/build_manager/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_manager/examples/full.py#15)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -890,9 +890,9 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#12)(api):**
 ### *recipes* / [cros\_source:examples/full](/recipe_modules/cros_source/examples/full.py)
 
-[DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#14)(api):**
 ### *recipes* / [depends:examples/full](/recipe_modules/depends/examples/full.py)
 
 [DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
@@ -910,11 +910,11 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
-[DEPS](/recipe_modules/gerrit/examples/full.py#6): [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/gerrit/examples/full.py#6): [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#13)(api):**
 
-&mdash; **def [assert\_equal](/recipe_modules/gerrit/examples/full.py#39)(got, want):**
+&mdash; **def [assert\_equal](/recipe_modules/gerrit/examples/full.py#46)(got, want):**
 
 Asserts that the two values are equal, or throws AssertionError.
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
