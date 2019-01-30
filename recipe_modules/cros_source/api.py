@@ -42,7 +42,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
     return self._workspace_path
 
   def find_project_path(self, project, branch):
-    """Find the source path for a given project.
+    """Find the source path for a given project in the workspace.
 
     Args:
       project (str): The project name to find a source path for.
@@ -51,13 +51,17 @@ class CrosSourceApi(recipe_api.RecipeApi):
     Returns:
       The path value for the found project.
     """
-    cmd = [
-        'chromite/scripts/find_project_path', '--project', project, '--branch',
-        branch
-    ]
-    with self.m.context(cwd=self.master_path):
-      return self.m.easy.stdout_step('find %s [%s]' % (project, branch), cmd,
-                                     test_stdout='src/project').strip()
+    if not branch.startswith('refs/'):
+      branch = 'refs/heads/%s' % branch
+    with self.m.context(cwd=self.workspace_path):
+      for project_info in self.m.repo.project_infos([project]):
+        if project_info.branch == branch:
+          return project_info.path
+      # Didn't find the project!
+      present = self.m.step.active_result.presentation
+      present.status = self.m.step.FAILURE
+      present.step_text = 'No path found for project %r branch %r' % (project,
+                                                                      branch)
 
   def apply_gerrit_patch_sets(self, patch_sets):
     """Apply Gerrit patch sets to the workspace.

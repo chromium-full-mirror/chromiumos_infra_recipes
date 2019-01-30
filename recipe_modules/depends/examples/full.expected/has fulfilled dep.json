@@ -16,7 +16,7 @@
       "@@@STEP_LOG_LINE@gather cq-depend@CL:12345 on chromium@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@CL:67890 on chrome-internal@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
-      "@@@STEP_LOG_LINE@dep local@CURRENT_REVISION found at src/project on branch BRANCH@@@",
+      "@@@STEP_LOG_LINE@dep local@deadbeef found at src/my/project on branch master@@@",
       "@@@STEP_LOG_LINE@dep local@gerrit query failure for cl 1234@@@",
       "@@@STEP_LOG_END@dep local@@@",
       "@@@STEP_WARNINGS@@@"
@@ -97,9 +97,9 @@
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"BRANCH\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"CURRENT_REVISION\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"PROJECT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"deadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"my/project\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -113,17 +113,20 @@
   },
   {
     "cmd": [
-      "chromite/scripts/find_project_path",
-      "--project",
-      "PROJECT",
-      "--branch",
-      "BRANCH"
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "forall",
+      "my/project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
-    "cwd": "[START_DIR]/chromiumos_master",
-    "name": "ensure manifest cq-depends fulfilled.find PROJECT [BRANCH]",
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure manifest cq-depends fulfilled.repo forall",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@my/project|src/my/project|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -131,10 +134,10 @@
       "git",
       "merge-base",
       "--is-ancestor",
-      "CURRENT_REVISION",
+      "deadbeef",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/my/project",
     "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled.git merge-base",
     "~followup_annotations": [

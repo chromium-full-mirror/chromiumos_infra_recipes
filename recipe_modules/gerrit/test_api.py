@@ -21,6 +21,11 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'branch': 'master',
         'subject': 'Change title',
     }
+    ref = 'refs/changes/%s/%d/%d' % (
+        str(request['change_number'])[-2:],
+        request['change_number'],
+        request['patch_set'],
+    )
     resp['revision_info'] = {
         'commit': {
             'message': 'Change commit message',
@@ -30,13 +35,10 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
                 'url': ('https://%s/chromium/src' % request['host']).replace(
                     '-review', ''),
                 'ref':
-                    'refs/changes/%s/%d/%d' % (
-                        str(request['change_number'])[-2:],
-                        request['change_number'],
-                        request['patch_set'],
-                    ),
+                    ref,
             }
-        }
+        },
+        'ref': ref,
     }
     return resp
 

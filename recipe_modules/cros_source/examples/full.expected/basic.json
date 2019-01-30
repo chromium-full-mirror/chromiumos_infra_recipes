@@ -1,21 +1,43 @@
 [
   {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "forall",
+      "fake_project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "repo forall",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No path found for project 'fake_project' branch 'refs/heads/fake_branch'@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@fake_project|src/fake_project|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "apply gerrit patch sets"
   },
   {
     "cmd": [
-      "chromite/scripts/find_project_path",
-      "--project",
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "forall",
       "chromium/src",
-      "--branch",
-      "master"
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
-    "cwd": "[START_DIR]/chromiumos_master",
-    "name": "apply gerrit patch sets.find chromium/src [master]",
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "apply gerrit patch sets.repo forall",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -25,7 +47,7 @@
       "https://chromium/chromium/src",
       "refs/changes/45/12345/1:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -38,7 +60,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse",
     "stdout": "/path/to/tmp/",
@@ -52,7 +74,7 @@
       "cherry-pick",
       "deadbeef"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply gerrit patch sets.git cherry-pick",
     "~followup_annotations": [
@@ -65,7 +87,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse (2)",
     "stdout": "/path/to/tmp/",
@@ -87,7 +109,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/project"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src"
     ],
     "infra_step": true,
     "name": "create project commits archive.project path",
@@ -100,10 +122,10 @@
       "git",
       "bundle",
       "create",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/project/bundle",
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle",
       "deadbeef^..HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "create project commits archive.git bundle",
     "~followup_annotations": [
@@ -118,7 +140,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\"project_paths\": [\"src/project\"]}",
+      "{\"project_paths\": [\"src/chromium/src\"]}",
       "[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json"
     ],
     "infra_step": true,
@@ -134,7 +156,7 @@
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
     "name": "create project commits archive.create archive",
-    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/project/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
+    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

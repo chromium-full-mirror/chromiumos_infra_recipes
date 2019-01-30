@@ -51,3 +51,7 @@ class RepoCacheApi(recipe_api.RecipeApi):
       with self.m.context(cwd=self.path, infra_steps=True):
         self.m.repo.init(self.manifest_url, **init_opts)
         self.m.repo.sync(**sync_opts)
+
+      # Sanity check since `repo init` will happily reuse a repository in the
+      # cwd's ancestor directories.
+      assert self.m.path.exists(self.path.join('.repo')), '.repo not created!'

@@ -95,9 +95,9 @@ class DependsApi(recipe_api.RecipeApi):
       test_data = {
         'changes': [{
           'info': {
-            'project': 'PROJECT',
-            'branch': 'BRANCH',
-            'current_revision': 'CURRENT_REVISION',
+            'project': 'my/project',
+            'branch': 'master',
+            'current_revision': 'deadbeef',
           }
         }, {'change_number': 1234, 'info': None}]
       }

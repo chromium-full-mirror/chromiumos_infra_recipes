@@ -11,6 +11,10 @@ DEPS = [
 
 
 def RunSteps(api):
+  _ = api.cros_source.master_path
+
+  api.cros_source.find_project_path('fake_project', 'fake_branch')
+
   commits = api.cros_source.apply_gerrit_patch_sets(
       [api.gerrit.test_api.test_patch_set()])
 

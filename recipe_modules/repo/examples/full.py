@@ -11,13 +11,18 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.repo.init('http://manifest_url')
-  api.repo.init('http://manifest_url', manifest_branch='mybranch',
-                groups=['group1', 'group2'], depth=10,
-                repo_url='http://repo_url')
-  api.repo.sync()
-  api.repo.sync(force_sync=True, detach=True, current_branch=True, jobs=99,
-                no_tags=True, optimized_fetch=True, cache_dir='/tmp/cache')
+  with api.context(cwd=api.path['start_dir']):
+    api.repo.init('http://manifest_url')
+    api.repo.init('http://manifest_url', manifest_branch='mybranch',
+                  groups=['group1', 'group2'], depth=10,
+                  repo_url='http://repo_url')
+    api.repo.sync()
+    api.repo.sync(force_sync=True, detach=True, current_branch=True, jobs=99,
+                  no_tags=True, optimized_fetch=True, cache_dir='/tmp/cache')
+
+  infos = api.repo.project_infos()
+  assert len(infos) == 3 and infos[0].path == 'src/a'
+
   assert api.repo.manifest_snapshot() == "<manifest></manifest>"
 
   snapshot_a = api.path['start_dir'].join('snapshot_a.xml')

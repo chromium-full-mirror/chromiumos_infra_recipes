@@ -15,13 +15,15 @@ import types
 from recipe_engine import recipe_api
 from xml.etree import cElementTree as ElementTree
 
-
 MANIFEST_MOCK = """
     <manifest>
       <project path="SAMPLE" revision="FROM_REV"/>
     </manifest>
   """
+
 ManifestDiff = namedtuple('ManifestDiff', ['path', 'from_rev', 'to_rev'])
+
+ProjectInfo = namedtuple('ProjectInfo', ['name', 'path', 'remote', 'branch'])
 
 
 class RepoApi(recipe_api.RecipeApi):
@@ -78,6 +80,9 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--repo-url', repo_url]
     self._step(cmd)
 
+    if self.m.context.cwd:
+      self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))
+
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, no_tags=False,
            optimized_fetch=False, cache_dir=None):
@@ -110,21 +115,51 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--cache-dir', cache_dir]
     self._step(cmd)
 
+  def project_infos(self, projects=[]):
+    """Uses 'repo forall' to gather project information.
+
+    Args:
+      projects (List[str]): Project names or paths to return info for. Defaults
+        to all projects.
+
+    Returns:
+      List[ProjectInfo]: Requested project infos.
+    """
+
+    def step_test_data():
+      data = '\n'.join('%s|src/%s|cros|refs/heads/master' % (p, p)
+                       for p in projects or ['a', 'b', 'c'])
+      return self.m.raw_io.test_api.stream_output(data)
+
+    cmd = ['forall'] + projects
+    cmd += ['-c', 'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV']
+    step_data = self._step(cmd,
+                           stdout=self.m.raw_io.output(add_output_log=True),
+                           step_test_data=step_test_data)
+
+    infos = []
+    for line in step_data.stdout.strip().split('\n'):
+      name, path, remote, rrev = line.split('|')
+      branch = None
+      if rrev.startswith('refs/heads/'):
+        branch = rrev
+      infos.append(ProjectInfo(name, path, remote, branch))
+    return infos
+
   def manifest_snapshot(self):
     """Uses repo to create a manifest snapshot and returns it as a string.
 
     Returns:
       str: The manifest XML as a string.
     """
-    step_test_data = lambda: self.m.raw_io.test_api.stream_output(
-      '<manifest></manifest>')
+    step_test_data = lambda: self.m.raw_io.test_api.stream_output('<manifest></manifest>')
     step_data = self._step(['manifest', '-r'],
                            stdout=self.m.raw_io.output(add_output_log=True),
                            step_test_data=step_test_data)
     return step_data.stdout.strip()
 
   def diff_remote_and_local_manifests(self, from_manifest_url,
-      from_manifest_ref, to_manifest_str):
+                                      from_manifest_ref, to_manifest_str):
     """Diffs the remote manifest against the local manifest string.
 
     Diffs the 'snapshot.xml' at the given `from_manifest_url` at the ref
@@ -172,9 +207,10 @@ class RepoApi(recipe_api.RecipeApi):
       List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
       changed project (excludes added/removed projects).
     """
+
     def project_paths(xml_data):
       xml = ElementTree.fromstring(xml_data)
-      attrs = [proj.attrib for proj in xml.iterfind ('project')]
+      attrs = [proj.attrib for proj in xml.iterfind('project')]
       # Make sure `path` is set, use `name` if `path` is missing
       for attr in attrs:
         attr['path'] = attr.get('path', attr.get('name'))

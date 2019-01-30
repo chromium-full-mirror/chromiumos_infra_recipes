@@ -166,7 +166,7 @@ Returns:
   str: The translated path, which will be valid within the cros_sdk chroot.
 ### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
 
-[DEPS](/recipe_modules/cros_source/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS source.
 
@@ -174,7 +174,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#62)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#66)(self, patch_sets):**
 
 Apply Gerrit patch sets to the workspace.
 
@@ -184,7 +184,7 @@ Args:
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#128)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#132)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -197,7 +197,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#85)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#89)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -213,7 +213,7 @@ Args:
 
 &mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#44)(self, project, branch):**
 
-Find the source path for a given project.
+Find the source path for a given project in the workspace.
 
 Args:
   project (str): The project name to find a source path for.
@@ -335,15 +335,15 @@ Returns:
 
 APIs for managing Gerrit changes.
 
-#### **class [GerritApi](/recipe_modules/gerrit/api.py#80)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GerritApi](/recipe_modules/gerrit/api.py#88)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gerrit helpers.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#83)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#91)(self, \*args, \*\*kwargs):**
 
 Initialize GerritApi.
 
-&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#103)(self, gerrit_changes, test_output_data=None):**
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#111)(self, gerrit_changes, test_output_data=None):**
 
 Fetch and return PatchSets from Gerrit.
 
@@ -712,11 +712,11 @@ API for working with the 'repo' VCS tool.
 
 See: https://chromium.googlesource.com/external/repo/
 
-#### **class [RepoApi](/recipe_modules/repo/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RepoApi](/recipe_modules/repo/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with the repo tool.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#160)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#195)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -732,7 +732,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#209)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#245)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -740,7 +740,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#126)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#161)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -756,7 +756,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [init](/recipe_modules/repo/api.py#57)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
+&mdash; **def [init](/recipe_modules/repo/api.py#59)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
 
 Executes 'repo init' with the given arguments.
 
@@ -767,16 +767,27 @@ Args:
   * depth (int): Create a shallow clone of the given depth.
   * repo_url (str): URL of the repo repository.
 
-&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#113)(self):**
+&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#149)(self):**
 
 Uses repo to create a manifest snapshot and returns it as a string.
 
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#32)(self):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#118)(self, projects=[]):**
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#81)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
+Uses 'repo forall' to gather project information.
+
+Args:
+  projects (List[str]): Project names or paths to return info for. Defaults
+    to all projects.
+
+Returns:
+  List[ProjectInfo]: Requested project infos.
+
+&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#34)(self):**
+
+&mdash; **def [sync](/recipe_modules/repo/api.py#86)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -903,7 +914,7 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#12)(api):**
 
-&mdash; **def [assert\_equal](/recipe_modules/gerrit/examples/full.py#34)(got, want):**
+&mdash; **def [assert\_equal](/recipe_modules/gerrit/examples/full.py#39)(got, want):**
 
 Asserts that the two values are equal, or throws AssertionError.
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)

@@ -69,12 +69,20 @@ class PatchSet(object):
   @property
   def git_fetch_url(self):
     """Returns a URL where 'git fetch' can access this PatchSet."""
-    return self._rev_info['fetch']['http']['url']
+    url = self._rev_info.get('fetch', {}).get('http', {}).get('url')
+    if url is None:
+      # No explicit fetch URL; build one ourselves.
+      url = 'https://%s/%s' % (self.host, self.project)
+    return url
 
   @property
   def git_fetch_ref(self):
     """Returns a ref where 'git fetch' can access this PatchSet."""
-    return self._rev_info['fetch']['http']['ref']
+    ref = self._rev_info.get('fetch', {}).get('http', {}).get('ref')
+    if ref is None:
+      # No explicit fetch ref; use the RevisionInfo ref.
+      ref = self._rev_info['ref']
+    return ref
 
 
 class GerritApi(recipe_api.RecipeApi):

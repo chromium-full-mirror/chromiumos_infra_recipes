@@ -25,6 +25,11 @@ def RunSteps(api):
   assert_equal(patch.display_id, 'chromium:91827')
   assert_equal(patch.display_url, 'https://chromium-review.googlesource.com/91827')
 
+  # Missing FetchInfo.
+  del patch._rev_info['fetch']
+  assert_equal(patch.git_fetch_url, 'https://chromium-review.googlesource.com/chromium/src')
+  assert_equal(patch.git_fetch_ref, 'refs/changes/27/91827/1')
+
   # Missing result
   api.gerrit.fetch_patch_sets([change], test_output_data={'changes': [{}]})
 
