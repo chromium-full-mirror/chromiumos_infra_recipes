@@ -30,13 +30,10 @@ DEPS = [
     'repo_cache',
 ]
 
-MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
 MANIFEST_REF = 'snapshot'
 
 
 def RunSteps(api):
-  # Set annealing into dryrun mode by default. Comment / uncomment as needed
-  # for testing.
   api.dev.configure(dryrun=False)
 
   # Cache the chroot.
@@ -48,11 +45,12 @@ def RunSteps(api):
   api.repo_cache.ensure_fresh_cache(repo_cache_path,
                                     api.cros_source.INTERNAL_MANIFEST_URL)
 
-  with api.cros_source.checkout_overlays_context(repo_cache_path):
-    with api.context(cwd=api.cros_source.workspace_path.join('manifest')):
+  with api.cros_source.checkout_overlays_context(repo_cache_path), api.context(
+      cwd=api.cros_source.workspace_path.join('manifest-internal')):
+
       snapshot_xml = api.repo.manifest_snapshot()
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
-          MANIFEST_URL, MANIFEST_REF, snapshot_xml)
+          api.cros_source.INTERNAL_MANIFEST_URL, MANIFEST_REF, snapshot_xml)
 
       # Nothing interesting to be done if the manifest didn't change in any
       # meaningful way.
@@ -62,8 +60,9 @@ def RunSteps(api):
 
       api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
       api.git_txn.update_ref_write_file(
-          MANIFEST_URL, MANIFEST_REF, 'Annealing manifest snapshot',
-          api.cros_source.workspace_path.join('manifest/snapshot.xml'),
+          api.cros_source.INTERNAL_MANIFEST_URL, MANIFEST_REF,
+          'Annealing manifest snapshot',
+          api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
           snapshot_xml)
 
 

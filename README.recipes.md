@@ -947,7 +947,7 @@ snapshots ToT.
 4. Make a manifest snapshot (aka "revlocked manifest"), and push it
    to `chromiumos/manifest` on the `annealing-test` branch.
 
-&mdash; **def [RunSteps](/recipes/mini_annealing.py#37)(api):**
+&mdash; **def [RunSteps](/recipes/mini_annealing.py#36)(api):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

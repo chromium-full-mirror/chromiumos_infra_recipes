@@ -238,7 +238,7 @@
       "manifest",
       "-r"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "repo manifest",
     "stdout": "/path/to/tmp/",
@@ -249,7 +249,7 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "diff remote and local manifest",
     "~followup_annotations": [
       "@@@STEP_TEXT@no manifest diffs from remote to local@@@",
@@ -260,10 +260,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chromium.googlesource.com/chromiumos/manifest",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "snapshot:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "diff remote and local manifest.git fetch",
     "~followup_annotations": [
@@ -276,7 +276,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "diff remote and local manifest.git rev-parse",
     "stdout": "/path/to/tmp/",
@@ -290,7 +290,7 @@
       "show",
       "FETCH_HEAD:snapshot.xml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "diff remote and local manifest.git show",
     "stdout": "/path/to/tmp/",
