@@ -6,5 +6,6 @@ DEPS = [
     'recipe_engine/step',
     'easy',
     'git',
+    'overlayfs',
     'repo',
 ]

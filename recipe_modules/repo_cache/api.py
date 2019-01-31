@@ -10,9 +10,6 @@ This is mostly a wrapper around the 'repo' module.
 
 from recipe_engine import recipe_api
 
-DEFAULT_CACHE_NAME = 'chromiumos'
-DEFAULT_MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
-
 DEFAULT_CACHE_SYNC_OPTS = dict(
     current_branch=True,
     detach=True,
@@ -26,20 +23,13 @@ DEFAULT_CACHE_SYNC_OPTS = dict(
 class RepoCacheApi(recipe_api.RecipeApi):
   """A module for managing repo repository caches."""
 
-  def __init__(self, *args, **kwargs):
-    super(RepoCacheApi, self).__init__(*args, **kwargs)
-    self.cache_name = DEFAULT_CACHE_NAME
-    self.manifest_url = DEFAULT_MANIFEST_URL
-
-  @property
-  def path(self):
-    """Return the configured repo cache path."""
-    return self.m.path['cache'].join(self.cache_name)
-
-  def ensure_fresh_cache(self, init_opts=None, sync_opts=None):
+  def ensure_fresh_cache(self, cache_path, manifest_url, init_opts=None,
+                         sync_opts=None):
     """Ensure the configured repo cache exists and is fresh.
 
     Args:
+      * cache_path (Path): Path to cache.
+      * manifest_url (str): Manifest URL for 'repo.init`.
       * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
     """
@@ -47,11 +37,11 @@ class RepoCacheApi(recipe_api.RecipeApi):
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
 
     with self.m.step.nest('prepare repo cache'):
-      self.m.file.ensure_directory('cache dir', self.path)
-      with self.m.context(cwd=self.path, infra_steps=True):
-        self.m.repo.init(self.manifest_url, **init_opts)
+      self.m.file.ensure_directory('cache dir', cache_path)
+      with self.m.context(cwd=cache_path, infra_steps=True):
+        self.m.repo.init(manifest_url, **init_opts)
         self.m.repo.sync(**sync_opts)
 
       # Sanity check since `repo init` will happily reuse a repository in the
       # cwd's ancestor directories.
-      assert self.m.path.exists(self.path.join('.repo')), '.repo not created!'
+      assert self.m.path.exists(cache_path.join('.repo')), '.repo not created!'

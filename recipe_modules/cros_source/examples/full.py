@@ -19,6 +19,9 @@ def RunSteps(api):
   except api.step.StepFailure:
     pass
 
+  with api.cros_source.checkout_overlays_context(api.path['start_dir']):
+    pass
+
   commits = api.cros_source.apply_gerrit_patch_sets(
       [api.gerrit.test_api.test_patch_set()])
 

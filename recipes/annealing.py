@@ -31,26 +31,22 @@ DEPS = [
     'repo_cache',
 ]
 
-MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
-
 
 def RunSteps(api):
-  with api.overlayfs.cleanup_context():
-    # Set annealing into dryrun mode by default. Comment / uncomment as needed
-    # for testing.
-    api.dev.configure(dryrun=True)
+  # Set annealing into dryrun mode by default. Comment / uncomment as needed
+  # for testing.
+  api.dev.configure(dryrun=True)
 
-    # Cache the chroot.
-    api.cros_sdk.configure(
-        chroot_parent_path=api.path['cache'].join('cros_chroot'))
+  # Cache the chroot.
+  api.cros_sdk.configure(
+      chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
-    # Refresh and mount repo cache.
-    api.repo_cache.ensure_fresh_cache()
-    api.overlayfs.mount('master', api.repo_cache.path,
-                        api.cros_source.master_path)
-    api.overlayfs.mount('workspace', api.repo_cache.path,
-                        api.cros_source.workspace_path)
+  # Prepare repo source cache.
+  repo_cache_path = api.path['cache'].join('chromiumos')
+  api.repo_cache.ensure_fresh_cache(repo_cache_path,
+                                    api.cros_source.INTERNAL_MANIFEST_URL)
 
+  with api.cros_source.checkout_overlays_context(repo_cache_path):
     # Portage uprev packages.
     with api.context(cwd=api.cros_source.workspace_path):
       api.portage.regen_cache(repo_name='chromiumos')

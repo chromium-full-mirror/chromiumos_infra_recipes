@@ -35,25 +35,24 @@ MANIFEST_REF = 'snapshot'
 
 
 def RunSteps(api):
-  with api.overlayfs.cleanup_context():
-    # Set annealing into dryrun mode by default. Comment / uncomment as needed
-    # for testing.
-    api.dev.configure(dryrun=False)
+  # Set annealing into dryrun mode by default. Comment / uncomment as needed
+  # for testing.
+  api.dev.configure(dryrun=False)
 
-    # Cache the chroot.
-    api.cros_sdk.configure(
-        chroot_parent_path=api.path['cache'].join('cros_chroot'))
+  # Cache the chroot.
+  api.cros_sdk.configure(
+      chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
-    # Refresh and mount repo cache.
-    api.repo_cache.ensure_fresh_cache()
-    api.overlayfs.mount('workspace', api.repo_cache.path,
-                        api.cros_source.workspace_path)
+  # Prepare repo source cache.
+  repo_cache_path = api.path['cache'].join('chromiumos')
+  api.repo_cache.ensure_fresh_cache(repo_cache_path,
+                                    api.cros_source.INTERNAL_MANIFEST_URL)
 
+  with api.cros_source.checkout_overlays_context(repo_cache_path):
     with api.context(cwd=api.cros_source.workspace_path.join('manifest')):
       snapshot_xml = api.repo.manifest_snapshot()
-      manifest_diffs = api.repo.diff_remote_and_local_manifests(MANIFEST_URL,
-                                                                MANIFEST_REF,
-                                                                snapshot_xml)
+      manifest_diffs = api.repo.diff_remote_and_local_manifests(
+          MANIFEST_URL, MANIFEST_REF, snapshot_xml)
 
       # Nothing interesting to be done if the manifest didn't change in any
       # meaningful way.
@@ -72,11 +71,8 @@ def GenTests(api):
   yield api.test('basic')
 
   yield api.test('has manifest change') + api.step_data(
-      'repo manifest',
-      stdout=api.raw_io.output(
+      'repo manifest', stdout=api.raw_io.output(
           '<manifest><project path="PATH" revision="TO_REV" /></manifest>')
   ) + api.step_data(
-      'diff remote and local manifest.git show',
-      stdout=api.raw_io.output(
-          '<manifest><project path="PATH" revision="FROM_REV" /></manifest>')
-  )
+      'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'))

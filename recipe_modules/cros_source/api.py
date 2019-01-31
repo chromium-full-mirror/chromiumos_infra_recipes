@@ -5,6 +5,7 @@
 
 """API for working with CrOS source."""
 
+import contextlib
 import json
 
 from collections import namedtuple
@@ -16,6 +17,9 @@ ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id'])
 
 class CrosSourceApi(recipe_api.RecipeApi):
   """A module for CrOS-specific source steps."""
+
+  EXTERNAL_MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
+  INTERNAL_MANIFEST_URL = 'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
 
   def initialize(self):
     """Initialize CrosSourceApi."""
@@ -40,6 +44,18 @@ class CrosSourceApi(recipe_api.RecipeApi):
     checkout and any modifications made by the build.
     """
     return self._workspace_path
+
+  @contextlib.contextmanager
+  def checkout_overlays_context(self, checkout_path):
+    """Returns a context where master and workspace overlays are mounted.
+
+    Args:
+      checkout_path (Path): Path to CrOS source checkout.
+    """
+    with self.m.overlayfs.cleanup_context():
+      self.m.overlayfs.mount('master', checkout_path, self.master_path)
+      self.m.overlayfs.mount('workspace', checkout_path, self.workspace_path)
+      yield
 
   def find_project_path(self, project, branch):
     """Find the source path for a given project in the workspace.

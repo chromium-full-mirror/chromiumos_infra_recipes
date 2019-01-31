@@ -20,27 +20,22 @@ DEPS = [
     'repo_cache',
 ]
 
-MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
-
 
 def RunSteps(api):
-  with api.overlayfs.cleanup_context():
-    # Set dryrun to prevent accidental e.g. git pushes.
-    api.dev.configure(dryrun=True)
+  # Set dryrun to prevent accidental e.g. git pushes.
+  api.dev.configure(dryrun=True)
 
-    # Use a named cache for the chroot.
-    chroot_parent_path = api.path['cache'].join('cros_chroot')
-    api.cros_sdk.configure(chroot_parent_path=chroot_parent_path)
+  # Use a named cache for the chroot.
+  api.cros_sdk.configure(
+      chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
-    # Refresh repo source cache.
-    api.repo_cache.ensure_fresh_cache(init_opts=dict(groups=['minilayout']))
+  # Prepare repo source cache.
+  repo_cache_path = api.path['cache'].join('chromiumos')
+  api.repo_cache.ensure_fresh_cache(repo_cache_path,
+                                    api.cros_source.INTERNAL_MANIFEST_URL,
+                                    init_opts=dict(groups=['minilayout']))
 
-    # Mount repo source overlays.
-    api.overlayfs.mount('master', api.repo_cache.path,
-                        api.cros_source.master_path)
-    api.overlayfs.mount('workspace', api.repo_cache.path,
-                        api.cros_source.workspace_path)
-
+  with api.cros_source.checkout_overlays_context(repo_cache_path):
     # Fetch and apply Gerrit changes.
     gerrit_changes = api.buildbucket.build.input.gerrit_changes
     patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)

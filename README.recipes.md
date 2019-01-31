@@ -166,15 +166,15 @@ Returns:
   str: The translated path, which will be valid within the cros_sdk chroot.
 ### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
 
-[DEPS](/recipe_modules/cros_source/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS source.
 
-#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#64)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#80)(self, patch_sets):**
 
 Apply Gerrit patch sets to the workspace.
 
@@ -184,7 +184,14 @@ Args:
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#130)(self, archive_path):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#48)(self, checkout_path):**
+
+Returns a context where master and workspace overlays are mounted.
+
+Args:
+  checkout_path (Path): Path to CrOS source checkout.
+
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#146)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -197,7 +204,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#87)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#103)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -211,7 +218,7 @@ Args:
   project_commits (List[ProjectCommit]): Commits to add to archive. Must be
     in patch application order.
 
-&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#44)(self, project, branch):**
+&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#60)(self, project, branch):**
 
 Find the source path for a given project in the workspace.
 
@@ -222,11 +229,11 @@ Args:
 Returns:
   The path value for the found project.
 
-&mdash; **def [initialize](/recipe_modules/cros_source/api.py#20)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_source/api.py#24)(self):**
 
 Initialize CrosSourceApi.
 
-&emsp; **@property**<br>&mdash; **def [master\_path](/recipe_modules/cros_source/api.py#25)(self):**
+&emsp; **@property**<br>&mdash; **def [master\_path](/recipe_modules/cros_source/api.py#29)(self):**
 
 The "master" checkout path.
 
@@ -234,7 +241,7 @@ This is a recent version of the source which should not be modified (apart
 from incidental changes like caching) during a build. "Top of tree" logic
 will run from this checkout.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#35)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#39)(self):**
 
 The "workspace" checkout path.
 
@@ -807,21 +814,19 @@ API for working with repo repository caches.
 
 This is mostly a wrapper around the 'repo' module.
 
-#### **class [RepoCacheApi](/recipe_modules/repo_cache/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RepoCacheApi](/recipe_modules/repo_cache/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for managing repo repository caches.
 
-&mdash; **def [ensure\_fresh\_cache](/recipe_modules/repo_cache/api.py#39)(self, init_opts=None, sync_opts=None):**
+&mdash; **def [ensure\_fresh\_cache](/recipe_modules/repo_cache/api.py#26)(self, cache_path, manifest_url, init_opts=None, sync_opts=None):**
 
 Ensure the configured repo cache exists and is fresh.
 
 Args:
+  * cache_path (Path): Path to cache.
+  * manifest_url (str): Manifest URL for 'repo.init`.
   * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
-
-&emsp; **@property**<br>&mdash; **def [path](/recipe_modules/repo_cache/api.py#34)(self):**
-
-Return the configured repo cache path.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -867,7 +872,7 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#37)(api):**
+&mdash; **def [RunSteps](/recipes/annealing.py#35)(api):**
 ### *recipes* / [artifacts:examples/full](/recipe_modules/artifacts/examples/full.py)
 
 [DEPS](/recipe_modules/artifacts/examples/full.py#5): [artifacts](#recipe_modules-artifacts), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -964,7 +969,7 @@ snapshots ToT.
 
 Recipe for prototyping Chrome OS builders.
 
-&mdash; **def [RunSteps](/recipes/prototype.py#26)(api):**
+&mdash; **def [RunSteps](/recipes/prototype.py#24)(api):**
 ### *recipes* / [prpc:examples/full](/recipe_modules/prpc/examples/full.py)
 
 [DEPS](/recipe_modules/prpc/examples/full.py#6): [prpc](#recipe_modules-prpc), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -977,9 +982,9 @@ Recipe for prototyping Chrome OS builders.
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
 ### *recipes* / [repo\_cache:examples/full](/recipe_modules/repo_cache/examples/full.py)
 
-[DEPS](/recipe_modules/repo_cache/examples/full.py#6): [repo\_cache](#recipe_modules-repo_cache)
+[DEPS](/recipe_modules/repo_cache/examples/full.py#6): [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/repo_cache/examples/full.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo_cache/examples/full.py#12)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
