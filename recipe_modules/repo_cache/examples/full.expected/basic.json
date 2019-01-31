@@ -23,6 +23,38 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      ".repo/manifests"
+    ],
+    "infra_step": true,
+    "name": "prepare repo cache.rm ./repo/manifests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      ".repo/manifests.git"
+    ],
+    "infra_step": true,
+    "name": "prepare repo cache.rm ./repo/manifests.git",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_PACKAGE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",

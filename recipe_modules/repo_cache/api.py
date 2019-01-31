@@ -39,6 +39,15 @@ class RepoCacheApi(recipe_api.RecipeApi):
     with self.m.step.nest('prepare repo cache'):
       self.m.file.ensure_directory('cache dir', cache_path)
       with self.m.context(cwd=cache_path, infra_steps=True):
+
+        # Remove the manifest git directory and it's associated .git directory
+        # which is at .repo/manifest and .repo/manifest.git respectively. When
+        # re-initing a manifest in repo, it will try to rebase the manifest
+        # checkout rather than say a hard reset. This is incorrect logic in our
+        # case.
+        self.m.file.rmtree('rm ./repo/manifests', '.repo/manifests')
+        self.m.file.rmtree('rm ./repo/manifests.git', '.repo/manifests.git')
+
         self.m.repo.init(manifest_url, **init_opts)
         self.m.repo.sync(**sync_opts)
 
