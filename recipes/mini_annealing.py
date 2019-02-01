@@ -52,13 +52,16 @@ def RunSteps(api):
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
           api.cros_source.INTERNAL_MANIFEST_URL, MANIFEST_REF, snapshot_xml)
 
-      # Nothing interesting to be done if the manifest didn't change in any
-      # meaningful way.
       # TODO(athilenius): It would be nice to set the 'Info' column here.
-      if not manifest_diffs:
-        return
+      if manifest_diffs is not None:
+        # If there are zero diffs (empty array) then there is nothing
+        # interesting to be done.
+        if len(manifest_diffs) == 0:
+          return
 
-      api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
+        # Otherwise we need to ensure all of those diffs have fulfilled deps.
+        api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
+
       api.git_txn.update_ref_write_file(
           api.cros_source.INTERNAL_MANIFEST_URL, MANIFEST_REF,
           'Annealing manifest snapshot',
