@@ -29,7 +29,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      ".repo/manifests"
+      "[CACHE]/chromiumos/.repo/manifests"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
@@ -46,7 +46,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      ".repo/manifests.git"
+      "[CACHE]/chromiumos/.repo/manifests.git"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,

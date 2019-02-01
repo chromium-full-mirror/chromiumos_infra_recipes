@@ -45,8 +45,10 @@ class RepoCacheApi(recipe_api.RecipeApi):
         # re-initing a manifest in repo, it will try to rebase the manifest
         # checkout rather than say a hard reset. This is incorrect logic in our
         # case.
-        self.m.file.rmtree('rm ./repo/manifests', '.repo/manifests')
-        self.m.file.rmtree('rm ./repo/manifests.git', '.repo/manifests.git')
+        self.m.file.rmtree('rm ./repo/manifests',
+                           cache_path.join('.repo/manifests'))
+        self.m.file.rmtree('rm ./repo/manifests.git',
+                           cache_path.join('.repo/manifests.git'))
 
         self.m.repo.init(manifest_url, **init_opts)
         self.m.repo.sync(**sync_opts)

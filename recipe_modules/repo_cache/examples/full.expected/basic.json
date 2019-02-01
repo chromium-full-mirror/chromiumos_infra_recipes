@@ -29,7 +29,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      ".repo/manifests"
+      "[START_DIR]/.repo/manifests"
     ],
     "infra_step": true,
     "name": "prepare repo cache.rm ./repo/manifests",
@@ -45,7 +45,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      ".repo/manifests.git"
+      "[START_DIR]/.repo/manifests.git"
     ],
     "infra_step": true,
     "name": "prepare repo cache.rm ./repo/manifests.git",
