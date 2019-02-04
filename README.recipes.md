@@ -18,7 +18,9 @@
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
+  * [skylab](#recipe_modules-skylab)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
+  * [test_plan](#recipe_modules-test_plan)
 
 **[Recipes](#Recipes)**
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
@@ -40,8 +42,11 @@
   * [portage:examples/full](#recipes-portage_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
+  * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
   * [support:examples/full](#recipes-support_examples_full)
+  * [test_execution/execute_plan](#recipes-test_execution_execute_plan) &mdash; Recipe for executing ChromeOS test plan.
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
+  * [test_plan:examples/full](#recipes-test_plan_examples_full)
 ## Recipe Modules
 
 ### *recipe_modules* / [artifacts](/recipe_modules/artifacts)
@@ -824,6 +829,22 @@ Sync to the given manifest file data.
 Args:
   * manifest_data (str): Manifest XML data to use for the sync.
   * kwargs: Keyword arguments to pass to 'repo.sync'.
+### *recipe_modules* / [skylab](/recipe_modules/skylab)
+
+[DEPS](/recipe_modules/skylab/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Skylab helper module
+
+&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#16)(self, name, test_unit):**
+
+Skylab step.
+
+Args:
+  * test_unit (TestUnit): Test plan step to execute.
+
+&mdash; **def [initialize](/recipe_modules/skylab/api.py#13)(self):**
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -851,6 +872,23 @@ Returns:
 Ensure the CIPD support package is installed.
 
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
+### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
+
+[DEPS](/recipe_modules/test_plan/__init__.py#1): [skylab](#recipe_modules-skylab), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [RunPlanApi](/recipe_modules/test_plan/api.py#8)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for test execution steps
+
+&mdash; **def [initialize](/recipe_modules/test_plan/api.py#11)(self):**
+
+&mdash; **def [run](/recipe_modules/test_plan/api.py#16)(self, name, test_plan):**
+
+Run all test plan steps. Aborts on the first step failure.
+
+Args:
+  * name (str): Step name.
+  * test_plan (GenerateTestPlanResponse): Test plan.
 ## Recipes
 
 ### *recipes* / [annealing](/recipes/annealing.py)
@@ -1014,11 +1052,23 @@ Recipe for prototyping Chrome OS builders.
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
+### *recipes* / [skylab:examples/create\_suite](/recipe_modules/skylab/examples/create_suite.py)
+
+[DEPS](/recipe_modules/skylab/examples/create_suite.py#7): [skylab](#recipe_modules-skylab), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_suite.py#13)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
+### *recipes* / [test\_execution/execute\_plan](/recipes/test_execution/execute_plan.py)
+
+[DEPS](/recipes/test_execution/execute_plan.py#8): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for executing ChromeOS test plan.
+
+&mdash; **def [RunSteps](/recipes/test_execution/execute_plan.py#16)(api):**
 ### *recipes* / [test\_execution/execute\_vm\_suite](/recipes/test_execution/execute_vm_suite.py)
 
 [DEPS](/recipes/test_execution/execute_vm_suite.py#12): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_test](#recipe_modules-cros_test), [overlayfs](#recipe_modules-overlayfs), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1037,6 +1087,11 @@ Use in place of file api's copytree method, as copytree can be quite slow,
 and we have to merge several source directories to a single target directory.
 
 &mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#140)(files, gsutil, gs_bucket, gs_path, dest_path):**
+### *recipes* / [test\_plan:examples/full](/recipe_modules/test_plan/examples/full.py)
+
+[DEPS](/recipe_modules/test_plan/examples/full.py#7): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/full.py#12)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-gitiles

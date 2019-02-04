@@ -1,0 +1,15 @@
+[
+  {
+    "cmd": [],
+    "name": "run plan"
+  },
+  {
+    "failure": {
+      "failure": {
+        "step": ""
+      },
+      "humanReason": "Unknown test environment \"invalid\""
+    },
+    "name": "$result"
+  }
+]
