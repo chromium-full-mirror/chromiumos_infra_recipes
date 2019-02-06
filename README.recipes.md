@@ -8,6 +8,7 @@
   * [build_manager](#recipe_modules-build_manager) &mdash; API for managing multiple parallel "worker" Buildbucket builds.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
+  * [cros_test](#recipe_modules-cros_test) &mdash; API for interacting with cros_test chromite api.
   * [depends](#recipe_modules-depends) &mdash; APIs for checking that CQ-DEPEND has been fulfilled.
   * [dev](#recipe_modules-dev) &mdash; API for development config.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
@@ -29,6 +30,7 @@
   * [build_manager:examples/full](#recipes-build_manager_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
+  * [cros_test:examples/full](#recipes-cros_test_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dev:examples/full](#recipes-dev_examples_full)
   * [easy:examples/full](#recipes-easy_examples_full)
@@ -43,6 +45,7 @@
   * [repo:examples/full](#recipes-repo_examples_full)
   * [repo_cache:examples/full](#recipes-repo_cache_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
+  * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
   * [upload_artifacts](#recipes-upload_artifacts)
 ## Recipe Modules
 
@@ -250,6 +253,27 @@ The "workspace" checkout path.
 
 This is where the build is processed. It will contain the target base
 checkout and any modifications made by the build.
+### *recipe_modules* / [cros\_test](/recipe_modules/cros_test)
+
+[DEPS](/recipe_modules/cros_test/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+API for interacting with cros_test chromite api.
+
+#### **class [CrosTestApi](/recipe_modules/cros_test/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&emsp; **@property**<br>&mdash; **def [image\_path](/recipe_modules/cros_test/api.py#16)(self):**
+
+Returns a Path to image artifacts.
+
+&mdash; **def [run\_vm\_test](/recipe_modules/cros_test/api.py#21)(self, build_target, test_suite):**
+
+Run the specified test in a vm.
+
+Expects chromiumos_qemu_image.bin and id_rsa to be present in image_path.
+
+Args:
+  build_target (str): The build target to test against.
+  test_suite (str): A valid Autotest vm test suite.
 ### *recipe_modules* / [depends](/recipe_modules/depends)
 
 [DEPS](/recipe_modules/depends/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -585,11 +609,11 @@ A module for interacting with OverlayFS mounts.
 
 Initialize OverlayfsApi.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#81)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#83)(self):**
 
 Returns a context that cleans up any overlayfs mounts created in it.
 
-&mdash; **def [mount](/recipe_modules/overlayfs/api.py#32)(self, name, lowerdir_path, mount_path):**
+&mdash; **def [mount](/recipe_modules/overlayfs/api.py#32)(self, name, lowerdir_path, mount_path, upperdir_path=None):**
 
 Mount an OverlayFS.
 
@@ -600,8 +624,10 @@ Args:
       "Mount options for overlay".
   * mount_path (Path): Path to mount the OverlayFS at. Will be created if
       it doesn't exist.
+  * upperdir_path (Path): Optional Path to the OverlayFS "upperdir".
+      See mount(8) "Mount options for overlay".
 
-&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#68)(self, name, mount_path):**
+&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#70)(self, name, mount_path):**
 
 Unmount an OverlayFS.
 
@@ -910,6 +936,11 @@ The annealing builders run in serial and do the following:
 [DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#17)(api):**
+### *recipes* / [cros\_test:examples/full](/recipe_modules/cros_test/examples/full.py)
+
+[DEPS](/recipe_modules/cros_test/examples/full.py#6): [cros\_test](#recipe_modules-cros_test), [recipe\_engine/file][recipe_engine/recipe_modules/file]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test/examples/full.py#12)(api):**
 ### *recipes* / [depends:examples/full](/recipe_modules/depends/examples/full.py)
 
 [DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
@@ -988,6 +1019,24 @@ Recipe for prototyping Chrome OS builders.
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
+### *recipes* / [test\_execution/execute\_vm\_suite](/recipes/test_execution/execute_vm_suite.py)
+
+[DEPS](/recipes/test_execution/execute_vm_suite.py#12): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_test](#recipe_modules-cros_test), [overlayfs](#recipe_modules-overlayfs), [repo\_cache](#recipe_modules-repo_cache), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for executing ChromeOS VM test suite.
+
+This recipe runs out-of-band on VM test swarming bot.
+
+&mdash; **def [RunSteps](/recipes/test_execution/execute_vm_suite.py#33)(api):**
+
+&mdash; **def [copy\_tree](/recipes/test_execution/execute_vm_suite.py#144)(name, py, src, dest):**
+
+Shell out to bash cp to perform copy operations.
+
+Use in place of file api's copytree method, as copytree can be quite slow,
+and we have to merge several source directories to a single target directory.
+
+&mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#138)(files, gsutil, gs_bucket, gs_path, dest_path):**
 ### *recipes* / [upload\_artifacts](/recipes/upload_artifacts.py)
 
 [DEPS](/recipes/upload_artifacts.py#6): [artifacts](#recipe_modules-artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [payloads](#recipe_modules-payloads), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]

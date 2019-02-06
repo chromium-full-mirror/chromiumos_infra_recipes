@@ -1,0 +1,56 @@
+[
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/cros_test/image"
+    ],
+    "infra_step": true,
+    "name": "ensure image path"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[chromeos::cros_test]/resources/find_free_port.py"
+    ],
+    "name": "find free port",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--workspace",
+      "[CLEANUP]/cros_test",
+      "--",
+      "cros_run_vm_test",
+      "--debug",
+      "--board=build_target",
+      "--image-path",
+      "/mnt/host/workspace/image/chromiumos_qemu_image.bin",
+      "--private-key",
+      "/mnt/host/workspace/image/id_rsa",
+      "--results-dir",
+      "/mnt/host/workspace/results",
+      "--ssh-port",
+      "9228",
+      "--autotest",
+      "test_suite",
+      "--test_that-args=--whitelist-chrome-crashes"
+    ],
+    "name": "run vm test suite test_suite"
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

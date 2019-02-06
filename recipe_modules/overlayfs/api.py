@@ -29,7 +29,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
     """Returns a Path to the base work directory for this module."""
     return self.m.path['cleanup'].join('overlayfs')
 
-  def mount(self, name, lowerdir_path, mount_path):
+  def mount(self, name, lowerdir_path, mount_path, upperdir_path=None):
     """Mount an OverlayFS.
 
     Args:
@@ -39,14 +39,16 @@ class OverlayfsApi(recipe_api.RecipeApi):
           "Mount options for overlay".
       * mount_path (Path): Path to mount the OverlayFS at. Will be created if
           it doesn't exist.
-
+      * upperdir_path (Path): Optional Path to the OverlayFS "upperdir".
+          See mount(8) "Mount options for overlay".
     """
     assert name.isalnum(), 'overlayfs mount names must be alphanumeric'
     with self.m.context(name_prefix='mount overlay %s' % name,
                         increment_nest_level=True, infra_steps=True):
       # Create overlayfs directories.
       work_base = self._base_work_path
-      upperdir_path = work_base.join('upperdir')
+      if upperdir_path is None:
+        upperdir_path = work_base.join('upperdir')
       self.m.file.ensure_directory('create upperdir', upperdir_path)
       workdir_path = work_base.join('workdir')
       self.m.file.ensure_directory('create workdir', workdir_path)
