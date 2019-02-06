@@ -35,7 +35,6 @@
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
-  * [mini_annealing](#recipes-mini_annealing) &mdash; Recipe for the Chrome OS mini-annealing builders.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [payloads:examples/full](#recipes-payloads_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
@@ -947,20 +946,6 @@ Asserts that the two values are equal, or throws AssertionError.
 &mdash; **def [RunSteps](/recipe_modules/git_txn/examples/full.py#12)(api):**
 
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
-### *recipes* / [mini\_annealing](/recipes/mini_annealing.py)
-
-[DEPS](/recipes/mini_annealing.py#16): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-Recipe for the Chrome OS mini-annealing builders.
-
-The mini annealing builder is a subset of the full annealing builder and simply
-snapshots ToT.
-
-1. Checkout ToT
-4. Make a manifest snapshot (aka "revlocked manifest"), and push it
-   to `chromiumos/manifest` on the `annealing-test` branch.
-
-&mdash; **def [RunSteps](/recipes/mini_annealing.py#36)(api):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
