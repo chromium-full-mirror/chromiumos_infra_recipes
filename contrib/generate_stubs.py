@@ -21,8 +21,6 @@ def main():
 
   dep_packages = set()
 
-  stubs_root = os.path.abspath(os.path.join(here, 'stubs'))
-
   for name, module in data['recipe_modules'].items():
     deps = []
     for dep in module['deps']['module_links']:
@@ -34,10 +32,7 @@ def main():
       continue
 
     print('Processing %s' % name)
-    stub_path = os.path.join(stubs_root, module['name'], 'api.pyi')
-    stub_dir = os.path.dirname(stub_path)
-    if not os.path.exists(stub_dir):
-      os.makedirs(stub_dir)
+    stub_path = module['api_class']['relpath'] + 'i'
     with open(stub_path, 'w') as stub:
       for dep in deps:
         stub.write('import %s.api\n' % dep)
