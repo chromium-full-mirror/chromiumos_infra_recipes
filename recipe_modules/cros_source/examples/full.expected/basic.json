@@ -189,6 +189,49 @@
     ]
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chromium.googlesource.com/project/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
+      "--format",
+      "text"
+    ],
+    "cwd": "[START_DIR]/root",
+    "name": "fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "<manifest></manifest>",
+      "[CLEANUP]/manifest_tmp_1"
+    ],
+    "cwd": "[START_DIR]/root",
+    "infra_step": true,
+    "name": "write manifest"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "sync",
+      "--detach",
+      "--manifest-name",
+      "../../../../[CLEANUP]/manifest_tmp_1",
+      "--optimized-fetch"
+    ],
+    "cwd": "[START_DIR]/root",
+    "infra_step": true,
+    "name": "repo sync"
+  },
+  {
     "cmd": [],
     "name": "apply gerrit patch sets"
   },
@@ -279,7 +322,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src"
+      "[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src"
     ],
     "infra_step": true,
     "name": "create project commits archive.project path",
@@ -292,7 +335,7 @@
       "git",
       "bundle",
       "create",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle",
+      "[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src/bundle",
       "deadbeef^..HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
@@ -311,7 +354,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\"project_paths\": [\"src/chromium/src\"]}",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json"
+      "[CLEANUP]/create_project_commits_archive_tmp_2/metadata.json"
     ],
     "infra_step": true,
     "name": "create project commits archive.metadata.json",
@@ -326,7 +369,7 @@
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
     "name": "create project commits archive.create archive",
-    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
+    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_2/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_2\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -341,7 +384,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_2/archive\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_3/archive\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -366,7 +409,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/metadata.json",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_3/archive/metadata.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -379,7 +422,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_3/archive/a/b/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b",
@@ -420,7 +463,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/c/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_3/archive/a/b/c/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",

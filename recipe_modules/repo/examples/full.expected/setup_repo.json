@@ -44,6 +44,8 @@
       "--current-branch",
       "--jobs",
       "99",
+      "--manifest-name",
+      "snapshot.xml",
       "--no-tags",
       "--optimized-fetch",
       "--cache-dir",
@@ -51,6 +53,30 @@
     ],
     "infra_step": true,
     "name": "repo sync (2)"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "<manifest></manifest>",
+      "[CLEANUP]/manifest_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "write manifest"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "sync",
+      "--manifest-name",
+      "../../../[CLEANUP]/manifest_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "repo sync (3)"
   },
   {
     "cmd": [
@@ -85,6 +111,7 @@
   },
   {
     "cmd": [],
+    "cwd": "[CLEANUP]",
     "name": "manifest diff",
     "~followup_annotations": [
       "@@@STEP_TEXT@manifest diff failed; no repo root found@@@"

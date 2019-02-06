@@ -90,15 +90,15 @@ Returns:
 
 API for managing multiple parallel "worker" Buildbucket builds.
 
-#### **class [BuildManagerApi](/recipe_modules/build_manager/api.py#81)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildManagerApi](/recipe_modules/build_manager/api.py#86)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for managing multiple parallel "worker" builds.
 
-&emsp; **@property**<br>&mdash; **def [build\_pb2](/recipe_modules/build_manager/api.py#84)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_pb2](/recipe_modules/build_manager/api.py#89)(self):**
 
 Returns the build_pb2 module.
 
-&mdash; **def [new\_manager](/recipe_modules/build_manager/api.py#89)(self):**
+&mdash; **def [new\_manager](/recipe_modules/build_manager/api.py#94)(self):**
 
 Create a new Manager.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
@@ -166,7 +166,7 @@ Returns:
   str: The translated path, which will be valid within the cros_sdk chroot.
 ### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
 
-[DEPS](/recipe_modules/cros_source/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS source.
 
@@ -191,7 +191,7 @@ Returns a context where master and workspace overlays are mounted.
 Args:
   checkout_path (Path): Path to CrOS source checkout.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#146)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#155)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -204,7 +204,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#103)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#112)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -240,6 +240,10 @@ The "master" checkout path.
 This is a recent version of the source which should not be modified (apart
 from incidental changes like caching) during a build. "Top of tree" logic
 will run from this checkout.
+
+&mdash; **def [sync\_gitiles\_snapshot](/recipe_modules/cros_source/api.py#103)(self, gitiles_commit):**
+
+Sync a checkout to the snapshot in |gitiles_commit|.
 
 &emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#39)(self):**
 
@@ -713,7 +717,7 @@ Args:
     str: The output JSON message data.
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
-[DEPS](/recipe_modules/repo/__init__.py#1): [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/repo/__init__.py#1): [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with the 'repo' VCS tool.
 
@@ -723,7 +727,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 A module for interacting with the repo tool.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#195)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#227)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -739,7 +743,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#245)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#268)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -747,7 +751,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#161)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#193)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -763,7 +767,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [init](/recipe_modules/repo/api.py#59)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
+&mdash; **def [init](/recipe_modules/repo/api.py#70)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
 
 Executes 'repo init' with the given arguments.
 
@@ -774,14 +778,14 @@ Args:
   * depth (int): Create a shallow clone of the given depth.
   * repo_url (str): URL of the repo repository.
 
-&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#149)(self):**
+&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#181)(self):**
 
 Uses repo to create a manifest snapshot and returns it as a string.
 
 Returns:
   str: The manifest XML as a string.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#118)(self, projects=[]):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#150)(self, projects=[]):**
 
 Uses 'repo forall' to gather project information.
 
@@ -794,7 +798,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#34)(self):**
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#86)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#97)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -803,9 +807,18 @@ Args:
   * detach (bool): Detach projects back to manifest revision.
   * current_branch (bool): Fetch only current branch.
   * jobs (int): Projects to fetch simultaneously.
+  * manifest_name (str): Temporary manifest to use for this sync.
   * no_tags (bool): Don't fetch tags.
   * optimized_fetch (bool): Only fetch projects if revision doesn't exist.
   * cache_dir (Path): Use git-cache with this cache directory.
+
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#132)(self, manifest_data, \*\*kwargs):**
+
+Sync to the given manifest file data.
+
+Args:
+  * manifest_data (str): Manifest XML data to use for the sync.
+  * kwargs: Keyword arguments to pass to 'repo.sync'.
 ### *recipe_modules* / [repo\_cache](/recipe_modules/repo_cache)
 
 [DEPS](/recipe_modules/repo_cache/__init__.py#1): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -895,9 +908,9 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#12)(api):**
 ### *recipes* / [cros\_source:examples/full](/recipe_modules/cros_source/examples/full.py)
 
-[DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#17)(api):**
 ### *recipes* / [depends:examples/full](/recipe_modules/depends/examples/full.py)
 
 [DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
@@ -1003,6 +1016,7 @@ Recipe for prototyping Chrome OS builders.
 &mdash; **def [full\_filename](/recipes/upload_artifacts.py#70)(os_version, build_target):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/deab113bfb35941f9a173e3a424bc7a67a55affa/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/deab113bfb35941f9a173e3a424bc7a67a55affa/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/deab113bfb35941f9a173e3a424bc7a67a55affa/recipes/README.recipes.md#recipe_modules-gsutil
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/91c13923c1d136dc688527fa39583ef61a3277f7/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/91c13923c1d136dc688527fa39583ef61a3277f7/README.recipes.md#recipe_modules-buildbucket

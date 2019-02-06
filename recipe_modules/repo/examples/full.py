@@ -11,14 +11,20 @@ DEPS = [
 
 
 def RunSteps(api):
+  with api.context(cwd=api.path['cleanup']):
+    assert api.repo._find_root() is None
+
   with api.context(cwd=api.path['start_dir']):
     api.repo.init('http://manifest_url')
     api.repo.init('http://manifest_url', manifest_branch='mybranch',
-                  groups=['group1', 'group2'], depth=10,
-                  repo_url='http://repo_url')
+                  groups=['group1',
+                          'group2'], depth=10, repo_url='http://repo_url')
     api.repo.sync()
     api.repo.sync(force_sync=True, detach=True, current_branch=True, jobs=99,
-                  no_tags=True, optimized_fetch=True, cache_dir='/tmp/cache')
+                  manifest_name='snapshot.xml', no_tags=True,
+                  optimized_fetch=True, cache_dir='/tmp/cache')
+
+    api.repo.sync_manifest('<manifest></manifest>')
 
   infos = api.repo.project_infos()
   assert len(infos) == 3 and infos[0].path == 'src/a'
@@ -27,7 +33,7 @@ def RunSteps(api):
 
   snapshot_a = api.path['start_dir'].join('snapshot_a.xml')
   snapshot_b = api.path['start_dir'].join('snapshot_b.xml')
-  with api.context(cwd=api.path['start_dir']):
+  with api.context(cwd=api.path['cleanup']):
     api.repo.diff_manifests_informational(snapshot_a, snapshot_b)
 
   repo_root = api.path['start_dir'].join('repo')
@@ -61,5 +67,4 @@ def GenTests(api):
   yield api.test('setup_repo')
 
   yield (api.test('missing from XML') +  #
-         api.step_data('diff remote and local manifest.git show',
-                       retcode=128))
+         api.step_data('diff remote and local manifest.git show', retcode=128))

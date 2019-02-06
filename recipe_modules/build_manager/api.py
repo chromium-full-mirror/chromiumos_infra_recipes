@@ -57,6 +57,11 @@ class Manager(object):
           message_from_jsonpb_dict(self._api.build_pb2.Build, build_dict))
     self._unscheduled = []
 
+  @property
+  def scheduled_build_ids(self):
+    """Returns a list of scheduled build IDs."""
+    return [build.id for build in self._scheduled_builds]
+
   def poll(self):
     """Returns Builds that have been updated since the last call to 'poll'.
 
@@ -68,7 +73,7 @@ class Manager(object):
     """
     if not self._scheduled_builds:
       return []
-    reqs = [{'id': build.id for build in self._scheduled_builds}]
+    reqs = [{'id': build_id} for build_id in self.scheduled_build_ids]
     updated = []
     for build_dict in self._api._buildbucket_batch('get_build', reqs):
       build = message_from_jsonpb_dict(self._api.build_pb2.Build, build_dict)

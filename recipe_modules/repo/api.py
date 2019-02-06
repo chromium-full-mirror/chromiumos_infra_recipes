@@ -35,6 +35,17 @@ class RepoApi(recipe_api.RecipeApi):
   def repo_path(self):
     return self.m.depot_tools.package_repo_resource('repo')
 
+  def _find_root(self):
+    """Starting from cwd, find an ancestor with a '.repo' subdir."""
+    candidate = self.m.context.cwd.join()  # .join() makes a copy to mutate
+    while True:
+      if self.m.path.exists(candidate.join('.repo')):
+        return candidate
+      if candidate.pieces:
+        candidate.pieces = candidate.pieces[:-1]
+      else:
+        return None
+
   def _step(self, args, name=None, **kwargs):
     """Executes 'repo' with the supplied arguments.
 
@@ -84,7 +95,7 @@ class RepoApi(recipe_api.RecipeApi):
       self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))
 
   def sync(self, _kwonly=(), force_sync=False, detach=False,
-           current_branch=False, jobs=None, no_tags=False,
+           current_branch=False, jobs=None, manifest_name=None, no_tags=False,
            optimized_fetch=False, cache_dir=None):
     """Executes 'repo sync' with the given arguments.
 
@@ -93,6 +104,7 @@ class RepoApi(recipe_api.RecipeApi):
       * detach (bool): Detach projects back to manifest revision.
       * current_branch (bool): Fetch only current branch.
       * jobs (int): Projects to fetch simultaneously.
+      * manifest_name (str): Temporary manifest to use for this sync.
       * no_tags (bool): Don't fetch tags.
       * optimized_fetch (bool): Only fetch projects if revision doesn't exist.
       * cache_dir (Path): Use git-cache with this cache directory.
@@ -107,6 +119,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--current-branch']
     if jobs is not None:
       cmd += ['--jobs', '%d' % jobs]
+    if manifest_name is not None:
+      cmd += ['--manifest-name', manifest_name]
     if no_tags:
       cmd += ['--no-tags']
     if optimized_fetch:
@@ -114,6 +128,24 @@ class RepoApi(recipe_api.RecipeApi):
     if cache_dir is not None:
       cmd += ['--cache-dir', cache_dir]
     self._step(cmd)
+
+  def sync_manifest(self, manifest_data, **kwargs):
+    """Sync to the given manifest file data.
+
+    Args:
+      * manifest_data (str): Manifest XML data to use for the sync.
+      * kwargs: Keyword arguments to pass to 'repo.sync'.
+    """
+    repo_root = self._find_root()
+    assert repo_root is not None, 'no repo root found'
+
+    manifest_path = self.m.path.mkstemp('manifest')
+    self.m.file.write_raw('write manifest', manifest_path, manifest_data)
+
+    repo_manifests_path = repo_root.join('.repo', 'manifests')
+    manifest_relpath = os.path.relpath(
+        str(manifest_path), str(repo_manifests_path))
+    self.sync(manifest_name=manifest_relpath, **kwargs)
 
   def project_infos(self, projects=[]):
     """Uses 'repo forall' to gather project information.
@@ -232,15 +264,6 @@ class RepoApi(recipe_api.RecipeApi):
         continue
       changes.append(ManifestDiff(from_path, from_revision, to_revision))
     return changes
-
-  def _find_root(self):
-    """Starting from cwd, find an ancestor with a '.repo' subdir."""
-    candidate = self.m.context.cwd.join()  # .join() makes a copy to mutate
-    while candidate.pieces:
-      if self.m.path.exists(candidate.join('.repo')):
-        return candidate
-      candidate.pieces = candidate.pieces[:-1]
-    return None
 
   def diff_manifests_informational(self, old_manifest_path, new_manifest_path):
     """Informational step that logs a "manifest diff".

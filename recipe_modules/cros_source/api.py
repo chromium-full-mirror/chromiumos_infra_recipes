@@ -100,6 +100,15 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
       return new_commits
 
+  def sync_gitiles_snapshot(self, gitiles_commit):
+    """Sync a checkout to the snapshot in |gitiles_commit|."""
+    gitiles_url = 'https://%s/%s' % (gitiles_commit.host,
+                                     gitiles_commit.project)
+    snapshot_xml = self.m.gitiles.download_file(gitiles_url, 'snapshot.xml',
+                                                branch=gitiles_commit.id)
+    self.m.repo.sync_manifest(manifest_data=snapshot_xml, detach=True,
+                              optimized_fetch=True)
+
   def create_project_commits_archive(self, archive_path, project_commits):
     """Creates an archive with the given project commits from the workspace.
 

@@ -4,8 +4,11 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/step',
+    'depot_tools/gitiles',
     'cros_source',
     'gerrit',
 ]
@@ -22,6 +25,11 @@ def RunSteps(api):
   with api.cros_source.checkout_overlays_context(api.path['start_dir']):
     pass
 
+  repo_root = api.path['start_dir'].join('root')
+  api.path.mock_add_paths(repo_root.join('.repo'))
+  with api.context(cwd=repo_root):
+    api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
+
   commits = api.cros_source.apply_gerrit_patch_sets(
       [api.gerrit.test_api.test_patch_set()])
 
@@ -32,4 +40,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic') +  #
+         api.buildbucket.ci_build() +  #
+         api.step_data(
+             'fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml',
+             api.gitiles.make_encoded_file('<manifest></manifest>')))
