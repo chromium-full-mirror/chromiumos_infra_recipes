@@ -20,22 +20,24 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_sdk',
     'cros_source',
+    'depends',
     'dev',
+    'git',
     'git_txn',
     'overlayfs',
-    'portage',
     'repo',
     'repo_cache',
 ]
 
+MANIFEST_REF = 'snapshot'
+
 
 def RunSteps(api):
-  # Set annealing into dryrun mode by default. Comment / uncomment as needed
-  # for testing.
-  api.dev.configure(dryrun=True)
+  api.dev.configure(dryrun=False)
 
   # Cache the chroot.
   api.cros_sdk.configure(
@@ -46,23 +48,37 @@ def RunSteps(api):
   api.repo_cache.ensure_fresh_cache(repo_cache_path,
                                     api.cros_source.INTERNAL_MANIFEST_URL)
 
-  with api.cros_source.checkout_overlays_context(repo_cache_path):
-    # Portage uprev packages.
-    with api.context(cwd=api.cros_source.workspace_path):
-      api.portage.regen_cache(repo_name='chromiumos')
-      api.portage.uprev_packages()
-      api.portage.push_package_uprevs()
+  with api.cros_source.checkout_overlays_context(repo_cache_path), api.context(
+      cwd=api.cros_source.workspace_path.join('manifest-internal')):
 
-    # Create a manifest snapshot and commit it.
-    with api.step.nest('update annealing manifest'):
-      snapshot_xml = api.repo.manifest_snapshot()
-      with api.context(cwd=api.cros_source.workspace_path.join('manifest')):
-        api.git_txn.update_ref_write_file(
-            'https://chromium-review.googlesource.com/chromiumos/infra/recipes',
-            'manifest-prototype', 'Annealing manifest snapshot',
-            api.cros_source.workspace_path.join('manifest/snapshot.xml'),
-            snapshot_xml)
+    snapshot_xml = api.repo.manifest_snapshot()
+    manifest_diffs = api.repo.diff_remote_and_local_manifests(
+        api.cros_source.INTERNAL_MANIFEST_URL, MANIFEST_REF, snapshot_xml)
+
+    # TODO(athilenius): It would be nice to set the 'Info' column here.
+    if manifest_diffs is not None:
+      # If there are zero diffs (empty array) then there is nothing
+      # interesting to be done.
+      if len(manifest_diffs) == 0:
+        return
+
+      # Otherwise we need to ensure all of those diffs have fulfilled deps.
+      api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
+
+    api.git_txn.update_ref_write_file(
+        api.cros_source.INTERNAL_MANIFEST_URL, MANIFEST_REF,
+        'Annealing manifest snapshot',
+        api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
+        snapshot_xml)
 
 
 def GenTests(api):
   yield api.test('basic')
+
+  yield api.test('has manifest change') + api.step_data(
+      'repo manifest', stdout=api.raw_io.output(
+          '<manifest><project path="PATH" revision="TO_REV" /></manifest>')
+  ) + api.step_data(
+      'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'))
+
