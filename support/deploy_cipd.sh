@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")"
 
-for go_tool in gerrit-fetch-changes repo-manifest-diff-projects
+for go_tool in gerrit-fetch-changes repo-manifest-diff-projects repo-log-trace
 do
   (cd "${go_tool}" && go build)
 done
