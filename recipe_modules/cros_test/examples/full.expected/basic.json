@@ -50,6 +50,42 @@
     "name": "run vm test suite test_suite"
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[chromeos::cros_test]/resources/find_free_port.py"
+    ],
+    "name": "find free port (2)",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--workspace",
+      "[CLEANUP]/cros_test",
+      "--",
+      "cros_run_vm_test",
+      "--debug",
+      "--no-display",
+      "--copy-on-write",
+      "--board=build_target",
+      "--image-path",
+      "/mnt/host/workspace/image/chromiumos_qemu_image.bin",
+      "--private-key",
+      "/mnt/host/workspace/image/id_rsa",
+      "--results-dir",
+      "/mnt/host/workspace/results/test_suite",
+      "--ssh-port",
+      "9228",
+      "--tast",
+      "test_expr"
+    ],
+    "name": "run tast test"
+  },
+  {
     "jsonResult": null,
     "name": "$result"
   }

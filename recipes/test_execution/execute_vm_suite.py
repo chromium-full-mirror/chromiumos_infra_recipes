@@ -32,8 +32,13 @@ DEPS = [
 
 def RunSteps(api):
   with _test_env_context(api):
-    api.cros_test.run_vm_test(api.properties['build_target'],
-                              api.properties['test_suite'])
+    if api.properties['test_type'] == 'tast':
+      api.cros_test.run_tast_test(api.properties['build_target'],
+                                  api.properties['test_suite'],
+                                  api.properties['test_exprs'])
+    else:
+      api.cros_test.run_vm_test(api.properties['build_target'],
+                                api.properties['test_suite'])
 
 @contextlib.contextmanager
 def _test_env_context(api):
@@ -156,10 +161,23 @@ os.system("cp -rn %s %s")
 
 def GenTests(api):
   yield (
-    api.test('basic') +
+    api.test('vm_test') +
     api.properties(
+      test_type='vm',
       build_target='build_target',
       test_suite='test_suite',
+      gs_path='path/to/image',
+      gs_bucket='image-bucket'
+    )
+  )
+
+  yield (
+    api.test('tast_test') +
+    api.properties(
+      test_type='tast',
+      build_target='build_target',
+      test_suite='test_suite',
+      test_exprs=["test_expr"],
       gs_path='path/to/image',
       gs_bucket='image-bucket'
     )

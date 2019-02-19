@@ -265,6 +265,17 @@ API for interacting with cros_test chromite api.
 
 Returns a Path to image artifacts.
 
+&mdash; **def [run\_tast\_test](/recipe_modules/cros_test/api.py#46)(self, build_target, test_suite, test_exprs):**
+
+Run the specified test in a vm.
+
+Expects chromiumos_qemu_image.bin and id_rsa to be present in image_path.
+
+Args:
+  build_target (str): The build target to test against.
+  test_suite (str): Tast test suite.
+  test_exprs (tuple[str] | list[str]): List of Tast test args.
+
 &mdash; **def [run\_vm\_test](/recipe_modules/cros_test/api.py#21)(self, build_target, test_suite):**
 
 Run the specified test in a vm.
@@ -1029,14 +1040,14 @@ This recipe runs out-of-band on VM test swarming bot.
 
 &mdash; **def [RunSteps](/recipes/test_execution/execute_vm_suite.py#33)(api):**
 
-&mdash; **def [copy\_tree](/recipes/test_execution/execute_vm_suite.py#144)(name, py, src, dest):**
+&mdash; **def [copy\_tree](/recipes/test_execution/execute_vm_suite.py#149)(name, py, src, dest):**
 
 Shell out to bash cp to perform copy operations.
 
 Use in place of file api's copytree method, as copytree can be quite slow,
 and we have to merge several source directories to a single target directory.
 
-&mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#138)(files, gsutil, gs_bucket, gs_path, dest_path):**
+&mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#143)(files, gsutil, gs_bucket, gs_path, dest_path):**
 ### *recipes* / [upload\_artifacts](/recipes/upload_artifacts.py)
 
 [DEPS](/recipes/upload_artifacts.py#6): [artifacts](#recipe_modules-artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [payloads](#recipe_modules-payloads), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]

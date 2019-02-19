@@ -12,6 +12,7 @@ DEPS = [
 def RunSteps(api):
   api.file.ensure_directory('ensure image path', api.cros_test.image_path)
   api.cros_test.run_vm_test('build_target', 'test_suite')
+  api.cros_test.run_tast_test('build_target', 'test_suite', ['test_expr'])
 
 
 def GenTests(api):
