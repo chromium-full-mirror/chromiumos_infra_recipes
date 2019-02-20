@@ -647,13 +647,15 @@
       "--",
       "cros_run_vm_test",
       "--debug",
+      "--no-display",
+      "--copy-on-write",
       "--board=build_target",
       "--image-path",
       "/mnt/host/workspace/image/chromiumos_qemu_image.bin",
       "--private-key",
       "/mnt/host/workspace/image/id_rsa",
       "--results-dir",
-      "/mnt/host/workspace/results",
+      "/mnt/host/workspace/results/test_suite",
       "--ssh-port",
       "9228",
       "--autotest",
@@ -661,7 +663,7 @@
       "--test_that-args=--whitelist-chrome-crashes"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "run vm test suite test_suite"
+    "name": "run vm suite test_suite"
   },
   {
     "cmd": [],

@@ -662,7 +662,7 @@
       "test_expr"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "run tast test"
+    "name": "run tast suite test_suite"
   },
   {
     "cmd": [],

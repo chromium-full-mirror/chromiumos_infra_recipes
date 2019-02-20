@@ -265,7 +265,7 @@ API for interacting with cros_test chromite api.
 
 Returns a Path to image artifacts.
 
-&mdash; **def [run\_tast\_test](/recipe_modules/cros_test/api.py#46)(self, build_target, test_suite, test_exprs):**
+&mdash; **def [run\_tast\_test](/recipe_modules/cros_test/api.py#39)(self, build_target, test_suite, test_exprs):**
 
 Run the specified test in a vm.
 
