@@ -1,0 +1,238 @@
+[
+  {
+    "cmd": [],
+    "name": "execute tests"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/payload"
+    ],
+    "infra_step": true,
+    "name": "execute tests.create payload dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"build_target\": {\"name\": \"build_target\"}, \"output_directory\": \"[CLEANUP]/payload\"}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "execute tests.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--workspace",
+      "[CLEANUP]/build_api_messages_tmp_1",
+      "--",
+      "/mnt/host/source/chromite/api/build_api",
+      "--input-json",
+      "/mnt/host/workspace/input_proto.json",
+      "--output-json",
+      "/mnt/host/workspace/output_proto.json",
+      "chromite.api.ArchiveService/CreateHwTestArchives"
+    ],
+    "name": "execute tests.build_api chromite.api.ArchiveService/CreateHwTestArchives",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "execute tests.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/build_api_messages_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "execute tests.rmtree [CLEANUP]/build_api_messages_tmp_1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_PACKAGE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "[CLEANUP]/payload",
+      "gs://chromeos-image-archive/build_target/R100-1234.5.6"
+    ],
+    "infra_step": true,
+    "name": "execute tests.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/build_target/R100-1234.5.6@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execute tests (2)"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/payload"
+    ],
+    "infra_step": true,
+    "name": "execute tests.create payload dir (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"build_target\": {\"name\": \"build_target\"}, \"output_directory\": \"[CLEANUP]/payload\"}",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "execute tests.write input file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--workspace",
+      "[CLEANUP]/build_api_messages_tmp_2",
+      "--",
+      "/mnt/host/source/chromite/api/build_api",
+      "--input-json",
+      "/mnt/host/workspace/input_proto.json",
+      "--output-json",
+      "/mnt/host/workspace/output_proto.json",
+      "chromite.api.ArchiveService/CreateVmTestArchives"
+    ],
+    "name": "execute tests.build_api chromite.api.ArchiveService/CreateVmTestArchives",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "execute tests.read output file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/build_api_messages_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "execute tests.rmtree [CLEANUP]/build_api_messages_tmp_2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_PACKAGE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "[CLEANUP]/payload",
+      "gs://chromeos-image-archive/build_target/R100-1234.5.6"
+    ],
+    "infra_step": true,
+    "name": "execute tests.gsutil upload (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/build_target/R100-1234.5.6@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

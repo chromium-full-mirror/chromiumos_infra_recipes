@@ -1,0 +1,13 @@
+[
+  {
+    "failure": {
+      "exception": {
+        "traceback": [
+          "<omitted by recipe engine>"
+        ]
+      },
+      "humanReason": "Uncaught Exception: ValueError('Unknown artifact type \"invalid\"',)"
+    },
+    "name": "$result"
+  }
+]

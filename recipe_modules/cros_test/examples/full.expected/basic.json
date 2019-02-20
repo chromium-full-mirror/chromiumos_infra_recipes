@@ -62,15 +62,6 @@
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[chromeos::cros_test]/resources/find_free_port.py"
-    ],
-    "name": "find free port (2)",
-    "stdout": "/path/to/tmp/"
-  },
-  {
-    "cmd": [
       "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",

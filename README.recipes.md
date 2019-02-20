@@ -16,7 +16,6 @@
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
-  * [payloads](#recipe_modules-payloads)
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [prpc](#recipe_modules-prpc) &mdash; API for working with the 'prpc' tool.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
@@ -38,7 +37,6 @@
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
-  * [payloads:examples/full](#recipes-payloads_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [prpc:examples/full](#recipes-prpc_examples_full)
@@ -46,24 +44,24 @@
   * [repo_cache:examples/full](#recipes-repo_cache_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
-  * [upload_artifacts](#recipes-upload_artifacts)
 ## Recipe Modules
 
 ### *recipe_modules* / [artifacts](/recipe_modules/artifacts)
 
-[DEPS](/recipe_modules/artifacts/__init__.py#1): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file]
+[DEPS](/recipe_modules/artifacts/__init__.py#5): [build\_api](#recipe_modules-build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [ArtifactsApi](/recipe_modules/artifacts/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ArtifactsApi](/recipe_modules/artifacts/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [upload](/recipe_modules/artifacts/api.py#13)(self, path, builder, build_id, gs_buckets):**
+A module for artifact generation steps
 
-Uploads artifacts to Google storage.
+&mdash; **def [create\_and\_upload](/recipe_modules/artifacts/api.py#22)(self, step_name, build_report, artifacts):**
+
+Create and upload artifacts.
 
 Args:
-  * path (Path): Directory containing artifacts.
-  * builder (str): Builder name.
-  * build_id (str): Buildbucket build id.
-  * gs_buckets (list[str]): Buckets to upload artifacts.
+  * step_name (str): Step name.
+  * build_report (dict): Build report.
+  * artifacts (list[str]): List of build artifacts.
 ### *recipe_modules* / [build\_api](/recipe_modules/build_api)
 
 [DEPS](/recipe_modules/build_api/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
@@ -645,43 +643,6 @@ Unmount an OverlayFS.
 Args:
   * name (str): The name used for |mount|.
   * mount_path (Path): Path to unmount the OverlayFS from.
-### *recipe_modules* / [payloads](/recipe_modules/payloads)
-
-[DEPS](/recipe_modules/payloads/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
-
-#### **class [PayloadsApi](/recipe_modules/payloads/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for payload generation steps
-
-&mdash; **def [generate\_delta](/recipe_modules/payloads/api.py#55)(self, image_path, output_filename):**
-
-Generates delta payload for hw testing.
-
-Args:
-  * image_path (Path): The path to the image
-      to generate payloads to. Must be subdir of chroot.
-  * output_filename (str): Output filename.
-
-&mdash; **def [generate\_full](/recipe_modules/payloads/api.py#28)(self, image_path, output_filename, kern_filename, root_filename):**
-
-Generates full payload for hw testing.
-
-Args:
-  * image_path (Path): The path to the image
-      to generate payloads to. Must be subdir of chroot.
-  * output_filename (str): Output filename.
-  * kern_filename (str): Out KERN filename.
-  * root_filename (str): Out ROOT filename.
-
-&mdash; **def [generate\_stateful](/recipe_modules/payloads/api.py#76)(self, image_path):**
-
-Generates stateful payload for hw testing.
-
-Args:
-  * image_path (Path): The path to the image
-      to generate payloads to. Must be subdir of chroot.
-
-&emsp; **@property**<br>&mdash; **def [payload\_path](/recipe_modules/payloads/api.py#24)(self):**
 ### *recipe_modules* / [portage](/recipe_modules/portage)
 
 [DEPS](/recipe_modules/portage/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -924,9 +885,9 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipes/annealing.py#39)(api):**
 ### *recipes* / [artifacts:examples/full](/recipe_modules/artifacts/examples/full.py)
 
-[DEPS](/recipe_modules/artifacts/examples/full.py#5): [artifacts](#recipe_modules-artifacts), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/artifacts/examples/full.py#6): [artifacts](#recipe_modules-artifacts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/artifacts/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/artifacts/examples/full.py#13)(api):**
 ### *recipes* / [build\_api:examples/full](/recipe_modules/build_api/examples/full.py)
 
 [DEPS](/recipe_modules/build_api/examples/full.py#6): [build\_api](#recipe_modules-build_api)
@@ -993,11 +954,6 @@ Asserts that the two values are equal, or throws AssertionError.
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
-### *recipes* / [payloads:examples/full](/recipe_modules/payloads/examples/full.py)
-
-[DEPS](/recipe_modules/payloads/examples/full.py#6): [payloads](#recipe_modules-payloads), [recipe\_engine/path][recipe_engine/recipe_modules/path]
-
-&mdash; **def [RunSteps](/recipe_modules/payloads/examples/full.py#11)(api):**
 ### *recipes* / [portage:examples/full](/recipe_modules/portage/examples/full.py)
 
 [DEPS](/recipe_modules/portage/examples/full.py#6): [dev](#recipe_modules-dev), [portage](#recipe_modules-portage), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1048,17 +1004,6 @@ Use in place of file api's copytree method, as copytree can be quite slow,
 and we have to merge several source directories to a single target directory.
 
 &mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#143)(files, gsutil, gs_bucket, gs_path, dest_path):**
-### *recipes* / [upload\_artifacts](/recipes/upload_artifacts.py)
-
-[DEPS](/recipes/upload_artifacts.py#6): [artifacts](#recipe_modules-artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [payloads](#recipe_modules-payloads), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-&mdash; **def [RunSteps](/recipes/upload_artifacts.py#25)(api):**
-
-&mdash; **def [compress\_file](/recipes/upload_artifacts.py#82)(python, name, src, dest):**
-
-&mdash; **def [delta\_filename](/recipes/upload_artifacts.py#75)(os_version, build_target):**
-
-&mdash; **def [full\_filename](/recipes/upload_artifacts.py#70)(os_version, build_target):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/67d70d26b08e3775c0a00b83d71c27271b0e4bb0/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/67d70d26b08e3775c0a00b83d71c27271b0e4bb0/recipes/README.recipes.md#recipe_modules-gitiles

@@ -1,42 +1,45 @@
-# Copyright 2019 The Chromium Authors. All rights reserved.
+# -*- coding: utf-8 -*-
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 DEPS = [
     'recipe_engine/properties',
     'recipe_engine/path',
-    'recipe_engine/file',
     'artifacts'
 ]
 
-from recipe_engine import config_types
 
 def RunSteps(api):
-  sd = api.path['start_dir']
-
-  api.file.ensure_directory('create artifact dir', sd.join('artifact_dir'))
-
-  api.artifacts.upload(
-      sd.join('artifact_dir'),
-      api.properties['buildername'],
-      api.properties['buildbucket_build_id'],
-      api.properties['gs_buckets'])
+  build_report = api.properties['build_report']
+  artifacts = api.properties['artifacts']
+  
+  api.artifacts.create_and_upload(
+    'execute tests',
+    build_report=build_report,
+    artifacts=artifacts)
 
 
 def GenTests(api):
-  yield (api.test('default_bucket') +
+  yield (
+    api.test('basic') +
     api.properties(
-      buildername='builder',
-      buildbucket_build_id='123454321',
-      gs_buckets=None
+      build_report=dict(
+        build_target='build_target',
+        version='R100-1234.5.6',
+      ),
+      artifacts=['hw', 'vm']
     )
   )
 
-  yield (api.test('override_bucket') +
+  yield (
+    api.test('invalid_artifact') +
     api.properties(
-      buildername='builder',
-      buildbucket_build_id='123454321',
-      gs_buckets=['artifact-bucket']
+      build_report=dict(
+        build_target='build_target',
+        version='R100-1234.5.6',
+      ),
+      artifacts=['invalid']
     )
+    + api.expect_exception("ValueError")
   )
-
