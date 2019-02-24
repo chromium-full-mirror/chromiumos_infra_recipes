@@ -21,6 +21,7 @@
   * [skylab](#recipe_modules-skylab)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
   * [test_plan](#recipe_modules-test_plan)
+  * [vm_test](#recipe_modules-vm_test)
 
 **[Recipes](#Recipes)**
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
@@ -48,6 +49,7 @@
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
   * [test_plan:examples/generate](#recipes-test_plan_examples_generate)
   * [test_plan:examples/run](#recipes-test_plan_examples_run)
+  * [vm_test:examples/full](#recipes-vm_test_examples_full)
 ## Recipe Modules
 
 ### *recipe_modules* / [artifacts](/recipe_modules/artifacts)
@@ -875,13 +877,13 @@ Ensure the CIPD support package is installed.
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
 ### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
 
-[DEPS](/recipe_modules/test_plan/__init__.py#1): [skylab](#recipe_modules-skylab), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/test_plan/__init__.py#1): [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [RunPlanApi](/recipe_modules/test_plan/api.py#8)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for test execution steps
 
-&mdash; **def [generate](/recipe_modules/test_plan/api.py#17)(self, name, build_report, dep_graph):**
+&mdash; **def [generate](/recipe_modules/test_plan/api.py#19)(self, name, build_report, dep_graph):**
 
 Generate test plan.
 
@@ -892,13 +894,42 @@ Args:
 
 &mdash; **def [initialize](/recipe_modules/test_plan/api.py#11)(self):**
 
-&mdash; **def [run](/recipe_modules/test_plan/api.py#37)(self, name, test_plan):**
+&mdash; **def [run](/recipe_modules/test_plan/api.py#39)(self, name, test_plan):**
 
 Run all test plan steps. Aborts on the first step failure.
 
 Args:
   * name (str): Step name.
   * test_plan (GenerateTestPlanResponse): Test plan.
+### *recipe_modules* / [vm\_test](/recipe_modules/vm_test)
+
+[DEPS](/recipe_modules/vm_test/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+
+#### **class [VMTestApi](/recipe_modules/vm_test/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for vm test execution steps
+
+&mdash; **def [run\_tast\_test](/recipe_modules/vm_test/api.py#44)(self, name, test_plan):**
+
+Run tast test on swarming bot.
+
+Args:
+  * name (str): Step name.
+  * test_plan (TestPlan): Test plan.
+
+Returns:
+  swarming.TaskRequestMetadata
+
+&mdash; **def [run\_vm\_test](/recipe_modules/vm_test/api.py#26)(self, name, test_plan):**
+
+Run vm test on swarming bot.
+
+Args:
+  * name (str): Step name.
+  * test_plan (TestPlan): Test plan.
+
+Returns:
+  swarming.TaskRequestMetadata
 ## Recipes
 
 ### *recipes* / [annealing](/recipes/annealing.py)
@@ -1107,6 +1138,11 @@ and we have to merge several source directories to a single target directory.
 [DEPS](/recipe_modules/test_plan/examples/run.py#7): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/test_plan/examples/run.py#12)(api):**
+### *recipes* / [vm\_test:examples/full](/recipe_modules/vm_test/examples/full.py)
+
+[DEPS](/recipe_modules/vm_test/examples/full.py#5): [test\_plan](#recipe_modules-test_plan), [vm\_test](#recipe_modules-vm_test)
+
+&mdash; **def [RunSteps](/recipe_modules/vm_test/examples/full.py#10)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-gitiles
@@ -1123,5 +1159,6 @@ and we have to merge several source directories to a single target directory.
 [recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-python
 [recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-raw_io
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-step
+[recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-swarming
 [recipe_engine/recipe_modules/tempfile]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-tempfile
 [recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/recipe_engine/recipe_api.py#1005

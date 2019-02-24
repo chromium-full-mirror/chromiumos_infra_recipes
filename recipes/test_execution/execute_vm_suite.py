@@ -31,7 +31,7 @@ DEPS = [
 
 def RunSteps(api):
   with _test_env_context(api):
-    if api.properties['test_type'] == 'tast':
+    if api.properties['test_type'] == 'tast_vm':
       api.cros_test.run_tast_test(api.properties['build_target'],
                                   api.properties['test_suite'],
                                   api.properties['test_exprs'])
@@ -171,7 +171,7 @@ def GenTests(api):
   yield (
     api.test('tast_test') +
     api.properties(
-      test_type='tast',
+      test_type='tast_vm',
       build_target='build_target',
       test_suite='test_suite',
       test_exprs=["test_expr"],

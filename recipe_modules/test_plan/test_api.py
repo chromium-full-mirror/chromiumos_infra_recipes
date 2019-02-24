@@ -34,6 +34,28 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
       }
     }
 
+  def example_vm_plan(self,
+                   test_env='',
+                   test_suite='test-suite',
+                   build_target='build_target',
+                   image_name='image.bin',
+                   artifact_path='path/to/artifact'):
+    return {
+      'test_env': test_env,
+      'test_suite': test_suite,
+      'artifact_path': artifact_path,
+      'scheduling_requirements': {
+        'build_target': build_target
+      },
+      'build_payload': {
+        'image': [
+          {
+            'image_name': image_name
+          }
+        ]
+      }
+    }
+
 def get_scheduling_requirements(reference_design=None, build_target=None):
   """Get scheduling requirements.
   

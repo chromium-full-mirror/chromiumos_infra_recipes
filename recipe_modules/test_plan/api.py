@@ -11,7 +11,9 @@ class RunPlanApi(recipe_api.RecipeApi):
   def initialize(self):
     self._test_planner_path = None
     self._test_env_steps = {
-      'hw': self.m.skylab.create_suite
+      'hw': self.m.skylab.create_suite,
+      'vm': self.m.vm_test.run_vm_test,
+      'tast_vm': self.m.vm_test.run_tast_test,
     }
 
   def generate(self, name, build_report, dep_graph):

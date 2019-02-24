@@ -45,3 +45,12 @@ def GenTests(api):
     })
   )
 
+  yield (
+    api.test('vm_test') +
+    api.properties(plan={
+      'test_plan': [
+        api.test_plan.example_vm_plan(test_env='vm', test_suite='suite'),
+        api.test_plan.example_vm_plan(test_env='tast_vm', test_suite='suite'),
+      ]
+    })
+  )

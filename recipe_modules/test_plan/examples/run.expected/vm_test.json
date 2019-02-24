@@ -1,0 +1,117 @@
+[
+  {
+    "cmd": [],
+    "name": "run plan"
+  },
+  {
+    "cmd": [],
+    "name": "run plan.execute vm suite suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run plan.execute vm suite suite.ensure swarming",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[CACHE]/swarming_client",
+      "-ensure-file",
+      "infra/tools/luci/swarming/${platform} git_revision:77ad228dacd5bf544b3fcfd93dedae3c08d2f2ea",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "run plan.execute vm suite suite.ensure swarming.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-git_revision:77a\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/swarming/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/swarming_client/swarming",
+      "spawn-tasks",
+      "-server",
+      "https://example.swarmingserver.appspot.com",
+      "-json-input",
+      "{\"requests\": [{\"name\": \"vm-test-suite\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/depot_tools/depot_tools\", \"path\": \"depot_tools\", \"version\": \"version:latest\"}, {\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"version:latest\"}]}, \"command\": [\"recipes/recipes.py\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"test_type\\\": \\\"vm\\\", \\\"build_target\\\": \\\"build_target\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"VMTest\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"depot_tools\"]}], \"execution_timeout_secs\": \"1200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "run plan.execute vm suite suite.trigger swarming",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test-suite\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LINK@Swarming task UI: vm-test-suite@https://example.swarmingserver.appspot.com/task?id=0@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run plan.execute tast_vm suite suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/swarming_client/swarming",
+      "spawn-tasks",
+      "-server",
+      "https://example.swarmingserver.appspot.com",
+      "-json-input",
+      "{\"requests\": [{\"name\": \"vm-test-suite\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/depot_tools/depot_tools\", \"path\": \"depot_tools\", \"version\": \"version:latest\"}, {\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"version:latest\"}]}, \"command\": [\"recipes/recipes.py\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"test_type\\\": \\\"tast_vm\\\", \\\"test_exprs\\\": [], \\\"build_target\\\": \\\"build_target\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"VMTest\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"depot_tools\"]}], \"execution_timeout_secs\": \"1200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "run plan.execute tast_vm suite suite.trigger swarming",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test-suite\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LINK@Swarming task UI: vm-test-suite@https://example.swarmingserver.appspot.com/task?id=0@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]
