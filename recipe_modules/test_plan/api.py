@@ -9,9 +9,30 @@ class RunPlanApi(recipe_api.RecipeApi):
   """A module for test execution steps"""
 
   def initialize(self):
+    self._test_planner_path = None
     self._test_env_steps = {
       'hw': self.m.skylab.create_suite
     }
+
+  def generate(self, name, build_report, dep_graph):
+    """Generate test plan.
+
+    Args:
+      * name (str): The step name.
+      * build_report (dict): Full build report.
+      * dep_graph (dict): Full dep graph.
+    """
+    self._ensure_test_planner()
+
+    # TODO(yshaul): Add real cmd flags / piping when available.
+    cmd = [
+      self._test_planner_path,
+    ]
+    try:
+      self.m.step(name, cmd, stdout=self.m.json.output())
+    finally:
+      result = self.m.step.active_result
+      return result.stdout
 
   def run(self, name, test_plan):
     """Run all test plan steps. Aborts on the first step failure.
@@ -40,6 +61,23 @@ class RunPlanApi(recipe_api.RecipeApi):
       raise self.m.step.StepFailure('Unknown test environment "%s"' % test_env)
 
     return step
+
+  def _ensure_test_planner(self):
+    """Ensure the test_planner cli is installed."""
+    if self._test_planner_path:
+      return # pragma: nocover
+
+    with self.m.step.nest('ensure test_planner'):
+      with self.m.context(infra_steps=True):
+        cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
+
+        pkgs = self.m.cipd.EnsureFile()
+        pkgs.add_package('chromiumos/infra/test_planner',
+                         'latest')
+        self.m.cipd.ensure(cipd_dir, pkgs)
+
+        self._test_planner_path = cipd_dir.join('test_planner')
+
 
 def step_name(test_plan):
   """Returns step name for test plan.

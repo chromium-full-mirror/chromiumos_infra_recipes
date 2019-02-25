@@ -46,7 +46,8 @@
   * [support:examples/full](#recipes-support_examples_full)
   * [test_execution/execute_plan](#recipes-test_execution_execute_plan) &mdash; Recipe for executing ChromeOS test plan.
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
-  * [test_plan:examples/full](#recipes-test_plan_examples_full)
+  * [test_plan:examples/generate](#recipes-test_plan_examples_generate)
+  * [test_plan:examples/run](#recipes-test_plan_examples_run)
 ## Recipe Modules
 
 ### *recipe_modules* / [artifacts](/recipe_modules/artifacts)
@@ -874,15 +875,24 @@ Ensure the CIPD support package is installed.
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
 ### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
 
-[DEPS](/recipe_modules/test_plan/__init__.py#1): [skylab](#recipe_modules-skylab), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/test_plan/__init__.py#1): [skylab](#recipe_modules-skylab), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [RunPlanApi](/recipe_modules/test_plan/api.py#8)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for test execution steps
 
+&mdash; **def [generate](/recipe_modules/test_plan/api.py#17)(self, name, build_report, dep_graph):**
+
+Generate test plan.
+
+Args:
+  * name (str): The step name.
+  * build_report (dict): Full build report.
+  * dep_graph (dict): Full dep graph.
+
 &mdash; **def [initialize](/recipe_modules/test_plan/api.py#11)(self):**
 
-&mdash; **def [run](/recipe_modules/test_plan/api.py#16)(self, name, test_plan):**
+&mdash; **def [run](/recipe_modules/test_plan/api.py#37)(self, name, test_plan):**
 
 Run all test plan steps. Aborts on the first step failure.
 
@@ -1087,11 +1097,16 @@ Use in place of file api's copytree method, as copytree can be quite slow,
 and we have to merge several source directories to a single target directory.
 
 &mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#140)(files, gsutil, gs_bucket, gs_path, dest_path):**
-### *recipes* / [test\_plan:examples/full](/recipe_modules/test_plan/examples/full.py)
+### *recipes* / [test\_plan:examples/generate](/recipe_modules/test_plan/examples/generate.py)
 
-[DEPS](/recipe_modules/test_plan/examples/full.py#7): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/test_plan/examples/generate.py#6): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
-&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/generate.py#11)(api):**
+### *recipes* / [test\_plan:examples/run](/recipe_modules/test_plan/examples/run.py)
+
+[DEPS](/recipe_modules/test_plan/examples/run.py#7): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/run.py#12)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-gitiles
