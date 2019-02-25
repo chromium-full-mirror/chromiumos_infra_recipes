@@ -107,7 +107,7 @@ class GitApi(recipe_api.RecipeApi):
 
     step_data = self._step(['rev-parse', 'FETCH_HEAD'],
                            stdout=self.m.raw_io.output(),
-                           test_stdout='deadbeef\n')
+                           test_stdout='%s\n' % self.test_api.test_commit_id)
     return step_data.stdout.strip()
 
   def checkout(self, commit, force=False):
@@ -177,8 +177,9 @@ class GitApi(recipe_api.RecipeApi):
 
   def head_commit(self):
     """Returns the HEAD commit ID."""
-    return self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
-                      test_stdout='deadbeef\n').stdout.strip()
+    return self._step(
+        ['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
+        test_stdout='%s\n' % self.test_api.test_commit_id).stdout.strip()
 
   @contextlib.contextmanager
   def head_context(self):
@@ -203,7 +204,7 @@ class GitApi(recipe_api.RecipeApi):
     step_data = self._step(
         ['log', '--pretty=%H%x1E%B%x00',
          '%s...%s' % (from_rev, to_rev)], stdout=self.m.raw_io.output(),
-        test_stdout='deadbeef\x1Emessage\x00')
+        test_stdout='%s\x1Emessage\x00' % self.test_api.test_commit_id)
     stdout = step_data.stdout.strip().rstrip('\x00')
     commits = []
     for record in stdout.split('\x00'):

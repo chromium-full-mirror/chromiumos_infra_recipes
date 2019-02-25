@@ -285,7 +285,7 @@
     "cmd": [
       "git",
       "cherry-pick",
-      "deadbeef"
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
@@ -336,7 +336,7 @@
       "bundle",
       "create",
       "[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src/bundle",
-      "deadbeef^..HEAD"
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,

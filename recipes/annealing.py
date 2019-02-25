@@ -16,7 +16,10 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 """
 
+import urlparse
+
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
@@ -65,11 +68,26 @@ def RunSteps(api):
       # Otherwise we need to ensure all of those diffs have fulfilled deps.
       api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
+    snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
     api.git_txn.update_ref_write_file(
-        api.cros_source.INTERNAL_MANIFEST_URL, MANIFEST_REF,
-        'Annealing manifest snapshot',
+        snapshot_repo_url, MANIFEST_REF, 'Annealing manifest snapshot',
         api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
         snapshot_xml)
+
+    # Use the newly created snapshot commit as the build output.
+    snapshot_commit = make_gitiles_commit(api, snapshot_repo_url,
+                                          api.git.head_commit())
+    api.buildbucket.set_output_gitiles_commit(snapshot_commit)
+
+
+def make_gitiles_commit(api, repo_url, commit_id):
+  """Create a GitilesCommit for the given |repo_url| and |commit_id|."""
+  url = urlparse.urlparse(repo_url)
+  c = api.buildbucket.common_pb2.GitilesCommit()
+  c.host = url.hostname
+  c.project = url.path[1:]  # strip leading /
+  c.id = commit_id
+  return c
 
 
 def GenTests(api):
@@ -81,4 +99,3 @@ def GenTests(api):
   ) + api.step_data(
       'diff remote and local manifest.git show', stdout=api.raw_io.output(
           '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'))
-
