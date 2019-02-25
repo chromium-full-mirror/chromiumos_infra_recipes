@@ -3,8 +3,9 @@
     "cmd": [],
     "name": "run plan",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@SUCCESS - vm-test-suite@hello world!@@@",
-      "@@@STEP_LOG_END@SUCCESS - vm-test-suite@@@"
+      "@@@STEP_LOG_LINE@FAILURE - vm-test-suite@hello world!@@@",
+      "@@@STEP_LOG_END@FAILURE - vm-test-suite@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -79,42 +80,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run plan.execute tast_vm suite suite",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/swarming_client/swarming",
-      "spawn-tasks",
-      "-server",
-      "https://example.swarmingserver.appspot.com",
-      "-json-input",
-      "{\"requests\": [{\"name\": \"vm-test-suite\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/depot_tools/depot_tools\", \"path\": \"depot_tools\", \"version\": \"version:latest\"}, {\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"version:latest\"}]}, \"command\": [\"recipes/recipes.py\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"test_type\\\": \\\"tast_vm\\\", \\\"test_exprs\\\": [], \\\"build_target\\\": \\\"build_target\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"VMTest\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"depot_tools\"]}], \"execution_timeout_secs\": \"1200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "run plan.execute tast_vm suite suite.trigger swarming",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test-suite\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task UI: vm-test-suite@https://example.swarmingserver.appspot.com/task?id=0@@@"
-    ]
-  },
-  {
     "cmd": [
       "[CACHE]/swarming_client/swarming",
       "collect",
@@ -124,7 +89,6 @@
       "/path/to/tmp/json",
       "-task-output-stdout",
       "json",
-      "0",
       "0"
     ],
     "infra_step": true,
@@ -137,7 +101,7 @@
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"name\": \"vm-test\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
@@ -155,7 +119,12 @@
     ]
   },
   {
-    "jsonResult": null,
+    "failure": {
+      "failure": {
+        "step": ""
+      },
+      "humanReason": "Failed one or more tests"
+    },
     "name": "$result"
   }
 ]

@@ -72,7 +72,7 @@ class VMTestApi(recipe_api.RecipeApi):
     Returns:
       swarming.TaskRequestMetadata
     """
-    with self.m.step.nest(name):
+    with self.m.step.nest(name) as result:
       ensure_file = self.m.cipd.EnsureFile()
       ensure_file.add_package(
           'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',

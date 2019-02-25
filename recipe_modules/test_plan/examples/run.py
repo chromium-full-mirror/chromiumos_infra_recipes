@@ -6,6 +6,7 @@
 
 DEPS = [
   'recipe_engine/properties',
+  'recipe_engine/swarming',
   'test_plan'
 ]
 
@@ -52,5 +53,22 @@ def GenTests(api):
         api.test_plan.example_vm_plan(test_env='vm', test_suite='suite'),
         api.test_plan.example_vm_plan(test_env='tast_vm', test_suite='suite'),
       ]
-    })
+    }) +
+    api.step_data('run plan.execute vm suite suite', api.swarming.trigger(['vm-test'])) +
+    api.step_data('run plan.collect test results', api.swarming.collect([
+        api.swarming.task_result(1, 'vm-test')
+    ]))
+  )
+
+  yield (
+    api.test('failed_test') +
+    api.properties(plan={
+      'test_plan': [
+        api.test_plan.example_vm_plan(test_env='vm', test_suite='suite'),
+      ]
+    }) +
+    api.step_data('run plan.execute vm suite suite', api.swarming.trigger(['vm-test'])) +
+    api.step_data('run plan.collect test results', api.swarming.collect([
+        api.swarming.task_result(1, 'vm-test', failure=True)
+    ]))
   )

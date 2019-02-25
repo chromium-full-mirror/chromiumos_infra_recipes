@@ -43,10 +43,39 @@ class RunPlanApi(recipe_api.RecipeApi):
       * name (str): Step name.
       * test_plan (GenerateTestPlanResponse): Test plan.
     """
-    with self.m.step.nest(name):
+    with self.m.step.nest(name) as result:
+      tasks = []
       for test_unit in test_plan['test_plan']:
         step = self._step(test_unit)
-        step(step_name(test_unit), test_unit)
+        task = step(step_name(test_unit), test_unit)
+        tasks.append(task)
+
+      swarming_results = self.m.swarming.collect('collect test results', tasks)
+
+      success = True
+      for idx, swarming_result in enumerate(swarming_results):
+        # We don't have a great way of highlighting failed tests.
+        # Group failed tests together by prepending status.
+        log_name = 'SUCCESS - ' if swarming_result.success else 'FAILURE - '
+        if isinstance(tasks[idx], str):
+          log_name += tasks[idx]
+        else:
+          log_name += tasks[idx].name
+
+        # Until parallel recipes materializes, dump output to step log
+        result.presentation.logs[log_name] = [
+            swarming_result.output
+        ]
+
+        if swarming_result.success:
+          result.presentation.status = 'SUCCESS'
+        else:
+          result.presentation.status = 'FAILURE'
+
+        success &= swarming_result.success
+
+      if not success:
+        raise self.m.step.StepFailure('Failed one or more tests')
 
   def _step(self, test_unit):
     """Returns step function for given test plan step.
