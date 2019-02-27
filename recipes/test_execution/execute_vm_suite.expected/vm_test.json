@@ -5,7 +5,7 @@
       "-u",
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
-      "RECIPE_PACKAGE_REPO[depot_tools]/gsutil.py",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
       "gs://image-bucket/path/to/image/image.zip",
@@ -20,7 +20,7 @@
       "-u",
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
-      "RECIPE_PACKAGE_REPO[depot_tools]/gsutil.py",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
       "gs://image-bucket/path/to/image/autotest_packages.tar",
@@ -35,7 +35,7 @@
       "-u",
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
-      "RECIPE_PACKAGE_REPO[depot_tools]/gsutil.py",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
       "gs://image-bucket/path/to/image/control_files.tar",
@@ -50,7 +50,7 @@
       "-u",
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
-      "RECIPE_PACKAGE_REPO[depot_tools]/gsutil.py",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
       "gs://image-bucket/path/to/image/test_suites.tar.bz2",
@@ -117,7 +117,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
       "https://chromium.googlesource.com/chromiumos/manifest"
@@ -131,7 +131,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--force-sync",
       "--detach",
@@ -309,7 +309,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
       "[CACHE]/cros_sdk/chroot",
@@ -638,7 +638,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
       "[CLEANUP]/chroot_ws/chroot",

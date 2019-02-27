@@ -57,7 +57,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
@@ -71,7 +71,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--force-sync",
       "--detach",
@@ -234,7 +234,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "RECIPE_REPO[depot_tools]/repo",
       "manifest",
       "-r"
     ],

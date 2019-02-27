@@ -31,7 +31,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
   @property
   def cros_sdk_path(self):
     """Returns a Path to the cros_sdk script."""
-    return self.m.depot_tools.package_repo_resource('cros_sdk')
+    return self.m.depot_tools.repo_resource('cros_sdk')
 
   @property
   def chroot_path(self):

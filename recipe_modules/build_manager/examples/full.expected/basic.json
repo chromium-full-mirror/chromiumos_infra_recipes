@@ -1,7 +1,7 @@
 [
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/prpc",
+      "RECIPE_REPO[depot_tools]/prpc",
       "call",
       "-format",
       "json",
@@ -33,7 +33,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/prpc",
+      "RECIPE_REPO[depot_tools]/prpc",
       "call",
       "-format",
       "json",
@@ -53,7 +53,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/prpc",
+      "RECIPE_REPO[depot_tools]/prpc",
       "call",
       "-format",
       "json",
@@ -79,7 +79,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/prpc",
+      "RECIPE_REPO[depot_tools]/prpc",
       "call",
       "-format",
       "json",

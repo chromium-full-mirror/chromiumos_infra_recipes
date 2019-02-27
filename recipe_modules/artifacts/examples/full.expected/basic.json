@@ -40,7 +40,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
       "[START_DIR]/cros_sdk/chroot",
@@ -98,7 +98,7 @@
       "-u",
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
-      "RECIPE_PACKAGE_REPO[depot_tools]/gsutil.py",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
       "-o",
       "GSUtil:parallel_composite_upload_threshold=50M",
       "-m",
@@ -156,7 +156,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
       "[START_DIR]/cros_sdk/chroot",
@@ -214,7 +214,7 @@
       "-u",
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
-      "RECIPE_PACKAGE_REPO[depot_tools]/gsutil.py",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
       "-o",
       "GSUtil:parallel_composite_upload_threshold=50M",
       "-m",

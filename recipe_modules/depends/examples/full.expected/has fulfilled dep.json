@@ -42,7 +42,7 @@
       "python",
       "-u",
       "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
-      "RECIPE_PACKAGE_REPO[chromeos]/support/deploy_cipd.json",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
     "name": "ensure manifest cq-depends fulfilled.read deploy_cipd.json",
@@ -113,7 +113,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/repo",
+      "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "my/project",
       "-c",

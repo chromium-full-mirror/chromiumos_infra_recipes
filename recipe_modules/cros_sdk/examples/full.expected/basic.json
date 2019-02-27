@@ -1,7 +1,7 @@
 [
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
       "[CLEANUP]/test/chroot",
@@ -11,7 +11,7 @@
   },
   {
     "cmd": [
-      "RECIPE_PACKAGE_REPO[depot_tools]/cros_sdk",
+      "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
       "[CLEANUP]/test/chroot",

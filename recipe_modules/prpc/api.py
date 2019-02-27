@@ -16,7 +16,7 @@ class PrpcApi(recipe_api.RecipeApi):
   @property
   def _prpc_path(self):
     """Returns the path to the prpc tool."""
-    return self.m.depot_tools.package_repo_resource('prpc')
+    return self.m.depot_tools.repo_resource('prpc')
 
   def call_json(self, server, method, input_data, test_output_data=None,
                 name=None):

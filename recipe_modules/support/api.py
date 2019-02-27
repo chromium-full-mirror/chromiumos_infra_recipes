@@ -23,8 +23,7 @@ class SupportApi(recipe_api.RecipeApi):
   def ensure_package_installed(self):
     """Ensure the CIPD support package is installed."""
     if not self._ensured:
-      deploy_version_file = self.package_repo_resource(
-          'support/deploy_cipd.json')
+      deploy_version_file = self.repo_resource('support/deploy_cipd.json')
 
       step_data = self.m.json.read(
           'read deploy_cipd.json', deploy_version_file,
@@ -51,6 +50,5 @@ class SupportApi(recipe_api.RecipeApi):
     """
     self.ensure_package_installed()
     tool_path = self._support_root.join(tool, tool)
-    return self.m.easy.stdout_json_step(tool, [tool_path],
-                                        stdin_json=input_data,
-                                        test_stdout=test_output_data)
+    return self.m.easy.stdout_json_step(
+        tool, [tool_path], stdin_json=input_data, test_stdout=test_output_data)

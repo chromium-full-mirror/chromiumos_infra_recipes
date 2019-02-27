@@ -33,7 +33,7 @@ class RepoApi(recipe_api.RecipeApi):
 
   @property
   def repo_path(self):
-    return self.m.depot_tools.package_repo_resource('repo')
+    return self.m.depot_tools.repo_resource('repo')
 
   def _find_root(self):
     """Starting from cwd, find an ancestor with a '.repo' subdir."""
