@@ -27,6 +27,7 @@
   * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
   * [build_manager:examples/full](#recipes-build_manager_examples_full)
+  * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test:examples/full](#recipes-cros_test_examples_full)
@@ -174,7 +175,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#80)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#82)(self, patch_sets):**
 
 Apply Gerrit patch sets to the workspace.
 
@@ -191,7 +192,7 @@ Returns a context where master and workspace overlays are mounted.
 Args:
   checkout_path (Path): Path to CrOS source checkout.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#155)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#161)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -204,7 +205,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#112)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#118)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -218,7 +219,7 @@ Args:
   project_commits (List[ProjectCommit]): Commits to add to archive. Must be
     in patch application order.
 
-&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#60)(self, project, branch):**
+&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#62)(self, project, branch):**
 
 Find the source path for a given project in the workspace.
 
@@ -241,7 +242,7 @@ This is a recent version of the source which should not be modified (apart
 from incidental changes like caching) during a build. "Top of tree" logic
 will run from this checkout.
 
-&mdash; **def [sync\_gitiles\_snapshot](/recipe_modules/cros_source/api.py#103)(self, gitiles_commit):**
+&mdash; **def [sync\_gitiles\_snapshot](/recipe_modules/cros_source/api.py#105)(self, gitiles_commit):**
 
 Sync a checkout to the snapshot in |gitiles_commit|.
 
@@ -902,6 +903,13 @@ Create a GitilesCommit for the given |repo_url| and |commit_id|.
 [DEPS](/recipe_modules/build_manager/examples/full.py#6): [build\_manager](#recipe_modules-build_manager), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/build_manager/examples/full.py#15)(api):**
+### *recipes* / [build\_target](/recipes/build_target.py)
+
+[DEPS](/recipes/build_target.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for building a BuildTarget image.
+
+&mdash; **def [RunSteps](/recipes/build_target.py#30)(api, build_target):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]

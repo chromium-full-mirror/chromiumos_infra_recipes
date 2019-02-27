@@ -55,6 +55,8 @@ class CrosSourceApi(recipe_api.RecipeApi):
     with self.m.overlayfs.cleanup_context():
       self.m.overlayfs.mount('master', checkout_path, self.master_path)
       self.m.overlayfs.mount('workspace', checkout_path, self.workspace_path)
+      self.m.path.mock_add_paths(self.master_path.join('.repo'))
+      self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
       yield
 
   def find_project_path(self, project, branch):
@@ -104,8 +106,12 @@ class CrosSourceApi(recipe_api.RecipeApi):
     """Sync a checkout to the snapshot in |gitiles_commit|."""
     gitiles_url = 'https://%s/%s' % (gitiles_commit.host,
                                      gitiles_commit.project)
+
+    step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file('<manifest></manifest>')
     snapshot_xml = self.m.gitiles.download_file(gitiles_url, 'snapshot.xml',
-                                                branch=gitiles_commit.id)
+                                                branch=gitiles_commit.id,
+                                                step_test_data=step_test_data)
+
     self.m.repo.sync_manifest(manifest_data=snapshot_xml, detach=True,
                               optimized_fetch=True)
 

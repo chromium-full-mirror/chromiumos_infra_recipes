@@ -40,8 +40,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.buildbucket.ci_build() +  #
-         api.step_data(
-             'fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml',
-             api.gitiles.make_encoded_file('<manifest></manifest>')))
+  yield api.test('basic') + api.buildbucket.ci_build()
