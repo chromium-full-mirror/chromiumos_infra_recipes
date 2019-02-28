@@ -8,6 +8,6 @@ led auth-info || {
 # Change to repo root.
 cd "$(dirname "$(readlink -f "$0")")/.." || exit 2
 
-led get-builder 'luci.chromeos.prototype:Annealing' | \
+led get-builder 'luci.chromeos.annealing:Annealing' | \
   led edit-recipe-bundle | \
   led launch || exit 3
