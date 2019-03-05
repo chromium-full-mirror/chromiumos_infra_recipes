@@ -5,7 +5,6 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
-  * [build_manager](#recipe_modules-build_manager) &mdash; API for managing multiple parallel "worker" Buildbucket builds.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_test](#recipe_modules-cros_test) &mdash; API for interacting with cros_test chromite api.
@@ -17,7 +16,6 @@
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
-  * [prpc](#recipe_modules-prpc) &mdash; API for working with the 'prpc' tool.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [repo_cache](#recipe_modules-repo_cache) &mdash; API for working with repo repository caches.
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
@@ -26,7 +24,6 @@
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
-  * [build_manager:examples/full](#recipes-build_manager_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
@@ -41,7 +38,6 @@
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
-  * [prpc:examples/full](#recipes-prpc_examples_full)
   * [repo:examples/full](#recipes-repo_examples_full)
   * [repo_cache:examples/full](#recipes-repo_cache_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
@@ -86,19 +82,6 @@ Args:
 
 Returns:
   dict: Output data.
-### *recipe_modules* / [build\_manager](/recipe_modules/build_manager)
-
-[DEPS](/recipe_modules/build_manager/__init__.py#1): [prpc](#recipe_modules-prpc), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-API for managing multiple parallel "worker" Buildbucket builds.
-
-#### **class [BuildManagerApi](/recipe_modules/build_manager/api.py#88)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for managing multiple parallel "worker" builds.
-
-&mdash; **def [new\_manager](/recipe_modules/build_manager/api.py#91)(self):**
-
-Create a new Manager.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -672,44 +655,6 @@ Args:
 Uprevs portage packages for all boards.
 
 Must be run with cwd inside a chromiumos source root.
-### *recipe_modules* / [prpc](/recipe_modules/prpc)
-
-[DEPS](/recipe_modules/prpc/__init__.py#1): [easy](#recipe_modules-easy), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools]
-
-API for working with the 'prpc' tool.
-
-#### **class [PrpcApi](/recipe_modules/prpc/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for interacting with the prpc tool.
-
-&mdash; **def [call\_json](/recipe_modules/prpc/api.py#21)(self, server, method, input_data, test_output_data=None, name=None):**
-
-Make a prpc call with JSON data.
-
-Args:
-  server (str): The host to make the call against.
-  method (str): The full method name (service.method) to call.
-  input_data (str): The input JSON message data.
-  test_output_data (list|dict): The output data to return in a test.
-  name (str): The step name. Defaults to 'prpc <method>'.
-
-  Returns:
-    str: The output JSON message data.
-
-&mdash; **def [call\_proto](/recipe_modules/prpc/api.py#41)(self, server, method, input_msg, output_msg_type, test_output_msg=None):**
-
-Make a prpc call with proto Messages.
-
-Args:
-  server (str): The host to make the call against.
-  method (str): The full method name (service.method) to call.
-  input_msg (google.protobuf.message.Message): The input Message.
-  output_msg_type (type): The output Message type.
-  test_output_msg (google.protobuf.message.Message): The output Message to
-    return in a test.
-
-  Returns:
-    str: The output JSON message data.
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
 [DEPS](/recipe_modules/repo/__init__.py#1): [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -895,11 +840,6 @@ Create a GitilesCommit for the given |repo_url| and |commit_id|.
 [DEPS](/recipe_modules/build_api/examples/full.py#6): [build\_api](#recipe_modules-build_api)
 
 &mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#11)(api):**
-### *recipes* / [build\_manager:examples/full](/recipe_modules/build_manager/examples/full.py)
-
-[DEPS](/recipe_modules/build_manager/examples/full.py#6): [build\_manager](#recipe_modules-build_manager), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-&mdash; **def [RunSteps](/recipe_modules/build_manager/examples/full.py#15)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -987,11 +927,6 @@ cq, postsubmit, release...
 Recipe for prototyping Chrome OS builders.
 
 &mdash; **def [RunSteps](/recipes/prototype.py#24)(api):**
-### *recipes* / [prpc:examples/full](/recipe_modules/prpc/examples/full.py)
-
-[DEPS](/recipe_modules/prpc/examples/full.py#6): [prpc](#recipe_modules-prpc), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
-
-&mdash; **def [RunSteps](/recipe_modules/prpc/examples/full.py#15)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
