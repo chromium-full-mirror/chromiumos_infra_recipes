@@ -85,15 +85,35 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"bucket\": \"ci\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"builder\": \"builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"project\": \"project\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"createTime\": \"2018-05-25T23:50:17Z\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"8922054662172514000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"host\": \"chromium.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/heads/master\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
-    "jsonResult": null,
+    "failure": {
+      "failure": {
+        "step": ""
+      },
+      "humanReason": "Child builder failed: project: \"project\"\nbucket: \"ci\"\nbuilder: \"builder\"\n"
+    },
     "name": "$result"
   }
 ]
