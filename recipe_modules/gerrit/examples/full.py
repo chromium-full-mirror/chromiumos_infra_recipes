@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
@@ -11,7 +13,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  change = api.buildbucket.common_pb2.GerritChange()
+  change = common_pb2.GerritChange()
   change.host = 'chromium-review.googlesource.com'
   change.change = 91827
   change.patchset = 1

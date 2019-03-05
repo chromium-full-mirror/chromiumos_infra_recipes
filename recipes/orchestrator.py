@@ -11,6 +11,9 @@ TODO(chromium:922994): Make this recipe somewhat generic across builders, e.g.
 cq, postsubmit, release...
 """
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
@@ -29,7 +32,7 @@ def RunSteps(api):
 
   completed_builds = api.buildbucket.run(requests)
   for build in completed_builds:
-    if build.status != api.buildbucket.common_pb2.SUCCESS:
+    if build.status != common_pb2.SUCCESS:
       raise api.step.StepFailure('Child builder failed: {}'.format(
           build.builder))
 

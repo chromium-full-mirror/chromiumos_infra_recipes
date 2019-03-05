@@ -13,6 +13,8 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+
 BUILDBUCKET_PROJECT = 'chromeos'
 BUILDBUCKET_SERVER = 'cr-buildbucket.appspot.com'
 
@@ -54,7 +56,7 @@ class Manager(object):
                                          test_response=test_response)
     for build_dict in resps:
       self._scheduled_builds.append(
-          message_from_jsonpb_dict(self._api.build_pb2.Build, build_dict))
+          message_from_jsonpb_dict(build_pb2.Build, build_dict))
     self._unscheduled = []
 
   @property
@@ -76,7 +78,7 @@ class Manager(object):
     reqs = [{'id': build_id} for build_id in self.scheduled_build_ids]
     updated = []
     for build_dict in self._api._buildbucket_batch('get_build', reqs):
-      build = message_from_jsonpb_dict(self._api.build_pb2.Build, build_dict)
+      build = message_from_jsonpb_dict(build_pb2.Build, build_dict)
       if self._poll_update_times.get(build.id) != build.update_time:
         self._poll_update_times[build.id] = build.update_time
         updated.append(build)
@@ -85,11 +87,6 @@ class Manager(object):
 
 class BuildManagerApi(recipe_api.RecipeApi):
   """A module for managing multiple parallel "worker" builds."""
-
-  @property
-  def build_pb2(self):
-    """Returns the build_pb2 module."""
-    return self.m.buildbucket.build_pb2
 
   def new_manager(self):
     """Create a new Manager."""

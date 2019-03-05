@@ -18,6 +18,8 @@ The annealing builders run in serial and do the following:
 
 import urlparse
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -83,7 +85,7 @@ def RunSteps(api):
 def make_gitiles_commit(api, repo_url, commit_id):
   """Create a GitilesCommit for the given |repo_url| and |commit_id|."""
   url = urlparse.urlparse(repo_url)
-  c = api.buildbucket.common_pb2.GitilesCommit()
+  c = common_pb2.GitilesCommit()
   c.host = url.hostname
   c.project = url.path[1:]  # strip leading /
   c.id = commit_id
