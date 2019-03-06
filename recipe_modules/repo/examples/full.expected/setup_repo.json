@@ -17,6 +17,8 @@
       "http://manifest_url",
       "--manifest-branch",
       "mybranch",
+      "--reference",
+      "/preload/chromeos",
       "--groups",
       "group1,group2",
       "--depth",

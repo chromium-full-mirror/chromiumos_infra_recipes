@@ -120,7 +120,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chromium.googlesource.com/chromiumos/manifest"
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "--reference",
+      "/preload/chromeos"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,

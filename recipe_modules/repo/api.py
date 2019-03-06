@@ -67,13 +67,14 @@ class RepoApi(recipe_api.RecipeApi):
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, [self.repo_path] + args, **kwargs)
 
-  def init(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None,
-           depth=None, repo_url=None):
+  def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
+           groups=None, depth=None, repo_url=None):
     """Executes 'repo init' with the given arguments.
 
     Args:
       * manifest_url (str): URL of the manifest repository to clone.
       * manifest_branch (str): Manifest repository branch to checkout.
+      * reference (str): Location of a mirror directory to bootstrap sync.
       * groups (list): Groups to checkout (see `repo init --groups`).
       * depth (int): Create a shallow clone of the given depth.
       * repo_url (str): URL of the repo repository.
@@ -82,6 +83,8 @@ class RepoApi(recipe_api.RecipeApi):
     cmd = ['init', '--manifest-url', manifest_url]
     if repo_url is not None:
       cmd += ['--manifest-branch', manifest_branch]
+    if reference is not None:
+      cmd += ['--reference', reference]
     if groups is not None:
       assert not isinstance(groups, types.StringTypes)
       cmd += ['--groups', ','.join(groups)]

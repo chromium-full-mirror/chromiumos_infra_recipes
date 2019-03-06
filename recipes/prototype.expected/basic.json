@@ -61,6 +61,8 @@
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--reference",
+      "/preload/chromeos",
       "--groups",
       "minilayout"
     ],

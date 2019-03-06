@@ -17,8 +17,8 @@ def RunSteps(api):
   with api.context(cwd=api.path['start_dir']):
     api.repo.init('http://manifest_url')
     api.repo.init('http://manifest_url', manifest_branch='mybranch',
-                  groups=['group1',
-                          'group2'], depth=10, repo_url='http://repo_url')
+                  reference='/preload/chromeos', groups=['group1', 'group2'],
+                  depth=10, repo_url='http://repo_url')
     api.repo.sync()
     api.repo.sync(force_sync=True, detach=True, current_branch=True, jobs=99,
                   manifest_name='snapshot.xml', no_tags=True,

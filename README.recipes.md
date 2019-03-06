@@ -149,11 +149,11 @@ Returns:
 
 API for working with CrOS source.
 
-#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#104)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#107)(self, patch_sets):**
 
 Apply Gerrit patch sets to the workspace.
 
@@ -163,18 +163,18 @@ Args:
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
-&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#33)(self):**
+&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#35)(self):**
 
 The cached checkout path.
 
 This is the cached version of source, usually updated once at the beginning
 of a build and then mounted into the master and/or workspace paths.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#74)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#77)(self):**
 
 Returns a context where master and workspace overlays are mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#183)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#186)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -187,7 +187,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#140)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#143)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -201,7 +201,7 @@ Args:
   project_commits (List[ProjectCommit]): Commits to add to archive. Must be
     in patch application order.
 
-&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#61)(self, manifest_url=INTERNAL_MANIFEST_URL, init_opts=None, sync_opts=None):**
+&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#63)(self, manifest_url=INTERNAL_MANIFEST_URL, init_opts=None, sync_opts=None):**
 
 Ensure the configured repo cache exists and is synced.
 
@@ -210,7 +210,7 @@ Args:
   * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
 
-&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#84)(self, project, branch):**
+&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#87)(self, project, branch):**
 
 Find the source path for a given project in the workspace.
 
@@ -221,7 +221,7 @@ Args:
 Returns:
   The path value for the found project.
 
-&emsp; **@property**<br>&mdash; **def [master\_path](/recipe_modules/cros_source/api.py#42)(self):**
+&emsp; **@property**<br>&mdash; **def [master\_path](/recipe_modules/cros_source/api.py#44)(self):**
 
 The "master" checkout path.
 
@@ -229,11 +229,11 @@ This is a recent version of the source which should not be modified (apart
 from incidental changes like caching) during a build. "Top of tree" logic
 will run from this checkout.
 
-&mdash; **def [sync\_gitiles\_snapshot](/recipe_modules/cros_source/api.py#127)(self, gitiles_commit):**
+&mdash; **def [sync\_gitiles\_snapshot](/recipe_modules/cros_source/api.py#130)(self, gitiles_commit):**
 
 Sync a checkout to the snapshot in |gitiles_commit|.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#52)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#54)(self):**
 
 The "workspace" checkout path.
 
@@ -674,7 +674,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 A module for interacting with the repo tool.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#227)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#230)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -690,7 +690,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#268)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#271)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -698,7 +698,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#193)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#196)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -714,7 +714,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#291)(self, root_path, manifest_url, init_opts=None, sync_opts=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#294)(self, root_path, manifest_url, init_opts=None, sync_opts=None):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -724,25 +724,26 @@ Args:
   * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#70)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
+&mdash; **def [init](/recipe_modules/repo/api.py#70)(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None, groups=None, depth=None, repo_url=None):**
 
 Executes 'repo init' with the given arguments.
 
 Args:
   * manifest_url (str): URL of the manifest repository to clone.
   * manifest_branch (str): Manifest repository branch to checkout.
+  * reference (str): Location of a mirror directory to bootstrap sync.
   * groups (list): Groups to checkout (see `repo init --groups`).
   * depth (int): Create a shallow clone of the given depth.
   * repo_url (str): URL of the repo repository.
 
-&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#181)(self):**
+&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#184)(self):**
 
 Uses repo to create a manifest snapshot and returns it as a string.
 
 Returns:
   str: The manifest XML as a string.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#150)(self, projects=[]):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#153)(self, projects=[]):**
 
 Uses 'repo forall' to gather project information.
 
@@ -755,7 +756,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#34)(self):**
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#97)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#100)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -769,7 +770,7 @@ Args:
   * optimized_fetch (bool): Only fetch projects if revision doesn't exist.
   * cache_dir (Path): Use git-cache with this cache directory.
 
-&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#132)(self, manifest_data, \*\*kwargs):**
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#135)(self, manifest_data, \*\*kwargs):**
 
 Sync to the given manifest file data.
 

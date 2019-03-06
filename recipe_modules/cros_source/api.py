@@ -14,6 +14,8 @@ from recipe_engine import recipe_api
 
 ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id'])
 
+DEFAULT_CACHE_INIT_OPTS = dict(reference='/preload/chromeos')
+
 DEFAULT_CACHE_SYNC_OPTS = dict(
     current_branch=True,
     detach=True,
@@ -67,6 +69,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
       * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
     """
+    init_opts = dict(DEFAULT_CACHE_INIT_OPTS, **(init_opts or {}))
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
     self.m.repo.ensure_synced_checkout(self.cache_path, manifest_url,
                                        init_opts=init_opts, sync_opts=sync_opts)
