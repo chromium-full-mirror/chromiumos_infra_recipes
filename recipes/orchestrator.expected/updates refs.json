@@ -372,7 +372,7 @@
     ],
     "infra_step": true,
     "name": "buildbucket.run.collect",
-    "timeout": 3600,
+    "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",

@@ -11,7 +11,6 @@ TODO(chromium:922994): Make this recipe somewhat generic across builders, e.g.
 cq, postsubmit, release...
 """
 
-
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -70,7 +69,7 @@ def RunSteps(api, update_manifest_refs):
     for builder in ['arm-generic-postsubmit']:
       requests.append(api.buildbucket.schedule_request(builder=builder))
 
-    completed_builds = api.buildbucket.run(requests)
+    completed_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4)
     for build in completed_builds:
       if build.status != common_pb2.SUCCESS:
         raise api.step.StepFailure('Child builder failed: {}'.format(
