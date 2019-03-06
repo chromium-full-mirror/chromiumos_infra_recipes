@@ -900,7 +900,7 @@ Asserts that the two values are equal, or throws AssertionError.
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#17): [dev](#recipe_modules-dev), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#15): [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
@@ -909,7 +909,7 @@ All builders run against the same source tree.
 TODO(chromium:922994): Make this recipe somewhat generic across builders, e.g.
 cq, postsubmit, release...
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#24)(api):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#45)(api, update_manifest_refs):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
