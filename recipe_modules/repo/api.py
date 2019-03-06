@@ -287,3 +287,29 @@ class RepoApi(recipe_api.RecipeApi):
         os.path.relpath(str(new_manifest_path), manifests_dir),
     ]
     self._step(cmd, name=name)
+
+  def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
+                             sync_opts=None):
+    """Ensure the given repo checkout exists and is synced.
+
+    Args:
+      * root_path (Path): Path to the repo root.
+      * manifest_url (str): Manifest URL for 'repo.init`.
+      * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
+      * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+    """
+    with self.m.step.nest('ensure synced checkout'):
+      self.m.file.ensure_directory('ensure root path', root_path)
+      with self.m.context(cwd=root_path, infra_steps=True):
+        # Remove .repo/manifests and .repo/manifests.git to avoid potential
+        # problems when switching to a different manifest repo or branch.
+        for manifest_dir in ('manifests', 'manifests.git'):
+          self.m.file.rmtree('remove .repo/%s' % manifest_dir,
+                             root_path.join('.repo', manifest_dir))
+
+        self.m.repo.init(manifest_url, **(init_opts or {}))
+        self.m.repo.sync(**(sync_opts or {}))
+
+      # Sanity check since `repo init` will happily reuse a repository in the
+      # cwd's ancestor directories.
+      assert self.m.path.exists(root_path.join('.repo')), '.repo not created!'

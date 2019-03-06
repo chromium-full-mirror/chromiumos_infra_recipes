@@ -20,7 +20,6 @@ DEPS = [
     'cros_source',
     'dev',
     'git',
-    'repo_cache',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -42,14 +41,9 @@ PROPERTIES = {
 
 
 def RunSteps(api, update_manifest_refs):
-  api.dev.configure(dryrun=False)
-
-  # Prepare repo source cache.
-  repo_cache_path = api.path['cache'].join('chromiumos')
-  api.repo_cache.ensure_fresh_cache(repo_cache_path,
-                                    api.cros_source.INTERNAL_MANIFEST_URL)
-
-  with api.cros_source.checkout_overlays_context(repo_cache_path):
+  # Set up source checkouts.
+  api.cros_source.ensure_synced_cache()
+  with api.cros_source.checkout_overlays_context():
     # Fetch snapshot refs and point start ref to the input snapshot.
     if 'start' in update_manifest_refs:
       with api.step.nest('update manifest start ref'):

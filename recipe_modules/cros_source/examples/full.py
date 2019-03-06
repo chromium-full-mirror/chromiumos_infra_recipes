@@ -22,13 +22,10 @@ def RunSteps(api):
   except api.step.StepFailure:
     pass
 
-  with api.cros_source.checkout_overlays_context(api.path['start_dir']):
-    pass
-
-  repo_root = api.path['start_dir'].join('root')
-  api.path.mock_add_paths(repo_root.join('.repo'))
-  with api.context(cwd=repo_root):
-    api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
+  api.cros_source.ensure_synced_cache()
+  with api.cros_source.checkout_overlays_context():
+    with api.context(cwd=api.cros_source.workspace_path):
+      api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
 
   commits = api.cros_source.apply_gerrit_patch_sets(
       [api.gerrit.test_api.test_patch_set()])

@@ -14,6 +14,15 @@ from recipe_engine import recipe_api
 
 ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id'])
 
+DEFAULT_CACHE_SYNC_OPTS = dict(
+    current_branch=True,
+    detach=True,
+    force_sync=True,
+    no_tags=True,
+    jobs=32,
+    optimized_fetch=True,
+)
+
 
 class CrosSourceApi(recipe_api.RecipeApi):
   """A module for CrOS-specific source steps."""
@@ -21,10 +30,14 @@ class CrosSourceApi(recipe_api.RecipeApi):
   EXTERNAL_MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
   INTERNAL_MANIFEST_URL = 'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
 
-  def initialize(self):
-    """Initialize CrosSourceApi."""
-    self._master_path = self.m.path['start_dir'].join('chromiumos_master')
-    self._workspace_path = self.m.path['start_dir'].join('chromiumos_workspace')
+  @property
+  def cache_path(self):
+    """The cached checkout path.
+
+    This is the cached version of source, usually updated once at the beginning
+    of a build and then mounted into the master and/or workspace paths.
+    """
+    return self.m.path['cache'].join('chromiumos')
 
   @property
   def master_path(self):
@@ -34,7 +47,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
     from incidental changes like caching) during a build. "Top of tree" logic
     will run from this checkout.
     """
-    return self._master_path
+    return self.m.path['start_dir'].join('chromiumos_master')
 
   @property
   def workspace_path(self):
@@ -43,18 +56,27 @@ class CrosSourceApi(recipe_api.RecipeApi):
     This is where the build is processed. It will contain the target base
     checkout and any modifications made by the build.
     """
-    return self._workspace_path
+    return self.m.path['start_dir'].join('chromiumos_workspace')
 
-  @contextlib.contextmanager
-  def checkout_overlays_context(self, checkout_path):
-    """Returns a context where master and workspace overlays are mounted.
+  def ensure_synced_cache(self, manifest_url=INTERNAL_MANIFEST_URL,
+                          init_opts=None, sync_opts=None):
+    """Ensure the configured repo cache exists and is synced.
 
     Args:
-      checkout_path (Path): Path to CrOS source checkout.
+      * manifest_url (str): Manifest URL for 'repo.init`.
+      * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
+      * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
     """
+    sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
+    self.m.repo.ensure_synced_checkout(self.cache_path, manifest_url,
+                                       init_opts=init_opts, sync_opts=sync_opts)
+
+  @contextlib.contextmanager
+  def checkout_overlays_context(self):
+    """Returns a context where master and workspace overlays are mounted."""
     with self.m.overlayfs.cleanup_context():
-      self.m.overlayfs.mount('master', checkout_path, self.master_path)
-      self.m.overlayfs.mount('workspace', checkout_path, self.workspace_path)
+      self.m.overlayfs.mount('master', self.cache_path, self.master_path)
+      self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
       self.m.path.mock_add_paths(self.master_path.join('.repo'))
       self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
       yield

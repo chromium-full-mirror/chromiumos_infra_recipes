@@ -23,7 +23,6 @@ DEPS = [
   'cros_source',
   'cros_test',
   'overlayfs',
-  'repo_cache',
 ]
 
 # Magic paths:
@@ -61,22 +60,20 @@ def _test_env_context(api):
   download_files([image_artifact] + autotest_artifacts,
                  api.gsutil, gs_bucket, gs_path, download_path)
 
-  # Prepare repo source cache.
+  # Prepare repo source.
   # This is needed because cros_run_vm_test requires chromite, as well
   # as other source dependencies that aren't easy to bundle.
   # TODO(yshaul): Add init_opts=dict(groups=['minilayout']).
   #               Minilayout currently crashes when building chroot.
-  repo_cache_path = api.path['cache'].join('chromiumos')
-  api.repo_cache.ensure_fresh_cache(repo_cache_path,
-                                    api.cros_source.EXTERNAL_MANIFEST_URL)
+  api.cros_source.ensure_synced_cache(
+      manifest_url=api.cros_source.EXTERNAL_MANIFEST_URL)
 
   api.file.ensure_directory('ensure cros_sdk dir',
                               api.path['cache'].join('cros_sdk'))
   api.cros_sdk.configure(chroot_parent_path=api.path['cache'].join('cros_sdk'))
 
   ws_path = api.cros_source.workspace_path
-  with api.cros_source.checkout_overlays_context(repo_cache_path), api.context(
-                                                 cwd=ws_path):
+  with api.cros_source.checkout_overlays_context(), api.context(cwd=ws_path):
     # The chroot is normally created implicitely with the first cros_sdk call.
     # However, we need the chroot to be created in advance, since we need
     # to copy the autotest files to the chroot *before* running cros_sdk.

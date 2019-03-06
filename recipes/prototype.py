@@ -17,7 +17,6 @@ DEPS = [
     'gerrit',
     'overlayfs',
     'repo',
-    'repo_cache',
 ]
 
 
@@ -29,13 +28,9 @@ def RunSteps(api):
   api.cros_sdk.configure(
       chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
-  # Prepare repo source cache.
-  repo_cache_path = api.path['cache'].join('chromiumos')
-  api.repo_cache.ensure_fresh_cache(repo_cache_path,
-                                    api.cros_source.INTERNAL_MANIFEST_URL,
-                                    init_opts=dict(groups=['minilayout']))
-
-  with api.cros_source.checkout_overlays_context(repo_cache_path):
+  # Set up source checkouts.
+  api.cros_source.ensure_synced_cache(init_opts=dict(groups=['minilayout']))
+  with api.cros_source.checkout_overlays_context():
     # Fetch and apply Gerrit changes.
     gerrit_changes = api.buildbucket.build.input.gerrit_changes
     patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)

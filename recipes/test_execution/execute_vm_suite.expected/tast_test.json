@@ -61,7 +61,7 @@
   },
   {
     "cmd": [],
-    "name": "prepare repo cache"
+    "name": "ensure synced checkout"
   },
   {
     "cmd": [
@@ -76,7 +76,7 @@
       "[CACHE]/chromiumos"
     ],
     "infra_step": true,
-    "name": "prepare repo cache.cache dir",
+    "name": "ensure synced checkout.ensure root path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -93,7 +93,7 @@
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "prepare repo cache.rm ./repo/manifests",
+    "name": "ensure synced checkout.remove .repo/manifests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -110,7 +110,7 @@
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "prepare repo cache.rm ./repo/manifests.git",
+    "name": "ensure synced checkout.remove .repo/manifests.git",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -124,7 +124,7 @@
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "prepare repo cache.repo init",
+    "name": "ensure synced checkout.repo init",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -143,7 +143,7 @@
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "prepare repo cache.repo sync",
+    "name": "ensure synced checkout.repo sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

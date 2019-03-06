@@ -18,7 +18,6 @@ DEPS = [
     'gerrit',
     'overlayfs',
     'repo',
-    'repo_cache',
 ]
 
 from recipe_engine.config import Dict
@@ -34,12 +33,9 @@ def RunSteps(api, build_target):
   api.cros_sdk.configure(
       chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
-  # Prepare repo source cache.
-  repo_cache_path = api.path['cache'].join('chromiumos')
-  api.repo_cache.ensure_fresh_cache(repo_cache_path,
-                                    api.cros_source.INTERNAL_MANIFEST_URL)
-
-  with api.cros_source.checkout_overlays_context(repo_cache_path):
+  # Set up source checkouts.
+  api.cros_source.ensure_synced_cache()
+  with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       # Sync workspace to gitiles_commit manifest snapshot.
       api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)

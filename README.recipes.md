@@ -17,7 +17,6 @@
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
-  * [repo_cache](#recipe_modules-repo_cache) &mdash; API for working with repo repository caches.
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
 
 **[Recipes](#Recipes)**
@@ -39,7 +38,6 @@
   * [portage:examples/full](#recipes-portage_examples_full)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
-  * [repo_cache:examples/full](#recipes-repo_cache_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
 ## Recipe Modules
@@ -151,11 +149,11 @@ Returns:
 
 API for working with CrOS source.
 
-#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#82)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#104)(self, patch_sets):**
 
 Apply Gerrit patch sets to the workspace.
 
@@ -165,14 +163,18 @@ Args:
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#48)(self, checkout_path):**
+&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#33)(self):**
+
+The cached checkout path.
+
+This is the cached version of source, usually updated once at the beginning
+of a build and then mounted into the master and/or workspace paths.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#74)(self):**
 
 Returns a context where master and workspace overlays are mounted.
 
-Args:
-  checkout_path (Path): Path to CrOS source checkout.
-
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#161)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#183)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -185,7 +187,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#118)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#140)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -199,7 +201,16 @@ Args:
   project_commits (List[ProjectCommit]): Commits to add to archive. Must be
     in patch application order.
 
-&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#62)(self, project, branch):**
+&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#61)(self, manifest_url=INTERNAL_MANIFEST_URL, init_opts=None, sync_opts=None):**
+
+Ensure the configured repo cache exists and is synced.
+
+Args:
+  * manifest_url (str): Manifest URL for 'repo.init`.
+  * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
+  * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+
+&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#84)(self, project, branch):**
 
 Find the source path for a given project in the workspace.
 
@@ -210,11 +221,7 @@ Args:
 Returns:
   The path value for the found project.
 
-&mdash; **def [initialize](/recipe_modules/cros_source/api.py#24)(self):**
-
-Initialize CrosSourceApi.
-
-&emsp; **@property**<br>&mdash; **def [master\_path](/recipe_modules/cros_source/api.py#29)(self):**
+&emsp; **@property**<br>&mdash; **def [master\_path](/recipe_modules/cros_source/api.py#42)(self):**
 
 The "master" checkout path.
 
@@ -222,11 +229,11 @@ This is a recent version of the source which should not be modified (apart
 from incidental changes like caching) during a build. "Top of tree" logic
 will run from this checkout.
 
-&mdash; **def [sync\_gitiles\_snapshot](/recipe_modules/cros_source/api.py#105)(self, gitiles_commit):**
+&mdash; **def [sync\_gitiles\_snapshot](/recipe_modules/cros_source/api.py#127)(self, gitiles_commit):**
 
 Sync a checkout to the snapshot in |gitiles_commit|.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#39)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#52)(self):**
 
 The "workspace" checkout path.
 
@@ -707,6 +714,16 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#291)(self, root_path, manifest_url, init_opts=None, sync_opts=None):**
+
+Ensure the given repo checkout exists and is synced.
+
+Args:
+  * root_path (Path): Path to the repo root.
+  * manifest_url (str): Manifest URL for 'repo.init`.
+  * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
+  * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+
 &mdash; **def [init](/recipe_modules/repo/api.py#70)(self, manifest_url, _kwonly=(), manifest_branch=None, groups=None, depth=None, repo_url=None):**
 
 Executes 'repo init' with the given arguments.
@@ -759,27 +776,6 @@ Sync to the given manifest file data.
 Args:
   * manifest_data (str): Manifest XML data to use for the sync.
   * kwargs: Keyword arguments to pass to 'repo.sync'.
-### *recipe_modules* / [repo\_cache](/recipe_modules/repo_cache)
-
-[DEPS](/recipe_modules/repo_cache/__init__.py#1): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-API for working with repo repository caches.
-
-This is mostly a wrapper around the 'repo' module.
-
-#### **class [RepoCacheApi](/recipe_modules/repo_cache/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for managing repo repository caches.
-
-&mdash; **def [ensure\_fresh\_cache](/recipe_modules/repo_cache/api.py#26)(self, cache_path, manifest_url, init_opts=None, sync_opts=None):**
-
-Ensure the configured repo cache exists and is fresh.
-
-Args:
-  * cache_path (Path): Path to cache.
-  * manifest_url (str): Manifest URL for 'repo.init`.
-  * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
-  * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -811,7 +807,7 @@ Ensure the CIPD support package is installed.
 
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#23): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#23): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -825,9 +821,9 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#44)(api):**
+&mdash; **def [RunSteps](/recipes/annealing.py#43)(api):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#85)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#79)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 ### *recipes* / [artifacts:examples/full](/recipe_modules/artifacts/examples/full.py)
@@ -842,11 +838,11 @@ Create a GitilesCommit for the given |repo_url| and |commit_id|.
 &mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#11)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#30)(api, build_target):**
+&mdash; **def [RunSteps](/recipes/build_target.py#29)(api, build_target):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -900,7 +896,7 @@ Asserts that the two values are equal, or throws AssertionError.
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#14): [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#14): [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
@@ -909,7 +905,7 @@ All builders run against the same source tree.
 TODO(chromium:922994): Make this recipe somewhat generic across builders, e.g.
 cq, postsubmit, release...
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#44)(api, update_manifest_refs):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#43)(api, update_manifest_refs):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -922,21 +918,16 @@ cq, postsubmit, release...
 &mdash; **def [RunSteps](/recipe_modules/portage/examples/full.py#13)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
-[DEPS](/recipes/prototype.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/prototype.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for prototyping Chrome OS builders.
 
-&mdash; **def [RunSteps](/recipes/prototype.py#24)(api):**
+&mdash; **def [RunSteps](/recipes/prototype.py#23)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
-### *recipes* / [repo\_cache:examples/full](/recipe_modules/repo_cache/examples/full.py)
-
-[DEPS](/recipe_modules/repo_cache/examples/full.py#6): [repo\_cache](#recipe_modules-repo_cache), [recipe\_engine/path][recipe_engine/recipe_modules/path]
-
-&mdash; **def [RunSteps](/recipe_modules/repo_cache/examples/full.py#12)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
@@ -944,22 +935,22 @@ Recipe for prototyping Chrome OS builders.
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
 ### *recipes* / [test\_execution/execute\_vm\_suite](/recipes/test_execution/execute_vm_suite.py)
 
-[DEPS](/recipes/test_execution/execute_vm_suite.py#12): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_test](#recipe_modules-cros_test), [overlayfs](#recipe_modules-overlayfs), [repo\_cache](#recipe_modules-repo_cache), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_execution/execute_vm_suite.py#12): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_test](#recipe_modules-cros_test), [overlayfs](#recipe_modules-overlayfs), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for executing ChromeOS VM test suite.
 
 This recipe runs out-of-band on VM test swarming bot.
 
-&mdash; **def [RunSteps](/recipes/test_execution/execute_vm_suite.py#33)(api):**
+&mdash; **def [RunSteps](/recipes/test_execution/execute_vm_suite.py#32)(api):**
 
-&mdash; **def [copy\_tree](/recipes/test_execution/execute_vm_suite.py#149)(name, py, src, dest):**
+&mdash; **def [copy\_tree](/recipes/test_execution/execute_vm_suite.py#146)(name, py, src, dest):**
 
 Shell out to bash cp to perform copy operations.
 
 Use in place of file api's copytree method, as copytree can be quite slow,
 and we have to merge several source directories to a single target directory.
 
-&mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#143)(files, gsutil, gs_bucket, gs_path, dest_path):**
+&mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#140)(files, gsutil, gs_bucket, gs_path, dest_path):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-gitiles

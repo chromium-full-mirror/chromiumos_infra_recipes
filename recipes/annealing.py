@@ -35,25 +35,19 @@ DEPS = [
     'git_txn',
     'overlayfs',
     'repo',
-    'repo_cache',
 ]
 
 MANIFEST_REF = 'snapshot'
 
 
 def RunSteps(api):
-  api.dev.configure(dryrun=False)
-
   # Cache the chroot.
   api.cros_sdk.configure(
       chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
-  # Prepare repo source cache.
-  repo_cache_path = api.path['cache'].join('chromiumos')
-  api.repo_cache.ensure_fresh_cache(repo_cache_path,
-                                    api.cros_source.INTERNAL_MANIFEST_URL)
-
-  with api.cros_source.checkout_overlays_context(repo_cache_path), api.context(
+  # Set up source checkouts.
+  api.cros_source.ensure_synced_cache()
+  with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path.join('manifest-internal')):
 
     snapshot_xml = api.repo.manifest_snapshot()
