@@ -906,7 +906,26 @@ All builders run against the same source tree.
 TODO(chromium:922994): Make this recipe somewhat generic across builders, e.g.
 cq, postsubmit, release...
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#43)(api, update_manifest_refs):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#51)(api, update_manifest_refs):**
+
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#91)(api, update_manifest_refs, ref_key):**
+
+Update ref in manifest-internal to point to current snapshot.
+
+Args:
+  api (object): See RunSteps documentation.
+  update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
+  ref_key: Key for ref to access in update_manifest_refs.
+
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#77)(refs):**
+
+Assert all given refs start with refs/heads.
+
+Args:
+  refs (list[str]): Refs to validate.
+
+Raises:
+  AssertionError: If any invalid ref is found.
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

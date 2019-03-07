@@ -34,28 +34,28 @@ PROPERTIES = {
         Property(
             kind=ConfigGroup(
                 # The start ref is updated before child builds are launched.
-                start=Single(str)),
+                # An example start ref is 'postsubmit', which should update
+                # right when the orchestrator launches.
+                start=Single(str),
+
+                # The success ref is updated only if all child builds succeed.
+                # An example success ref is 'stable', which should update only
+                # when postsubmit builds succeed.
+                success=Single(str),
+            ),
             default={},
         ),
 }
 
 
 def RunSteps(api, update_manifest_refs):
+  validate_refs(update_manifest_refs.values())
+
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
-    # Fetch snapshot refs and point start ref to the input snapshot.
-    if 'start' in update_manifest_refs:
-      with api.step.nest('update manifest start ref'):
-        snapshot = api.buildbucket.gitiles_commit
-        snapshot_path = api.cros_source.find_project_path(
-            snapshot.project, 'master')
-        with api.context(
-            cwd=api.cros_source.workspace_path.join(snapshot_path)):
-          api.git.fetch_ref(snapshot.host, snapshot.id)
-          refspec = '%s:refs/heads/%s' % (snapshot.id,
-                                          update_manifest_refs['start'])
-          api.git.push(snapshot.host, refspec)
+    # Point start ref to the input snapshot if specified.
+    maybe_update_manifest_ref(api, update_manifest_refs, 'start')
 
     requests = []
     # Just schedule a single child build to test postsubmit flow.
@@ -69,6 +69,43 @@ def RunSteps(api, update_manifest_refs):
         raise api.step.StepFailure('Child builder failed: {}'.format(
             build.builder))
 
+    # Victory! If we've made it this far, the child builders were successful
+    # and we can update the success manifest ref if it is specified.
+    maybe_update_manifest_ref(api, update_manifest_refs, 'success')
+
+
+def validate_refs(refs):
+  """Assert all given refs start with refs/heads.
+
+  Args:
+    refs (list[str]): Refs to validate.
+
+  Raises:
+    AssertionError: If any invalid ref is found.
+  """
+  for ref in refs:
+    if not ref.startswith('refs/heads/'):
+      raise ValueError('ref %s is missing refs/heads/' % ref)
+
+
+def maybe_update_manifest_ref(api, update_manifest_refs, ref_key):
+  """Update ref in manifest-internal to point to current snapshot.
+
+  Args:
+    api (object): See RunSteps documentation.
+    update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
+    ref_key: Key for ref to access in update_manifest_refs.
+  """
+  if ref_key in update_manifest_refs:
+    with api.step.nest('update manifest %s ref' % ref_key):
+      snapshot = api.buildbucket.gitiles_commit
+      snapshot_path = api.cros_source.find_project_path(snapshot.project,
+                                                        'master')
+      with api.context(cwd=api.cros_source.workspace_path.join(snapshot_path)):
+        api.git.fetch_ref(snapshot.host, snapshot.id)
+        refspec = '%s:%s' % (snapshot.id, update_manifest_refs[ref_key])
+        api.git.push(snapshot.host, refspec)
+
 
 def GenTests(api):
   yield (api.test('basic') + api.buildbucket.ci_build(
@@ -77,15 +114,22 @@ def GenTests(api):
 
   yield (api.test('updates refs') + api.buildbucket.ci_build(
       project='chromeos', bucket='postsubmit',
-      builder='postsubmit-orchestrator') +
-         api.properties(update_manifest_refs={'start': 'ref'}))
+      builder='postsubmit-orchestrator') + api.properties(update_manifest_refs={
+          'start': 'refs/heads/foo',
+          'success': 'refs/heads/bar'
+      }))
 
-  yield api.test('child builder fails') + api.buildbucket.ci_build(
-      project='chromeos', bucket='postsubmit', builder='postsubmit-orchestrator'
-  ) + api.buildbucket.simulated_collect_output(
-      [
-          api.buildbucket.ci_build_message(build_id=8922054662172514000,
-                                           status='FAILURE'),
-      ],
-      step_name='buildbucket.run.collect',
-  )
+  yield (api.test('bad update ref') +
+         api.properties(update_manifest_refs={'start': 'foo'}) +
+         api.expect_exception("ValueError"))
+
+  yield (api.test('child builder fails') + api.buildbucket.ci_build(
+      project='chromeos', bucket='postsubmit',
+      builder='postsubmit-orchestrator') +
+         api.buildbucket.simulated_collect_output(
+             [
+                 api.buildbucket.ci_build_message(build_id=8922054662172514000,
+                                                  status='FAILURE'),
+             ],
+             step_name='buildbucket.run.collect',
+         ))
