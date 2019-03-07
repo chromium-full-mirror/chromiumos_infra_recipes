@@ -66,7 +66,7 @@ def RunSteps(api):
 
     snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
     api.git_txn.update_ref_write_file(
-        snapshot_repo_url, MANIFEST_REF, 'Annealing manifest snapshot',
+        snapshot_repo_url, MANIFEST_REF, make_message(api),
         api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
         snapshot_xml)
 
@@ -84,6 +84,28 @@ def make_gitiles_commit(api, repo_url, commit_id):
   c.project = url.path[1:]  # strip leading /
   c.id = commit_id
   return c
+
+
+def make_message(api):
+  """Creates and returns the commit message with a Cr-Commit-Position.
+
+  Creates and returns the commit message with a Cr-Commit-Position
+  suitable for use by FindIt, as in:
+
+  Cr-Commit-Position: refs/heads/snapshot@{#%d}
+
+  Note that if a prior commit position is not found this will return a
+  commit position that resets back to 1. After this is deployed and
+  Cr-Commit-Position is seeded it may be better to remove this fallback
+  and have it fail if no prior commit position is found.
+  """
+  position = api.git.position_num()
+  if position is None:
+    position = 0
+  message = 'Annealing manifest snapshot\n\n'
+  message += ('Cr-Commit-Position: refs/heads/%s@{#%d}' %
+              (MANIFEST_REF, position + 1))
+  return message
 
 
 def GenTests(api):

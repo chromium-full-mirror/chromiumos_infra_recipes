@@ -255,3 +255,23 @@ class GitApi(recipe_api.RecipeApi):
     """
     revs = '%s..%s' % (from_commit, to_ref)
     self._step(['bundle', 'create', output_path, revs])
+
+  def position_num(self, ref='HEAD^'):
+    """Returns the chrome commit position or None if one cannot be found.
+
+    Args:
+      ref (str): The ref to fetch to get the position num of.
+
+    Returns:
+      int chrome commit position or None if one cannot be found.
+    """
+    result = self.m.python(
+        'git_footers.py', self.m.depot_tools.root.join('git_footers.py'),
+        args=[ref, '--position-num'], stdout=self.m.raw_io.output(),
+        step_test_data=lambda: self.m.raw_io.test_api.stream_output('101'),
+        ok_ret='any')
+
+    if result.retcode != 0:
+      return None
+
+    return int(result.stdout.strip())
