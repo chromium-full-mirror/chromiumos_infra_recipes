@@ -260,7 +260,7 @@
     "cmd": [
       "git",
       "fetch",
-      "chromium.googlesource.com",
+      "https://chromium.googlesource.com/chromeos",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
@@ -288,7 +288,7 @@
     "cmd": [
       "git",
       "push",
-      "chromium.googlesource.com",
+      "https://chromium.googlesource.com/chromeos",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:refs/heads/foo"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
@@ -412,7 +412,7 @@
     "cmd": [
       "git",
       "fetch",
-      "chromium.googlesource.com",
+      "https://chromium.googlesource.com/chromeos",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
@@ -440,7 +440,7 @@
     "cmd": [
       "git",
       "push",
-      "chromium.googlesource.com",
+      "https://chromium.googlesource.com/chromeos",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:refs/heads/bar"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",

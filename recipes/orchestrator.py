@@ -102,9 +102,10 @@ def maybe_update_manifest_ref(api, update_manifest_refs, ref_key):
       snapshot_path = api.cros_source.find_project_path(snapshot.project,
                                                         'master')
       with api.context(cwd=api.cros_source.workspace_path.join(snapshot_path)):
-        api.git.fetch_ref(snapshot.host, snapshot.id)
+        git_repo = 'https://%s/%s' % (snapshot.host, snapshot.project)
+        api.git.fetch_ref(git_repo, snapshot.id)
         refspec = '%s:%s' % (snapshot.id, update_manifest_refs[ref_key])
-        api.git.push(snapshot.host, refspec)
+        api.git.push(git_repo, refspec)
 
 
 def GenTests(api):
