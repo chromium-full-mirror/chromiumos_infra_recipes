@@ -65,7 +65,8 @@ def RunSteps(api):
       api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
     snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
-    api.git.checkout(MANIFEST_REF)
+    api.git.fetch_ref(snapshot_repo_url, MANIFEST_REF)
+    api.git.checkout('FETCH_HEAD')
     api.git_txn.update_ref_write_file(
         snapshot_repo_url, MANIFEST_REF, make_message(api),
         api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
