@@ -65,6 +65,7 @@ def RunSteps(api):
       api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
     snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
+    api.git.checkout(MANIFEST_REF)
     api.git_txn.update_ref_write_file(
         snapshot_repo_url, MANIFEST_REF, make_message(api),
         api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
@@ -103,17 +104,21 @@ def make_message(api):
   if position is None:
     position = 0
   message = 'Annealing manifest snapshot\n\n'
-  message += ('Cr-Commit-Position: refs/heads/%s@{#%d}' %
-              (MANIFEST_REF, position + 1))
+  message += 'Cr-Commit-Position: refs/heads/%s@{#%d}' % (MANIFEST_REF,
+                                                          position + 1)
   return message
 
 
 def GenTests(api):
   yield api.test('basic')
 
-  yield api.test('has manifest change') + api.step_data(
-      'repo manifest', stdout=api.raw_io.output(
-          '<manifest><project path="PATH" revision="TO_REV" /></manifest>')
-  ) + api.step_data(
-      'diff remote and local manifest.git show', stdout=api.raw_io.output(
-          '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'))
+  yield (
+      api.test('has manifest change') + api.step_data(
+          'repo manifest', stdout=api.raw_io.output(
+              '<manifest><project path="PATH" revision="TO_REV" /></manifest>'))
+      +  #
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'
+          )) +  #
+      api.step_data('git_footers.py', retcode=1))

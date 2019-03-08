@@ -256,7 +256,7 @@ class GitApi(recipe_api.RecipeApi):
     revs = '%s..%s' % (from_commit, to_ref)
     self._step(['bundle', 'create', output_path, revs])
 
-  def position_num(self, ref='HEAD^'):
+  def position_num(self, ref='HEAD'):
     """Returns the chrome commit position or None if one cannot be found.
 
     Args:

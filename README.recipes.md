@@ -388,7 +388,7 @@ Returns:
   List[PatchSet]: List of PatchSets in requested order.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
-[DEPS](/recipe_modules/git/__init__.py#1): [dev](#recipe_modules-dev), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git/__init__.py#1): [dev](#recipe_modules-dev), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with git.
 
@@ -508,6 +508,16 @@ Args:
 
 Returns:
   List(Commit) A list of commit metas.
+
+&mdash; **def [position\_num](/recipe_modules/git/api.py#259)(self, ref='HEAD'):**
+
+Returns the chrome commit position or None if one cannot be found.
+
+Args:
+  ref (str): The ref to fetch to get the position num of.
+
+Returns:
+  int chrome commit position or None if one cannot be found.
 
 &mdash; **def [push](/recipe_modules/git/api.py#143)(self, remote, refspec, capture_stdout=False):**
 
@@ -824,9 +834,23 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#43)(api):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#79)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#80)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
+
+&mdash; **def [make\_message](/recipes/annealing.py#90)(api):**
+
+Creates and returns the commit message with a Cr-Commit-Position.
+
+Creates and returns the commit message with a Cr-Commit-Position
+suitable for use by FindIt, as in:
+
+Cr-Commit-Position: refs/heads/snapshot@{#%d}
+
+Note that if a prior commit position is not found this will return a
+commit position that resets back to 1. After this is deployed and
+Cr-Commit-Position is seeded it may be better to remove this fallback
+and have it fail if no prior commit position is found.
 ### *recipes* / [artifacts:examples/full](/recipe_modules/artifacts/examples/full.py)
 
 [DEPS](/recipe_modules/artifacts/examples/full.py#6): [artifacts](#recipe_modules-artifacts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

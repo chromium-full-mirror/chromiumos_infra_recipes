@@ -324,10 +324,20 @@
   },
   {
     "cmd": [
+      "git",
+      "checkout",
+      "snapshot"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "git checkout"
+  },
+  {
+    "cmd": [
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "HEAD^",
+      "HEAD",
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",

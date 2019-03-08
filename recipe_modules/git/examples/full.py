@@ -27,6 +27,7 @@ def RunSteps(api):
   api.git.is_reachable('deadbeef')
   api.git.show_file('deadbeef', 'some/path')
   api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')
+  api.git.position_num()
 
   with api.git.head_context():
     pass
@@ -45,3 +46,6 @@ def GenTests(api):
       'diff check.git ls-files',
       retcode=1,
   )
+
+  yield (api.test('no git position footer') +  #
+         api.step_data('git_footers.py', retcode=1))

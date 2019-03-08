@@ -175,6 +175,17 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "HEAD",
+      "--position-num"
+    ],
+    "name": "git_footers.py",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
       "git",
       "symbolic-ref",
       "--short",
