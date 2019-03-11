@@ -64,11 +64,11 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [BuildApiApi](/recipe_modules/build_api/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildApiApi](/recipe_modules/build_api/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS Build API steps.
 
-&mdash; **def [call\_json](/recipe_modules/build_api/api.py#55)(self, service_method, input_dict, test_output_dict=None):**
+&mdash; **def [call\_json](/recipe_modules/build_api/api.py#59)(self, service_method, input_dict, test_output_dict=None):**
 
 Call a Build API method with JSON serialization.
 
@@ -80,6 +80,23 @@ Args:
 
 Returns:
   dict: Output data.
+
+&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#97)(self, service_method, input_msg, test_output_data='{}'):**
+
+Call a Build API method with JSON serialization.
+
+Args:
+  service_method (str): The service/method path (ex.
+      chromium.api.Service/Method).
+  input_msg (google.protobuf.message.Message): Input data.
+  test_output_data (str): Data to return during test.
+
+Raises:
+  KeyError: if the given service_method isn't found.
+  TypeError: if |input_msg| is the wrong Message type.
+
+Returns:
+  google.protobuf.message.Message: Output data.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -858,9 +875,9 @@ and have it fail if no prior commit position is found.
 &mdash; **def [RunSteps](/recipe_modules/artifacts/examples/full.py#13)(api):**
 ### *recipes* / [build\_api:examples/full](/recipe_modules/build_api/examples/full.py)
 
-[DEPS](/recipe_modules/build_api/examples/full.py#6): [build\_api](#recipe_modules-build_api)
+[DEPS](/recipe_modules/build_api/examples/full.py#6): [build\_api](#recipe_modules-build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#14)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1000,6 +1017,7 @@ and we have to merge several source directories to a single target directory.
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-gsutil
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-archive
+[recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-buildbucket
 [recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-cipd
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-context
