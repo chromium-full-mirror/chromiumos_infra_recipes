@@ -10,7 +10,7 @@
     "name": "read test plan",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"test_plan\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"test_unit\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"build_payload\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"artifact_path\": \"path/to/artifact\", @@@",
@@ -21,7 +21,7 @@
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"scheduling_requirements\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"reference_design\": \"reference_design\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"build_target\": \"build_target\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"test_env\": \"hw\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"test_suite\": \"test-suite\"@@@",
@@ -33,17 +33,20 @@
   },
   {
     "cmd": [],
-    "name": "run plan",
+    "name": "run plan"
+  },
+  {
+    "cmd": [],
+    "name": "run plan.schedule",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@SUCCESS - hw-test@hello world!@@@",
-      "@@@STEP_LOG_END@SUCCESS - hw-test@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run plan.ensure skylab",
+    "name": "run plan.schedule.ensure skylab",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -58,9 +61,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.ensure skylab.ensure_installed",
+    "name": "run plan.schedule.ensure skylab.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -82,20 +85,27 @@
       "ChromeOSSkylab",
       "-image",
       "image.bin",
-      "-reference_design",
-      "reference_design",
+      "-board",
+      "build_target",
       "test-suite"
     ],
-    "name": "run plan.execute hw suite test-suite",
+    "name": "run plan.schedule.execute hw suite test-suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run plan.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run plan.ensure swarming",
+    "name": "run plan.collect.ensure swarming",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -110,9 +120,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.ensure swarming.ensure_installed",
+    "name": "run plan.collect.ensure swarming.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -139,9 +149,9 @@
       "hw-test"
     ],
     "infra_step": true,
-    "name": "run plan.collect test results",
+    "name": "run plan.collect.collect tasks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"hw-test\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",

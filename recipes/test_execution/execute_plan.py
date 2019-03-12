@@ -19,11 +19,10 @@ def RunSteps(api):
 
   test_plan = step_data.json.output
 
-  if (test_plan is None or
-      len(test_plan.get('test_plan', [])) == 0):
+  if (test_plan is None or len(test_plan.get('test_unit', [])) == 0):
     return
 
-  api.test_plan.run('run plan', test_plan)
+  api.test_plan.run_plan('run plan', test_plan)
 
 
 def GenTests(api):
@@ -35,14 +34,9 @@ def GenTests(api):
     api.step_data('read test plan', api.json.output({}))
   )
 
-  yield (
-    api.test('test_plan') +
-    api.properties(test_plan='test_plan.json') +
-    api.step_data('read test plan', api.json.output(
-      {
-        "test_plan": [
-          api.test_plan.example_hw_unit(reference_design='reference_design')
-        ]
-      }
-    ))
-  )
+  yield (api.test('test_plan') + api.properties(test_plan='test_plan.json') +
+         api.step_data(
+             'read test plan',
+             api.json.output(
+                 api.test_plan.example_test_plan(
+                     api.test_plan.example_hw_unit()))))

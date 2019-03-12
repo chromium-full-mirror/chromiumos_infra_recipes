@@ -1,14 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "vm test"
-  },
-  {
-    "cmd": [],
-    "name": "vm test.ensure swarming",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "ensure swarming"
   },
   {
     "cmd": [
@@ -22,9 +15,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "vm test.ensure swarming.ensure_installed",
+    "name": "ensure swarming.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -50,26 +43,21 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "vm test.trigger swarming",
+    "name": "vm test",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test-test-suite\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task UI: vm-test-test-suite@https://example.swarmingserver.appspot.com/task?id=0@@@"
+      "@@@STEP_LINK@Swarming task UI: vm-test@https://example.swarmingserver.appspot.com/task?id=0@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "tast test"
   },
   {
     "cmd": [
@@ -83,21 +71,20 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "tast test.trigger swarming",
+    "name": "tast test",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test-test-suite\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task UI: vm-test-test-suite@https://example.swarmingserver.appspot.com/task?id=0@@@"
+      "@@@STEP_LINK@Swarming task UI: vm-test@https://example.swarmingserver.appspot.com/task?id=0@@@"
     ]
   },
   {

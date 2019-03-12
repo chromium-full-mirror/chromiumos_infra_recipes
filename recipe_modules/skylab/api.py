@@ -24,11 +24,11 @@ class SkylabApi(recipe_api.RecipeApi):
 
     # TODO(yshaul): Change to reference design when available. crbug/926512
     cmd = [
-      self._skylab_path,
-      'create-suite',
-      '-pool', SKYLAB_SWARMING_POOL,
-      '-image', test_unit['build_payload']['image'][0]['image_name']
-    ] + get_hw_scheduling_args(test_unit) + [test_unit['test_suite']]
+        self._skylab_path, 'create-suite', '-pool', SKYLAB_SWARMING_POOL,
+        '-image', test_unit['build_payload']['image'][0]['image_name'],
+        '-board', test_unit['scheduling_requirements']['build_target'],
+        test_unit['test_suite']
+    ]
 
     self.m.step(name, cmd)
 
@@ -50,17 +50,3 @@ class SkylabApi(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._skylab_path = cipd_dir.join('skylab')
-
-def get_hw_scheduling_args(test_unit):
-  """Maps test_unit to skylab scheduling.
-
-  Args:
-      * test_unit (TestUnit): Test plan step to execute.
-  """
-  if 'build_target' in test_unit['scheduling_requirements']:
-    return ['-board', test_unit['scheduling_requirements']['build_target']]
-  elif 'reference_design' in test_unit['scheduling_requirements']:
-    return ['-reference_design',
-            test_unit['scheduling_requirements']['reference_design']]
-
-  raise ValueError('test_unit must specify build_target or reference_design')

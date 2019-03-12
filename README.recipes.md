@@ -5,6 +5,7 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
+  * [cros_build](#recipe_modules-cros_build)
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_test](#recipe_modules-cros_test) &mdash; API for interacting with cros_test chromite api.
@@ -21,6 +22,7 @@
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [skylab](#recipe_modules-skylab)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
+  * [test_manager](#recipe_modules-test_manager) &mdash; Api for coordinating test execution steps.
   * [test_plan](#recipe_modules-test_plan)
   * [vm_test](#recipe_modules-vm_test)
 
@@ -29,6 +31,7 @@
   * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
+  * [cros_build:examples/full](#recipes-cros_build_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test:examples/full](#recipes-cros_test_examples_full)
@@ -50,8 +53,10 @@
   * [support:examples/full](#recipes-support_examples_full)
   * [test_execution/execute_plan](#recipes-test_execution_execute_plan) &mdash; Recipe for executing ChromeOS test plan.
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
+  * [test_manager:examples/full](#recipes-test_manager_examples_full) &mdash; Recipe to schedules child builders, watches for failures and triggers tests.
   * [test_plan:examples/generate](#recipes-test_plan_examples_generate)
   * [test_plan:examples/run](#recipes-test_plan_examples_run)
+  * [test_plan:examples/test_builds](#recipes-test_plan_examples_test_builds)
   * [vm_test:examples/full](#recipes-vm_test_examples_full)
 ## Recipe Modules
 
@@ -110,6 +115,61 @@ Raises:
 
 Returns:
   google.protobuf.message.Message: Output data.
+### *recipe_modules* / [cros\_build](/recipe_modules/cros_build)
+
+[DEPS](/recipe_modules/cros_build/__init__.py#1): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [CrosBuildApi](/recipe_modules/cros_build/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+High level build steps to be called from orchestrator / e2e tests.
+
+&emsp; **@recipe_api.composite_step**<br>&mdash; **def [collect](/recipe_modules/cros_build/api.py#52)(self, scheduled_builds, step_name='collect'):**
+
+Wait for builds to complete, and return results.
+
+Args:
+  * scheduled_builds (list[build_pb2.Build]): List of builds,
+      as returned from schedule step.
+  * step_name (str): Optional name of step.
+
+Returns:
+  generator[build_pb2.Build]
+
+&emsp; **@recipe_api.composite_step**<br>&mdash; **def [download\_build\_report](/recipe_modules/cros_build/api.py#98)(self, build):**
+
+Download builds reports from isolate.
+
+Builders should set the 'build_report_hash' output property to
+point to the isolate hash of the build report. We then download
+the report from swarming and pass it into the test planner.
+
+Args:
+  * build (build_pb2.Build): Completed build returned from the collect step.
+
+Returns:
+  * Path of build report.
+
+&emsp; **@recipe_api.composite_step**<br>&mdash; **def [schedule\_child\_builders](/recipe_modules/cros_build/api.py#29)(self, name, builder, build_config):**
+
+Schedule buildbucket builds for all child builders.
+
+Args:
+  * name (str): Step name.
+  * builder (str): Name of builder.
+  * build_config (list[dict]): Build config to schedule.
+
+Returns:
+  list[build_pb2.Build]
+
+&emsp; **@recipe_api.composite_step**<br>&mdash; **def [verify\_builds](/recipe_modules/cros_build/api.py#79)(self, builds):**
+
+Verify all builds completed successfully.
+
+Args:
+  * builds (list[build_pb2.Build]): List of completed builds.
+
+Raises:
+  CompositeBuildFailure containing all failed builds.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -899,6 +959,44 @@ Returns:
 Ensure the CIPD support package is installed.
 
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
+### *recipe_modules* / [test\_manager](/recipe_modules/test_manager)
+
+[DEPS](/recipe_modules/test_manager/__init__.py#1): [cros\_build](#recipe_modules-cros_build), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Api for coordinating test execution steps.
+
+#### **class [TestManagerApi](/recipe_modules/test_manager/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [run\_tests](/recipe_modules/test_manager/api.py#15)(self, builds, step_name='run tests'):**
+
+Shortcut for schedule_tests + collect_tests.
+
+Args:
+  * builds (list[build_pb2.Build]): List of builds to test.
+  * step_name (str): Optional step name.
+
+Returns:
+  list[swarming.TaskResult]
+
+&mdash; **def [schedule\_tests](/recipe_modules/test_manager/api.py#34)(self, builds):**
+
+Schedule tests for successful builds.
+
+Args:
+  * builds (list[build_pb2.Build]): List of builds to test.
+
+Returns:
+  Tuple(list[swarming.TaskRequestMetadata], list[str])
+
+&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#63)(self, test_results):**
+
+Logs test status to UI, and raises on failed tests.
+
+Args:
+  * test_results (swarming.TaskResult): List of swarming TaskResults.
+
+Raises:
+  recipe_api.StepFailure on failing tests.
 ### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
 
 [DEPS](/recipe_modules/test_plan/__init__.py#1): [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -907,24 +1005,67 @@ Ensure the CIPD support package is installed.
 
 A module for test execution steps
 
-&mdash; **def [generate](/recipe_modules/test_plan/api.py#19)(self, name, build_report, dep_graph):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#90)(self, name, tasks):**
+
+Waits for a set of tests to complete, and returns their results.
+Args:
+  * name (str): Step name.
+  * tasks (list[swarming.TaskResult]): Swarming metadata
+      of executing tests.
+
+Returns:
+   list[swarming.TaskResult]
+
+&mdash; **def [generate](/recipe_modules/test_plan/api.py#37)(self, name, build_report_path, dep_graph):**
 
 Generate test plan.
 
 Args:
   * name (str): The step name.
-  * build_report (dict): Full build report.
+  * build_report_path (Path): Path to build report.
   * dep_graph (dict): Full dep graph.
 
 &mdash; **def [initialize](/recipe_modules/test_plan/api.py#11)(self):**
 
-&mdash; **def [run](/recipe_modules/test_plan/api.py#39)(self, name, test_plan):**
+&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#54)(self, name, test_plan):**
 
-Run all test plan steps. Aborts on the first step failure.
+Shortcut for schedule and collect.
 
 Args:
   * name (str): Step name.
   * test_plan (GenerateTestPlanResponse): Test plan.
+
+Raises:
+   recipe_api.StepFailure
+
+&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#68)(self, name, test_plan):**
+
+Run all test plan steps.
+
+When not running in deferred context, aborts on the first
+scheduling failure.
+
+Args:
+  * name (str): Step name.
+  * test_plan (GenerateTestPlanResponse): Test plan.
+
+Returns:
+  list[swarming.TaskRequestMetadata]
+
+&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#19)(self, name, build_report_path, dep_graph):**
+
+Shortcut for generate and schedule.
+
+Args:
+  * name (str): The step name.
+  * build_report_path (Path): Path to build report.
+  * dep_graph (dict): Full dep graph.
+
+Returns:
+  list[swarming.TaskRequestMetadata]
+
+Raises:
+   step.StepFailure
 ### *recipe_modules* / [vm\_test](/recipe_modules/vm_test)
 
 [DEPS](/recipe_modules/vm_test/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -933,7 +1074,7 @@ Args:
 
 A module for vm test execution steps
 
-&mdash; **def [run\_tast\_test](/recipe_modules/vm_test/api.py#44)(self, name, test_plan):**
+&mdash; **def [run\_tast\_test](/recipe_modules/vm_test/api.py#41)(self, name, test_plan):**
 
 Run tast test on swarming bot.
 
@@ -1008,6 +1149,15 @@ and have it fail if no prior commit position is found.
 Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#41)(api, build_target, findit_bisect):**
+### *recipes* / [cros\_build:examples/full](/recipe_modules/cros_build/examples/full.py)
+
+[DEPS](/recipe_modules/cros_build/examples/full.py#6): [cros\_build](#recipe_modules-cros_build), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build/examples/full.py#31)(api):**
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [execution\_context](/recipe_modules/cros_build/examples/full.py#15)(api, deferred):**
+
+&mdash; **def [get\_result](/recipe_modules/cros_build/examples/full.py#24)(step_result):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1080,7 +1230,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#50)(api, update_manifest_refs):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#95)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#100)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1089,7 +1239,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#81)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#86)(refs):**
 
 Assert all given refs start with refs/heads.
 
@@ -1155,21 +1305,37 @@ Use in place of file api's copytree method, as copytree can be quite slow,
 and we have to merge several source directories to a single target directory.
 
 &mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#140)(files, gsutil, gs_bucket, gs_path, dest_path):**
+### *recipes* / [test\_manager:examples/full](/recipe_modules/test_manager/examples/full.py)
+
+[DEPS](/recipe_modules/test_manager/examples/full.py#13): [cros\_build](#recipe_modules-cros_build), [test\_manager](#recipe_modules-test_manager), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe to schedules child builders, watches for failures and triggers tests.
+
+All builders run against the same source tree.
+
+NOTE: This recipe will be merged with the main orchestrator recipe shortly.
+
+&mdash; **def [RunSteps](/recipe_modules/test_manager/examples/full.py#23)(api):**
 ### *recipes* / [test\_plan:examples/generate](/recipe_modules/test_plan/examples/generate.py)
 
-[DEPS](/recipe_modules/test_plan/examples/generate.py#6): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/json][recipe_engine/recipe_modules/json]
+[DEPS](/recipe_modules/test_plan/examples/generate.py#6): [test\_plan](#recipe_modules-test_plan)
 
-&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/generate.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/generate.py#9)(api):**
 ### *recipes* / [test\_plan:examples/run](/recipe_modules/test_plan/examples/run.py)
 
-[DEPS](/recipe_modules/test_plan/examples/run.py#7): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/test_plan/examples/run.py#6): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/run.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/run.py#9)(api):**
+### *recipes* / [test\_plan:examples/test\_builds](/recipe_modules/test_plan/examples/test_builds.py)
+
+[DEPS](/recipe_modules/test_plan/examples/test_builds.py#6): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/test_builds.py#9)(api):**
 ### *recipes* / [vm\_test:examples/full](/recipe_modules/vm_test/examples/full.py)
 
 [DEPS](/recipe_modules/vm_test/examples/full.py#5): [test\_plan](#recipe_modules-test_plan), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-&mdash; **def [RunSteps](/recipe_modules/vm_test/examples/full.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/vm_test/examples/full.py#8)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7e68767e2fe21638044fb7cc020a74db33086e77/recipes/README.recipes.md#recipe_modules-gitiles
@@ -1179,7 +1345,9 @@ and we have to merge several source directories to a single target directory.
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-buildbucket
 [recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-cipd
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-context
+[recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-cq
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-file
+[recipe_engine/recipe_modules/isolated]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-isolated
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-json
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/55876a3b36992bb1cf5984cb136da88de5068fd3/README.recipes.md#recipe_modules-properties

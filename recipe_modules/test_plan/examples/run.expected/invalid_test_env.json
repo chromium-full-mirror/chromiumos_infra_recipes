@@ -4,6 +4,13 @@
     "name": "run plan"
   },
   {
+    "cmd": [],
+    "name": "run plan.schedule",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {
         "step": ""

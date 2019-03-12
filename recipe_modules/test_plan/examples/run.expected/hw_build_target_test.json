@@ -1,17 +1,20 @@
 [
   {
     "cmd": [],
-    "name": "run plan",
+    "name": "run plan"
+  },
+  {
+    "cmd": [],
+    "name": "run plan.schedule",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@SUCCESS - hw-test@hello world!@@@",
-      "@@@STEP_LOG_END@SUCCESS - hw-test@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run plan.ensure skylab",
+    "name": "run plan.schedule.ensure skylab",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -26,9 +29,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.ensure skylab.ensure_installed",
+    "name": "run plan.schedule.ensure skylab.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -54,9 +57,9 @@
       "build_target",
       "suite1"
     ],
-    "name": "run plan.execute hw suite suite1",
+    "name": "run plan.schedule.execute hw suite suite1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -71,16 +74,23 @@
       "build_target",
       "suite2"
     ],
-    "name": "run plan.execute hw suite suite2",
+    "name": "run plan.schedule.execute hw suite suite2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run plan.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run plan.ensure swarming",
+    "name": "run plan.collect.ensure swarming",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -95,9 +105,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.ensure swarming.ensure_installed",
+    "name": "run plan.collect.ensure swarming.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -125,9 +135,9 @@
       "hw-test"
     ],
     "infra_step": true,
-    "name": "run plan.collect test results",
+    "name": "run plan.collect.collect tasks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"hw-test\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",

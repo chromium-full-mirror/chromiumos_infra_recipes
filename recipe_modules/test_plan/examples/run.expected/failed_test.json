@@ -1,23 +1,18 @@
 [
   {
     "cmd": [],
-    "name": "run plan",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@FAILURE - vm-test-suite@hello world!@@@",
-      "@@@STEP_LOG_END@FAILURE - vm-test-suite@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "run plan"
   },
   {
     "cmd": [],
-    "name": "run plan.execute vm suite suite",
+    "name": "run plan.schedule",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run plan.execute vm suite suite.ensure swarming",
+    "name": "run plan.schedule.ensure swarming",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -34,7 +29,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.execute vm suite suite.ensure swarming.ensure_installed",
+    "name": "run plan.schedule.ensure swarming.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -62,21 +57,28 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.execute vm suite suite.trigger swarming",
+    "name": "run plan.schedule.execute vm suite suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test-suite\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task UI: vm-test-suite@https://example.swarmingserver.appspot.com/task?id=0@@@"
+      "@@@STEP_LINK@Swarming task UI: vm-test@https://example.swarmingserver.appspot.com/task?id=0@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run plan.collect",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -92,9 +94,9 @@
       "0"
     ],
     "infra_step": true,
-    "name": "run plan.collect test results",
+    "name": "run plan.collect.collect tasks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"1\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
@@ -119,12 +121,7 @@
     ]
   },
   {
-    "failure": {
-      "failure": {
-        "step": ""
-      },
-      "humanReason": "Failed one or more tests"
-    },
+    "jsonResult": null,
     "name": "$result"
   }
 ]

@@ -11,71 +11,96 @@ class RunPlanApi(recipe_api.RecipeApi):
   def initialize(self):
     self._test_planner_path = None
     self._test_env_steps = {
-      'hw': self.m.skylab.create_suite,
-      'vm': self.m.vm_test.run_vm_test,
-      'tast_vm': self.m.vm_test.run_tast_test,
+        'hw': self.m.skylab.create_suite,
+        'vm': self.m.vm_test.run_vm_test,
+        'tast_vm': self.m.vm_test.run_tast_test,
     }
 
-  def generate(self, name, build_report, dep_graph):
+  def test_builds(self, name, build_report_path, dep_graph):
+    """Shortcut for generate and schedule.
+
+    Args:
+      * name (str): The step name.
+      * build_report_path (Path): Path to build report.
+      * dep_graph (dict): Full dep graph.
+
+    Returns:
+      list[swarming.TaskRequestMetadata]
+
+    Raises:
+       step.StepFailure
+    """
+    with self.m.step.nest(name):
+      test_plan = self.generate('generate', build_report_path, dep_graph)
+      return self.schedule_tests('schedule', test_plan)
+
+  def generate(self, name, build_report_path, dep_graph):
     """Generate test plan.
 
     Args:
       * name (str): The step name.
-      * build_report (dict): Full build report.
+      * build_report_path (Path): Path to build report.
       * dep_graph (dict): Full dep graph.
     """
     self._ensure_test_planner()
 
     # TODO(yshaul): Add real cmd flags / piping when available.
     cmd = [
-      self._test_planner_path,
+        self._test_planner_path,
     ]
-    try:
-      self.m.step(name, cmd, stdout=self.m.json.output())
-    finally:
-      result = self.m.step.active_result
-      return result.stdout
+    test_plan_res = self.m.step(name, cmd, stdout=self.m.json.output())
+    return test_plan_res.stdout
 
-  def run(self, name, test_plan):
-    """Run all test plan steps. Aborts on the first step failure.
+  def run_plan(self, name, test_plan):
+    """Shortcut for schedule and collect.
 
     Args:
       * name (str): Step name.
       * test_plan (GenerateTestPlanResponse): Test plan.
+
+    Raises:
+       recipe_api.StepFailure
     """
-    with self.m.step.nest(name) as result:
+    with self.m.step.nest(name):
+      tasks = self.schedule_tests('schedule', test_plan)
+      return self.collect_tests('collect', tasks)
+
+  def schedule_tests(self, name, test_plan):
+    """Run all test plan steps.
+    
+    When not running in deferred context, aborts on the first
+    scheduling failure.
+
+    Args:
+      * name (str): Step name.
+      * test_plan (GenerateTestPlanResponse): Test plan.
+
+    Returns:
+      list[swarming.TaskRequestMetadata]
+    """
+    with self.m.step.nest(name):
       tasks = []
-      for test_unit in test_plan['test_plan']:
+      for test_unit in test_plan['test_unit']:
         step = self._step(test_unit)
         task = step(step_name(test_unit), test_unit)
         tasks.append(task)
 
-      swarming_results = self.m.swarming.collect('collect test results', tasks)
+      return tasks
 
-      success = True
-      for idx, swarming_result in enumerate(swarming_results):
-        # We don't have a great way of highlighting failed tests.
-        # Group failed tests together by prepending status.
-        log_name = 'SUCCESS - ' if swarming_result.success else 'FAILURE - '
-        if isinstance(tasks[idx], str):
-          log_name += tasks[idx]
-        else:
-          log_name += tasks[idx].name
+  def collect_tests(self, name, tasks):
+    """Waits for a set of tests to complete, and returns their results.
+    Args:
+      * name (str): Step name.
+      * tasks (list[swarming.TaskResult]): Swarming metadata
+          of executing tests.
 
-        # Until parallel recipes materializes, dump output to step log
-        result.presentation.logs[log_name] = [
-            swarming_result.output
-        ]
-
-        if swarming_result.success:
-          result.presentation.status = 'SUCCESS'
-        else:
-          result.presentation.status = 'FAILURE'
-
-        success &= swarming_result.success
-
-      if not success:
-        raise self.m.step.StepFailure('Failed one or more tests')
+    Returns:
+       list[swarming.TaskResult]
+    """
+    # TODO(yshaul): Tests are actually scheduled against multiple swarming
+    #     servers. Check against them all.
+    with self.m.step.nest(name) as result:
+      return self.m.swarming.collect('collect tasks', tasks)
 
   def _step(self, test_unit):
     """Returns step function for given test plan step.
@@ -96,15 +121,14 @@ class RunPlanApi(recipe_api.RecipeApi):
   def _ensure_test_planner(self):
     """Ensure the test_planner cli is installed."""
     if self._test_planner_path:
-      return # pragma: nocover
+      return  # pragma: nocover
 
     with self.m.step.nest('ensure test_planner'):
       with self.m.context(infra_steps=True):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
 
         pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package('chromiumos/infra/test_planner',
-                         'latest')
+        pkgs.add_package('chromiumos/infra/test_planner', 'latest')
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._test_planner_path = cipd_dir.join('test_planner')

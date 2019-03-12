@@ -32,14 +32,35 @@
     ]
   },
   {
-    "failure": {
-      "exception": {
-        "traceback": [
-          "<omitted by recipe engine>"
-        ]
-      },
-      "humanReason": "Uncaught Exception: ValueError('test_unit must specify build_target or reference_design',)"
-    },
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "create-suite",
+      "-pool",
+      "ChromeOSSkylab",
+      "-image",
+      "image.bin",
+      "-board",
+      "build_target",
+      "suite1"
+    ],
+    "name": "skylab"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "create-suite",
+      "-pool",
+      "ChromeOSSkylab",
+      "-image",
+      "image.bin",
+      "-board",
+      "build_target",
+      "suite2"
+    ],
+    "name": "skylab (2)"
+  },
+  {
+    "jsonResult": null,
     "name": "$result"
   }
 ]

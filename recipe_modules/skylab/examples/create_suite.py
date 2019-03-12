@@ -16,34 +16,9 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (
-    api.test('ref_design_test') +
-    api.properties(plan={
-      'test_unit': [
-        api.test_plan.example_hw_unit(test_suite='suite1',
-                                      reference_design='ref_design'),
-        api.test_plan.example_hw_unit(test_suite='suite2',
-                                      reference_design='ref_design'),
-      ]
-    })
-  )
-
-  yield (
-    api.test('build_target_test') +
-    api.properties(plan={
-      'test_unit': [
-        api.test_plan.example_hw_unit(test_suite='suite1',
-                                      build_target='build_target'),
-      ]
-    })
-  )
-
-  yield (
-    api.test('invalid_args_test') +
-    api.properties(plan={
-      'test_unit': [
-        api.test_plan.example_hw_unit(test_suite='suite1'),
-      ]
-    })
-    + api.expect_exception("ValueError")
-  )
+  yield (api.test('basic') + api.properties(
+      plan=api.test_plan.example_test_plan(
+          # At least 2 units needed - some behaviors only manifast
+          # on second call to create_suite
+          api.test_plan.example_hw_unit(test_suite='suite1'),
+          api.test_plan.example_hw_unit(test_suite='suite2'))))

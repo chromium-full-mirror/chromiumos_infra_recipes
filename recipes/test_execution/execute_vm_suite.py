@@ -27,7 +27,7 @@ DEPS = [
 
 # Magic paths:
 # api.path['cleanup'] = recipe managed temp directory.
-# api.path['cache'] = swarming managed "named cache" directory. 
+# api.path['cache'] = swarming managed "named cache" directory.
 
 def RunSteps(api):
   with _test_env_context(api):
@@ -168,14 +168,7 @@ def GenTests(api):
     )
   )
 
-  yield (
-    api.test('tast_test') +
-    api.properties(
-      test_type='tast_vm',
-      build_target='build_target',
-      test_suite='test_suite',
-      test_exprs=["test_expr"],
-      gs_path='path/to/image',
-      gs_bucket='image-bucket'
-    )
-  )
+  yield (api.test('tast_test') +
+         api.properties(test_type='tast_vm', build_target='build_target',
+                        test_suite='test_suite', test_exprs=["test_expr"],
+                        gs_path='path/to/image', gs_bucket='image-bucket'))
