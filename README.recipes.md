@@ -8,6 +8,7 @@
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_test](#recipe_modules-cros_test) &mdash; API for interacting with cros_test chromite api.
+  * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [depends](#recipe_modules-depends) &mdash; APIs for checking that CQ-DEPEND has been fulfilled.
   * [dev](#recipe_modules-dev) &mdash; API for development config.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
@@ -27,6 +28,7 @@
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test:examples/full](#recipes-cros_test_examples_full)
+  * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dev:examples/full](#recipes-dev_examples_full)
   * [easy:examples/full](#recipes-easy_examples_full)
@@ -288,6 +290,24 @@ Expects chromiumos_qemu_image.bin and id_rsa to be present in image_path.
 Args:
   build_target (str): The build target to test against.
   test_suite (str): A valid Autotest vm test suite.
+### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
+
+[DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for working with CrOS version numbers.
+
+#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for steps that manipulate Chrome OS versions.
+
+&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#52)(self):**
+
+Read the Chrome OS version from the workspace.
+
+Returns: a Version read from the workspace.
+
+Raises:
+  ValueError: if the version file had unexpected formatting.
 ### *recipe_modules* / [depends](/recipe_modules/depends)
 
 [DEPS](/recipe_modules/depends/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -900,6 +920,11 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_test/examples/full.py#6): [cros\_test](#recipe_modules-cros_test), [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test/examples/full.py#12)(api):**
+### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
+
+[DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#13)(api):**
 ### *recipes* / [depends:examples/full](/recipe_modules/depends/examples/full.py)
 
 [DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
@@ -938,7 +963,7 @@ Asserts that the two values are equal, or throws AssertionError.
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#14): [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#14): [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
@@ -947,9 +972,9 @@ All builders run against the same source tree.
 TODO(chromium:922994): Make this recipe somewhat generic across builders, e.g.
 cq, postsubmit, release...
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#51)(api, update_manifest_refs):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#52)(api, update_manifest_refs):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#91)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#96)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -958,7 +983,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#77)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#82)(refs):**
 
 Assert all given refs start with refs/heads.
 

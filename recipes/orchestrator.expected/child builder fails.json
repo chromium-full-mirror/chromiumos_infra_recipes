@@ -235,6 +235,23 @@
     ]
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@version: R99-1234.56.0@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "buildbucket.run"
   },

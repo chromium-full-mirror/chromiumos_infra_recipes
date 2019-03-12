@@ -18,6 +18,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_source',
+    'cros_version',
     'dev',
     'git',
 ]
@@ -56,6 +57,10 @@ def RunSteps(api, update_manifest_refs):
   with api.cros_source.checkout_overlays_context():
     # Point start ref to the input snapshot if specified.
     maybe_update_manifest_ref(api, update_manifest_refs, 'start')
+
+    # Calculate buildspec.
+    # TODO(lannm): Increment rc and push to manifest-versions.
+    api.cros_version.read_workspace_version()
 
     requests = []
     # Just schedule a single child build to test postsubmit flow.
