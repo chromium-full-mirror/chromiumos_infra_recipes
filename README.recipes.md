@@ -15,6 +15,7 @@
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
+  * [infra_config](#recipe_modules-infra_config)
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
@@ -38,6 +39,7 @@
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
+  * [infra_config:examples/full](#recipes-infra_config_examples_full)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
@@ -645,6 +647,20 @@ Returns:
 
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
+### *recipe_modules* / [infra\_config](/recipe_modules/infra_config)
+
+[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles]
+
+#### **class [InfraConfigApi](/recipe_modules/infra_config/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for accessing data  in the chromeos/infra/config repo
+
+&mdash; **def [get\_builder\_configs](/recipe_modules/infra_config/api.py#17)(self):**
+
+Gets BuilderConfigs from the master branch.
+
+Returns:
+  A BuilderConfigs proto.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1040,6 +1056,11 @@ Asserts that the two values are equal, or throws AssertionError.
 &mdash; **def [RunSteps](/recipe_modules/git_txn/examples/full.py#12)(api):**
 
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
+### *recipes* / [infra\_config:examples/full](/recipe_modules/infra_config/examples/full.py)
+
+[DEPS](/recipe_modules/infra_config/examples/full.py#6): [infra\_config](#recipe_modules-infra_config), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles]
+
+&mdash; **def [RunSteps](/recipe_modules/infra_config/examples/full.py#39)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#14): [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
