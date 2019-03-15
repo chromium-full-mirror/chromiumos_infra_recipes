@@ -286,7 +286,7 @@
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],
     "name": "gerrit-fetch-changes",
-    "stdin": "{\"changes\": []}",
+    "stdin": "{\"changes\": [], \"include_files\": false}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",

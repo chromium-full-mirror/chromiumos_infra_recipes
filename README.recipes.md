@@ -413,15 +413,15 @@ Returns:
 
 APIs for managing Gerrit changes.
 
-#### **class [GerritApi](/recipe_modules/gerrit/api.py#88)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GerritApi](/recipe_modules/gerrit/api.py#99)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gerrit helpers.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#91)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#102)(self, \*args, \*\*kwargs):**
 
 Initialize GerritApi.
 
-&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#111)(self, gerrit_changes, test_output_data=None):**
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#122)(self, gerrit_changes, include_files=False, test_output_data=None):**
 
 Fetch and return PatchSets from Gerrit.
 
@@ -429,6 +429,7 @@ The step fails if any patch set is not found.
 
 Args:
   gerrit_changes (List[GerritChange]): Buildbucket GerritChanges to fetch.
+  include_files (bool): If True, include information about changed files.
   test_output_data (dict): Test output for gerrit-fetch-changes.
 
 Returns:
@@ -1037,13 +1038,9 @@ Recipe for building a BuildTarget image.
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
-[DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#15)(api):**
-
-&mdash; **def [assert\_equal](/recipe_modules/gerrit/examples/full.py#48)(got, want):**
-
-Asserts that the two values are equal, or throws AssertionError.
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#16)(api):**
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
 [DEPS](/recipe_modules/git/examples/full.py#6): [dev](#recipe_modules-dev), [git](#recipe_modules-git), [recipe\_engine/path][recipe_engine/recipe_modules/path]

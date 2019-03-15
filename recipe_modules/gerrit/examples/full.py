@@ -6,6 +6,7 @@
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/step',
     'gerrit',
@@ -18,23 +19,25 @@ def RunSteps(api):
   change.change = 91827
   change.patchset = 1
   patch = api.gerrit.fetch_patch_sets([change])[0]
-  assert_equal(patch.project, 'chromium/src')
-  assert_equal(patch.branch, 'master')
-  assert_equal(patch.subject, 'Change title')
-  assert_equal(patch.git_fetch_url,
-               'https://chromium.googlesource.com/chromium/src')
-  assert_equal(patch.git_fetch_ref, 'refs/changes/27/91827/1')
-  assert_equal(patch.subject, 'Change title')
-  assert_equal(patch.short_host, 'chromium')
-  assert_equal(patch.display_id, 'chromium:91827')
-  assert_equal(patch.display_url,
-               'https://chromium-review.googlesource.com/91827')
+  api.assertions.assertEqual(patch.project, 'chromium/src')
+  api.assertions.assertEqual(patch.branch, 'master')
+  api.assertions.assertEqual(patch.subject, 'Change title')
+  api.assertions.assertEqual(patch.git_fetch_url,
+                             'https://chromium.googlesource.com/chromium/src')
+  api.assertions.assertEqual(patch.git_fetch_ref, 'refs/changes/27/91827/1')
+  api.assertions.assertEqual(patch.subject, 'Change title')
+  api.assertions.assertEqual(patch.short_host, 'chromium')
+  api.assertions.assertEqual(patch.display_id, 'chromium:91827')
+  api.assertions.assertEqual(patch.display_url,
+                             'https://chromium-review.googlesource.com/91827')
+  api.assertions.assertIn('my/fake/file', patch.file_infos)
 
   # Missing FetchInfo.
   del patch._rev_info['fetch']
-  assert_equal(patch.git_fetch_url,
-               'https://chromium-review.googlesource.com/chromium/src')
-  assert_equal(patch.git_fetch_ref, 'refs/changes/27/91827/1')
+  api.assertions.assertEqual(
+      patch.git_fetch_url,
+      'https://chromium-review.googlesource.com/chromium/src')
+  api.assertions.assertEqual(patch.git_fetch_ref, 'refs/changes/27/91827/1')
 
   # Missing result
   try:
@@ -43,11 +46,6 @@ def RunSteps(api):
     pass
 
   api.gerrit.test_api.test_patch_set()
-
-
-def assert_equal(got, want):
-  """Asserts that the two values are equal, or throws AssertionError."""
-  assert got == want, '%r != %r' % (got, want)
 
 
 def GenTests(api):

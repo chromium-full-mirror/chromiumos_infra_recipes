@@ -39,6 +39,13 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
             }
         },
         'ref': ref,
+        'files': {
+            'my/fake/file': {
+                'status': 'A',
+                'size_delta': 0,
+                'size': 0,
+            },
+        },
     }
     return resp
 

@@ -84,6 +84,17 @@ class PatchSet(object):
       ref = self._rev_info['ref']
     return ref
 
+  @property
+  def file_infos(self):
+    """Returns a dict of {<path>: <FileInfo>}.
+
+    Will return None if file info wasn't requested. See `include_files` on
+    `gerrit.fetch_patch_sets`.
+
+    See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#file-info
+    """
+    return self._rev_info.get('files')
+
 
 class GerritApi(recipe_api.RecipeApi):
   """A module for Gerrit helpers."""
@@ -108,13 +119,15 @@ class GerritApi(recipe_api.RecipeApi):
     return self.m.support.call('gerrit-fetch-changes', input,
                                test_output_data=test_output_data)
 
-  def fetch_patch_sets(self, gerrit_changes, test_output_data=None):
+  def fetch_patch_sets(self, gerrit_changes, include_files=False,
+                       test_output_data=None):
     """Fetch and return PatchSets from Gerrit.
 
     The step fails if any patch set is not found.
 
     Args:
       gerrit_changes (List[GerritChange]): Buildbucket GerritChanges to fetch.
+      include_files (bool): If True, include information about changed files.
       test_output_data (dict): Test output for gerrit-fetch-changes.
 
     Returns:
@@ -128,7 +141,7 @@ class GerritApi(recipe_api.RecipeApi):
           'patch_set': int(gerrit_change.patchset),
       })
 
-    request = {'changes': requests}
+    request = {'changes': requests, 'include_files': include_files}
     results = self._gerrit_fetch_changes(request,
                                          test_output_data=test_output_data)
 
