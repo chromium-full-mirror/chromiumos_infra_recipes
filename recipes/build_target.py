@@ -23,10 +23,22 @@ DEPS = [
 from recipe_engine.config import Dict
 from recipe_engine.recipe_api import Property
 
-PROPERTIES = {'build_target': Property(kind=Dict())}
+PROPERTIES = {
+  'build_target': Property(kind=Dict()),
+  # BuildRerunCompileFailureInput when invoked by FindIt for bisection build.
+  'findit_bisect': Property(kind=Dict(), default={}),
+}
 
 
-def RunSteps(api, build_target):
+def _run_cros_sdk_script(api, script, target, *args):
+  # TODO: Replace with Build API equivalents.
+  cmd = ['/mnt/host/source/src/scripts/%s' % script, '--board', target]
+  if args:
+    cmd.extend(args)
+  api.cros_sdk.run(script, cmd)
+
+
+def RunSteps(api, build_target, findit_bisect):
   build_target_name = build_target['name']
 
   # Use a named cache for the chroot.
@@ -40,15 +52,20 @@ def RunSteps(api, build_target):
       # Sync workspace to gitiles_commit manifest snapshot.
       api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
 
-      # Build target image.
-      for build_script in ('setup_board', 'build_packages', 'build_image'):
-        # TODO: Replace with Build API equivalents.
-        api.cros_sdk.run(build_script, [
-            '/mnt/host/source/src/scripts/%s' % build_script, '--board',
-            build_target_name
-        ])
+      _run_cros_sdk_script(api, 'setup_board', build_target_name)
+
+      packages = findit_bisect.get('targets', [])
+      _run_cros_sdk_script(api, 'build_packages', build_target_name, *packages)
+
+      _run_cros_sdk_script(api, 'build_image', build_target_name)
 
 
 def GenTests(api):
   yield (api.test('basic') +  #
          api.properties(build_target={'name': 'generic'}))
+
+  yield (api.test('with-findit-bisect') +  #
+         api.properties(
+           build_target={'name': 'generic'},
+           findit_bisect={'targets': ['foo', 'bar', 'baz']},
+         ))
