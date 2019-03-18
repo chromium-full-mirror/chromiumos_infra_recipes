@@ -40,6 +40,7 @@
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [infra_config:examples/full](#recipes-infra_config_examples_full)
+  * [infra_config:examples/no_builder_config](#recipes-infra_config_examples_no_builder_config)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
@@ -650,18 +651,24 @@ Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 ### *recipe_modules* / [infra\_config](/recipe_modules/infra_config)
 
-[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles]
+[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 #### **class [InfraConfigApi](/recipe_modules/infra_config/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module for accessing data  in the chromeos/infra/config repo
+A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [get\_builder\_configs](/recipe_modules/infra_config/api.py#17)(self):**
+&mdash; **def [get\_current\_builder\_config](/recipe_modules/infra_config/api.py#17)(self):**
 
-Gets BuilderConfigs from the master branch.
+Gets the BuilderConfig for the current builder from the master branch.
+
+Finds the BuilderConfig whose id.name matches the current Buildbucket
+builder.
 
 Returns:
   A BuilderConfigs proto.
+
+Raises:
+  A ValueError if no BuilderConfig is found for the current builder.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1055,23 +1062,25 @@ Recipe for building a BuildTarget image.
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [infra\_config:examples/full](/recipe_modules/infra_config/examples/full.py)
 
-[DEPS](/recipe_modules/infra_config/examples/full.py#6): [infra\_config](#recipe_modules-infra_config), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles]
+[DEPS](/recipe_modules/infra_config/examples/full.py#6): [infra\_config](#recipe_modules-infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/infra_config/examples/full.py#39)(api):**
+&mdash; **def [RunSteps](/recipe_modules/infra_config/examples/full.py#13)(api):**
+### *recipes* / [infra\_config:examples/no\_builder\_config](/recipe_modules/infra_config/examples/no_builder_config.py)
+
+[DEPS](/recipe_modules/infra_config/examples/no_builder_config.py#6): [infra\_config](#recipe_modules-infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/infra_config/examples/no_builder_config.py#13)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#14): [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-TODO(chromium:922994): Make this recipe somewhat generic across builders, e.g.
-cq, postsubmit, release...
+&mdash; **def [RunSteps](/recipes/orchestrator.py#50)(api, update_manifest_refs):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#52)(api, update_manifest_refs):**
-
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#96)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#95)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1080,7 +1089,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#82)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#81)(refs):**
 
 Assert all given refs start with refs/heads.
 

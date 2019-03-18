@@ -5,21 +5,24 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'infra_config',
 ]
 
 
 def RunSteps(api):
-  builder_configs = api.infra_config.get_builder_configs()
+  builder_config = api.infra_config.get_current_builder_config()
+
+  api.assertions.assertEqual(builder_config.id.name, "postsubmit-orchestrator")
 
   # Sanity check that the jsonpb was parsed.
-  builder_configs_list = builder_configs.builder_configs
-  api.assertions.assertEqual(len(builder_configs_list), 2)
-  api.assertions.assertEqual(builder_configs_list[0].id.name,
-                             "amd64-generic-postsubmit")
-  api.assertions.assertEqual(builder_configs_list[1].id.name,
-                             "arm-generic-postsubmit")
+  children = builder_config.orchestrator.children
+  api.assertions.assertEqual(len(children), 2)
+  api.assertions.assertEqual(children[0], "amd64-generic-postsubmit")
+  api.assertions.assertEqual(children[1], "arm-generic-postsubmit")
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic') + api.buildbucket.ci_build(
+      project='chromeos', bucket='postsubmit',
+      builder='postsubmit-orchestrator')

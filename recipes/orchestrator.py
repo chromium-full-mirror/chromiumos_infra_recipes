@@ -6,9 +6,6 @@
 """Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
-
-TODO(chromium:922994): Make this recipe somewhat generic across builders, e.g.
-cq, postsubmit, release...
 """
 
 DEPS = [
@@ -21,6 +18,7 @@ DEPS = [
     'cros_version',
     'dev',
     'git',
+    'infra_config',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -63,13 +61,14 @@ def RunSteps(api, update_manifest_refs):
     api.cros_version.read_workspace_version()
 
     requests = []
-    # Just schedule a single child build to test postsubmit flow.
-    # TODO(chromium:904935): Schedule all build targets.
-    for builder in ['arm-generic-postsubmit']:
-      requests.append(api.buildbucket.schedule_request(builder=builder))
+
+    orchestrator_builder_config = api.infra_config.get_current_builder_config()
+    for child in orchestrator_builder_config.orchestrator.children:
+      requests.append(api.buildbucket.schedule_request(builder=child))
 
     completed_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4)
     for build in completed_builds:
+      # TODO(chromium:924657): Consider builder criticality.
       if build.status != common_pb2.SUCCESS:
         raise api.step.StepFailure('Child builder failed: {}'.format(
             build.builder))
@@ -136,6 +135,8 @@ def GenTests(api):
              [
                  api.buildbucket.ci_build_message(build_id=8922054662172514000,
                                                   status='FAILURE'),
+                 api.buildbucket.ci_build_message(build_id=8922054662172514001,
+                                                  status='SUCCESS'),
              ],
              step_name='buildbucket.run.collect',
          ))
