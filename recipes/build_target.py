@@ -27,6 +27,8 @@ PROPERTIES = {
   'build_target': Property(kind=Dict()),
   # BuildRerunCompileFailureInput when invoked by FindIt for bisection build.
   'findit_bisect': Property(kind=Dict(), default={}),
+  # Whether or not to build an image.
+  'build_image': Property(kind=bool, default=True),
 }
 
 
@@ -38,7 +40,7 @@ def _run_cros_sdk_script(api, script, target, *args):
   api.cros_sdk.run(script, cmd)
 
 
-def RunSteps(api, build_target, findit_bisect):
+def RunSteps(api, build_target, findit_bisect, build_image):
   build_target_name = build_target['name']
 
   # Use a named cache for the chroot.
@@ -54,10 +56,12 @@ def RunSteps(api, build_target, findit_bisect):
 
       _run_cros_sdk_script(api, 'setup_board', build_target_name)
 
+      # Packages subset will be present when FindIt asks for bisection build.
       packages = findit_bisect.get('targets', [])
       _run_cros_sdk_script(api, 'build_packages', build_target_name, *packages)
 
-      _run_cros_sdk_script(api, 'build_image', build_target_name)
+      if build_image:
+        _run_cros_sdk_script(api, 'build_image', build_target_name)
 
 
 def GenTests(api):
@@ -68,4 +72,5 @@ def GenTests(api):
          api.properties(
            build_target={'name': 'generic'},
            findit_bisect={'targets': ['foo', 'bar', 'baz']},
+           build_image=False,
          ))

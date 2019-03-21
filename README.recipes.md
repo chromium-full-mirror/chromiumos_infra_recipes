@@ -1148,7 +1148,7 @@ and have it fail if no prior commit position is found.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#41)(api, build_target, findit_bisect):**
+&mdash; **def [RunSteps](/recipes/build_target.py#43)(api, build_target, findit_bisect, build_image):**
 ### *recipes* / [cros\_build:examples/full](/recipe_modules/cros_build/examples/full.py)
 
 [DEPS](/recipe_modules/cros_build/examples/full.py#6): [cros\_build](#recipe_modules-cros_build), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

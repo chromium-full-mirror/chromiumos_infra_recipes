@@ -309,20 +309,6 @@
     "name": "build_packages"
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "--",
-      "/mnt/host/source/src/scripts/build_image",
-      "--board",
-      "generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "build_image"
-  },
-  {
     "cmd": [],
     "name": "clean up overlayfs mounts"
   },
