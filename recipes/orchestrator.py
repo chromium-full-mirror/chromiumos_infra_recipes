@@ -63,12 +63,7 @@ def RunSteps(api, update_manifest_refs):
     requests = []
 
     orchestrator_builder_config = api.infra_config.get_current_builder_config()
-    # Buildbucket had trouble scaling to all postsubmit children at the same
-    # time (see crbug.com/943467). Temporarily schedule a subset of children to
-    # test the flow of reading from infra/config and scheduling children.
-    # TODO(chromium:943467): Schedule all children when Buildbucket can handle
-    # it.
-    for child in orchestrator_builder_config.orchestrator.children[:10]:
+    for child in orchestrator_builder_config.orchestrator.children:
       requests.append(api.buildbucket.schedule_request(builder=child))
 
     completed_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4)
