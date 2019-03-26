@@ -26,8 +26,6 @@ from recipe_engine.recipe_api import Property
 
 PROPERTIES = {
   'build_target': Property(kind=Dict()),
-  # BuildRerunCompileFailureInput when invoked by FindIt for bisection build.
-  'findit_bisect': Property(kind=Dict(), default={}),
   # Whether or not to build an image.
   'build_image': Property(kind=bool, default=True),
 }
@@ -41,7 +39,7 @@ def _run_cros_sdk_script(api, script, target, *args):
   api.cros_sdk.run(script, cmd)
 
 
-def RunSteps(api, build_target, findit_bisect, build_image):
+def RunSteps(api, build_target, build_image):
   build_target_name = build_target['name']
 
   api.cros_bisect.set_bisect_builder(build_target_name)
@@ -60,7 +58,7 @@ def RunSteps(api, build_target, findit_bisect, build_image):
       _run_cros_sdk_script(api, 'setup_board', build_target_name)
 
       # Packages subset will be present when FindIt asks for bisection build.
-      packages = findit_bisect.get('targets', [])
+      packages = api.cros_bisect.get_packages()
       _run_cros_sdk_script(api, 'build_packages', build_target_name, *packages)
 
       if build_image:

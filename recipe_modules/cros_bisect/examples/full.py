@@ -4,11 +4,18 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/properties',
     'cros_bisect',
 ]
 
 def RunSteps(api):
   api.cros_bisect.set_bisect_builder('wally')
+  api.cros_bisect.get_packages()
 
 def GenTests(api):
   yield api.test('basic')
+
+  yield (api.test('with-findit-bisect') +  #
+         api.properties(
+           findit_bisect={'targets': ['pkg/foo', 'pkg/bar', 'pkg/baz']},
+         ))

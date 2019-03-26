@@ -130,7 +130,14 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#13)(self, build_target_name):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#26)(self):**
+
+Returns packages to build as specified by FindIt or empty list.
+
+Returns the packages to build as specified by a FindIt invocation or an
+empty list if this run was not invoked as a bisection build.
+
+&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#17)(self, build_target_name):**
 
 Sets the BISECT_BUILDER output property.
 
@@ -208,7 +215,7 @@ Configure the DupIt script module.
 Args:
   * dryrun (bool): If True, run gsutil updates in a dryrun mode.
 
-&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#32)(self):**
+&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#31)(self):**
 
 &mdash; **def [run](/recipe_modules/cros_dupit/api.py#27)(self):**
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
@@ -1189,12 +1196,12 @@ and have it fail if no prior commit position is found.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#44)(api, build_target, findit_bisect, build_image):**
+&mdash; **def [RunSteps](/recipes/build_target.py#42)(api, build_target, build_image):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
-[DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect)
+[DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#10)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#11)(api):**
 ### *recipes* / [cros\_build:examples/full](/recipe_modules/cros_build/examples/full.py)
 
 [DEPS](/recipe_modules/cros_build/examples/full.py#6): [cros\_build](#recipe_modules-cros_build), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
