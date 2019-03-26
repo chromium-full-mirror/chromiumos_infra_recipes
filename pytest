@@ -1,0 +1,8 @@
+#!/usr/bin/env vpython
+
+import sys
+
+import pytest
+
+
+sys.exit(pytest.main())
