@@ -5,6 +5,7 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
+  * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_build](#recipe_modules-cros_build)
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
@@ -32,6 +33,7 @@
   * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
+  * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
@@ -118,6 +120,22 @@ Raises:
 
 Returns:
   google.protobuf.message.Message: Output data.
+### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
+
+[DEPS](/recipe_modules/cros_bisect/__init__.py#1): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for interacting with FindIt.
+
+#### **class [CrosBisectApi](/recipe_modules/cros_bisect/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for interacting with FindIt.
+
+&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#13)(self, build_target_name):**
+
+Sets the BISECT_BUILDER output property.
+
+Sets the BISECT_BUILDER output property to the name of the builder FindIt
+should invoke if the build fails and bisection is required.
 ### *recipe_modules* / [cros\_build](/recipe_modules/cros_build)
 
 [DEPS](/recipe_modules/cros_build/__init__.py#1): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1167,11 +1185,16 @@ and have it fail if no prior commit position is found.
 &mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#14)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#43)(api, build_target, findit_bisect, build_image):**
+&mdash; **def [RunSteps](/recipes/build_target.py#44)(api, build_target, findit_bisect, build_image):**
+### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
+
+[DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect)
+
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#10)(api):**
 ### *recipes* / [cros\_build:examples/full](/recipe_modules/cros_build/examples/full.py)
 
 [DEPS](/recipe_modules/cros_build/examples/full.py#6): [cros\_build](#recipe_modules-cros_build), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1265,7 +1288,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#50)(api, update_manifest_refs):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#100)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#95)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1274,7 +1297,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#86)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#81)(refs):**
 
 Assert all given refs start with refs/heads.
 

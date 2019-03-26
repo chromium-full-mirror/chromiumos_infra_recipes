@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'cros_bisect',
     'cros_sdk',
     'cros_source',
     'dev',
@@ -42,6 +43,8 @@ def _run_cros_sdk_script(api, script, target, *args):
 
 def RunSteps(api, build_target, findit_bisect, build_image):
   build_target_name = build_target['name']
+
+  api.cros_bisect.set_bisect_builder(build_target_name)
 
   # Use a named cache for the chroot.
   api.cros_sdk.configure(

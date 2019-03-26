@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "set_bisect_builder",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"wally-bisect\"@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

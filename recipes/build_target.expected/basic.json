@@ -1,6 +1,13 @@
 [
   {
     "cmd": [],
+    "name": "set_bisect_builder",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"generic-bisect\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "ensure synced checkout"
   },
   {
