@@ -6,6 +6,7 @@
   * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_build](#recipe_modules-cros_build)
+  * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_test](#recipe_modules-cros_test) &mdash; API for interacting with cros_test chromite api.
@@ -32,12 +33,14 @@
   * [build_api:examples/full](#recipes-build_api_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
+  * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test:examples/full](#recipes-cros_test_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dev:examples/full](#recipes-dev_examples_full)
+  * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [easy:examples/full](#recipes-easy_examples_full)
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
@@ -170,6 +173,26 @@ Args:
 
 Raises:
   CompositeBuildFailure containing all failed builds.
+### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
+
+[DEPS](/recipe_modules/cros_dupit/__init__.py#1): [recipe\_engine/python][recipe_engine/recipe_modules/python]
+
+API for DupIt script.
+
+#### **class [DupItApi](/recipe_modules/cros_dupit/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for the DupIt script.
+
+&mdash; **def [configure](/recipe_modules/cros_dupit/api.py#18)(self, dryrun=None):**
+
+Configure the DupIt script module.
+
+Args:
+  * dryrun (bool): If True, run gsutil updates in a dryrun mode.
+
+&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#32)(self):**
+
+&mdash; **def [run](/recipe_modules/cros_dupit/api.py#27)(self):**
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1158,6 +1181,11 @@ Recipe for building a BuildTarget image.
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [execution\_context](/recipe_modules/cros_build/examples/full.py#15)(api, deferred):**
 
 &mdash; **def [get\_result](/recipe_modules/cros_build/examples/full.py#24)(step_result):**
+### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
+
+[DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
+
+&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#13)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1188,6 +1216,13 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/dev/examples/full.py#8): [dev](#recipe_modules-dev)
 
 &mdash; **def [RunSteps](/recipe_modules/dev/examples/full.py#13)(api):**
+### *recipes* / [dupit](/recipes/dupit.py)
+
+[DEPS](/recipes/dupit.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
+
+Recipe for syncing remote, distributed tarballs to our local cache.
+
+&mdash; **def [RunSteps](/recipes/dupit.py#13)(api):**
 ### *recipes* / [easy:examples/full](/recipe_modules/easy/examples/full.py)
 
 [DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

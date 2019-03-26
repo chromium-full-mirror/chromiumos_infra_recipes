@@ -1,0 +1,15 @@
+[
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[chromeos::cros_dupit]/resources/dupit.py",
+      "--dryrun=False"
+    ],
+    "name": "run dupit.py"
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]
