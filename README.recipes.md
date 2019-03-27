@@ -782,7 +782,7 @@ Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 ### *recipe_modules* / [infra\_config](/recipe_modules/infra_config)
 
-[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 #### **class [InfraConfigApi](/recipe_modules/infra_config/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -800,6 +800,16 @@ Returns:
 
 Raises:
   A ValueError if no BuilderConfig is found for the current builder.
+
+&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#45)(self, config_name):**
+
+Gets Path of most recent test config.
+
+Args:
+  * config_name (str): Config filename.
+
+Returns:
+  Path pointing to specified config file.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

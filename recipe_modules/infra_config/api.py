@@ -41,3 +41,21 @@ class InfraConfigApi(recipe_api.RecipeApi):
 
     raise LookupError(
         "No BuilderConfig for builder {}".format(current_builder_name))
+
+  def get_test_config(self, config_name):
+    """Gets Path of most recent test config.
+
+    Args:
+      * config_name (str): Config filename.
+
+    Returns:
+      Path pointing to specified config file.
+    """
+    conf_contents = self.m.gitiles.download_file(
+        REPO_URL, "testingconfig/generated/%s" % config_name,
+        step_test_data=self.test_api.test_config_file)
+
+    path = self.m.path['cleanup'].join('testconfig', config_name, conf_contents)
+
+    self.m.file.write_raw('save %s' % config_name, path, conf_contents)
+    return path

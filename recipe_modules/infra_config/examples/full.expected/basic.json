@@ -14,6 +14,34 @@
     "name": "fetch master:generated/builder_configs.cfg"
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/config_name.cfg",
+      "--format",
+      "text"
+    ],
+    "name": "fetch master:testingconfig/generated/config_name.cfg"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/testconfig/config_name.cfg"
+    ],
+    "infra_step": true,
+    "name": "save config_name.cfg"
+  },
+  {
     "jsonResult": null,
     "name": "$result"
   }

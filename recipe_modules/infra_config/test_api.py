@@ -48,3 +48,8 @@ class InfraConfigTestApi(recipe_test_api.RecipeTestApi):
               ]
             }
           """)
+
+  def test_config_file(self):
+    """A step_test_data function to simulate test config download."""
+
+    return self.m.gitiles.make_encoded_file("")

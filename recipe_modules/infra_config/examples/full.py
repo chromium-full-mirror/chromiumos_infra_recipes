@@ -21,6 +21,8 @@ def RunSteps(api):
   api.assertions.assertEqual(children[0], "amd64-generic-postsubmit")
   api.assertions.assertEqual(children[1], "arm-generic-postsubmit")
 
+  api.infra_config.get_test_config('config_name.cfg')
+
 
 def GenTests(api):
   yield api.test('basic') + api.buildbucket.ci_build(
