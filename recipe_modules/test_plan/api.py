@@ -5,6 +5,11 @@
 
 from recipe_engine import recipe_api
 
+from google.protobuf import json_format as jsonpb
+
+from PB.testplans.generate_test_plan import GenerateTestPlanRequest
+
+
 class RunPlanApi(recipe_api.RecipeApi):
   """A module for test execution steps"""
 
@@ -44,9 +49,16 @@ class RunPlanApi(recipe_api.RecipeApi):
     """
     self._ensure_test_planner()
 
-    # TODO(yshaul): Add real cmd flags / piping when available.
+    generate_request = GenerateTestPlanRequest()
+    generate_request.source_tree_config_path = str(
+        self.m.infra_config.get_test_config("source_tree_test_config.cfg"))
+    generate_request.target_test_requirements_path = str(
+        self.m.infra_config.get_test_config("target_test_requirements.cfg"))
+    generate_request.build_report_path.add().file_path = str(build_report_path)
+
     cmd = [
         self._test_planner_path,
+        self.m.json.input(jsonpb.MessageToDict(generate_request)),
     ]
     test_plan_res = self.m.step(name, cmd, stdout=self.m.json.output())
     return test_plan_res.stdout

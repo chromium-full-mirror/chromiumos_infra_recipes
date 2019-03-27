@@ -1080,13 +1080,13 @@ Raises:
   recipe_api.StepFailure on failing tests.
 ### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
 
-[DEPS](/recipe_modules/test_plan/__init__.py#1): [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/test_plan/__init__.py#1): [infra\_config](#recipe_modules-infra_config), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [RunPlanApi](/recipe_modules/test_plan/api.py#8)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RunPlanApi](/recipe_modules/test_plan/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for test execution steps
 
-&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#90)(self, name, tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#100)(self, name, tasks):**
 
 Waits for a set of tests to complete, and returns their results.
 Args:
@@ -1097,7 +1097,7 @@ Args:
 Returns:
    list[swarming.TaskResult]
 
-&mdash; **def [generate](/recipe_modules/test_plan/api.py#37)(self, name, build_report_path, dep_graph):**
+&mdash; **def [generate](/recipe_modules/test_plan/api.py#41)(self, name, build_report_path, dep_graph):**
 
 Generate test plan.
 
@@ -1106,9 +1106,9 @@ Args:
   * build_report_path (Path): Path to build report.
   * dep_graph (dict): Full dep graph.
 
-&mdash; **def [initialize](/recipe_modules/test_plan/api.py#11)(self):**
+&mdash; **def [initialize](/recipe_modules/test_plan/api.py#15)(self):**
 
-&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#54)(self, name, test_plan):**
+&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#64)(self, name, test_plan):**
 
 Shortcut for schedule and collect.
 
@@ -1119,7 +1119,7 @@ Args:
 Raises:
    recipe_api.StepFailure
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#68)(self, name, test_plan):**
+&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#78)(self, name, test_plan):**
 
 Run all test plan steps.
 
@@ -1133,7 +1133,7 @@ Args:
 Returns:
   list[swarming.TaskRequestMetadata]
 
-&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#19)(self, name, build_report_path, dep_graph):**
+&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#23)(self, name, build_report_path, dep_graph):**
 
 Shortcut for generate and schedule.
 

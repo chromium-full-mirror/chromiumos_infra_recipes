@@ -40,7 +40,76 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_planner/test_planner"
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/source_tree_test_config.cfg",
+      "--format",
+      "text"
+    ],
+    "name": "test_non-deferred.fetch master:testingconfig/generated/source_tree_test_config.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/testconfig/source_tree_test_config.cfg"
+    ],
+    "infra_step": true,
+    "name": "test_non-deferred.save source_tree_test_config.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/target_test_requirements.cfg",
+      "--format",
+      "text"
+    ],
+    "name": "test_non-deferred.fetch master:testingconfig/generated/target_test_requirements.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/testconfig/target_test_requirements.cfg"
+    ],
+    "infra_step": true,
+    "name": "test_non-deferred.save target_test_requirements.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/test_planner",
+      "{\"buildReportPath\": [{\"filePath\": \"builder\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}"
     ],
     "name": "test_non-deferred.generate",
     "stdout": "/path/to/tmp/json",
@@ -59,7 +128,76 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_planner/test_planner"
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/source_tree_test_config.cfg",
+      "--format",
+      "text"
+    ],
+    "name": "test_deferred.fetch master:testingconfig/generated/source_tree_test_config.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/testconfig/source_tree_test_config.cfg"
+    ],
+    "infra_step": true,
+    "name": "test_deferred.save source_tree_test_config.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/target_test_requirements.cfg",
+      "--format",
+      "text"
+    ],
+    "name": "test_deferred.fetch master:testingconfig/generated/target_test_requirements.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/testconfig/target_test_requirements.cfg"
+    ],
+    "infra_step": true,
+    "name": "test_deferred.save target_test_requirements.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/test_planner",
+      "{\"buildReportPath\": [{\"filePath\": \"builder\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}"
     ],
     "name": "test_deferred.generate",
     "stdout": "/path/to/tmp/json",
