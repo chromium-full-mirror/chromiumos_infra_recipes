@@ -60,7 +60,6 @@
     "name": "run plan.schedule.execute hw suite suite1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "step returned non-zero exit code: 1",
       "@@@STEP_FAILURE@@@"
     ]
   },

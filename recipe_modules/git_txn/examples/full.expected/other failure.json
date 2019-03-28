@@ -55,7 +55,6 @@
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "step returned non-zero exit code: 1",
       "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote failed]@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_EXCEPTION@@@"

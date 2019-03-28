@@ -68,7 +68,6 @@
     "name": "collect",
     "timeout": 3600,
     "~followup_annotations": [
-      "step returned non-zero exit code: 1",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"8922054662172514000\", @@@",
