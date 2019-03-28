@@ -255,7 +255,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -324,7 +323,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"

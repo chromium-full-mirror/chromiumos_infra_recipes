@@ -668,7 +668,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "clean up overlayfs mounts"
   },
   {
@@ -695,7 +694,7 @@
       "[START_DIR]/chromiumos_master"
     ],
     "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay master",
+    "name": "clean up overlayfs mounts (2).unmount overlay master",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -707,7 +706,7 @@
       "[START_DIR]/chromiumos_workspace"
     ],
     "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay workspace",
+    "name": "clean up overlayfs mounts (2).unmount overlay workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

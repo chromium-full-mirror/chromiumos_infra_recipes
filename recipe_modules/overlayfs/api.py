@@ -43,8 +43,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
           See mount(8) "Mount options for overlay".
     """
     assert name.isalnum(), 'overlayfs mount names must be alphanumeric'
-    with self.m.context(name_prefix='mount overlay %s' % name,
-                        increment_nest_level=True, infra_steps=True):
+    with self.m.context(namespace='mount overlay %s' % name, infra_steps=True):
       # Create overlayfs directories.
       work_base = self._base_work_path
       if upperdir_path is None:

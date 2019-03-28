@@ -25,7 +25,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/PATH",
     "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git log",
+    "name": "ensure manifest cq-depends fulfilled (2).git log",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

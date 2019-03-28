@@ -132,7 +132,7 @@
       "[CLEANUP]/payload"
     ],
     "infra_step": true,
-    "name": "execute tests.create payload dir (2)",
+    "name": "execute tests (2).create payload dir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -149,7 +149,7 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
-    "name": "execute tests.write input file (2)",
+    "name": "execute tests (2).write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -170,7 +170,7 @@
       "/mnt/host/workspace/output_proto.json",
       "chromite.api.ArchiveService/CreateVmTestArchives"
     ],
-    "name": "execute tests.build_api chromite.api.ArchiveService/CreateVmTestArchives",
+    "name": "execute tests (2).build_api chromite.api.ArchiveService/CreateVmTestArchives",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -187,7 +187,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "execute tests.read output file (2)",
+    "name": "execute tests (2).read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -203,7 +203,7 @@
       "[CLEANUP]/build_api_messages_tmp_2"
     ],
     "infra_step": true,
-    "name": "execute tests.rmtree [CLEANUP]/build_api_messages_tmp_2",
+    "name": "execute tests (2).rmtree [CLEANUP]/build_api_messages_tmp_2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -225,7 +225,7 @@
       "gs://chromeos-image-archive/build_target/R100-1234.5.6"
     ],
     "infra_step": true,
-    "name": "execute tests.gsutil upload (2)",
+    "name": "execute tests (2).gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/build_target/R100-1234.5.6@@@"

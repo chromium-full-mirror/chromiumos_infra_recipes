@@ -29,7 +29,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/PATH",
     "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git log",
+    "name": "ensure manifest cq-depends fulfilled (2).git log",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -43,7 +43,7 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "name": "ensure manifest cq-depends fulfilled.read deploy_cipd.json",
+    "name": "ensure manifest cq-depends fulfilled (2).read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -66,7 +66,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "ensure manifest cq-depends fulfilled.ensure_installed",
+    "name": "ensure manifest cq-depends fulfilled (2).ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -86,7 +86,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],
-    "name": "ensure manifest cq-depends fulfilled.gerrit-fetch-changes",
+    "name": "ensure manifest cq-depends fulfilled (2).gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": \"12345\", \"host\": \"chromium\", \"patch_set\": -1}, {\"change_number\": \"67890\", \"host\": \"chrome-internal\", \"patch_set\": -1}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
@@ -119,7 +119,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.repo forall",
+    "name": "ensure manifest cq-depends fulfilled (2).repo forall",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -137,7 +137,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/my/project",
     "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled.git merge-base",
+    "name": "ensure manifest cq-depends fulfilled (2).git merge-base",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

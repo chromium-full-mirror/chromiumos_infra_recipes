@@ -159,7 +159,7 @@
           "<omitted by recipe engine>"
         ]
       },
-      "humanReason": "Infra Failure: Step('download.basic_builder') returned 1"
+      "humanReason": "Infra Failure: Step(u'download.basic_builder') returned 1"
     },
     "name": "$result"
   }

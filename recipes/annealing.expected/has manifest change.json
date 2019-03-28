@@ -251,7 +251,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "diff remote and local manifest"
   },
   {
@@ -298,7 +297,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "ensure manifest cq-depends fulfilled",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@diff manifest@PATH upreved from FROM_REV to TO_REV@@@",
@@ -368,7 +366,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "git transaction",
     "~followup_annotations": [
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
@@ -436,7 +433,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "git transaction.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

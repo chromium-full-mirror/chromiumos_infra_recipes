@@ -410,7 +410,7 @@
       "[START_DIR]/mount_b"
     ],
     "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay b (2)",
+    "name": "clean up overlayfs mounts (2).unmount overlay b",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -498,7 +498,7 @@
       "[START_DIR]/mount_c"
     ],
     "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay c (2)",
+    "name": "clean up overlayfs mounts (3).unmount overlay c",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -514,7 +514,7 @@
       "[START_DIR]/mount_a"
     ],
     "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay a (2)",
+    "name": "clean up overlayfs mounts (4).unmount overlay a",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

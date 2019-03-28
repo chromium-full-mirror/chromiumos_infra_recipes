@@ -251,7 +251,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "diff remote and local manifest",
     "~followup_annotations": [
       "@@@STEP_TEXT@no manifest diffs from remote to local@@@",

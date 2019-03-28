@@ -73,7 +73,7 @@
       "refs/heads/ref:"
     ],
     "infra_step": true,
-    "name": "git transaction.git fetch (2)",
+    "name": "git transaction (2).git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -85,7 +85,7 @@
       "FETCH_HEAD"
     ],
     "infra_step": true,
-    "name": "git transaction.git rev-parse (2)",
+    "name": "git transaction (2).git rev-parse",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -99,7 +99,7 @@
       "FETCH_HEAD"
     ],
     "infra_step": true,
-    "name": "git transaction.git checkout (2)",
+    "name": "git transaction (2).git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -116,7 +116,7 @@
       "refs/heads/ref:"
     ],
     "infra_step": true,
-    "name": "git transaction.git fetch (3)",
+    "name": "git transaction (3).git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -128,7 +128,7 @@
       "FETCH_HEAD"
     ],
     "infra_step": true,
-    "name": "git transaction.git rev-parse (3)",
+    "name": "git transaction (3).git rev-parse",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -142,7 +142,7 @@
       "FETCH_HEAD"
     ],
     "infra_step": true,
-    "name": "git transaction.git checkout (3)",
+    "name": "git transaction (3).git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -159,14 +159,14 @@
       "file/path.txt"
     ],
     "infra_step": true,
-    "name": "git transaction.write file",
+    "name": "git transaction (3).write file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "git transaction.diff check",
+    "name": "git transaction (3).diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -179,7 +179,7 @@
       "file/path.txt"
     ],
     "infra_step": true,
-    "name": "git transaction.diff check.git ls-files",
+    "name": "git transaction (3).diff check.git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -191,7 +191,7 @@
       "file/path.txt"
     ],
     "infra_step": true,
-    "name": "git transaction.git add",
+    "name": "git transaction (3).git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -206,7 +206,7 @@
       "file/path.txt"
     ],
     "infra_step": true,
-    "name": "git transaction.git commit",
+    "name": "git transaction (3).git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -220,7 +220,7 @@
       "HEAD:refs/heads/ref"
     ],
     "infra_step": true,
-    "name": "git transaction.git push (2)",
+    "name": "git transaction (3).git push",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

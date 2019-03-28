@@ -76,15 +76,15 @@ def GenTests(api):
   )
 
   yield api.test('update ref has diff has new file') + api.step_data(
-      'git transaction.diff check.git ls-files',
+      'git transaction (3).diff check.git ls-files',
       retcode=1,
   )
 
   yield api.test('update ref has diff has change') + api.step_data(
-      'git transaction.diff check.git ls-files',
+      'git transaction (3).diff check.git ls-files',
       retcode=0,
   ) + api.step_data(
-      'git transaction.diff check.git diff-index',
+      'git transaction (3).diff check.git diff-index',
       retcode=1)
 
 
