@@ -8,6 +8,7 @@
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_build](#recipe_modules-cros_build)
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
+  * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_test](#recipe_modules-cros_test) &mdash; API for interacting with cros_test chromite api.
@@ -36,6 +37,7 @@
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
+  * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test:examples/full](#recipes-cros_test_examples_full)
@@ -218,6 +220,27 @@ Args:
 &emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#31)(self):**
 
 &mdash; **def [run](/recipe_modules/cros_dupit/api.py#27)(self):**
+### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
+
+[DEPS](/recipe_modules/cros_prebuilts/__init__.py#1): [build\_api](#recipe_modules-build_api), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for uploading CrOS prebuilts to Google Storage.
+
+#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for uploading package prebuilts.
+
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#106)(self, target, kind, private=True):**
+
+Upload binary prebuilts for the build target to Google Storage.
+
+Determines what to upload, uploads it, and points Portage to the upload URI.
+This step works entirely within the workspace checkout.
+
+Args:
+  target (BuildTarget): The build target to upload prebuilts for.
+  kind (str): Label describing kind of prebuilts to upload (e.g. 'chrome').
+  private (bool): Whether or not the target prebuilts are private.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1216,6 +1239,11 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
 
 &mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#13)(api):**
+### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
+
+[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#14)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
