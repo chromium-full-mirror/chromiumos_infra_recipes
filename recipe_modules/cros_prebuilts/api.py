@@ -5,6 +5,8 @@
 
 """API for uploading CrOS prebuilts to Google Storage."""
 
+import os
+
 from recipe_engine import recipe_api
 
 from PB.chromite.api import binhost
@@ -66,12 +68,22 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       sb_request.private = private
       sb_request.key = binhost.BinhostKey.Value(key)
       sb_request.uri = uri
+
       sb_response = self.m.build_api.call_proto(
           'chromite.api.BinhostService/SetBinhost', sb_request,
           test_output_data=self.test_api.set_binhost_response)
-      binhost_path = sb_response.output_file
-      self.m.git.commit_files([binhost_path], 'Point %s to %s.' % (key, uri))
-      # TODO(evanhernandez): Push this change as well.
+      binhost_path = self.m.path.abs_to_path(sb_response.output_file)
+      binhost_data = self.m.file.read_text('read binhost conf', binhost_path)
+
+      projects = self.m.repo.project_infos(projects=[binhost_path])
+      assert len(projects) == 1, '%s must belong to 1 project' % binhost_path
+      project = projects[0]
+
+      with self.m.context(
+          cwd=self.m.cros_source.workspace_path.join(project.path)):
+        self.m.git_txn.update_ref_write_file(project.remote, project.branch,
+                                             'Set %s=%s.' % (key, uri),
+                                             binhost_path, binhost_data)
 
   def _upload(self, root, paths, uri):
     """Upload the paths within root to the GS URI.
@@ -109,7 +121,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       kind (str): Label describing kind of prebuilts to upload (e.g. 'chrome').
       private (bool): Whether or not the target prebuilts are private.
     """
-    with self.m.step.nest('upload prebuilts for %s' % target):
+    with self.m.step.nest('upload prebuilts for %s' % target.name):
       upload_uri = self._prebuilts_uri(target, kind)
       upload_root, upload_paths = self._prepare_binhost_uploads(
           target, upload_uri)

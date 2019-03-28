@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "upload prebuilts for name: \"target\"\n"
+    "name": "upload prebuilts for target"
   },
   {
     "cmd": [
@@ -15,7 +15,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.read chromeos_version.sh",
+    "name": "upload prebuilts for target.read chromeos_version.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@version: R99-1234.56.0@@@"
@@ -23,7 +23,7 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts for name: \"target\"\n.prepare binhost uploads",
+    "name": "upload prebuilts for target.prepare binhost uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -40,7 +40,7 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.prepare binhost uploads.write input file",
+    "name": "upload prebuilts for target.prepare binhost uploads.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -61,7 +61,7 @@
       "/mnt/host/workspace/output_proto.json",
       "chromite.api.BinhostService/PrepareBinhostUploads"
     ],
-    "name": "upload prebuilts for name: \"target\"\n.prepare binhost uploads.build_api chromite.api.BinhostService/PrepareBinhostUploads",
+    "name": "upload prebuilts for target.prepare binhost uploads.build_api chromite.api.BinhostService/PrepareBinhostUploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -78,7 +78,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.prepare binhost uploads.read output file",
+    "name": "upload prebuilts for target.prepare binhost uploads.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -94,14 +94,14 @@
       "[CLEANUP]/build_api_messages_tmp_1"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.prepare binhost uploads.rmtree [CLEANUP]/build_api_messages_tmp_1",
+    "name": "upload prebuilts for target.prepare binhost uploads.rmtree [CLEANUP]/build_api_messages_tmp_1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts for name: \"target\"\n.upload archives to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages",
+    "name": "upload prebuilts for target.upload archives to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -115,7 +115,7 @@
       "{\"[START_DIR]/uploads/dir/bar.tbz2\": [\"[CLEANUP]/prebuilts_tmp_2/bar.tbz2\"], \"[START_DIR]/uploads/dir/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_2/foo.tbz2\"]}"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.upload archives to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.link files to upload",
+    "name": "upload prebuilts for target.upload archives to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.link files to upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -136,14 +136,14 @@
       "gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.upload archives to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.gsutil rsync",
+    "name": "upload prebuilts for target.upload archives to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.gsutil rsync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts for name: \"target\"\n.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages",
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -160,7 +160,7 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.write input file",
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -181,7 +181,7 @@
       "/mnt/host/workspace/output_proto.json",
       "chromite.api.BinhostService/SetBinhost"
     ],
-    "name": "upload prebuilts for name: \"target\"\n.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.build_api chromite.api.BinhostService/SetBinhost",
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.build_api chromite.api.BinhostService/SetBinhost",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -198,7 +198,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.read output file",
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -214,24 +214,149 @@
       "[CLEANUP]/build_api_messages_tmp_3"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.rmtree [CLEANUP]/build_api_messages_tmp_3",
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.rmtree [CLEANUP]/build_api_messages_tmp_3",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "git",
-      "commit",
-      "--message",
-      "Point POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.",
-      "--",
-      "[START_DIR]/BINHOST.conf"
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/BINHOST.conf",
+      "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload prebuilts for name: \"target\"\n.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git commit",
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.read binhost conf",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/BINHOST.conf",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.repo forall",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/BINHOST.conf|src/[START_DIR]/BINHOST.conf|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "refs/heads/master:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[START_DIR]/BINHOST.conf"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction.write file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction.diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[START_DIR]/BINHOST.conf"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction.diff check.git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff-index",
+      "--quiet",
+      "HEAD",
+      "[START_DIR]/BINHOST.conf"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction.diff check.git diff-index",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
