@@ -23,6 +23,22 @@ class CrosBisectApi(recipe_api.RecipeApi):
     res = self.m.step('set_bisect_builder', cmd=None)
     res.presentation.properties['BISECT_BUILDER'] = build_target_name + '-bisect'
 
+  def _create_failures_payload(self, failed_packages):
+    failures = []
+    for pkg in failed_packages:
+      failures.append({'rule': 'emerge', 'output_targets': pkg})
+    return {'failures': failures}
+
+  def set_build_compile_failure(self, failed_packages):
+    """Outputs failure of the failed packages for FindIt consumption.
+
+    Outputs failure of the indicated packages for consumption by FindIt
+    under the output property "BuildCompileFailureOutput".
+    """
+    payload = self._create_failures_payload(failed_packages)
+    res = self.m.step('set_build_compile_failure', cmd=None)
+    res.presentation.properties['build_compile_failure_output'] = payload
+
   def get_packages(self):
     """Returns packages to build as specified by FindIt or empty list.
 

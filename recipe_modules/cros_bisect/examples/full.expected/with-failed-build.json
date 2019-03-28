@@ -1,0 +1,20 @@
+[
+  {
+    "cmd": [],
+    "name": "set_bisect_builder",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"wally-bisect\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set_build_compile_failure",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@build_compile_failure_output@{\"failures\": [{\"output_targets\": \"pkg/uno\", \"rule\": \"emerge\"}, {\"output_targets\": \"pkg/dos\", \"rule\": \"emerge\"}]}@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

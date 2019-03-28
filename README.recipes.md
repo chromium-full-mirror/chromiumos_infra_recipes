@@ -132,7 +132,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#26)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#42)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -145,6 +145,13 @@ Sets the BISECT_BUILDER output property.
 
 Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the build fails and bisection is required.
+
+&mdash; **def [set\_build\_compile\_failure](/recipe_modules/cros_bisect/api.py#32)(self, failed_packages):**
+
+Outputs failure of the failed packages for FindIt consumption.
+
+Outputs failure of the indicated packages for consumption by FindIt
+under the output property "BuildCompileFailureOutput".
 ### *recipe_modules* / [cros\_build](/recipe_modules/cros_build)
 
 [DEPS](/recipe_modules/cros_build/__init__.py#1): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1234,7 +1241,7 @@ Recipe for building a BuildTarget image.
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#19)(api, expected_packages):**
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#24)(api, expected_packages, failed_packages):**
 ### *recipes* / [cros\_build:examples/full](/recipe_modules/cros_build/examples/full.py)
 
 [DEPS](/recipe_modules/cros_build/examples/full.py#6): [cros\_build](#recipe_modules-cros_build), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
