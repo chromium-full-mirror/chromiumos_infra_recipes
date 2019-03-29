@@ -12,9 +12,16 @@
   },
   {
     "cmd": [],
-    "name": "run plan.schedule.ensure swarming",
+    "name": "run plan.schedule.vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run plan.schedule.vm.ensure swarming",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -29,9 +36,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.schedule.ensure swarming.ensure_installed",
+    "name": "run plan.schedule.vm.ensure swarming.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -57,9 +64,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.schedule.execute vm suite test-suite",
+    "name": "run plan.schedule.vm.test-suite",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -75,6 +82,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run plan.schedule.tast_vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "[CACHE]/swarming_client/swarming",
       "spawn-tasks",
@@ -86,9 +100,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.schedule.execute tast_vm suite test-suite",
+    "name": "run plan.schedule.tast_vm.test-suite",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",

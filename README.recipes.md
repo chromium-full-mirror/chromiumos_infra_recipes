@@ -58,7 +58,7 @@
   * [portage:examples/portageq_parse_error](#recipes-portage_examples_portageq_parse_error)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
-  * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
+  * [skylab:examples/create_suites](#recipes-skylab_examples_create_suites)
   * [support:examples/full](#recipes-support_examples_full)
   * [sync_chrome:examples/full](#recipes-sync_chrome_examples_full)
   * [test_execution/execute_plan](#recipes-test_execution_execute_plan) &mdash; Recipe for executing ChromeOS test plan.
@@ -1034,12 +1034,16 @@ Args:
 
 Skylab helper module
 
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#16)(self, name, test_unit):**
+&mdash; **def [create\_suites](/recipe_modules/skylab/api.py#16)(self, name, test_unit):**
 
 Skylab step.
 
 Args:
+  * name (str): Step name.
   * test_unit (TestUnit): Test plan step to execute.
+
+Returns:
+  list[swarming.TaskRequestMetadata]
 
 &mdash; **def [initialize](/recipe_modules/skylab/api.py#13)(self):**
 ### *recipe_modules* / [support](/recipe_modules/support)
@@ -1123,11 +1127,11 @@ Raises:
 
 [DEPS](/recipe_modules/test_plan/__init__.py#1): [infra\_config](#recipe_modules-infra_config), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [RunPlanApi](/recipe_modules/test_plan/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RunPlanApi](/recipe_modules/test_plan/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for test execution steps
 
-&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#102)(self, name, tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#110)(self, name, tasks):**
 
 Waits for a set of tests to complete, and returns their results.
 Args:
@@ -1138,7 +1142,7 @@ Args:
 Returns:
    list[swarming.TaskResult]
 
-&mdash; **def [generate](/recipe_modules/test_plan/api.py#42)(self, name, build_report_path, dep_graph):**
+&mdash; **def [generate](/recipe_modules/test_plan/api.py#43)(self, name, build_report_path, dep_graph):**
 
 Generate test plan.
 
@@ -1147,9 +1151,12 @@ Args:
   * build_report_path (Path): Path to build report.
   * dep_graph (dict): Full dep graph.
 
-&mdash; **def [initialize](/recipe_modules/test_plan/api.py#16)(self):**
+Returns:
+  GenerateTestPlanResponse of test plan.
 
-&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#66)(self, name, test_plan):**
+&mdash; **def [initialize](/recipe_modules/test_plan/api.py#17)(self):**
+
+&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#72)(self, name, test_plan):**
 
 Shortcut for schedule and collect.
 
@@ -1160,7 +1167,7 @@ Args:
 Raises:
    recipe_api.StepFailure
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#80)(self, name, test_plan):**
+&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#86)(self, name, test_plan):**
 
 Run all test plan steps.
 
@@ -1174,7 +1181,7 @@ Args:
 Returns:
   list[swarming.TaskRequestMetadata]
 
-&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#24)(self, name, build_report_path, dep_graph):**
+&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#25)(self, name, build_report_path, dep_graph):**
 
 Shortcut for generate and schedule.
 
@@ -1196,27 +1203,27 @@ Raises:
 
 A module for vm test execution steps
 
-&mdash; **def [run\_tast\_test](/recipe_modules/vm_test/api.py#41)(self, name, test_plan):**
+&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#46)(self, name, test_unit):**
 
 Run tast test on swarming bot.
 
 Args:
   * name (str): Step name.
-  * test_plan (TestPlan): Test plan.
+  * test_unit (TestUnit): Test unit.
 
 Returns:
-  swarming.TaskRequestMetadata
+  list[swarming.TaskRequestMetadata]
 
-&mdash; **def [run\_vm\_test](/recipe_modules/vm_test/api.py#26)(self, name, test_plan):**
+&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#24)(self, name, test_unit):**
 
 Run vm test on swarming bot.
 
 Args:
   * name (str): Step name.
-  * test_plan (TestPlan): Test plan.
+  * test_unit (TestUnit): Test unit.
 
 Returns:
-  swarming.TaskRequestMetadata
+  list[swarming.TaskRequestMetadata]
 ## Recipes
 
 ### *recipes* / [annealing](/recipes/annealing.py)
@@ -1419,11 +1426,11 @@ Recipe for prototyping Chrome OS builders.
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
-### *recipes* / [skylab:examples/create\_suite](/recipe_modules/skylab/examples/create_suite.py)
+### *recipes* / [skylab:examples/create\_suites](/recipe_modules/skylab/examples/create_suites.py)
 
-[DEPS](/recipe_modules/skylab/examples/create_suite.py#7): [skylab](#recipe_modules-skylab), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/skylab/examples/create_suites.py#6): [skylab](#recipe_modules-skylab), [test\_plan](#recipe_modules-test_plan)
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_suite.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_suites.py#9)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
@@ -1436,11 +1443,11 @@ Recipe for prototyping Chrome OS builders.
 &mdash; **def [RunSteps](/recipe_modules/sync_chrome/examples/full.py#9)(api):**
 ### *recipes* / [test\_execution/execute\_plan](/recipes/test_execution/execute_plan.py)
 
-[DEPS](/recipes/test_execution/execute_plan.py#8): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_execution/execute_plan.py#13): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for executing ChromeOS test plan.
 
-&mdash; **def [RunSteps](/recipes/test_execution/execute_plan.py#16)(api):**
+&mdash; **def [RunSteps](/recipes/test_execution/execute_plan.py#21)(api):**
 ### *recipes* / [test\_execution/execute\_vm\_suite](/recipes/test_execution/execute_vm_suite.py)
 
 [DEPS](/recipes/test_execution/execute_vm_suite.py#12): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_test](#recipe_modules-cros_test), [overlayfs](#recipe_modules-overlayfs), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1477,9 +1484,9 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 &mdash; **def [RunSteps](/recipe_modules/test_plan/examples/generate.py#9)(api):**
 ### *recipes* / [test\_plan:examples/run](/recipe_modules/test_plan/examples/run.py)
 
-[DEPS](/recipe_modules/test_plan/examples/run.py#6): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/test_plan/examples/run.py#12): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/run.py#9)(api):**
+&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/run.py#19)(api, plan):**
 ### *recipes* / [test\_plan:examples/test\_builds](/recipe_modules/test_plan/examples/test_builds.py)
 
 [DEPS](/recipe_modules/test_plan/examples/test_builds.py#6): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -21,41 +21,51 @@ SWARMING_TEST_NAME = 'vm-test-%s'
 class VMTestApi(recipe_api.RecipeApi):
   """A module for vm test execution steps"""
 
-  # TODO(yshaul): Update artifact_path when field is implemented.
-  #               crbug/935152
-  def run_vm_test(self, name, test_plan):
+  def run_vm_tests(self, name, test_unit):
     """Run vm test on swarming bot.
 
     Args:
       * name (str): Step name.
-      * test_plan (TestPlan): Test plan.
+      * test_unit (TestUnit): Test unit.
 
     Returns:
-      swarming.TaskRequestMetadata
+      list[swarming.TaskRequestMetadata]
     """
-    return self._run(
-        name, build_target=test_plan['scheduling_requirements']['build_target'],
-        test_suite=test_plan['test_suite'], gs_path=test_plan['artifact_path'],
-        test_type='vm')
+    result = []
+    with self.m.step.nest(name):
+      for test in test_unit.vm_test_cfg.vm_test:
+        result.append(
+            self._run(
+                test.test_suite,
+                build_target=test_unit.scheduling_requirements.build_target,
+                test_suite=test.test_suite,
+                gs_path=test_unit.build_payload.artifact_path, test_type='vm'))
 
-  def run_tast_test(self, name, test_plan):
+    return result
+
+  def run_tast_vm_tests(self, name, test_unit):
     """Run tast test on swarming bot.
 
     Args:
       * name (str): Step name.
-      * test_plan (TestPlan): Test plan.
+      * test_unit (TestUnit): Test unit.
 
     Returns:
-      swarming.TaskRequestMetadata
+      list[swarming.TaskRequestMetadata]
     """
-    return self._run(
-        name,
-        build_target=test_plan['scheduling_requirements']['build_target'],
-        test_suite=test_plan['test_suite'],
-        gs_path=test_plan['artifact_path'],
-        # TODO(yshaul): add test_plan['test_exprs'] when available
-        test_exprs=[],
-        test_type='tast_vm')
+    result = []
+    with self.m.step.nest(name):
+      for test in test_unit.tast_vm_test_cfg.tast_vm_test:
+        result.append(
+            self._run(
+                test.suite_name,
+                build_target=test_unit.scheduling_requirements.build_target,
+                test_suite=test.suite_name,
+                gs_path=test_unit.build_payload.artifact_path, test_exprs=[
+                    expr.test_expr for expr in test.tast_test_expr
+                ], test_type='tast_vm'))
+
+    return result
 
   def _run(self, name, test_suite, **kwargs):
     """Trigger test on swarming bot.
@@ -79,7 +89,7 @@ class VMTestApi(recipe_api.RecipeApi):
     request = (
         self.m.swarming.task_request().with_name(
             SWARMING_TEST_NAME %
-            test_suite).with_priority(SWARMING_MED_PRIORITY))
+            str(test_suite)).with_priority(SWARMING_MED_PRIORITY))
 
     cmd = [
         'recipes/recipes.py',

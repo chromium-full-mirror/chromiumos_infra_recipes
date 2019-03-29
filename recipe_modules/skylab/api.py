@@ -13,32 +13,36 @@ class SkylabApi(recipe_api.RecipeApi):
   def initialize(self):
     self._skylab_path = None
 
-  def create_suite(self, name, test_unit):
+  def create_suites(self, name, test_unit):
     """Skylab step.
 
     Args:
+      * name (str): Step name.
       * test_unit (TestUnit): Test plan step to execute.
-    """
 
+    Returns:
+      list[swarming.TaskRequestMetadata]
+    """
     self._ensure_skylab()
 
-    # TODO(yshaul): Change to reference design when available. crbug/926512
-    cmd = [
-        self._skylab_path, 'create-suite', '-pool', SKYLAB_SWARMING_POOL,
-        '-image', test_unit['build_payload']['image'][0]['image_name'],
-        '-board', test_unit['scheduling_requirements']['build_target'],
-        test_unit['test_suite']
-    ]
+    with self.m.step.nest(name):
+      for test in test_unit.hw_test_cfg.hw_test:
+        test_suite = test.suite
+        cmd = [
+            self._skylab_path, 'create-suite', '-pool', SKYLAB_SWARMING_POOL,
+            '-image', test_unit.build_payload.image[0].image_name, '-board',
+            test_unit.scheduling_requirements.build_target, test_suite
+        ]
 
-    self.m.step(name, cmd)
+        self.m.step(test_suite, cmd)
 
     # TODO(yshaul): Replace hw-test with swarming metadata for skylab tasks. crbug/935244
-    return 'hw-test'
+    return ['hw-test']
 
   def _ensure_skylab(self):
     """Ensure the Skylab cli is installed."""
     if self._skylab_path:
-      return
+      return  # pragma: nocover
 
     with self.m.step.nest('ensure skylab'):
       with self.m.context(infra_steps=True):

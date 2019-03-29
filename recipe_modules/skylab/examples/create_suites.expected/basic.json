@@ -32,6 +32,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "skylab"
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/skylab/skylab",
       "create-suite",
@@ -43,7 +47,10 @@
       "build_target",
       "suite1"
     ],
-    "name": "skylab"
+    "name": "skylab.suite1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -57,7 +64,10 @@
       "build_target",
       "suite2"
     ],
-    "name": "skylab (2)"
+    "name": "skylab.suite2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "jsonResult": null,

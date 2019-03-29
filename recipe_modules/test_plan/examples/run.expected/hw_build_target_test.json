@@ -46,18 +46,8 @@
     ]
   },
   {
-    "cmd": [
-      "[START_DIR]/cipd/skylab/skylab",
-      "create-suite",
-      "-pool",
-      "ChromeOSSkylab",
-      "-image",
-      "image.bin",
-      "-board",
-      "build_target",
-      "suite1"
-    ],
-    "name": "run plan.schedule.execute hw suite suite1",
+    "cmd": [],
+    "name": "run plan.schedule.hw",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -72,11 +62,28 @@
       "image.bin",
       "-board",
       "build_target",
+      "suite1"
+    ],
+    "name": "run plan.schedule.hw.suite1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "create-suite",
+      "-pool",
+      "ChromeOSSkylab",
+      "-image",
+      "image.bin",
+      "-board",
+      "build_target",
       "suite2"
     ],
-    "name": "run plan.schedule.execute hw suite suite2",
+    "name": "run plan.schedule.hw.suite2",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -131,7 +138,6 @@
       "/path/to/tmp/json",
       "-task-output-stdout",
       "json",
-      "hw-test",
       "hw-test"
     ],
     "infra_step": true,
@@ -145,7 +151,7 @@
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_0\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
@@ -157,8 +163,8 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@Swarming task output: my_task_1@hello world!@@@",
-      "@@@STEP_LOG_END@Swarming task output: my_task_1@@@"
+      "@@@STEP_LOG_LINE@Swarming task output: my_task_0@hello world!@@@",
+      "@@@STEP_LOG_END@Swarming task output: my_task_0@@@"
     ]
   },
   {

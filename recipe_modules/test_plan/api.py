@@ -8,6 +8,7 @@ from recipe_engine import recipe_api
 from google.protobuf import json_format as jsonpb
 
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
+from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 
 
 class RunPlanApi(recipe_api.RecipeApi):
@@ -16,9 +17,9 @@ class RunPlanApi(recipe_api.RecipeApi):
   def initialize(self):
     self._test_planner_path = None
     self._test_env_steps = {
-        'hw': self.m.skylab.create_suite,
-        'vm': self.m.vm_test.run_vm_test,
-        'tast_vm': self.m.vm_test.run_tast_test,
+        'hw': self.m.skylab.create_suites,
+        'vm': self.m.vm_test.run_vm_tests,
+        'tast_vm': self.m.vm_test.run_tast_vm_tests,
     }
 
   def test_builds(self, name, build_report_path, dep_graph):
@@ -46,6 +47,9 @@ class RunPlanApi(recipe_api.RecipeApi):
       * name (str): The step name.
       * build_report_path (Path): Path to build report.
       * dep_graph (dict): Full dep graph.
+
+    Returns:
+      GenerateTestPlanResponse of test plan.
     """
     self._ensure_test_planner()
 
@@ -61,7 +65,9 @@ class RunPlanApi(recipe_api.RecipeApi):
         self.m.json.input(jsonpb.MessageToDict(generate_request)),
     ]
     test_plan_res = self.m.step(name, cmd, stdout=self.m.json.output())
-    return test_plan_res.stdout
+
+    return jsonpb.ParseDict(test_plan_res.stdout, GenerateTestPlanResponse(),
+                            ignore_unknown_fields=True)
 
   def run_plan(self, name, test_plan):
     """Shortcut for schedule and collect.
@@ -92,12 +98,14 @@ class RunPlanApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest(name):
       tasks = []
-      for test_unit in test_plan['test_unit']:
-        step = self._step(test_unit)
-        task = step(step_name(test_unit), test_unit)
+      for test_unit in test_plan.test_unit:
+        test_env, step = self._step(test_unit)
+        task = step(test_env, test_unit)
         tasks.append(task)
 
-      return tasks
+      # Temporarily flatten list, as other code depends on a flat structure.
+      # TODO(yshaul): Remove when other code handle sublists
+      return [task for sublist in tasks for task in sublist]
 
   def collect_tests(self, name, tasks):
     """Waits for a set of tests to complete, and returns their results.
@@ -115,20 +123,24 @@ class RunPlanApi(recipe_api.RecipeApi):
       return self.m.swarming.collect('collect tasks', tasks)
 
   def _step(self, test_unit):
-    """Returns step function for given test plan step.
+    """Returns environment and step function for given test plan step.
 
     Args:
       * test_unit (TestUnit): Test plan step.
 
     Returns:
-      callable
+      Tuple(str, callable)
     """
-    test_env = test_unit['test_env']
-    step = self._test_env_steps.get(test_env, None)
-    if step is None:
-      raise self.m.step.StepFailure('Unknown test environment "%s"' % test_env)
+    if not test_unit.WhichOneof('TestCfg'):
+      raise self.m.step.StepFailure('No test environment specified.')
 
-    return step
+    test_env = test_unit.WhichOneof('TestCfg')[:-len('_test_cfg')]
+    step = self._test_env_steps.get(test_env, None)
+    if step is None:  # pragma: nocover
+      raise self.m.step.StepFailure(
+          'Unable to execute tests for test environment "%s"' % test_env)
+
+    return test_env, step
 
   def _ensure_test_planner(self):
     """Ensure the test_planner cli is installed."""
@@ -144,15 +156,3 @@ class RunPlanApi(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._test_planner_path = cipd_dir.join('test_planner')
-
-
-def step_name(test_plan):
-  """Returns step name for test plan.
-
-  Args:
-    * test_plan (TestPlan): Test plan step.
-
-  Returns:
-    str: Step name
-  """
-  return 'execute %(test_env)s suite %(test_suite)s' % test_plan

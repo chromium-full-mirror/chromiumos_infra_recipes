@@ -5,6 +5,11 @@
 
 """Recipe for executing ChromeOS test plan."""
 
+from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import ParseDict
+
+from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+
 DEPS = [
   'recipe_engine/context',
   'recipe_engine/json',
@@ -17,9 +22,10 @@ def RunSteps(api):
   step_data = api.json.read(
     'read test plan', api.properties.get('test_plan',''))
 
-  test_plan = step_data.json.output
+  test_plan = ParseDict(step_data.json.output or {}, GenerateTestPlanResponse(),
+                        ignore_unknown_fields=True)
 
-  if (test_plan is None or len(test_plan.get('test_unit', [])) == 0):
+  if (test_plan is None or len(test_plan.test_unit) == 0):
     return
 
   api.test_plan.run_plan('run plan', test_plan)
@@ -38,5 +44,6 @@ def GenTests(api):
          api.step_data(
              'read test plan',
              api.json.output(
-                 api.test_plan.example_test_plan(
-                     api.test_plan.example_hw_unit()))))
+                 MessageToDict(
+                     api.test_plan.example_test_plan(
+                         api.test_plan.example_hw_unit())))))

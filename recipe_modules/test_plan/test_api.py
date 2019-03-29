@@ -3,75 +3,80 @@
 # that can be found in the LICENSE file.
 
 from recipe_engine import recipe_test_api
-from .api import step_name
+
+from google.protobuf.json_format import MessageToDict
+
+from PB.testplans.generate_test_plan import TestUnit
+from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 
 
 class TestPlanTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for test_plan api."""
 
   def example_test_plan(self, *units):
-    return {'test_unit': units}
+    test_plan = GenerateTestPlanResponse()
+    for unit in units:
+      test_plan.test_unit.add().MergeFrom(unit)
 
-  def example_hw_unit(self, test_env='hw', test_suite='test-suite',
+    return test_plan
+
+  def example_hw_unit(self, test_suites=['test-suite'],
                       build_target='build_target', image_name='image.bin',
                       artifact_path='path/to/artifact'):
+    unit = TestUnit()
+    unit.scheduling_requirements.build_target = build_target
+    unit.build_payload.artifact_path = artifact_path
+    unit.build_payload.image.add().image_name = image_name
 
-    return {
-        'test_env': test_env,
-        'test_suite': test_suite,
-        'scheduling_requirements': {
-            'build_target': build_target,
-        },
-        'build_payload': {
-            'artifact_path': artifact_path,
-            'image': [{
-                'image_name': image_name
-            }]
-        }
-    }
+    for test_suite in test_suites:
+      unit.hw_test_cfg.hw_test.add().suite = test_suite
 
-  def example_vm_plan(self, test_env='', test_suite='test-suite',
+    return unit
+
+  def example_vm_unit(self, test_env='', test_suites=['test-suite'],
                       build_target='build_target', image_name='image.bin',
                       artifact_path='path/to/artifact'):
-    return {
-        'test_env': test_env,
-        'test_suite': test_suite,
-        'artifact_path': artifact_path,
-        'scheduling_requirements': {
-            'build_target': build_target
-        },
-        'build_payload': {
-            'image': [{
-                'image_name': image_name
-            }]
-        }
-    }
+    unit = TestUnit()
+    unit.scheduling_requirements.build_target = build_target
+    unit.build_payload.artifact_path = artifact_path
+    unit.build_payload.image.add().image_name = image_name
+
+    for test_suite in test_suites:
+      unit.vm_test_cfg.vm_test.add().test_suite = test_suite
+
+    return unit
+
+  def example_tast_vm_unit(self, test_env='', test_suites=['test-suite'],
+                           build_target='build_target', image_name='image.bin',
+                           artifact_path='path/to/artifact'):
+    unit = TestUnit()
+    unit.scheduling_requirements.build_target = build_target
+    unit.build_payload.artifact_path = artifact_path
+    unit.build_payload.image.add().image_name = image_name
+
+    for test_suite in test_suites:
+      unit.tast_vm_test_cfg.tast_vm_test.add().suite_name = test_suite
+
+    return unit
 
   def fail_schedule(self, name, test_env='hw', test_suite='test-suite'):
-    substep = step_name({
-        'test_env': test_env,
-        'test_suite': test_suite,
-    })
+    substep = step_name(test_env=test_env, test_suite=test_suite)
     return self.step_data('%s.%s' % (name, substep), retcode=1)
 
   def simulated_generate_output(self, name, test_plan):
-    return self.step_data(name, stdout=self.m.json.output(test_plan))
+    return self.step_data(name, stdout=self.m.json.output(
+        MessageToDict(test_plan)))
 
   def simulate_test_builds(self, name):
-    test_suites = ['suite1', 'suite2']
-
     # TODO(yshaul) Use HW plans as well, when skylab starts returning
     # the correct data. crbug/935244
-    test_units = [
-        self.example_vm_plan(test_env='vm', test_suite=test_suite)
-        for test_suite in test_suites
-    ]
+    test_unit = self.example_vm_unit(test_suites=['suite1', 'suite2'])
 
     result = self.simulated_generate_output('%s.generate' % name,
-                                            self.example_test_plan(*test_units))
+                                            self.example_test_plan(test_unit))
 
-    for idx, test_unit in enumerate(test_units):
-      substep_name = step_name(test_unit)
+    for idx, test in enumerate(test_unit.vm_test_cfg.vm_test):
+      substep_name = 'vm.%s' % test.test_suite
       result += self.step_data(
           '%s.schedule.%s' % (name, substep_name),
           self.m.swarming.trigger(['task - %s' % str(idx)]))
@@ -87,3 +92,16 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
   def fail_test_builds(self, name):
     # Bounce on the first infra step of test_build
     return self.step_data('%s.generate' % name, retcode=1)
+
+
+def step_name(test_env, test_suite):
+  """Returns step name for test plan.
+
+  Args:
+    * test_env (str): Name of test env.
+    * test_suite (str): Name of test suite.
+
+  Returns:
+    str: Step name
+  """
+  return '%s.%s' % (test_env, test_suite)

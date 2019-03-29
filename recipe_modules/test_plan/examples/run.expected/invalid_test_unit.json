@@ -15,7 +15,7 @@
       "failure": {
         "step": ""
       },
-      "humanReason": "Unknown test environment \"invalid\""
+      "humanReason": "No test environment specified."
     },
     "name": "$result"
   }
