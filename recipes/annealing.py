@@ -81,11 +81,12 @@ def RunSteps(api):
 def make_gitiles_commit(api, repo_url, commit_id):
   """Create a GitilesCommit for the given |repo_url| and |commit_id|."""
   url = urlparse.urlparse(repo_url)
-  c = common_pb2.GitilesCommit()
-  c.host = url.hostname
-  c.project = url.path[1:]  # strip leading /
-  c.id = commit_id
-  return c
+  return common_pb2.GitilesCommit(
+      host=url.hostname,
+      project=url.path[1:], # strip leading /
+      ref='refs/heads/master',
+      id=commit_id,
+  )
 
 
 def make_message(api):

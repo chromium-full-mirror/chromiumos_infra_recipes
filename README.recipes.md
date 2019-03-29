@@ -1207,7 +1207,7 @@ The annealing builders run in serial and do the following:
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#91)(api):**
+&mdash; **def [make\_message](/recipes/annealing.py#92)(api):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
