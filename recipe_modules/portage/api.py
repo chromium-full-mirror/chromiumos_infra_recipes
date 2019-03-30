@@ -5,6 +5,8 @@
 
 """APIs for CrOS Portage."""
 
+import re
+
 from recipe_engine import recipe_api
 
 
@@ -56,3 +58,34 @@ class PortageApi(recipe_api.RecipeApi):
     if self.m.dev.dryrun:
       cmd += ['--dryrun']
     return self.m.step('push portage package uprevs', cmd)
+
+  def portageq_best_visible_version(self, atom):
+    """
+    Run portageq best_visible and parse out the version.
+
+    Must be run with cwd inside a chromiumos source root.
+
+    Args:
+      atom (str): An atom to pass to portageq, e.g. 'chromeos-chrome'
+
+    Return: The atom version as a string, e.g. '74.0.3726.0'
+    """
+    cmd = ['portageq', 'best_visible', '.', atom]
+
+    step_data = self.m.cros_sdk.run(
+        'portageq best_visible %s' % atom, cmd,
+        stdout=self.m.raw_io.output(add_output_log=True), step_test_data=
+        lambda: self.m.raw_io.test_api.stream_output('chromeos-base/chromeos-chrome-74.0.3726.0_rc-r1')
+    )
+
+    # Expect the return to be like <category>/<package>-<version>_<tag>. Where
+    # <category>, <package>, and <tag> can be composed of letters and dashes.
+    # Extract the version.
+    version_matches = re.findall('[a-z-]+\/[a-z-]+([\d.]+)_[\w-]+',
+                                 step_data.stdout)
+
+    if len(version_matches) != 1:
+      raise ValueError(
+          'Could not parse version from portageq output: %s' % step_data.stdout)
+
+    return version_matches[0]

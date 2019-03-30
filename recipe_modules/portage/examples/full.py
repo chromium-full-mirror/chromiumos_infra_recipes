@@ -4,7 +4,9 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'dev',
     'portage',
 ]
@@ -15,6 +17,9 @@ def RunSteps(api):
   api.portage.regen_cache('my_overlay')
   api.portage.uprev_packages()
   api.portage.push_package_uprevs()
+  api.assertions.assertEqual(
+      api.portage.portageq_best_visible_version('chromeos-chrome'),
+      '74.0.3726.0')
 
 
 def GenTests(api):

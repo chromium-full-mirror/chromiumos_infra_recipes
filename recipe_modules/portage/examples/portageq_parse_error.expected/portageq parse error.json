@@ -1,0 +1,25 @@
+[
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[START_DIR]/cros_sdk/chroot",
+      "--",
+      "portageq",
+      "best_visible",
+      ".",
+      "chromeos-chrome"
+    ],
+    "name": "portageq best_visible chromeos-chrome",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@a_malformed_package_string5@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]
