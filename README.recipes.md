@@ -261,7 +261,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#40)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#41)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -273,16 +273,16 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros_sdk/api.py#36)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros_sdk/api.py#37)(self):**
 
-&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#23)(self, chroot_parent_path):**
+&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#23)(self, chroot_parent_path, chrome_root=None):**
 
 Configure CrosSdkApi.
 
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#31)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#32)(self):**
 
 Returns a Path to the cros_sdk script.
 
@@ -290,7 +290,7 @@ Returns a Path to the cros_sdk script.
 
 Initialize CrosSdkApi.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#59)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#65)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -304,7 +304,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [workspace\_path\_to\_chroot](/recipe_modules/cros_sdk/api.py#80)(self, workspace_root, workspace_path):**
+&mdash; **def [workspace\_path\_to\_chroot](/recipe_modules/cros_sdk/api.py#86)(self, workspace_root, workspace_path):**
 
 Translate a workspace path to its mounted chroot equivalent.
 
@@ -1068,6 +1068,11 @@ Ensure the CIPD support package is installed.
 #### **class [SyncChromeApi](/recipe_modules/sync_chrome/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 &mdash; **def [sync\_chrome](/recipe_modules/sync_chrome/api.py#11)(self, chrome_root):**
+
+Sync Chrome source code.
+
+Args:
+  chrome_root (str): Directory to sync the Chrome source code to.
 ### *recipe_modules* / [test\_manager](/recipe_modules/test_manager)
 
 [DEPS](/recipe_modules/test_manager/__init__.py#1): [cros\_build](#recipe_modules-cros_build), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1253,11 +1258,11 @@ and have it fail if no prior commit position is found.
 &mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#14)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [sync\_chrome](#recipe_modules-sync_chrome), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#42)(api, build_target, build_image):**
+&mdash; **def [RunSteps](/recipes/build_target.py#43)(api, build_target, build_image):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

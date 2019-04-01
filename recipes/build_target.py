@@ -19,15 +19,16 @@ DEPS = [
     'gerrit',
     'overlayfs',
     'repo',
+    'sync_chrome',
 ]
 
 from recipe_engine.config import Dict
 from recipe_engine.recipe_api import Property
 
 PROPERTIES = {
-  'build_target': Property(kind=Dict()),
-  # Whether or not to build an image.
-  'build_image': Property(kind=bool, default=True),
+    'build_target': Property(kind=Dict()),
+    # Whether or not to build an image.
+    'build_image': Property(kind=bool, default=True),
 }
 
 
@@ -44,9 +45,13 @@ def RunSteps(api, build_target, build_image):
 
   api.cros_bisect.set_bisect_builder(build_target_name)
 
+  chrome_root = api.path['cache'].join('chrome')
+  api.sync_chrome.sync_chrome(chrome_root)
+
   # Use a named cache for the chroot.
   api.cros_sdk.configure(
-      chroot_parent_path=api.path['cache'].join('cros_chroot'))
+      chroot_parent_path=api.path['cache'].join('cros_chroot'),
+      chrome_root=chrome_root)
 
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
@@ -71,7 +76,7 @@ def GenTests(api):
 
   yield (api.test('with-findit-bisect') +  #
          api.properties(
-           build_target={'name': 'generic'},
-           findit_bisect={'targets': ['foo', 'bar', 'baz']},
-           build_image=False,
+             build_target={'name': 'generic'},
+             findit_bisect={'targets': ['foo', 'bar', 'baz']},
+             build_image=False,
          ))

@@ -12,7 +12,9 @@ DEPS = [
 def RunSteps(api):
   workspace = api.path['cleanup'].join('workspace')
 
-  api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
+  api.cros_sdk.configure(
+      chroot_parent_path=api.path['cleanup'].join('test'),
+      chrome_root=api.path['cleanup'].join('chrome_root_test'))
   api.cros_sdk('get cros_sdk help', ['--help'])
   api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},
                    workspace=workspace)
