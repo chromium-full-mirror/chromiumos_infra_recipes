@@ -11,9 +11,12 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.cros_dupit.configure(dryrun=False)
+  api.cros_dupit.configure(
+      rsync_mirror_address='rsync://mirrors.do.not.exists/distfiles',
+      cloud_storage_uri='gs://stark-trek/the-ultimate-computer/distfiles/',
+      dryrun=True)
   api.cros_dupit.run()
-  assert api.cros_dupit.dryrun == False
+  assert api.cros_dupit.dryrun == True
 
 
 def GenTests(api):

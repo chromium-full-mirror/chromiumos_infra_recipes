@@ -1,12 +1,44 @@
 [
   {
     "cmd": [
+      "rsync",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "--perms",
+      "--times",
+      "--compress",
+      "--stats",
+      "--progress",
+      "--human-readable",
+      "--timeout=180",
+      "--bwlimit=1m",
+      "rsync://mirrors.do.not.exists/distfiles",
+      "[CACHE]/builder"
+    ],
+    "name": "Sync distfiles from rsync://mirrors.do.not.exists/distfiles"
+  },
+  {
+    "cmd": [
       "python",
       "-u",
-      "RECIPE_MODULE[chromeos::cros_dupit]/resources/dupit.py",
-      "--dryrun=False"
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "-d",
+      "[CACHE]/builder",
+      "gs://stark-trek/the-ultimate-computer/distfiles/",
+      "-",
+      "n"
     ],
-    "name": "run dupit.py"
+    "infra_step": true,
+    "name": "gsutil Upload distfiles to gs://stark-trek/the-ultimate-computer/distfiles/"
   },
   {
     "jsonResult": null,

@@ -16,15 +16,6 @@ def CommonChecks(input_api, output_api):
       )
   ])
 
-  results += input_api.RunTests([
-      input_api.Command(
-          name='recipes resources pytests',
-          cmd=[input_api.python_executable, 'pytest'],
-          kwargs={},
-          message=output_api.PresubmitError,
-      )
-  ])
-
   return results
 
 
