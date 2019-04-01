@@ -25,6 +25,7 @@
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [skylab](#recipe_modules-skylab)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
+  * [sync_chrome](#recipe_modules-sync_chrome)
   * [test_manager](#recipe_modules-test_manager) &mdash; Api for coordinating test execution steps.
   * [test_plan](#recipe_modules-test_plan)
   * [vm_test](#recipe_modules-vm_test)
@@ -59,6 +60,7 @@
   * [repo:examples/full](#recipes-repo_examples_full)
   * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
   * [support:examples/full](#recipes-support_examples_full)
+  * [sync_chrome:examples/full](#recipes-sync_chrome_examples_full)
   * [test_execution/execute_plan](#recipes-test_execution_execute_plan) &mdash; Recipe for executing ChromeOS test plan.
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
   * [test_manager:examples/full](#recipes-test_manager_examples_full) &mdash; Recipe to schedules child builders, watches for failures and triggers tests.
@@ -1059,6 +1061,13 @@ Returns:
 Ensure the CIPD support package is installed.
 
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
+### *recipe_modules* / [sync\_chrome](/recipe_modules/sync_chrome)
+
+[DEPS](/recipe_modules/sync_chrome/__init__.py#1): [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+#### **class [SyncChromeApi](/recipe_modules/sync_chrome/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [sync\_chrome](/recipe_modules/sync_chrome/api.py#11)(self, chrome_root):**
 ### *recipe_modules* / [test\_manager](/recipe_modules/test_manager)
 
 [DEPS](/recipe_modules/test_manager/__init__.py#1): [cros\_build](#recipe_modules-cros_build), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1407,6 +1416,11 @@ Recipe for prototyping Chrome OS builders.
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
+### *recipes* / [sync\_chrome:examples/full](/recipe_modules/sync_chrome/examples/full.py)
+
+[DEPS](/recipe_modules/sync_chrome/examples/full.py#6): [sync\_chrome](#recipe_modules-sync_chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/sync_chrome/examples/full.py#9)(api):**
 ### *recipes* / [test\_execution/execute\_plan](/recipes/test_execution/execute_plan.py)
 
 [DEPS](/recipes/test_execution/execute_plan.py#8): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1465,6 +1479,7 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 &mdash; **def [RunSteps](/recipe_modules/vm_test/examples/full.py#8)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8d3ba46327207c40e66b4ec818cec077f0ac08cf/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8d3ba46327207c40e66b4ec818cec077f0ac08cf/recipes/README.recipes.md#recipe_modules-gclient
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8d3ba46327207c40e66b4ec818cec077f0ac08cf/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8d3ba46327207c40e66b4ec818cec077f0ac08cf/recipes/README.recipes.md#recipe_modules-gsutil
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8f658073e9df9d182ce6bb39cf2406e1a5ade7dd/README.recipes.md#recipe_modules-archive
