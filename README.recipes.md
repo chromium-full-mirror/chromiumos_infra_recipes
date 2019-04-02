@@ -5,6 +5,7 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
+  * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_build](#recipe_modules-cros_build)
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
@@ -35,6 +36,7 @@
   * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
+  * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
@@ -125,6 +127,27 @@ Raises:
 
 Returns:
   google.protobuf.message.Message: Output data.
+### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
+
+[DEPS](/recipe_modules/cros_artifacts/__init__.py#1): [build\_api](#recipe_modules-build_api), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for uploading CrOS build artifacts to Google Storage.
+
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for bundling and uploading build artifacts.
+
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#50)(self, name, target, kind, artifacts):**
+
+Bundle and upload the given artifacts for the given build target.
+
+Args:
+  name (str): The step name.
+  target (BuildTarget): The build target with artifacts of interest.
+  kind (str): The kind of artifacts being uploaded, e.g. 'postsubmit'.
+      This affects where the artifacts are placed in Google Storage.
+  artifacts (list[str]): List of artifacts to upload. See build config
+      for options.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
 
 [DEPS](/recipe_modules/cros_bisect/__init__.py#1): [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1291,6 +1314,11 @@ and have it fail if no prior commit position is found.
 Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#43)(api, build_target, build_image):**
+### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
+
+[DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts)
+
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#13)(api):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
