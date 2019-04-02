@@ -11,7 +11,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  builder_config = api.infra_config.get_current_builder_config()
+  builder_config = api.infra_config.get_builder_config(
+      api.buildbucket.build.builder.builder)
 
   api.assertions.assertEqual(builder_config.id.name, "postsubmit-orchestrator")
 

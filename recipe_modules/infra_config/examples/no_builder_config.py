@@ -11,8 +11,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.assertions.assertRaises(LookupError,
-                              api.infra_config.get_current_builder_config)
+  api.assertions.assertRaises(LookupError, api.infra_config.get_builder_config,
+                              api.buildbucket.build.builder.builder)
 
 
 def GenTests(api):

@@ -62,7 +62,8 @@ def RunSteps(api, update_manifest_refs):
 
     requests = []
 
-    orchestrator_builder_config = api.infra_config.get_current_builder_config()
+    orchestrator_builder_config = api.infra_config.get_builder_config(
+        api.buildbucket.build.builder.builder)
     for child in orchestrator_builder_config.orchestrator.children:
       requests.append(api.buildbucket.schedule_request(builder=child))
 

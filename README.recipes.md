@@ -806,20 +806,29 @@ Raises:
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [get\_current\_builder\_config](/recipe_modules/infra_config/api.py#17)(self):**
+&mdash; **def [get\_builder\_config](/recipe_modules/infra_config/api.py#22)(self, builder_name):**
 
-Gets the BuilderConfig for the current builder from the master branch.
+Gets the BuilderConfig for the specified builder from the master branch.
 
-Finds the BuilderConfig whose id.name matches the current Buildbucket
+Finds the BuilderConfig whose id.name matches the specified Buildbucket
 builder.
+
+This function loads the checked in proto and forms a map from id.name to
+BuilderConfig on the first call. Subsequent calls just look up in the map,
+so will be much faster than the first call. This is meant for the case when
+many lookups are needed, e.g. a parent builder looks up all child configs.
+
+Args:
+  * builder_name (str): The Buildbucket builder to look for, matched against
+    BuilderConfig's id.name.
 
 Returns:
   A BuilderConfigs proto.
 
 Raises:
-  A ValueError if no BuilderConfig is found for the current builder.
+  A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#45)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#60)(self, config_name):**
 
 Gets Path of most recent test config.
 
@@ -828,6 +837,10 @@ Args:
 
 Returns:
   Path pointing to specified config file.
+
+&mdash; **def [initialize](/recipe_modules/infra_config/api.py#17)(self):**
+
+Init the InfraConfigApi module.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1381,7 +1394,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#50)(api, update_manifest_refs):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#95)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#96)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1390,7 +1403,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#81)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#82)(refs):**
 
 Assert all given refs start with refs/heads.
 
