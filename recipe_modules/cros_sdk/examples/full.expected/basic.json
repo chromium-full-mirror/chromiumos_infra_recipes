@@ -5,8 +5,6 @@
       "--nouse-image",
       "--chroot",
       "[CLEANUP]/test/chroot",
-      "--chrome_root",
-      "[CLEANUP]/chrome_root_test",
       "--help"
     ],
     "name": "get cros_sdk help"
@@ -17,11 +15,11 @@
       "--nouse-image",
       "--chroot",
       "[CLEANUP]/test/chroot",
-      "--chrome_root",
-      "[CLEANUP]/chrome_root_test",
       "PATH=/bin",
       "--workspace",
       "[CLEANUP]/workspace",
+      "--chrome_root",
+      "[CLEANUP]/chrome_root_test",
       "--",
       "ls"
     ],

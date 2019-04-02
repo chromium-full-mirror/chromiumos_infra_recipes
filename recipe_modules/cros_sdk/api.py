@@ -20,16 +20,13 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """Initialize CrosSdkApi."""
     self.configure(self.m.path['start_dir'].join('cros_sdk'))
 
-  def configure(self, chroot_parent_path, chrome_root=None):
+  def configure(self, chroot_parent_path):
     """Configure CrosSdkApi.
 
     Args:
       chroot_parent_path (Path): Parent for chroot directory.
-      chrome_root (Path): Path containing a Chrome checkout, which will be
-       mounted into the chroot. If None, no Chrome checkout will be mounted.
     """
     self._chroot_path = chroot_parent_path.join('chroot')
-    self._chrome_root = chrome_root
 
   @property
   def cros_sdk_path(self):
@@ -58,19 +55,18 @@ class CrosSdkApi(recipe_api.RecipeApi):
         self.chroot_path,
     ]
 
-    if self._chrome_root:
-      cmd += ['--chrome_root', self._chrome_root]
-
     cmd += args
     return self.m.step(name, cmd, **kwargs)
 
-  def run(self, name, cmd, env=None, workspace=None, **kwargs):
+  def run(self, name, cmd, env=None, workspace=None, chrome_root=None,
+          **kwargs):
     """Runs a command in a cros_sdk chroot.
 
     Args:
       * name (str): The name of the step.
       * cmd (list): A command and arguments to run.
       * env (dict): A dict of environment variables to pass to the command.
+      * chrome_root (Path): A path to mount as the chroot's Chrome checkout.
       * workspace (Path): A path to mount to the chroot's workspace directory.
       * kwargs: Keyword arguments to pass to __call__.
 
@@ -82,6 +78,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
       args += ['%s=%s' % x for x in env.items()]
     if workspace is not None:
       args += ['--workspace', workspace]
+    if chrome_root is not None:
+      args += ['--chrome_root', chrome_root]
     args += ['--'] + cmd
     return self(name, args, **kwargs)
 

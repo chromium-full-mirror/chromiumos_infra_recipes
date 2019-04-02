@@ -268,7 +268,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#43)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#40)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -280,18 +280,16 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros_sdk/api.py#39)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros_sdk/api.py#36)(self):**
 
-&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#23)(self, chroot_parent_path, chrome_root=None):**
+&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#23)(self, chroot_parent_path):**
 
 Configure CrosSdkApi.
 
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
-  chrome_root (Path): Path containing a Chrome checkout, which will be
-   mounted into the chroot. If None, no Chrome checkout will be mounted.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#34)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#31)(self):**
 
 Returns a Path to the cros_sdk script.
 
@@ -299,7 +297,7 @@ Returns a Path to the cros_sdk script.
 
 Initialize CrosSdkApi.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#67)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#61)(self, name, cmd, env=None, workspace=None, chrome_root=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -307,13 +305,14 @@ Args:
   * name (str): The name of the step.
   * cmd (list): A command and arguments to run.
   * env (dict): A dict of environment variables to pass to the command.
+  * chrome_root (Path): A path to mount as the chroot's Chrome checkout.
   * workspace (Path): A path to mount to the chroot's workspace directory.
   * kwargs: Keyword arguments to pass to __call__.
 
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [workspace\_path\_to\_chroot](/recipe_modules/cros_sdk/api.py#88)(self, workspace_root, workspace_path):**
+&mdash; **def [workspace\_path\_to\_chroot](/recipe_modules/cros_sdk/api.py#86)(self, workspace_root, workspace_path):**
 
 Translate a workspace path to its mounted chroot equivalent.
 
@@ -1298,9 +1297,9 @@ Recipe for building a BuildTarget image.
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#14)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
-[DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#13)(api):**
 ### *recipes* / [cros\_source:examples/full](/recipe_modules/cros_source/examples/full.py)
 
 [DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

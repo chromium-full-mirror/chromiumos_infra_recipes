@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/path',
     'cros_sdk',
 ]
@@ -12,12 +13,12 @@ DEPS = [
 def RunSteps(api):
   workspace = api.path['cleanup'].join('workspace')
 
-  api.cros_sdk.configure(
-      chroot_parent_path=api.path['cleanup'].join('test'),
-      chrome_root=api.path['cleanup'].join('chrome_root_test'))
+  api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
+
   api.cros_sdk('get cros_sdk help', ['--help'])
   api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},
-                   workspace=workspace)
+                   workspace=workspace,
+                   chrome_root=api.path['cleanup'].join('chrome_root_test'))
 
   workspace_file = workspace.join('inner', 'file')
   chroot_path = api.cros_sdk.workspace_path_to_chroot(workspace, workspace_file)

@@ -32,12 +32,12 @@ PROPERTIES = {
 }
 
 
-def _run_cros_sdk_script(api, script, target, *args):
+def _run_cros_sdk_script(api, script, target, chrome_root=None, *args):
   # TODO: Replace with Build API equivalents.
   cmd = ['/mnt/host/source/src/scripts/%s' % script, '--board', target]
   if args:
     cmd.extend(args)
-  api.cros_sdk.run(script, cmd)
+  api.cros_sdk.run(script, cmd, chrome_root=chrome_root)
 
 
 def RunSteps(api, build_target, build_image):
@@ -52,20 +52,20 @@ def RunSteps(api, build_target, build_image):
       # Sync workspace to gitiles_commit manifest snapshot.
       api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
 
+      # Use a named cache for the chroot.
+      api.cros_sdk.configure(
+          chroot_parent_path=api.path['cache'].join('cros_chroot'))
+
       # sync_chrome must run inside a chromiumos source root.
       chrome_root = api.path['cache'].join('chrome')
       api.sync_chrome.sync_chrome(chrome_root)
 
-      # Use a named cache for the chroot.
-      api.cros_sdk.configure(
-          chroot_parent_path=api.path['cache'].join('cros_chroot'),
-          chrome_root=chrome_root)
-
-      _run_cros_sdk_script(api, 'setup_board', build_target_name)
+      _run_cros_sdk_script(api, 'setup_board', build_target_name, chrome_root)
 
       # Packages subset will be present when FindIt asks for bisection build.
       packages = api.cros_bisect.get_packages()
-      _run_cros_sdk_script(api, 'build_packages', build_target_name, *packages)
+      _run_cros_sdk_script(api, 'build_packages', build_target_name,
+                           chrome_root, *packages)
 
       if build_image:
         _run_cros_sdk_script(api, 'build_image', build_target_name)
