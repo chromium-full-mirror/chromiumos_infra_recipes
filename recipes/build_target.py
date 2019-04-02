@@ -45,20 +45,21 @@ def RunSteps(api, build_target, build_image):
 
   api.cros_bisect.set_bisect_builder(build_target_name)
 
-  chrome_root = api.path['cache'].join('chrome')
-  api.sync_chrome.sync_chrome(chrome_root)
-
-  # Use a named cache for the chroot.
-  api.cros_sdk.configure(
-      chroot_parent_path=api.path['cache'].join('cros_chroot'),
-      chrome_root=chrome_root)
-
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       # Sync workspace to gitiles_commit manifest snapshot.
       api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
+
+      # sync_chrome must run inside a chromiumos source root.
+      chrome_root = api.path['cache'].join('chrome')
+      api.sync_chrome.sync_chrome(chrome_root)
+
+      # Use a named cache for the chroot.
+      api.cros_sdk.configure(
+          chroot_parent_path=api.path['cache'].join('cros_chroot'),
+          chrome_root=chrome_root)
 
       _run_cros_sdk_script(api, 'setup_board', build_target_name)
 
