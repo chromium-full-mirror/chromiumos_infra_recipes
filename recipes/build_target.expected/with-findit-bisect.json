@@ -1,9 +1,23 @@
 [
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
+      "--format",
+      "text"
+    ],
+    "name": "fetch master:generated/builder_configs.cfg"
+  },
+  {
     "cmd": [],
     "name": "set_bisect_builder",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"generic-bisect\"@@@"
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-postsubmit-bisect\"@@@"
     ]
   },
   {
@@ -413,7 +427,7 @@
       "--",
       "/mnt/host/source/src/scripts/setup_board",
       "--board",
-      "generic"
+      "amd64-generic-postsubmit"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "setup_board"
@@ -429,7 +443,7 @@
       "--",
       "/mnt/host/source/src/scripts/build_packages",
       "--board",
-      "generic",
+      "amd64-generic-postsubmit",
       "foo",
       "bar",
       "baz"

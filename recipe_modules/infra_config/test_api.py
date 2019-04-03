@@ -27,6 +27,9 @@ class InfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "general": {
                     "critical": true
+                  },
+                  "artifacts": {
+                    "prebuilts": "PRIVATE"
                   }
                 },
                 {

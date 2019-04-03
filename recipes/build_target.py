@@ -13,10 +13,12 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_bisect',
+    'cros_prebuilts',
     'cros_sdk',
     'cros_source',
     'dev',
     'gerrit',
+    'infra_config',
     'overlayfs',
     'repo',
     'sync_chrome',
@@ -25,11 +27,21 @@ DEPS = [
 from recipe_engine.config import Dict
 from recipe_engine.recipe_api import Property
 
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget
+
 PROPERTIES = {
     'build_target': Property(kind=Dict()),
+
     # Whether or not to build an image.
     'build_image': Property(kind=bool, default=True),
+
+    # Whether or not to upload binary prebuilts to Google Storage.
+    'upload_prebuilts': Property(kind=bool, default=False),
 }
+
+UPLOADABLE_PREBUILTS_CONFIGS = [BuilderConfig.Artifacts.PUBLIC,
+                               BuilderConfig.Artifacts.PRIVATE]
 
 
 def _run_cros_sdk_script(api, script, target, chrome_root=None, *args):
@@ -40,8 +52,9 @@ def _run_cros_sdk_script(api, script, target, chrome_root=None, *args):
   api.cros_sdk.run(script, cmd, chrome_root=chrome_root)
 
 
-def RunSteps(api, build_target, build_image):
+def RunSteps(api, build_target, build_image, upload_prebuilts):
   build_target_name = build_target['name']
+  build_config = api.infra_config.get_builder_config(build_target_name)
 
   api.cros_bisect.set_bisect_builder(build_target_name)
 
@@ -70,14 +83,26 @@ def RunSteps(api, build_target, build_image):
       if build_image:
         _run_cros_sdk_script(api, 'build_image', build_target_name)
 
+      prebuilts = build_config.artifacts.prebuilts
+      if upload_prebuilts and prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
+        # TODO(crbug.com/920418): Stop using dummy binhost.
+        api.cros_prebuilts.upload_target_prebuilts(
+            BuildTarget(name=build_target_name), 'dummy',
+            private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
+
 
 def GenTests(api):
   yield (api.test('basic') +  #
-         api.properties(build_target={'name': 'generic'}))
+         api.properties(build_target={'name': 'amd64-generic-postsubmit'}))
+
+  yield (api.test('upload-prebuilts') + #
+         api.properties(
+             build_target={'name': 'amd64-generic-postsubmit'},
+             upload_prebuilts=True))
 
   yield (api.test('with-findit-bisect') +  #
          api.properties(
-             build_target={'name': 'generic'},
+             build_target={'name': 'amd64-generic-postsubmit'},
              findit_bisect={'targets': ['foo', 'bar', 'baz']},
              build_image=False,
          ))
