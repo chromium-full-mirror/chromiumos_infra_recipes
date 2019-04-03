@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'cros_artifacts',
     'cros_bisect',
     'cros_prebuilts',
     'cros_sdk',
@@ -36,12 +37,16 @@ PROPERTIES = {
     # Whether or not to build an image.
     'build_image': Property(kind=bool, default=True),
 
+    # Whether or not to upload build/test artifacts.
+    'upload_artifacts': Property(kind=bool, default=False),
+
     # Whether or not to upload binary prebuilts to Google Storage.
     'upload_prebuilts': Property(kind=bool, default=False),
 }
 
-UPLOADABLE_PREBUILTS_CONFIGS = [BuilderConfig.Artifacts.PUBLIC,
-                               BuilderConfig.Artifacts.PRIVATE]
+UPLOADABLE_PREBUILTS_CONFIGS = [
+    BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
+]
 
 
 def _run_cros_sdk_script(api, script, target, chrome_root=None, *args):
@@ -52,7 +57,8 @@ def _run_cros_sdk_script(api, script, target, chrome_root=None, *args):
   api.cros_sdk.run(script, cmd, chrome_root=chrome_root)
 
 
-def RunSteps(api, build_target, build_image, upload_prebuilts):
+def RunSteps(api, build_target, build_image, upload_artifacts,
+             upload_prebuilts):
   build_target_name = build_target['name']
   build_config = api.infra_config.get_builder_config(build_target_name)
 
@@ -83,6 +89,18 @@ def RunSteps(api, build_target, build_image, upload_prebuilts):
       if build_image:
         _run_cros_sdk_script(api, 'build_image', build_target_name)
 
+      if upload_artifacts:
+        # TODO(crbug.com/905039): Read artifacts to upload from BuilderConfig.
+        api.cros_artifacts.upload_artifacts('upload dummy artifacts',
+                                            BuildTarget(name=build_target_name),
+                                            'dummy', [
+                                                'autotest-files',
+                                                'tast-files',
+                                                'pinned-guest-images',
+                                                'firmware',
+                                                'ebuild-logs',
+                                            ])
+
       prebuilts = build_config.artifacts.prebuilts
       if upload_prebuilts and prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
         # TODO(crbug.com/920418): Stop using dummy binhost.
@@ -95,10 +113,13 @@ def GenTests(api):
   yield (api.test('basic') +  #
          api.properties(build_target={'name': 'amd64-generic-postsubmit'}))
 
-  yield (api.test('upload-prebuilts') + #
-         api.properties(
-             build_target={'name': 'amd64-generic-postsubmit'},
-             upload_prebuilts=True))
+  yield (api.test('upload-artifacts') +  #
+         api.properties(build_target={'name': 'amd64-generic-postsubmit'},
+                        upload_artifacts=True))
+
+  yield (api.test('upload-prebuilts') +  #
+         api.properties(build_target={'name': 'amd64-generic-postsubmit'},
+                        upload_prebuilts=True))
 
   yield (api.test('with-findit-bisect') +  #
          api.properties(
