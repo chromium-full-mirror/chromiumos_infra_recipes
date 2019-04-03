@@ -823,7 +823,7 @@ Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 ### *recipe_modules* / [infra\_config](/recipe_modules/infra_config)
 
-[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 #### **class [InfraConfigApi](/recipe_modules/infra_config/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -851,7 +851,7 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#67)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#68)(self, config_name):**
 
 Gets Path of most recent test config.
 

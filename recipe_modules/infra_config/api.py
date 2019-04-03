@@ -58,11 +58,13 @@ class InfraConfigApi(recipe_api.RecipeApi):
     Raises:
       A LookupError if no BuilderConfig is found for the specified builder.
     """
-    config = self._get_name_to_builder_config().get(builder_name)
-    if not config:
-      raise LookupError("No BuilderConfig for builder {}".format(builder_name))
+    with self.m.context(infra_steps=True):
+      config = self._get_name_to_builder_config().get(builder_name)
+      if not config:
+        raise LookupError(
+            "No BuilderConfig for builder {}".format(builder_name))
 
-    return config
+      return config
 
   def get_test_config(self, config_name):
     """Gets Path of most recent test config.
