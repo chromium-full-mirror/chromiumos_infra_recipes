@@ -31,7 +31,6 @@
       "----",
       "rsync",
       "-r",
-      "-d",
       "[CACHE]/builder",
       "gs://stark-trek/the-ultimate-computer/distfiles/",
       "-",

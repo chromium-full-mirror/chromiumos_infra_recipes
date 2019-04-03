@@ -31,7 +31,6 @@
       "----",
       "rsync",
       "-r",
-      "-d",
       "[CACHE]/builder",
       "gs://chromeos-mirror/gentoo/distfiles/",
       "-",
