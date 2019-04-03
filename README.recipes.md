@@ -851,7 +851,7 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#68)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#69)(self, config_name):**
 
 Gets Path of most recent test config.
 
@@ -1548,10 +1548,10 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 
 &mdash; **def [RunSteps](/recipe_modules/vm_test/examples/full.py#8)(api):**
 
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/25eb154c14012bdd38e975769bd6257820d924f3/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/25eb154c14012bdd38e975769bd6257820d924f3/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/25eb154c14012bdd38e975769bd6257820d924f3/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/25eb154c14012bdd38e975769bd6257820d924f3/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b8268cad11b722e682b519f78990205f3f98f6c0/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b8268cad11b722e682b519f78990205f3f98f6c0/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b8268cad11b722e682b519f78990205f3f98f6c0/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b8268cad11b722e682b519f78990205f3f98f6c0/recipes/README.recipes.md#recipe_modules-gsutil
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8f658073e9df9d182ce6bb39cf2406e1a5ade7dd/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8f658073e9df9d182ce6bb39cf2406e1a5ade7dd/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8f658073e9df9d182ce6bb39cf2406e1a5ade7dd/README.recipes.md#recipe_modules-buildbucket
