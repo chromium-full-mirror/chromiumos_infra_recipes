@@ -17,7 +17,7 @@
     "cmd": [],
     "name": "set_bisect_builder",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-postsubmit-bisect\"@@@"
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-bisect\"@@@"
     ]
   },
   {
@@ -263,12 +263,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https:/+//snapshot.xml",
+      "https://chromium.googlesource.com/chromeos/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
       "--format",
       "text"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "fetch :snapshot.xml"
+    "name": "fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml"
   },
   {
     "cmd": [
@@ -457,7 +457,7 @@
       "--",
       "/mnt/host/source/src/scripts/setup_board",
       "--board",
-      "amd64-generic-postsubmit"
+      "amd64-generic"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "setup_board"
@@ -473,7 +473,7 @@
       "--",
       "/mnt/host/source/src/scripts/build_packages",
       "--board",
-      "amd64-generic-postsubmit"
+      "amd64-generic"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "build_packages"
@@ -487,14 +487,14 @@
       "--",
       "/mnt/host/source/src/scripts/build_image",
       "--board",
-      "amd64-generic-postsubmit"
+      "amd64-generic"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "build_image"
   },
   {
     "cmd": [],
-    "name": "upload prebuilts for amd64-generic-postsubmit"
+    "name": "upload prebuilts for amd64-generic"
   },
   {
     "cmd": [
@@ -509,7 +509,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.read chromeos_version.sh",
+    "name": "upload prebuilts for amd64-generic.read chromeos_version.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@version: R99-1234.56.0@@@"
@@ -517,7 +517,7 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts for amd64-generic-postsubmit.prepare binhost uploads",
+    "name": "upload prebuilts for amd64-generic.prepare binhost uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -530,12 +530,12 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic-postsubmit\"\n  }, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages\"\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.prepare binhost uploads.write input file",
+    "name": "upload prebuilts for amd64-generic.prepare binhost uploads.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -557,7 +557,7 @@
       "chromite.api.BinhostService/PrepareBinhostUploads"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "upload prebuilts for amd64-generic-postsubmit.prepare binhost uploads.build_api chromite.api.BinhostService/PrepareBinhostUploads",
+    "name": "upload prebuilts for amd64-generic.prepare binhost uploads.build_api chromite.api.BinhostService/PrepareBinhostUploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -575,7 +575,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.prepare binhost uploads.read output file",
+    "name": "upload prebuilts for amd64-generic.prepare binhost uploads.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -592,14 +592,14 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.prepare binhost uploads.rmtree [CLEANUP]/build_api_messages_tmp_2",
+    "name": "upload prebuilts for amd64-generic.prepare binhost uploads.rmtree [CLEANUP]/build_api_messages_tmp_2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts for amd64-generic-postsubmit.upload archives to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages",
+    "name": "upload prebuilts for amd64-generic.upload archives to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -614,7 +614,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.upload archives to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.link files to upload",
+    "name": "upload prebuilts for amd64-generic.upload archives to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.link files to upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -632,18 +632,18 @@
       "----",
       "rsync",
       "[CLEANUP]/prebuilts_tmp_3",
-      "gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages"
+      "gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.upload archives to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.gsutil rsync",
+    "name": "upload prebuilts for amd64-generic.upload archives to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.gsutil rsync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -656,12 +656,12 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic-postsubmit\"\n  }, \n  \"key\": \"DUMMY_BINHOST\", \n  \"private\": true, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"key\": \"DUMMY_BINHOST\", \n  \"private\": true, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages\"\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.write input file",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -683,7 +683,7 @@
       "chromite.api.BinhostService/SetBinhost"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.build_api chromite.api.BinhostService/SetBinhost",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.build_api chromite.api.BinhostService/SetBinhost",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -701,7 +701,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.read output file",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -718,7 +718,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.rmtree [CLEANUP]/build_api_messages_tmp_4",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.rmtree [CLEANUP]/build_api_messages_tmp_4",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -736,7 +736,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.read binhost conf",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.read binhost conf",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -751,7 +751,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.repo forall",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.repo forall",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -761,7 +761,7 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.git transaction",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.git transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
@@ -776,7 +776,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.git transaction.git fetch",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.git transaction.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -789,7 +789,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.git transaction.git rev-parse",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.git transaction.git rev-parse",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -804,7 +804,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.git transaction.git checkout",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.git transaction.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -822,14 +822,14 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.git transaction.write file",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.git transaction.write file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.git transaction.diff check",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.git transaction.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -843,7 +843,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.git transaction.diff check.git ls-files",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.git transaction.diff check.git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -858,7 +858,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts for amd64-generic-postsubmit.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic-postsubmit/dummy-R99-1234.56.0/packages.git transaction.diff check.git diff-index",
+    "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.git transaction.diff check.git diff-index",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

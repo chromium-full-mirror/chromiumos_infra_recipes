@@ -17,7 +17,7 @@
     "cmd": [],
     "name": "set_bisect_builder",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-postsubmit-bisect\"@@@"
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-bisect\"@@@"
     ]
   },
   {
@@ -263,12 +263,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https:/+//snapshot.xml",
+      "https://chromium.googlesource.com/chromeos/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
       "--format",
       "text"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "fetch :snapshot.xml"
+    "name": "fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml"
   },
   {
     "cmd": [
@@ -457,7 +457,7 @@
       "--",
       "/mnt/host/source/src/scripts/setup_board",
       "--board",
-      "amd64-generic-postsubmit"
+      "amd64-generic"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "setup_board"
@@ -473,7 +473,7 @@
       "--",
       "/mnt/host/source/src/scripts/build_packages",
       "--board",
-      "amd64-generic-postsubmit"
+      "amd64-generic"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "build_packages"
@@ -487,7 +487,7 @@
       "--",
       "/mnt/host/source/src/scripts/build_image",
       "--board",
-      "amd64-generic-postsubmit"
+      "amd64-generic"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "build_image"
@@ -511,7 +511,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic-postsubmit\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -593,7 +593,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic-postsubmit\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -675,7 +675,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic-postsubmit\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -757,7 +757,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic-postsubmit\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -839,7 +839,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic-postsubmit\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -938,7 +938,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_2",
-      "gs://chromeos-image-archive/amd64-generic-postsubmit-dummy/R99-1234.56.0"
+      "gs://chromeos-image-archive/amd64-generic-dummy/R99-1234.56.0"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,

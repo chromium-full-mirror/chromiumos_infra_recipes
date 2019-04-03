@@ -17,7 +17,7 @@
     "cmd": [],
     "name": "set_bisect_builder",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-postsubmit-bisect\"@@@"
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-bisect\"@@@"
     ]
   },
   {
@@ -263,12 +263,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https:/+//snapshot.xml",
+      "https://chromium.googlesource.com/chromeos/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
       "--format",
       "text"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "fetch :snapshot.xml"
+    "name": "fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml"
   },
   {
     "cmd": [
@@ -457,7 +457,7 @@
       "--",
       "/mnt/host/source/src/scripts/setup_board",
       "--board",
-      "amd64-generic-postsubmit"
+      "amd64-generic"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "setup_board"
@@ -473,7 +473,7 @@
       "--",
       "/mnt/host/source/src/scripts/build_packages",
       "--board",
-      "amd64-generic-postsubmit",
+      "amd64-generic",
       "foo",
       "bar",
       "baz"

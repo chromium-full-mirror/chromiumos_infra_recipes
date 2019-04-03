@@ -60,7 +60,8 @@ def _run_cros_sdk_script(api, script, target, chrome_root=None, *args):
 def RunSteps(api, build_target, build_image, upload_artifacts,
              upload_prebuilts):
   build_target_name = build_target['name']
-  build_config = api.infra_config.get_builder_config(build_target_name)
+  build_config = api.infra_config.get_builder_config(
+      api.buildbucket.build.builder.builder)
 
   api.cros_bisect.set_bisect_builder(build_target_name)
 
@@ -111,19 +112,27 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
 
 def GenTests(api):
   yield (api.test('basic') +  #
-         api.properties(build_target={'name': 'amd64-generic-postsubmit'}))
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='amd64-generic-postsubmit') +  #
+         api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('upload-artifacts') +  #
-         api.properties(build_target={'name': 'amd64-generic-postsubmit'},
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='amd64-generic-postsubmit') +  #
+         api.properties(build_target={'name': 'amd64-generic'},
                         upload_artifacts=True))
 
   yield (api.test('upload-prebuilts') +  #
-         api.properties(build_target={'name': 'amd64-generic-postsubmit'},
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='amd64-generic-postsubmit') +  #
+         api.properties(build_target={'name': 'amd64-generic'},
                         upload_prebuilts=True))
 
   yield (api.test('with-findit-bisect') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='amd64-generic-postsubmit') +  #
          api.properties(
-             build_target={'name': 'amd64-generic-postsubmit'},
+             build_target={'name': 'amd64-generic'},
              findit_bisect={'targets': ['foo', 'bar', 'baz']},
              build_image=False,
          ))
