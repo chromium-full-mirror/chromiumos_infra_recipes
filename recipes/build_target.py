@@ -76,10 +76,10 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
           chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
       # sync_chrome must run inside a chromiumos source root.
-      chrome_root = api.path['cache'].join('chrome')
+      chrome_root = api.path['start_dir'].join('chrome')
       api.sync_chrome.sync_chrome(chrome_root)
 
-      _run_cros_sdk_script(api, 'setup_board', build_target_name, chrome_root)
+      _run_cros_sdk_script(api, 'setup_board', build_target_name)
 
       # Packages subset will be present when FindIt asks for bisection build.
       packages = api.cros_bisect.get_packages()

@@ -1111,13 +1111,22 @@ Ensure the CIPD support package is installed.
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
 ### *recipe_modules* / [sync\_chrome](/recipe_modules/sync_chrome)
 
-[DEPS](/recipe_modules/sync_chrome/__init__.py#1): [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/sync_chrome/__init__.py#1): [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 #### **class [SyncChromeApi](/recipe_modules/sync_chrome/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [sync\_chrome](/recipe_modules/sync_chrome/api.py#11)(self, chrome_root):**
+&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/sync_chrome/api.py#11)(self):**
+
+The path to use for gclient caching.
+
+All git repos are cached here, and it is used for clones, instead of cloning
+directly from the remote.
+
+&mdash; **def [sync\_chrome](/recipe_modules/sync_chrome/api.py#20)(self, chrome_root):**
 
 Sync Chrome source code.
+
+Must be run with cwd inside a chromiumos source root.
 
 Args:
   chrome_root (str): Directory to sync the Chrome source code to.

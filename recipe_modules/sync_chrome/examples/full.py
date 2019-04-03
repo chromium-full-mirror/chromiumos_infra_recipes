@@ -7,7 +7,7 @@ DEPS = ['recipe_engine/path', 'sync_chrome']
 
 
 def RunSteps(api):
-  api.sync_chrome.sync_chrome(chrome_root=api.path['cache'].join('chrome'))
+  api.sync_chrome.sync_chrome(chrome_root=api.path['start_dir'].join('chrome'))
 
 
 def GenTests(api):

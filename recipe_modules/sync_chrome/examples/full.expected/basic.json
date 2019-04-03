@@ -22,11 +22,42 @@
     "cmd": [
       "python",
       "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chrome"
+    ],
+    "infra_step": true,
+    "name": "ensure chrome cache"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chrome"
+    ],
+    "infra_step": true,
+    "name": "ensure chrome root"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
       "cache_dir = '[CACHE]/chrome'\nsolutions = [{'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]"
     ],
+    "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
@@ -56,6 +87,7 @@
       "--output-json",
       "/path/to/tmp/json"
     ],
+    "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
@@ -85,6 +117,7 @@
       "user.name",
       "local_bot"
     ],
+    "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
@@ -104,6 +137,7 @@
       "user.email",
       "local_bot@example.com"
     ],
+    "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
