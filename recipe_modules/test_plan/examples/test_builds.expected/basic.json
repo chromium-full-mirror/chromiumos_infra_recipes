@@ -126,6 +126,29 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"hwTestCfg\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hwTest\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }, @@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"schedulingRequirements\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"buildTarget\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"buildPayload\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"artifactPath\": \"path/to/artifact\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"image\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"imageName\": \"image.bin\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"schedulingRequirements\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"buildTarget\": \"build_target\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
@@ -157,6 +180,86 @@
     "name": "test_non-deferred.schedule.build_target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test_non-deferred.schedule.build_target.ensure skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/skylab",
+      "-ensure-file",
+      "chromiumos/infra/skylab/${platform} prod",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "test_non-deferred.schedule.build_target.ensure skylab.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/skylab/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test_non-deferred.schedule.build_target.hw",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "create-suite",
+      "-json",
+      "-pool",
+      "ChromeOSSkylab",
+      "-image",
+      "image.bin",
+      "-board",
+      "build_target",
+      "suite1"
+    ],
+    "name": "test_non-deferred.schedule.build_target.hw.suite1",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "create-suite",
+      "-json",
+      "-pool",
+      "ChromeOSSkylab",
+      "-image",
+      "image.bin",
+      "-board",
+      "build_target",
+      "suite2"
+    ],
+    "name": "test_non-deferred.schedule.build_target.hw.suite2",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -351,6 +454,29 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"hwTestCfg\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hwTest\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }, @@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"schedulingRequirements\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"buildTarget\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"buildPayload\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"artifactPath\": \"path/to/artifact\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"image\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"imageName\": \"image.bin\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"schedulingRequirements\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"buildTarget\": \"build_target\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
@@ -382,6 +508,51 @@
     "name": "test_deferred.schedule.build_target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test_deferred.schedule.build_target.hw",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "create-suite",
+      "-json",
+      "-pool",
+      "ChromeOSSkylab",
+      "-image",
+      "image.bin",
+      "-board",
+      "build_target",
+      "suite1"
+    ],
+    "name": "test_deferred.schedule.build_target.hw.suite1",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "create-suite",
+      "-json",
+      "-pool",
+      "ChromeOSSkylab",
+      "-image",
+      "image.bin",
+      "-board",
+      "build_target",
+      "suite2"
+    ],
+    "name": "test_deferred.schedule.build_target.hw.suite2",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

@@ -69,17 +69,24 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
 
   def simulate_test_builds(self, name):
     test_suites = ['suite1', 'suite2']
-    test_unit = self.example_vm_unit(test_suites=test_suites)
+    test_units = [
+      self.example_hw_unit(test_suites=test_suites),
+      self.example_vm_unit(test_suites=test_suites),
+    ]
 
     result = self.simulated_generate_output('%s.generate' % name,
-                                            self.example_test_plan(test_unit))
+                                            self.example_test_plan(*test_units))
 
-    for idx, test in enumerate(test_unit.vm_test_cfg.vm_test):
-      substep_name = '%s.vm.%s' % (
-          test_unit.scheduling_requirements.build_target, test.test_suite)
-      result += self.step_data(
-          '%s.schedule.%s' % (name, substep_name),
-          self.m.swarming.trigger(['task - %s' % str(idx)]))
+    for test_unit in test_units:
+      result += self.m.skylab.simulated_create_suites(
+          '%s.schedule.build_target.hw' % name, test_unit)
+
+      for idx, test in enumerate(test_unit.vm_test_cfg.vm_test):
+        substep_name = '%s.vm.%s' % (
+            test_unit.scheduling_requirements.build_target, test.test_suite)
+        result += self.step_data(
+            '%s.schedule.%s' % (name, substep_name),
+            self.m.swarming.trigger(['task - %s' % str(idx)]))
 
     return result
 
