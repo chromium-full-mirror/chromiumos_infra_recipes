@@ -31,10 +31,10 @@
       "----",
       "rsync",
       "-r",
-      "[CACHE]/builder",
-      "gs://stark-trek/the-ultimate-computer/distfiles/",
       "-",
-      "n"
+      "n",
+      "[CACHE]/builder",
+      "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
     "infra_step": true,
     "name": "gsutil Upload distfiles to gs://stark-trek/the-ultimate-computer/distfiles/"

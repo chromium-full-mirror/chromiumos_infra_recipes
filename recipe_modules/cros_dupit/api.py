@@ -52,10 +52,12 @@ class DupItApi(recipe_api.RecipeApi):
 
     # NOTE: we must keep the old files/objects (i.e: not passing -d) since this
     # mirror is also used by old branches which rely on the old distfiles.
-    gsutil_rsync_commands = ['rsync', '-r',  # recurse
-                             local_path, self.cloud_storage_uri]
+    gsutil_rsync_commands = ['rsync', '-r']  # recurse
+
     if self.dryrun:
       gsutil_rsync_commands += '-n'
+
+    gsutil_rsync_commands += [local_path, self.cloud_storage_uri]
 
     self.m.gsutil(
         cmd=gsutil_rsync_commands,

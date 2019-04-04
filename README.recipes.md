@@ -243,7 +243,7 @@ API for DupIt script.
 
 A module for the DupIt script.
 
-&emsp; **@property**<br>&mdash; **def [cloud\_storage\_uri](/recipe_modules/cros_dupit/api.py#73)(self):**
+&emsp; **@property**<br>&mdash; **def [cloud\_storage\_uri](/recipe_modules/cros_dupit/api.py#75)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_dupit/api.py#18)(self, rsync_mirror_address, cloud_storage_uri, dryrun):**
 
@@ -255,9 +255,9 @@ Args:
   * cloud_storage_uri: the cloud storage URI to sync gentoo distfiles to.
   * dryrun (bool): If True, run gsutil updates in a dryrun mode.
 
-&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#65)(self):**
+&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#67)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#69)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#71)(self):**
 
 &mdash; **def [run](/recipe_modules/cros_dupit/api.py#31)(self):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)

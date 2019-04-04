@@ -31,10 +31,10 @@
       "----",
       "rsync",
       "-r",
-      "[CACHE]/builder",
-      "gs://chromeos-mirror/gentoo/distfiles/",
       "-",
-      "n"
+      "n",
+      "[CACHE]/builder",
+      "gs://chromeos-mirror/gentoo/distfiles/"
     ],
     "infra_step": true,
     "name": "gsutil Upload distfiles to gs://chromeos-mirror/gentoo/distfiles/"
