@@ -25,6 +25,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('confgure chroot path'):
       self._chroot_path = chroot_parent_path.join('chroot')
+      self.m.file.ensure_directory('ensure chroot path', self._chroot_path)
       # TODO(crbug.com/949721): Currently, chromite depends on the chroot living
       # within the source tree. As a workaround, link the external chroot to
       # both source trees to make it look legit. New chromite services should
