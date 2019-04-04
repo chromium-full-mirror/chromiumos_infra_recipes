@@ -40,18 +40,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[START_DIR]/cros_sdk/chroot",
-      "--workspace",
-      "[CLEANUP]/build_api_messages_tmp_1",
-      "--",
-      "/mnt/host/source/chromite/api/build_api",
+      "[START_DIR]/chromiumos_workspace/chromite/scripts/build_api",
       "--input-json",
-      "/mnt/host/workspace/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
-      "/mnt/host/workspace/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "chromite.api.ArchiveService/CreateHwTestArchives"
     ],
     "name": "execute tests.build_api chromite.api.ArchiveService/CreateHwTestArchives",
@@ -72,22 +65,6 @@
     ],
     "infra_step": true,
     "name": "execute tests.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/build_api_messages_tmp_1"
-    ],
-    "infra_step": true,
-    "name": "execute tests.rmtree [CLEANUP]/build_api_messages_tmp_1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -156,18 +133,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[START_DIR]/cros_sdk/chroot",
-      "--workspace",
-      "[CLEANUP]/build_api_messages_tmp_2",
-      "--",
-      "/mnt/host/source/chromite/api/build_api",
+      "[START_DIR]/chromiumos_workspace/chromite/scripts/build_api",
       "--input-json",
-      "/mnt/host/workspace/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
-      "/mnt/host/workspace/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "chromite.api.ArchiveService/CreateVmTestArchives"
     ],
     "name": "execute tests (2).build_api chromite.api.ArchiveService/CreateVmTestArchives",
@@ -188,22 +158,6 @@
     ],
     "infra_step": true,
     "name": "execute tests (2).read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/build_api_messages_tmp_2"
-    ],
-    "infra_step": true,
-    "name": "execute tests (2).rmtree [CLEANUP]/build_api_messages_tmp_2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

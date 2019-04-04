@@ -524,18 +524,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "--workspace",
-      "[CLEANUP]/build_api_messages_tmp_3",
-      "--",
-      "/mnt/host/source/chromite/api/build_api",
+      "[START_DIR]/chromiumos_workspace/chromite/scripts/build_api",
       "--input-json",
-      "/mnt/host/workspace/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
-      "/mnt/host/workspace/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "chromite.api.ArtifactsService/BundleAutotestFiles"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -558,23 +551,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload dummy artifacts.bundle autotest-files for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/build_api_messages_tmp_3"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle autotest-files for upload.rmtree [CLEANUP]/build_api_messages_tmp_3",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -606,18 +582,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "--workspace",
-      "[CLEANUP]/build_api_messages_tmp_4",
-      "--",
-      "/mnt/host/source/chromite/api/build_api",
+      "[START_DIR]/chromiumos_workspace/chromite/scripts/build_api",
       "--input-json",
-      "/mnt/host/workspace/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
-      "/mnt/host/workspace/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "chromite.api.ArtifactsService/BundleTastFiles"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -640,23 +609,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload dummy artifacts.bundle tast-files for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/build_api_messages_tmp_4"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle tast-files for upload.rmtree [CLEANUP]/build_api_messages_tmp_4",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -688,18 +640,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "--workspace",
-      "[CLEANUP]/build_api_messages_tmp_5",
-      "--",
-      "/mnt/host/source/chromite/api/build_api",
+      "[START_DIR]/chromiumos_workspace/chromite/scripts/build_api",
       "--input-json",
-      "/mnt/host/workspace/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
-      "/mnt/host/workspace/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "chromite.api.ArtifactsService/BundlePinnedGuestImages"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -722,23 +667,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload dummy artifacts.bundle pinned-guest-images for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/build_api_messages_tmp_5"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle pinned-guest-images for upload.rmtree [CLEANUP]/build_api_messages_tmp_5",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -770,18 +698,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "--workspace",
-      "[CLEANUP]/build_api_messages_tmp_6",
-      "--",
-      "/mnt/host/source/chromite/api/build_api",
+      "[START_DIR]/chromiumos_workspace/chromite/scripts/build_api",
       "--input-json",
-      "/mnt/host/workspace/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
-      "/mnt/host/workspace/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "chromite.api.ArtifactsService/BundleFirmware"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -804,23 +725,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload dummy artifacts.bundle firmware for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/build_api_messages_tmp_6"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle firmware for upload.rmtree [CLEANUP]/build_api_messages_tmp_6",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -852,18 +756,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "--workspace",
-      "[CLEANUP]/build_api_messages_tmp_7",
-      "--",
-      "/mnt/host/source/chromite/api/build_api",
+      "[START_DIR]/chromiumos_workspace/chromite/scripts/build_api",
       "--input-json",
-      "/mnt/host/workspace/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
-      "/mnt/host/workspace/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "chromite.api.ArtifactsService/BundleEbuildLogs"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -886,23 +783,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload dummy artifacts.bundle ebuild-logs for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/build_api_messages_tmp_7"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle ebuild-logs for upload.rmtree [CLEANUP]/build_api_messages_tmp_7",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

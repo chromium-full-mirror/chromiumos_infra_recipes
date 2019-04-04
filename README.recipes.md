@@ -90,17 +90,19 @@ Args:
   * artifacts (list[str]): List of build artifacts.
 ### *recipe_modules* / [build\_api](/recipe_modules/build_api)
 
-[DEPS](/recipe_modules/build_api/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
+[DEPS](/recipe_modules/build_api/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with the protobuf-based Build API.
 
-#### **class [BuildApiApi](/recipe_modules/build_api/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildApiApi](/recipe_modules/build_api/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS Build API steps.
 
-&mdash; **def [call\_json](/recipe_modules/build_api/api.py#59)(self, service_method, input_dict, test_output_dict=None):**
+&mdash; **def [call\_json](/recipe_modules/build_api/api.py#51)(self, service_method, input_dict, test_output_dict=None):**
 
 Call a Build API method with JSON serialization.
+
+For now, only runs outside the chroot.
 
 Args:
   service_method (str): The service/method path (ex.
@@ -111,9 +113,11 @@ Args:
 Returns:
   dict: Output data.
 
-&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#97)(self, service_method, input_msg, test_output_data='{}'):**
+&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#91)(self, service_method, input_msg, test_output_data='{}'):**
 
 Call a Build API method with JSON serialization.
+
+For now, only runs outside the chroot.
 
 Args:
   service_method (str): The service/method path (ex.

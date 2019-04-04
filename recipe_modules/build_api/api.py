@@ -13,9 +13,6 @@ from google.protobuf import reflection
 
 from recipe_engine import recipe_api
 
-INPUT_FILENAME = 'input_proto.json'
-OUTPUT_FILENAME = 'output_proto.json'
-
 
 class BuildApiApi(recipe_api.RecipeApi):
   """A module for CrOS Build API steps."""
@@ -32,32 +29,29 @@ class BuildApiApi(recipe_api.RecipeApi):
     Returns:
       str: Output data.
     """
-    with self.m.tempfile.temp_dir('build_api_messages') as workspace_path:
-      input_path = workspace_path.join(INPUT_FILENAME)
-      output_path = workspace_path.join(OUTPUT_FILENAME)
-      chroot_input_path = self.m.cros_sdk.workspace_path_to_chroot(
-          workspace_path, input_path)
-      chroot_output_path = self.m.cros_sdk.workspace_path_to_chroot(
-          workspace_path, output_path)
+    messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
+    input_path = messages_path.join('input_proto.json')
+    output_path = messages_path.join('output_proto.json')
 
-      # Write the input proto JSON to a temp file (which is how it's passed to
-      # the build API).
-      self.m.file.write_raw('write input file', input_path, input_data)
+    # Write the input proto JSON to a temp file (which is how it's passed to
+    # the build API).
+    self.m.file.write_raw('write input file', input_path, input_data)
 
-      # Path to bin hardcoded for now as it's not in PATH.
-      bin_path = '/mnt/host/source/chromite/api/build_api'
-      cmd = [
-          bin_path, '--input-json', chroot_input_path, '--output-json',
-          chroot_output_path, service_method
-      ]
-      self.m.cros_sdk.run('build_api %s' % service_method, cmd,
-                          workspace=workspace_path)
+    bin_path = self.m.cros_source.workspace_path.join(
+        'chromite/scripts/build_api')
+    cmd = [
+        bin_path, '--input-json', input_path, '--output-json', output_path,
+        service_method
+    ]
+    self.m.step('build_api %s' % service_method, cmd)
 
-      return self.m.file.read_raw('read output file', output_path,
-                                  test_data=test_output_data)
+    return self.m.file.read_raw('read output file', output_path,
+                                test_data=test_output_data)
 
   def call_json(self, service_method, input_dict, test_output_dict=None):
     """Call a Build API method with JSON serialization.
+
+    For now, only runs outside the chroot (crbug.com/949789).
 
     Args:
       service_method (str): The service/method path (ex.
@@ -96,6 +90,8 @@ class BuildApiApi(recipe_api.RecipeApi):
 
   def call_proto(self, service_method, input_msg, test_output_data='{}'):
     """Call a Build API method with JSON serialization.
+
+    For now, only runs outside the chroot (crbug.com/949789).
 
     Args:
       service_method (str): The service/method path (ex.

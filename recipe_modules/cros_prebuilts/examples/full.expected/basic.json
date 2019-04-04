@@ -47,18 +47,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[START_DIR]/cros_sdk/chroot",
-      "--workspace",
-      "[CLEANUP]/build_api_messages_tmp_1",
-      "--",
-      "/mnt/host/source/chromite/api/build_api",
+      "[START_DIR]/chromiumos_workspace/chromite/scripts/build_api",
       "--input-json",
-      "/mnt/host/workspace/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
-      "/mnt/host/workspace/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "chromite.api.BinhostService/PrepareBinhostUploads"
     ],
     "name": "upload prebuilts for target.prepare binhost uploads.build_api chromite.api.BinhostService/PrepareBinhostUploads",
@@ -79,22 +72,6 @@
     ],
     "infra_step": true,
     "name": "upload prebuilts for target.prepare binhost uploads.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/build_api_messages_tmp_1"
-    ],
-    "infra_step": true,
-    "name": "upload prebuilts for target.prepare binhost uploads.rmtree [CLEANUP]/build_api_messages_tmp_1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -167,18 +144,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[START_DIR]/cros_sdk/chroot",
-      "--workspace",
-      "[CLEANUP]/build_api_messages_tmp_3",
-      "--",
-      "/mnt/host/source/chromite/api/build_api",
+      "[START_DIR]/chromiumos_workspace/chromite/scripts/build_api",
       "--input-json",
-      "/mnt/host/workspace/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
-      "/mnt/host/workspace/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "chromite.api.BinhostService/SetBinhost"
     ],
     "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.build_api chromite.api.BinhostService/SetBinhost",
@@ -199,22 +169,6 @@
     ],
     "infra_step": true,
     "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/build_api_messages_tmp_3"
-    ],
-    "infra_step": true,
-    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.rmtree [CLEANUP]/build_api_messages_tmp_3",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

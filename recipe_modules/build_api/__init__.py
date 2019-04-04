@@ -1,6 +1,6 @@
 DEPS = [
     'recipe_engine/file',
-    'recipe_engine/tempfile',
-
-    'cros_sdk',
+    'recipe_engine/path',
+    'recipe_engine/step',
+    'cros_source',
 ]
