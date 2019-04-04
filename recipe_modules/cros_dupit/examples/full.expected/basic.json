@@ -14,7 +14,7 @@
       "--timeout=180",
       "--bwlimit=1m",
       "rsync://mirrors.do.not.exists/distfiles",
-      "[CACHE]/builder"
+      "[CACHE]/gentoo_distfiles"
     ],
     "name": "Sync distfiles from rsync://mirrors.do.not.exists/distfiles"
   },
@@ -33,7 +33,7 @@
       "-r",
       "-",
       "n",
-      "[CACHE]/builder",
+      "[CACHE]/gentoo_distfiles",
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
     "infra_step": true,

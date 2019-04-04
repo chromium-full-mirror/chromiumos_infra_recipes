@@ -30,7 +30,11 @@ class DupItApi(recipe_api.RecipeApi):
 
   def run(self):
 
-    local_path = self.m.path['cache'].join('builder')
+    # Use swarming cache from DupIit builders to persist gentoo_distfiles/
+    # directory across builds (see the cache specification for DupIt builder
+    # in
+    # https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/master/main.star)
+    local_path = self.m.path['cache'].join('gentoo_distfiles')
 
     rsync_commands = [
         'rsync',
