@@ -295,7 +295,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#48)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#45)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -307,7 +307,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros_sdk/api.py#44)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros_sdk/api.py#41)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#20)(self, chroot_parent_path):**
 
@@ -316,7 +316,7 @@ Configure CrosSdkApi.
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#39)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#36)(self):**
 
 Returns a Path to the cros_sdk script.
 
@@ -324,7 +324,7 @@ Returns a Path to the cros_sdk script.
 
 Initialize CrosSdkApi.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#69)(self, name, cmd, env=None, workspace=None, chrome_root=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#78)(self, name, cmd, env=None, workspace=None, chrome_root=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 

@@ -30,11 +30,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
       # within the source tree. As a workaround, link the external chroot to
       # both source trees to make it look legit. New chromite services should
       # accept the chroot path as a parameter.
-      self.m.file.symlink('link workspace checkout to chroot',
-                          self._chroot_path,
-                          self.m.cros_source.workspace_path.join('chroot'))
-      self.m.file.symlink('link master checkout to chroot', self._chroot_path,
-                          self.m.cros_source.master_path.join('chroot'))
+      self._link_chroot(self.m.cros_source.workspace_path)
+      self._link_chroot(self.m.cros_source.master_path)
 
   @property
   def cros_sdk_path(self):
@@ -65,6 +62,18 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
     cmd += args
     return self.m.step(name, cmd, **kwargs)
+
+  def _link_chroot(self, checkout_path):
+    """Link the chroot to a chromiumos checkout.
+
+    Args:
+      checkout_path (Path): Path to the checkout root.
+    """
+    checkout_basename = self.m.path.basename(checkout_path)
+    self.m.file.ensure_directory('ensure %s' % checkout_basename, checkout_path)
+    self.m.file.symlink('link %s to chroot' % checkout_basename,
+                        self._chroot_path,
+                        self.m.cros_source.workspace_path.join('chroot'))
 
   def run(self, name, cmd, env=None, workspace=None, chrome_root=None,
           **kwargs):
