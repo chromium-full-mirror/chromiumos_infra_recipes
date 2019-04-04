@@ -56,6 +56,7 @@
     "cmd": [
       "[START_DIR]/cipd/skylab/skylab",
       "create-suite",
+      "-json",
       "-pool",
       "ChromeOSSkylab",
       "-image",
@@ -65,6 +66,7 @@
       "suite1"
     ],
     "name": "run plan.schedule.hw.suite1",
+    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -73,6 +75,7 @@
     "cmd": [
       "[START_DIR]/cipd/skylab/skylab",
       "create-suite",
+      "-json",
       "-pool",
       "ChromeOSSkylab",
       "-image",
@@ -82,6 +85,7 @@
       "suite2"
     ],
     "name": "run plan.schedule.hw.suite2",
+    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -138,14 +142,15 @@
       "/path/to/tmp/json",
       "-task-output-stdout",
       "json",
-      "hw-test"
+      "0",
+      "1"
     ],
     "infra_step": true,
     "name": "run plan.collect.collect tasks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"hw-test\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"0\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
@@ -158,11 +163,29 @@
       "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"hw-test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"1\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"1\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@Swarming task output: my_task_1@hello world!@@@",
+      "@@@STEP_LOG_END@Swarming task output: my_task_1@@@",
       "@@@STEP_LOG_LINE@Swarming task output: my_task_0@hello world!@@@",
       "@@@STEP_LOG_END@Swarming task output: my_task_0@@@"
     ]

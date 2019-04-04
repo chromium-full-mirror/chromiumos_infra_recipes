@@ -12,8 +12,9 @@ def RunSteps(api):
       api.test_plan.test_api.example_hw_unit(test_suites=['suite1', 'suite2']))
 
   for test_unit in test_plan.test_unit:
-    api.skylab.create_suites('skylab', test_unit)
+    tasks = api.skylab.create_suites('test', test_unit)
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic') + api.skylab.simulated_create_suites(
+      'test', test_suites=['suite1', 'suite2']))

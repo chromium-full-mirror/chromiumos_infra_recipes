@@ -33,12 +33,13 @@
   },
   {
     "cmd": [],
-    "name": "skylab"
+    "name": "test"
   },
   {
     "cmd": [
       "[START_DIR]/cipd/skylab/skylab",
       "create-suite",
+      "-json",
       "-pool",
       "ChromeOSSkylab",
       "-image",
@@ -47,7 +48,8 @@
       "build_target",
       "suite1"
     ],
-    "name": "skylab.suite1",
+    "name": "test.suite1",
+    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -56,6 +58,7 @@
     "cmd": [
       "[START_DIR]/cipd/skylab/skylab",
       "create-suite",
+      "-json",
       "-pool",
       "ChromeOSSkylab",
       "-image",
@@ -64,7 +67,8 @@
       "build_target",
       "suite2"
     ],
-    "name": "skylab.suite2",
+    "name": "test.suite2",
+    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

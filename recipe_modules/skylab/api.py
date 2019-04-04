@@ -3,10 +3,38 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
+
 from recipe_engine import recipe_api
 
 SKYLAB_SWARMING_POOL = 'ChromeOSSkylab'
 SKYLAB_VERSION = 'prod'
+
+
+# swarming.TaskRequestMetadata duck.
+# TestManager and TestPlan both expect to interact with
+# TaskRequestMetadata type objects.
+class SkylabRequestMetadata(object):
+  """Metadata of a requested task."""
+
+  def __init__(self, task_json):
+    self._task_json = task_json
+
+  @property
+  def name(self):
+    """Returns the name of the associated task."""
+    return self._task_json['task_name']  # pragma: nocover
+
+  @property
+  def id(self):
+    """Returns the id of the associated task."""
+    return self._task_json['task_id']  # pragma: nocover
+
+  @property
+  def task_ui_link(self):
+    """Returns the URL of the associated task in the Swarming UI."""
+    return self._task_json['task_url']  # pragma: nocover
+
 
 class SkylabApi(recipe_api.RecipeApi):
   """Skylab helper module"""
@@ -21,23 +49,31 @@ class SkylabApi(recipe_api.RecipeApi):
       * test_unit (TestUnit): Test plan step to execute.
 
     Returns:
-      list[swarming.TaskRequestMetadata]
+      list[SkylabRequestMetadata]
     """
     self._ensure_skylab()
 
+    tasks = []
     with self.m.step.nest(name):
       for test in test_unit.hw_test_cfg.hw_test:
         test_suite = test.suite
         cmd = [
-            self._skylab_path, 'create-suite', '-pool', SKYLAB_SWARMING_POOL,
-            '-image', test_unit.build_payload.image[0].image_name, '-board',
-            test_unit.scheduling_requirements.build_target, test_suite
+            self._skylab_path,
+            'create-suite',
+            '-json',
+            '-pool', SKYLAB_SWARMING_POOL,
+            '-image', test_unit.build_payload.image[0].image_name,
+            '-board', test_unit.scheduling_requirements.build_target,
+            test_suite
         ]
 
-        self.m.step(test_suite, cmd)
+        result = self.m.easy.stdout_step(
+            test_suite, cmd,
+            test_stdout=self.test_api.example_result(test_suite))
+        task = SkylabRequestMetadata(json.loads(result))
+        tasks.append(task)
 
-    # TODO(yshaul): Replace hw-test with swarming metadata for skylab tasks. crbug/935244
-    return ['hw-test']
+    return tasks
 
   def _ensure_skylab(self):
     """Ensure the Skylab cli is installed."""

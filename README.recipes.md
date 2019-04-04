@@ -1064,13 +1064,13 @@ Args:
   * kwargs: Keyword arguments to pass to 'repo.sync'.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
-[DEPS](/recipe_modules/skylab/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/skylab/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#39)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Skylab helper module
 
-&mdash; **def [create\_suites](/recipe_modules/skylab/api.py#16)(self, name, test_unit):**
+&mdash; **def [create\_suites](/recipe_modules/skylab/api.py#44)(self, name, test_unit):**
 
 Skylab step.
 
@@ -1079,9 +1079,9 @@ Args:
   * test_unit (TestUnit): Test plan step to execute.
 
 Returns:
-  list[swarming.TaskRequestMetadata]
+  list[SkylabRequestMetadata]
 
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#13)(self):**
+&mdash; **def [initialize](/recipe_modules/skylab/api.py#41)(self):**
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1181,7 +1181,7 @@ A module for test execution steps
 Waits for a set of tests to complete, and returns their results.
 Args:
   * name (str): Step name.
-  * tasks (list[swarming.TaskResult]): Swarming metadata
+  * tasks (list[swarming.TaskRequestMetadata]): Swarming metadata
       of executing tests.
 
 Returns:

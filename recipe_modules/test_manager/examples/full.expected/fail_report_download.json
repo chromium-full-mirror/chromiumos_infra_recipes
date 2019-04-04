@@ -525,7 +525,7 @@
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"task - 1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_1\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
@@ -537,16 +537,16 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@Swarming task output: task - 1@hello world!@@@",
-      "@@@STEP_LOG_END@Swarming task output: task - 1@@@"
+      "@@@STEP_LOG_LINE@Swarming task output: my_task_1@hello world!@@@",
+      "@@@STEP_LOG_END@Swarming task output: my_task_1@@@"
     ]
   },
   {
     "cmd": [],
     "name": "test results",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@SUCCESS - task - 1@hello world!@@@",
-      "@@@STEP_LOG_END@SUCCESS - task - 1@@@"
+      "@@@STEP_LOG_LINE@SUCCESS - my_task_1@hello world!@@@",
+      "@@@STEP_LOG_END@SUCCESS - my_task_1@@@"
     ]
   },
   {

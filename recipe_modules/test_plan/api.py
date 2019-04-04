@@ -111,7 +111,7 @@ class RunPlanApi(recipe_api.RecipeApi):
     """Waits for a set of tests to complete, and returns their results.
     Args:
       * name (str): Step name.
-      * tasks (list[swarming.TaskResult]): Swarming metadata
+      * tasks (list[swarming.TaskRequestMetadata]): Swarming metadata
           of executing tests.
 
     Returns:
@@ -120,7 +120,11 @@ class RunPlanApi(recipe_api.RecipeApi):
     # TODO(yshaul): Tests are actually scheduled against multiple swarming
     #     servers. Check against them all.
     with self.m.step.nest(name) as result:
-      return self.m.swarming.collect('collect tasks', tasks)
+      # pluck task ids rather than passing in tasks directly.
+      # This is because skylab ducks TaskRequestMetadata,
+      # and collect asserts type of TaskRequestMetadata.
+      task_ids = [str(task.id) for task in tasks]
+      return self.m.swarming.collect('collect tasks', task_ids)
 
   def _step(self, test_unit):
     """Returns environment and step function for given test plan step.
