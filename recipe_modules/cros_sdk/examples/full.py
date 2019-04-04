@@ -20,10 +20,6 @@ def RunSteps(api):
                    workspace=workspace,
                    chrome_root=api.path['cleanup'].join('chrome_root_test'))
 
-  workspace_file = workspace.join('inner', 'file')
-  chroot_path = api.cros_sdk.workspace_path_to_chroot(workspace, workspace_file)
-  assert chroot_path == '/mnt/host/workspace/inner/file'
-
 
 def GenTests(api):
   yield api.test('basic')

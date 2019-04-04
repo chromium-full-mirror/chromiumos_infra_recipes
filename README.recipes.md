@@ -102,7 +102,7 @@ A module for CrOS Build API steps.
 
 Call a Build API method with JSON serialization.
 
-For now, only runs outside the chroot.
+For now, only runs outside the chroot (crbug.com/949789).
 
 Args:
   service_method (str): The service/method path (ex.
@@ -117,7 +117,7 @@ Returns:
 
 Call a Build API method with JSON serialization.
 
-For now, only runs outside the chroot.
+For now, only runs outside the chroot (crbug.com/949789).
 
 Args:
   service_method (str): The service/method path (ex.
@@ -287,15 +287,15 @@ Args:
   private (bool): Whether or not the target prebuilts are private.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
-[DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_sdk/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for interacting with cros_sdk, the interface to the CrOS SDK.
 
-#### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#40)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#47)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -307,26 +307,28 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros_sdk/api.py#36)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot\_path](/recipe_modules/cros_sdk/api.py#43)(self):**
 
-&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#23)(self, chroot_parent_path):**
+&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#20)(self, chroot_parent_path):**
 
 Configure CrosSdkApi.
 
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#31)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#38)(self):**
 
 Returns a Path to the cros_sdk script.
 
-&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#19)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#16)(self):**
 
 Initialize CrosSdkApi.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#61)(self, name, cmd, env=None, workspace=None, chrome_root=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#68)(self, name, cmd, env=None, workspace=None, chrome_root=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
+
+It is assumed the current working directory is within a chromiumos checkout.
 
 Args:
   * name (str): The name of the step.
@@ -338,17 +340,6 @@ Args:
 
 Returns:
   See 'step.__call__'.
-
-&mdash; **def [workspace\_path\_to\_chroot](/recipe_modules/cros_sdk/api.py#86)(self, workspace_root, workspace_path):**
-
-Translate a workspace path to its mounted chroot equivalent.
-
-Args:
-  * workspace_root (Path): The path to be passed to cros_sdk --workspace.
-  * workspace_path (Path): A child of |workspace_root|, to be translated.
-
-Returns:
-  str: The translated path, which will be valid within the cros_sdk chroot.
 ### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
 
 [DEPS](/recipe_modules/cros_source/__init__.py#1): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

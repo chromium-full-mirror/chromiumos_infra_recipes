@@ -9,9 +9,6 @@ import os
 
 from recipe_engine import recipe_api
 
-# The path within the chroot where the workspace directory is mounted.
-CHROOT_WORKSPACE_PATH = '/mnt/host/workspace'
-
 
 class CrosSdkApi(recipe_api.RecipeApi):
   """A module for interacting with cros_sdk."""
@@ -26,7 +23,17 @@ class CrosSdkApi(recipe_api.RecipeApi):
     Args:
       chroot_parent_path (Path): Parent for chroot directory.
     """
-    self._chroot_path = chroot_parent_path.join('chroot')
+    with self.m.step.nest('confgure chroot path'):
+      self._chroot_path = chroot_parent_path.join('chroot')
+      # TODO(crbug.com/949721): Currently, chromite depends on the chroot living
+      # within the source tree. As a workaround, link the external chroot to
+      # both source trees to make it look legit. New chromite services should
+      # accept the chroot path as a parameter.
+      self.m.file.symlink('link workspace checkout to chroot',
+                          self._chroot_path,
+                          self.m.cros_source.workspace_path.join('chroot'))
+      self.m.file.symlink('link master checkout to chroot', self._chroot_path,
+                          self.m.cros_source.master_path.join('chroot'))
 
   @property
   def cros_sdk_path(self):
@@ -62,6 +69,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
           **kwargs):
     """Runs a command in a cros_sdk chroot.
 
+    It is assumed the current working directory is within a chromiumos checkout.
+
     Args:
       * name (str): The name of the step.
       * cmd (list): A command and arguments to run.
@@ -76,24 +85,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
     args = []
     if env is not None:
       args += ['%s=%s' % x for x in env.items()]
-    if workspace is not None:
-      args += ['--workspace', workspace]
     if chrome_root is not None:
       args += ['--chrome_root', chrome_root]
     args += ['--'] + cmd
     return self(name, args, **kwargs)
-
-  def workspace_path_to_chroot(self, workspace_root, workspace_path):
-    """Translate a workspace path to its mounted chroot equivalent.
-
-    Args:
-      * workspace_root (Path): The path to be passed to cros_sdk --workspace.
-      * workspace_path (Path): A child of |workspace_root|, to be translated.
-
-    Returns:
-      str: The translated path, which will be valid within the cros_sdk chroot.
-    """
-    assert workspace_root.is_parent_of(workspace_path), \
-      'workspace path not in root'
-    relpath = os.path.relpath(str(workspace_path), str(workspace_root))
-    return os.path.join(CHROOT_WORKSPACE_PATH, relpath)

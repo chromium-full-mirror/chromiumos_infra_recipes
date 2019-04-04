@@ -1,5 +1,43 @@
 [
   {
+    "cmd": [],
+    "name": "confgure chroot path"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[START_DIR]/cros_sdk/chroot",
+      "[START_DIR]/chromiumos_workspace/chroot"
+    ],
+    "infra_step": true,
+    "name": "confgure chroot path.link workspace checkout to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[START_DIR]/cros_sdk/chroot",
+      "[START_DIR]/chromiumos_master/chroot"
+    ],
+    "infra_step": true,
+    "name": "confgure chroot path.link master checkout to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -164,6 +202,44 @@
     ],
     "infra_step": true,
     "name": "ensure cros_sdk dir"
+  },
+  {
+    "cmd": [],
+    "name": "confgure chroot path (2)"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[CACHE]/cros_sdk/chroot",
+      "[START_DIR]/chromiumos_workspace/chroot"
+    ],
+    "infra_step": true,
+    "name": "confgure chroot path (2).link workspace checkout to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[CACHE]/cros_sdk/chroot",
+      "[START_DIR]/chromiumos_master/chroot"
+    ],
+    "infra_step": true,
+    "name": "confgure chroot path (2).link master checkout to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -629,6 +705,46 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "confgure chroot path (3)"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[CLEANUP]/chroot_ws/chroot",
+      "[START_DIR]/chromiumos_workspace/chroot"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "confgure chroot path (3).link workspace checkout to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[CLEANUP]/chroot_ws/chroot",
+      "[START_DIR]/chromiumos_master/chroot"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "confgure chroot path (3).link master checkout to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -644,8 +760,6 @@
       "--nouse-image",
       "--chroot",
       "[CLEANUP]/chroot_ws/chroot",
-      "--workspace",
-      "[CLEANUP]/cros_test",
       "--",
       "cros_run_vm_test",
       "--debug",

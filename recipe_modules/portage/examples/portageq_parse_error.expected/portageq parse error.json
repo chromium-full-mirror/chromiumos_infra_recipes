@@ -1,5 +1,43 @@
 [
   {
+    "cmd": [],
+    "name": "confgure chroot path"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[START_DIR]/cros_sdk/chroot",
+      "[START_DIR]/chromiumos_workspace/chroot"
+    ],
+    "infra_step": true,
+    "name": "confgure chroot path.link workspace checkout to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[START_DIR]/cros_sdk/chroot",
+      "[START_DIR]/chromiumos_master/chroot"
+    ],
+    "infra_step": true,
+    "name": "confgure chroot path.link master checkout to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
