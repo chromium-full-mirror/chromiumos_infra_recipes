@@ -32,7 +32,7 @@ def GenTests(api):
       plan=api.test_plan.example_test_plan(
           api.test_plan.example_vm_unit(),
           api.test_plan.example_tast_vm_unit(),
-      )) + api.step_data('run plan.schedule.vm.test-suite',
+      )) + api.step_data('run plan.schedule.build_target.vm.test-suite',
                          api.swarming.trigger(['vm-test'])) + api.step_data(
                              'run plan.collect.collect tasks',
                              api.swarming.collect(
@@ -42,13 +42,13 @@ def GenTests(api):
       api.test('failed_test') + api.properties(
           plan=api.test_plan.example_test_plan(
               api.test_plan.example_vm_unit(test_suites=['suite']))) +
-      api.step_data('run plan.schedule.vm.suite',
+      api.step_data('run plan.schedule.build_target.vm.suite',
                     api.swarming.trigger(['vm-test'])) +
       api.test_plan.simulated_collect_output('run plan.collect', failure=True))
 
   yield (api.test('fail_schedule') + api.properties(
       plan=api.test_plan.example_test_plan(
-          api.test_plan.example_hw_unit(test_suites=[
-              'suite1'
-          ], build_target='build_target', image_name='image.bin'),)) +
-         api.test_plan.fail_schedule('run plan.schedule', test_suite='suite1'))
+          api.test_plan.example_hw_unit(
+              test_suites=['suite1'], build_target='build_target',
+              image_name='image.bin'),)) + api.test_plan.fail_schedule(
+                  'run plan.schedule.build_target', test_suite='suite1'))

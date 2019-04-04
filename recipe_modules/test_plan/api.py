@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from itertools import groupby
+
 from recipe_engine import recipe_api
 
 from google.protobuf import json_format as jsonpb
@@ -85,7 +87,7 @@ class RunPlanApi(recipe_api.RecipeApi):
 
   def schedule_tests(self, name, test_plan):
     """Run all test plan steps.
-    
+
     When not running in deferred context, aborts on the first
     scheduling failure.
 
@@ -96,16 +98,20 @@ class RunPlanApi(recipe_api.RecipeApi):
     Returns:
       list[swarming.TaskRequestMetadata]
     """
+    tasks = []
     with self.m.step.nest(name):
-      tasks = []
-      for test_unit in test_plan.test_unit:
-        test_env, step = self._step(test_unit)
-        task = step(test_env, test_unit)
-        tasks.append(task)
+      for build_target, test_units in groupby(
+          test_plan.test_unit,
+          lambda unit: unit.scheduling_requirements.build_target):
+        with self.m.step.nest(build_target):
+          for test_unit in test_units:
+            test_env, step = self._step(test_unit)
+            task = step(test_env, test_unit)
+            tasks.append(task)
 
-      # Temporarily flatten list, as other code depends on a flat structure.
-      # TODO(yshaul): Remove when other code handle sublists
-      return [task for sublist in tasks for task in sublist]
+    # Temporarily flatten list, as other code depends on a flat structure.
+    # TODO(yshaul): Remove when other code handle sublists
+    return [task for sublist in tasks for task in sublist]
 
   def collect_tests(self, name, tasks):
     """Waits for a set of tests to complete, and returns their results.

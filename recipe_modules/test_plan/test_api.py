@@ -68,15 +68,15 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
         MessageToDict(test_plan)))
 
   def simulate_test_builds(self, name):
-    # TODO(yshaul) Use HW plans as well, when skylab starts returning
-    # the correct data. crbug/935244
-    test_unit = self.example_vm_unit(test_suites=['suite1', 'suite2'])
+    test_suites = ['suite1', 'suite2']
+    test_unit = self.example_vm_unit(test_suites=test_suites)
 
     result = self.simulated_generate_output('%s.generate' % name,
                                             self.example_test_plan(test_unit))
 
     for idx, test in enumerate(test_unit.vm_test_cfg.vm_test):
-      substep_name = 'vm.%s' % test.test_suite
+      substep_name = '%s.vm.%s' % (
+          test_unit.scheduling_requirements.build_target, test.test_suite)
       result += self.step_data(
           '%s.schedule.%s' % (name, substep_name),
           self.m.swarming.trigger(['task - %s' % str(idx)]))

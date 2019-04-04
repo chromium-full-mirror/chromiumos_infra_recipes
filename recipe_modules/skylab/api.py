@@ -58,13 +58,10 @@ class SkylabApi(recipe_api.RecipeApi):
       for test in test_unit.hw_test_cfg.hw_test:
         test_suite = test.suite
         cmd = [
-            self._skylab_path,
-            'create-suite',
-            '-json',
-            '-pool', SKYLAB_SWARMING_POOL,
-            '-image', test_unit.build_payload.image[0].image_name,
-            '-board', test_unit.scheduling_requirements.build_target,
-            test_suite
+            self._skylab_path, 'create-suite', '-json', '-pool',
+            SKYLAB_SWARMING_POOL, '-image',
+            test_unit.build_payload.image[0].image_name, '-board',
+            test_unit.scheduling_requirements.build_target, test_suite
         ]
 
         result = self.m.easy.stdout_step(

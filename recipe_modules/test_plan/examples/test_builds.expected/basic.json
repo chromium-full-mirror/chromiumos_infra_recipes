@@ -154,16 +154,23 @@
   },
   {
     "cmd": [],
-    "name": "test_non-deferred.schedule.vm",
+    "name": "test_non-deferred.schedule.build_target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test_non-deferred.schedule.vm.ensure swarming",
+    "name": "test_non-deferred.schedule.build_target.vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test_non-deferred.schedule.build_target.vm.ensure swarming",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -178,9 +185,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_non-deferred.schedule.vm.ensure swarming.ensure_installed",
+    "name": "test_non-deferred.schedule.build_target.vm.ensure swarming.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -206,9 +213,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_non-deferred.schedule.vm.suite1",
+    "name": "test_non-deferred.schedule.build_target.vm.suite1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -235,9 +242,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_non-deferred.schedule.vm.suite2",
+    "name": "test_non-deferred.schedule.build_target.vm.suite2",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -372,9 +379,16 @@
   },
   {
     "cmd": [],
-    "name": "test_deferred.schedule.vm",
+    "name": "test_deferred.schedule.build_target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test_deferred.schedule.build_target.vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -389,9 +403,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_deferred.schedule.vm.suite1",
+    "name": "test_deferred.schedule.build_target.vm.suite1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -418,9 +432,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_deferred.schedule.vm.suite2",
+    "name": "test_deferred.schedule.build_target.vm.suite2",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",

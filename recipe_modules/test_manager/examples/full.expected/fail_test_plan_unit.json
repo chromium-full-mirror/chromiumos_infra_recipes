@@ -373,16 +373,23 @@
   },
   {
     "cmd": [],
-    "name": "test.test builds - child_builder1.schedule.vm",
+    "name": "test.test builds - child_builder1.schedule.build_target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test.test builds - child_builder1.schedule.vm.ensure swarming",
+    "name": "test.test builds - child_builder1.schedule.build_target.vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test.test builds - child_builder1.schedule.build_target.vm.ensure swarming",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -397,9 +404,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test.test builds - child_builder1.schedule.vm.ensure swarming.ensure_installed",
+    "name": "test.test builds - child_builder1.schedule.build_target.vm.ensure swarming.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -425,9 +432,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test.test builds - child_builder1.schedule.vm.suite1",
+    "name": "test.test builds - child_builder1.schedule.build_target.vm.suite1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -454,9 +461,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test.test builds - child_builder1.schedule.vm.suite2",
+    "name": "test.test builds - child_builder1.schedule.build_target.vm.suite2",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -612,9 +619,16 @@
   },
   {
     "cmd": [],
-    "name": "test.test builds - child_builder2.schedule.vm",
+    "name": "test.test builds - child_builder2.schedule.build_target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test.test builds - child_builder2.schedule.build_target.vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -629,9 +643,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test.test builds - child_builder2.schedule.vm.suite1",
+    "name": "test.test builds - child_builder2.schedule.build_target.vm.suite1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -658,9 +672,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test.test builds - child_builder2.schedule.vm.suite2",
+    "name": "test.test builds - child_builder2.schedule.build_target.vm.suite2",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
