@@ -83,7 +83,7 @@
       "/path/to/tmp/json",
       "symlink",
       "[START_DIR]/cros_sdk/chroot",
-      "[START_DIR]/chromiumos_workspace/chroot"
+      "[START_DIR]/chromiumos_master/chroot"
     ],
     "infra_step": true,
     "name": "confgure chroot path.link chromiumos_master to chroot",
@@ -175,7 +175,7 @@
       "/path/to/tmp/json",
       "symlink",
       "[CACHE]/cros_chroot/chroot",
-      "[START_DIR]/chromiumos_workspace/chroot"
+      "[START_DIR]/chromiumos_master/chroot"
     ],
     "infra_step": true,
     "name": "confgure chroot path (2).link chromiumos_master to chroot",
