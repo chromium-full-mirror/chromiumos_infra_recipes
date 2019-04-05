@@ -26,6 +26,7 @@ class SyncChromeApi(recipe_api.RecipeApi):
     Args:
       chrome_root (str): Directory to sync the Chrome source code to.
     """
+    # TODO(crbug.com/945606): Call sync_chrome in build_target recipe.
     # portageq must be run with cwd inside a chromiumos source root.
     revision = self.m.portage.portageq_best_visible_version(
         'chromeos-base/chromeos-chrome')

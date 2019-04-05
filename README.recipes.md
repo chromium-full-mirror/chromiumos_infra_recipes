@@ -324,7 +324,7 @@ Returns a Path to the cros_sdk script.
 
 Initialize CrosSdkApi.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#77)(self, name, cmd, env=None, workspace=None, chrome_root=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#77)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -334,7 +334,6 @@ Args:
   * name (str): The name of the step.
   * cmd (list): A command and arguments to run.
   * env (dict): A dict of environment variables to pass to the command.
-  * chrome_root (Path): A path to mount as the chroot's Chrome checkout.
   * workspace (Path): A path to mount to the chroot's workspace directory.
   * kwargs: Keyword arguments to pass to __call__.
 

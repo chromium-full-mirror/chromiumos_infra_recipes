@@ -74,8 +74,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
     self.m.file.symlink('link %s to chroot' % checkout_basename,
                         self._chroot_path, checkout_path.join('chroot'))
 
-  def run(self, name, cmd, env=None, workspace=None, chrome_root=None,
-          **kwargs):
+  def run(self, name, cmd, env=None, workspace=None, **kwargs):
     """Runs a command in a cros_sdk chroot.
 
     It is assumed the current working directory is within a chromiumos checkout.
@@ -84,7 +83,6 @@ class CrosSdkApi(recipe_api.RecipeApi):
       * name (str): The name of the step.
       * cmd (list): A command and arguments to run.
       * env (dict): A dict of environment variables to pass to the command.
-      * chrome_root (Path): A path to mount as the chroot's Chrome checkout.
       * workspace (Path): A path to mount to the chroot's workspace directory.
       * kwargs: Keyword arguments to pass to __call__.
 
@@ -94,7 +92,5 @@ class CrosSdkApi(recipe_api.RecipeApi):
     args = []
     if env is not None:
       args += ['%s=%s' % x for x in env.items()]
-    if chrome_root is not None:
-      args += ['--chrome_root', chrome_root]
     args += ['--'] + cmd
     return self(name, args, **kwargs)

@@ -200,8 +200,6 @@
       "--chroot",
       "[CLEANUP]/test/chroot",
       "PATH=/bin",
-      "--chrome_root",
-      "[CLEANUP]/chrome_root_test",
       "--",
       "ls"
     ],

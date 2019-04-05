@@ -17,8 +17,7 @@ def RunSteps(api):
 
   api.cros_sdk('get cros_sdk help', ['--help'])
   api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},
-                   workspace=workspace,
-                   chrome_root=api.path['cleanup'].join('chrome_root_test'))
+                   workspace=workspace)
 
 
 def GenTests(api):
