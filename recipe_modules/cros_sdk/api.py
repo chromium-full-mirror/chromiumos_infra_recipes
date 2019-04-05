@@ -71,8 +71,13 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """
     checkout_basename = self.m.path.basename(checkout_path)
     self.m.file.ensure_directory('ensure %s' % checkout_basename, checkout_path)
+
+    chroot_link = checkout_path.join('chroot')
+    if self.m.path.exists(chroot_link):
+      self.m.file.remove('remove original chroot link', chroot_link)
+
     self.m.file.symlink('link %s to chroot' % checkout_basename,
-                        self._chroot_path, checkout_path.join('chroot'))
+                        self._chroot_path, chroot_link)
 
   def run(self, name, cmd, env=None, workspace=None, **kwargs):
     """Runs a command in a cros_sdk chroot.

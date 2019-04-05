@@ -324,7 +324,7 @@ Returns a Path to the cros_sdk script.
 
 Initialize CrosSdkApi.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#77)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#82)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
