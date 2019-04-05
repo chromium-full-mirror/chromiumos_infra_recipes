@@ -1,25 +1,6 @@
 [
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-o",
-      "GSUtil:parallel_composite_upload_threshold=50M",
-      "-m",
-      "----",
-      "rsync",
-      "-r",
-      "gs://chromeos-mirror/gentoo/distfiles/",
-      "[CACHE]/gentoo_distfiles"
-    ],
-    "infra_step": true,
-    "name": "gsutil Pull distfiles from gs://chromeos-mirror/gentoo/distfiles/"
-  },
-  {
-    "cmd": [
       "rsync",
       "--recursive",
       "--links",

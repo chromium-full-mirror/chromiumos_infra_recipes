@@ -36,15 +36,6 @@ class DupItApi(recipe_api.RecipeApi):
     # https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/master/main.star)
     local_path = self.m.path['cache'].join('gentoo_distfiles')
 
-    # First, we pull the distfiles from existing chromeos cloud storage
-    # distfiles folder. While this may be outdated, it's very fast since we
-    # don't have to rate limit the sync.
-    self.m.gsutil(
-        cmd=['rsync', '-r', self.cloud_storage_uri, local_path],
-        name='Pull distfiles from %s' % self.cloud_storage_uri,
-        parallel_upload=True, multithreaded=True)
-
-    # Rsync from public mirror gentoo distfiles to get the latest.
     rsync_commands = [
         'rsync',
         '--recursive',  # make sure we copy files recursively
