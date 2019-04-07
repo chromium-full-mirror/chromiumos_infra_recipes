@@ -13,10 +13,10 @@
       "--human-readable",
       "--timeout=180",
       "--bwlimit=10m",
-      "rsync://mirrors.tera-byte.com/gentoo/distfiles",
+      "rsync://mirrors.rit.edu/gentoo/distfiles",
       "[CACHE]/gentoo_distfiles"
     ],
-    "name": "Sync distfiles from rsync://mirrors.tera-byte.com/gentoo/distfiles"
+    "name": "Sync distfiles from rsync://mirrors.rit.edu/gentoo/distfiles"
   },
   {
     "cmd": [
