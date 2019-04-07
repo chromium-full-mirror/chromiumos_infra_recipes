@@ -13,6 +13,7 @@ DEPS = [
 def RunSteps(api):
   api.cros_dupit.configure(
       rsync_mirror_address='rsync://mirrors.do.not.exists/distfiles',
+      rsync_mirror_rate_limit='1m',
       cloud_storage_uri='gs://stark-trek/the-ultimate-computer/distfiles/',
       dryrun=True)
   api.cros_dupit.run()

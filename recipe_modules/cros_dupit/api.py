@@ -15,17 +15,20 @@ class DupItApi(recipe_api.RecipeApi):
     super(DupItApi, self).__init__(*args, **kwargs)
     self._dryrun = False
 
-  def configure(self, rsync_mirror_address, cloud_storage_uri, dryrun):
+  def configure(self, rsync_mirror_address, rsync_mirror_rate_limit,
+                cloud_storage_uri, dryrun):
     """Configure the DupIt script module.
 
     Args:
       * rsync_mirror_address: the rsync mirror address that contains gentoo
         distfiles
+      * rsync_mirror_rate_limit: the rate limit of syncing from public mirror.
       * cloud_storage_uri: the cloud storage URI to sync gentoo distfiles to.
       * dryrun (bool): If True, run gsutil updates in a dryrun mode.
     """
     self._dryrun = dryrun
     self._rsync_mirror_address = rsync_mirror_address
+    self._rsync_mirror_rate_limit = rsync_mirror_rate_limit
     self._cloud_storage_uri = cloud_storage_uri
 
   def run(self):
@@ -48,7 +51,7 @@ class DupItApi(recipe_api.RecipeApi):
         '--progress',  # shows progress during transfer
         '--human-readable',
         '--timeout=180',  # IO timeout of 3 minutes
-        '--bwlimit=1m',  # Rate limit so we don't DDOS the target mirror
+        '--bwlimit=%s' % self.rsync_mirror_rate_limit
     ]
     rsync_commands += [self.rsync_mirror_address, local_path]
     self.m.step('Sync distfiles from %s' % self.rsync_mirror_address,
@@ -75,6 +78,10 @@ class DupItApi(recipe_api.RecipeApi):
   @property
   def rsync_mirror_address(self):
     return self._rsync_mirror_address
+
+  @property
+  def rsync_mirror_rate_limit(self):
+    return self._rsync_mirror_rate_limit
 
   @property
   def cloud_storage_uri(self):

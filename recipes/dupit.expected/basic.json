@@ -12,11 +12,11 @@
       "--progress",
       "--human-readable",
       "--timeout=180",
-      "--bwlimit=1m",
-      "rsync://mirrors.rit.edu/gentoo/distfiles",
+      "--bwlimit=10m",
+      "rsync://mirrors.tera-byte.com/gentoo/distfiles",
       "[CACHE]/gentoo_distfiles"
     ],
-    "name": "Sync distfiles from rsync://mirrors.rit.edu/gentoo/distfiles"
+    "name": "Sync distfiles from rsync://mirrors.tera-byte.com/gentoo/distfiles"
   },
   {
     "cmd": [

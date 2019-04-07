@@ -247,23 +247,26 @@ API for DupIt script.
 
 A module for the DupIt script.
 
-&emsp; **@property**<br>&mdash; **def [cloud\_storage\_uri](/recipe_modules/cros_dupit/api.py#79)(self):**
+&emsp; **@property**<br>&mdash; **def [cloud\_storage\_uri](/recipe_modules/cros_dupit/api.py#86)(self):**
 
-&mdash; **def [configure](/recipe_modules/cros_dupit/api.py#18)(self, rsync_mirror_address, cloud_storage_uri, dryrun):**
+&mdash; **def [configure](/recipe_modules/cros_dupit/api.py#18)(self, rsync_mirror_address, rsync_mirror_rate_limit, cloud_storage_uri, dryrun):**
 
 Configure the DupIt script module.
 
 Args:
   * rsync_mirror_address: the rsync mirror address that contains gentoo
     distfiles
+  * rsync_mirror_rate_limit: the rate limit of syncing from public mirror.
   * cloud_storage_uri: the cloud storage URI to sync gentoo distfiles to.
   * dryrun (bool): If True, run gsutil updates in a dryrun mode.
 
-&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#71)(self):**
+&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#74)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#75)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#78)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_dupit/api.py#31)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#82)(self):**
+
+&mdash; **def [run](/recipe_modules/cros_dupit/api.py#34)(self):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#1): [build\_api](#recipe_modules-build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
