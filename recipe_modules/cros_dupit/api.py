@@ -41,16 +41,25 @@ class DupItApi(recipe_api.RecipeApi):
 
     rsync_commands = [
         'rsync',
-        '--recursive',  # make sure we copy files recursively
-        '--links',  # symlinks are copied as symlinks
-        '--safe-links',  # ignore symlinks that points to files outside
-        '--perms',  # preserve files permission
-        '--times',  # preserve modification times
-        '--compress',  # compress files during transfer to save bandwidth
-        '--stats',  # log out file-transfer stats for debugging
-        '--progress',  # shows progress during transfer
+        # Make sure we copy files recursively.
+        '--recursive',
+        # Symlinks are copied as symlinks.
+        '--links',
+        # Ignore symlinks that points to files outside of the root directory.
+        '--safe-links',
+        # Preserve files permission.
+        '--perms',
+        # Preserve modification times.
+        '--times',
+        # Compress files during transfer to save bandwidth.
+        '--compress',
+        # Log out file-transfer stats for debugging.
+        '--stats',
+        # Shows progress during transfer.
+        '--progress',
         '--human-readable',
-        '--timeout=180',  # IO timeout of 3 minutes
+        # IO timeout of 3 minutes.
+        '--timeout=180',
         '--bwlimit=%s' % self.rsync_mirror_rate_limit
     ]
     rsync_commands += [self.rsync_mirror_address, local_path]
