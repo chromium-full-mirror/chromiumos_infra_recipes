@@ -26,7 +26,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
   def _create_failures_payload(self, failed_packages):
     failures = []
     for pkg in failed_packages:
-      failures.append({'rule': 'emerge', 'output_targets': pkg})
+      failures.append({'rule': 'emerge', 'output_targets': [pkg]})
     return {'failures': failures}
 
   def set_build_compile_failure(self, failed_packages):
