@@ -24,6 +24,7 @@
       "--recursive",
       "--links",
       "--safe-links",
+      "--delete",
       "--perms",
       "--times",
       "--compress",

@@ -65,7 +65,7 @@ class DupItApi(recipe_api.RecipeApi):
         '--safe-links',
         # Delete extra files to ensure the local directory's content closely
         # match that of the public mirror.
-
+        '--delete',
         # Preserve files permission.
         '--perms',
         # Preserve modification times.

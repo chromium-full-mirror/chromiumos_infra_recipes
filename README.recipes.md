@@ -98,7 +98,7 @@ API for working with the protobuf-based Build API.
 
 A module for CrOS Build API steps.
 
-&mdash; **def [call\_json](/recipe_modules/build_api/api.py#51)(self, service_method, input_dict, test_output_dict=None):**
+&mdash; **def [call\_json](/recipe_modules/build_api/api.py#50)(self, service_method, input_dict, test_output_dict=None):**
 
 Call a Build API method with JSON serialization.
 
@@ -113,7 +113,7 @@ Args:
 Returns:
   dict: Output data.
 
-&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#91)(self, service_method, input_msg, test_output_data='{}'):**
+&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#90)(self, service_method, input_msg, test_output_data='{}'):**
 
 Call a Build API method with JSON serialization.
 
@@ -247,7 +247,7 @@ API for DupIt script. See the design of this recipe in go/cros-dupit.
 
 A module for the DupIt script.
 
-&emsp; **@property**<br>&mdash; **def [all\_gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#138)(self):**
+&emsp; **@property**<br>&mdash; **def [all\_gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#140)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_dupit/api.py#18)(self, rsync_mirror_address, rsync_mirror_rate_limit, latest_gs_distfiles_uri, all_gs_distfiles_uri, dryrun):**
 
@@ -264,17 +264,17 @@ Args:
       to store the all Gentoo distfiles.
   * dryrun (bool): If True, run gsutil updates in a dryrun mode.
 
-&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#122)(self):**
+&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/cros_dupit/api.py#124)(self):**
 
-&emsp; **@property**<br>&mdash; **def [latest\_gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#134)(self):**
+&emsp; **@property**<br>&mdash; **def [latest\_gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#136)(self):**
 
-&emsp; **@property**<br>&mdash; **def [local\_distfiles\_cache](/recipe_modules/cros_dupit/api.py#142)(self):**
+&emsp; **@property**<br>&mdash; **def [local\_distfiles\_cache](/recipe_modules/cros_dupit/api.py#144)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#126)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#128)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#130)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#132)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_dupit/api.py#116)(self):**
+&mdash; **def [run](/recipe_modules/cros_dupit/api.py#118)(self):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#1): [build\_api](#recipe_modules-build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
