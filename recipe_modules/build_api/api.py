@@ -37,8 +37,7 @@ class BuildApiApi(recipe_api.RecipeApi):
     # the build API).
     self.m.file.write_raw('write input file', input_path, input_data)
 
-    bin_path = self.m.cros_source.workspace_path.join(
-        'chromite/scripts/build_api')
+    bin_path = self.m.cros_source.workspace_path.join('chromite/bin/build_api')
     cmd = [
         bin_path, '--input-json', input_path, '--output-json', output_path,
         service_method
