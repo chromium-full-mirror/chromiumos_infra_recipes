@@ -62,7 +62,7 @@ class DupItApi(recipe_api.RecipeApi):
     gsutil_rsync_commands = ['rsync', '-r']  # recurse
 
     if self.dryrun:
-      gsutil_rsync_commands += '-n'
+      gsutil_rsync_commands.append('-n')
 
     gsutil_rsync_commands += [local_path, self.cloud_storage_uri]
 

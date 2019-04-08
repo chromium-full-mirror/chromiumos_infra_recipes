@@ -31,8 +31,7 @@
       "----",
       "rsync",
       "-r",
-      "-",
-      "n",
+      "-n",
       "[CACHE]/gentoo_distfiles",
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
