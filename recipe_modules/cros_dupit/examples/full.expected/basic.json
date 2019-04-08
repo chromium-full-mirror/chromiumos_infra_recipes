@@ -1,6 +1,25 @@
 [
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "gs://stark-trek/mini-cache/latest_distfiles/",
+      "[CACHE]/gentoo_distfiles"
+    ],
+    "infra_step": true,
+    "name": "gsutil Download distfiles from gs://stark-trek/mini-cache/latest_distfiles/"
+  },
+  {
+    "cmd": [
       "rsync",
       "--recursive",
       "--links",
@@ -36,7 +55,27 @@
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
     "infra_step": true,
-    "name": "gsutil Upload distfiles to gs://stark-trek/the-ultimate-computer/distfiles/"
+    "name": "gsutil Upload new distfiles to gs://stark-trek/the-ultimate-computer/distfiles/"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "-d",
+      "[CACHE]/gentoo_distfiles",
+      "gs://stark-trek/mini-cache/latest_distfiles/"
+    ],
+    "infra_step": true,
+    "name": "gsutil Sync latest distfiles to gs://stark-trek/mini-cache/latest_distfiles/"
   },
   {
     "jsonResult": null,

@@ -1,6 +1,25 @@
 [
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "gs://chromeos-mirror/gentoo/latest_distfiles/",
+      "[CACHE]/gentoo_distfiles"
+    ],
+    "infra_step": true,
+    "name": "gsutil Download distfiles from gs://chromeos-mirror/gentoo/latest_distfiles/"
+  },
+  {
+    "cmd": [
       "rsync",
       "--recursive",
       "--links",
@@ -36,7 +55,27 @@
       "gs://chromeos-mirror/gentoo/distfiles/"
     ],
     "infra_step": true,
-    "name": "gsutil Upload distfiles to gs://chromeos-mirror/gentoo/distfiles/"
+    "name": "gsutil Upload new distfiles to gs://chromeos-mirror/gentoo/distfiles/"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "-d",
+      "[CACHE]/gentoo_distfiles",
+      "gs://chromeos-mirror/gentoo/latest_distfiles/"
+    ],
+    "infra_step": true,
+    "name": "gsutil Sync latest distfiles to gs://chromeos-mirror/gentoo/latest_distfiles/"
   },
   {
     "jsonResult": null,

@@ -14,7 +14,8 @@ def RunSteps(api):
   api.cros_dupit.configure(
       rsync_mirror_address='rsync://mirrors.do.not.exists/distfiles',
       rsync_mirror_rate_limit='1m',
-      cloud_storage_uri='gs://stark-trek/the-ultimate-computer/distfiles/',
+      latest_gs_distfiles_uri='gs://stark-trek/mini-cache/latest_distfiles/',
+      all_gs_distfiles_uri='gs://stark-trek/the-ultimate-computer/distfiles/',
       dryrun=True)
   api.cros_dupit.run()
   assert api.cros_dupit.dryrun == True
