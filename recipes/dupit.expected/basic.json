@@ -32,7 +32,7 @@
       "--progress",
       "--human-readable",
       "--timeout=180",
-      "--bwlimit=10m",
+      "--bwlimit=1m",
       "rsync://mirrors.rit.edu/gentoo/distfiles",
       "[CACHE]/gentoo_distfiles"
     ],
