@@ -34,6 +34,16 @@ class InfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "arm-generic-postsubmit",
+                    "branch": "master",
+                    "type": "POSTSUBMIT"
+                  },
+                  "general": {
+                    "critical": false
+                  }
+                },
+                {
+                  "id": {
                     "name": "postsubmit-orchestrator",
                     "branch": "master",
                     "type": "POSTSUBMIT"

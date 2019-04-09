@@ -383,10 +383,18 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"builder\": \"amd64-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"critical\": \"YES\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"8922054662172514000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"builder\": \"arm-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"critical\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"8922054662172514001\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
@@ -423,7 +431,12 @@
     ]
   },
   {
-    "jsonResult": null,
+    "failure": {
+      "failure": {
+        "step": ""
+      },
+      "humanReason": "Child builder failed: builder: \"amd64-generic-postsubmit\"\n"
+    },
     "name": "$result"
   }
 ]
