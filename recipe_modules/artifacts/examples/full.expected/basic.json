@@ -40,6 +40,7 @@
   },
   {
     "cmd": [
+      "sudo",
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
@@ -133,6 +134,7 @@
   },
   {
     "cmd": [
+      "sudo",
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",

@@ -39,7 +39,12 @@ class BuildApiApi(recipe_api.RecipeApi):
 
     bin_path = self.m.cros_source.workspace_path.join('chromite/bin/build_api')
     cmd = [
-        bin_path, '--input-json', input_path, '--output-json', output_path,
+        'sudo',  # TODO(crbug.com/950959): Do not run as root.
+        bin_path,
+        '--input-json',
+        input_path,
+        '--output-json',
+        output_path,
         service_method
     ]
     self.m.step('build_api %s' % service_method, cmd)
