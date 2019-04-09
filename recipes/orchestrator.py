@@ -48,18 +48,18 @@ PROPERTIES = {
 }
 
 
-def _is_critical_failure(build):
+def _is_critical_failure(api, build):
   """Returns true if a build should fail the orchestrator run.
 
   Checks if the status was not SUCCESS (i.e. it was FAILURE, INFRA_FAILURE,
-  STATUS_UNSPECIFIED, etc.) and the build was not non-critical (use a double
-  negative so both NO and UNSET cause failures).
+  STATUS_UNSPECIFIED, etc.) and the build was critical.
 
   Args:
+    * api (object): See RunSteps documentation.
     * build (Build proto): The completed build to check.
   """
-  # TODO(crbug.com/950061): Use the buildbucket helper fn. to check critical.
-  return build.status != common_pb2.SUCCESS and build.critical != common_pb2.NO
+  return build.status != common_pb2.SUCCESS and api.buildbucket.is_critical(
+      build)
 
 
 def RunSteps(api, update_manifest_refs):
@@ -88,7 +88,7 @@ def RunSteps(api, update_manifest_refs):
 
     completed_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4)
     for build in completed_builds:
-      if _is_critical_failure(build):
+      if _is_critical_failure(api, build):
         raise api.step.StepFailure('Child builder failed: {}'.format(
             build.builder))
 
@@ -132,51 +132,52 @@ def maybe_update_manifest_ref(api, update_manifest_refs, ref_key):
 
 
 def GenTests(api):
-  yield (api.test('basic') + api.buildbucket.ci_build(
-      project='chromeos', bucket='postsubmit',
-      builder='postsubmit-orchestrator'))
 
-  yield (api.test('updates refs') + api.buildbucket.ci_build(
-      project='chromeos', bucket='postsubmit',
-      builder='postsubmit-orchestrator') + api.properties(update_manifest_refs={
-          'start': 'refs/heads/foo',
-          'success': 'refs/heads/bar'
-      }))
+  def postsubmit_orchestrator_build():
+    """Generate a test build proto for the postsubmit orchestrator."""
+    return api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                    builder='postsubmit-orchestrator')
 
-  yield (api.test('bad update ref') +
-         api.properties(update_manifest_refs={'start': 'foo'}) +
+  yield (api.test('basic') +  #
+         postsubmit_orchestrator_build())
+
+  yield (api.test('updates refs') +  #
+         postsubmit_orchestrator_build() +  #
+         api.properties(update_manifest_refs={
+             'start': 'refs/heads/foo',
+             'success': 'refs/heads/bar'
+         }))
+
+  yield (api.test('bad update ref') +  #
+         api.properties(update_manifest_refs={'start': 'foo'}) +  #
          api.expect_exception("ValueError"))
 
-  yield (api.test('critical child builder fails') + api.buildbucket.ci_build(
-      project='chromeos', bucket='postsubmit',
-      builder='postsubmit-orchestrator') +
-         api.buildbucket.simulated_collect_output(
-             [
-                 build_pb2.Build(
-                     id=8922054662172514000, builder=build_pb2.BuilderID(
-                         builder='amd64-generic-postsubmit',),
-                     status=common_pb2.FAILURE, critical=common_pb2.YES),
-                 build_pb2.Build(
-                     id=8922054662172514001, builder=build_pb2.BuilderID(
-                         builder='arm-generic-postsubmit',),
-                     status=common_pb2.SUCCESS, critical=common_pb2.NO),
-             ],
-             step_name='buildbucket.run.collect',
-         ))
+  yield (
+      api.test('critical child builder fails') +  #
+      postsubmit_orchestrator_build() +  #
+      api.buildbucket.simulated_collect_output(
+          [
+              build_pb2.Build(id=8922054662172514000, builder={
+                  'builder': 'amd64-generic-postsubmit'
+              }, status=common_pb2.FAILURE, critical=common_pb2.YES),
+              build_pb2.Build(id=8922054662172514001, builder={
+                  'builder': 'arm-generic-postsubmit'
+              }, status=common_pb2.SUCCESS, critical=common_pb2.NO),
+          ],
+          step_name='buildbucket.run.collect',
+      ))
 
-  yield (api.test('non-critical child builder fails') +
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='postsubmit-orchestrator') +
-         api.buildbucket.simulated_collect_output(
-             [
-                 build_pb2.Build(
-                     id=8922054662172514000, builder=build_pb2.BuilderID(
-                         builder='amd64-generic-postsubmit',),
-                     status=common_pb2.SUCCESS, critical=common_pb2.YES),
-                 build_pb2.Build(
-                     id=8922054662172514001, builder=build_pb2.BuilderID(
-                         builder='arm-generic-postsubmit',),
-                     status=common_pb2.FAILURE, critical=common_pb2.NO),
-             ],
-             step_name='buildbucket.run.collect',
-         ))
+  yield (
+      api.test('non-critical child builder fails') +  #
+      postsubmit_orchestrator_build() +  #
+      api.buildbucket.simulated_collect_output(
+          [
+              build_pb2.Build(id=8922054662172514000, builder={
+                  'builder': 'amd64-generic-postsubmit'
+              }, status=common_pb2.SUCCESS, critical=common_pb2.YES),
+              build_pb2.Build(id=8922054662172514001, builder={
+                  'builder': 'arm-generic-postsubmit'
+              }, status=common_pb2.FAILURE, critical=common_pb2.NO),
+          ],
+          step_name='buildbucket.run.collect',
+      ))
