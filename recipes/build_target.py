@@ -87,17 +87,24 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
 
       if upload_artifacts:
         # TODO(crbug.com/905039): Read artifacts to upload from BuilderConfig.
-        api.cros_artifacts.upload_artifacts('upload dummy artifacts',
-                                            BuildTarget(name=build_target_name),
-                                            'dummy', [
-                                                'image-zip',
-                                                'test-update-payloads',
-                                                'autotest-files',
-                                                'tast-files',
-                                                'pinned-guest-images',
-                                                'firmware',
-                                                'ebuild-logs',
-                                            ])
+        artifacts_bucket, artifacts_path = api.cros_artifacts.upload_artifacts(
+            'upload dummy artifacts', BuildTarget(name=build_target_name),
+            'dummy', [
+                'image-zip',
+                'test-update-payloads',
+                'autotest-files',
+                'tast-files',
+                'pinned-guest-images',
+                'firmware',
+                'ebuild-logs',
+            ])
+        res = api.step('set output artifacts', cmd=None)
+        res.presentation.properties['artifacts'] = {
+            'gs_bucket': artifacts_bucket,
+            'gs_path': artifacts_path,
+            # TODO(evanhernandez): Also output dict mapping artifact type to
+            # file name.
+        }
 
       prebuilts = build_config.artifacts.prebuilts
       if upload_prebuilts and prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:

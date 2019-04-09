@@ -1024,6 +1024,14 @@
   },
   {
     "cmd": [],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "set output artifacts",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"gs_bucket\": \"gs://chromeos-image-archive\", \"gs_path\": \"amd64-generic-dummy/R99-1234.56.0\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {

@@ -28,9 +28,9 @@ ENDPOINTS_BY_ARTIFACT = {
 class CrosArtifactsApi(recipe_api.RecipeApi):
   """A module for bundling and uploading build artifacts."""
 
-  def _artifacts_uri(self, target, kind):
+  def _artifacts_gs_path(self, target, kind):
     version = self.m.cros_version.read_workspace_version()
-    return 'gs://chromeos-image-archive/%s-%s/%s' % (target.name, kind, version)
+    return '%s-%s/%s' % (target.name, kind, version)
 
   def _bundle_artifact(self, artifact, target, path):
     """Defer to the build API to bundle the given artifact."""
@@ -58,11 +58,17 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           This affects where the artifacts are placed in Google Storage.
       artifacts (list[str]): List of artifacts to upload. See build config
           for options.
+
+    Returns:
+      tuple(str, str): GS bucket and GS path at which artifacts were uploaded.
     """
     with self.m.step.nest(name):
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
       for artifact in artifacts:
         self._bundle_artifact(artifact, target, staging_root)
-      upload_uri = self._artifacts_uri(target, kind)
+      upload_bucket = 'gs://chromeos-image-archive'
+      upload_path = self._artifacts_gs_path(target, kind)
+      upload_uri = '%s/%s' % (upload_bucket, upload_path)
       self.m.gsutil(['rsync', staging_root, upload_uri], parallel_upload=True,
                     multithreaded=True)
+      return upload_bucket, upload_path

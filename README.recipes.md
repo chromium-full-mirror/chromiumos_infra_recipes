@@ -98,7 +98,7 @@ API for working with the protobuf-based Build API.
 
 A module for CrOS Build API steps.
 
-&mdash; **def [call\_json](/recipe_modules/build_api/api.py#51)(self, service_method, input_dict, test_output_dict=None):**
+&mdash; **def [call\_json](/recipe_modules/build_api/api.py#55)(self, service_method, input_dict, test_output_dict=None):**
 
 Call a Build API method with JSON serialization.
 
@@ -113,7 +113,7 @@ Args:
 Returns:
   dict: Output data.
 
-&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#91)(self, service_method, input_msg, test_output_data='{}'):**
+&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#95)(self, service_method, input_msg, test_output_data='{}'):**
 
 Call a Build API method with JSON serialization.
 
@@ -152,6 +152,9 @@ Args:
       This affects where the artifacts are placed in Google Storage.
   artifacts (list[str]): List of artifacts to upload. See build config
       for options.
+
+Returns:
+  tuple(str, str): GS bucket and GS path at which artifacts were uploaded.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
 
 [DEPS](/recipe_modules/cros_bisect/__init__.py#1): [recipe\_engine/step][recipe_engine/recipe_modules/step]
