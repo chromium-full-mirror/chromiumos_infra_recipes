@@ -1181,7 +1181,7 @@ Raises:
 
 A module for test execution steps
 
-&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#116)(self, name, tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#117)(self, name, tasks):**
 
 Waits for a set of tests to complete, and returns their results.
 Args:
@@ -1206,7 +1206,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/test_plan/api.py#19)(self):**
 
-&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#74)(self, name, test_plan):**
+&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#75)(self, name, test_plan):**
 
 Shortcut for schedule and collect.
 
@@ -1217,7 +1217,7 @@ Args:
 Raises:
    recipe_api.StepFailure
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#88)(self, name, test_plan):**
+&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#89)(self, name, test_plan):**
 
 Run all test plan steps.
 

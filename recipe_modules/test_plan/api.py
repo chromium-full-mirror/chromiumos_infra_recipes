@@ -60,7 +60,8 @@ class RunPlanApi(recipe_api.RecipeApi):
         self.m.infra_config.get_test_config("source_tree_test_config.cfg"))
     generate_request.target_test_requirements_path = str(
         self.m.infra_config.get_test_config("target_test_requirements.cfg"))
-    generate_request.build_report_path.add().file_path = str(build_report_path)
+    # TODO: Replace instances of build_report_path with buildbucket_build_path
+    # generate_request.build_report_path.add().file_path = str(build_report_path)
 
     cmd = [
         self._test_planner_path,

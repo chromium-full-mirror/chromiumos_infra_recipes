@@ -351,7 +351,7 @@
   {
     "cmd": [
       "[START_DIR]/cipd/test_planner/test_planner",
-      "{\"buildReportPath\": [{\"filePath\": \"[CLEANUP]/build_reports/DEADBEEF/build_report.json\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}"
+      "{\"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}"
     ],
     "name": "test.test builds - child_builder2.generate",
     "stdout": "/path/to/tmp/json",

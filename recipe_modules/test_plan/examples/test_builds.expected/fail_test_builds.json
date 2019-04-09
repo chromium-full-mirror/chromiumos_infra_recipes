@@ -109,7 +109,7 @@
   {
     "cmd": [
       "[START_DIR]/cipd/test_planner/test_planner",
-      "{\"buildReportPath\": [{\"filePath\": \"builder\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}"
+      "{\"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}"
     ],
     "name": "test_non-deferred.generate",
     "stdout": "/path/to/tmp/json",
@@ -196,7 +196,7 @@
   {
     "cmd": [
       "[START_DIR]/cipd/test_planner/test_planner",
-      "{\"buildReportPath\": [{\"filePath\": \"builder\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}"
+      "{\"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}"
     ],
     "name": "test_deferred.generate",
     "stdout": "/path/to/tmp/json",
