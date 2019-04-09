@@ -90,6 +90,8 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
         api.cros_artifacts.upload_artifacts('upload dummy artifacts',
                                             BuildTarget(name=build_target_name),
                                             'dummy', [
+                                                'image-zip',
+                                                'test-update-payloads',
                                                 'autotest-files',
                                                 'tast-files',
                                                 'pinned-guest-images',

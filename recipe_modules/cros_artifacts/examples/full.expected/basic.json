@@ -201,7 +201,7 @@
   },
   {
     "cmd": [],
-    "name": "upload test artifacts.bundle autotest-files for upload",
+    "name": "upload test artifacts.bundle image-zip for upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -218,7 +218,7 @@
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "infra_step": true,
-    "name": "upload test artifacts.bundle autotest-files for upload.write input file",
+    "name": "upload test artifacts.bundle image-zip for upload.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -230,6 +230,61 @@
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "chromite.api.ArtifactsService/BundleImageZip"
+    ],
+    "name": "upload test artifacts.bundle image-zip for upload.build_api chromite.api.ArtifactsService/BundleImageZip",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "upload test artifacts.bundle image-zip for upload.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload test artifacts.bundle autotest-files for upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_5\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "upload test artifacts.bundle autotest-files for upload.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "chromite.api.ArtifactsService/BundleAutotestFiles"
     ],
     "name": "upload test artifacts.bundle autotest-files for upload.build_api chromite.api.ArtifactsService/BundleAutotestFiles",
@@ -245,7 +300,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -270,7 +325,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_5\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload test artifacts.bundle tast-files for upload.write input file",
@@ -282,9 +337,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "chromite.api.ArtifactsService/BundleTastFiles"
     ],
     "name": "upload test artifacts.bundle tast-files for upload.build_api chromite.api.ArtifactsService/BundleTastFiles",
@@ -300,7 +355,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -325,7 +380,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_5\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload test artifacts.bundle pinned-guest-images for upload.write input file",
@@ -337,9 +392,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "chromite.api.ArtifactsService/BundlePinnedGuestImages"
     ],
     "name": "upload test artifacts.bundle pinned-guest-images for upload.build_api chromite.api.ArtifactsService/BundlePinnedGuestImages",
@@ -355,7 +410,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -366,7 +421,7 @@
   },
   {
     "cmd": [],
-    "name": "upload test artifacts.bundle test-update-payload for upload",
+    "name": "upload test artifacts.bundle test-update-payloads for upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -380,10 +435,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_5\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "infra_step": true,
-    "name": "upload test artifacts.bundle test-update-payload for upload.write input file",
+    "name": "upload test artifacts.bundle test-update-payloads for upload.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -392,12 +447,12 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "chromite.api.ArtifactsService/BundleTestUpdatePayloads"
     ],
-    "name": "upload test artifacts.bundle test-update-payload for upload.build_api chromite.api.ArtifactsService/BundleTestUpdatePayloads",
+    "name": "upload test artifacts.bundle test-update-payloads for upload.build_api chromite.api.ArtifactsService/BundleTestUpdatePayloads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -410,11 +465,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload test artifacts.bundle test-update-payload for upload.read output file",
+    "name": "upload test artifacts.bundle test-update-payloads for upload.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

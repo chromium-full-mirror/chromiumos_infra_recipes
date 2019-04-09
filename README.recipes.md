@@ -137,11 +137,11 @@ Returns:
 
 API for uploading CrOS build artifacts to Google Storage.
 
-#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#50)(self, name, target, kind, artifacts):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#51)(self, name, target, kind, artifacts):**
 
 Bundle and upload the given artifacts for the given build target.
 

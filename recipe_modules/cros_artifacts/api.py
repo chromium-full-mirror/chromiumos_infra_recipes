@@ -15,7 +15,8 @@ ARTIFACTS_SERVICE = 'chromite.api.ArtifactsService'
 # Note for maintainers: this dictionary must be kept in sync
 # with the Starlark config.
 ENDPOINTS_BY_ARTIFACT = {
-    'test-update-payload': 'BundleTestUpdatePayloads',
+    'image-zip': 'BundleImageZip',
+    'test-update-payloads': 'BundleTestUpdatePayloads',
     'autotest-files': 'BundleAutotestFiles',
     'tast-files': 'BundleTastFiles',
     'pinned-guest-images': 'BundlePinnedGuestImages',

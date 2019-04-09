@@ -18,13 +18,13 @@ def RunSteps(api):
                                       'postsubmit', ['ebuild-logs'])
   api.cros_artifacts.upload_artifacts('upload firmware archive', target,
                                       'postsubmit', ['firmware'])
-  api.cros_artifacts.upload_artifacts('upload test artifacts', target,
-                                      'cq', [
-                                          'autotest-files',
-                                          'tast-files',
-                                          'pinned-guest-images',
-                                          'test-update-payload',
-                                      ])
+  api.cros_artifacts.upload_artifacts('upload test artifacts', target, 'cq', [
+      'image-zip',
+      'autotest-files',
+      'tast-files',
+      'pinned-guest-images',
+      'test-update-payloads',
+  ])
 
 
 def GenTests(api):
