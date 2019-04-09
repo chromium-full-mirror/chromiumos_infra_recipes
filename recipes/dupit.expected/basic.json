@@ -51,7 +51,7 @@
       "----",
       "rsync",
       "-r",
-      "/distfiles/",
+      "[CACHE]/gentoo_distfiles/distfiles",
       "gs://chromeos-mirror/gentoo/distfiles/"
     ],
     "infra_step": true,

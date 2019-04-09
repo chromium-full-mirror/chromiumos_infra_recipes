@@ -108,7 +108,7 @@ class DupItApi(recipe_api.RecipeApi):
       gsutil_rsync_commands.append('-n')
 
     gsutil_rsync_commands += [
-        self.m.path.join(self.local_distfiles_cache, '/distfiles/'),
+        self.m.path.join(self.local_distfiles_cache, 'distfiles'),
         self.all_gs_distfiles_uri
     ]
 
