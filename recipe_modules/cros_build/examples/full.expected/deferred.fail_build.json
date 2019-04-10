@@ -103,7 +103,10 @@
   },
   {
     "cmd": [],
-    "name": "verify builds"
+    "name": "verify builds",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],

@@ -92,6 +92,8 @@ class CrosBuildApi(recipe_api.RecipeApi):
       ]
 
       if failed_builds:
+        presentation = self.m.step.active_result.presentation
+        presentation.status = self.m.step.FAILURE
         raise CompositeBuildFailure('One or more child builders failed',
                                     failed_builds)
 
