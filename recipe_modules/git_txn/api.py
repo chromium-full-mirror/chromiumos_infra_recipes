@@ -106,6 +106,7 @@ class GitTxnApi(recipe_api.RecipeApi):
       TooManyAttempts: if the number of attempts exceeds |retries|.
     """
     def update_callback():
+      self.m.file.remove('try remove existing file', dest)
       self.m.file.write_raw('write file', dest, data)
       if not self.m.git.diff_check(dest):
         return False

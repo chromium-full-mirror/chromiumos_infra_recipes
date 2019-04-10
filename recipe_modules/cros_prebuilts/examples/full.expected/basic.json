@@ -260,6 +260,23 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
+      "remove",
+      "[START_DIR]/BINHOST.conf"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.git transaction.try remove existing file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
       "copy",
       "",
       "[START_DIR]/BINHOST.conf"
