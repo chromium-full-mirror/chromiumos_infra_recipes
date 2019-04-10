@@ -43,7 +43,7 @@
       "-pool",
       "ChromeOSSkylab",
       "-image",
-      "image.bin",
+      "path/to/artifact",
       "-board",
       "build_target",
       "suite1"
@@ -62,7 +62,7 @@
       "-pool",
       "ChromeOSSkylab",
       "-image",
-      "image.bin",
+      "path/to/artifact",
       "-board",
       "build_target",
       "suite2"

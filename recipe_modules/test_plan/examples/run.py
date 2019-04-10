@@ -49,6 +49,6 @@ def GenTests(api):
   yield (api.test('fail_schedule') + api.properties(
       plan=api.test_plan.example_test_plan(
           api.test_plan.example_hw_unit(
-              test_suites=['suite1'], build_target='build_target',
-              image_name='image.bin'),)) + api.test_plan.fail_schedule(
+              test_suites=['suite1'], build_target='build_target'))) +
+              api.test_plan.fail_schedule(
                   'run plan.schedule.build_target', test_suite='suite1'))

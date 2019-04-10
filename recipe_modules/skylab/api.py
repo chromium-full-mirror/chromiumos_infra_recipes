@@ -60,7 +60,7 @@ class SkylabApi(recipe_api.RecipeApi):
         cmd = [
             self._skylab_path, 'create-suite', '-json', '-pool',
             SKYLAB_SWARMING_POOL, '-image',
-            test_unit.build_payload.image[0].image_name, '-board',
+            test_unit.build_payload.artifacts_gs_path, '-board',
             test_unit.scheduling_requirements.build_target, test_suite
         ]
 

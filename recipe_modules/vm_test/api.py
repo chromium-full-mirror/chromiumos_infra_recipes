@@ -39,7 +39,7 @@ class VMTestApi(recipe_api.RecipeApi):
                 test.test_suite,
                 build_target=test_unit.scheduling_requirements.build_target,
                 test_suite=test.test_suite,
-                gs_path=test_unit.build_payload.artifact_path, test_type='vm'))
+                gs_path=test_unit.build_payload.artifacts_gs_path, test_type='vm'))
 
     return result
 
@@ -61,7 +61,7 @@ class VMTestApi(recipe_api.RecipeApi):
                 test.suite_name,
                 build_target=test_unit.scheduling_requirements.build_target,
                 test_suite=test.suite_name,
-                gs_path=test_unit.build_payload.artifact_path, test_exprs=[
+                gs_path=test_unit.build_payload.artifacts_gs_path, test_exprs=[
                     expr.test_expr for expr in test.tast_test_expr
                 ], test_type='tast_vm'))
 

@@ -21,12 +21,11 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return test_plan
 
   def example_hw_unit(self, test_suites=['test-suite'],
-                      build_target='build_target', image_name='image.bin',
+                      build_target='build_target',
                       artifact_path='path/to/artifact'):
     unit = TestUnit()
     unit.scheduling_requirements.build_target = build_target
-    unit.build_payload.artifact_path = artifact_path
-    unit.build_payload.image.add().image_name = image_name
+    unit.build_payload.artifacts_gs_path = artifact_path
 
     for test_suite in test_suites:
       unit.hw_test_cfg.hw_test.add().suite = test_suite
@@ -34,12 +33,11 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return unit
 
   def example_vm_unit(self, test_env='', test_suites=['test-suite'],
-                      build_target='build_target', image_name='image.bin',
+                      build_target='build_target',
                       artifact_path='path/to/artifact'):
     unit = TestUnit()
     unit.scheduling_requirements.build_target = build_target
-    unit.build_payload.artifact_path = artifact_path
-    unit.build_payload.image.add().image_name = image_name
+    unit.build_payload.artifacts_gs_path = artifact_path
 
     for test_suite in test_suites:
       unit.vm_test_cfg.vm_test.add().test_suite = test_suite
@@ -47,12 +45,11 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return unit
 
   def example_tast_vm_unit(self, test_env='', test_suites=['test-suite'],
-                           build_target='build_target', image_name='image.bin',
+                           build_target='build_target',
                            artifact_path='path/to/artifact'):
     unit = TestUnit()
     unit.scheduling_requirements.build_target = build_target
-    unit.build_payload.artifact_path = artifact_path
-    unit.build_payload.image.add().image_name = image_name
+    unit.build_payload.artifacts_gs_path = artifact_path
 
     for test_suite in test_suites:
       unit.tast_vm_test_cfg.tast_vm_test.add().suite_name = test_suite
