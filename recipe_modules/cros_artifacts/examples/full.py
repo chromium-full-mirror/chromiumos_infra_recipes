@@ -8,6 +8,7 @@ DEPS = [
 ]
 
 from PB.chromiumos import common
+from PB.chromiumos.builder_config import BuilderConfig
 
 
 def RunSteps(api):
@@ -15,15 +16,17 @@ def RunSteps(api):
   target.name = 'target'
 
   api.cros_artifacts.upload_artifacts('upload ebuild logs', target,
-                                      'postsubmit', ['ebuild-logs'])
+                                      'postsubmit',
+                                      [BuilderConfig.Artifacts.EBUILD_LOGS])
   api.cros_artifacts.upload_artifacts('upload firmware archive', target,
-                                      'postsubmit', ['firmware'])
+                                      'postsubmit',
+                                      [BuilderConfig.Artifacts.FIRMWARE])
   api.cros_artifacts.upload_artifacts('upload test artifacts', target, 'cq', [
-      'image-zip',
-      'autotest-files',
-      'tast-files',
-      'pinned-guest-images',
-      'test-update-payloads',
+      BuilderConfig.Artifacts.IMAGE_ZIP,
+      BuilderConfig.Artifacts.AUTOTEST_FILES,
+      BuilderConfig.Artifacts.TAST_FILES,
+      BuilderConfig.Artifacts.PINNED_GUEST_IMAGES,
+      BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD,
   ])
 
 

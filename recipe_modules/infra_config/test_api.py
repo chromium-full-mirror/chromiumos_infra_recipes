@@ -29,7 +29,8 @@ class InfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": true
                   },
                   "artifacts": {
-                    "prebuilts": "PRIVATE"
+                    "prebuilts": "PRIVATE",
+                    "artifact_types": ["IMAGE_ZIP"]
                   }
                 },
                 {

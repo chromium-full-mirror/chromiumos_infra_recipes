@@ -98,7 +98,7 @@ API for working with the protobuf-based Build API.
 
 A module for CrOS Build API steps.
 
-&mdash; **def [call\_json](/recipe_modules/build_api/api.py#65)(self, service_method, input_dict, test_output_dict=None):**
+&mdash; **def [call\_json](/recipe_modules/build_api/api.py#59)(self, service_method, input_dict, test_output_dict=None):**
 
 Call a Build API method with JSON serialization.
 
@@ -113,7 +113,7 @@ Args:
 Returns:
   dict: Output data.
 
-&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#105)(self, service_method, input_msg, test_output_data='{}'):**
+&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#99)(self, service_method, input_msg, test_output_data='{}'):**
 
 Call a Build API method with JSON serialization.
 
@@ -137,11 +137,11 @@ Returns:
 
 API for uploading CrOS build artifacts to Google Storage.
 
-#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#51)(self, name, target, kind, artifacts):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#71)(self, name, target, kind, artifacts):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -150,8 +150,8 @@ Args:
   target (BuildTarget): The build target with artifacts of interest.
   kind (str): The kind of artifacts being uploaded, e.g. 'postsubmit'.
       This affects where the artifacts are placed in Google Storage.
-  artifacts (list[str]): List of artifacts to upload. See build config
-      for options.
+  artifacts (list[ArtifactTypes]): List of artifacts
+      to upload. See build config for options.
 
 Returns:
   tuple(str, str): GS bucket and GS path at which artifacts were uploaded.
@@ -1335,7 +1335,7 @@ Recipe for building a BuildTarget image.
 
 [DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts)
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#14)(api):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -570,7 +570,7 @@
   },
   {
     "cmd": [],
-    "name": "upload dummy artifacts.bundle image-zip for upload",
+    "name": "upload dummy artifacts.bundle IMAGE_ZIP for upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -588,7 +588,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload dummy artifacts.bundle image-zip for upload.write input file",
+    "name": "upload dummy artifacts.bundle IMAGE_ZIP for upload.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -601,7 +601,7 @@
       "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_3/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_3/output_proto.json chromite.api.ArtifactsService/BundleImageZip\""
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "upload dummy artifacts.bundle image-zip for upload.build_api chromite.api.ArtifactsService/BundleImageZip",
+    "name": "upload dummy artifacts.bundle IMAGE_ZIP for upload.build_api chromite.api.ArtifactsService/BundleImageZip",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -619,287 +619,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload dummy artifacts.bundle image-zip for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload dummy artifacts.bundle autotest-files for upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle autotest-files for upload.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_4/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_4/output_proto.json chromite.api.ArtifactsService/BundleAutotestFiles\""
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "upload dummy artifacts.bundle autotest-files for upload.build_api chromite.api.ArtifactsService/BundleAutotestFiles",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle autotest-files for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload dummy artifacts.bundle tast-files for upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle tast-files for upload.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_5/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_5/output_proto.json chromite.api.ArtifactsService/BundleTastFiles\""
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "upload dummy artifacts.bundle tast-files for upload.build_api chromite.api.ArtifactsService/BundleTastFiles",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle tast-files for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload dummy artifacts.bundle pinned-guest-images for upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle pinned-guest-images for upload.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_6/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_6/output_proto.json chromite.api.ArtifactsService/BundlePinnedGuestImages\""
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "upload dummy artifacts.bundle pinned-guest-images for upload.build_api chromite.api.ArtifactsService/BundlePinnedGuestImages",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle pinned-guest-images for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload dummy artifacts.bundle firmware for upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle firmware for upload.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_7/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_7/output_proto.json chromite.api.ArtifactsService/BundleFirmware\""
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "upload dummy artifacts.bundle firmware for upload.build_api chromite.api.ArtifactsService/BundleFirmware",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle firmware for upload.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload dummy artifacts.bundle ebuild-logs for upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle ebuild-logs for upload.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_8/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_8/output_proto.json chromite.api.ArtifactsService/BundleEbuildLogs\""
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "upload dummy artifacts.bundle ebuild-logs for upload.build_api chromite.api.ArtifactsService/BundleEbuildLogs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload dummy artifacts.bundle ebuild-logs for upload.read output file",
+    "name": "upload dummy artifacts.bundle IMAGE_ZIP for upload.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

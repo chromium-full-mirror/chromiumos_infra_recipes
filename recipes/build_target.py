@@ -59,11 +59,11 @@ def _run_cros_sdk_script(api, script, target, *args):
 
 def RunSteps(api, build_target, build_image, upload_artifacts,
              upload_prebuilts):
-  build_target_name = build_target['name']
+  build_target = BuildTarget(**build_target)
   build_config = api.infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
 
-  api.cros_bisect.set_bisect_builder(build_target_name)
+  api.cros_bisect.set_bisect_builder(build_target.name)
 
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
@@ -76,27 +76,20 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
       api.cros_sdk.configure(
           chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
-      _run_cros_sdk_script(api, 'setup_board', build_target_name)
+      _run_cros_sdk_script(api, 'setup_board', build_target.name)
 
       # Packages subset will be present when FindIt asks for bisection build.
       packages = api.cros_bisect.get_packages()
-      _run_cros_sdk_script(api, 'build_packages', build_target_name, *packages)
+      _run_cros_sdk_script(api, 'build_packages', build_target.name, *packages)
 
       if build_image:
-        _run_cros_sdk_script(api, 'build_image', build_target_name)
+        _run_cros_sdk_script(api, 'build_image', build_target.name)
 
       if upload_artifacts:
-        # TODO(crbug.com/905039): Read artifacts to upload from BuilderConfig.
+        # TODO(crbug.com/905039): Stop using dummy artifact kind.
         artifacts_bucket, artifacts_path = api.cros_artifacts.upload_artifacts(
-            'upload dummy artifacts', BuildTarget(name=build_target_name),
-            'dummy', [
-                'image-zip',
-                'autotest-files',
-                'tast-files',
-                'pinned-guest-images',
-                'firmware',
-                'ebuild-logs',
-            ])
+            'upload dummy artifacts', build_target, 'dummy',
+            build_config.artifacts.artifact_types)
         res = api.step('set output artifacts', cmd=None)
         res.presentation.properties['artifacts'] = {
             'gs_bucket': artifacts_bucket,
@@ -109,7 +102,7 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
       if upload_prebuilts and prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
         # TODO(crbug.com/920418): Stop using dummy binhost.
         api.cros_prebuilts.upload_target_prebuilts(
-            BuildTarget(name=build_target_name), 'dummy',
+            build_target, 'dummy',
             private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
 
