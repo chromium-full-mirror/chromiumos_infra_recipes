@@ -31,6 +31,9 @@ class InfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   "artifacts": {
                     "prebuilts": "PRIVATE",
                     "artifact_types": ["IMAGE_ZIP"]
+                  },
+                  "chrome": {
+                    "internal": true
                   }
                 },
                 {

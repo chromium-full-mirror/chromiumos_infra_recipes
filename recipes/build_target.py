@@ -49,12 +49,19 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 ]
 
 
-def _run_cros_sdk_script(api, script, target, *args):
+def _run_cros_sdk_script(api, script, target, builder_config, *args):
   # TODO: Replace with Build API equivalents.
   cmd = ['/mnt/host/source/src/scripts/%s' % script, '--board', target]
   if args:
     cmd.extend(args)
-  api.cros_sdk.run(script, cmd)
+
+  env = {}
+  # TODO(crbug.com/950614): Most (internal) boards are able to find Chrome
+  # prebuilts w/o this USE flag. Remove if it is not needed.
+  if builder_config.chrome.internal:
+    env['USE'] = 'chrome_internal'
+
+  api.cros_sdk.run(script, cmd, env)
 
 
 def RunSteps(api, build_target, build_image, upload_artifacts,
@@ -76,14 +83,16 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
       api.cros_sdk.configure(
           chroot_parent_path=api.path['cache'].join('cros_chroot'))
 
-      _run_cros_sdk_script(api, 'setup_board', build_target.name)
+      _run_cros_sdk_script(api, 'setup_board', build_target.name, build_config)
 
       # Packages subset will be present when FindIt asks for bisection build.
       packages = api.cros_bisect.get_packages()
-      _run_cros_sdk_script(api, 'build_packages', build_target.name, *packages)
+      _run_cros_sdk_script(api, 'build_packages', build_target.name,
+                           build_config, *packages)
 
       if build_image:
-        _run_cros_sdk_script(api, 'build_image', build_target.name)
+        _run_cros_sdk_script(api, 'build_image', build_target.name,
+                             build_config)
 
       if upload_artifacts:
         # TODO(crbug.com/905039): Stop using dummy artifact kind.
