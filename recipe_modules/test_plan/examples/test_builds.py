@@ -12,14 +12,14 @@ def RunSteps(api):
   build_config = api.properties['build_config']
 
   try:
-    api.test_plan.test_builds('test_non-deferred', builder, build_config)
+    api.test_plan.test_builds('test_non-deferred', builder)
   except:
     # Don't fail the test on exception - we have more to do.
     # Observing the exception in the json output is sufficient.
     pass
 
   with api.step.defer_results():
-    api.test_plan.test_builds('test_deferred', builder, build_config)
+    api.test_plan.test_builds('test_deferred', builder)
 
 
 def GenTests(api):

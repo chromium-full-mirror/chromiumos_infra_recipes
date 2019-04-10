@@ -56,8 +56,7 @@ def GenTests(api):
   yield (
       api.test('basic') + api.cros_build.simulated_collect_output(
           builds, step_name='test.collect') + properties +
-      api.test_plan.simulate_test_builds('test.test builds - child_builder1') +
-      api.test_plan.simulate_test_builds('test.test builds - child_builder2'))
+      api.test_plan.simulate_test_builds('test.test builds'))
 
   fail_build_output = [
       api.cros_build.example('child_builder1', build_config[0]),
@@ -69,35 +68,25 @@ def GenTests(api):
       api.test('fail_builder') +
       properties + api.cros_build.simulated_collect_output(
           fail_build_output, step_name='test.collect') +
-      api.test_plan.simulate_test_builds('test.test builds - child_builder1'))
+      api.test_plan.simulate_test_builds('test.test builds'))
 
   yield (api.test('fail_collect_builds') + properties + api.step_data(
       'test.collect', retcode=1))
 
   yield (
-      api.test('fail_report_download') +
-      properties + api.cros_build.simulated_collect_output(
-          builds, step_name='test.collect') +
-      api.cros_build.fail_download_report(builds[0], step_name='test.download')
-      + api.test_plan.simulate_test_builds('test.test builds - child_builder2'))
-
-  yield (
-      api.test('fail_test_plan_run') + properties +
-      api.cros_build.simulated_collect_output(builds, step_name='test.collect')
-      + api.test_plan.fail_test_builds('test.test builds - child_builder1') +
-      api.test_plan.simulate_test_builds('test.test builds - child_builder2'))
+      api.test('fail_test_plan_run') + properties
+      + api.cros_build.simulated_collect_output(builds, step_name='test.collect')
+      + api.test_plan.fail_test_builds('test.test builds'))
 
   yield (
       api.test('fail_test_plan_collect') + properties +
       api.cros_build.simulated_collect_output(builds, step_name='test.collect')
-      + api.test_plan.simulate_test_builds('test.test builds - child_builder1')
-      + api.test_plan.simulate_test_builds('test.test builds - child_builder2')
+      + api.test_plan.simulate_test_builds('test.test builds')
       + api.step_data('test.collect test results', retcode=1))
 
   yield (
       api.test('fail_test_plan_unit') + properties +
       api.cros_build.simulated_collect_output(builds, step_name='test.collect')
-      + api.test_plan.simulate_test_builds('test.test builds - child_builder1')
-      + api.test_plan.simulate_test_builds('test.test builds - child_builder2')
+      + api.test_plan.simulate_test_builds('test.test builds')
       + api.test_plan.simulated_collect_output('test.collect test results',
                                                failure=True))

@@ -64,8 +64,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return self.step_data('%s.%s' % (name, substep), retcode=1)
 
   def simulated_generate_output(self, name, test_plan):
-    return self.step_data(name, stdout=self.m.json.output(
-        MessageToDict(test_plan)))
+    return self.step_data(name, self.m.json.output(MessageToDict(test_plan)))
 
   def simulate_test_builds(self, name):
     test_suites = ['suite1', 'suite2']

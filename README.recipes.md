@@ -1140,13 +1140,13 @@ Args:
   chrome_root (str): Directory to sync the Chrome source code to.
 ### *recipe_modules* / [test\_manager](/recipe_modules/test_manager)
 
-[DEPS](/recipe_modules/test_manager/__init__.py#1): [cros\_build](#recipe_modules-cros_build), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/test_manager/__init__.py#1): [cros\_build](#recipe_modules-cros_build), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Api for coordinating test execution steps.
 
-#### **class [TestManagerApi](/recipe_modules/test_manager/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TestManagerApi](/recipe_modules/test_manager/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [run\_tests](/recipe_modules/test_manager/api.py#15)(self, builds, step_name='run tests'):**
+&mdash; **def [run\_tests](/recipe_modules/test_manager/api.py#17)(self, builds, step_name='run tests'):**
 
 Shortcut for schedule_tests + collect_tests.
 
@@ -1157,17 +1157,17 @@ Args:
 Returns:
   list[swarming.TaskResult]
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_manager/api.py#34)(self, builds):**
+&mdash; **def [schedule\_tests](/recipe_modules/test_manager/api.py#36)(self, builds):**
 
 Schedule tests for successful builds.
 
 Args:
-  * builds (list[build_pb2.Build]): List of builds to test.
+  * builds (generator or list of build_pb2.Build): builds to test.
 
 Returns:
   Tuple(list[swarming.TaskRequestMetadata], list[str])
 
-&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#63)(self, test_results):**
+&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#67)(self, test_results):**
 
 Logs test status to UI, and raises on failed tests.
 
@@ -1184,7 +1184,7 @@ Raises:
 
 A module for test execution steps
 
-&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#117)(self, name, tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#121)(self, name, tasks):**
 
 Waits for a set of tests to complete, and returns their results.
 Args:
@@ -1195,21 +1195,21 @@ Args:
 Returns:
    list[swarming.TaskResult]
 
-&mdash; **def [generate](/recipe_modules/test_plan/api.py#45)(self, name, build_report_path, dep_graph):**
+&mdash; **def [generate](/recipe_modules/test_plan/api.py#45)(self, name, build_proto_paths):**
 
 Generate test plan.
 
 Args:
   * name (str): The step name.
-  * build_report_path (Path): Path to build report.
-  * dep_graph (dict): Full dep graph.
+  * build_proto_paths (list(Path)): Paths to buildbucket build protos
+      stored as JSON files.
 
 Returns:
   GenerateTestPlanResponse of test plan.
 
 &mdash; **def [initialize](/recipe_modules/test_plan/api.py#19)(self):**
 
-&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#75)(self, name, test_plan):**
+&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#79)(self, name, test_plan):**
 
 Shortcut for schedule and collect.
 
@@ -1220,7 +1220,7 @@ Args:
 Raises:
    recipe_api.StepFailure
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#89)(self, name, test_plan):**
+&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#93)(self, name, test_plan):**
 
 Run all test plan steps.
 
@@ -1234,14 +1234,14 @@ Args:
 Returns:
   list[swarming.TaskRequestMetadata]
 
-&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#27)(self, name, build_report_path, dep_graph):**
+&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#27)(self, name, build_proto_paths):**
 
 Shortcut for generate and schedule.
 
 Args:
   * name (str): The step name.
-  * build_report_path (Path): Path to build report.
-  * dep_graph (dict): Full dep graph.
+  * build_proto_paths (list(Path)): Paths to buildbucket build protos
+      stored as JSON files.
 
 Returns:
   list[swarming.TaskRequestMetadata]

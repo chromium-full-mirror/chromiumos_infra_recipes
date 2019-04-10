@@ -7,8 +7,7 @@ DEPS = ['test_plan']
 
 
 def RunSteps(api):
-  # TODO(yshaul): Add build_report and dep_graph when available.
-  api.test_plan.generate('generate plan', None, None)
+  api.test_plan.generate('generate plan', ['/path/to/build/json/file'])
 
 
 def GenTests(api):

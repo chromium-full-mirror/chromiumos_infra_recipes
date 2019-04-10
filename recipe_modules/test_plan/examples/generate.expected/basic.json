@@ -90,10 +90,12 @@
   {
     "cmd": [
       "[START_DIR]/cipd/test_planner/test_planner",
-      "{\"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}"
+      "--input_json",
+      "{\"buildbucketBuildPath\": [{\"filePath\": \"/path/to/build/json/file\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
+      "--output_json",
+      "/path/to/tmp/json"
     ],
     "name": "generate plan",
-    "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"

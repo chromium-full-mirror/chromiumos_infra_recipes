@@ -24,13 +24,13 @@ class RunPlanApi(recipe_api.RecipeApi):
         'tast_vm': self.m.vm_test.run_tast_vm_tests,
     }
 
-  def test_builds(self, name, build_report_path, dep_graph):
+  def test_builds(self, name, build_proto_paths):
     """Shortcut for generate and schedule.
 
     Args:
       * name (str): The step name.
-      * build_report_path (Path): Path to build report.
-      * dep_graph (dict): Full dep graph.
+      * build_proto_paths (list(Path)): Paths to buildbucket build protos
+          stored as JSON files.
 
     Returns:
       list[swarming.TaskRequestMetadata]
@@ -39,16 +39,16 @@ class RunPlanApi(recipe_api.RecipeApi):
        step.StepFailure
     """
     with self.m.step.nest(name):
-      test_plan = self.generate('generate', build_report_path, dep_graph)
+      test_plan = self.generate('generate', build_proto_paths)
       return self.schedule_tests('schedule', test_plan)
 
-  def generate(self, name, build_report_path, dep_graph):
+  def generate(self, name, build_proto_paths):
     """Generate test plan.
 
     Args:
       * name (str): The step name.
-      * build_report_path (Path): Path to build report.
-      * dep_graph (dict): Full dep graph.
+      * build_proto_paths (list(Path)): Paths to buildbucket build protos
+          stored as JSON files.
 
     Returns:
       GenerateTestPlanResponse of test plan.
@@ -60,16 +60,20 @@ class RunPlanApi(recipe_api.RecipeApi):
         self.m.infra_config.get_test_config("source_tree_test_config.cfg"))
     generate_request.target_test_requirements_path = str(
         self.m.infra_config.get_test_config("target_test_requirements.cfg"))
-    # TODO: Replace instances of build_report_path with buildbucket_build_path
-    # generate_request.build_report_path.add().file_path = str(build_report_path)
+    for build_proto_path in build_proto_paths:
+      generate_request.buildbucket_build_path.add().file_path = (
+        str(build_proto_path))
 
     cmd = [
         self._test_planner_path,
+        '--input_json',
         self.m.json.input(jsonpb.MessageToDict(generate_request)),
+        '--output_json',
+        self.m.json.output(),
     ]
-    test_plan_res = self.m.step(name, cmd, stdout=self.m.json.output())
-
-    return jsonpb.ParseDict(test_plan_res.stdout, GenerateTestPlanResponse(),
+    test_plan_res = self.m.step(name, cmd)
+    output = test_plan_res.json.output
+    return jsonpb.ParseDict(output, GenerateTestPlanResponse(),
                             ignore_unknown_fields=True)
 
   def run_plan(self, name, test_plan):

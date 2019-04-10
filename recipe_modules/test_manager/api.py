@@ -7,6 +7,8 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+from google.protobuf import json_format as jsonpb
+
 from recipe_engine import recipe_api
 
 
@@ -35,7 +37,7 @@ class TestManagerApi(recipe_api.RecipeApi):
     """Schedule tests for successful builds.
 
     Args:
-      * builds (list[build_pb2.Build]): List of builds to test.
+      * builds (generator or list of build_pb2.Build): builds to test.
 
     Returns:
       Tuple(list[swarming.TaskRequestMetadata], list[str])
@@ -43,20 +45,22 @@ class TestManagerApi(recipe_api.RecipeApi):
     tasks = []
     schedule_failures = []
 
-    for build in builds:
-      if build.status != common_pb2.SUCCESS:
-        continue
+    # We need to be able to loop over the builds multiple times, so in case the
+    # input builds is a generator, let's use a list instead here.
+    builds_list = list(builds)
 
-      builder = build.builder.builder
-      try:
-        report_path = self.m.cros_build.download_build_report(build)
+    build_protos = []
+    tmp = self.m.path.mkdtemp('buildprotos')
+    for build in builds_list:
+      build_target = build.input.properties.fields['build_target'].struct_value.fields['name'].string_value
+      filename = tmp.join('build_%s.json' % build_target)
+      self.m.file.write_raw('write_build_%s' % build_target, filename, jsonpb.MessageToJson(build))
+      build_protos.append(filename)
 
-        # TODO(yshaul): add dep graph
-        tasks += self.m.test_plan.test_builds('test builds - %s' % builder,
-                                              report_path, dep_graph=None)
-      except recipe_api.StepFailure:
-        schedule_failures.append(builder)
-        continue
+    try:
+      tasks += self.m.test_plan.test_builds('test builds', build_protos)
+    except recipe_api.StepFailure:
+      schedule_failures.extend([b.builder.builder for b in builds_list])
 
     return tasks, schedule_failures
 
