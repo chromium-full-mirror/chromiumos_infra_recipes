@@ -72,7 +72,8 @@ def RunSteps(api, update_manifest_refs):
               builder=child,
               critical=child_builder_config.general.critical.value))
 
-    completed_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4)
+    completed_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4,
+                                           step_name='run child builds')
     api.cros_build.verify_builds(completed_builds)
 
     # Victory! If we've made it this far, the child builders were successful
@@ -147,7 +148,7 @@ def GenTests(api):
                   'builder': 'arm-generic-postsubmit'
               }, status=common_pb2.SUCCESS, critical=common_pb2.NO),
           ],
-          step_name='buildbucket.run.collect',
+          step_name='run child builds.collect',
       ))
 
   yield (
@@ -162,5 +163,5 @@ def GenTests(api):
                   'builder': 'arm-generic-postsubmit'
               }, status=common_pb2.FAILURE, critical=common_pb2.NO),
           ],
-          step_name='buildbucket.run.collect',
+          step_name='run child builds.collect',
       ))

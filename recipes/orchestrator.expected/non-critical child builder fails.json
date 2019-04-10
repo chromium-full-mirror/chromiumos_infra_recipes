@@ -268,7 +268,7 @@
   },
   {
     "cmd": [],
-    "name": "buildbucket.run"
+    "name": "run child builds"
   },
   {
     "cmd": [
@@ -278,7 +278,7 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "buildbucket.run.schedule",
+    "name": "run child builds.schedule",
     "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
@@ -377,7 +377,7 @@
       "8922054662172514001"
     ],
     "infra_step": true,
-    "name": "buildbucket.run.collect",
+    "name": "run child builds.collect",
     "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
