@@ -16,12 +16,9 @@
   {
     "cmd": [
       "sudo",
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "chromite.api.Service/Method"
+      "/bin/bash",
+      "-c",
+      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_1/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_1/output_proto.json chromite.api.Service/Method\""
     ],
     "name": "build_api chromite.api.Service/Method"
   },
@@ -56,12 +53,9 @@
   {
     "cmd": [
       "sudo",
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "chromite.api.TestApiService/InputOutputMethod"
+      "/bin/bash",
+      "-c",
+      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_2/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_2/output_proto.json chromite.api.TestApiService/InputOutputMethod\""
     ],
     "name": "build_api chromite.api.TestApiService/InputOutputMethod"
   },

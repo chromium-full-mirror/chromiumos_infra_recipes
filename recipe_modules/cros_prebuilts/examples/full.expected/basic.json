@@ -48,12 +48,9 @@
   {
     "cmd": [
       "sudo",
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "chromite.api.BinhostService/PrepareBinhostUploads"
+      "/bin/bash",
+      "-c",
+      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_1/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_1/output_proto.json chromite.api.BinhostService/PrepareBinhostUploads\""
     ],
     "name": "upload prebuilts for target.prepare binhost uploads.build_api chromite.api.BinhostService/PrepareBinhostUploads",
     "~followup_annotations": [
@@ -146,12 +143,9 @@
   {
     "cmd": [
       "sudo",
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
-      "chromite.api.BinhostService/SetBinhost"
+      "/bin/bash",
+      "-c",
+      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_3/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_3/output_proto.json chromite.api.BinhostService/SetBinhost\""
     ],
     "name": "upload prebuilts for target.set binhost POSTSUBMIT_BINHOST to gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0/packages.build_api chromite.api.BinhostService/SetBinhost",
     "~followup_annotations": [

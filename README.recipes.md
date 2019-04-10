@@ -98,7 +98,7 @@ API for working with the protobuf-based Build API.
 
 A module for CrOS Build API steps.
 
-&mdash; **def [call\_json](/recipe_modules/build_api/api.py#55)(self, service_method, input_dict, test_output_dict=None):**
+&mdash; **def [call\_json](/recipe_modules/build_api/api.py#65)(self, service_method, input_dict, test_output_dict=None):**
 
 Call a Build API method with JSON serialization.
 
@@ -113,7 +113,7 @@ Args:
 Returns:
   dict: Output data.
 
-&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#95)(self, service_method, input_msg, test_output_data='{}'):**
+&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#105)(self, service_method, input_msg, test_output_data='{}'):**
 
 Call a Build API method with JSON serialization.
 

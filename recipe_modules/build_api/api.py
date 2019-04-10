@@ -38,14 +38,18 @@ class BuildApiApi(recipe_api.RecipeApi):
     self.m.file.write_raw('write input file', input_path, input_data)
 
     bin_path = self.m.cros_source.workspace_path.join('chromite/bin/build_api')
-    cmd = [
-        'sudo',  # TODO(crbug.com/950959): Do not run as root.
-        bin_path,
-        '--input-json',
-        input_path,
-        '--output-json',
-        output_path,
+    build_api_cmd = [
+        bin_path, '--input-json', input_path, '--output-json', output_path,
         service_method
+    ]
+    # TODO(crbug.com/950959): Because the chroot runs as root, the build API
+    # must also run as root, lest it access chroot files with insufficient
+    # permissions. An unfortunate consequence is that we must set the umask
+    # so that files created by the build API are readable by the parent process.
+    # Hence, the horrid command.
+    cmd = [
+        'sudo', '/bin/bash', '-c',
+        '"umask 0000 && %s"' % ' '.join(map(str, build_api_cmd))
     ]
     self.m.step('build_api %s' % service_method, cmd)
 
