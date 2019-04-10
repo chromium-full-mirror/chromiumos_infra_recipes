@@ -20,6 +20,8 @@ DEPS = [
     'dev',
     'git',
     'infra_config',
+    'test_manager',
+    'test_plan',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -74,7 +76,12 @@ def RunSteps(api, update_manifest_refs):
 
     completed_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4,
                                            step_name='run child builds')
-    api.cros_build.verify_builds(completed_builds)
+    # Defer exceptions until the end, so that we recover gracefully
+    # from intermediate failures.
+    with api.step.defer_results():
+      api.cros_build.verify_builds(completed_builds)
+      test_results = api.test_manager.run_tests(completed_builds)
+      api.test_manager.verify_tests(test_results.get_result())
 
     # Victory! If we've made it this far, the child builders were successful
     # and we can update the success manifest ref if it is specified.
@@ -123,14 +130,16 @@ def GenTests(api):
                                     builder='postsubmit-orchestrator')
 
   yield (api.test('basic') +  #
-         postsubmit_orchestrator_build())
+         postsubmit_orchestrator_build() +
+         api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (api.test('updates refs') +  #
          postsubmit_orchestrator_build() +  #
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }))
+         }) +
+         api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (api.test('bad update ref') +  #
          api.properties(update_manifest_refs={'start': 'foo'}) +  #
@@ -149,7 +158,8 @@ def GenTests(api):
               }, status=common_pb2.SUCCESS, critical=common_pb2.NO),
           ],
           step_name='run child builds.collect',
-      ))
+      ) +
+      api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (
       api.test('non-critical child builder fails') +  #
@@ -164,4 +174,5 @@ def GenTests(api):
               }, status=common_pb2.FAILURE, critical=common_pb2.NO),
           ],
           step_name='run child builds.collect',
-      ))
+      ) +
+      api.test_plan.simulate_test_builds('run tests.test builds'))
