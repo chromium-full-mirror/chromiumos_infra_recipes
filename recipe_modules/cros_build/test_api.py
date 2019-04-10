@@ -31,6 +31,7 @@ class CrosBuildTestApi(recipe_test_api.RecipeTestApi):
       build_id=8945511751514863184,
       tags=None,
       status=None,
+      build_target=None,
       input_properties=None,
       output_properties=None,
   ):
@@ -61,12 +62,15 @@ class CrosBuildTestApi(recipe_test_api.RecipeTestApi):
     if input_properties:
       build.input.properties.update(input_properties)
 
+    if build_target:
+      build.input.properties['build_target'] = {'name': build_target}
+
     if output_properties:
       build.output.properties.update(output_properties)
 
     return build
 
-  def example(self, builder, input_properties, status='SUCCESS'):
+  def example(self, builder, input_properties, build_target=None, status='SUCCESS'):
     if not hasattr(self, '_build_id'):
       self._build_id = BASE_BUILD_ID
 
@@ -75,6 +79,7 @@ class CrosBuildTestApi(recipe_test_api.RecipeTestApi):
 
     return self.build_message(
         builder=builder, build_id=build_id, status=status,
+        build_target=build_target,
         input_properties=input_properties,
         output_properties=dict(build_report_hash='DEADBEEF'))
 

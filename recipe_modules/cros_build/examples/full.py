@@ -48,7 +48,8 @@ def GenTests(api):
   contexts = ['non-deferred', 'deferred']
 
   for context in contexts:
-    basic_build = api.cros_build.example('basic_builder', config[0])
+    basic_build = api.cros_build.example(
+      'basic_builder', config[0], build_target='bob')
     deferred = context == 'deferred'
 
     yield (api.test('%s.fail_collect' % context) + api.properties(

@@ -126,7 +126,9 @@
       "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"build_target\": \"build_target1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"build_target\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"name\": \"bt1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": {@@@",
@@ -153,7 +155,9 @@
       "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"build_target\": \"build_target2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"build_target\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"name\": \"bt1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": {@@@",
@@ -175,11 +179,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"status\": \"SUCCESS\", \n  \"builder\": {\n    \"project\": \"project\", \n    \"builder\": \"child_builder1\", \n    \"bucket\": \"bucket\"\n  }, \n  \"createTime\": \"2018-05-25T23:50:17Z\", \n  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \n  \"output\": {\n    \"properties\": {\n      \"build_report_hash\": \"DEADBEEF\"\n    }\n  }, \n  \"input\": {\n    \"properties\": {\n      \"build_target\": {\n        \"name\": null\n      }\n    }, \n    \"gitilesCommit\": {\n      \"project\": \"project\", \n      \"host\": \"host\", \n      \"ref\": \"refs/heads/master\", \n      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"\n    }\n  }, \n  \"id\": \"8922054662172514000\"\n}",
-      "[CLEANUP]/buildprotos_tmp_1/build_.json"
+      "{\n  \"status\": \"SUCCESS\", \n  \"builder\": {\n    \"project\": \"project\", \n    \"builder\": \"child_builder1\", \n    \"bucket\": \"bucket\"\n  }, \n  \"createTime\": \"2018-05-25T23:50:17Z\", \n  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \n  \"output\": {\n    \"properties\": {\n      \"build_report_hash\": \"DEADBEEF\"\n    }\n  }, \n  \"input\": {\n    \"properties\": {\n      \"build_target\": {\n        \"name\": \"bt1\"\n      }\n    }, \n    \"gitilesCommit\": {\n      \"project\": \"project\", \n      \"host\": \"host\", \n      \"ref\": \"refs/heads/master\", \n      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"\n    }\n  }, \n  \"id\": \"8922054662172514000\"\n}",
+      "[CLEANUP]/buildprotos_tmp_1/build_bt1.json"
     ],
     "infra_step": true,
-    "name": "test.write_build_",
+    "name": "test.write_build_bt1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -192,11 +196,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"status\": \"SUCCESS\", \n  \"builder\": {\n    \"project\": \"project\", \n    \"builder\": \"child_builder2\", \n    \"bucket\": \"bucket\"\n  }, \n  \"createTime\": \"2018-05-25T23:50:17Z\", \n  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \n  \"output\": {\n    \"properties\": {\n      \"build_report_hash\": \"DEADBEEF\"\n    }\n  }, \n  \"input\": {\n    \"properties\": {\n      \"build_target\": {\n        \"name\": null\n      }\n    }, \n    \"gitilesCommit\": {\n      \"project\": \"project\", \n      \"host\": \"host\", \n      \"ref\": \"refs/heads/master\", \n      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"\n    }\n  }, \n  \"id\": \"8922054662172514001\"\n}",
-      "[CLEANUP]/buildprotos_tmp_1/build_.json"
+      "{\n  \"status\": \"SUCCESS\", \n  \"builder\": {\n    \"project\": \"project\", \n    \"builder\": \"child_builder2\", \n    \"bucket\": \"bucket\"\n  }, \n  \"createTime\": \"2018-05-25T23:50:17Z\", \n  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \n  \"output\": {\n    \"properties\": {\n      \"build_report_hash\": \"DEADBEEF\"\n    }\n  }, \n  \"input\": {\n    \"properties\": {\n      \"build_target\": {\n        \"name\": \"bt1\"\n      }\n    }, \n    \"gitilesCommit\": {\n      \"project\": \"project\", \n      \"host\": \"host\", \n      \"ref\": \"refs/heads/master\", \n      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"\n    }\n  }, \n  \"id\": \"8922054662172514001\"\n}",
+      "[CLEANUP]/buildprotos_tmp_1/build_bt1.json"
     ],
     "infra_step": true,
-    "name": "test.write_build_ (2)",
+    "name": "test.write_build_bt1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -315,7 +319,7 @@
     "cmd": [
       "[START_DIR]/cipd/test_planner/test_planner",
       "--input_json",
-      "{\"buildbucketBuildPath\": [{\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_.json\"}, {\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_.json\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
+      "{\"buildbucketBuildPath\": [{\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_bt1.json\"}, {\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_bt1.json\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],

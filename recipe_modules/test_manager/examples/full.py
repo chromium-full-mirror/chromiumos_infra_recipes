@@ -47,8 +47,8 @@ def GenTests(api):
   ]
 
   builds = [
-      api.cros_build.example('child_builder1', build_config[0]),
-      api.cros_build.example('child_builder2', build_config[1]),
+      api.cros_build.example('child_builder1', {}, build_target='bt1'),
+      api.cros_build.example('child_builder2', {}, build_target='bt1'),
   ]
 
   properties = api.properties(builder='builder', build_config=build_config)
