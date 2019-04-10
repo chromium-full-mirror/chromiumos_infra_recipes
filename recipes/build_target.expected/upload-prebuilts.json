@@ -617,7 +617,7 @@
       "sudo",
       "/bin/bash",
       "-c",
-      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_2/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_2/output_proto.json chromite.api.BinhostService/PrepareBinhostUploads\""
+      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_2/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_2/output_proto.json chromite.api.BinhostService/PrepareBinhostUploads"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "upload prebuilts for amd64-generic.prepare binhost uploads.build_api chromite.api.BinhostService/PrepareBinhostUploads",
@@ -717,7 +717,7 @@
       "sudo",
       "/bin/bash",
       "-c",
-      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_4/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_4/output_proto.json chromite.api.BinhostService/SetBinhost\""
+      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_4/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_4/output_proto.json chromite.api.BinhostService/SetBinhost"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "upload prebuilts for amd64-generic.set binhost DUMMY_BINHOST to gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0/packages.build_api chromite.api.BinhostService/SetBinhost",

@@ -49,7 +49,7 @@ class BuildApiApi(recipe_api.RecipeApi):
     # Hence, the horrid command.
     cmd = [
         'sudo', '/bin/bash', '-c',
-        '"umask 0000 && %s"' % ' '.join(map(str, build_api_cmd))
+        'umask 0000 && %s' % ' '.join(map(str, build_api_cmd))
     ]
     self.m.step('build_api %s' % service_method, cmd)
 

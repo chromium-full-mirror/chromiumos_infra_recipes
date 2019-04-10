@@ -43,7 +43,7 @@
       "sudo",
       "/bin/bash",
       "-c",
-      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_1/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_1/output_proto.json chromite.api.ArchiveService/CreateHwTestArchives\""
+      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_1/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_1/output_proto.json chromite.api.ArchiveService/CreateHwTestArchives"
     ],
     "name": "execute tests.build_api chromite.api.ArchiveService/CreateHwTestArchives",
     "~followup_annotations": [
@@ -134,7 +134,7 @@
       "sudo",
       "/bin/bash",
       "-c",
-      "\"umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_2/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_2/output_proto.json chromite.api.ArchiveService/CreateVmTestArchives\""
+      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_2/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_2/output_proto.json chromite.api.ArchiveService/CreateVmTestArchives"
     ],
     "name": "execute tests (2).build_api chromite.api.ArchiveService/CreateVmTestArchives",
     "~followup_annotations": [
