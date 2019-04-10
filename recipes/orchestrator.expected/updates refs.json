@@ -460,6 +460,10 @@
   },
   {
     "cmd": [],
+    "name": "verify builds"
+  },
+  {
+    "cmd": [],
     "name": "update manifest success ref"
   },
   {

@@ -396,6 +396,10 @@
   },
   {
     "cmd": [],
+    "name": "verify builds"
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {

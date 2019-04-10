@@ -118,6 +118,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "verify builds"
+  },
+  {
     "failure": {
       "exception": {
         "traceback": [

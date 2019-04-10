@@ -588,6 +588,10 @@
   },
   {
     "cmd": [],
+    "name": "verify builds"
+  },
+  {
+    "cmd": [],
     "name": "test results",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@SUCCESS - task - 1@hello world!@@@",

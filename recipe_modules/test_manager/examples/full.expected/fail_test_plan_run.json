@@ -395,6 +395,10 @@
   },
   {
     "cmd": [],
+    "name": "verify builds"
+  },
+  {
+    "cmd": [],
     "name": "test results"
   },
   {

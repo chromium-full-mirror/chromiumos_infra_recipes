@@ -577,6 +577,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "verify builds"
+  },
+  {
     "failure": {
       "failure": {
         "step": "test.collect test results"

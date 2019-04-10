@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'cros_build',
     'cros_source',
     'cros_version',
     'dev',
@@ -47,21 +48,6 @@ PROPERTIES = {
         ),
 }
 
-
-def _is_critical_failure(api, build):
-  """Returns true if a build should fail the orchestrator run.
-
-  Checks if the status was not SUCCESS (i.e. it was FAILURE, INFRA_FAILURE,
-  STATUS_UNSPECIFIED, etc.) and the build was critical.
-
-  Args:
-    * api (object): See RunSteps documentation.
-    * build (Build proto): The completed build to check.
-  """
-  return build.status != common_pb2.SUCCESS and api.buildbucket.is_critical(
-      build)
-
-
 def RunSteps(api, update_manifest_refs):
   validate_refs(update_manifest_refs.values())
 
@@ -87,10 +73,7 @@ def RunSteps(api, update_manifest_refs):
               critical=child_builder_config.general.critical.value))
 
     completed_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4)
-    for build in completed_builds:
-      if _is_critical_failure(api, build):
-        raise api.step.StepFailure('Child builder failed: {}'.format(
-            build.builder))
+    api.cros_build.verify_builds(completed_builds)
 
     # Victory! If we've made it this far, the child builders were successful
     # and we can update the success manifest ref if it is specified.

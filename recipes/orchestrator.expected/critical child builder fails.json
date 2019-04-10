@@ -404,6 +404,10 @@
   },
   {
     "cmd": [],
+    "name": "verify builds"
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {
@@ -435,7 +439,7 @@
       "failure": {
         "step": ""
       },
-      "humanReason": "Child builder failed: builder: \"amd64-generic-postsubmit\"\n"
+      "humanReason": "One or more child builders failed"
     },
     "name": "$result"
   }

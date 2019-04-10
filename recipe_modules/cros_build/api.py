@@ -86,14 +86,14 @@ class CrosBuildApi(recipe_api.RecipeApi):
     Raises:
       CompositeBuildFailure containing all failed builds.
     """
-    # TODO(yshaul): ignore builders marked non-critical
-    failed_builds = [
-        build for build in builds if build.status != common_pb2.SUCCESS
-    ]
+    with self.m.step.nest('verify builds'):
+      failed_builds = [
+          build for build in builds if self._is_critical_failure(build)
+      ]
 
-    if failed_builds:
-      raise CompositeBuildFailure('One or more child builders failed',
-                                  failed_builds)
+      if failed_builds:
+        raise CompositeBuildFailure('One or more child builders failed',
+                                    failed_builds)
 
   @recipe_api.composite_step
   def download_build_report(self, build):
@@ -118,6 +118,15 @@ class CrosBuildApi(recipe_api.RecipeApi):
                              isolated_hash, download_path)
 
     return download_path.join('build_report.json')
+
+  def _is_critical_failure(self, build):
+    """Checks if the status was not SUCCESS and the build was critical.
+
+    Args:
+      * build (Build proto): The completed build to check.
+    """
+    return build.status != common_pb2.SUCCESS and self.m.buildbucket.is_critical(
+        build)
 
   @recipe_api.non_step
   def _get_result(self, step_output):

@@ -102,6 +102,10 @@
   },
   {
     "cmd": [],
+    "name": "verify builds"
+  },
+  {
+    "cmd": [],
     "name": "ensure isolated"
   },
   {
