@@ -34,7 +34,7 @@ def GenTests(api):
           api.test_plan.example_tast_vm_unit(),
       )) + api.step_data('run plan.schedule.build_target.vm.test-suite',
                          api.swarming.trigger(['vm-test'])) + api.step_data(
-                             'run plan.collect.collect tasks',
+                             'run plan.collect.vm_swarming_server.com',
                              api.swarming.collect(
                                  [api.swarming.task_result(1, 'vm-test')])))
 

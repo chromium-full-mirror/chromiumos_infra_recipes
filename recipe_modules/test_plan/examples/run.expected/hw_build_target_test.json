@@ -144,7 +144,7 @@
       "[CACHE]/swarming_client/swarming",
       "collect",
       "-server",
-      "https://example.swarmingserver.appspot.com",
+      "https://s.com",
       "-task-summary-json",
       "/path/to/tmp/json",
       "-task-output-stdout",
@@ -153,7 +153,7 @@
       "1"
     ],
     "infra_step": true,
-    "name": "run plan.collect.collect tasks",
+    "name": "run plan.collect.s.com",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

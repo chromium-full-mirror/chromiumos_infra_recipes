@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+
 # Copyright 2019 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from collections import namedtuple
+from itertools import chain
 from itertools import groupby
+from urlparse import urlparse
 
 from recipe_engine import recipe_api
 
@@ -11,6 +15,9 @@ from google.protobuf import json_format as jsonpb
 
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+
+
+ScheduleResult = namedtuple('ScheduleResult', ['swarming_server', 'tasks'])
 
 
 class RunPlanApi(recipe_api.RecipeApi):
@@ -104,9 +111,9 @@ class RunPlanApi(recipe_api.RecipeApi):
       * test_plan (GenerateTestPlanResponse): Test plan.
 
     Returns:
-      list[swarming.TaskRequestMetadata]
+      list[ScheduleResult]
     """
-    tasks = []
+    results = []
     with self.m.step.nest(name):
       for build_target, test_units in groupby(
           test_plan.test_unit,
@@ -114,31 +121,41 @@ class RunPlanApi(recipe_api.RecipeApi):
         with self.m.step.nest(build_target):
           for test_unit in test_units:
             test_env, step = self._step(test_unit)
-            task = step(test_env, test_unit)
-            tasks.append(task)
+            result = step(test_env, test_unit)
+            results.append(result)
 
-    # Temporarily flatten list, as other code depends on a flat structure.
-    # TODO(yshaul): Remove when other code handle sublists
-    return [task for sublist in tasks for task in sublist]
+    return results
 
-  def collect_tests(self, name, tasks):
+  def collect_tests(self, name, schedule_results):
     """Waits for a set of tests to complete, and returns their results.
     Args:
       * name (str): Step name.
-      * tasks (list[swarming.TaskRequestMetadata]): Swarming metadata
-          of executing tests.
+      * schedule_results (list[ScheduleResult]): List of ScheduleResult from
+          call to schedule.
 
     Returns:
        list[swarming.TaskResult]
     """
-    # TODO(yshaul): Tests are actually scheduled against multiple swarming
-    #     servers. Check against them all.
+    results = []
     with self.m.step.nest(name) as result:
-      # pluck task ids rather than passing in tasks directly.
-      # This is because skylab ducks TaskRequestMetadata,
-      # and collect asserts type of TaskRequestMetadata.
-      task_ids = [str(task.id) for task in tasks]
-      return self.m.swarming.collect('collect tasks', task_ids)
+      swarming_servers = set(
+          [result.swarming_server for result in schedule_results])
+      for swarming_server in swarming_servers:
+        # pluck task ids rather than passing in tasks directly.
+        # This is because skylab.create_suites ducks TaskRequestMetadata,
+        # and collect asserts type of TaskRequestMetadata.
+        tasks = chain.from_iterable([
+            result.tasks
+            for result in schedule_results
+            if result.swarming_server == swarming_server
+        ])
+        task_ids = [str(task.id) for task in tasks]
+
+        with self.m.swarming.with_server(swarming_server):
+          hostname = urlparse(swarming_server).hostname
+          results += self.m.swarming.collect('%s' % hostname, task_ids)
+
+    return results
 
   def _step(self, test_unit):
     """Returns environment and step function for given test plan step.

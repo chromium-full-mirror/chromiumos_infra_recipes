@@ -1,6 +1,7 @@
-# Copyright 2019 The LUCI Authors. All rights reserved.
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed under the Apache License, Version 2.0
 # that can be found in the LICENSE file.
+from urlparse import urlparse
 
 from recipe_engine import recipe_test_api
 
@@ -32,7 +33,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
 
     return unit
 
-  def example_vm_unit(self, test_env='', test_suites=['test-suite'],
+  def example_vm_unit(self, test_suites=['test-suite'],
                       build_target='build_target',
                       artifact_path='path/to/artifact'):
     unit = TestUnit()
@@ -87,8 +88,11 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return result
 
   def simulated_collect_output(self, name, failure=False):
+    # TODO(yshaul): use properties config rather than hardcoding name
+    # hostname = 'vm_swarming_server.com'
+    hostname = urlparse(self.m.vm_test.swarming_server).hostname
     return self.step_data(
-        '%s.collect tasks' % name,
+        '%s.%s' % (name, hostname),
         self.m.swarming.collect(
             [self.m.swarming.task_result(1, 'vm-test', failure=failure)]))
 

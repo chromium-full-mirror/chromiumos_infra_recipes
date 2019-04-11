@@ -25,7 +25,6 @@ def RunSteps(api):
 def GenTests(api):
   builder = 'builder'
   build_config = [dict(build_target='build_target')]
-
   yield (api.test('basic') + api.properties(builder=builder,
                                             build_config=build_config) +
          api.test_plan.simulate_test_builds('test_non-deferred') +

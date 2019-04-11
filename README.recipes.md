@@ -1076,11 +1076,11 @@ Args:
 
 [DEPS](/recipe_modules/skylab/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#39)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Skylab helper module
 
-&mdash; **def [create\_suites](/recipe_modules/skylab/api.py#44)(self, name, test_unit):**
+&mdash; **def [create\_suites](/recipe_modules/skylab/api.py#53)(self, name, test_unit):**
 
 Skylab step.
 
@@ -1089,9 +1089,9 @@ Args:
   * test_unit (TestUnit): Test plan step to execute.
 
 Returns:
-  list[SkylabRequestMetadata]
+  test_plan.api.ScheduleResult
 
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#41)(self):**
+&mdash; **def [initialize](/recipe_modules/skylab/api.py#50)(self):**
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1182,22 +1182,22 @@ Raises:
 
 [DEPS](/recipe_modules/test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [infra\_config](#recipe_modules-infra_config), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [RunPlanApi](/recipe_modules/test_plan/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RunPlanApi](/recipe_modules/test_plan/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for test execution steps
 
-&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#124)(self, name, tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#129)(self, name, schedule_results):**
 
 Waits for a set of tests to complete, and returns their results.
 Args:
   * name (str): Step name.
-  * tasks (list[swarming.TaskRequestMetadata]): Swarming metadata
-      of executing tests.
+  * schedule_results (list[ScheduleResult]): List of ScheduleResult from
+      call to schedule.
 
 Returns:
    list[swarming.TaskResult]
 
-&mdash; **def [generate](/recipe_modules/test_plan/api.py#45)(self, name, build_proto_paths):**
+&mdash; **def [generate](/recipe_modules/test_plan/api.py#52)(self, name, build_proto_paths):**
 
 Generate test plan.
 
@@ -1209,9 +1209,9 @@ Args:
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [initialize](/recipe_modules/test_plan/api.py#19)(self):**
+&mdash; **def [initialize](/recipe_modules/test_plan/api.py#26)(self):**
 
-&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#82)(self, name, test_plan):**
+&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#89)(self, name, test_plan):**
 
 Shortcut for schedule and collect.
 
@@ -1222,7 +1222,7 @@ Args:
 Raises:
    recipe_api.StepFailure
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#96)(self, name, test_plan):**
+&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#103)(self, name, test_plan):**
 
 Run all test plan steps.
 
@@ -1234,9 +1234,9 @@ Args:
   * test_plan (GenerateTestPlanResponse): Test plan.
 
 Returns:
-  list[swarming.TaskRequestMetadata]
+  list[ScheduleResult]
 
-&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#27)(self, name, build_proto_paths):**
+&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#34)(self, name, build_proto_paths):**
 
 Shortcut for generate and schedule.
 
@@ -1254,11 +1254,13 @@ Raises:
 
 [DEPS](/recipe_modules/vm_test/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [VMTestApi](/recipe_modules/vm_test/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [VMTestApi](/recipe_modules/vm_test/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for vm test execution steps
 
-&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#46)(self, name, test_unit):**
+&mdash; **def [initialize](/recipe_modules/vm_test/api.py#34)(self):**
+
+&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#65)(self, name, test_unit):**
 
 Run tast test on swarming bot.
 
@@ -1267,9 +1269,9 @@ Args:
   * test_unit (TestUnit): Test unit.
 
 Returns:
-  list[swarming.TaskRequestMetadata]
+  swarming.TaskRequestMetadata
 
-&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#24)(self, name, test_unit):**
+&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#42)(self, name, test_unit):**
 
 Run vm test on swarming bot.
 
@@ -1278,7 +1280,9 @@ Args:
   * test_unit (TestUnit): Test unit.
 
 Returns:
-  list[swarming.TaskRequestMetadata]
+  swarming.TaskRequestMetadata
+
+&emsp; **@property**<br>&mdash; **def [swarming\_server](/recipe_modules/vm_test/api.py#38)(self):**
 ## Recipes
 
 ### *recipes* / [annealing](/recipes/annealing.py)

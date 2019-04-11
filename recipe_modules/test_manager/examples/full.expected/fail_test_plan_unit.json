@@ -542,7 +542,7 @@
       "[CACHE]/swarming_client/swarming",
       "spawn-tasks",
       "-server",
-      "https://example.swarmingserver.appspot.com",
+      "https://vm_swarming_server.com",
       "-json-input",
       "{\"requests\": [{\"name\": \"vm-test-suite1\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/depot_tools/depot_tools\", \"path\": \"depot_tools\", \"version\": \"version:latest\"}, {\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"version:latest\"}]}, \"command\": [\"recipes/recipes.py\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite1\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"test_type\\\": \\\"vm\\\", \\\"build_target\\\": \\\"build_target\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"VMTest\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"depot_tools\"]}], \"execution_timeout_secs\": \"1200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
       "-json-output",
@@ -563,7 +563,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task UI: task - 0@https://example.swarmingserver.appspot.com/task?id=0@@@"
+      "@@@STEP_LINK@Swarming task UI: task - 0@https://vm_swarming_server.com/task?id=0@@@"
     ]
   },
   {
@@ -571,7 +571,7 @@
       "[CACHE]/swarming_client/swarming",
       "spawn-tasks",
       "-server",
-      "https://example.swarmingserver.appspot.com",
+      "https://vm_swarming_server.com",
       "-json-input",
       "{\"requests\": [{\"name\": \"vm-test-suite2\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/depot_tools/depot_tools\", \"path\": \"depot_tools\", \"version\": \"version:latest\"}, {\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"version:latest\"}]}, \"command\": [\"recipes/recipes.py\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite2\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"test_type\\\": \\\"vm\\\", \\\"build_target\\\": \\\"build_target\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"VMTest\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"depot_tools\"]}], \"execution_timeout_secs\": \"1200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
       "-json-output",
@@ -592,7 +592,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task UI: task - 1@https://example.swarmingserver.appspot.com/task?id=0@@@"
+      "@@@STEP_LINK@Swarming task UI: task - 1@https://vm_swarming_server.com/task?id=0@@@"
     ]
   },
   {
@@ -607,18 +607,74 @@
       "[CACHE]/swarming_client/swarming",
       "collect",
       "-server",
-      "https://example.swarmingserver.appspot.com",
+      "https://s.com",
       "-task-summary-json",
       "/path/to/tmp/json",
       "-task-output-stdout",
       "json",
       "6",
-      "7",
+      "7"
+    ],
+    "infra_step": true,
+    "name": "test.collect test results.s.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"6\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"6\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"7\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@Swarming task output: my_task_1@hello world!@@@",
+      "@@@STEP_LOG_END@Swarming task output: my_task_1@@@",
+      "@@@STEP_LOG_LINE@Swarming task output: my_task_0@hello world!@@@",
+      "@@@STEP_LOG_END@Swarming task output: my_task_0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/swarming_client/swarming",
+      "collect",
+      "-server",
+      "https://vm_swarming_server.com",
+      "-task-summary-json",
+      "/path/to/tmp/json",
+      "-task-output-stdout",
+      "json",
       "0",
       "0"
     ],
     "infra_step": true,
-    "name": "test.collect test results.collect tasks",
+    "name": "test.collect test results.vm_swarming_server.com",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -652,6 +708,10 @@
     "cmd": [],
     "name": "test results",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@SUCCESS - my_task_1@hello world!@@@",
+      "@@@STEP_LOG_END@SUCCESS - my_task_1@@@",
+      "@@@STEP_LOG_LINE@SUCCESS - my_task_0@hello world!@@@",
+      "@@@STEP_LOG_END@SUCCESS - my_task_0@@@",
       "@@@STEP_LOG_LINE@FAILURE - vm-test@hello world!@@@",
       "@@@STEP_LOG_END@FAILURE - vm-test@@@"
     ]

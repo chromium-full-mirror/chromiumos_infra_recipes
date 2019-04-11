@@ -7,6 +7,10 @@ import json
 
 from recipe_engine import recipe_api
 
+from urlparse import urlparse
+
+from RECIPE_MODULES.chromeos.test_plan.api import ScheduleResult
+
 SKYLAB_SWARMING_POOL = 'ChromeOSSkylab'
 SKYLAB_VERSION = 'prod'
 
@@ -35,6 +39,11 @@ class SkylabRequestMetadata(object):
     """Returns the URL of the associated task in the Swarming UI."""
     return self._task_json['task_url']  # pragma: nocover
 
+  @property
+  def swarming_server(self):
+    """Returns the swarming server hostname of the associated task."""
+    return 'https://%s' % urlparse(self._task_json['task_url']).hostname
+
 
 class SkylabApi(recipe_api.RecipeApi):
   """Skylab helper module"""
@@ -49,7 +58,7 @@ class SkylabApi(recipe_api.RecipeApi):
       * test_unit (TestUnit): Test plan step to execute.
 
     Returns:
-      list[SkylabRequestMetadata]
+      test_plan.api.ScheduleResult
     """
     self._ensure_skylab()
 
@@ -70,7 +79,10 @@ class SkylabApi(recipe_api.RecipeApi):
         task = SkylabRequestMetadata(json.loads(result))
         tasks.append(task)
 
-    return tasks
+    if tasks:
+      swarming_server = tasks[0].swarming_server
+
+    return ScheduleResult(swarming_server=swarming_server, tasks=tasks)
 
   def _ensure_skylab(self):
     """Ensure the Skylab cli is installed."""

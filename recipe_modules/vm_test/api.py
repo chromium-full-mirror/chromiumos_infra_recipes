@@ -8,6 +8,8 @@ import json
 
 from recipe_engine import recipe_api
 
+from RECIPE_MODULES.chromeos.test_plan.api import ScheduleResult
+
 # GS BUCKET in which to archive build artifacts.
 ARCHIVE_BUCKET = 'chromeos-image-archive'
 
@@ -17,9 +19,25 @@ SWARMING_MED_PRIORITY = 100
 # Name of swarming job. Appends test suite name.
 SWARMING_TEST_NAME = 'vm-test-%s'
 
+# TODO(yshaul): Move into config template.
+SWARMING_SERVER = 'https://chrome-swarming.appspot.com'
+
 
 class VMTestApi(recipe_api.RecipeApi):
   """A module for vm test execution steps"""
+
+  def __init__(self, vm_test_properties, *args, **kwargs):
+    super(VMTestApi, self).__init__(*args, **kwargs)
+    self._swarming_server = vm_test_properties.get('swarming_server',
+                                                   SWARMING_SERVER)
+
+  def initialize(self):
+    if self._test_data.enabled:
+      self._swarming_server = self.test_api.swarming_server
+
+  @property
+  def swarming_server(self):
+    return self._swarming_server
 
   def run_vm_tests(self, name, test_unit):
     """Run vm test on swarming bot.
@@ -29,19 +47,20 @@ class VMTestApi(recipe_api.RecipeApi):
       * test_unit (TestUnit): Test unit.
 
     Returns:
-      list[swarming.TaskRequestMetadata]
+      swarming.TaskRequestMetadata
     """
-    result = []
+    tasks = []
     with self.m.step.nest(name):
       for test in test_unit.vm_test_cfg.vm_test:
-        result.append(
+        tasks.append(
             self._run(
                 test.test_suite,
                 build_target=test_unit.scheduling_requirements.build_target,
                 test_suite=test.test_suite,
-                gs_path=test_unit.build_payload.artifacts_gs_path, test_type='vm'))
+                gs_path=test_unit.build_payload.artifacts_gs_path,
+                test_type='vm'))
 
-    return result
+    return ScheduleResult(swarming_server=self.swarming_server, tasks=tasks)
 
   def run_tast_vm_tests(self, name, test_unit):
     """Run tast test on swarming bot.
@@ -51,12 +70,12 @@ class VMTestApi(recipe_api.RecipeApi):
       * test_unit (TestUnit): Test unit.
 
     Returns:
-      list[swarming.TaskRequestMetadata]
+      swarming.TaskRequestMetadata
     """
-    result = []
+    tasks = []
     with self.m.step.nest(name):
       for test in test_unit.tast_vm_test_cfg.tast_vm_test:
-        result.append(
+        tasks.append(
             self._run(
                 test.suite_name,
                 build_target=test_unit.scheduling_requirements.build_target,
@@ -65,7 +84,7 @@ class VMTestApi(recipe_api.RecipeApi):
                     expr.test_expr for expr in test.tast_test_expr
                 ], test_type='tast_vm'))
 
-    return result
+    return ScheduleResult(swarming_server=self.swarming_server, tasks=tasks)
 
   def _run(self, name, test_suite, **kwargs):
     """Trigger test on swarming bot.
@@ -107,7 +126,9 @@ class VMTestApi(recipe_api.RecipeApi):
             .with_cipd_ensure_file(ensure_file).with_env_prefixes(
                 PATH=["depot_tools"])))
 
-    metadata = self.m.swarming.trigger(name, requests=[request])
+    with self.m.swarming.with_server(self.swarming_server):
+      metadata = self.m.swarming.trigger(name, requests=[request])
+
     return metadata[0]
 
   def _get_properties(self, **kwargs):
