@@ -24,13 +24,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     Returns:
       The full GS URI in which to upload prebuilts.
     """
-    # TODO(evanhernandez): Move the logic below to a common module.
-    with self.m.context(
-        cwd=self.m.cros_source.master_path.join('manifest-internal')):
-      snapshot_number = self.m.git.position_num(
-          ref=self.m.buildbucket.gitiles_commit.id)
-    return 'gs://chromeos-prebuilt/board/%s/%s-%s/packages' % (
-        target.name, kind, snapshot_number)
+    version = self.m.cros_version.read_workspace_version()
+    return 'gs://chromeos-prebuilt/board/%s/%s-%s/packages' % (target.name,
+                                                               kind, version)
 
   def _prepare_binhost_uploads(self, target, uri):
     """Determine which prebuilt archives should be uploaded to the binhost.
