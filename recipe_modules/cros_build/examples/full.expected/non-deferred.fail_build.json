@@ -105,6 +105,8 @@
     "cmd": [],
     "name": "verify builds",
     "~followup_annotations": [
+      "@@@STEP_TEXT@One or more child builders failed:@@@",
+      "@@@STEP_LINK@project/bucket/failed_builder/8922054662172514002@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

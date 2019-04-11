@@ -94,6 +94,16 @@ class CrosBuildApi(recipe_api.RecipeApi):
       if failed_builds:
         presentation = self.m.step.active_result.presentation
         presentation.status = self.m.step.FAILURE
+        presentation.step_text = 'One or more child builders failed:'
+
+        for build in failed_builds:
+          build_url = self.m.buildbucket.build_url(build_id=build.id)
+          build_title = '%s/%s/%s/%d' % (
+              build.builder.project, build.builder.bucket,
+              build.builder.builder, build.number or build.id)
+          presentation.links[build_title] = build_url
+        # TODO(crbug.com/950061): Do we still need to raise an exception if the
+        # status is FAILURE above?
         raise CompositeBuildFailure('One or more child builders failed',
                                     failed_builds)
 

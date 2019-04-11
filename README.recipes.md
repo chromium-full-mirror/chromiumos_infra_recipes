@@ -205,7 +205,7 @@ Args:
 Returns:
   generator[build_pb2.Build]
 
-&emsp; **@recipe_api.composite_step**<br>&mdash; **def [download\_build\_report](/recipe_modules/cros_build/api.py#100)(self, build):**
+&emsp; **@recipe_api.composite_step**<br>&mdash; **def [download\_build\_report](/recipe_modules/cros_build/api.py#108)(self, build):**
 
 Download builds reports from isolate.
 
