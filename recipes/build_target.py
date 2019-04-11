@@ -66,6 +66,13 @@ def _run_cros_sdk_script(api, script, target, builder_config, *args):
 
 def RunSteps(api, build_target, build_image, upload_artifacts,
              upload_prebuilts):
+  # TODO(evanhernandez): Many bots in the Chrome OS fleet have corrupted gsutil
+  # creds lock thanks to some incorrectly privileged code. As a hack around this
+  # problem, delete the creds lock before starting execution.
+  # Remove this after ~2 weeks.
+  api.step('remove stale gsutil cache',
+           ['sudo', 'rm', '-rf', '/home/chrome-bot/.gsutil'])
+
   build_target = BuildTarget(**build_target)
   build_config = api.infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
