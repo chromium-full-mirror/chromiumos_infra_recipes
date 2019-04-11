@@ -62,7 +62,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       key (str): The binhost key, e.g. POSTSUBMIT_BINHOST.
       uri (str): The new binhost URI.
     """
-    with self.m.step.nest('set binhost %s to %s' % (key, uri)):
+    with self.m.step.nest('update binhost conf file'):
       sb_request = binhost.SetBinhostRequest()
       sb_request.build_target.CopyFrom(target)
       sb_request.private = private
@@ -99,7 +99,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           will match their path relative to the root. E.g., foo/bar.tbz2 will be
           uploaded to <uri>/foo/bar.tbz2.
     """
-    with self.m.step.nest('upload archives to %s' % uri):
+    with self.m.step.nest('upload prebuilt blobs to GS'):
       sync_root = self.m.path.mkdtemp(prefix='prebuilts')
       symlink_tree = self.m.file.symlink_tree(sync_root)
       for relative_path in paths:
@@ -121,7 +121,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       kind (str): Label describing kind of prebuilts to upload (e.g. 'chrome').
       private (bool): Whether or not the target prebuilts are private.
     """
-    with self.m.step.nest('upload prebuilts for %s' % target.name):
+    with self.m.step.nest('upload prebuilts'):
       upload_uri = self._prebuilts_uri(target, kind)
       upload_root, upload_paths = self._prepare_binhost_uploads(
           target, upload_uri)
