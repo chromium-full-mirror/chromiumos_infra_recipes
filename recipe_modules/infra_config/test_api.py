@@ -38,6 +38,22 @@ class InfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "amd64-generic-cq",
+                    "branch": "master",
+                    "type": "CQ"
+                  },
+                  "general": {
+                    "critical": true
+                  },
+                  "artifacts": {
+                    "prebuilts": "PRIVATE"
+                  },
+                  "chrome": {
+                    "internal": true
+                  }
+                },
+                {
+                  "id": {
                     "name": "arm-generic-postsubmit",
                     "branch": "master",
                     "type": "POSTSUBMIT"

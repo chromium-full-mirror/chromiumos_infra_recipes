@@ -64,6 +64,12 @@ def _run_cros_sdk_script(api, script, target, builder_config, *args):
   api.cros_sdk.run(script, cmd, env)
 
 
+def _apply_gerrit_changes(api, gerrit_changes):
+  with api.step.nest('apply cherry-pick changes'):
+    patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
+    api.cros_source.apply_gerrit_patch_sets(patch_sets)
+
+
 def RunSteps(api, build_target, build_image, upload_artifacts,
              upload_prebuilts):
   # TODO(evanhernandez): Many bots in the Chrome OS fleet have corrupted gsutil
@@ -85,6 +91,9 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
     with api.context(cwd=api.cros_source.workspace_path):
       # Sync workspace to gitiles_commit manifest snapshot.
       api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
+
+      if api.buildbucket.build.input.gerrit_changes:
+        _apply_gerrit_changes(api, api.buildbucket.build.input.gerrit_changes)
 
       # Use a named cache for the chroot.
       api.cros_sdk.configure(
@@ -141,3 +150,8 @@ def GenTests(api):
              findit_bisect={'targets': ['foo', 'bar', 'baz']},
              build_image=False,
          ))
+
+  yield (api.test('with-gerrit-changes') +  #
+         api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                   builder='amd64-generic-cq') +  #
+         api.properties(build_target={'name': 'amd64-generic'}))
