@@ -353,9 +353,10 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_planner/test_planner",
+      "[START_DIR]/cipd/test_planner/test_plan_generator",
+      "gen-test-plan",
       "--input_json",
-      "{\"buildbucketBuildPath\": [{\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_bt1.json\"}, {\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_bt1.json\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
+      "{\"buildbucketBuildPath\": [{\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_bt1.json\"}, {\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_bt1.json\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],

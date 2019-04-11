@@ -56,16 +56,19 @@ class RunPlanApi(recipe_api.RecipeApi):
     self._ensure_test_planner()
 
     generate_request = GenerateTestPlanRequest()
+    generate_request.chromiumos_checkout_root = str(
+        self.m.cros_source.master_path)
     generate_request.source_tree_config_path = str(
-        self.m.infra_config.get_test_config("source_tree_test_config.cfg"))
+        self.m.infra_config.get_test_config('source_tree_test_config.cfg'))
     generate_request.target_test_requirements_path = str(
-        self.m.infra_config.get_test_config("target_test_requirements.cfg"))
+        self.m.infra_config.get_test_config('target_test_requirements.cfg'))
     for build_proto_path in build_proto_paths:
       generate_request.buildbucket_build_path.add().file_path = (
         str(build_proto_path))
 
     cmd = [
         self._test_planner_path,
+        'gen-test-plan',
         '--input_json',
         self.m.json.input(jsonpb.MessageToDict(generate_request)),
         '--output_json',
@@ -170,4 +173,4 @@ class RunPlanApi(recipe_api.RecipeApi):
         pkgs.add_package('chromiumos/infra/test_planner', 'latest')
         self.m.cipd.ensure(cipd_dir, pkgs)
 
-        self._test_planner_path = cipd_dir.join('test_planner')
+        self._test_planner_path = cipd_dir.join('test_plan_generator')

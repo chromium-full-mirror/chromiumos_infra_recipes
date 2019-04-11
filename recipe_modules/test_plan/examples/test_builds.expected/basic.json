@@ -144,9 +144,10 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_planner/test_planner",
+      "[START_DIR]/cipd/test_planner/test_plan_generator",
+      "gen-test-plan",
       "--input_json",
-      "{\"buildbucketBuildPath\": [{\"filePath\": \"b\"}, {\"filePath\": \"u\"}, {\"filePath\": \"i\"}, {\"filePath\": \"l\"}, {\"filePath\": \"d\"}, {\"filePath\": \"e\"}, {\"filePath\": \"r\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
+      "{\"buildbucketBuildPath\": [{\"filePath\": \"b\"}, {\"filePath\": \"u\"}, {\"filePath\": \"i\"}, {\"filePath\": \"l\"}, {\"filePath\": \"d\"}, {\"filePath\": \"e\"}, {\"filePath\": \"r\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],
@@ -500,9 +501,10 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_planner/test_planner",
+      "[START_DIR]/cipd/test_planner/test_plan_generator",
+      "gen-test-plan",
       "--input_json",
-      "{\"buildbucketBuildPath\": [{\"filePath\": \"b\"}, {\"filePath\": \"u\"}, {\"filePath\": \"i\"}, {\"filePath\": \"l\"}, {\"filePath\": \"d\"}, {\"filePath\": \"e\"}, {\"filePath\": \"r\"}], \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
+      "{\"buildbucketBuildPath\": [{\"filePath\": \"b\"}, {\"filePath\": \"u\"}, {\"filePath\": \"i\"}, {\"filePath\": \"l\"}, {\"filePath\": \"d\"}, {\"filePath\": \"e\"}, {\"filePath\": \"r\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],

@@ -1180,13 +1180,13 @@ Raises:
   recipe_api.StepFailure on failing tests.
 ### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
 
-[DEPS](/recipe_modules/test_plan/__init__.py#1): [infra\_config](#recipe_modules-infra_config), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [infra\_config](#recipe_modules-infra_config), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 #### **class [RunPlanApi](/recipe_modules/test_plan/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for test execution steps
 
-&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#121)(self, name, tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#124)(self, name, tasks):**
 
 Waits for a set of tests to complete, and returns their results.
 Args:
@@ -1211,7 +1211,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/test_plan/api.py#19)(self):**
 
-&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#79)(self, name, test_plan):**
+&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#82)(self, name, test_plan):**
 
 Shortcut for schedule and collect.
 
@@ -1222,7 +1222,7 @@ Args:
 Raises:
    recipe_api.StepFailure
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#93)(self, name, test_plan):**
+&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#96)(self, name, test_plan):**
 
 Run all test plan steps.
 
