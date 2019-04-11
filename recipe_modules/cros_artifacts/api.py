@@ -5,6 +5,8 @@
 
 """API for uploading CrOS build artifacts to Google Storage."""
 
+import os
+
 from recipe_engine import recipe_api
 
 from PB.chromite.api import artifacts
@@ -52,6 +54,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       artifact (ArtifactTypes): The artifact to bundle.
       target (BuildTarget): The build target to bundle artifacts for.
       path (Path): Path to output artifact bundles.
+
+    Returns:
+      tuple(str, list[str]): Artifact name, list of artifact file paths
+          relative to |path|.
     """
     artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
     with self.m.step.nest('bundle %s for upload' % artifact_name):
@@ -64,12 +70,22 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       bundle_request.build_target.CopyFrom(target)
       bundle_request.output_dir = str(path)
       endpoint = '%s/%s' % (ARTIFACTS_SERVICE, ENDPOINTS_BY_ARTIFACT[artifact])
-      self.m.build_api.call_proto(
+      bundle_response = self.m.build_api.call_proto(
           endpoint, bundle_request,
           test_output_data=self.test_api.bundle_response)
+      artifact_files = [
+          os.path.relpath(art.path, str(path))
+          for art in bundle_response.artifacts
+      ]
+      return artifact_name, artifact_files
 
   def upload_artifacts(self, name, target, kind, artifacts):
     """Bundle and upload the given artifacts for the given build target.
+
+    This function sets the "artifacts" output property to include the
+    GS bucket, the path within that bucket, and a dict mapping artifact
+    to a list of artifact paths (relative to the GS path) for each artifact
+    type that was uploaded.
 
     Args:
       name (str): The step name.
@@ -78,17 +94,24 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           This affects where the artifacts are placed in Google Storage.
       artifacts (list[ArtifactTypes]): List of artifacts
           to upload. See build config for options.
-
-    Returns:
-      tuple(str, str): GS bucket and GS path at which artifacts were uploaded.
     """
     with self.m.step.nest(name):
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
+
+      files_by_artifact = {}
       for artifact in artifacts:
-        self._bundle_artifact(artifact, target, staging_root)
-      upload_bucket = 'gs://chromeos-image-archive'
-      upload_path = self._artifacts_gs_path(target, kind)
-      upload_uri = '%s/%s' % (upload_bucket, upload_path)
+        name, files = self._bundle_artifact(artifact, target, staging_root)
+        files_by_artifact[name] = files
+
+      gs_bucket = 'gs://chromeos-image-archive'
+      gs_path = self._artifacts_gs_path(target, kind)
+      upload_uri = '%s/%s' % (gs_bucket, gs_path)
       self.m.gsutil(['rsync', staging_root, upload_uri], parallel_upload=True,
                     multithreaded=True)
-      return upload_bucket, upload_path
+
+      res = self.m.step('output artifact GS paths', cmd=None)
+      res.presentation.properties['artifacts'] = {
+          'gs_bucket': gs_bucket,
+          'gs_path': gs_path,
+          'files_by_artifact': files_by_artifact,
+      }

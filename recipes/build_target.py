@@ -103,16 +103,9 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
 
       if upload_artifacts:
         # TODO(crbug.com/905039): Stop using dummy artifact kind.
-        artifacts_bucket, artifacts_path = api.cros_artifacts.upload_artifacts(
+        api.cros_artifacts.upload_artifacts(
             'upload dummy artifacts', build_target, 'dummy',
             build_config.artifacts.artifact_types)
-        res = api.step('set output artifacts', cmd=None)
-        res.presentation.properties['artifacts'] = {
-            'gs_bucket': artifacts_bucket,
-            'gs_path': artifacts_path,
-            # TODO(evanhernandez): Also output dict mapping artifact type to
-            # file name.
-        }
 
       prebuilts = build_config.artifacts.prebuilts
       if upload_prebuilts and prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:

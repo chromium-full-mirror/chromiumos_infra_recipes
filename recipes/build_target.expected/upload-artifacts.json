@@ -702,9 +702,10 @@
   {
     "cmd": [],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "set output artifacts",
+    "name": "upload dummy artifacts.output artifact GS paths",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"gs_bucket\": \"gs://chromeos-image-archive\", \"gs_path\": \"amd64-generic-dummy/R99-1234.56.0-101\"}@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"gs://chromeos-image-archive\", \"gs_path\": \"amd64-generic-dummy/R99-1234.56.0-101\"}@@@"
     ]
   },
   {
