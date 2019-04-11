@@ -483,7 +483,7 @@ Args:
   test_suite (str): A valid Autotest vm test suite.
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
-[DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS version numbers.
 

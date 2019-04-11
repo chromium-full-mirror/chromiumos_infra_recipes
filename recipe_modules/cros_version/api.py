@@ -20,24 +20,24 @@ CHROMEOS_VERSION_RE_MAPPING = {
 
 
 class Version(object):
-  __slots__ = ('chrome_branch', 'build', 'branch', 'patch', 'rc')
+  __slots__ = ('chrome_branch', 'build', 'branch', 'patch', 'snapshot')
 
-  def __init__(self, chrome_branch, build, branch=0, patch=0, rc=None):
+  def __init__(self, chrome_branch, build, branch=0, patch=0, snapshot=None):
     self.chrome_branch = chrome_branch
     self.build = build
     self.branch = branch
     self.patch = patch
-    self.rc = rc
+    self.snapshot = snapshot
 
   def __str__(self):
-    return 'R%d-%s' % (self.chrome_branch, self.platform_version)
+    version = 'R%d-%s' % (self.chrome_branch, self.platform_version)
+    if self.snapshot is not None:
+      version += '-%s' % self.snapshot
+    return version
 
   @property
   def platform_version(self):
-    s = '%d.%d.%d' % (self.build, self.branch, self.patch)
-    if self.rc is not None:
-      s += '-rc%d' % self.rc
-    return s
+    return '%d.%d.%d' % (self.build, self.branch, self.patch)
 
   @property
   def buildspec_filename(self):
@@ -69,6 +69,12 @@ class CrosVersionApi(recipe_api.RecipeApi):
         raise ValueError(
             'pattern %r did not match chromeos_version.sh' % regex.pattern)
       version_args[k] = int(m.group(1))
+
+    with self.m.step.nest('read snapshot number'):
+      with self.m.context(
+          cwd=self.m.cros_source.master_path.join('manifest-internal')):
+        version_args['snapshot'] = self.m.git.position_num(
+            ref=self.m.buildbucket.gitiles_commit.id)
 
     version = Version(**version_args)
     self.m.step.active_result.presentation.step_text = 'version: %s' % version

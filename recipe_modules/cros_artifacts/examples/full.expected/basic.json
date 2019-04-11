@@ -70,8 +70,30 @@
     "infra_step": true,
     "name": "upload ebuild logs.read chromeos_version.sh",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@version: R99-1234.56.0@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload ebuild logs.read snapshot number",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "",
+      "--position-num"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "name": "upload ebuild logs.read snapshot number.git_footers.py",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
     ]
   },
   {
@@ -87,7 +109,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/target-postsubmit/R99-1234.56.0"
+      "gs://chromeos-image-archive/target-postsubmit/R99-1234.56.0-101"
     ],
     "infra_step": true,
     "name": "upload ebuild logs.gsutil rsync",
@@ -166,8 +188,30 @@
     "infra_step": true,
     "name": "upload firmware archive.read chromeos_version.sh",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@version: R99-1234.56.0@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload firmware archive.read snapshot number",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "",
+      "--position-num"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "name": "upload firmware archive.read snapshot number.git_footers.py",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
     ]
   },
   {
@@ -183,7 +227,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_3",
-      "gs://chromeos-image-archive/target-postsubmit/R99-1234.56.0"
+      "gs://chromeos-image-archive/target-postsubmit/R99-1234.56.0-101"
     ],
     "infra_step": true,
     "name": "upload firmware archive.gsutil rsync",
@@ -474,8 +518,30 @@
     "infra_step": true,
     "name": "upload test artifacts.read chromeos_version.sh",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@version: R99-1234.56.0@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload test artifacts.read snapshot number",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "",
+      "--position-num"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "name": "upload test artifacts.read snapshot number.git_footers.py",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
     ]
   },
   {
@@ -491,7 +557,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_5",
-      "gs://chromeos-image-archive/target-cq/R99-1234.56.0"
+      "gs://chromeos-image-archive/target-cq/R99-1234.56.0-101"
     ],
     "infra_step": true,
     "name": "upload test artifacts.gsutil rsync",

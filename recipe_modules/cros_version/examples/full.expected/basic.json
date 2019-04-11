@@ -11,9 +11,26 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "read chromeos_version.sh",
+    "name": "read chromeos_version.sh"
+  },
+  {
+    "cmd": [],
+    "name": "read snapshot number"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "",
+      "--position-num"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "name": "read snapshot number.git_footers.py",
+    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_TEXT@version: R99-1234.56.0@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
     ]
   },
   {
