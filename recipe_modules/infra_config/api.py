@@ -79,7 +79,9 @@ class InfraConfigApi(recipe_api.RecipeApi):
         REPO_URL, "testingconfig/generated/%s" % config_name,
         step_test_data=self.test_api.test_config_file)
 
-    path = self.m.path['cleanup'].join('testconfig', config_name)
+    outdir = self.m.path['cleanup'].join('testconfig')
+    self.m.file.ensure_directory('make testconfig', outdir)
+    path = outdir.join(config_name)
 
     self.m.file.write_raw('save %s' % config_name, path, conf_contents)
     return path

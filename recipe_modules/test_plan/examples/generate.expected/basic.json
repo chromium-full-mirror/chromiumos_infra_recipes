@@ -52,6 +52,21 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/testconfig"
+    ],
+    "infra_step": true,
+    "name": "make testconfig"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
       "copy",
       "",
       "[CLEANUP]/testconfig/source_tree_test_config.cfg"
@@ -72,6 +87,21 @@
       "text"
     ],
     "name": "fetch master:testingconfig/generated/target_test_requirements.cfg"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/testconfig"
+    ],
+    "infra_step": true,
+    "name": "make testconfig (2)"
   },
   {
     "cmd": [
