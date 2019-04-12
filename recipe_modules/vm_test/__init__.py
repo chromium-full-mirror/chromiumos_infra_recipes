@@ -11,6 +11,7 @@ PROPERTIES = {
             kind=ConfigGroup(
                 # The absolute path to the temporary directory that the recipe should use.
                 swarming_server=Single(str),
+                swarming_pool=Single(str),
             ),
             default={},
         )
