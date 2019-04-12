@@ -96,15 +96,8 @@ def make_message(api):
   suitable for use by FindIt, as in:
 
   Cr-Commit-Position: refs/heads/snapshot@{#%d}
-
-  Note that if a prior commit position is not found this will return a
-  commit position that resets back to 1. After this is deployed and
-  Cr-Commit-Position is seeded it may be better to remove this fallback
-  and have it fail if no prior commit position is found.
   """
   position = api.git.position_num()
-  if position is None:
-    position = 0
   message = 'Annealing manifest snapshot\n\n'
   message += 'Cr-Commit-Position: refs/heads/%s@{#%d}' % (MANIFEST_REF,
                                                           position + 1)
@@ -122,5 +115,4 @@ def GenTests(api):
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'
-          )) +  #
-      api.step_data('git_footers.py', retcode=1))
+          )))

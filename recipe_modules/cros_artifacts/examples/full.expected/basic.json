@@ -82,6 +82,34 @@
   },
   {
     "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      ":"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "infra_step": true,
+    "name": "upload ebuild logs.read snapshot number.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "infra_step": true,
+    "name": "upload ebuild logs.read snapshot number.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
@@ -204,6 +232,34 @@
     "name": "upload firmware archive.read snapshot number",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      ":"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "infra_step": true,
+    "name": "upload firmware archive.read snapshot number.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "infra_step": true,
+    "name": "upload firmware archive.read snapshot number.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -542,6 +598,34 @@
     "name": "upload test artifacts.read snapshot number",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      ":"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "infra_step": true,
+    "name": "upload test artifacts.read snapshot number.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "infra_step": true,
+    "name": "upload test artifacts.read snapshot number.git rev-parse",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

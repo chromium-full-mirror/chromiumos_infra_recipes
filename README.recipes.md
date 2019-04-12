@@ -742,13 +742,16 @@ Returns:
 
 &mdash; **def [position\_num](/recipe_modules/git/api.py#259)(self, ref='HEAD'):**
 
-Returns the chrome commit position or None if one cannot be found.
+Returns the chrome commit position.
+
+The ref must be present in the local checkout, and it must contain the
+Cr-Commit-Position footer or this function will fail.
 
 Args:
   ref (str): The ref to fetch to get the position num of.
 
 Returns:
-  int chrome commit position or None if one cannot be found.
+  int: The Chrome commit position
 
 &mdash; **def [push](/recipe_modules/git/api.py#143)(self, remote, refspec, capture_stdout=False):**
 
@@ -1315,11 +1318,6 @@ Creates and returns the commit message with a Cr-Commit-Position
 suitable for use by FindIt, as in:
 
 Cr-Commit-Position: refs/heads/snapshot@{#%d}
-
-Note that if a prior commit position is not found this will return a
-commit position that resets back to 1. After this is deployed and
-Cr-Commit-Position is seeded it may be better to remove this fallback
-and have it fail if no prior commit position is found.
 ### *recipes* / [artifacts:examples/full](/recipe_modules/artifacts/examples/full.py)
 
 [DEPS](/recipe_modules/artifacts/examples/full.py#6): [artifacts](#recipe_modules-artifacts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

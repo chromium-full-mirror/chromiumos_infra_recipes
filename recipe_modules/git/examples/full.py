@@ -46,6 +46,3 @@ def GenTests(api):
       'diff check.git ls-files',
       retcode=1,
   )
-
-  yield (api.test('no git position footer') +  #
-         api.step_data('git_footers.py', retcode=1))
