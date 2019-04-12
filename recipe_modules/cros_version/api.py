@@ -72,7 +72,7 @@ class CrosVersionApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('read snapshot number'):
       with self.m.context(
-          cwd=self.m.cros_source.master_path.join('manifest-internal')):
+          cwd=self.m.cros_source.workspace_path.join('manifest-internal')):
         snapshot = self.m.buildbucket.gitiles_commit.id
         self.m.git.fetch_ref(self.m.cros_source.INTERNAL_MANIFEST_URL, snapshot)
         version_args['snapshot'] = self.m.git.position_num(ref=snapshot)

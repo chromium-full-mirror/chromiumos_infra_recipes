@@ -24,7 +24,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       ":"
     ],
-    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read snapshot number.git fetch",
     "~followup_annotations": [
@@ -37,7 +37,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read snapshot number.git rev-parse",
     "stdout": "/path/to/tmp/",
@@ -53,7 +53,7 @@
       "",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "read snapshot number.git_footers.py",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [

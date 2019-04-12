@@ -668,7 +668,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
-    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload dummy artifacts.read snapshot number.git fetch",
     "~followup_annotations": [
@@ -681,7 +681,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload dummy artifacts.read snapshot number.git rev-parse",
     "stdout": "/path/to/tmp/",
@@ -697,7 +697,7 @@
       "2d72510e447ab60a9728aeea2362d8be2cbd7789",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_master/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "upload dummy artifacts.read snapshot number.git_footers.py",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
