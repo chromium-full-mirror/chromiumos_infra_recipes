@@ -207,7 +207,7 @@ Args:
 Returns:
   generator[build_pb2.Build]
 
-&emsp; **@recipe_api.composite_step**<br>&mdash; **def [download\_build\_report](/recipe_modules/cros_build/api.py#110)(self, build):**
+&emsp; **@recipe_api.composite_step**<br>&mdash; **def [download\_build\_report](/recipe_modules/cros_build/api.py#112)(self, build):**
 
 Download builds reports from isolate.
 
@@ -221,6 +221,8 @@ Args:
 Returns:
   * Path of build report.
 
+&mdash; **def [get\_build\_title](/recipe_modules/cros_build/api.py#79)(self, build):**
+
 &emsp; **@recipe_api.composite_step**<br>&mdash; **def [schedule\_child\_builders](/recipe_modules/cros_build/api.py#29)(self, name, builder, build_config):**
 
 Schedule buildbucket builds for all child builders.
@@ -233,7 +235,7 @@ Args:
 Returns:
   list[build_pb2.Build]
 
-&emsp; **@recipe_api.composite_step**<br>&mdash; **def [verify\_builds](/recipe_modules/cros_build/api.py#79)(self, builds):**
+&emsp; **@recipe_api.composite_step**<br>&mdash; **def [verify\_builds](/recipe_modules/cros_build/api.py#83)(self, builds):**
 
 Verify all builds completed successfully.
 
@@ -1438,7 +1440,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#53)(api, update_manifest_refs):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#105)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#106)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1447,7 +1449,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#91)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#92)(refs):**
 
 Assert all given refs start with refs/heads.
 

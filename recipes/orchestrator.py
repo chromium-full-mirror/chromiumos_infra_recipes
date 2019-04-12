@@ -74,8 +74,9 @@ def RunSteps(api, update_manifest_refs):
               builder=child,
               critical=child_builder_config.general.critical.value))
 
-    completed_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4,
-                                           step_name='run child builds')
+    completed_builds = api.buildbucket.run(
+        requests, timeout=60 * 60 * 4, step_name='run child builds',
+        url_title_fn=api.cros_build.get_build_title)
     # Defer exceptions until the end, so that we recover gracefully
     # from intermediate failures.
     with api.step.defer_results():

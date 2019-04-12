@@ -76,6 +76,19 @@ class CrosBuildApi(recipe_api.RecipeApi):
     for build in completed_builds.values():
       yield build
 
+  def get_build_title(self, build):
+    """Get a string to describe the build.
+
+
+    Args:
+      * build (build_pb2.Build): The build to describe.
+
+    Returns:
+      A string describing the build.
+    """
+    return '%s/%s/%s/%d' % (build.builder.project, build.builder.bucket,
+                            build.builder.builder, build.number or build.id)
+
   @recipe_api.composite_step
   def verify_builds(self, builds):
     """Verify all builds completed successfully.
@@ -98,9 +111,7 @@ class CrosBuildApi(recipe_api.RecipeApi):
 
         for build in failed_builds:
           build_url = self.m.buildbucket.build_url(build_id=build.id)
-          build_title = '%s/%s/%s/%d' % (
-              build.builder.project, build.builder.bucket,
-              build.builder.builder, build.number or build.id)
+          build_title = self.get_build_title(build)
           presentation.links[build_title] = build_url
         # TODO(crbug.com/950061): Do we still need to raise an exception if the
         # status is FAILURE above?
