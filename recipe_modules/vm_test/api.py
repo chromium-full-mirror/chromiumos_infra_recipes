@@ -14,8 +14,9 @@ from RECIPE_MODULES.chromeos.test_plan.api import ScheduleResult
 ARCHIVE_BUCKET = 'chromeos-image-archive'
 
 SWARMING_MED_PRIORITY = 100
-
 SWARMING_TEST_NAME = 'vm-test-%s'
+
+VM_TEST_RECIPE = 'test_execution/execute_vm_suite'
 
 
 class VMTestApi(recipe_api.RecipeApi):
@@ -133,6 +134,7 @@ class VMTestApi(recipe_api.RecipeApi):
 
   def _get_properties(self, **kwargs):
     ret = {
+        'recipe': VM_TEST_RECIPE,
         'gs_bucket': ARCHIVE_BUCKET,
         '$recipe_engine/path': {
             'cache_dir': '/b/bot/w/ir/cache'
