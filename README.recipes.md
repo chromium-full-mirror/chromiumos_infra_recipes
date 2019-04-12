@@ -207,7 +207,7 @@ Args:
 Returns:
   generator[build_pb2.Build]
 
-&emsp; **@recipe_api.composite_step**<br>&mdash; **def [download\_build\_report](/recipe_modules/cros_build/api.py#112)(self, build):**
+&emsp; **@recipe_api.composite_step**<br>&mdash; **def [download\_build\_report](/recipe_modules/cros_build/api.py#121)(self, build):**
 
 Download builds reports from isolate.
 
@@ -223,6 +223,15 @@ Returns:
 
 &mdash; **def [get\_build\_title](/recipe_modules/cros_build/api.py#79)(self, build):**
 
+Get a string to describe the build.
+
+
+Args:
+  * build (build_pb2.Build): The build to describe.
+
+Returns:
+  A string describing the build.
+
 &emsp; **@recipe_api.composite_step**<br>&mdash; **def [schedule\_child\_builders](/recipe_modules/cros_build/api.py#29)(self, name, builder, build_config):**
 
 Schedule buildbucket builds for all child builders.
@@ -235,7 +244,7 @@ Args:
 Returns:
   list[build_pb2.Build]
 
-&emsp; **@recipe_api.composite_step**<br>&mdash; **def [verify\_builds](/recipe_modules/cros_build/api.py#83)(self, builds):**
+&emsp; **@recipe_api.composite_step**<br>&mdash; **def [verify\_builds](/recipe_modules/cros_build/api.py#92)(self, builds):**
 
 Verify all builds completed successfully.
 
@@ -1557,10 +1566,10 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 
 &mdash; **def [RunSteps](/recipe_modules/vm_test/examples/full.py#8)(api):**
 
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1de3cd440cf8883c0586420fc19423d83fcb7eb0/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1de3cd440cf8883c0586420fc19423d83fcb7eb0/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1de3cd440cf8883c0586420fc19423d83fcb7eb0/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1de3cd440cf8883c0586420fc19423d83fcb7eb0/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/db58954c8cb36dd41e245a982f978a1f19b16af6/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/db58954c8cb36dd41e245a982f978a1f19b16af6/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/db58954c8cb36dd41e245a982f978a1f19b16af6/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/db58954c8cb36dd41e245a982f978a1f19b16af6/recipes/README.recipes.md#recipe_modules-gsutil
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-buildbucket
