@@ -15,8 +15,7 @@ def RunSteps(api):
       rsync_mirror_address='rsync://distfiles.gentoo.org/gentoo/distfiles/',
       rsync_mirror_rate_limit='1m',
       latest_gs_distfiles_uri='gs://chromeos-mirror/gentoo/latest_distfiles/',
-      all_gs_distfiles_uri='gs://chromeos-mirror/gentoo/distfiles/',
-      dryrun=False)
+      all_gs_distfiles_uri='gs://chromeos-mirror/gentoo/distfiles/')
   api.cros_dupit.run()
 
 

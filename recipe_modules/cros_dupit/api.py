@@ -13,10 +13,9 @@ class DupItApi(recipe_api.RecipeApi):
 
   def __init__(self, *args, **kwargs):
     super(DupItApi, self).__init__(*args, **kwargs)
-    self._dryrun = False
 
   def configure(self, rsync_mirror_address, rsync_mirror_rate_limit,
-                latest_gs_distfiles_uri, all_gs_distfiles_uri, dryrun):
+                latest_gs_distfiles_uri, all_gs_distfiles_uri):
     """Configure the DupIt script module.
 
     Args:
@@ -28,9 +27,7 @@ class DupItApi(recipe_api.RecipeApi):
           very similar to that of a public Gentoo mirror.
       * all_gs_distfiles_uri: the Google cloud storage URI which's supposed
           to store the all Gentoo distfiles.
-      * dryrun (bool): If True, run gsutil updates in a dryrun mode.
     """
-    self._dryrun = dryrun
     assert (rsync_mirror_address.endswith('distfiles') or
             rsync_mirror_address.endswith('distfiles/'))
     self._rsync_mirror_address = rsync_mirror_address
@@ -98,33 +95,39 @@ class DupItApi(recipe_api.RecipeApi):
         name='Sync latest distfiles to %s' % self.latest_gs_distfiles_uri,
         parallel_upload=True, multithreaded=True)
 
-  def _rsync_to_all_gs_distfiles(self):
-    # NOTE: we must keep the old files/objects (i.e: not passing -d) since the
-    # all_gs_distfiles bucket is also used by old branches which rely on the old
-    # distfiles.
-    gsutil_rsync_commands = ['rsync', '-r']  # recurse
+  def _copy_new_files_to_all_gs_distfiles(self):
+    # NOTE: there have been more than one scenario where a file was updated by
+    # upstream (beyond Gentoo) and the contents were otherwise unchanged.
+    # In either cases, we must keep the old files/objects in the
+    # all_gs_distfiles bucket unchanged to avoid breaking builds.
+    #
+    # For the scenarios where we want the newer/fixed archive, developers can
+    # do the rename & upload to all_gs_distfiles_uri manually to workaround the
+    # bad behavior of the upstream project.
+    gsutil_cp_commands = [
+        'cp',
+        # Recursively copy the files.
+        '-r',
+        # No cloberring.
+        '-n',
+        # Preserve files ACLs.
+        '-p'
+    ]
 
-    if self.dryrun:
-      gsutil_rsync_commands.append('-n')
-
-    gsutil_rsync_commands += [
+    gsutil_cp_commands += [
         self.m.path.join(self.local_distfiles_cache, 'distfiles'),
         self.all_gs_distfiles_uri
     ]
 
-    self.m.gsutil(cmd=gsutil_rsync_commands,
+    self.m.gsutil(cmd=gsutil_cp_commands,
                   name='Upload new distfiles to %s' % self.all_gs_distfiles_uri,
                   parallel_upload=True, multithreaded=True)
 
   def run(self):
     self._rsync_from_latest_gs_distfiles()
     self._rsync_from_public_gentoo_distfiles()
-    self._rsync_to_all_gs_distfiles()
+    self._copy_new_files_to_all_gs_distfiles()
     self._rsync_to_latest_gs_distfiles()
-
-  @property
-  def dryrun(self):
-    return self._dryrun
 
   @property
   def rsync_mirror_address(self):

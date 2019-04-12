@@ -49,8 +49,10 @@
       "GSUtil:parallel_composite_upload_threshold=50M",
       "-m",
       "----",
-      "rsync",
+      "cp",
       "-r",
+      "-n",
+      "-p",
       "[CACHE]/gentoo_distfiles/distfiles",
       "gs://chromeos-mirror/gentoo/distfiles/"
     ],

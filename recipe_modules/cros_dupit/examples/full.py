@@ -15,10 +15,8 @@ def RunSteps(api):
       rsync_mirror_address='rsync://mirrors.do.not.exists/distfiles',
       rsync_mirror_rate_limit='1m',
       latest_gs_distfiles_uri='gs://stark-trek/mini-cache/latest_distfiles/',
-      all_gs_distfiles_uri='gs://stark-trek/the-ultimate-computer/distfiles/',
-      dryrun=True)
+      all_gs_distfiles_uri='gs://stark-trek/the-ultimate-computer/distfiles/')
   api.cros_dupit.run()
-  assert api.cros_dupit.dryrun == True
 
 
 def GenTests(api):
