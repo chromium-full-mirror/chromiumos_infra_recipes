@@ -33,10 +33,10 @@
       "--human-readable",
       "--timeout=180",
       "--bwlimit=1m",
-      "rsync://mirrors.rit.edu/gentoo/distfiles",
+      "rsync://distfiles.gentoo.org/gentoo/distfiles/",
       "[CACHE]/gentoo_distfiles"
     ],
-    "name": "Sync distfiles from rsync://mirrors.rit.edu/gentoo/distfiles"
+    "name": "Sync distfiles from rsync://distfiles.gentoo.org/gentoo/distfiles/"
   },
   {
     "cmd": [
