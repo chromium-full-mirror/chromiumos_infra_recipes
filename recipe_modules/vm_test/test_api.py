@@ -11,3 +11,8 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
   @property
   def swarming_server(self):
     return 'https://vm_swarming_server.com'
+
+  @property
+  def swarming_pool(self):
+    return 'vm_pool'
+

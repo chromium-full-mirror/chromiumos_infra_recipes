@@ -13,14 +13,9 @@ from RECIPE_MODULES.chromeos.test_plan.api import ScheduleResult
 # GS BUCKET in which to archive build artifacts.
 ARCHIVE_BUCKET = 'chromeos-image-archive'
 
-SWARMING_POOL = 'VMTest'
 SWARMING_MED_PRIORITY = 100
 
-# Name of swarming job. Appends test suite name.
 SWARMING_TEST_NAME = 'vm-test-%s'
-
-# TODO(yshaul): Move into config template.
-SWARMING_SERVER = 'https://chrome-swarming.appspot.com'
 
 
 class VMTestApi(recipe_api.RecipeApi):
@@ -28,16 +23,21 @@ class VMTestApi(recipe_api.RecipeApi):
 
   def __init__(self, vm_test_properties, *args, **kwargs):
     super(VMTestApi, self).__init__(*args, **kwargs)
-    self._swarming_server = vm_test_properties.get('swarming_server',
-                                                   SWARMING_SERVER)
+    self._swarming_server = vm_test_properties.get('swarming_server', None)
+    self._swarming_pool = vm_test_properties.get('swarming_pool', None)
 
   def initialize(self):
     if self._test_data.enabled:
       self._swarming_server = self.test_api.swarming_server
+      self._swarming_pool = self.test_api.swarming_pool
 
   @property
   def swarming_server(self):
     return self._swarming_server
+
+  @property
+  def swarming_pool(self):
+    return self._swarming_pool
 
   def run_vm_tests(self, name, test_unit):
     """Run vm test on swarming bot.
@@ -122,7 +122,7 @@ class VMTestApi(recipe_api.RecipeApi):
     # Configure the first slice.
     request = (
         request.with_slice(
-            0, request[0].with_command(cmd).with_dimensions(pool=SWARMING_POOL)
+            0, request[0].with_command(cmd).with_dimensions(pool=self.swarming_pool)
             .with_cipd_ensure_file(ensure_file).with_env_prefixes(
                 PATH=["depot_tools"])))
 
