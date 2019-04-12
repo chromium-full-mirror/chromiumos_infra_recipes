@@ -76,8 +76,8 @@ class GitTxnApi(recipe_api.RecipeApi):
           self.m.git.push(remote, 'HEAD:%s' % ref, capture_stdout=True)
           return True
         except recipe_api.StepFailure as ex:
-          # Only retry on 'remote rejected' errors.
-          if ex.retcode == 1 and '[remote rejected]' in ex.result.stdout:
+          # Only retry on remote 'rejected' errors.
+          if ex.retcode == 1 and 'rejected' in ex.result.stdout:
             ex.result.presentation.status = 'SUCCESS'
           else:
             raise
