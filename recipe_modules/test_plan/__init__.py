@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/swarming',
     'infra_config',
+    'repo',
     'skylab',
     'vm_test'
 ]

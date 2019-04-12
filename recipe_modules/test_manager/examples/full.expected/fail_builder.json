@@ -163,40 +163,6 @@
     ]
   },
   {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"status\": \"SUCCESS\", \n  \"builder\": {\n    \"project\": \"project\", \n    \"builder\": \"child_builder1\", \n    \"bucket\": \"bucket\"\n  }, \n  \"createTime\": \"2018-05-25T23:50:17Z\", \n  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \n  \"output\": {\n    \"properties\": {\n      \"build_report_hash\": \"DEADBEEF\"\n    }\n  }, \n  \"input\": {\n    \"properties\": {\n      \"build_target\": {\n        \"name\": null\n      }\n    }, \n    \"gitilesCommit\": {\n      \"project\": \"project\", \n      \"host\": \"host\", \n      \"ref\": \"refs/heads/master\", \n      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"\n    }\n  }, \n  \"id\": \"8922054662172514002\"\n}",
-      "[CLEANUP]/buildprotos_tmp_1/build_.json"
-    ],
-    "infra_step": true,
-    "name": "test.write_build_",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"status\": \"FAILURE\", \n  \"builder\": {\n    \"project\": \"project\", \n    \"builder\": \"child_builder2_fail\", \n    \"bucket\": \"bucket\"\n  }, \n  \"createTime\": \"2018-05-25T23:50:17Z\", \n  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \n  \"output\": {\n    \"properties\": {\n      \"build_report_hash\": \"DEADBEEF\"\n    }\n  }, \n  \"input\": {\n    \"properties\": {\n      \"build_target\": {\n        \"name\": null\n      }\n    }, \n    \"gitilesCommit\": {\n      \"project\": \"project\", \n      \"host\": \"host\", \n      \"ref\": \"refs/heads/master\", \n      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"\n    }\n  }, \n  \"id\": \"8922054662172514003\"\n}",
-      "[CLEANUP]/buildprotos_tmp_1/build_.json"
-    ],
-    "infra_step": true,
-    "name": "test.write_build_ (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "test.test builds",
     "~followup_annotations": [
@@ -347,7 +313,7 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_json",
-      "{\"buildbucketBuildPath\": [{\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_.json\"}, {\"filePath\": \"[CLEANUP]/buildprotos_tmp_1/build_.json\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
+      "{\"buildbucketProtos\": [{\"serializedProto\": \"CNKtpKubruDoexIhCgdwcm9qZWN0EgZidWNrZXQaDmNoaWxkX2J1aWxkZXIxIi91c2VyOmx1Y2ktc2NoZWR1bGVyQGFwcHNwb3QuZ3NlcnZpY2VhY2NvdW50LmNvbTIGCLnCotgFYAx6cQohCh8KDGJ1aWxkX3RhcmdldBIPGg1idWlsZF90YXJnZXQxEkwKBGhvc3QSB3Byb2plY3QaKDJkNzI1MTBlNDQ3YWI2MGE5NzI4YWVlYTIzNjJkOGJlMmNiZDc3ODkiEXJlZnMvaGVhZHMvbWFzdGVyggEjCiEKHwoRYnVpbGRfcmVwb3J0X2hhc2gSChoIREVBREJFRUY=\"}, {\"serializedProto\": \"CNOtpKubruDoexImCgdwcm9qZWN0EgZidWNrZXQaE2NoaWxkX2J1aWxkZXIyX2ZhaWwiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AVgFHpxCiEKHwoMYnVpbGRfdGFyZ2V0Eg8aDWJ1aWxkX3RhcmdldDISTAoEaG9zdBIHcHJvamVjdBooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIRcmVmcy9oZWFkcy9tYXN0ZXKCASMKIQofChFidWlsZF9yZXBvcnRfaGFzaBIKGghERUFEQkVFRg==\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\", \"sourceTreeConfigPath\": \"[CLEANUP]/testconfig/source_tree_test_config.cfg\", \"targetTestRequirementsPath\": \"[CLEANUP]/testconfig/target_test_requirements.cfg\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],

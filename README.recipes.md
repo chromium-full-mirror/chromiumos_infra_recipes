@@ -1172,7 +1172,7 @@ Args:
 Returns:
   Tuple(list[swarming.TaskRequestMetadata], list[str])
 
-&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#67)(self, test_results):**
+&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#59)(self, test_results):**
 
 Logs test status to UI, and raises on failed tests.
 
@@ -1183,9 +1183,9 @@ Raises:
   recipe_api.StepFailure on failing tests.
 ### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
 
-[DEPS](/recipe_modules/test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [infra\_config](#recipe_modules-infra_config), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [infra\_config](#recipe_modules-infra_config), [repo](#recipe_modules-repo), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [RunPlanApi](/recipe_modules/test_plan/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RunPlanApi](/recipe_modules/test_plan/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for test execution steps
 
@@ -1200,19 +1200,18 @@ Args:
 Returns:
    list[swarming.TaskResult]
 
-&mdash; **def [generate](/recipe_modules/test_plan/api.py#52)(self, name, build_proto_paths):**
+&mdash; **def [generate](/recipe_modules/test_plan/api.py#52)(self, name, builds):**
 
 Generate test plan.
 
 Args:
   * name (str): The step name.
-  * build_proto_paths (list(Path)): Paths to buildbucket build protos
-      stored as JSON files.
+  * builds (list[build_pb2.Build]): builds to test.
 
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [initialize](/recipe_modules/test_plan/api.py#26)(self):**
+&mdash; **def [initialize](/recipe_modules/test_plan/api.py#27)(self):**
 
 &mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#89)(self, name, test_plan):**
 
@@ -1239,14 +1238,13 @@ Args:
 Returns:
   list[ScheduleResult]
 
-&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#34)(self, name, build_proto_paths):**
+&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#35)(self, name, builds):**
 
 Shortcut for generate and schedule.
 
 Args:
   * name (str): The step name.
-  * build_proto_paths (list(Path)): Paths to buildbucket build protos
-      stored as JSON files.
+  * builds (list[build_pb2.Build]): builds to test.
 
 Returns:
   list[swarming.TaskRequestMetadata]
@@ -1541,9 +1539,9 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 &mdash; **def [RunSteps](/recipe_modules/test_manager/examples/full.py#23)(api):**
 ### *recipes* / [test\_plan:examples/generate](/recipe_modules/test_plan/examples/generate.py)
 
-[DEPS](/recipe_modules/test_plan/examples/generate.py#6): [test\_plan](#recipe_modules-test_plan)
+[DEPS](/recipe_modules/test_plan/examples/generate.py#8): [test\_plan](#recipe_modules-test_plan)
 
-&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/generate.py#9)(api):**
+&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/generate.py#11)(api):**
 ### *recipes* / [test\_plan:examples/run](/recipe_modules/test_plan/examples/run.py)
 
 [DEPS](/recipe_modules/test_plan/examples/run.py#12): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -1551,9 +1549,9 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 &mdash; **def [RunSteps](/recipe_modules/test_plan/examples/run.py#19)(api, plan):**
 ### *recipes* / [test\_plan:examples/test\_builds](/recipe_modules/test_plan/examples/test_builds.py)
 
-[DEPS](/recipe_modules/test_plan/examples/test_builds.py#6): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/test_plan/examples/test_builds.py#8): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/test_builds.py#9)(api):**
+&mdash; **def [RunSteps](/recipe_modules/test_plan/examples/test_builds.py#11)(api):**
 ### *recipes* / [vm\_test:examples/full](/recipe_modules/vm_test/examples/full.py)
 
 [DEPS](/recipe_modules/vm_test/examples/full.py#5): [test\_plan](#recipe_modules-test_plan), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

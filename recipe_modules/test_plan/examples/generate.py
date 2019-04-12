@@ -3,11 +3,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+
 DEPS = ['test_plan']
 
 
 def RunSteps(api):
-  api.test_plan.generate('generate plan', ['/path/to/build/json/file'])
+  api.test_plan.generate('generate plan', [build_pb2.Build()])
 
 
 def GenTests(api):

@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+
 DEPS = ['recipe_engine/properties', 'recipe_engine/step', 'test_plan']
 
 
@@ -12,14 +14,14 @@ def RunSteps(api):
   build_config = api.properties['build_config']
 
   try:
-    api.test_plan.test_builds('test_non-deferred', builder)
+    api.test_plan.test_builds('test_non-deferred', [build_pb2.Build()])
   except:
     # Don't fail the test on exception - we have more to do.
     # Observing the exception in the json output is sufficient.
     pass
 
   with api.step.defer_results():
-    api.test_plan.test_builds('test_deferred', builder)
+    api.test_plan.test_builds('test_deferred', [build_pb2.Build()])
 
 
 def GenTests(api):

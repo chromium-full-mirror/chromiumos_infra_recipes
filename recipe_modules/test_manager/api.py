@@ -49,16 +49,8 @@ class TestManagerApi(recipe_api.RecipeApi):
     # input builds is a generator, let's use a list instead here.
     builds_list = list(builds)
 
-    build_protos = []
-    tmp = self.m.path.mkdtemp('buildprotos')
-    for build in builds_list:
-      build_target = build.input.properties.fields['build_target'].struct_value.fields['name'].string_value
-      filename = tmp.join('build_%s.json' % build_target)
-      self.m.file.write_raw('write_build_%s' % build_target, filename, jsonpb.MessageToJson(build))
-      build_protos.append(filename)
-
     try:
-      tasks += self.m.test_plan.test_builds('test builds', build_protos)
+      tasks += self.m.test_plan.test_builds('test builds', builds_list)
     except recipe_api.StepFailure:
       schedule_failures.extend([b.builder.builder for b in builds_list])
 

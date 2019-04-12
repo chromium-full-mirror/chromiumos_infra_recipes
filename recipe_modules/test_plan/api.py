@@ -13,6 +13,7 @@ from recipe_engine import recipe_api
 
 from google.protobuf import json_format as jsonpb
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 
@@ -31,13 +32,12 @@ class RunPlanApi(recipe_api.RecipeApi):
         'tast_vm': self.m.vm_test.run_tast_vm_tests,
     }
 
-  def test_builds(self, name, build_proto_paths):
+  def test_builds(self, name, builds):
     """Shortcut for generate and schedule.
 
     Args:
       * name (str): The step name.
-      * build_proto_paths (list(Path)): Paths to buildbucket build protos
-          stored as JSON files.
+      * builds (list[build_pb2.Build]): builds to test.
 
     Returns:
       list[swarming.TaskRequestMetadata]
@@ -46,16 +46,15 @@ class RunPlanApi(recipe_api.RecipeApi):
        step.StepFailure
     """
     with self.m.step.nest(name):
-      test_plan = self.generate('generate', build_proto_paths)
+      test_plan = self.generate('generate', builds)
       return self.schedule_tests('schedule', test_plan)
 
-  def generate(self, name, build_proto_paths):
+  def generate(self, name, builds):
     """Generate test plan.
 
     Args:
       * name (str): The step name.
-      * build_proto_paths (list(Path)): Paths to buildbucket build protos
-          stored as JSON files.
+      * builds (list[build_pb2.Build]): builds to test.
 
     Returns:
       GenerateTestPlanResponse of test plan.
@@ -69,9 +68,10 @@ class RunPlanApi(recipe_api.RecipeApi):
         self.m.infra_config.get_test_config('source_tree_test_config.cfg'))
     generate_request.target_test_requirements_path = str(
         self.m.infra_config.get_test_config('target_test_requirements.cfg'))
-    for build_proto_path in build_proto_paths:
-      generate_request.buildbucket_build_path.add().file_path = (
-        str(build_proto_path))
+    generate_request.repo_tool_path = str(self.m.repo.repo_path)
+    for build in builds:
+      generate_request.buildbucket_protos.add().serialized_proto = (
+        build_pb2.Build.SerializeToString(build))
 
     cmd = [
         self._test_planner_path,
