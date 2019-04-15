@@ -19,6 +19,7 @@ The annealing builders run in serial and do the following:
 import urlparse
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -37,10 +38,13 @@ DEPS = [
     'repo',
 ]
 
-MANIFEST_REF = 'snapshot'
+PROPERTIES = {
+    # The name of the git reference to create snapshots on.
+    'manifest_ref': Property(kind=str, default='snapshot')
+}
 
 
-def RunSteps(api):
+def RunSteps(api, manifest_ref):
   # Cache the chroot.
   api.cros_sdk.configure(
       chroot_parent_path=api.path['cache'].join('cros_chroot'))
@@ -52,7 +56,7 @@ def RunSteps(api):
 
     snapshot_xml = api.repo.manifest_snapshot()
     manifest_diffs = api.repo.diff_remote_and_local_manifests(
-        api.cros_source.INTERNAL_MANIFEST_URL, MANIFEST_REF, snapshot_xml)
+        api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
 
     # TODO(athilenius): It would be nice to set the 'Info' column here.
     if manifest_diffs is not None:
@@ -65,10 +69,10 @@ def RunSteps(api):
       api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
     snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
-    api.git.fetch_ref(snapshot_repo_url, MANIFEST_REF)
+    api.git.fetch_ref(snapshot_repo_url, manifest_ref)
     api.git.checkout('FETCH_HEAD')
     api.git_txn.update_ref_write_file(
-        snapshot_repo_url, MANIFEST_REF, make_message(api),
+        snapshot_repo_url, manifest_ref, make_message(api, manifest_ref),
         api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
         snapshot_xml)
 
@@ -89,17 +93,24 @@ def make_gitiles_commit(api, repo_url, commit_id):
   )
 
 
-def make_message(api):
+def make_message(api, manifest_ref):
   """Creates and returns the commit message with a Cr-Commit-Position.
 
   Creates and returns the commit message with a Cr-Commit-Position
   suitable for use by FindIt, as in:
 
   Cr-Commit-Position: refs/heads/snapshot@{#%d}
+
+  Args:
+    * api (object): See RunSteps documentation.
+    * manifest_ref (str): The git reference to use in the commit message.
+
+  Returns:
+    A string containing the commit message.
   """
   position = api.git.position_num()
   message = 'Annealing manifest snapshot\n\n'
-  message += 'Cr-Commit-Position: refs/heads/%s@{#%d}' % (MANIFEST_REF,
+  message += 'Cr-Commit-Position: refs/heads/%s@{#%d}' % (manifest_ref,
                                                           position + 1)
   return message
 
