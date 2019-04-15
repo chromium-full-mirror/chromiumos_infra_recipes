@@ -1170,7 +1170,7 @@ Args:
 Returns:
   list[swarming.TaskResult]
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_manager/api.py#36)(self, builds):**
+&mdash; **def [schedule\_tests](/recipe_modules/test_manager/api.py#38)(self, builds):**
 
 Schedule tests for successful builds.
 
@@ -1180,7 +1180,7 @@ Args:
 Returns:
   Tuple(list[swarming.TaskRequestMetadata], list[str])
 
-&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#59)(self, test_results):**
+&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#61)(self, test_results):**
 
 Logs test status to UI, and raises on failed tests.
 

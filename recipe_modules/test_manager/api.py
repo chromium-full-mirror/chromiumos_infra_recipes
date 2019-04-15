@@ -26,9 +26,8 @@ class TestManagerApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest(step_name) as step_result:
       tasks, failures = self.schedule_tests(builds)
-
       if failures:
-        step_result.presentation.result = 'FAILURE'
+        step_result.presentation.status = 'FAILURE'
         step_result.presentation.logs['test scheduling failures'] = failures
 
       return self.m.test_plan.collect_tests('collect test results', tasks)

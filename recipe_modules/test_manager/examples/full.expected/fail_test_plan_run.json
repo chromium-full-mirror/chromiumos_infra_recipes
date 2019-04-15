@@ -87,7 +87,8 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@test scheduling failures@child_builder1@@@",
       "@@@STEP_LOG_LINE@test scheduling failures@child_builder2@@@",
-      "@@@STEP_LOG_END@test scheduling failures@@@"
+      "@@@STEP_LOG_END@test scheduling failures@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
