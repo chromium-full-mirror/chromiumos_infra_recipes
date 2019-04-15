@@ -53,7 +53,7 @@
       "-r",
       "-n",
       "-p",
-      "[CACHE]/gentoo_distfiles/distfiles",
+      "[CACHE]/gentoo_distfiles/distfiles/*",
       "gs://chromeos-mirror/gentoo/distfiles/"
     ],
     "infra_step": true,

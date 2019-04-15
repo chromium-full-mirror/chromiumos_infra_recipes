@@ -53,7 +53,7 @@
       "-r",
       "-n",
       "-p",
-      "[CACHE]/gentoo_distfiles/distfiles",
+      "[CACHE]/gentoo_distfiles/distfiles/*",
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
     "infra_step": true,

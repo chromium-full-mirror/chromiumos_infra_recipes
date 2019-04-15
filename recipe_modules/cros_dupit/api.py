@@ -115,7 +115,7 @@ class DupItApi(recipe_api.RecipeApi):
     ]
 
     gsutil_cp_commands += [
-        self.m.path.join(self.local_distfiles_cache, 'distfiles'),
+        self.m.path.join(self.local_distfiles_cache, 'distfiles', '*'),
         self.all_gs_distfiles_uri
     ]
 
