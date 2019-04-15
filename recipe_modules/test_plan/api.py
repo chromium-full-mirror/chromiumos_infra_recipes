@@ -64,10 +64,6 @@ class RunPlanApi(recipe_api.RecipeApi):
     generate_request = GenerateTestPlanRequest()
     generate_request.chromiumos_checkout_root = str(
         self.m.cros_source.master_path)
-    generate_request.source_tree_config_path = str(
-        self.m.infra_config.get_test_config('source_tree_test_config.cfg'))
-    generate_request.target_test_requirements_path = str(
-        self.m.infra_config.get_test_config('target_test_requirements.cfg'))
     generate_request.repo_tool_path = str(self.m.repo.repo_path)
     for build in builds:
       generate_request.buildbucket_protos.add().serialized_proto = (
