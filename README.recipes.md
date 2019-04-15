@@ -1197,7 +1197,7 @@ Raises:
 
 A module for test execution steps
 
-&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#125)(self, name, schedule_results):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#135)(self, name, schedule_results):**
 
 Waits for a set of tests to complete, and returns their results.
 Args:

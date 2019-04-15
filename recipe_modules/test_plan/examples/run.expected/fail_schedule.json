@@ -82,9 +82,9 @@
   {
     "failure": {
       "failure": {
-        "step": "run plan.schedule.build_target.hw.suite1"
+        "step": "Aggregate step failure."
       },
-      "humanReason": "Step(u'run plan.schedule.build_target.hw.suite1') failed with return_code 1"
+      "humanReason": "1 out of 1 aggregated steps failed: Step(u'run plan.schedule.build_target.hw.suite1') failed with return_code 1"
     },
     "name": "$result"
   }

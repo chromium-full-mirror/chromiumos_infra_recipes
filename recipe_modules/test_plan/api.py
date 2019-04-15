@@ -110,17 +110,27 @@ class RunPlanApi(recipe_api.RecipeApi):
       list[ScheduleResult]
     """
     results = []
-    with self.m.step.nest(name):
-      for build_target, test_units in groupby(
-          test_plan.test_unit,
-          lambda unit: unit.scheduling_requirements.build_target):
-        with self.m.step.nest(build_target):
-          for test_unit in test_units:
-            test_env, step = self._step(test_unit)
-            result = step(test_env, test_unit)
-            results.append(result)
+    with self.m.step.defer_results():
+      with self.m.step.nest(name):
+        for build_target, test_units in groupby(
+            test_plan.test_unit,
+            lambda unit: unit.scheduling_requirements.build_target):
+          with self.m.step.nest(build_target):
+            for test_unit in test_units:
+              if not test_unit.WhichOneof('TestCfg'):
+                raise self.m.step.StepFailure('No test environment specified.')
+              test_env = test_unit.WhichOneof('TestCfg')[:-len('_test_cfg')]
+              step = self._test_env_steps.get(test_env)
+              if step is None:  # pragma: nocover
+                raise self.m.step.StepFailure(
+                    'Unable to execute tests for test environment "%s"' % test_env)
+              results.append(step(test_env, test_unit))
 
-    return results
+    successful_results = []
+    for r in results:
+      if r.is_ok:
+        successful_results.append(r.get_result())
+    return successful_results
 
   def collect_tests(self, name, schedule_results):
     """Waits for a set of tests to complete, and returns their results.
@@ -152,26 +162,6 @@ class RunPlanApi(recipe_api.RecipeApi):
           results += self.m.swarming.collect('%s' % hostname, task_ids)
 
     return results
-
-  def _step(self, test_unit):
-    """Returns environment and step function for given test plan step.
-
-    Args:
-      * test_unit (TestUnit): Test plan step.
-
-    Returns:
-      Tuple(str, callable)
-    """
-    if not test_unit.WhichOneof('TestCfg'):
-      raise self.m.step.StepFailure('No test environment specified.')
-
-    test_env = test_unit.WhichOneof('TestCfg')[:-len('_test_cfg')]
-    step = self._test_env_steps.get(test_env, None)
-    if step is None:  # pragma: nocover
-      raise self.m.step.StepFailure(
-          'Unable to execute tests for test environment "%s"' % test_env)
-
-    return test_env, step
 
   def _ensure_test_planner(self):
     """Ensure the test_planner cli is installed."""
