@@ -101,9 +101,14 @@ class VMTestApi(recipe_api.RecipeApi):
     ensure_file = self.m.cipd.EnsureFile()
     ensure_file.add_package(
         'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
-        'version:latest', 'recipes')
+        'refs/heads/master', 'recipes')
 
-    ensure_file.add_package('infra/depot_tools/depot_tools', 'version:latest',
+    # The below hash is the only available package in CIPD for depot_tools, and
+    # it's from 2017. We probably want a different approach for getting
+    # depot_tools to Swarming.
+    # TODO: implement a better way.
+    ensure_file.add_package('infra/depot_tools/depot_tools',
+                            '9fee972b551402cc20c534477bbea55c94a01627',
                             'depot_tools')
 
     request = (
