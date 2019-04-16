@@ -11,7 +11,6 @@ from urlparse import urlparse
 
 from RECIPE_MODULES.chromeos.test_plan.api import ScheduleResult
 
-SKYLAB_SWARMING_POOL = 'ChromeOSSkylab'
 SKYLAB_VERSION = 'prod'
 
 
@@ -66,9 +65,11 @@ class SkylabApi(recipe_api.RecipeApi):
     with self.m.step.nest(name):
       for test in test_unit.hw_test_cfg.hw_test:
         test_suite = test.suite
+        # TODO: figure out whether or not we always want to use the bvt pool.
+        skylab_pool = 'bvt'
         cmd = [
             self._skylab_path, 'create-suite', '-json', '-pool',
-            SKYLAB_SWARMING_POOL, '-image',
+            skylab_pool, '-image',
             test_unit.build_payload.artifacts_gs_path, '-board',
             test_unit.scheduling_requirements.build_target, test_suite
         ]

@@ -1087,11 +1087,11 @@ Args:
 
 [DEPS](/recipe_modules/skylab/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Skylab helper module
 
-&mdash; **def [create\_suites](/recipe_modules/skylab/api.py#53)(self, name, test_unit):**
+&mdash; **def [create\_suites](/recipe_modules/skylab/api.py#52)(self, name, test_unit):**
 
 Skylab step.
 
@@ -1102,7 +1102,7 @@ Args:
 Returns:
   test_plan.api.ScheduleResult
 
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#50)(self):**
+&mdash; **def [initialize](/recipe_modules/skylab/api.py#49)(self):**
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
