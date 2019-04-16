@@ -117,7 +117,7 @@ class VMTestApi(recipe_api.RecipeApi):
             str(test_suite)).with_priority(SWARMING_MED_PRIORITY))
 
     cmd = [
-        'recipes/recipes.py',
+        'recipes/recipes',
         'run',
         '--workdir',
         'recipes/workdir',
