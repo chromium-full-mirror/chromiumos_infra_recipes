@@ -134,7 +134,7 @@ def GenTests(api):
          postsubmit_orchestrator_build() +
          api.test_plan.simulate_test_builds('run tests.test builds'))
 
-  yield (api.test('updates refs') +  #
+  yield (api.test('updates_refs') +  #
          postsubmit_orchestrator_build() +  #
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
@@ -142,12 +142,12 @@ def GenTests(api):
          }) +
          api.test_plan.simulate_test_builds('run tests.test builds'))
 
-  yield (api.test('bad update ref') +  #
+  yield (api.test('bad_update_ref') +  #
          api.properties(update_manifest_refs={'start': 'foo'}) +  #
          api.expect_exception("ValueError"))
 
   yield (
-      api.test('critical child builder fails') +  #
+      api.test('critical_child_builder_fails') +  #
       postsubmit_orchestrator_build() +  #
       api.buildbucket.simulated_collect_output(
           [
@@ -163,7 +163,7 @@ def GenTests(api):
       api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (
-      api.test('non-critical child builder fails') +  #
+      api.test('non-critical_child_builder_fails') +  #
       postsubmit_orchestrator_build() +  #
       api.buildbucket.simulated_collect_output(
           [
