@@ -68,10 +68,13 @@ class SkylabApi(recipe_api.RecipeApi):
         # TODO: figure out whether or not we always want to use the bvt pool.
         skylab_pool = 'bvt'
         cmd = [
-            self._skylab_path, 'create-suite', '-json', '-pool',
-            skylab_pool, '-image',
-            test_unit.build_payload.artifacts_gs_path, '-board',
-            test_unit.scheduling_requirements.build_target, test_suite
+            self._skylab_path, 'create-suite',
+            '-json',
+            '-pool', skylab_pool,
+            '-image', test_unit.build_payload.artifacts_gs_path,
+            '-board', test_unit.scheduling_requirements.build_target,
+            '-timeout-mins', 120,
+            test_suite,
         ]
 
         result = self.m.easy.stdout_step(

@@ -46,6 +46,8 @@
       "path/to/artifact",
       "-board",
       "build_target",
+      "-timeout-mins",
+      "120",
       "suite1"
     ],
     "name": "test.suite1",
@@ -65,6 +67,8 @@
       "path/to/artifact",
       "-board",
       "build_target",
+      "-timeout-mins",
+      "120",
       "suite2"
     ],
     "name": "test.suite2",

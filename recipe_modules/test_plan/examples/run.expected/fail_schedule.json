@@ -70,6 +70,8 @@
       "path/to/artifact",
       "-board",
       "build_target",
+      "-timeout-mins",
+      "120",
       "suite1"
     ],
     "name": "run plan.schedule.build_target.hw.suite1",

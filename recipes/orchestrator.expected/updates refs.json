@@ -675,6 +675,8 @@
       "path/to/artifact",
       "-board",
       "build_target",
+      "-timeout-mins",
+      "120",
       "suite1"
     ],
     "name": "run tests.test builds.schedule.build_target.hw.suite1",
@@ -694,6 +696,8 @@
       "path/to/artifact",
       "-board",
       "build_target",
+      "-timeout-mins",
+      "120",
       "suite2"
     ],
     "name": "run tests.test builds.schedule.build_target.hw.suite2",

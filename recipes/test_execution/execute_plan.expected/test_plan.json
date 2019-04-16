@@ -102,6 +102,8 @@
       "path/to/artifact",
       "-board",
       "build_target",
+      "-timeout-mins",
+      "120",
       "test-suite"
     ],
     "name": "run plan.schedule.build_target.hw.test-suite",
