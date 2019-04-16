@@ -103,13 +103,9 @@ class VMTestApi(recipe_api.RecipeApi):
         'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
         'refs/heads/master', 'recipes')
 
-    # The below hash is the only available package in CIPD for depot_tools, and
-    # it's from 2017. We probably want a different approach for getting
-    # depot_tools to Swarming.
-    # TODO: implement a better way.
-    ensure_file.add_package('infra/depot_tools/depot_tools',
-                            '9fee972b551402cc20c534477bbea55c94a01627',
-                            'depot_tools')
+    ensure_file.add_package('infra/tools/luci/vpython/${platform}',
+                            'latest',
+                            'vpython')
 
     request = (
         self.m.swarming.task_request().with_name(
@@ -123,6 +119,7 @@ class VMTestApi(recipe_api.RecipeApi):
         'recipes/workdir',
         '--properties',
         json.dumps(self._get_properties(test_suite=test_suite, **kwargs)),
+        VM_TEST_RECIPE,
     ]
 
     # Configure the first slice.
@@ -130,7 +127,7 @@ class VMTestApi(recipe_api.RecipeApi):
         request.with_slice(
             0, request[0].with_command(cmd).with_dimensions(pool=self.swarming_pool)
             .with_cipd_ensure_file(ensure_file).with_env_prefixes(
-                PATH=["depot_tools"])))
+                PATH=["vpython"])))
 
     with self.m.swarming.with_server(self.swarming_server):
       metadata = self.m.swarming.trigger(name, requests=[request])
