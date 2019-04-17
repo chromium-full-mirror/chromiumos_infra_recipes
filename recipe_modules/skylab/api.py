@@ -81,6 +81,8 @@ class SkylabApi(recipe_api.RecipeApi):
             test_suite, cmd,
             test_stdout=self.test_api.example_result(test_suite))
         task = SkylabRequestMetadata(json.loads(result))
+        presented_links = self.m.step.active_result.presentation.links
+        presented_links['Skylab task UI: %s' % task.name] = task.task_ui_link
         tasks.append(task)
 
     if tasks:

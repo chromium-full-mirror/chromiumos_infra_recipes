@@ -333,7 +333,8 @@
     "name": "test.test builds.schedule.build_target.hw.suite1",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LINK@Skylab task UI: suite1@http://s.com/2@@@"
     ]
   },
   {
@@ -354,7 +355,8 @@
     "name": "test.test builds.schedule.build_target.hw.suite2",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LINK@Skylab task UI: suite2@http://s.com/3@@@"
     ]
   },
   {
