@@ -24,6 +24,10 @@ def GenTests(api):
   yield (api.test('invalid_test_unit') +
          api.properties(plan=api.test_plan.example_test_plan(TestUnit())))
 
+  yield (api.test('gce_build_target_test') + api.properties(
+      plan=api.test_plan.example_test_plan(
+          api.test_plan.example_gce_unit(test_suites=['suite1', 'suite2']))))
+
   yield (api.test('hw_build_target_test') + api.properties(
       plan=api.test_plan.example_test_plan(
           api.test_plan.example_hw_unit(test_suites=['suite1', 'suite2']))))

@@ -120,6 +120,11 @@ class RunPlanApi(recipe_api.RecipeApi):
               if not test_unit.WhichOneof('TestCfg'):
                 raise self.m.step.StepFailure('No test environment specified.')
               test_env = test_unit.WhichOneof('TestCfg')[:-len('_test_cfg')]
+              # GCE testing isn't supported yet
+              # TODO(https://crbug.com/953961): Figure out if/when we need
+              # GCE tests.
+              if test_env == 'gce':
+                continue
               step = self._test_env_steps.get(test_env)
               if step is None:  # pragma: nocover
                 raise self.m.step.StepFailure(
