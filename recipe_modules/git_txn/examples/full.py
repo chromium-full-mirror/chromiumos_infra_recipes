@@ -28,7 +28,7 @@ def attempt_git_step(api, attempt, git_subcmd, retcode=0, stdout=None):
 def GenTests(api):
   yield api.test('basic')
 
-  yield api.test('retry succeed') + attempt_git_step(
+  yield api.test('retry_succeed') + attempt_git_step(
       api,
       1,
       'push',
@@ -41,7 +41,7 @@ def GenTests(api):
       stdout='deadbeef2',
   )
 
-  yield api.test('other failure') + attempt_git_step(
+  yield api.test('other_failure') + attempt_git_step(
       api,
       1,
       'push',
@@ -49,7 +49,7 @@ def GenTests(api):
       stdout='!	HEAD:refs/fake	[remote failed]',
   )
 
-  yield api.test('rejected no update') + attempt_git_step(
+  yield api.test('rejected_no_update') + attempt_git_step(
       api,
       1,
       'push',
@@ -57,7 +57,7 @@ def GenTests(api):
       stdout='!	HEAD:refs/fake	[remote rejected]',
   )
 
-  yield api.test('retry too many times') + attempt_git_step(
+  yield api.test('retry_too_many_times') + attempt_git_step(
       api,
       1,
       'push',
@@ -76,12 +76,12 @@ def GenTests(api):
       stdout='!	HEAD:refs/fake	[remote rejected]',
   )
 
-  yield api.test('update ref has diff has new file') + api.step_data(
+  yield api.test('update_ref_has_diff_has_new_file') + api.step_data(
       'git transaction (3).diff check.git ls-files',
       retcode=1,
   )
 
-  yield api.test('update ref has diff has change') + api.step_data(
+  yield api.test('update_ref_has_diff_has_change') + api.step_data(
       'git transaction (3).diff check.git ls-files',
       retcode=0,
   ) + api.step_data(
