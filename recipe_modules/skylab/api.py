@@ -65,8 +65,7 @@ class SkylabApi(recipe_api.RecipeApi):
     with self.m.step.nest(name):
       for test in test_unit.hw_test_cfg.hw_test:
         test_suite = test.suite
-        # TODO: figure out whether or not we always want to use the bvt pool.
-        skylab_pool = 'bvt'
+        skylab_pool = 'DUT_POOL_QUOTA'
         cmd = [
             self._skylab_path, 'create-suite',
             '-json',
