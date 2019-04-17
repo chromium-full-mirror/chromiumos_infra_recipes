@@ -3,7 +3,6 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
-  * [artifacts](#recipe_modules-artifacts)
   * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
@@ -33,7 +32,6 @@
 
 **[Recipes](#Recipes)**
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
-  * [artifacts:examples/full](#recipes-artifacts_examples_full)
   * [build_api:examples/full](#recipes-build_api_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
@@ -72,22 +70,6 @@
   * [vm_test:examples/full](#recipes-vm_test_examples_full)
 ## Recipe Modules
 
-### *recipe_modules* / [artifacts](/recipe_modules/artifacts)
-
-[DEPS](/recipe_modules/artifacts/__init__.py#5): [build\_api](#recipe_modules-build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-#### **class [ArtifactsApi](/recipe_modules/artifacts/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for artifact generation steps
-
-&mdash; **def [create\_and\_upload](/recipe_modules/artifacts/api.py#22)(self, step_name, build_report, artifacts):**
-
-Create and upload artifacts.
-
-Args:
-  * step_name (str): Step name.
-  * build_report (dict): Build report.
-  * artifacts (list[str]): List of build artifacts.
 ### *recipe_modules* / [build\_api](/recipe_modules/build_api)
 
 [DEPS](/recipe_modules/build_api/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1333,11 +1315,6 @@ Args:
 
 Returns:
   A string containing the commit message.
-### *recipes* / [artifacts:examples/full](/recipe_modules/artifacts/examples/full.py)
-
-[DEPS](/recipe_modules/artifacts/examples/full.py#6): [artifacts](#recipe_modules-artifacts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-&mdash; **def [RunSteps](/recipe_modules/artifacts/examples/full.py#13)(api):**
 ### *recipes* / [build\_api:examples/full](/recipe_modules/build_api/examples/full.py)
 
 [DEPS](/recipe_modules/build_api/examples/full.py#6): [build\_api](#recipe_modules-build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
