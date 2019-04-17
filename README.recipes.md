@@ -280,7 +280,7 @@ API for uploading CrOS prebuilts to Google Storage.
 
 A module for uploading package prebuilts.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#113)(self, target, kind, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#114)(self, target, kind, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -776,7 +776,7 @@ API for updating remote git repositories transactionally.
 
 A module for executing git transactions.
 
-&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#26)(self, remote, ref, update_callback, retries=3):**
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#26)(self, remote, ref, update_callback, retries=3, automerge=False):**
 
 Transactionally update a remote git repository ref.
 
@@ -796,6 +796,7 @@ Args:
       local repo's HEAD. The callback is passed no arguments. If the
       callback returns False the update will be cancelled but succeed.
   retries (int): Number of update attempts to make before failing.
+  automerge (bool): Whether to use Gerrit's "auto-merge" feature.
 
 Returns:
   bool: True if the transaction succeeded, false if it explicitly aborts.
@@ -803,7 +804,7 @@ Returns:
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#87)(self, remote, ref, message, dest, data, \*\*kwargs):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#93)(self, remote, ref, message, dest, data, \*\*kwargs):**
 
 Transactionally update a file in a remote git repository ref.
 
@@ -1414,7 +1415,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 
 &mdash; **def [RunSteps](/recipe_modules/git_txn/examples/full.py#12)(api):**
 
-&mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#19)(api, attempt, git_subcmd, retcode=0, stdout=None):**
+&mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#20)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [infra\_config:examples/full](/recipe_modules/infra_config/examples/full.py)
 
 [DEPS](/recipe_modules/infra_config/examples/full.py#6): [infra\_config](#recipe_modules-infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

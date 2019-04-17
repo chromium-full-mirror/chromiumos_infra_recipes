@@ -48,7 +48,7 @@
       "push",
       "--porcelain",
       "remote",
-      "HEAD:refs/heads/ref"
+      "HEAD:refs/for/refs/heads/ref%submit"
     ],
     "infra_step": true,
     "name": "git transaction.git push",
@@ -233,7 +233,7 @@
       "push",
       "--porcelain",
       "remote",
-      "HEAD:refs/heads/ref"
+      "HEAD:refs/for/refs/heads/ref"
     ],
     "infra_step": true,
     "name": "git transaction (3).git push",

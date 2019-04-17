@@ -10,7 +10,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.git_txn.update_ref('remote', 'ref', lambda: None, retries=2)
+  api.git_txn.update_ref('remote', 'ref', lambda: None,
+                         retries=2, automerge=True)
   api.git_txn.update_ref('remote', 'ref', lambda: False)
   api.git_txn.update_ref_write_file('remote', 'ref', 'Update file',
                                     'file/path.txt', 'data')
