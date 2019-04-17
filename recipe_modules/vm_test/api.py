@@ -125,9 +125,12 @@ class VMTestApi(recipe_api.RecipeApi):
     # Configure the first slice.
     request = (
         request.with_slice(
-            0, request[0].with_command(cmd).with_dimensions(pool=self.swarming_pool)
-            .with_cipd_ensure_file(ensure_file).with_env_prefixes(
-                PATH=["vpython"])))
+            0, request[0]
+            .with_command(cmd)
+            .with_execution_timeout_secs(3600 * 2)
+            .with_dimensions(pool=self.swarming_pool)
+            .with_cipd_ensure_file(ensure_file)
+            .with_env_prefixes(PATH=["vpython"])))
 
     with self.m.swarming.with_server(self.swarming_server):
       metadata = self.m.swarming.trigger(name, requests=[request])
