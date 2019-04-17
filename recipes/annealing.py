@@ -26,6 +26,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_sdk',
@@ -39,8 +40,8 @@ DEPS = [
 ]
 
 PROPERTIES = {
-    # The name of the git reference to create snapshots on.
-    'manifest_ref': Property(kind=str, default='snapshot')
+    # REQUIRED. The name of the git reference to create snapshots on.
+    'manifest_ref': Property(kind=str)
 }
 
 
@@ -116,10 +117,13 @@ def make_message(api, manifest_ref):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic') +  #
+         api.properties(manifest_ref="snapshot"))
 
   yield (
-      api.test('has manifest change') + api.step_data(
+      api.test('has manifest change') +  #
+      api.properties(manifest_ref="snapshot") +  #
+      api.step_data(
           'repo manifest', stdout=api.raw_io.output(
               '<manifest><project path="PATH" revision="TO_REV" /></manifest>'))
       +  #
@@ -127,3 +131,6 @@ def GenTests(api):
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'
           )))
+
+  yield (api.test('missing required properties') +  #
+         api.expect_exception('ValueError'))
