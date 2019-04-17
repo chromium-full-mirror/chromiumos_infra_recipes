@@ -115,7 +115,7 @@ Returns:
   google.protobuf.message.Message: Output data.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
-[DEPS](/recipe_modules/cros_artifacts/__init__.py#1): [build\_api](#recipe_modules-build_api), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_artifacts/__init__.py#3): [build\_api](#recipe_modules-build_api), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for uploading CrOS build artifacts to Google Storage.
 
@@ -123,7 +123,7 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#82)(self, name, target, kind, artifacts):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#86)(self, name, target, kind, artifacts):**
 
 Bundle and upload the given artifacts for the given build target.
 
