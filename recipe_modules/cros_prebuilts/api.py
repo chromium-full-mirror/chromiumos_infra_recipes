@@ -15,6 +15,10 @@ from PB.chromite.api import binhost
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
   """A module for uploading package prebuilts."""
 
+  def __init__(self, prebuilts_gs_bucket, **kwargs):
+    super(CrosPrebuiltsApi, self).__init__(**kwargs)
+    self._gs_bucket = prebuilts_gs_bucket
+
   def _prebuilts_uri(self, target, kind):
     """Determine the GS URI to upload prebuilts.
     Args:
@@ -25,8 +29,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       The full GS URI in which to upload prebuilts.
     """
     version = self.m.cros_version.read_workspace_version()
-    return 'gs://chromeos-prebuilt/board/%s/%s-%s/packages' % (target.name,
-                                                               kind, version)
+    return '%s/board/%s/%s-%s/packages' % (self._gs_bucket, target.name, kind,
+                                           version)
 
   def _prepare_binhost_uploads(self, target, uri):
     """Determine which prebuilt archives should be uploaded to the binhost.
