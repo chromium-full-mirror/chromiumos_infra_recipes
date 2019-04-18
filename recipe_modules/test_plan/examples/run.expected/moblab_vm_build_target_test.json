@@ -1,0 +1,31 @@
+[
+  {
+    "cmd": [],
+    "name": "run plan"
+  },
+  {
+    "cmd": [],
+    "name": "run plan.schedule",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run plan.schedule.build_target",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run plan.collect",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

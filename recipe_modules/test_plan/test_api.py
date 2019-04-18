@@ -33,6 +33,18 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
 
     return unit
 
+  def example_moblab_vm_unit(self, test_types=[],
+                             build_target='build_target',
+                             artifact_path='path/to/artifact'):
+    unit = TestUnit()
+    unit.scheduling_requirements.build_target = build_target
+    unit.build_payload.artifacts_gs_path = artifact_path
+
+    for test_type in test_types:
+      unit.moblab_vm_test_cfg.moblab_test.add().test_type = test_type
+
+    return unit
+
   def example_hw_unit(self, test_suites=['test-suite'],
                       build_target='build_target',
                       artifact_path='path/to/artifact'):

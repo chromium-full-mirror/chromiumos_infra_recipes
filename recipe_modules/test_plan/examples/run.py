@@ -28,6 +28,10 @@ def GenTests(api):
       plan=api.test_plan.example_test_plan(
           api.test_plan.example_gce_unit(test_suites=['suite1', 'suite2']))))
 
+  yield (api.test('moblab_vm_build_target_test') + api.properties(
+      plan=api.test_plan.example_test_plan(
+          api.test_plan.example_moblab_vm_unit(test_types=['suite1']))))
+
   yield (api.test('hw_build_target_test') + api.properties(
       plan=api.test_plan.example_test_plan(
           api.test_plan.example_hw_unit(test_suites=['suite1', 'suite2']))))
