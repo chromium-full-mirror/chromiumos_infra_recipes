@@ -83,13 +83,7 @@
   },
   {
     "cmd": [],
-    "name": "test",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@test scheduling failures@child_builder1@@@",
-      "@@@STEP_LOG_LINE@test scheduling failures@child_builder2@@@",
-      "@@@STEP_LOG_END@test scheduling failures@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "test"
   },
   {
     "cmd": [
@@ -234,21 +228,15 @@
   },
   {
     "cmd": [],
-    "name": "test.collect test results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "verify builds"
   },
   {
-    "cmd": [],
-    "name": "test results"
-  },
-  {
-    "jsonResult": null,
+    "failure": {
+      "failure": {
+        "step": "test.test builds.generate"
+      },
+      "humanReason": "Step('test.test builds.generate') failed with return_code 1"
+    },
     "name": "$result"
   }
 ]

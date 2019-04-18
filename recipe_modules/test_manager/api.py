@@ -18,42 +18,15 @@ class TestManagerApi(recipe_api.RecipeApi):
     """Shortcut for schedule_tests + collect_tests.
 
     Args:
-      * builds (list[build_pb2.Build]): List of builds to test.
+      * builds (list or generator of build_pb2.Build]): Builds to test.
       * step_name (str): Optional step name.
 
     Returns:
       list[swarming.TaskResult]
     """
-    with self.m.step.nest(step_name) as step_result:
-      tasks, failures = self.schedule_tests(builds)
-      if failures:
-        step_result.presentation.status = 'FAILURE'
-        step_result.presentation.logs['test scheduling failures'] = failures
-
+    with self.m.step.nest(step_name):
+      tasks = self.m.test_plan.test_builds('test builds', list(builds))
       return self.m.test_plan.collect_tests('collect test results', tasks)
-
-  def schedule_tests(self, builds):
-    """Schedule tests for successful builds.
-
-    Args:
-      * builds (generator or list of build_pb2.Build): builds to test.
-
-    Returns:
-      Tuple(list[swarming.TaskRequestMetadata], list[str])
-    """
-    tasks = []
-    schedule_failures = []
-
-    # We need to be able to loop over the builds multiple times, so in case the
-    # input builds is a generator, let's use a list instead here.
-    builds_list = list(builds)
-
-    try:
-      tasks += self.m.test_plan.test_builds('test builds', builds_list)
-    except recipe_api.StepFailure:
-      schedule_failures.extend([b.builder.builder for b in builds_list])
-
-    return tasks, schedule_failures
 
   def verify_tests(self, test_results):
     """Logs test status to UI, and raises on failed tests.

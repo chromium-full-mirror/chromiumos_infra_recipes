@@ -1147,23 +1147,13 @@ Api for coordinating test execution steps.
 Shortcut for schedule_tests + collect_tests.
 
 Args:
-  * builds (list[build_pb2.Build]): List of builds to test.
+  * builds (list or generator of build_pb2.Build]): Builds to test.
   * step_name (str): Optional step name.
 
 Returns:
   list[swarming.TaskResult]
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_manager/api.py#35)(self, builds):**
-
-Schedule tests for successful builds.
-
-Args:
-  * builds (generator or list of build_pb2.Build): builds to test.
-
-Returns:
-  Tuple(list[swarming.TaskRequestMetadata], list[str])
-
-&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#58)(self, test_results):**
+&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#31)(self, test_results):**
 
 Logs test status to UI, and raises on failed tests.
 
