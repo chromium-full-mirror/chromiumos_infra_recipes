@@ -60,9 +60,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--reference",
-      "/preload/chromeos"
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,

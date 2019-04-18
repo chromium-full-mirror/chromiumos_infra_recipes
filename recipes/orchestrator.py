@@ -54,7 +54,7 @@ def RunSteps(api, update_manifest_refs):
   validate_refs(update_manifest_refs.values())
 
   # Set up source checkouts.
-  api.cros_source.ensure_synced_cache()
+  api.cros_source.ensure_synced_cache(init_opts=dict(reference=None))
   with api.cros_source.checkout_overlays_context():
     # Point start ref to the input snapshot if specified.
     maybe_update_manifest_ref(api, update_manifest_refs, 'start')
