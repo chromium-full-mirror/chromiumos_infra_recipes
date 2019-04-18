@@ -247,7 +247,7 @@
       "push",
       "--porcelain",
       "remote",
-      "HEAD:refs/for/refs/heads/ref"
+      "HEAD:refs/heads/ref"
     ],
     "infra_step": true,
     "name": "git transaction (3).git push",

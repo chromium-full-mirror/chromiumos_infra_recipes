@@ -75,10 +75,11 @@ class GitTxnApi(recipe_api.RecipeApi):
           return False
 
         try:
-          dest_ref = 'HEAD:refs/for/%s' % ref
-          # See https://gerrit-review.googlesource.com/Documentation/user-upload.html#auto_merge
+          dest_ref = ref
           if automerge:
-            dest_ref += '%submit'
+            # See https://gerrit-review.googlesource.com/Documentation/user-upload.html#auto_merge
+            dest_ref = 'refs/for/%s%%submit' % dest_ref
+          dest_ref = 'HEAD:%s' % dest_ref
           self.m.git.push(remote, dest_ref, capture_stdout=True)
           return True
         except recipe_api.StepFailure as ex:
