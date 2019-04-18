@@ -52,6 +52,7 @@ PROPERTIES = {
 
 def RunSteps(api, update_manifest_refs):
   validate_refs(update_manifest_refs.values())
+  validate_build_inputs(api)
 
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
@@ -103,6 +104,25 @@ def validate_refs(refs):
       raise ValueError('ref %s is missing refs/heads/' % ref)
 
 
+def validate_build_inputs(api):
+  """Assert that orchestrator build inputs are correct.
+
+  Args:
+    api (object): See RunSteps documentation.
+
+  Raises:
+    ValueError: If input values are invalid for this orchestrator run.
+  """
+  build = api.buildbucket.build
+  if not build.input.gitiles_commit.project:
+    raise ValueError('orchestrator runs must supply a Gitiles '
+                     'commit in their input. Found none. If you\'d like to '
+                     'retry a run that did have a Gitiles commit, try doing '
+                     'so through RPC explorer, e.g. '
+                     'https://screenshot.googleplex.com/FSEm8xB5CS3 '
+                     'Got input: %s' % build.input)
+
+
 def maybe_update_manifest_ref(api, update_manifest_refs, ref_key):
   """Update ref in manifest-internal to point to current snapshot.
 
@@ -130,9 +150,21 @@ def GenTests(api):
     return api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                     builder='postsubmit-orchestrator')
 
+  def postsubmit_orchestrator_build_with_no_gitiles():
+    """Generate a test build proto with no gitiles commit project."""
+    build = api.buildbucket.ci_build_message(project='chromeos',
+                                             bucket='postsubmit',
+                                             builder='postsubmit-orchestrator')
+    build.input.gitiles_commit.Clear()
+    return api.buildbucket.build(build)
+
   yield (api.test('basic') +  #
          postsubmit_orchestrator_build() +
          api.test_plan.simulate_test_builds('run tests.test builds'))
+
+  yield (api.test('missing_gitiles_commit') +  #
+         postsubmit_orchestrator_build_with_no_gitiles() +
+         api.expect_exception("ValueError"))
 
   yield (api.test('updates_refs') +  #
          postsubmit_orchestrator_build() +  #

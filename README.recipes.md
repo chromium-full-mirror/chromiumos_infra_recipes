@@ -1426,7 +1426,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#53)(api, update_manifest_refs):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#106)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#126)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1435,7 +1435,17 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#92)(refs):**
+&mdash; **def [validate\_build\_inputs](/recipes/orchestrator.py#107)(api):**
+
+Assert that orchestrator build inputs are correct.
+
+Args:
+  api (object): See RunSteps documentation.
+
+Raises:
+  ValueError: If input values are invalid for this orchestrator run.
+
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#93)(refs):**
 
 Assert all given refs start with refs/heads.
 
