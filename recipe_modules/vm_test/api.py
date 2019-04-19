@@ -78,7 +78,8 @@ class VMTestApi(recipe_api.RecipeApi):
       for test in test_unit.tast_vm_test_cfg.tast_vm_test:
         tasks.append(
             self._run(
-                test.suite_name,
+                '%s_%s' % (test_unit.scheduling_requirements.build_target,
+                           test.suite_name),
                 build_target=test_unit.scheduling_requirements.build_target,
                 test_suite=test.suite_name,
                 gs_path=test_unit.build_payload.artifacts_gs_path, test_exprs=[

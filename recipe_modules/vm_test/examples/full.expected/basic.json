@@ -83,7 +83,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "tast test.test-suite",
+    "name": "tast test.build_target_test-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

@@ -107,7 +107,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.schedule.build_target.tast_vm.test-suite",
+    "name": "run plan.schedule.build_target.tast_vm.build_target_test-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
