@@ -6,9 +6,10 @@ DEPS = ['recipe_engine/swarming', 'test_plan', 'vm_test']
 
 
 def RunSteps(api):
-  api.vm_test.run_vm_tests('vm test', api.test_plan.test_api.example_vm_unit())
-  api.vm_test.run_tast_vm_tests('tast test',
-                                api.test_plan.test_api.example_tast_vm_unit())
+  api.vm_test.run_vm_tests('vm test', 'my-bt',
+      api.test_plan.test_api.example_vm_unit(build_target='my-bt'))
+  api.vm_test.run_tast_vm_tests('tast test', 'my-bt',
+      api.test_plan.test_api.example_tast_vm_unit(build_target='my-bt'))
 
 
 def GenTests(api):

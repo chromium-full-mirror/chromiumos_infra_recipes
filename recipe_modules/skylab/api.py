@@ -71,7 +71,7 @@ class SkylabApi(recipe_api.RecipeApi):
             '-json',
             '-pool', skylab_pool,
             '-image', test_unit.build_payload.artifacts_gs_path,
-            '-board', test_unit.scheduling_requirements.build_target,
+            '-board', test.skylab_board,
             '-timeout-mins', 120,
             test_suite,
         ]

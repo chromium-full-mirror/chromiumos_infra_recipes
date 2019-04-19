@@ -40,11 +40,12 @@ class VMTestApi(recipe_api.RecipeApi):
   def swarming_pool(self):
     return self._swarming_pool
 
-  def run_vm_tests(self, name, test_unit):
+  def run_vm_tests(self, name, build_target, test_unit):
     """Run vm test on swarming bot.
 
     Args:
       * name (str): Step name.
+      * build_target (str): Build target.
       * test_unit (TestUnit): Test unit.
 
     Returns:
@@ -56,18 +57,19 @@ class VMTestApi(recipe_api.RecipeApi):
         tasks.append(
             self._run(
                 test.test_suite,
-                build_target=test_unit.scheduling_requirements.build_target,
+                build_target=build_target,
                 test_suite=test.test_suite,
                 gs_path=test_unit.build_payload.artifacts_gs_path,
                 test_type='vm'))
 
     return ScheduleResult(swarming_server=self.swarming_server, tasks=tasks)
 
-  def run_tast_vm_tests(self, name, test_unit):
+  def run_tast_vm_tests(self, name, build_target, test_unit):
     """Run tast test on swarming bot.
 
     Args:
       * name (str): Step name.
+      * build_target (str): Build target.
       * test_unit (TestUnit): Test unit.
 
     Returns:
@@ -78,9 +80,8 @@ class VMTestApi(recipe_api.RecipeApi):
       for test in test_unit.tast_vm_test_cfg.tast_vm_test:
         tasks.append(
             self._run(
-                '%s_%s' % (test_unit.scheduling_requirements.build_target,
-                           test.suite_name),
-                build_target=test_unit.scheduling_requirements.build_target,
+                '%s_%s' % (build_target, test.suite_name),
+                build_target=build_target,
                 test_suite=test.suite_name,
                 gs_path=test_unit.build_payload.artifacts_gs_path, test_exprs=[
                     expr.test_expr for expr in test.tast_test_expr

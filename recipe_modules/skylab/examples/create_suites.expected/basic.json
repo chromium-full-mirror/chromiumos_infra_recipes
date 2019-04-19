@@ -45,7 +45,7 @@
       "-image",
       "path/to/artifact",
       "-board",
-      "build_target",
+      "build_target_skylab-board",
       "-timeout-mins",
       "120",
       "suite1"
@@ -67,7 +67,7 @@
       "-image",
       "path/to/artifact",
       "-board",
-      "build_target",
+      "build_target_skylab-board",
       "-timeout-mins",
       "120",
       "suite2"

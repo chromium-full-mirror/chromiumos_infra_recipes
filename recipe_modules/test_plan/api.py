@@ -26,11 +26,6 @@ class RunPlanApi(recipe_api.RecipeApi):
 
   def initialize(self):
     self._test_planner_path = None
-    self._test_env_steps = {
-        'hw': self.m.skylab.create_suites,
-        'vm': self.m.vm_test.run_vm_tests,
-        'tast_vm': self.m.vm_test.run_tast_vm_tests,
-    }
 
   def test_builds(self, name, builds):
     """Shortcut for generate and schedule.
@@ -114,24 +109,31 @@ class RunPlanApi(recipe_api.RecipeApi):
       with self.m.step.nest(name):
         for build_target, test_units in groupby(
             test_plan.test_unit,
-            lambda unit: unit.scheduling_requirements.build_target):
+            lambda unit: unit.build_target.name):
           with self.m.step.nest(build_target):
             for test_unit in test_units:
               if not test_unit.WhichOneof('TestCfg'):
                 raise self.m.step.StepFailure('No test environment specified.')
               test_env = test_unit.WhichOneof('TestCfg')[:-len('_test_cfg')]
-              # TODO(https://crbug.com/953961): Remove references to GCE tests.
+              # There are no plans to support GCE tests.
+              # https://crbug.com/953961
               if test_env == 'gce':
                 continue
               # We don't support Moblab VM tests yet.
               # TODO(https://crbug.com/954276): Figure out how to support them.
-              if test_env == 'moblab_vm':
+              elif test_env == 'moblab_vm':
                 continue
-              step = self._test_env_steps.get(test_env)
-              if step is None:  # pragma: nocover
+              elif test_env == 'hw':
+                results.append(self.m.skylab.create_suites(test_env, test_unit))
+              elif test_env == 'vm':
+                results.append(self.m.vm_test.run_vm_tests(
+                    test_env, build_target, test_unit))
+              elif test_env == 'tast_vm':
+                results.append(self.m.vm_test.run_tast_vm_tests(
+                    test_env, build_target, test_unit))
+              else: # pragma: nocover
                 raise self.m.step.StepFailure(
                     'Unable to execute tests for test environment "%s"' % test_env)
-              results.append(step(test_env, test_unit))
 
     successful_results = []
     for r in results:

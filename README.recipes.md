@@ -1170,7 +1170,7 @@ Raises:
 
 A module for test execution steps
 
-&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#142)(self, name, schedule_results):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#144)(self, name, schedule_results):**
 
 Waits for a set of tests to complete, and returns their results.
 Args:
@@ -1181,7 +1181,7 @@ Args:
 Returns:
    list[swarming.TaskResult]
 
-&mdash; **def [generate](/recipe_modules/test_plan/api.py#52)(self, name, builds):**
+&mdash; **def [generate](/recipe_modules/test_plan/api.py#47)(self, name, builds):**
 
 Generate test plan.
 
@@ -1194,7 +1194,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/test_plan/api.py#27)(self):**
 
-&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#85)(self, name, test_plan):**
+&mdash; **def [run\_plan](/recipe_modules/test_plan/api.py#80)(self, name, test_plan):**
 
 Shortcut for schedule and collect.
 
@@ -1205,7 +1205,7 @@ Args:
 Raises:
    recipe_api.StepFailure
 
-&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#99)(self, name, test_plan):**
+&mdash; **def [schedule\_tests](/recipe_modules/test_plan/api.py#94)(self, name, test_plan):**
 
 Run all test plan steps.
 
@@ -1219,7 +1219,7 @@ Args:
 Returns:
   list[ScheduleResult]
 
-&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#35)(self, name, builds):**
+&mdash; **def [test\_builds](/recipe_modules/test_plan/api.py#30)(self, name, builds):**
 
 Shortcut for generate and schedule.
 
@@ -1242,23 +1242,25 @@ A module for vm test execution steps
 
 &mdash; **def [initialize](/recipe_modules/vm_test/api.py#30)(self):**
 
-&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#66)(self, name, test_unit):**
+&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#67)(self, name, build_target, test_unit):**
 
 Run tast test on swarming bot.
 
 Args:
   * name (str): Step name.
+  * build_target (str): Build target.
   * test_unit (TestUnit): Test unit.
 
 Returns:
   swarming.TaskRequestMetadata
 
-&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#43)(self, name, test_unit):**
+&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#43)(self, name, build_target, test_unit):**
 
 Run vm test on swarming bot.
 
 Args:
   * name (str): Step name.
+  * build_target (str): Build target.
   * test_unit (TestUnit): Test unit.
 
 Returns:

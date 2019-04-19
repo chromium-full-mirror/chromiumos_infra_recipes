@@ -25,7 +25,6 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
                        build_target='build_target',
                        artifact_path='path/to/artifact'):
     unit = TestUnit()
-    unit.scheduling_requirements.build_target = build_target
     unit.build_payload.artifacts_gs_path = artifact_path
 
     for test_suite in test_suites:
@@ -37,7 +36,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
                              build_target='build_target',
                              artifact_path='path/to/artifact'):
     unit = TestUnit()
-    unit.scheduling_requirements.build_target = build_target
+    unit.build_target.name = build_target
     unit.build_payload.artifacts_gs_path = artifact_path
 
     for test_type in test_types:
@@ -49,11 +48,13 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
                       build_target='build_target',
                       artifact_path='path/to/artifact'):
     unit = TestUnit()
-    unit.scheduling_requirements.build_target = build_target
+    unit.build_target.name = build_target
     unit.build_payload.artifacts_gs_path = artifact_path
 
     for test_suite in test_suites:
-      unit.hw_test_cfg.hw_test.add().suite = test_suite
+      hw_test = unit.hw_test_cfg.hw_test.add()
+      hw_test.suite = test_suite
+      hw_test.skylab_board = '%s_skylab-board' % build_target
 
     return unit
 
@@ -61,7 +62,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
                       build_target='build_target',
                       artifact_path='path/to/artifact'):
     unit = TestUnit()
-    unit.scheduling_requirements.build_target = build_target
+    unit.build_target.name = build_target
     unit.build_payload.artifacts_gs_path = artifact_path
 
     for test_suite in test_suites:
@@ -73,7 +74,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
                            build_target='build_target',
                            artifact_path='path/to/artifact'):
     unit = TestUnit()
-    unit.scheduling_requirements.build_target = build_target
+    unit.build_target.name = build_target
     unit.build_payload.artifacts_gs_path = artifact_path
 
     for test_suite in test_suites:
@@ -104,7 +105,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
 
       for idx, test in enumerate(test_unit.vm_test_cfg.vm_test):
         substep_name = '%s.vm.%s' % (
-            test_unit.scheduling_requirements.build_target, test.test_suite)
+            test_unit.build_target.name, test.test_suite)
         result += self.step_data(
             '%s.schedule.%s' % (name, substep_name),
             self.m.swarming.trigger(['task - %s' % str(idx)]))
