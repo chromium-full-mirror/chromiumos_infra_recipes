@@ -12,7 +12,7 @@
   },
   {
     "cmd": [],
-    "name": "run plan.schedule.build_target",
+    "name": "run plan.schedule.moe_blab",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

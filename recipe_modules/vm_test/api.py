@@ -14,7 +14,6 @@ from RECIPE_MODULES.chromeos.test_plan.api import ScheduleResult
 ARCHIVE_BUCKET = 'chromeos-image-archive'
 
 SWARMING_MED_PRIORITY = 100
-SWARMING_TEST_NAME = 'vm-test-%s'
 
 VM_TEST_RECIPE = 'test_execution/execute_vm_suite'
 
@@ -80,7 +79,7 @@ class VMTestApi(recipe_api.RecipeApi):
       for test in test_unit.tast_vm_test_cfg.tast_vm_test:
         tasks.append(
             self._run(
-                '%s_%s' % (build_target, test.suite_name),
+                test.suite_name,
                 build_target=build_target,
                 test_suite=test.suite_name,
                 gs_path=test_unit.build_payload.artifacts_gs_path, test_exprs=[
@@ -89,11 +88,12 @@ class VMTestApi(recipe_api.RecipeApi):
 
     return ScheduleResult(swarming_server=self.swarming_server, tasks=tasks)
 
-  def _run(self, name, test_suite, **kwargs):
+  def _run(self, name, build_target, test_suite, **kwargs):
     """Trigger test on swarming bot.
 
     Args:
       * name (str): Step name.
+      * build_target (str)
       * test_suite (str): name of test suite.
       * kwargs: Task properties.
 
@@ -108,11 +108,10 @@ class VMTestApi(recipe_api.RecipeApi):
     ensure_file.add_package('infra/tools/luci/vpython/${platform}',
                             'latest',
                             'vpython')
-
     request = (
         self.m.swarming.task_request().with_name(
-            SWARMING_TEST_NAME %
-            str(test_suite)).with_priority(SWARMING_MED_PRIORITY))
+            'vm-test.%s.%s'% (str(build_target), str(test_suite))
+        ).with_priority(SWARMING_MED_PRIORITY))
 
     cmd = [
         'recipes/recipes',

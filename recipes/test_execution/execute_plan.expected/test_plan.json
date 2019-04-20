@@ -16,12 +16,12 @@
       "@@@STEP_LOG_LINE@json.output@        \"artifactsGsPath\": \"path/to/artifact\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"hard_wear\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"hwTestCfg\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"hwTest\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"build_target_skylab-board\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"hard_wear_skylab-board\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"suite\": \"test-suite\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
@@ -45,14 +45,14 @@
   },
   {
     "cmd": [],
-    "name": "run plan.schedule.build_target",
+    "name": "run plan.schedule.hard_wear",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run plan.schedule.build_target.ensure skylab",
+    "name": "run plan.schedule.hard_wear.ensure skylab",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -69,7 +69,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.schedule.build_target.ensure skylab.ensure_installed",
+    "name": "run plan.schedule.hard_wear.ensure skylab.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -87,7 +87,7 @@
   },
   {
     "cmd": [],
-    "name": "run plan.schedule.build_target.hw",
+    "name": "run plan.schedule.hard_wear.hw",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -102,12 +102,12 @@
       "-image",
       "path/to/artifact",
       "-board",
-      "build_target_skylab-board",
+      "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
       "test-suite"
     ],
-    "name": "run plan.schedule.build_target.hw.test-suite",
+    "name": "run plan.schedule.hard_wear.hw.test-suite",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",

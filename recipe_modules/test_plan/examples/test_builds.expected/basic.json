@@ -57,16 +57,16 @@
       "@@@STEP_LOG_LINE@json.output@        \"artifactsGsPath\": \"path/to/artifact\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"hard_wear\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"hwTestCfg\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"hwTest\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"build_target_skylab-board\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"hard_wear_skylab-board\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite1\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }, @@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"build_target_skylab-board\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"hard_wear_skylab-board\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite2\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
@@ -77,7 +77,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"artifactsGsPath\": \"path/to/artifact\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vert_masheen\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"vmTestCfg\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"vmTest\": [@@@",
@@ -104,14 +104,14 @@
   },
   {
     "cmd": [],
-    "name": "test_non-deferred.schedule.build_target",
+    "name": "test_non-deferred.schedule.hard_wear",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test_non-deferred.schedule.build_target.ensure skylab",
+    "name": "test_non-deferred.schedule.hard_wear.ensure skylab",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -128,7 +128,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_non-deferred.schedule.build_target.ensure skylab.ensure_installed",
+    "name": "test_non-deferred.schedule.hard_wear.ensure skylab.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -146,7 +146,7 @@
   },
   {
     "cmd": [],
-    "name": "test_non-deferred.schedule.build_target.hw",
+    "name": "test_non-deferred.schedule.hard_wear.hw",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -161,12 +161,12 @@
       "-image",
       "path/to/artifact",
       "-board",
-      "build_target_skylab-board",
+      "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
       "suite1"
     ],
-    "name": "test_non-deferred.schedule.build_target.hw.suite1",
+    "name": "test_non-deferred.schedule.hard_wear.hw.suite1",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -183,12 +183,12 @@
       "-image",
       "path/to/artifact",
       "-board",
-      "build_target_skylab-board",
+      "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
       "suite2"
     ],
-    "name": "test_non-deferred.schedule.build_target.hw.suite2",
+    "name": "test_non-deferred.schedule.hard_wear.hw.suite2",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -197,14 +197,21 @@
   },
   {
     "cmd": [],
-    "name": "test_non-deferred.schedule.build_target.vm",
+    "name": "test_non-deferred.schedule.vert_masheen",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test_non-deferred.schedule.vert_masheen.vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test_non-deferred.schedule.build_target.vm.ensure swarming",
+    "name": "test_non-deferred.schedule.vert_masheen.vm.ensure swarming",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -221,7 +228,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_non-deferred.schedule.build_target.vm.ensure swarming.ensure_installed",
+    "name": "test_non-deferred.schedule.vert_masheen.vm.ensure swarming.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -244,12 +251,12 @@
       "-server",
       "https://vm_swarming_server.com",
       "-json-input",
-      "{\"requests\": [{\"name\": \"vm-test-suite1\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite1\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"build_target\\\": \\\"build_target\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"7200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
+      "{\"requests\": [{\"name\": \"vm-test.vert_masheen.suite1\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite1\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"7200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
       "-json-output",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_non-deferred.schedule.build_target.vm.suite1",
+    "name": "test_non-deferred.schedule.vert_masheen.vm.suite1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -273,12 +280,12 @@
       "-server",
       "https://vm_swarming_server.com",
       "-json-input",
-      "{\"requests\": [{\"name\": \"vm-test-suite2\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite2\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"build_target\\\": \\\"build_target\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"7200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
+      "{\"requests\": [{\"name\": \"vm-test.vert_masheen.suite2\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite2\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"7200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
       "-json-output",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_non-deferred.schedule.build_target.vm.suite2",
+    "name": "test_non-deferred.schedule.vert_masheen.vm.suite2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -318,16 +325,16 @@
       "@@@STEP_LOG_LINE@json.output@        \"artifactsGsPath\": \"path/to/artifact\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"hard_wear\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"hwTestCfg\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"hwTest\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"build_target_skylab-board\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"hard_wear_skylab-board\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite1\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }, @@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"build_target_skylab-board\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"hard_wear_skylab-board\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite2\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
@@ -338,7 +345,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"artifactsGsPath\": \"path/to/artifact\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vert_masheen\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"vmTestCfg\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"vmTest\": [@@@",
@@ -365,14 +372,14 @@
   },
   {
     "cmd": [],
-    "name": "test_deferred.schedule.build_target",
+    "name": "test_deferred.schedule.hard_wear",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test_deferred.schedule.build_target.hw",
+    "name": "test_deferred.schedule.hard_wear.hw",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -387,12 +394,12 @@
       "-image",
       "path/to/artifact",
       "-board",
-      "build_target_skylab-board",
+      "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
       "suite1"
     ],
-    "name": "test_deferred.schedule.build_target.hw.suite1",
+    "name": "test_deferred.schedule.hard_wear.hw.suite1",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -409,12 +416,12 @@
       "-image",
       "path/to/artifact",
       "-board",
-      "build_target_skylab-board",
+      "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
       "suite2"
     ],
-    "name": "test_deferred.schedule.build_target.hw.suite2",
+    "name": "test_deferred.schedule.hard_wear.hw.suite2",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -423,7 +430,14 @@
   },
   {
     "cmd": [],
-    "name": "test_deferred.schedule.build_target.vm",
+    "name": "test_deferred.schedule.vert_masheen",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test_deferred.schedule.vert_masheen.vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -435,12 +449,12 @@
       "-server",
       "https://vm_swarming_server.com",
       "-json-input",
-      "{\"requests\": [{\"name\": \"vm-test-suite1\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite1\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"build_target\\\": \\\"build_target\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"7200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
+      "{\"requests\": [{\"name\": \"vm-test.vert_masheen.suite1\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite1\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"7200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
       "-json-output",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_deferred.schedule.build_target.vm.suite1",
+    "name": "test_deferred.schedule.vert_masheen.vm.suite1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -464,12 +478,12 @@
       "-server",
       "https://vm_swarming_server.com",
       "-json-input",
-      "{\"requests\": [{\"name\": \"vm-test-suite2\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite2\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"build_target\\\": \\\"build_target\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"7200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
+      "{\"requests\": [{\"name\": \"vm-test.vert_masheen.suite2\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite2\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"7200\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"60\", \"outputs\": []}}]}]}",
       "-json-output",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "test_deferred.schedule.build_target.vm.suite2",
+    "name": "test_deferred.schedule.vert_masheen.vm.suite2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

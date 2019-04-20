@@ -40,7 +40,7 @@ def GenTests(api):
       plan=api.test_plan.example_test_plan(
           api.test_plan.example_vm_unit(),
           api.test_plan.example_tast_vm_unit(),
-      )) + api.step_data('run plan.schedule.build_target.vm.test-suite',
+      )) + api.step_data('run plan.schedule.vert_masheen.vm.test-suite',
                          api.swarming.trigger(['vm-test'])) + api.step_data(
                              'run plan.collect.vm_swarming_server.com',
                              api.swarming.collect(
@@ -50,7 +50,7 @@ def GenTests(api):
       api.test('failed_test') + api.properties(
           plan=api.test_plan.example_test_plan(
               api.test_plan.example_vm_unit(test_suites=['suite']))) +
-      api.step_data('run plan.schedule.build_target.vm.suite',
+      api.step_data('run plan.schedule.vert_masheen.vm.suite',
                     api.swarming.trigger(['vm-test'])) +
       api.test_plan.simulated_collect_output('run plan.collect', failure=True))
 

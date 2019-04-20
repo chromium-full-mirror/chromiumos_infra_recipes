@@ -22,7 +22,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return test_plan
 
   def example_gce_unit(self, test_suites=['test-suite'],
-                       build_target='build_target',
+                       build_target='gee_see_eee',
                        artifact_path='path/to/artifact'):
     unit = TestUnit()
     unit.build_payload.artifacts_gs_path = artifact_path
@@ -33,7 +33,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return unit
 
   def example_moblab_vm_unit(self, test_types=[],
-                             build_target='build_target',
+                             build_target='moe_blab',
                              artifact_path='path/to/artifact'):
     unit = TestUnit()
     unit.build_target.name = build_target
@@ -45,7 +45,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return unit
 
   def example_hw_unit(self, test_suites=['test-suite'],
-                      build_target='build_target',
+                      build_target='hard_wear',
                       artifact_path='path/to/artifact'):
     unit = TestUnit()
     unit.build_target.name = build_target
@@ -59,7 +59,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return unit
 
   def example_vm_unit(self, test_suites=['test-suite'],
-                      build_target='build_target',
+                      build_target='vert_masheen',
                       artifact_path='path/to/artifact'):
     unit = TestUnit()
     unit.build_target.name = build_target
@@ -71,7 +71,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return unit
 
   def example_tast_vm_unit(self, test_env='', test_suites=['test-suite'],
-                           build_target='build_target',
+                           build_target='tasty_vm',
                            artifact_path='path/to/artifact'):
     unit = TestUnit()
     unit.build_target.name = build_target
@@ -101,7 +101,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
 
     for test_unit in test_units:
       result += self.m.skylab.simulated_create_suites(
-          '%s.schedule.build_target.hw' % name, test_unit)
+          '%s.schedule.hard_wear.hw' % name, test_unit)
 
       for idx, test in enumerate(test_unit.vm_test_cfg.vm_test):
         substep_name = '%s.vm.%s' % (
