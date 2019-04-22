@@ -1242,7 +1242,7 @@ A module for vm test execution steps
 
 &mdash; **def [initialize](/recipe_modules/vm_test/api.py#29)(self):**
 
-&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#66)(self, name, build_target, test_unit):**
+&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#68)(self, name, build_target, test_unit):**
 
 Run tast test on swarming bot.
 
@@ -1254,7 +1254,7 @@ Args:
 Returns:
   swarming.TaskRequestMetadata
 
-&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#42)(self, name, build_target, test_unit):**
+&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#43)(self, name, build_target, test_unit):**
 
 Run vm test on swarming bot.
 

@@ -39,6 +39,7 @@ class VMTestApi(recipe_api.RecipeApi):
   def swarming_pool(self):
     return self._swarming_pool
 
+  # TODO: use BuildTarget proto rather than string.
   def run_vm_tests(self, name, build_target, test_unit):
     """Run vm test on swarming bot.
 
@@ -63,6 +64,7 @@ class VMTestApi(recipe_api.RecipeApi):
 
     return ScheduleResult(swarming_server=self.swarming_server, tasks=tasks)
 
+  # TODO: use BuildTarget proto rather than string.
   def run_tast_vm_tests(self, name, build_target, test_unit):
     """Run tast test on swarming bot.
 
@@ -88,12 +90,13 @@ class VMTestApi(recipe_api.RecipeApi):
 
     return ScheduleResult(swarming_server=self.swarming_server, tasks=tasks)
 
+  # TODO: use BuildTarget proto rather than string.
   def _run(self, name, build_target, test_suite, **kwargs):
     """Trigger test on swarming bot.
 
     Args:
       * name (str): Step name.
-      * build_target (str)
+      * build_target (str): Build target for the build being tested.
       * test_suite (str): name of test suite.
       * kwargs: Task properties.
 
@@ -119,7 +122,8 @@ class VMTestApi(recipe_api.RecipeApi):
         '--workdir',
         'recipes/workdir',
         '--properties',
-        json.dumps(self._get_properties(test_suite=test_suite, **kwargs)),
+        json.dumps(self._get_properties(
+            build_target=build_target, test_suite=test_suite, **kwargs)),
         VM_TEST_RECIPE,
     ]
 
