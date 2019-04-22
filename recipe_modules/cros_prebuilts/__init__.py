@@ -5,6 +5,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/runtime',
     'recipe_engine/step',
     'build_api',
     'cros_source',

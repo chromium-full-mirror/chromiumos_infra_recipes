@@ -85,10 +85,10 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project.path)):
-        self.m.git_txn.update_ref_write_file(project.remote, project.branch,
-                                             'Set %s=%s.' % (key, uri),
-                                             binhost_path, binhost_data,
-                                             automerge=True)
+        self.m.git_txn.update_ref_write_file(
+            project.remote, project.branch, 'Set %s=%s.' % (key, uri),
+            binhost_path, binhost_data, automerge=True,
+            dryrun=self.m.runtime.is_experimental)
 
   def _upload(self, root, paths, uri):
     """Upload the paths within root to the GS URI.

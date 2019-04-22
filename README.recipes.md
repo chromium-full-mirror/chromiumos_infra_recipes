@@ -272,7 +272,7 @@ Args:
 &mdash; **def [run](/recipe_modules/cros_dupit/api.py#126)(self):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
-[DEPS](/recipe_modules/cros_prebuilts/__init__.py#3): [build\_api](#recipe_modules-build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_prebuilts/__init__.py#3): [build\_api](#recipe_modules-build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for uploading CrOS prebuilts to Google Storage.
 
@@ -650,7 +650,7 @@ Args:
   * files (list[str|Path]): A list of file paths to commit.
   * message (str): The commit message.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#245)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#247)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -662,7 +662,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#164)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#166)(self):**
 
 Returns the currently checked out branch name.
 
@@ -701,15 +701,15 @@ Args:
 Returns:
   str: The commit ID of the fetched ref.
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#178)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#180)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#184)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#186)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#215)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#217)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -719,7 +719,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#194)(self, from_rev, to_rev):**
+&mdash; **def [log](/recipe_modules/git/api.py#196)(self, from_rev, to_rev):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -730,7 +730,7 @@ Args:
 Returns:
   List(Commit) A list of commit metas.
 
-&mdash; **def [position\_num](/recipe_modules/git/api.py#259)(self, ref='HEAD'):**
+&mdash; **def [position\_num](/recipe_modules/git/api.py#261)(self, ref='HEAD'):**
 
 Returns the chrome commit position.
 
@@ -743,7 +743,7 @@ Args:
 Returns:
   int: The Chrome commit position
 
-&mdash; **def [push](/recipe_modules/git/api.py#143)(self, remote, refspec, capture_stdout=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#143)(self, remote, refspec, capture_stdout=False, dryrun=False):**
 
 Runs 'git push'.
 
@@ -751,11 +751,13 @@ Args:
   remote (str): The remote repository to push to.
   refspec (str): The refspec to push.
   capture_stdout (bool): If True, return stdout in step data.
+  dryrun (bool): If True, run git push with --dry-run (doesn't actually
+      push). Should only be used in non-prod settings.
 
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#227)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#229)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -776,7 +778,7 @@ API for updating remote git repositories transactionally.
 
 A module for executing git transactions.
 
-&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#26)(self, remote, ref, update_callback, retries=3, automerge=False):**
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#26)(self, remote, ref, update_callback, retries=3, automerge=False, dryrun=False):**
 
 Transactionally update a remote git repository ref.
 
@@ -797,6 +799,8 @@ Args:
       callback returns False the update will be cancelled but succeed.
   retries (int): Number of update attempts to make before failing.
   automerge (bool): Whether to use Gerrit's "auto-merge" feature.
+  dryrun (bool): If True, run git push with --dry-run (doesn't actually
+      push). Should only be used in non-prod settings.
 
 Returns:
   bool: True if the transaction succeeded, false if it explicitly aborts.
@@ -804,7 +808,7 @@ Returns:
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#94)(self, remote, ref, message, dest, data, \*\*kwargs):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#96)(self, remote, ref, message, dest, data, \*\*kwargs):**
 
 Transactionally update a file in a remote git repository ref.
 
@@ -1346,9 +1350,9 @@ Recipe for building a BuildTarget image.
 &mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#13)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#15)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1572,6 +1576,7 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-properties
 [recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-python
 [recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-raw_io
+[recipe_engine/recipe_modules/runtime]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-runtime
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-step
 [recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-swarming
 [recipe_engine/recipe_modules/tempfile]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/602257a66a4e492e7029ccaf542b55f9ef641346/README.recipes.md#recipe_modules-tempfile
