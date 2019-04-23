@@ -21,10 +21,5 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic')
 
-  yield (
-      api.test('experimental') +  #
-      api.runtime(is_luci=True, is_experimental=True) +  #
-      api.step_data(
-          'upload prebuilts.update binhost conf file.git transaction.diff check.git ls-files',
-          retcode=1,
-      ))
+  yield (api.test('experimental') +  #
+         api.runtime(is_luci=True, is_experimental=True))
