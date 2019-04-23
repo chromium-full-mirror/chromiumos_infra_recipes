@@ -47,7 +47,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       pbu_request = binhost.PrepareBinhostUploadsRequest()
       pbu_request.build_target.CopyFrom(target)
       pbu_request.uri = uri
-      pbu_response = self.m.build_api.call_proto(
+      pbu_response = self.m.cros_build_api.call_proto(
           'chromite.api.BinhostService/PrepareBinhostUploads', pbu_request,
           test_output_data=self.test_api.prepare_binhost_uploads_response)
       upload_root = self.m.path.abs_to_path(pbu_response.uploads_dir)
@@ -73,7 +73,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       sb_request.key = binhost.BinhostKey.Value(key)
       sb_request.uri = uri
 
-      sb_response = self.m.build_api.call_proto(
+      sb_response = self.m.cros_build_api.call_proto(
           'chromite.api.BinhostService/SetBinhost', sb_request,
           test_output_data=self.test_api.set_binhost_response)
       binhost_path = self.m.path.abs_to_path(sb_response.output_file)

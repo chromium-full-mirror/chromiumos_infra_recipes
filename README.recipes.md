@@ -3,10 +3,10 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
-  * [build_api](#recipe_modules-build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_build](#recipe_modules-cros_build)
+  * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
@@ -32,11 +32,11 @@
 
 **[Recipes](#Recipes)**
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
-  * [build_api:examples/full](#recipes-build_api_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
+  * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
@@ -70,52 +70,9 @@
   * [vm_test:examples/full](#recipes-vm_test_examples_full)
 ## Recipe Modules
 
-### *recipe_modules* / [build\_api](/recipe_modules/build_api)
-
-[DEPS](/recipe_modules/build_api/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-API for working with the protobuf-based Build API.
-
-#### **class [BuildApiApi](/recipe_modules/build_api/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for CrOS Build API steps.
-
-&mdash; **def [call\_json](/recipe_modules/build_api/api.py#59)(self, service_method, input_dict, test_output_dict=None):**
-
-Call a Build API method with JSON serialization.
-
-For now, only runs outside the chroot (crbug.com/949789).
-
-Args:
-  service_method (str): The service/method path (ex.
-      chromium.api.Service/Method).
-  input_dict (dict): Input data.
-  test_output_dict (dict): Data to return during test.
-
-Returns:
-  dict: Output data.
-
-&mdash; **def [call\_proto](/recipe_modules/build_api/api.py#99)(self, service_method, input_msg, test_output_data='{}'):**
-
-Call a Build API method with JSON serialization.
-
-For now, only runs outside the chroot (crbug.com/949789).
-
-Args:
-  service_method (str): The service/method path (ex.
-      chromium.api.Service/Method).
-  input_msg (google.protobuf.message.Message): Input data.
-  test_output_data (str): Data to return during test.
-
-Raises:
-  KeyError: if the given service_method isn't found.
-  TypeError: if |input_msg| is the wrong Message type.
-
-Returns:
-  google.protobuf.message.Message: Output data.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
-[DEPS](/recipe_modules/cros_artifacts/__init__.py#3): [build\_api](#recipe_modules-build_api), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_artifacts/__init__.py#3): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for uploading CrOS build artifacts to Google Storage.
 
@@ -235,6 +192,49 @@ Args:
 
 Raises:
   CompositeBuildFailure containing all failed builds.
+### *recipe_modules* / [cros\_build\_api](/recipe_modules/cros_build_api)
+
+[DEPS](/recipe_modules/cros_build_api/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for working with the protobuf-based Build API.
+
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for CrOS Build API steps.
+
+&mdash; **def [call\_json](/recipe_modules/cros_build_api/api.py#59)(self, service_method, input_dict, test_output_dict=None):**
+
+Call a Build API method with JSON serialization.
+
+For now, only runs outside the chroot (crbug.com/949789).
+
+Args:
+  service_method (str): The service/method path (ex.
+      chromium.api.Service/Method).
+  input_dict (dict): Input data.
+  test_output_dict (dict): Data to return during test.
+
+Returns:
+  dict: Output data.
+
+&mdash; **def [call\_proto](/recipe_modules/cros_build_api/api.py#99)(self, service_method, input_msg, test_output_data='{}'):**
+
+Call a Build API method with JSON serialization.
+
+For now, only runs outside the chroot (crbug.com/949789).
+
+Args:
+  service_method (str): The service/method path (ex.
+      chromium.api.Service/Method).
+  input_msg (google.protobuf.message.Message): Input data.
+  test_output_data (str): Data to return during test.
+
+Raises:
+  KeyError: if the given service_method isn't found.
+  TypeError: if |input_msg| is the wrong Message type.
+
+Returns:
+  google.protobuf.message.Message: Output data.
 ### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
 
 [DEPS](/recipe_modules/cros_dupit/__init__.py#1): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -272,7 +272,7 @@ Args:
 &mdash; **def [run](/recipe_modules/cros_dupit/api.py#126)(self):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
-[DEPS](/recipe_modules/cros_prebuilts/__init__.py#3): [build\_api](#recipe_modules-build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_prebuilts/__init__.py#3): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for uploading CrOS prebuilts to Google Storage.
 
@@ -1312,11 +1312,6 @@ Args:
 
 Returns:
   A string containing the commit message.
-### *recipes* / [build\_api:examples/full](/recipe_modules/build_api/examples/full.py)
-
-[DEPS](/recipe_modules/build_api/examples/full.py#6): [build\_api](#recipe_modules-build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
-
-&mdash; **def [RunSteps](/recipe_modules/build_api/examples/full.py#14)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [infra\_config](#recipe_modules-infra_config), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [sync\_chrome](#recipe_modules-sync_chrome), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1343,6 +1338,11 @@ Recipe for building a BuildTarget image.
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [execution\_context](/recipe_modules/cros_build/examples/full.py#15)(api, deferred):**
 
 &mdash; **def [get\_result](/recipe_modules/cros_build/examples/full.py#24)(step_result):**
+### *recipes* / [cros\_build\_api:examples/full](/recipe_modules/cros_build_api/examples/full.py)
+
+[DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#14)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)

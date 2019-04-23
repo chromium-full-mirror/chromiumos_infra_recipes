@@ -14,7 +14,7 @@ from google.protobuf import reflection
 from recipe_engine import recipe_api
 
 
-class BuildApiApi(recipe_api.RecipeApi):
+class CrosBuildApiApi(recipe_api.RecipeApi):
   """A module for CrOS Build API steps."""
 
   def _call(self, service_method, input_data, test_output_data=''):

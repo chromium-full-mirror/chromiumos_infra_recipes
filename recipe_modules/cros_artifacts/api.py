@@ -74,7 +74,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       bundle_request.build_target.CopyFrom(target)
       bundle_request.output_dir = str(path)
       endpoint = '%s/%s' % (ARTIFACTS_SERVICE, ENDPOINTS_BY_ARTIFACT[artifact])
-      bundle_response = self.m.build_api.call_proto(
+      bundle_response = self.m.cros_build_api.call_proto(
           endpoint, bundle_request,
           test_output_data=self.test_api.bundle_response)
       artifact_files = [
