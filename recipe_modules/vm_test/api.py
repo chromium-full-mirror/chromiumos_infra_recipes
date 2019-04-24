@@ -132,7 +132,9 @@ class VMTestApi(recipe_api.RecipeApi):
         request.with_slice(
             0, request[0]
             .with_command(cmd)
-            .with_execution_timeout_secs(3600 * 2)
+            .with_execution_timeout_secs(60 * 60 * 3)
+            # Some commands are really slow, like creating the chroot.
+            .with_io_timeout_secs(60 * 30)
             .with_dimensions(pool=self.swarming_pool)
             .with_cipd_ensure_file(ensure_file)
             .with_env_prefixes(PATH=["vpython"])))
