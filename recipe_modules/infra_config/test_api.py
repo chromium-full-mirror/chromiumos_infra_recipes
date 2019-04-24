@@ -1,4 +1,5 @@
-# Copyright 2019 The Chromium Authors. All rights reserved.
+# -*- coding: utf-8 -*-
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -76,6 +77,16 @@ class InfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       "amd64-generic-postsubmit",
                       "arm-generic-postsubmit"
                     ]
+                  }
+                },
+                {
+                  "id": {
+                    "name": "chromite-cq",
+                    "branch": "master",
+                    "type": "CQ"
+                  },
+                  "general": {
+                    "critical": true
                   }
                 }
               ]

@@ -1318,7 +1318,7 @@ Returns:
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#73)(api, build_target, build_image, upload_artifacts, upload_prebuilts):**
+&mdash; **def [RunSteps](/recipes/build_target.py#76)(api, build_target, build_image, upload_artifacts, upload_prebuilts, run_chromite_tests):**
 ### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts)

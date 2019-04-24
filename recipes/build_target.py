@@ -42,6 +42,9 @@ PROPERTIES = {
 
     # Whether or not to upload binary prebuilts to Google Storage.
     'upload_prebuilts': Property(kind=bool, default=False),
+
+    # Whether or not to run the chromite tests and exit early.
+    'run_chromite_tests': Property(kind=bool, default=False),
 }
 
 UPLOADABLE_PREBUILTS_CONFIGS = [
@@ -71,7 +74,7 @@ def _apply_gerrit_changes(api, gerrit_changes):
 
 
 def RunSteps(api, build_target, build_image, upload_artifacts,
-             upload_prebuilts):
+             upload_prebuilts, run_chromite_tests):
   # TODO(evanhernandez): Many bots in the Chrome OS fleet have corrupted gsutil
   # creds lock thanks to some incorrectly privileged code. As a hack around this
   # problem, delete the creds lock before starting execution.
@@ -98,6 +101,10 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
       # Use a named cache for the chroot.
       api.cros_sdk.configure(
           chroot_parent_path=api.path['cache'].join('cros_chroot'))
+
+      if run_chromite_tests:
+        api.cros_sdk.run('run_tests', ['/mnt/host/source/chromite/run_tests'])
+        return
 
       _run_cros_sdk_script(api, 'setup_board', build_target.name, build_config)
 
@@ -155,3 +162,9 @@ def GenTests(api):
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('run-chromite-tests') + #
+         api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                   builder='chromite-cq') +  #
+         api.properties(build_target={'name': 'chromite'},
+                        run_chromite_tests=True))
