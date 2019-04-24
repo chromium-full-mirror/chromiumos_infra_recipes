@@ -80,7 +80,7 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#86)(self, name, target, kind, artifacts):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#94)(self, name, target, kind, artifacts):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -198,43 +198,45 @@ Raises:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#68)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module for CrOS Build API steps.
+This recipe module exposes client stubs for all build API services.
 
-&mdash; **def [call\_json](/recipe_modules/cros_build_api/api.py#59)(self, service_method, input_dict, test_output_dict=None):**
+To add a service endpoint, create a class INSIDE THIS MODULE extending Stub.
+Make sure the class name is the same as the service name.
 
-Call a Build API method with JSON serialization.
+To call a service endpoint, simply call corresponding method on the stub. It
+will "magicly" know what to do and fail gracefully if it does not. Example:
 
-For now, only runs outside the chroot (crbug.com/949789).
+    # Inside recipes/my_recipe.py...
+    my_request_proto = BundleRequest()
+    # Set up your request proto, and then...
+    api.cros_build_api.ArtifactsService.BundleFirmware(my_request_proto)
+
+The stub will perform sane validations and then call the build API command.
+
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#91)(self, endpoint, input_proto, output_type, test_output_data=None):**
+
+Call the build API with the given input proto.
+
+This function tries to be as dumb as possible. It does not validate that
+the endpoint exists, nor that the input_proto has the correct type. While
+clients may call this function directly, they should ALMOST ALWAYS call
+the build API through the appropriate stub.
 
 Args:
-  service_method (str): The service/method path (ex.
-      chromium.api.Service/Method).
-  input_dict (dict): Input data.
-  test_output_dict (dict): Data to return during test.
+  endpoint (str): The full endpoint to call,
+      e.g. chromite.api.MyService/MyMethod
+  input_proto (google.protobuf): The input proto object.
+  output_type (google.protobuf.descriptor): The output proto type.
+  test_output_data (str): JSON to use as a response during testing.
 
 Returns:
-  dict: Output data.
+  google.protobuf: The parsed response proto.
 
-&mdash; **def [call\_proto](/recipe_modules/cros_build_api/api.py#99)(self, service_method, input_msg, test_output_data='{}'):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#85)(self):**
 
-Call a Build API method with JSON serialization.
-
-For now, only runs outside the chroot (crbug.com/949789).
-
-Args:
-  service_method (str): The service/method path (ex.
-      chromium.api.Service/Method).
-  input_msg (google.protobuf.message.Message): Input data.
-  test_output_data (str): Data to return during test.
-
-Raises:
-  KeyError: if the given service_method isn't found.
-  TypeError: if |input_msg| is the wrong Message type.
-
-Returns:
-  google.protobuf.message.Message: Output data.
+Expose all client stubs defined in this module.
 ### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
 
 [DEPS](/recipe_modules/cros_dupit/__init__.py#1): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -280,7 +282,7 @@ API for uploading CrOS prebuilts to Google Storage.
 
 A module for uploading package prebuilts.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#120)(self, target, kind, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#111)(self, target, kind, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -1342,7 +1344,7 @@ Recipe for building a BuildTarget image.
 
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#16)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)

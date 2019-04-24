@@ -51,6 +51,22 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     version = self.m.cros_version.read_workspace_version()
     return '%s-%s/%s' % (target.name, kind, version)
 
+  def _get_endpoint(self, artifact):
+    """Return the callable endpoint in ArtifactsService for this artifact.
+
+    Args:
+      artifact (ArtifactTypes): The artifact type to bundle.
+
+    Returns:
+      callable: The ArtifactsService endpoint.
+    """
+    assert artifact in ENDPOINTS_BY_ARTIFACT, (
+        'Could not find build API endpoint for bundling artifact %s. '
+        'You may need to sync the cros_artifacts recipe endpoint dictionary '
+        'with the current build config.' % artifact_name)
+    return getattr(self.m.cros_build_api.ArtifactsService,
+                   ENDPOINTS_BY_ARTIFACT[artifact])
+
   def _bundle_artifact(self, artifact, target, path):
     """Defer to the build API to bundle the given artifact.
 
@@ -65,21 +81,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
     with self.m.step.nest('bundle %s for upload' % artifact_name):
-      assert artifact in ENDPOINTS_BY_ARTIFACT, (
-          'Could not find build API endpoint for bundling artifact %s. '
-          'You may need to sync the cros_artifacts recipe endpoint dictionary '
-          'with the current build config.' % artifact_name)
+      endpoint = self._get_endpoint(artifact)
+      request = artifacts.BundleRequest(build_target=target,
+                                        output_dir=str(path))
+      response = endpoint(request)
 
-      bundle_request = artifacts.BundleRequest()
-      bundle_request.build_target.CopyFrom(target)
-      bundle_request.output_dir = str(path)
-      endpoint = '%s/%s' % (ARTIFACTS_SERVICE, ENDPOINTS_BY_ARTIFACT[artifact])
-      bundle_response = self.m.cros_build_api.call_proto(
-          endpoint, bundle_request,
-          test_output_data=self.test_api.bundle_response)
       artifact_files = [
-          os.path.relpath(art.path, str(path))
-          for art in bundle_response.artifacts
+          os.path.relpath(art.path, str(path)) for art in response.artifacts
       ]
       return artifact_name, artifact_files
 

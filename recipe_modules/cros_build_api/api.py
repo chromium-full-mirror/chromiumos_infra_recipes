@@ -5,6 +5,7 @@
 
 """API for working with the protobuf-based Build API."""
 
+import functools
 import json
 
 from google.protobuf import descriptor_pool
@@ -14,33 +15,110 @@ from google.protobuf import reflection
 from recipe_engine import recipe_api
 
 
-class CrosBuildApiApi(recipe_api.RecipeApi):
-  """A module for CrOS Build API steps."""
+class Stub(object):
+  """A simple client stub for the build API.
 
-  def _call(self, service_method, input_data, test_output_data=''):
-    """Call a Build API method.
+  This class should have one subclass for each service. It determines the exact
+  build API endpoint to call based on the name of the class (which MUST match
+  the service name) and the method called on it (which MUST match the service
+  method to call). It validates that the input proto type matches what the
+  service expects.
+  """
+
+  def __init__(self, call_build_api):
+    # call_build_api is a function that (blindly) writes the proto to
+    # file, calls the build API command line, and reads the output. This
+    # needs to be a callback because non-RecipeApi classes cannot use the
+    # injected modules such as recipe_modules/file
+    self._call_build_api = call_build_api
+
+  def __call__(self, method, input_proto, **kwargs):
+    service = 'chromite.api.%s' % type(self).__name__
+
+    # Check that the service and method exist.
+    service_descriptor = descriptor_pool.Default().FindServiceByName(service)
+    method_descriptor = service_descriptor.FindMethodByName(method)
+    if method_descriptor is None:
+      raise KeyError('No such method %s in service %s.' % (method, service))
+
+    # Check that the input type aligns with what is expected.
+    given_input_type = input_proto.DESCRIPTOR.full_name
+    method_input_type = method_descriptor.input_type.full_name
+    if given_input_type != method_input_type:
+      raise TypeError('Expected input type %r, got %r' % (method_input_type,
+                                                          given_input_type))
+
+    # We good we good we good. Now we can actually call the build API.
+    endpoint = '%s/%s' % (service, method)
+    return self._call_build_api(endpoint, input_proto,
+                                method_descriptor.output_type, **kwargs)
+
+  def __getattr__(self, attr):
+    return functools.partial(self, attr)
+
+
+class BinhostService(Stub):
+  """Stub for BinhostService."""
+
+
+class ArtifactsService(Stub):
+  """Stub for ArtifactsService."""
+
+
+class CrosBuildApiApi(recipe_api.RecipeApi):
+  """This recipe module exposes client stubs for all build API services.
+
+  To add a service endpoint, create a class INSIDE THIS MODULE extending Stub.
+  Make sure the class name is the same as the service name.
+
+  To call a service endpoint, simply call corresponding method on the stub. It
+  will "magicly" know what to do and fail gracefully if it does not. Example:
+
+      # Inside recipes/my_recipe.py...
+      my_request_proto = BundleRequest()
+      # Set up your request proto, and then...
+      api.cros_build_api.ArtifactsService.BundleFirmware(my_request_proto)
+
+  The stub will perform sane validations and then call the build API command.
+  """
+
+  def initialize(self):
+    """Expose all client stubs defined in this module."""
+    stubs = Stub.__subclasses__()
+    for stub in stubs:
+      setattr(self, stub.__name__, stub(self))
+
+  def __call__(self, endpoint, input_proto, output_type, test_output_data=None):
+    """Call the build API with the given input proto.
+
+    This function tries to be as dumb as possible. It does not validate that
+    the endpoint exists, nor that the input_proto has the correct type. While
+    clients may call this function directly, they should ALMOST ALWAYS call
+    the build API through the appropriate stub.
 
     Args:
-      service_method (str): The service/method path (ex.
-          chromium.api.Service/Method).
-      input_data (str): Input data.
-      test_output_data (str): Data to return during test.
+      endpoint (str): The full endpoint to call,
+          e.g. chromite.api.MyService/MyMethod
+      input_proto (google.protobuf): The input proto object.
+      output_type (google.protobuf.descriptor): The output proto type.
+      test_output_data (str): JSON to use as a response during testing.
 
     Returns:
-      str: Output data.
+      google.protobuf: The parsed response proto.
     """
+
     messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
     input_path = messages_path.join('input_proto.json')
     output_path = messages_path.join('output_proto.json')
 
     # Write the input proto JSON to a temp file (which is how it's passed to
     # the build API).
-    self.m.file.write_raw('write input file', input_path, input_data)
+    self.m.file.write_raw('write input file', input_path,
+                          json_format.MessageToJson(input_proto))
 
-    bin_path = self.m.cros_source.workspace_path.join('chromite/bin/build_api')
     build_api_cmd = [
-        bin_path, '--input-json', input_path, '--output-json', output_path,
-        service_method
+        self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
+        '--input-json', input_path, '--output-json', output_path, endpoint
     ]
     # TODO(crbug.com/950959): Because the chroot runs as root, the build API
     # must also run as root, lest it access chroot files with insufficient
@@ -51,79 +129,14 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
         'sudo', '/bin/bash', '-c',
         'umask 0000 && %s' % ' '.join(map(str, build_api_cmd))
     ]
-    self.m.step('build_api %s' % service_method, cmd)
+    self.m.step('call build API: %s' % endpoint, cmd)
 
-    return self.m.file.read_raw('read output file', output_path,
-                                test_data=test_output_data)
+    # If no test data is provided, see if we have our own.
+    if test_output_data is None:
+      test_output_data = self.test_api.response_for_endpoint(endpoint)
 
-  def call_json(self, service_method, input_dict, test_output_dict=None):
-    """Call a Build API method with JSON serialization.
+    output_data = self.m.file.read_raw('read output file', output_path,
+                                       test_data=test_output_data)
+    output_msg = reflection.MakeClass(output_type)()
 
-    For now, only runs outside the chroot (crbug.com/949789).
-
-    Args:
-      service_method (str): The service/method path (ex.
-          chromium.api.Service/Method).
-      input_dict (dict): Input data.
-      test_output_dict (dict): Data to return during test.
-
-    Returns:
-      dict: Output data.
-    """
-    output_data = self._call(service_method, json.dumps(input_dict),
-                             test_output_data=json.dumps(test_output_dict))
-    return json.loads(output_data)
-
-  def _method_descriptor(self, service_method):
-    """Lookup a |google.protobuf.descriptor.ServiceDescriptor|.
-
-    The module containing the service descriptor must be imported before this
-    is called.
-
-    Args:
-      service_method (str): The service/method path (ex.
-          chromium.api.Service/Method).
-
-    Raises:
-      KeyError: If the service name isn't found.
-    """
-    service_name, method_name = service_method.split('/')
-    try:
-      svc_descriptor = descriptor_pool.Default().FindServiceByName(service_name)
-    except KeyError as e:
-      # The KeyError raised by FindServiceByName only has the package name.
-      raise KeyError('%r; did you import the module?' % service_name, e)
-
-    return svc_descriptor.FindMethodByName(method_name)
-
-  def call_proto(self, service_method, input_msg, test_output_data='{}'):
-    """Call a Build API method with JSON serialization.
-
-    For now, only runs outside the chroot (crbug.com/949789).
-
-    Args:
-      service_method (str): The service/method path (ex.
-          chromium.api.Service/Method).
-      input_msg (google.protobuf.message.Message): Input data.
-      test_output_data (str): Data to return during test.
-
-    Raises:
-      KeyError: if the given service_method isn't found.
-      TypeError: if |input_msg| is the wrong Message type.
-
-    Returns:
-      google.protobuf.message.Message: Output data.
-    """
-    method = self._method_descriptor(service_method)
-
-    input_msg_type = input_msg.DESCRIPTOR.full_name
-    method_input_type = method.input_type.full_name
-    if input_msg_type != method_input_type:
-      raise TypeError('expected input type %r, got %r' % (method_input_type,
-                                                          input_msg_type))
-
-    input_data = json_format.MessageToJson(input_msg)
-    output_data = self._call(service_method, input_data,
-                             test_output_data=test_output_data)
-    output_msg = reflection.MakeClass(method.output_type)()
     return json_format.Parse(output_data, output_msg)

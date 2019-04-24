@@ -44,14 +44,10 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           a list of uploadable string paths relative to that directory.
     """
     with self.m.step.nest('prepare binhost uploads'):
-      pbu_request = binhost.PrepareBinhostUploadsRequest()
-      pbu_request.build_target.CopyFrom(target)
-      pbu_request.uri = uri
-      pbu_response = self.m.cros_build_api.call_proto(
-          'chromite.api.BinhostService/PrepareBinhostUploads', pbu_request,
-          test_output_data=self.test_api.prepare_binhost_uploads_response)
-      upload_root = self.m.path.abs_to_path(pbu_response.uploads_dir)
-      upload_paths = [ut.path for ut in pbu_response.upload_targets]
+      response = self.m.cros_build_api.BinhostService.PrepareBinhostUploads(
+          binhost.PrepareBinhostUploadsRequest(build_target=target, uri=uri))
+      upload_root = self.m.path.abs_to_path(response.uploads_dir)
+      upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths
 
   def _set_binhost(self, target, private, key, uri):
@@ -67,16 +63,11 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       uri (str): The new binhost URI.
     """
     with self.m.step.nest('update binhost conf file'):
-      sb_request = binhost.SetBinhostRequest()
-      sb_request.build_target.CopyFrom(target)
-      sb_request.private = private
-      sb_request.key = binhost.BinhostKey.Value(key)
-      sb_request.uri = uri
-
-      sb_response = self.m.cros_build_api.call_proto(
-          'chromite.api.BinhostService/SetBinhost', sb_request,
-          test_output_data=self.test_api.set_binhost_response)
-      binhost_path = self.m.path.abs_to_path(sb_response.output_file)
+      request = binhost.SetBinhostRequest(build_target=target, private=private,
+                                          key=binhost.BinhostKey.Value(key),
+                                          uri=uri)
+      response = self.m.cros_build_api.BinhostService.SetBinhost(request)
+      binhost_path = self.m.path.abs_to_path(response.output_file)
       binhost_data = self.m.file.read_text('read binhost conf', binhost_path)
 
       projects = self.m.repo.project_infos(projects=[binhost_path])
