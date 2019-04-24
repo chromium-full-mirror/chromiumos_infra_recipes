@@ -113,7 +113,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[CLEANUP]",
     "name": "manifest diff",
     "~followup_annotations": [
       "@@@STEP_TEXT@manifest diff failed; no repo root found@@@"

@@ -729,7 +729,6 @@
   },
   {
     "cmd": [],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "upload dummy artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
