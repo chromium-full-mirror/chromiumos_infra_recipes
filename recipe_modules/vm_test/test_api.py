@@ -16,3 +16,6 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
   def swarming_pool(self):
     return 'vm_pool'
 
+  @property
+  def swarming_role(self):
+    return 'vm_role'

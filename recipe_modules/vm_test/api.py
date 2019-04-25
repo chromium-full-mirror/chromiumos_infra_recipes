@@ -25,11 +25,13 @@ class VMTestApi(recipe_api.RecipeApi):
     super(VMTestApi, self).__init__(*args, **kwargs)
     self._swarming_server = vm_test_properties.get('swarming_server', None)
     self._swarming_pool = vm_test_properties.get('swarming_pool', None)
+    self._swarming_role = vm_test_properties.get('swarming_role', None)
 
   def initialize(self):
     if self._test_data.enabled:
       self._swarming_server = self.test_api.swarming_server
       self._swarming_pool = self.test_api.swarming_pool
+      self._swarming_role = self.test_api.swarming_role
 
   @property
   def swarming_server(self):
@@ -38,6 +40,10 @@ class VMTestApi(recipe_api.RecipeApi):
   @property
   def swarming_pool(self):
     return self._swarming_pool
+
+  @property
+  def swarming_role(self):
+    return self._swarming_role
 
   # TODO: use BuildTarget proto rather than string.
   def run_vm_tests(self, name, build_target, test_unit):
@@ -130,13 +136,13 @@ class VMTestApi(recipe_api.RecipeApi):
     # Configure the first slice.
     request = (
         request.with_slice(
-            0, request[0]
-            .with_command(cmd)
-            .with_execution_timeout_secs(60 * 60 * 3)
+            0,
+            request[0].with_command(cmd).with_execution_timeout_secs(
+                60 * 60 * 3)
             # Some commands are really slow, like creating the chroot.
-            .with_io_timeout_secs(60 * 30)
-            .with_dimensions(pool=self.swarming_pool)
-            .with_cipd_ensure_file(ensure_file)
+            .with_io_timeout_secs(60 * 30).with_dimensions(
+                pool=self.swarming_pool,
+                role=self.swarming_role).with_cipd_ensure_file(ensure_file)
             .with_env_prefixes(PATH=["vpython"])))
 
     with self.m.swarming.with_server(self.swarming_server):

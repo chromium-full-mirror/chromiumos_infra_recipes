@@ -1246,9 +1246,9 @@ Raises:
 
 A module for vm test execution steps
 
-&mdash; **def [initialize](/recipe_modules/vm_test/api.py#29)(self):**
+&mdash; **def [initialize](/recipe_modules/vm_test/api.py#30)(self):**
 
-&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#68)(self, name, build_target, test_unit):**
+&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#74)(self, name, build_target, test_unit):**
 
 Run tast test on swarming bot.
 
@@ -1260,7 +1260,7 @@ Args:
 Returns:
   swarming.TaskRequestMetadata
 
-&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#43)(self, name, build_target, test_unit):**
+&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#49)(self, name, build_target, test_unit):**
 
 Run vm test on swarming bot.
 
@@ -1272,9 +1272,11 @@ Args:
 Returns:
   swarming.TaskRequestMetadata
 
-&emsp; **@property**<br>&mdash; **def [swarming\_pool](/recipe_modules/vm_test/api.py#38)(self):**
+&emsp; **@property**<br>&mdash; **def [swarming\_pool](/recipe_modules/vm_test/api.py#40)(self):**
 
-&emsp; **@property**<br>&mdash; **def [swarming\_server](/recipe_modules/vm_test/api.py#34)(self):**
+&emsp; **@property**<br>&mdash; **def [swarming\_role](/recipe_modules/vm_test/api.py#44)(self):**
+
+&emsp; **@property**<br>&mdash; **def [swarming\_server](/recipe_modules/vm_test/api.py#36)(self):**
 ## Recipes
 
 ### *recipes* / [annealing](/recipes/annealing.py)
