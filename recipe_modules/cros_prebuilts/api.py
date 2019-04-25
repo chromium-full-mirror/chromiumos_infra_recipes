@@ -74,14 +74,20 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       assert len(projects) == 1, '%s must belong to 1 project' % binhost_path
       project = projects[0]
 
-      # Staging doesn't have ACLs to push conf files for some targets.
-      # TODO(crbug.com/952330): Figure out a way to cover this in staging.
-      if not self.m.runtime.is_experimental:
-        with self.m.context(
-            cwd=self.m.cros_source.workspace_path.join(project.path)):
-          self.m.git_txn.update_ref_write_file(
-              project.remote, project.branch, 'Set %s=%s.' % (key, uri),
-              binhost_path, binhost_data, automerge=True)
+      # Staging doesn't have ACLs to push conf files to the real branch.
+      # Instead, use a branch with the last component named 'staging'
+      branch = project.branch
+
+      if self.m.runtime.is_experimental:
+        branch_parts = branch.split('/')
+        branch_parts[-1] = 'staging'
+        branch = '/'.join(branch_parts)
+
+      with self.m.context(
+          cwd=self.m.cros_source.workspace_path.join(project.path)):
+        self.m.git_txn.update_ref_write_file(
+            project.remote, branch, 'Set %s=%s.' % (key, uri), binhost_path,
+            binhost_data, automerge=True)
 
   def _upload(self, root, paths, uri):
     """Upload the paths within root to the GS URI.
