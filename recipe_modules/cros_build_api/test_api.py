@@ -16,7 +16,12 @@ def jsonify(**kwargs):
 
 
 class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
-  """Generate test data for all build API services."""
+  """Generate simple test data for all build API services.
+
+  The data defined in this class is meant to serve as a simple default.
+  Callers of cros_build_api may specify their own test data as they see
+  fit.
+  """
 
   def path(self, subpath):
     """Return the given subpath as a fully qualified path.
@@ -38,7 +43,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     bundle_endpoints = [
         'BundleImageZip', 'BundleTestUpdatePayloads', 'BundleAutotestFiles',
         'BundleTastFiles', 'BundlePinnedGuestImages', 'BundleFirmware',
-        'BundleEbuildLogs'
+        'BundleEbuildLogs',
     ]
     return {endpoint: bundle_response for endpoint in bundle_endpoints}
 
@@ -54,11 +59,59 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def sysroot_service_responses(self):
+    """Generate responses for SysrootService."""
+    responses = {}
+    responses['Create'] = jsonify(
+        sysroot={
+            'path': self.path('/build/target'),
+            'build_target': {'name': 'target'},
+        },
+    )
+    responses['InstallToolchain'] = jsonify(
+        failed_packages=[
+            {
+                'package_name': 'failed_tool',
+                'category': 'oops',
+                'version': '1.2.3',
+            }
+        ],
+    )
+    responses['InstallPackages'] = jsonify(
+        failed_packages=[
+            {
+                'package_name': 'failed_package',
+                'category': 'oops',
+                'version': '4.5.6',
+            },
+        ],
+    )
+    return responses
+
+  @property
+  def image_service_responses(self):
+    """Generate responses for ImageService."""
+    responses = {}
+    responses['CreateImage'] = jsonify(
+        success=True,
+        images=[
+            {'path': 'cros/src/build/images/base.bin', 'type': 'BASE'},
+        ],
+        failed_packages=[
+            {'package_name': 'image_package', 'category': 'A', 'version': '1'},
+        ],
+    )
+    responses['TestImage'] = jsonify(success=True)
+    return responses
+
+  @property
   def responses_by_service(self):
     """Map service name to a dictionary of responses by method name."""
     return {
         'ArtifactsService': self.artifact_service_responses,
         'BinhostService': self.binhost_service_responses,
+        'ImageService': self.image_service_responses,
+        'SysrootService': self.sysroot_service_responses,
     }
 
   def response_for_endpoint(self, endpoint):

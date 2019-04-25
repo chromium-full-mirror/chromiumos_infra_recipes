@@ -198,7 +198,7 @@ Raises:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#68)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#76)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -215,7 +215,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#91)(self, endpoint, input_proto, output_type, test_output_data=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#99)(self, endpoint, input_proto, output_type, test_output_data=None):**
 
 Call the build API with the given input proto.
 
@@ -234,7 +234,7 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#85)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#93)(self):**
 
 Expose all client stubs defined in this module.
 ### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
@@ -1346,7 +1346,7 @@ Recipe for building a BuildTarget image.
 
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#21)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)

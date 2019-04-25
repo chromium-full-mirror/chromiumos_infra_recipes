@@ -57,12 +57,20 @@ class Stub(object):
     return functools.partial(self, attr)
 
 
+class ArtifactsService(Stub):
+  """Stub for ArtifactsService."""
+
+
 class BinhostService(Stub):
   """Stub for BinhostService."""
 
 
-class ArtifactsService(Stub):
-  """Stub for ArtifactsService."""
+class ImageService(Stub):
+  """Stub for ImageService."""
+
+
+class SysrootService(Stub):
+  """Stub for SysrootService."""
 
 
 class CrosBuildApiApi(recipe_api.RecipeApi):

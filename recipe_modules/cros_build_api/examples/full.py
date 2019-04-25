@@ -8,8 +8,13 @@ DEPS = [
     'cros_build_api',
 ]
 
+import json
+
+from PB.chromite.api import artifacts
+from PB.chromite.api import binhost
+from PB.chromite.api import image
+from PB.chromite.api import sysroot
 from PB.chromite.api import build_api_test
-from PB.chromite.api.artifacts import BundleRequest
 from PB.chromiumos.common import BuildTarget
 
 
@@ -23,7 +28,7 @@ def RunSteps(api):
   api.assertions.assertEqual(output_proto.result, 'good')
 
   # Check stubs work.
-  input_proto = BundleRequest(build_target=BuildTarget(name='target'))
+  input_proto = artifacts.BundleRequest(build_target=BuildTarget(name='target'))
   output_proto = api.cros_build_api.ArtifactsService.BundleFirmware(input_proto)
   api.assertions.assertTrue(
       output_proto.artifacts[0].path.endswith('/tmp/artifact.tar.gz'))
@@ -36,6 +41,37 @@ def RunSteps(api):
       build_api_test.TestRequestMessage())
 
   # Check the test API.
+  response_type_by_service = {
+      'ArtifactsService': {
+          endpoint: artifacts.BundleResponse for endpoint in
+          ['BundleImageZip', 'BundleTestUpdatePayloads', 'BundleAutotestFiles',
+           'BundleTastFiles', 'BundlePinnedGuestImages', 'BundleFirmware',
+           'BundleEbuildLogs']
+      },
+      'BinhostService': {
+          'PrepareBinhostUploads': binhost.PrepareBinhostUploadsResponse,
+          'SetBinhost': binhost.SetBinhostResponse,
+      },
+      'ImageService': {
+          'CreateImage': image.CreateImageResult,
+          'TestImage': image.TestImageResult,
+      },
+      'SysrootService': {
+          'Create': sysroot.SysrootCreateResponse,
+          'InstallToolchain': sysroot.InstallToolchainResponse,
+          'InstallPackages': sysroot.InstallPackagesResponse,
+      },
+  }
+  responses_by_service = api.cros_build_api.test_api.responses_by_service
+  for service, responses_by_method in responses_by_service.iteritems():
+    for method, response_json in responses_by_method.iteritems():
+      api.assertions.assertIn(service, response_type_by_service)
+      api.assertions.assertIn(method, response_type_by_service[service])
+
+      # Check we can create a valid response proto.
+      response_type = response_type_by_service[service][method]
+      response_proto = response_type(**json.loads(response_json))
+
   api.assertions.assertRaises(KeyError,
                               api.cros_build_api.test_api.response_for_endpoint,
                               'chromite.api.BadService/Foo')
