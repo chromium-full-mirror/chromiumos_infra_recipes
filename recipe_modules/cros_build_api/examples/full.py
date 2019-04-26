@@ -12,6 +12,7 @@ import json
 
 from PB.chromite.api import artifacts
 from PB.chromite.api import binhost
+from PB.chromite.api import depgraph
 from PB.chromite.api import image
 from PB.chromite.api import sysroot
 from PB.chromite.api import build_api_test
@@ -51,6 +52,9 @@ def RunSteps(api):
       'BinhostService': {
           'PrepareBinhostUploads': binhost.PrepareBinhostUploadsResponse,
           'SetBinhost': binhost.SetBinhostResponse,
+      },
+      'DependencyService': {
+          'GetBuildDependencyGraph': depgraph.GetBuildDependencyGraphResponse,
       },
       'ImageService': {
           'CreateImage': image.CreateImageResult,

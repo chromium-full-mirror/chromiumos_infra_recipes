@@ -65,6 +65,10 @@ class BinhostService(Stub):
   """Stub for BinhostService."""
 
 
+class DependencyService(Stub):
+  """Stub for DependencyService."""
+
+
 class ImageService(Stub):
   """Stub for ImageService."""
 
