@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "confgure chroot path"
+    "name": "configure chroot path"
   },
   {
     "cmd": [
@@ -16,7 +16,7 @@
       "[START_DIR]/cros_sdk/chroot"
     ],
     "infra_step": true,
-    "name": "confgure chroot path.ensure chroot path",
+    "name": "configure chroot path.ensure chroot path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -34,7 +34,7 @@
       "[START_DIR]/chromiumos_workspace"
     ],
     "infra_step": true,
-    "name": "confgure chroot path.ensure chromiumos_workspace",
+    "name": "configure chroot path.ensure chromiumos_workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -51,7 +51,7 @@
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
     "infra_step": true,
-    "name": "confgure chroot path.link chromiumos_workspace to chroot",
+    "name": "configure chroot path.link chromiumos_workspace to chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -69,7 +69,7 @@
       "[START_DIR]/chromiumos_master"
     ],
     "infra_step": true,
-    "name": "confgure chroot path.ensure chromiumos_master",
+    "name": "configure chroot path.ensure chromiumos_master",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -86,14 +86,14 @@
       "[START_DIR]/chromiumos_master/chroot"
     ],
     "infra_step": true,
-    "name": "confgure chroot path.link chromiumos_master to chroot",
+    "name": "configure chroot path.link chromiumos_master to chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "confgure chroot path (2)"
+    "name": "configure chroot path (2)"
   },
   {
     "cmd": [
@@ -108,7 +108,7 @@
       "[CACHE]/cros_chroot/chroot"
     ],
     "infra_step": true,
-    "name": "confgure chroot path (2).ensure chroot path",
+    "name": "configure chroot path (2).ensure chroot path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -126,7 +126,7 @@
       "[START_DIR]/chromiumos_workspace"
     ],
     "infra_step": true,
-    "name": "confgure chroot path (2).ensure chromiumos_workspace",
+    "name": "configure chroot path (2).ensure chromiumos_workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -142,7 +142,7 @@
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
     "infra_step": true,
-    "name": "confgure chroot path (2).remove original chroot link",
+    "name": "configure chroot path (2).remove original chroot link",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -159,7 +159,7 @@
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
     "infra_step": true,
-    "name": "confgure chroot path (2).link chromiumos_workspace to chroot",
+    "name": "configure chroot path (2).link chromiumos_workspace to chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -177,7 +177,7 @@
       "[START_DIR]/chromiumos_master"
     ],
     "infra_step": true,
-    "name": "confgure chroot path (2).ensure chromiumos_master",
+    "name": "configure chroot path (2).ensure chromiumos_master",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -193,7 +193,7 @@
       "[START_DIR]/chromiumos_master/chroot"
     ],
     "infra_step": true,
-    "name": "confgure chroot path (2).remove original chroot link (2)",
+    "name": "configure chroot path (2).remove original chroot link (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -210,7 +210,7 @@
       "[START_DIR]/chromiumos_master/chroot"
     ],
     "infra_step": true,
-    "name": "confgure chroot path (2).link chromiumos_master to chroot",
+    "name": "configure chroot path (2).link chromiumos_master to chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

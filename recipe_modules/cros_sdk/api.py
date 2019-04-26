@@ -23,7 +23,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
     Args:
       chroot_parent_path (Path): Parent for chroot directory.
     """
-    with self.m.step.nest('confgure chroot path'):
+    with self.m.step.nest('configure chroot path'):
       self._chroot_path = chroot_parent_path.join('chroot')
       self.m.file.ensure_directory('ensure chroot path', self._chroot_path)
       # TODO(crbug.com/949721): Currently, chromite depends on the chroot living
