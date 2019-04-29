@@ -9,6 +9,7 @@
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
+  * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_test](#recipe_modules-cros_test) &mdash; API for interacting with cros_test chromite api.
@@ -39,6 +40,7 @@
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
+  * [cros_relevance:examples/full](#recipes-cros_relevance_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test:examples/full](#recipes-cros_test_examples_full)
@@ -293,6 +295,27 @@ Args:
   target (BuildTarget): The build target to upload prebuilts for.
   kind (str): Label describing kind of prebuilts to upload (e.g. 'chrome').
   private (bool): Whether or not the target prebuilts are private.
+### *recipe_modules* / [cros\_relevance](/recipe_modules/cros_relevance)
+
+[DEPS](/recipe_modules/cros_relevance/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for determining if a build is unnecessary.
+
+&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#17)(self):**
+
+Initializes the module.
+
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#21)(self, build):**
+
+Determines if the build can be terminated early.
+
+Args:
+  build (build_pb2.Build): The child builder to check.
+
+Returns:
+  bool: Whether the build can be terminated early.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1357,6 +1380,11 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#15)(api):**
+### *recipes* / [cros\_relevance:examples/full](/recipe_modules/cros_relevance/examples/full.py)
+
+[DEPS](/recipe_modules/cros_relevance/examples/full.py#8): [cros\_relevance](#recipe_modules-cros_relevance)
+
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/full.py#13)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
