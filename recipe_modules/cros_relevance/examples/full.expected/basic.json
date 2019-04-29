@@ -1,5 +1,42 @@
 [
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"my_build_target\"\n  }, \n  \"outputPath\": \"/tmp/depgraph-my_build_target.json\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "write input file"
+  },
+  {
+    "cmd": [
+      "sudo",
+      "/bin/bash",
+      "-c",
+      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_1/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_1/output_proto.json chromite.api.DependencyService/GetBuildDependencyGraph"
+    ],
+    "name": "call build API: chromite.api.DependencyService/GetBuildDependencyGraph"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read output file"
+  },
+  {
     "cmd": [],
     "name": "ensure pointless_build_checker"
   },
@@ -36,7 +73,7 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_json",
-      "{\"buildbucketProto\": {}, \"chromiumosWorkspaceCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
+      "{\"buildbucketProto\": {}, \"chromiumosWorkspaceCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"depGraphPath\": \"/mnt/host/source/[START_DIR]/dir/for/depservice\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],
@@ -45,7 +82,9 @@
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"buildIsPointless\": false@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@relevance_output@buildIsPointless@@@",
+      "@@@STEP_LOG_END@relevance_output@@@"
     ]
   },
   {

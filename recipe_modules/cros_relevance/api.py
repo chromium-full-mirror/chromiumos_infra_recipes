@@ -4,12 +4,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.chromiumos.pointless_build import PointlessBuildCheckRequest
 from PB.chromiumos.pointless_build import PointlessBuildCheckResponse
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
+
+import os
 
 class CrosRelevanceApi(recipe_api.RecipeApi):
   """A module for determining if a build is unnecessary."""
@@ -18,20 +21,33 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """Initializes the module."""
     self._pointless_build_checker_path = None
 
-  def is_build_pointless(self, build):
+  def is_build_pointless(self, build, build_target):
     """Determines if the build can be terminated early.
 
     Args:
       build (build_pb2.Build): The child builder to check.
+      build_target (chromiumos.BuildTarget): The BuildTarget being built.
 
     Returns:
       bool: Whether the build can be terminated early.
     """
+    dep_req = GetBuildDependencyGraphRequest(
+      build_target=build_target,
+      output_path = '/tmp/depgraph-%s.json' % build_target.name,
+    )
+    resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
+        dep_req)
+    # This chroot path won't be needed once GetBuildDependencyGraphResponse
+    # contains the DepGraph itself.
+    dep_file = os.path.join('/mnt/host/source',
+                            resp.build_dependency_graph_file)
+
     self._ensure_pointless_build_checker()
-    check_request = PointlessBuildCheckRequest()
-    check_request.chromiumos_workspace_checkout_root = str(
-        self.m.cros_source.master_path)
-    check_request.repo_tool_path = str(self.m.repo.repo_path)
+    check_request = PointlessBuildCheckRequest(
+      chromiumos_workspace_checkout_root = str(self.m.cros_source.master_path),
+      dep_graph_path = dep_file,
+      repo_tool_path = str(self.m.repo.repo_path),
+    )
     check_request.buildbucket_proto.serialized_proto = (
         build_pb2.Build.SerializeToString(build))
     cmd = [
@@ -46,7 +62,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     output = test_plan_res.json.output
     result = jsonpb.ParseDict(output, PointlessBuildCheckResponse(),
                               ignore_unknown_fields=True)
-    return result.build_is_pointless
+    test_plan_res.presentation.logs['relevance_output'] = output
+    return result.build_is_pointless.value
 
   def _ensure_pointless_build_checker(self):
     """Ensure the pointless_build_checker binary is installed."""

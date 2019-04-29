@@ -15,6 +15,7 @@ DEPS = [
     'cros_artifacts',
     'cros_bisect',
     'cros_prebuilts',
+    'cros_relevance',
     'cros_sdk',
     'cros_source',
     'dev',
@@ -108,6 +109,9 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
 
       _run_cros_sdk_script(api, 'setup_board', build_target.name, build_config)
 
+      if api.cros_relevance.is_build_pointless(api.buildbucket.build, build_target):
+        return
+
       # Packages subset will be present when FindIt asks for bisection build.
       packages = api.cros_bisect.get_packages()
       _run_cros_sdk_script(api, 'build_packages', build_target.name,
@@ -133,23 +137,27 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
 
 def GenTests(api):
   yield (api.test('basic') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                   builder='amd64-generic-postsubmit') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('upload-artifacts') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                   builder='amd64-generic-postsubmit') +  #
          api.properties(build_target={'name': 'amd64-generic'},
                         upload_artifacts=True))
 
   yield (api.test('upload-prebuilts') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                   builder='amd64-generic-postsubmit') +  #
          api.properties(build_target={'name': 'amd64-generic'},
                         upload_prebuilts=True))
 
   yield (api.test('with-findit-bisect') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                   builder='amd64-generic-postsubmit') +  #
          api.properties(
@@ -159,6 +167,7 @@ def GenTests(api):
          ))
 
   yield (api.test('with-gerrit-changes') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
@@ -168,3 +177,10 @@ def GenTests(api):
                                    builder='chromite-cq') +  #
          api.properties(build_target={'name': 'chromite'},
                         run_chromite_tests=True))
+
+  yield (api.test('pointless-build') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             build_is_pointless=True) +
+         api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                   builder='amd64-generic-cq') +  #
+         api.properties(build_target={'name': 'amd64-generic'}))

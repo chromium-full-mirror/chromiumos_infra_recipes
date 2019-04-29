@@ -63,7 +63,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     """Generate responses for DependencyService."""
     responses = {}
     responses['GetBuildDependencyGraph'] = jsonify(
-        build_dependency_graph_file='dir/for/depservice',
+        build_dependency_graph_file=self.path('dir/for/depservice'),
     )
     return responses
 

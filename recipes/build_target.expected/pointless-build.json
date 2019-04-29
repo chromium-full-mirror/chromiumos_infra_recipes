@@ -816,42 +816,12 @@
     "name": "pointless build check",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"buildIsPointless\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"buildIsPointless\": true@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@relevance_output@buildIsPointless@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
     ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "USE=chrome_internal",
-      "--",
-      "/mnt/host/source/src/scripts/build_packages",
-      "--board",
-      "amd64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "build_packages"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "USE=chrome_internal",
-      "--",
-      "/mnt/host/source/src/scripts/build_image",
-      "--board",
-      "amd64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "build_image"
   },
   {
     "cmd": [],
