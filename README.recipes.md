@@ -218,7 +218,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#103)(self, endpoint, input_proto, output_type, test_output_data=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#103)(self, endpoint, input_proto, output_type, test_output_data=None, sudo=False):**
 
 Call the build API with the given input proto.
 
@@ -233,6 +233,9 @@ Args:
   input_proto (google.protobuf): The input proto object.
   output_type (google.protobuf.descriptor): The output proto type.
   test_output_data (str): JSON to use as a response during testing.
+  sudo (bool): If True, run the build API as sudo. Note this is risky.
+      and therefore this option is deprecated. For example, if the API
+      call ever invokes cros_sdk, it will fail.
 
 Returns:
   google.protobuf: The parsed response proto.
@@ -285,7 +288,7 @@ API for uploading CrOS prebuilts to Google Storage.
 
 A module for uploading package prebuilts.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#117)(self, target, kind, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#121)(self, target, kind, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 

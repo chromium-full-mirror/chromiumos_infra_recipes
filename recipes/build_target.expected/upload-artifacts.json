@@ -607,10 +607,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_3/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_3/output_proto.json chromite.api.ArtifactsService/BundleImageZip"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "chromite.api.ArtifactsService/BundleImageZip"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "upload dummy artifacts.bundle IMAGE_ZIP for upload.call build API: chromite.api.ArtifactsService/BundleImageZip",

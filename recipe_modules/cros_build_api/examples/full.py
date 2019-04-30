@@ -25,7 +25,7 @@ def RunSteps(api):
   output_type = build_api_test.TestResultMessage.DESCRIPTOR
   output_proto = api.cros_build_api(
       'chromite.api.TestApiService/InputOutputMethod', input_proto, output_type,
-      test_output_data='{"result": "good"}')
+      test_output_data='{"result": "good"}', sudo=True)
   api.assertions.assertEqual(output_proto.result, 'good')
 
   # Check stubs work.

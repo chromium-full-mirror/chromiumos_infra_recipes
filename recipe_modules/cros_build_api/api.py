@@ -100,7 +100,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
     for stub in stubs:
       setattr(self, stub.__name__, stub(self))
 
-  def __call__(self, endpoint, input_proto, output_type, test_output_data=None):
+  def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
+               sudo=False):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -114,11 +115,13 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       input_proto (google.protobuf): The input proto object.
       output_type (google.protobuf.descriptor): The output proto type.
       test_output_data (str): JSON to use as a response during testing.
+      sudo (bool): If True, run the build API as sudo. Note this is risky.
+          and therefore this option is deprecated. For example, if the API
+          call ever invokes cros_sdk, it will fail.
 
     Returns:
       google.protobuf: The parsed response proto.
     """
-
     messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
     input_path = messages_path.join('input_proto.json')
     output_path = messages_path.join('output_proto.json')
@@ -128,19 +131,21 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
     self.m.file.write_raw('write input file', input_path,
                           json_format.MessageToJson(input_proto))
 
-    build_api_cmd = [
+    cmd = [
         self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
         '--input-json', input_path, '--output-json', output_path, endpoint
     ]
-    # TODO(crbug.com/950959): Because the chroot runs as root, the build API
-    # must also run as root, lest it access chroot files with insufficient
-    # permissions. An unfortunate consequence is that we must set the umask
-    # so that files created by the build API are readable by the parent process.
-    # Hence, the horrid command.
-    cmd = [
-        'sudo', '/bin/bash', '-c',
-        'umask 0000 && %s' % ' '.join(map(str, build_api_cmd))
-    ]
+
+    # TODO(crbug.com/950959): Do not support sudo commands once obviated.
+    if sudo:
+      # An unfortunate consequence of running the build API as root is that we
+      # must set the umask so that files created by the build API are readable
+      # by the parent process. Hence, the horrid command.
+      cmd = [
+          'sudo', '/bin/bash', '-c',
+          'umask 0000 && %s' % ' '.join(map(str, cmd))
+      ]
+
     self.m.step('call build API: %s' % endpoint, cmd)
 
     # If no test data is provided, see if we have our own.

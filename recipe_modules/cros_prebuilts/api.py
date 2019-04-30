@@ -44,8 +44,12 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           a list of uploadable string paths relative to that directory.
     """
     with self.m.step.nest('prepare binhost uploads'):
+      # We must run this command as sudo because it writes files to the chroot
+      # from outside the chroot.
+      # TODO(crbug.com/950959): Stop writing to the chroot.
       response = self.m.cros_build_api.BinhostService.PrepareBinhostUploads(
-          binhost.PrepareBinhostUploadsRequest(build_target=target, uri=uri))
+          binhost.PrepareBinhostUploadsRequest(build_target=target, uri=uri),
+          sudo=True)
       upload_root = self.m.path.abs_to_path(response.uploads_dir)
       upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths

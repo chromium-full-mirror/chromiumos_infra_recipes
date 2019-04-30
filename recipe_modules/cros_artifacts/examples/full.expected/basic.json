@@ -29,10 +29,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_2/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_2/output_proto.json chromite.api.ArtifactsService/BundleEbuildLogs"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "chromite.api.ArtifactsService/BundleEbuildLogs"
     ],
     "name": "upload ebuild logs.bundle EBUILD_LOGS for upload.call build API: chromite.api.ArtifactsService/BundleEbuildLogs",
     "~followup_annotations": [
@@ -183,10 +185,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_4/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_4/output_proto.json chromite.api.ArtifactsService/BundleFirmware"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "chromite.api.ArtifactsService/BundleFirmware"
     ],
     "name": "upload firmware archive.bundle FIRMWARE for upload.call build API: chromite.api.ArtifactsService/BundleFirmware",
     "~followup_annotations": [
@@ -337,10 +341,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_6/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_6/output_proto.json chromite.api.ArtifactsService/BundleImageZip"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "chromite.api.ArtifactsService/BundleImageZip"
     ],
     "name": "upload test artifacts.bundle IMAGE_ZIP for upload.call build API: chromite.api.ArtifactsService/BundleImageZip",
     "~followup_annotations": [
@@ -390,10 +396,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_7/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_7/output_proto.json chromite.api.ArtifactsService/BundleAutotestFiles"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "chromite.api.ArtifactsService/BundleAutotestFiles"
     ],
     "name": "upload test artifacts.bundle AUTOTEST_FILES for upload.call build API: chromite.api.ArtifactsService/BundleAutotestFiles",
     "~followup_annotations": [
@@ -443,10 +451,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_8/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_8/output_proto.json chromite.api.ArtifactsService/BundleTastFiles"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "chromite.api.ArtifactsService/BundleTastFiles"
     ],
     "name": "upload test artifacts.bundle TAST_FILES for upload.call build API: chromite.api.ArtifactsService/BundleTastFiles",
     "~followup_annotations": [
@@ -496,10 +506,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_9/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_9/output_proto.json chromite.api.ArtifactsService/BundlePinnedGuestImages"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "chromite.api.ArtifactsService/BundlePinnedGuestImages"
     ],
     "name": "upload test artifacts.bundle PINNED_GUEST_IMAGES for upload.call build API: chromite.api.ArtifactsService/BundlePinnedGuestImages",
     "~followup_annotations": [
@@ -549,10 +561,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_10/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_10/output_proto.json chromite.api.ArtifactsService/BundleTestUpdatePayloads"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "chromite.api.ArtifactsService/BundleTestUpdatePayloads"
     ],
     "name": "upload test artifacts.bundle TEST_UPDATE_PAYLOAD for upload.call build API: chromite.api.ArtifactsService/BundleTestUpdatePayloads",
     "~followup_annotations": [

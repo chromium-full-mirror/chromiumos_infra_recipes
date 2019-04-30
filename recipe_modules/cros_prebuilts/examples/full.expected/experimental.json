@@ -192,10 +192,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_3/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_3/output_proto.json chromite.api.BinhostService/SetBinhost"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "chromite.api.BinhostService/SetBinhost"
     ],
     "name": "upload prebuilts.update binhost conf file.call build API: chromite.api.BinhostService/SetBinhost",
     "~followup_annotations": [

@@ -33,10 +33,12 @@
   },
   {
     "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_1/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_1/output_proto.json chromite.api.DependencyService/GetBuildDependencyGraph"
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "chromite.api.DependencyService/GetBuildDependencyGraph"
     ],
     "name": "pointless build check.call build API: chromite.api.DependencyService/GetBuildDependencyGraph",
     "~followup_annotations": [
