@@ -24,5 +24,5 @@ class CrosRelevanceTestApi(recipe_test_api.RecipeTestApi):
     """
     resp = PointlessBuildCheckResponse()
     resp.build_is_pointless.value = build_is_pointless
-    return self.step_data('pointless build check',
+    return self.step_data('pointless build check.run check',
         self.m.json.output(MessageToDict(resp)))

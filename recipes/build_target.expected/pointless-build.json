@@ -731,6 +731,21 @@
     "name": "setup_board"
   },
   {
+    "cmd": [],
+    "name": "pointless build check",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@build_target {@@@",
+      "@@@STEP_LOG_LINE@request@  name: \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@output_path: \"/tmp/depgraph-amd64-generic.json\"@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@build_dependency_graph_file: \"[START_DIR]/dir/for/depservice\"@@@",
+      "@@@STEP_LOG_END@response@@@",
+      "@@@STEP_LOG_LINE@relevance_output@buildIsPointless@@@",
+      "@@@STEP_LOG_END@relevance_output@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -743,7 +758,10 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "write input file"
+    "name": "pointless build check.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -753,7 +771,10 @@
       "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_2/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_2/output_proto.json chromite.api.DependencyService/GetBuildDependencyGraph"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "call build API: chromite.api.DependencyService/GetBuildDependencyGraph"
+    "name": "pointless build check.call build API: chromite.api.DependencyService/GetBuildDependencyGraph",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -768,11 +789,17 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "read output file"
+    "name": "pointless build check.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "ensure pointless_build_checker"
+    "name": "pointless build check.ensure pointless_build_checker",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -787,9 +814,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "ensure pointless_build_checker.ensure_installed",
+    "name": "pointless build check.ensure pointless_build_checker.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -813,14 +840,13 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "pointless build check",
+    "name": "pointless build check.run check",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"buildIsPointless\": true@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@relevance_output@buildIsPointless@@@",
-      "@@@STEP_LOG_END@relevance_output@@@"
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {

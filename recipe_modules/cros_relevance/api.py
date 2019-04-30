@@ -31,39 +31,42 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Returns:
       bool: Whether the build can be terminated early.
     """
-    dep_req = GetBuildDependencyGraphRequest(
-      build_target=build_target,
-      output_path = '/tmp/depgraph-%s.json' % build_target.name,
-    )
-    resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
-        dep_req)
-    # This chroot path won't be needed once GetBuildDependencyGraphResponse
-    # contains the DepGraph itself.
-    dep_file = os.path.join('/mnt/host/source',
-                            resp.build_dependency_graph_file)
+    with self.m.step.nest('pointless build check') as step_result:
+      dep_req = GetBuildDependencyGraphRequest(
+        build_target=build_target,
+        output_path = '/tmp/depgraph-%s.json' % build_target.name,
+      )
+      step_result.presentation.logs['request'] = [str(dep_req)]
+      resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
+          dep_req)
+      step_result.presentation.logs['response'] = [str(resp)]
+      # This chroot path won't be needed once GetBuildDependencyGraphResponse
+      # contains the DepGraph itself.
+      dep_file = os.path.join('/mnt/host/source',
+                              resp.build_dependency_graph_file)
 
-    self._ensure_pointless_build_checker()
-    check_request = PointlessBuildCheckRequest(
-      chromiumos_workspace_checkout_root = str(self.m.cros_source.master_path),
-      dep_graph_path = dep_file,
-      repo_tool_path = str(self.m.repo.repo_path),
-    )
-    check_request.buildbucket_proto.serialized_proto = (
-        build_pb2.Build.SerializeToString(build))
-    cmd = [
-        self._pointless_build_checker_path,
-        'check-build',
-        '--input_json',
-        self.m.json.input(jsonpb.MessageToDict(check_request)),
-        '--output_json',
-        self.m.json.output(),
-    ]
-    test_plan_res = self.m.step('pointless build check', cmd)
-    output = test_plan_res.json.output
-    result = jsonpb.ParseDict(output, PointlessBuildCheckResponse(),
-                              ignore_unknown_fields=True)
-    test_plan_res.presentation.logs['relevance_output'] = output
-    return result.build_is_pointless.value
+      self._ensure_pointless_build_checker()
+      check_request = PointlessBuildCheckRequest(
+        chromiumos_workspace_checkout_root = str(self.m.cros_source.master_path),
+        dep_graph_path = dep_file,
+        repo_tool_path = str(self.m.repo.repo_path),
+      )
+      check_request.buildbucket_proto.serialized_proto = (
+          build_pb2.Build.SerializeToString(build))
+      cmd = [
+          self._pointless_build_checker_path,
+          'check-build',
+          '--input_json',
+          self.m.json.input(jsonpb.MessageToDict(check_request)),
+          '--output_json',
+          self.m.json.output(),
+      ]
+      test_plan_res = self.m.step('run check', cmd)
+      output = test_plan_res.json.output
+      result = jsonpb.ParseDict(output, PointlessBuildCheckResponse(),
+                                ignore_unknown_fields=True)
+      step_result.presentation.logs['relevance_output'] = output
+      return result.build_is_pointless.value
 
   def _ensure_pointless_build_checker(self):
     """Ensure the pointless_build_checker binary is installed."""
