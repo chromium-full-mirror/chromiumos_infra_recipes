@@ -59,6 +59,7 @@
   * [portage:examples/full](#recipes-portage_examples_full)
   * [portage:examples/portageq_parse_error](#recipes-portage_examples_portageq_parse_error)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
+  * [recipes_tester](#recipes-recipes_tester) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
   * [skylab:examples/create_suites](#recipes-skylab_examples_create_suites)
   * [support:examples/full](#recipes-support_examples_full)
@@ -1515,6 +1516,13 @@ Raises:
 Recipe for prototyping Chrome OS builders.
 
 &mdash; **def [RunSteps](/recipes/prototype.py#23)(api):**
+### *recipes* / [recipes\_tester](/recipes/recipes_tester.py)
+
+[DEPS](/recipes/recipes_tester.py#10): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [test\_manager](#recipe_modules-test_manager), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+
+Tests a recipe CL by running ChromeOS builders.
+
+&mdash; **def [RunSteps](/recipes/recipes_tester.py#129)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1605,6 +1613,7 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-file
 [recipe_engine/recipe_modules/isolated]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-isolated
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-json
+[recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-led
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-properties
 [recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-python
