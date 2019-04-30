@@ -1,8 +1,15 @@
+# Chrome OS CI team
 andrewlamb@chromium.org
+dburger@chromium.org
+dhanyaganesh@chromium.org
 evanhernandez@chromium.org
-evanhernandez@google.com
 jclinton@chromium.org
-jclinton@google.com
+mikenichols@chromium.org
 seanabraham@chromium.org
 
+# Service accounts
 recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
+
+# Backup @google.com accounts
+evanhernandez@google.com
+jclinton@google.com
