@@ -1522,7 +1522,7 @@ Recipe for prototyping Chrome OS builders.
 
 Tests a recipe CL by running ChromeOS builders.
 
-&mdash; **def [RunSteps](/recipes/recipes_tester.py#129)(api):**
+&mdash; **def [RunSteps](/recipes/recipes_tester.py#125)(api):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1600,10 +1600,10 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 
 &mdash; **def [RunSteps](/recipe_modules/vm_test/examples/full.py#8)(api):**
 
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/c7acd584e36b371204f86109169406dcb62a6c28/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/c7acd584e36b371204f86109169406dcb62a6c28/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/c7acd584e36b371204f86109169406dcb62a6c28/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/c7acd584e36b371204f86109169406dcb62a6c28/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0f58ae4d2d2bc0efb61e6b840e3ba64a828538f8/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0f58ae4d2d2bc0efb61e6b840e3ba64a828538f8/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0f58ae4d2d2bc0efb61e6b840e3ba64a828538f8/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0f58ae4d2d2bc0efb61e6b840e3ba64a828538f8/recipes/README.recipes.md#recipe_modules-gsutil
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0536a97f09079ccde3b1506ee7ceaabdeb8e5e3a/README.recipes.md#recipe_modules-buildbucket
