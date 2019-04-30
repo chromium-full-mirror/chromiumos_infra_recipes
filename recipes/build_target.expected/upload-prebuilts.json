@@ -548,99 +548,6 @@
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"outputPath\": \"/tmp/depgraph-amd64-generic.json\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "write input file"
-  },
-  {
-    "cmd": [
-      "sudo",
-      "/bin/bash",
-      "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_2/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_2/output_proto.json chromite.api.DependencyService/GetBuildDependencyGraph"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "call build API: chromite.api.DependencyService/GetBuildDependencyGraph"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "read output file"
-  },
-  {
-    "cmd": [],
-    "name": "ensure pointless_build_checker"
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/test_planner",
-      "-ensure-file",
-      "chromiumos/infra/test_planner latest",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "ensure pointless_build_checker.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_planner\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/test_planner/pointless_build_checker",
-      "check-build",
-      "--input_json",
-      "{\"buildbucketProto\": {\"serializedProto\": \"CNDsgNmu8bWSfBIwCghjaHJvbWVvcxIKcG9zdHN1Ym1pdBoYYW1kNjQtZ2VuZXJpYy1wb3N0c3VibWl0Ii91c2VyOmx1Y2ktc2NoZWR1bGVyQGFwcHNwb3QuZ3NlcnZpY2VhY2NvdW50LmNvbTIGCLnCotgFemQSYgoZY2hyb21pdW0uZ29vZ2xlc291cmNlLmNvbRIIY2hyb21lb3MaKDJkNzI1MTBlNDQ3YWI2MGE5NzI4YWVlYTIzNjJkOGJlMmNiZDc3ODkiEXJlZnMvaGVhZHMvbWFzdGVy\"}, \"chromiumosWorkspaceCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"depGraphPath\": \"/mnt/host/source/[START_DIR]/dir/for/depservice\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
-      "--output_json",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "pointless build check",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"buildIsPointless\": false@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@relevance_output@buildIsPointless@@@",
-      "@@@STEP_LOG_END@relevance_output@@@"
-    ]
-  },
-  {
-    "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
@@ -758,7 +665,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0-101/packages\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -772,7 +679,7 @@
       "sudo",
       "/bin/bash",
       "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_3/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_3/output_proto.json chromite.api.BinhostService/PrepareBinhostUploads"
+      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_2/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_2/output_proto.json chromite.api.BinhostService/PrepareBinhostUploads"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "upload prebuilts.prepare binhost uploads.call build API: chromite.api.BinhostService/PrepareBinhostUploads",
@@ -788,7 +695,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -811,7 +718,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/symlink.py",
       "--link-json",
-      "{\"[START_DIR]/uploads/dir/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_4/foo.tbz2\"]}"
+      "{\"[START_DIR]/uploads/dir/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_3/foo.tbz2\"]}"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -832,7 +739,7 @@
       "-m",
       "----",
       "rsync",
-      "[CLEANUP]/prebuilts_tmp_4",
+      "[CLEANUP]/prebuilts_tmp_3",
       "gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0-101/packages"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -858,7 +765,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"key\": \"DUMMY_BINHOST\", \n  \"private\": true, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0-101/packages\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -872,7 +779,7 @@
       "sudo",
       "/bin/bash",
       "-c",
-      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_5/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_5/output_proto.json chromite.api.BinhostService/SetBinhost"
+      "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_4/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_4/output_proto.json chromite.api.BinhostService/SetBinhost"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "upload prebuilts.update binhost conf file.call build API: chromite.api.BinhostService/SetBinhost",
@@ -888,7 +795,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

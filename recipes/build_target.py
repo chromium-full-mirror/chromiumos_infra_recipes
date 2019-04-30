@@ -109,8 +109,13 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
 
       _run_cros_sdk_script(api, 'setup_board', build_target.name, build_config)
 
-      if api.cros_relevance.is_build_pointless(api.buildbucket.build, build_target):
-        return
+      # TODO(seanabraham): We should always run through the cros_relevance code,
+      # even when there are no gerrit_changes. This is a temporary way to
+      # unblock postsubmit orchestrator, since is_build_pointless currently
+      # always fails :/.
+      if api.buildbucket.build.input.gerrit_changes:
+        if api.cros_relevance.is_build_pointless(api.buildbucket.build, build_target):
+          return
 
       # Packages subset will be present when FindIt asks for bisection build.
       packages = api.cros_bisect.get_packages()
@@ -137,27 +142,23 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
 
 def GenTests(api):
   yield (api.test('basic') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                   builder='amd64-generic-postsubmit') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('upload-artifacts') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                   builder='amd64-generic-postsubmit') +  #
          api.properties(build_target={'name': 'amd64-generic'},
                         upload_artifacts=True))
 
   yield (api.test('upload-prebuilts') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                   builder='amd64-generic-postsubmit') +  #
          api.properties(build_target={'name': 'amd64-generic'},
                         upload_prebuilts=True))
 
   yield (api.test('with-findit-bisect') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                   builder='amd64-generic-postsubmit') +  #
          api.properties(
