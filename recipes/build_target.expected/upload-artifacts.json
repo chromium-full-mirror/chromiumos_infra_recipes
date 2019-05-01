@@ -615,6 +615,11 @@
       "chromite.api.ArtifactsService/BundleImageZip"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload dummy artifacts.bundle IMAGE_ZIP for upload.call build API: chromite.api.ArtifactsService/BundleImageZip",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

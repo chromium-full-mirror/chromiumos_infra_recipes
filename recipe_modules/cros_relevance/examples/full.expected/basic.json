@@ -40,6 +40,11 @@
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "chromite.api.DependencyService/GetBuildDependencyGraph"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "pointless build check.call build API: chromite.api.DependencyService/GetBuildDependencyGraph",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

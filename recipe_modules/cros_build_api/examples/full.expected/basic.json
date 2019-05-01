@@ -20,6 +20,11 @@
       "-c",
       "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_1/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_1/output_proto.json chromite.api.TestApiService/InputOutputMethod"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "call build API: chromite.api.TestApiService/InputOutputMethod"
   },
   {
@@ -59,6 +64,11 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "chromite.api.ArtifactsService/BundleFirmware"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "call build API: chromite.api.ArtifactsService/BundleFirmware"
   },
   {

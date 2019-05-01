@@ -102,6 +102,11 @@
       "-c",
       "umask 0000 && [START_DIR]/chromiumos_workspace/chromite/bin/build_api --input-json [CLEANUP]/build_api_messages_tmp_1/input_proto.json --output-json [CLEANUP]/build_api_messages_tmp_1/output_proto.json chromite.api.BinhostService/PrepareBinhostUploads"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload prebuilts.prepare binhost uploads.call build API: chromite.api.BinhostService/PrepareBinhostUploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -199,6 +204,11 @@
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "chromite.api.BinhostService/SetBinhost"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload prebuilts.update binhost conf file.call build API: chromite.api.BinhostService/SetBinhost",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

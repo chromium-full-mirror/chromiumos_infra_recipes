@@ -146,7 +146,11 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
           'umask 0000 && %s' % ' '.join(map(str, cmd))
       ]
 
-    self.m.step('call build API: %s' % endpoint, cmd)
+    # build_api needs to invoke other chromite/bin binaries, hence this dir
+    # needs to be on the PATH.
+    chromite_bin_dir = self.m.cros_source.workspace_path.join('chromite/bin')
+    with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
+      self.m.step('call build API: %s' % endpoint, cmd)
 
     # If no test data is provided, see if we have our own.
     if test_output_data is None:

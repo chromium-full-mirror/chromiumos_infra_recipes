@@ -36,6 +36,11 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "chromite.api.ArtifactsService/BundleEbuildLogs"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload ebuild logs.bundle EBUILD_LOGS for upload.call build API: chromite.api.ArtifactsService/BundleEbuildLogs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -192,6 +197,11 @@
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "chromite.api.ArtifactsService/BundleFirmware"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload firmware archive.bundle FIRMWARE for upload.call build API: chromite.api.ArtifactsService/BundleFirmware",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -348,6 +358,11 @@
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "chromite.api.ArtifactsService/BundleImageZip"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload test artifacts.bundle IMAGE_ZIP for upload.call build API: chromite.api.ArtifactsService/BundleImageZip",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -403,6 +418,11 @@
       "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "chromite.api.ArtifactsService/BundleAutotestFiles"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload test artifacts.bundle AUTOTEST_FILES for upload.call build API: chromite.api.ArtifactsService/BundleAutotestFiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -458,6 +478,11 @@
       "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "chromite.api.ArtifactsService/BundleTastFiles"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload test artifacts.bundle TAST_FILES for upload.call build API: chromite.api.ArtifactsService/BundleTastFiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -513,6 +538,11 @@
       "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "chromite.api.ArtifactsService/BundlePinnedGuestImages"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload test artifacts.bundle PINNED_GUEST_IMAGES for upload.call build API: chromite.api.ArtifactsService/BundlePinnedGuestImages",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -568,6 +598,11 @@
       "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "chromite.api.ArtifactsService/BundleTestUpdatePayloads"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "name": "upload test artifacts.bundle TEST_UPDATE_PAYLOAD for upload.call build API: chromite.api.ArtifactsService/BundleTestUpdatePayloads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
