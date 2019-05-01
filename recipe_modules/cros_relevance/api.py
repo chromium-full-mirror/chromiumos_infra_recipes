@@ -45,8 +45,9 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       # Joins chroot with /tmp/filename, with /tmp/filename living in
       # the chroot. Do not use os.path.join, since it thinks /tmp/filename is
       # an absolute path, thus clobbering the first token.
-      dep_file = '%s%s' % ('/mnt/host/source',
-                           resp.build_dependency_graph_file)
+      dep_file = '%s%s%s' % (self.m.cros_source.workspace_path,
+                             '/chroot',
+                             resp.build_dependency_graph_file)
 
       self._ensure_pointless_build_checker()
       check_request = PointlessBuildCheckRequest(
