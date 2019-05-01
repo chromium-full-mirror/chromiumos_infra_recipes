@@ -1,0 +1,26 @@
+[
+  {
+    "cmd": [
+      "./recipes.py",
+      "analyze",
+      "{\"files\": [\"a/b/test.txt\", \"a/foo.txt\"], \"recipes\": [\"recipeA\"]}",
+      "/path/to/tmp/json"
+    ],
+    "name": "recipe analyze",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"error\": \"Analyze failed\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {
+        "step": ""
+      },
+      "humanReason": "recipes analyze failed with error: Analyze failed"
+    },
+    "name": "$result"
+  }
+]

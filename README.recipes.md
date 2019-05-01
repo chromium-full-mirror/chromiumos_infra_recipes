@@ -23,6 +23,7 @@
   * [infra_config](#recipe_modules-infra_config)
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
+  * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [skylab](#recipe_modules-skylab)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
@@ -59,6 +60,7 @@
   * [portage:examples/full](#recipes-portage_examples_full)
   * [portage:examples/portageq_parse_error](#recipes-portage_examples_portageq_parse_error)
   * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
+  * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [recipes_tester](#recipes-recipes_tester) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
   * [skylab:examples/create_suites](#recipes-skylab_examples_create_suites)
@@ -985,6 +987,31 @@ Args:
 Uprevs portage packages for all boards.
 
 Must be run with cwd inside a chromiumos source root.
+### *recipe_modules* / [recipe\_analyze](/recipe_modules/recipe_analyze)
+
+[DEPS](/recipe_modules/recipe_analyze/__init__.py#1): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for calling 'recipes.py analyze'
+
+#### **class [RecipeAnalyzeApi](/recipe_modules/recipe_analyze/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for calling 'recipes.py analyze'
+
+&mdash; **def [is\_recipe\_affected](/recipe_modules/recipe_analyze/api.py#17)(self, affected_files, recipe):**
+
+Return True iff changes in <affected_files> affect <recipe>.
+
+Must be called from the root of a recipes repo (i.e. recipes.py is in the
+cwd).
+
+Args:
+  * affected_files (list[str]): A list of changed files. Paths may be
+    absolute or relative (to the root of the recipes repo), and should use
+    forward slashes only.
+  * recipe (str): The name of the recipe to analyze.
+
+Return:
+  Bool
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
 [DEPS](/recipe_modules/repo/__init__.py#1): [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1519,6 +1546,11 @@ Raises:
 Recipe for prototyping Chrome OS builders.
 
 &mdash; **def [RunSteps](/recipes/prototype.py#23)(api):**
+### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
+
+[DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+
+&mdash; **def [RunSteps](/recipe_modules/recipe_analyze/examples/full.py#9)(api):**
 ### *recipes* / [recipes\_tester](/recipes/recipes_tester.py)
 
 [DEPS](/recipes/recipes_tester.py#10): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [test\_manager](#recipe_modules-test_manager), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

@@ -1,0 +1,29 @@
+[
+  {
+    "cmd": [
+      "./recipes.py",
+      "analyze",
+      "{\"files\": [\"a/b/test.txt\", \"a/foo.txt\"], \"recipes\": [\"recipeA\"]}",
+      "/path/to/tmp/json"
+    ],
+    "name": "recipe analyze",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"invalid_recipes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"recipeA\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"recipeB\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {
+        "step": ""
+      },
+      "humanReason": "recipes analyze failed with invalid recipes: [u'recipeA', u'recipeB']"
+    },
+    "name": "$result"
+  }
+]
