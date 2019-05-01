@@ -10,11 +10,14 @@ DEPS = [
 
 import json
 
+from google.protobuf import empty_pb2
+
 from PB.chromite.api import artifacts
 from PB.chromite.api import binhost
 from PB.chromite.api import depgraph
 from PB.chromite.api import image
 from PB.chromite.api import sysroot
+from PB.chromite.api import test
 from PB.chromite.api import build_api_test
 from PB.chromiumos.common import BuildTarget
 
@@ -65,6 +68,11 @@ def RunSteps(api):
           'InstallToolchain': sysroot.InstallToolchainResponse,
           'InstallPackages': sysroot.InstallPackagesResponse,
       },
+      'TestService': {
+          'BuildTargetUnitTest': test.BuildTargetUnitTestResponse,
+          'ChromiteUnitTest': empty_pb2.Empty,
+          'DebugInfoTest': empty_pb2.Empty,
+      }
   }
   responses_by_service = api.cros_build_api.test_api.responses_by_service
   for service, responses_by_method in responses_by_service.iteritems():

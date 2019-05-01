@@ -114,6 +114,18 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def test_service_responses(self):
+    """Generate responses for TestService."""
+    responses = {}
+    responses['BuildTargetUnitTest'] = jsonify(
+        tarball_path="tarball/path",
+        failed_packages=[],
+    )
+    responses['ChromiteUnitTest'] = "{}"
+    responses['DebugInfoTest'] = "{}"
+    return responses
+
+  @property
   def responses_by_service(self):
     """Map service name to a dictionary of responses by method name."""
     return {
@@ -122,6 +134,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'DependencyService': self.dependency_service_responses,
         'ImageService': self.image_service_responses,
         'SysrootService': self.sysroot_service_responses,
+        'TestService': self.test_service_responses,
     }
 
   def response_for_endpoint(self, endpoint):

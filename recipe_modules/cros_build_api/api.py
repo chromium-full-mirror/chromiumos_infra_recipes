@@ -77,6 +77,10 @@ class SysrootService(Stub):
   """Stub for SysrootService."""
 
 
+class TestService(Stub):
+  """Stub for TestService."""
+
+
 class CrosBuildApiApi(recipe_api.RecipeApi):
   """This recipe module exposes client stubs for all build API services.
 
