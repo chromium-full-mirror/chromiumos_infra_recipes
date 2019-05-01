@@ -290,7 +290,7 @@ API for uploading CrOS prebuilts to Google Storage.
 
 A module for uploading package prebuilts.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#121)(self, target, kind, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#123)(self, target, kind, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -1420,7 +1420,7 @@ Recipe for building a BuildTarget image.
 &mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#13)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime]
+[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#15)(api):**
 ### *recipes* / [cros\_relevance:examples/full](/recipe_modules/cros_relevance/examples/full.py)

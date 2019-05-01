@@ -5,7 +5,7 @@
 
 DEPS = [
     'recipe_engine/path',
-    'recipe_engine/runtime',
+    'recipe_engine/properties',
     'cros_prebuilts',
 ]
 
@@ -21,5 +21,5 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic')
 
-  yield (api.test('experimental') +  #
-         api.runtime(is_luci=True, is_experimental=True))
+  yield (api.test('staging_branch') +  #
+         api.properties(prebuilts_use_staging_branch=True))

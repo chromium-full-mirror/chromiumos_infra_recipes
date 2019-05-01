@@ -15,9 +15,11 @@ from PB.chromite.api import binhost
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
   """A module for uploading package prebuilts."""
 
-  def __init__(self, prebuilts_gs_bucket, **kwargs):
+  def __init__(self, prebuilts_gs_bucket, prebuilts_use_staging_branch,
+               **kwargs):
     super(CrosPrebuiltsApi, self).__init__(**kwargs)
     self._gs_bucket = prebuilts_gs_bucket
+    self._use_staging_branch = prebuilts_use_staging_branch
 
   def _prebuilts_uri(self, target, kind):
     """Determine the GS URI to upload prebuilts.
@@ -82,7 +84,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       # Instead, use a branch with the last component named 'staging'
       branch = project.branch
 
-      if self.m.runtime.is_experimental:
+      if self._use_staging_branch:
         branch_parts = branch.split('/')
         branch_parts[-1] = 'staging'
         branch = '/'.join(branch_parts)
