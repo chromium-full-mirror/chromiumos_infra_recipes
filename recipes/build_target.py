@@ -124,7 +124,7 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
 
       if build_image:
         _run_cros_sdk_script(api, 'build_image', build_target.name,
-                             build_config)
+                             build_config, 'test')
 
       if upload_artifacts:
         # TODO(crbug.com/905039): Stop using dummy artifact kind.

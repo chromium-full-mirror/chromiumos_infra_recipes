@@ -571,7 +571,8 @@
       "--",
       "/mnt/host/source/src/scripts/build_image",
       "--board",
-      "amd64-generic"
+      "amd64-generic",
+      "test"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "build_image"
