@@ -741,7 +741,9 @@
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@build_dependency_graph_file: \"[START_DIR]/dir/for/depservice\"@@@",
       "@@@STEP_LOG_END@response@@@",
-      "@@@STEP_LOG_LINE@relevance_output@buildIsPointless@@@",
+      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
+      "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
+      "@@@STEP_LOG_LINE@relevance_output@}@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
     ]
   },
