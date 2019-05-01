@@ -12,18 +12,21 @@ DEPS = [
 from recipe_engine.config import List
 from recipe_engine.recipe_api import Property
 
+from PB.chromiumos.common import PackageInfo
+
 PROPERTIES = {
   # Used to verify the handling of a FindIt invocation and the retrieval
   # of the packages to build.
-  'expected_packages': Property(kind=List(str), default=[]),
+  'expected_packages': Property(kind=List(PackageInfo), default=[]),
   # Simulates if the build fails, and cros_bisect is asked to output failure
   # information for FindIt.
-  'failed_packages': Property(kind=List(str), default=[]),
+  'failed_packages': Property(kind=List(PackageInfo), default=[]),
 }
 
 def RunSteps(api, expected_packages, failed_packages):
   api.cros_bisect.set_bisect_builder('wally')
-  api.assertions.assertEqual(api.cros_bisect.get_packages(), expected_packages)
+  api.assertions.assertItemsEqual(api.cros_bisect.get_packages(),
+                                  expected_packages)
 
   if failed_packages:
     api.cros_bisect.set_build_compile_failure(failed_packages)
@@ -33,13 +36,24 @@ def GenTests(api):
 
   yield (api.test('with-findit-bisect') +  #
          api.properties(
-           findit_bisect={'targets': ['pkg/foo', 'pkg/bar', 'pkg/baz']},
+           findit_bisect={'targets': [
+               api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
+               api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
+               api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
+           ]},
          ) + #
          api.properties(
-           expected_packages=['pkg/foo', 'pkg/bar', 'pkg/baz'],
+           expected_packages=[
+               PackageInfo(package_name='foo', category='cat1', version='1'),
+               PackageInfo(package_name='bar', category='cat1', version='2'),
+               PackageInfo(package_name='baz', category='cat2', version='3'),
+           ],
          ))
 
   yield (api.test('with-failed-build') + #
          api.properties(
-           failed_packages=['pkg/uno', 'pkg/dos'],
+           failed_packages=[
+               PackageInfo(package_name='uno', category='pkg', version='1'),
+               PackageInfo(package_name='dos', category='pkg', version='2'),
+           ],
          ))

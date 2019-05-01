@@ -5,6 +5,10 @@
 
 """API for interacting with FindIt."""
 
+from google.protobuf import json_format as jsonpb
+
+from PB.chromiumos.common import PackageInfo
+
 from recipe_engine import recipe_api
 
 class CrosBisectApi(recipe_api.RecipeApi):
@@ -19,14 +23,29 @@ class CrosBisectApi(recipe_api.RecipeApi):
 
     Sets the BISECT_BUILDER output property to the name of the builder FindIt
     should invoke if the build fails and bisection is required.
+
+    Args:
+      build_target_name (str): build target name to set the bisect builder for.
     """
     res = self.m.step('set_bisect_builder', cmd=None)
     res.presentation.properties['BISECT_BUILDER'] = build_target_name + '-bisect'
 
   def _create_failures_payload(self, failed_packages):
+    """Creates and returns the failures payload used by FindIt.
+
+    Args:
+      failed_packages (list[PackageInfo]): list of PackageInfo representing the
+          failed packages.
+    Returns:
+      dict: failures payload used by FindIt to identify failures and later
+          echo them back during bisection builds.
+    """
     failures = []
     for pkg in failed_packages:
-      failures.append({'rule': 'emerge', 'output_targets': [pkg]})
+      failures.append({
+          'rule': 'emerge',
+          'output_targets': [jsonpb.MessageToJson(pkg)]
+      })
     return {'failures': failures}
 
   def set_build_compile_failure(self, failed_packages):
@@ -34,6 +53,10 @@ class CrosBisectApi(recipe_api.RecipeApi):
 
     Outputs failure of the indicated packages for consumption by FindIt
     under the output property "BuildCompileFailureOutput".
+
+    Args:
+      failed_packages (list[PackageInfo]): list of PackageInfo representing the
+          failed packages.
     """
     payload = self._create_failures_payload(failed_packages)
     res = self.m.step('set_build_compile_failure', cmd=None)
@@ -44,5 +67,9 @@ class CrosBisectApi(recipe_api.RecipeApi):
 
     Returns the packages to build as specified by a FindIt invocation or an
     empty list if this run was not invoked as a bisection build.
+
+    Returns:
+      list[PackageInfo]: list of packages to build as specified by FindIt
     """
-    return self._findit_bisect.get('targets', [])
+    serialized_targets = self._findit_bisect.get('targets', [])
+    return [jsonpb.Parse(st, PackageInfo()) for st in serialized_targets]

@@ -10,7 +10,7 @@
     "cmd": [],
     "name": "set_build_compile_failure",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_compile_failure_output@{\"failures\": [{\"output_targets\": [\"pkg/uno\"], \"rule\": \"emerge\"}, {\"output_targets\": [\"pkg/dos\"], \"rule\": \"emerge\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@build_compile_failure_output@{\"failures\": [{\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"uno\\\", \\n  \\\"version\\\": \\\"1\\\"\\n}\"], \"rule\": \"emerge\"}, {\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"dos\\\", \\n  \\\"version\\\": \\\"2\\\"\\n}\"], \"rule\": \"emerge\"}]}@@@"
     ]
   },
   {

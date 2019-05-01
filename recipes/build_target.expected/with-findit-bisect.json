@@ -556,10 +556,7 @@
       "--",
       "/mnt/host/source/src/scripts/build_packages",
       "--board",
-      "amd64-generic",
-      "foo",
-      "bar",
-      "baz"
+      "amd64-generic"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "build_packages"

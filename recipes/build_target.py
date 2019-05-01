@@ -118,7 +118,10 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
           return
 
       # Packages subset will be present when FindIt asks for bisection build.
-      packages = api.cros_bisect.get_packages()
+      # TODO: put this back when switch to Build API so it can take the
+      # PackageInfos directly.
+      # packages = api.cros_bisect.get_packages()
+      packages = []
       _run_cros_sdk_script(api, 'build_packages', build_target.name,
                            build_config, *packages)
 
@@ -138,7 +141,6 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
         api.cros_prebuilts.upload_target_prebuilts(
             build_target, 'dummy',
             private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
-
 
 def GenTests(api):
   yield (api.test('basic') +  #
@@ -163,7 +165,11 @@ def GenTests(api):
                                   builder='amd64-generic-postsubmit') +  #
          api.properties(
              build_target={'name': 'amd64-generic'},
-             findit_bisect={'targets': ['foo', 'bar', 'baz']},
+             findit_bisect={'targets': [
+                 api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
+                 api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
+                 api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
+             ]},
              build_image=False,
          ))
 
