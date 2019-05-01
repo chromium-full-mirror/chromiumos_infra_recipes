@@ -842,7 +842,7 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_json",
-      "{\"buildbucketProto\": {\"serializedProto\": \"CNDsgNmu8bWSfBIgCghjaHJvbWVvcxICY3EaEGFtZDY0LWdlbmVyaWMtY3EiHHVzZXI6Y29tbWl0LWJvdEBjaHJvbWl1bS5vcmcyBgi5wqLYBXo0GjIKIGNocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxjAxAcgBw==\"}, \"chromiumosWorkspaceCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"depGraphPath\": \"/mnt/host/source/[START_DIR]/dir/for/depservice\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
+      "{\"buildbucketProto\": {\"serializedProto\": \"CNDsgNmu8bWSfBIgCghjaHJvbWVvcxICY3EaEGFtZDY0LWdlbmVyaWMtY3EiHHVzZXI6Y29tbWl0LWJvdEBjaHJvbWl1bS5vcmcyBgi5wqLYBXo0GjIKIGNocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxjAxAcgBw==\"}, \"chromiumosWorkspaceCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"depGraphPath\": \"/mnt/host/source[START_DIR]/dir/for/depservice\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],
