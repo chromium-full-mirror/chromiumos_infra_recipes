@@ -81,6 +81,25 @@ class GitApi(recipe_api.RecipeApi):
       return self._step(['diff-index', '--quiet', 'HEAD', path],
                         ok_ret=(0, 1)).retcode != 0
 
+  def get_diff_files(self, from_rev, to_rev):
+    """Runs 'git diff' to find files changed between <from_rev> and <to_rev>.
+
+    Args:
+      * from_rev (str): Revision to start at. Can be a commit or ref (e.g.
+        'HEAD', 'origin/master').
+      * to_rev (str): Revision to end at.
+    Returns:
+      A list[str] of changed files.
+    """
+    test_stdout = """
+a/b/text.txt
+other_test.txt
+"""
+    step_data = self._step(
+        ['diff', '--name-only', '{}...{}'.format(from_rev, to_rev)],
+        stdout=self.m.raw_io.output(), test_stdout=test_stdout)
+    return step_data.stdout.strip().split('\n')
+
   def fetch(self, remote, refspecs=None):
     """Runs 'git fetch'.
 

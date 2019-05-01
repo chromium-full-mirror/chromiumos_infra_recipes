@@ -173,6 +173,17 @@
   {
     "cmd": [
       "git",
+      "diff",
+      "--name-only",
+      "master...HEAD"
+    ],
+    "infra_step": true,
+    "name": "git diff",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "git",
       "symbolic-ref",
       "--short",
       "HEAD"
