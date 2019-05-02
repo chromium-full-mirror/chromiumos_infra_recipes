@@ -20,8 +20,9 @@ SKYLAB_VERSION = 'prod'
 class SkylabRequestMetadata(object):
   """Metadata of a requested task."""
 
-  def __init__(self, task_json):
+  def __init__(self, task_json, build_target):
     self._task_json = task_json
+    self._build_target = build_target
 
   @property
   def name(self):
@@ -42,6 +43,11 @@ class SkylabRequestMetadata(object):
   def swarming_server(self):
     """Returns the swarming server hostname of the associated task."""
     return 'https://%s' % urlparse(self._task_json['task_url']).hostname
+
+  @property
+  def build_target(self):
+    """Returns chromiumos.BuildTarget."""
+    return self._build_target  # pragma: nocover
 
 
 class SkylabApi(recipe_api.RecipeApi):
@@ -79,7 +85,7 @@ class SkylabApi(recipe_api.RecipeApi):
         result = self.m.easy.stdout_step(
             test_suite, cmd,
             test_stdout=self.test_api.example_result(test_suite))
-        task = SkylabRequestMetadata(json.loads(result))
+        task = SkylabRequestMetadata(json.loads(result), test_unit.build_target)
         presented_links = self.m.step.active_result.presentation.links
         presented_links['Skylab task UI: %s' % task.name] = task.task_ui_link
         tasks.append(task)

@@ -18,6 +18,39 @@ SWARMING_MED_PRIORITY = 100
 VM_TEST_RECIPE = 'test_execution/execute_vm_suite'
 
 
+class VmTestRequestMetadata(object):
+  """Metadata of a requested VM test task."""
+
+  def __init__(self, task_request_metadata, build_target):
+    self._task_request_metadata = task_request_metadata
+    self._build_target = build_target
+
+  @property
+  def name(self):
+    """Returns the name of the associated task."""
+    return self._task_request_metadata.name  # pragma: nocover
+
+  @property
+  def id(self):
+    """Returns the id of the associated task."""
+    return self._task_request_metadata.id  # pragma: nocover
+
+  @property
+  def task_ui_link(self):
+    """Returns the URL of the associated task in the Swarming UI."""
+    return self._task_request_metadata.task_ui_  # pragma: nocover
+
+  @property
+  def swarming_server(self):
+    """Returns the swarming server hostname of the associated task."""
+    return self._task_request_metadata.swarming_server  # pragma: nocover
+
+  @property
+  def build_target(self):
+    """Returns chromiumos.BuildTarget."""
+    return self._build_target  # pragma: nocover
+
+
 class VMTestApi(recipe_api.RecipeApi):
   """A module for vm test execution steps"""
 
@@ -45,13 +78,11 @@ class VMTestApi(recipe_api.RecipeApi):
   def swarming_role(self):
     return self._swarming_role
 
-  # TODO: use BuildTarget proto rather than string.
-  def run_vm_tests(self, name, build_target, test_unit):
+  def run_vm_tests(self, name, test_unit):
     """Run vm test on swarming bot.
 
     Args:
       * name (str): Step name.
-      * build_target (str): Build target.
       * test_unit (TestUnit): Test unit.
 
     Returns:
@@ -63,20 +94,18 @@ class VMTestApi(recipe_api.RecipeApi):
         tasks.append(
             self._run(
                 test.test_suite,
-                build_target=build_target,
+                build_target=test_unit.build_target,
                 test_suite=test.test_suite,
                 gs_path=test_unit.build_payload.artifacts_gs_path,
                 test_type='vm'))
 
     return ScheduleResult(swarming_server=self.swarming_server, tasks=tasks)
 
-  # TODO: use BuildTarget proto rather than string.
-  def run_tast_vm_tests(self, name, build_target, test_unit):
+  def run_tast_vm_tests(self, name, test_unit):
     """Run tast test on swarming bot.
 
     Args:
       * name (str): Step name.
-      * build_target (str): Build target.
       * test_unit (TestUnit): Test unit.
 
     Returns:
@@ -88,7 +117,7 @@ class VMTestApi(recipe_api.RecipeApi):
         tasks.append(
             self._run(
                 test.suite_name,
-                build_target=build_target,
+                build_target=test_unit.build_target,
                 test_suite=test.suite_name,
                 gs_path=test_unit.build_payload.artifacts_gs_path, test_exprs=[
                     expr.test_expr for expr in test.tast_test_expr
@@ -102,7 +131,8 @@ class VMTestApi(recipe_api.RecipeApi):
 
     Args:
       * name (str): Step name.
-      * build_target (str): Build target for the build being tested.
+      * build_target (chromiumos.BuildTarget):
+          Build target for the build being tested.
       * test_suite (str): name of test suite.
       * kwargs: Task properties.
 
@@ -119,7 +149,7 @@ class VMTestApi(recipe_api.RecipeApi):
                             'vpython')
     request = (
         self.m.swarming.task_request().with_name(
-            'vm-test.%s.%s'% (str(build_target), str(test_suite))
+            'vm-test.%s.%s'% (str(build_target.name), str(test_suite))
         ).with_priority(SWARMING_MED_PRIORITY))
 
     cmd = [
@@ -129,7 +159,7 @@ class VMTestApi(recipe_api.RecipeApi):
         'recipes/workdir',
         '--properties',
         json.dumps(self._get_properties(
-            build_target=build_target, test_suite=test_suite, **kwargs)),
+            build_target=build_target.name, test_suite=test_suite, **kwargs)),
         VM_TEST_RECIPE,
     ]
 
@@ -148,7 +178,7 @@ class VMTestApi(recipe_api.RecipeApi):
     with self.m.swarming.with_server(self.swarming_server):
       metadata = self.m.swarming.trigger(name, requests=[request])
 
-    return metadata[0]
+    return VmTestRequestMetadata(metadata[0], build_target)
 
   def _get_properties(self, **kwargs):
     ret = {

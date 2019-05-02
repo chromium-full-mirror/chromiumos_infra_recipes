@@ -35,7 +35,7 @@ class RunPlanApi(recipe_api.RecipeApi):
       * builds (list[build_pb2.Build]): builds to test.
 
     Returns:
-      list[swarming.TaskRequestMetadata]
+      list[ScheduleResult]
 
     Raises:
        step.StepFailure
@@ -126,11 +126,10 @@ class RunPlanApi(recipe_api.RecipeApi):
               elif test_env == 'hw':
                 results.append(self.m.skylab.create_suites(test_env, test_unit))
               elif test_env == 'vm':
-                results.append(self.m.vm_test.run_vm_tests(
-                    test_env, build_target, test_unit))
+                results.append(self.m.vm_test.run_vm_tests(test_env, test_unit))
               elif test_env == 'tast_vm':
                 results.append(self.m.vm_test.run_tast_vm_tests(
-                    test_env, build_target, test_unit))
+                    test_env, test_unit))
               else: # pragma: nocover
                 raise self.m.step.StepFailure(
                     'Unable to execute tests for test environment "%s"' % test_env)
@@ -170,7 +169,33 @@ class RunPlanApi(recipe_api.RecipeApi):
           hostname = urlparse(swarming_server).hostname
           results += self.m.swarming.collect('%s' % hostname, task_ids)
 
+    self._record_test_successes(schedule_results, results)
     return results
+
+  def _record_test_successes(self, schedule_results, results):
+    """Records test statuses to an output property.
+
+    Args:
+      schedule_results (list[ScheduleResult])
+      results (list[swarming.TaskResult])
+    """
+    task_id_to_task_metadata = {}
+    for sched in schedule_results:
+      for task in sched.tasks:
+        task_id_to_task_metadata[str(task.id)] = task
+    bt_to_status = {}
+    # Record 'success' for a build target if all of its tests passed, and
+    # 'failure' if any test failed.
+    for result in results:
+      bt = task_id_to_task_metadata[result.id].build_target.name
+      if result.success and bt_to_status.get(bt, 'success') == 'success':
+        bt_to_status[bt] = 'success'
+      else:
+        bt_to_status[bt] = 'failure'
+    self.m.step.active_result.presentation.properties[(
+        'build_target_test_status')] = bt_to_status
+    return
+
 
   def _ensure_test_planner(self):
     """Ensure the test_planner cli is installed."""

@@ -44,7 +44,7 @@ def GenTests(api):
                          api.swarming.trigger(['vm-test'])) + api.step_data(
                              'run plan.collect.vm_swarming_server.com',
                              api.swarming.collect(
-                                 [api.swarming.task_result(1, 'vm-test')])))
+                                 [api.swarming.task_result(0, 'vm-test')])))
 
   yield (
       api.test('failed_test') + api.properties(

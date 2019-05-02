@@ -112,7 +112,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"1\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"0\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
@@ -125,13 +125,14 @@
       "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": 1@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": 0@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@Swarming task output: vm-test@hello world!@@@",
-      "@@@STEP_LOG_END@Swarming task output: vm-test@@@"
+      "@@@STEP_LOG_END@Swarming task output: vm-test@@@",
+      "@@@SET_BUILD_PROPERTY@build_target_test_status@{\"vert_masheen\": \"failure\"}@@@"
     ]
   },
   {

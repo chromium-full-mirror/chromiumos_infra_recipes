@@ -119,7 +119,7 @@ class TestPlanTestApi(recipe_test_api.RecipeTestApi):
     return self.step_data(
         '%s.%s' % (name, hostname),
         self.m.swarming.collect(
-            [self.m.swarming.task_result(1, 'vm-test', failure=failure)]))
+            [self.m.swarming.task_result(0, 'vm-test', failure=failure)]))
 
   def fail_test_builds(self, name):
     # Bounce on the first infra step of test_build

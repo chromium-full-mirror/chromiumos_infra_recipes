@@ -868,7 +868,8 @@
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@Swarming task output: my_task_1@hello world!@@@",
-      "@@@STEP_LOG_END@Swarming task output: my_task_1@@@"
+      "@@@STEP_LOG_END@Swarming task output: my_task_1@@@",
+      "@@@SET_BUILD_PROPERTY@build_target_test_status@{\"hard_wear\": \"success\", \"vert_masheen\": \"success\"}@@@"
     ]
   },
   {

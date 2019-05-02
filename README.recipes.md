@@ -1177,11 +1177,11 @@ Args:
 
 [DEPS](/recipe_modules/skylab/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#53)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Skylab helper module
 
-&mdash; **def [create\_suites](/recipe_modules/skylab/api.py#52)(self, name, test_unit):**
+&mdash; **def [create\_suites](/recipe_modules/skylab/api.py#58)(self, name, test_unit):**
 
 Skylab step.
 
@@ -1192,7 +1192,7 @@ Args:
 Returns:
   test_plan.api.ScheduleResult
 
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#49)(self):**
+&mdash; **def [initialize](/recipe_modules/skylab/api.py#55)(self):**
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1277,7 +1277,7 @@ Raises:
 
 A module for test execution steps
 
-&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#144)(self, name, schedule_results):**
+&mdash; **def [collect\_tests](/recipe_modules/test_plan/api.py#143)(self, name, schedule_results):**
 
 Waits for a set of tests to complete, and returns their results.
 Args:
@@ -1335,7 +1335,7 @@ Args:
   * builds (list[build_pb2.Build]): builds to test.
 
 Returns:
-  list[swarming.TaskRequestMetadata]
+  list[ScheduleResult]
 
 Raises:
    step.StepFailure
@@ -1343,41 +1343,39 @@ Raises:
 
 [DEPS](/recipe_modules/vm_test/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [VMTestApi](/recipe_modules/vm_test/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [VMTestApi](/recipe_modules/vm_test/api.py#54)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for vm test execution steps
 
-&mdash; **def [initialize](/recipe_modules/vm_test/api.py#30)(self):**
+&mdash; **def [initialize](/recipe_modules/vm_test/api.py#63)(self):**
 
-&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#74)(self, name, build_target, test_unit):**
+&mdash; **def [run\_tast\_vm\_tests](/recipe_modules/vm_test/api.py#104)(self, name, test_unit):**
 
 Run tast test on swarming bot.
 
 Args:
   * name (str): Step name.
-  * build_target (str): Build target.
   * test_unit (TestUnit): Test unit.
 
 Returns:
   swarming.TaskRequestMetadata
 
-&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#49)(self, name, build_target, test_unit):**
+&mdash; **def [run\_vm\_tests](/recipe_modules/vm_test/api.py#81)(self, name, test_unit):**
 
 Run vm test on swarming bot.
 
 Args:
   * name (str): Step name.
-  * build_target (str): Build target.
   * test_unit (TestUnit): Test unit.
 
 Returns:
   swarming.TaskRequestMetadata
 
-&emsp; **@property**<br>&mdash; **def [swarming\_pool](/recipe_modules/vm_test/api.py#40)(self):**
+&emsp; **@property**<br>&mdash; **def [swarming\_pool](/recipe_modules/vm_test/api.py#73)(self):**
 
-&emsp; **@property**<br>&mdash; **def [swarming\_role](/recipe_modules/vm_test/api.py#44)(self):**
+&emsp; **@property**<br>&mdash; **def [swarming\_role](/recipe_modules/vm_test/api.py#77)(self):**
 
-&emsp; **@property**<br>&mdash; **def [swarming\_server](/recipe_modules/vm_test/api.py#36)(self):**
+&emsp; **@property**<br>&mdash; **def [swarming\_server](/recipe_modules/vm_test/api.py#69)(self):**
 ## Recipes
 
 ### *recipes* / [annealing](/recipes/annealing.py)
