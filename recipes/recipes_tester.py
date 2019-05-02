@@ -19,6 +19,7 @@ DEPS = [
     'depot_tools/gclient',
     'gerrit',
     'git',
+    'recipe_analyze',
     'test_manager',
 ]
 
@@ -76,6 +77,11 @@ def _apply_gerrit_changes(api):
 def _launch_builders(api):
   """Launch builders with recipe changes patched in.
 
+  Builders are only launched if the files in the patched changes affect the
+  builder's recipe, as determined by 'recipes.py analyze'. recipes.py determines
+  this by looking at 3 different files: the recipe itself, the modules it
+  depends on, and the .gitattributes file in the root of the repo.
+
   Args:
     * api (object): See RunSteps documentation.
   Returns:
@@ -83,13 +89,43 @@ def _launch_builders(api):
     containing 'host_name' and 'task_id' keys. I.e. results can be called like
     "results[0]['swarming']['host_name']".
   """
-  with api.step.nest('launch builders'):
+  with api.step.nest('analyze and launch builders') as launch_step:
     results = []
 
+    with api.step.nest('get affected files') as affected_files_step:
+      # Changes should be cherry picked at this point. The relevant diffs should
+      # be between the original master and HEAD.
+      affected_files = api.git.get_diff_files(from_rev='origin/master',
+                                              to_rev='HEAD')
+      affected_files_step.presentation.logs['affected files'] = affected_files
+
     for builder in BUILDERS:
-      results.append(
-          api.led('get-builder',
-                  builder).then('edit-recipe-bundle').then('launch').result)
+      with api.step.nest(
+          'analyze and launch {}'.format(builder)) as builder_step:
+        # Get an intermediate result from led to extract the builder definition.
+        # Then, chain on calls to launch the builder (if it is relevant).
+        intermediate_result = api.led('get-builder', builder)
+
+        recipe_names = set(
+            job_slice['userland']['recipe_name']
+            for job_slice in intermediate_result.result['job_slices'])
+
+        # Every builder should run a single recipe across the slices.
+        assert len(recipe_names) == 1, (
+            'There should be exactly 1 recipe name in the builder definition. '
+            'Actual recipe names: {}'.format(recipe_names))
+
+        recipe = recipe_names.pop()
+        if api.recipe_analyze.is_recipe_affected(affected_files, recipe):
+          results.append(
+              intermediate_result.then('edit-recipe-bundle').then('launch')
+              .result)
+        else:
+          builder_step.presentation.step_text = (
+              'builder {} (recipe {}) not affected'.format(builder, recipe))
+
+    launch_step.presentation.step_text = 'launched {} / {} builders'.format(
+        len(results), len(BUILDERS))
 
     return results
 
@@ -107,6 +143,7 @@ def _collect_results(api, led_results):
   Returns:
     A list of swarming TaskResult.
   """
+  assert led_results
   with api.step.nest('collect results'):
     host_names = set(result['swarming']['host_name'] for result in led_results)
 
@@ -130,21 +167,96 @@ def RunSteps(api):
     _apply_gerrit_changes(api)
     led_results = _launch_builders(api)
 
-  swarming_results = _collect_results(api, led_results)
-  api.test_manager.verify_tests(swarming_results)
+  if led_results:
+    swarming_results = _collect_results(api, led_results)
+    api.test_manager.verify_tests(swarming_results)
 
 
 def GenTests(api):
+
+  def launch_step_name(builder, step_name):
+    """Get the full name of a step used during the launch of a builder.
+
+    Args:
+      * builder (str): The name of the builder.
+      * step_name (str): The name of the step (e.g. 'led launch').
+
+    Returns:
+      A str
+    """
+    return 'analyze and launch builders.analyze and launch {}.{}'.format(
+        builder, step_name)
+
+  def led_get_builder_test_data(builder, recipe_name):
+    """Get step data for a 'led get-builder' command.
+
+    Args:
+      * builder (str): The name of the builder.
+      * recipe_name (str): The name of the recipe to return in the builder
+        def.
+
+    Returns:
+      A TestData object.
+    """
+    return api.step_data(
+        launch_step_name(builder, 'led get-builder'), stdout=api.json.output({
+            'job_slices': [{
+                'userland': {
+                    'recipe_name': recipe_name
+                }
+            }]
+        }))
+
+  def led_get_launch_test_data(builder):
+    """Get step data for a 'led launch' command.
+
+    Args:
+      * builder (str): The name of the builder.
+
+    Returns:
+      A TestData object.
+    """
+    return api.step_data(
+        launch_step_name(builder, 'led launch').format(builder),
+        stdout=api.json.output({
+            'swarming': {
+                'host_name': 'chromium-swarm.appspot.com',
+                'task_id': 'deadbeeeeef',
+            }
+        }))
+
+  def recipe_analyze_test_data(builder, recipes):
+    """Get step data for a 'recipes.py analyze' command.
+
+    Args:
+      * builder (str): The name of the builder.
+      * recipes (list[str]): The recipes to return in the Output proto.
+
+    Returns:
+      A TestData object.
+    """
+    return api.step_data(
+        launch_step_name(builder, 'recipe analyze'),
+        api.json.output({
+            'recipes': recipes
+        }))
+
   yield (api.test('basic') +  #
          api.buildbucket.try_build(project='chromeos', bucket='infra',
                                    builder='recipes-tester') +  #
-         api.step_data(
-             'launch builders.led launch', stdout=api.json.output({
-                 'swarming': {
-                     'host_name': 'chromium-swarm.appspot.com',
-                     'task_id': 'deadbeeeeef',
-                 }
-             })))
+         led_get_builder_test_data('luci.chromeos.staging:staging-Annealing',
+                                   'annealing') +  #
+         recipe_analyze_test_data('luci.chromeos.staging:staging-Annealing',
+                                  ['annealing']) +  #
+         led_get_launch_test_data('luci.chromeos.staging:staging-Annealing'))
 
-  yield (api.test('no gerrit changes') +  #
+  yield (api.test('builder_not_affected') +  #
+         api.buildbucket.try_build(project='chromeos', bucket='infra',
+                                   builder='recipes-tester') +  #
+         led_get_builder_test_data('luci.chromeos.staging:staging-Annealing',
+                                   'annealing') +  #
+         recipe_analyze_test_data('luci.chromeos.staging:staging-Annealing',
+                                  ['build_target']))
+
+  yield (api.test('no_gerrit_changes') +  #
          api.expect_exception('ValueError'))
