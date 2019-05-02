@@ -16,11 +16,13 @@ from PB.chromiumos.common import PackageInfo
 
 PROPERTIES = {
   # Used to verify the handling of a FindIt invocation and the retrieval
-  # of the packages to build.
-  'expected_packages': Property(kind=List(PackageInfo), default=[]),
+  # of the packages to build. Contains a List(PackageInfo) but
+  # kind=List(PackageInfo) is not allowed here.
+  'expected_packages': Property(default=[]),
   # Simulates if the build fails, and cros_bisect is asked to output failure
-  # information for FindIt.
-  'failed_packages': Property(kind=List(PackageInfo), default=[]),
+  # information for FindIt. Contains a List(PackageInfo) but
+  # kind=List(PackageInfo) is not allowed here.
+  'failed_packages': Property(default=[]),
 }
 
 def RunSteps(api, expected_packages, failed_packages):
