@@ -9,13 +9,15 @@ import os
 
 from recipe_engine import recipe_api
 
+from PB.chromiumos import common
+
 
 class CrosSdkApi(recipe_api.RecipeApi):
   """A module for interacting with cros_sdk."""
 
   def initialize(self):
     """Initialize CrosSdkApi."""
-    self.configure(self.m.path['start_dir'].join('cros_sdk'))
+    self.configure(self.m.path['cache'].join('cros_sdk'))
 
   def configure(self, chroot_parent_path):
     """Configure CrosSdkApi.
@@ -39,8 +41,9 @@ class CrosSdkApi(recipe_api.RecipeApi):
     return self.m.depot_tools.repo_resource('cros_sdk')
 
   @property
-  def chroot_path(self):
-    return self._chroot_path
+  def chroot(self):
+    """Return a chromiumos.common.Chroot."""
+    return common.Chroot(path=str(self._chroot_path))
 
   def __call__(self, name, args, **kwargs):
     """Executes 'cros_sdk' with the supplied arguments.
@@ -57,7 +60,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
         self.cros_sdk_path,
         '--nouse-image',
         '--chroot',
-        self.chroot_path,
+        self._chroot_path,
     ]
 
     cmd += args

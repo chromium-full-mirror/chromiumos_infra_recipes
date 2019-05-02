@@ -47,10 +47,11 @@ def RunSteps(api):
   # Check the test API.
   response_type_by_service = {
       'ArtifactsService': {
-          endpoint: artifacts.BundleResponse for endpoint in
-          ['BundleImageZip', 'BundleTestUpdatePayloads', 'BundleAutotestFiles',
-           'BundleTastFiles', 'BundlePinnedGuestImages', 'BundleFirmware',
-           'BundleEbuildLogs']
+          endpoint: artifacts.BundleResponse for endpoint in [
+              'BundleImageZip', 'BundleTestUpdatePayloads',
+              'BundleAutotestFiles', 'BundleTastFiles',
+              'BundlePinnedGuestImages', 'BundleFirmware', 'BundleEbuildLogs'
+          ]
       },
       'BinhostService': {
           'PrepareBinhostUploads': binhost.PrepareBinhostUploadsResponse,
@@ -60,8 +61,8 @@ def RunSteps(api):
           'GetBuildDependencyGraph': depgraph.GetBuildDependencyGraphResponse,
       },
       'ImageService': {
-          'CreateImage': image.CreateImageResult,
-          'TestImage': image.TestImageResult,
+          'Create': image.CreateImageResult,
+          'Test': image.TestImageResult,
       },
       'SysrootService': {
           'Create': sysroot.SysrootCreateResponse,

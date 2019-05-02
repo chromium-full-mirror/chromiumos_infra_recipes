@@ -111,7 +111,7 @@ def _test_env_context(api):
     # Instead, we simply create the setup we want in <cleanup>/chroot_build,
     # and overlay that over the cached chroot.
     chroot_ws_path = api.path['cleanup'].join('chroot_ws')
-    lowerdir_path = api.cros_sdk.chroot_path
+    lowerdir_path = api.cros_sdk.chroot.path
     upperdir_path = chroot_ws_path.join('upper')
     mount_path = chroot_ws_path.join('chroot')
 

@@ -77,40 +77,25 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'build_target': {'name': 'target'},
         },
     )
-    responses['InstallToolchain'] = jsonify(
-        failed_packages=[
-            {
-                'package_name': 'failed_tool',
-                'category': 'oops',
-                'version': '1.2.3',
-            }
-        ],
-    )
-    responses['InstallPackages'] = jsonify(
-        failed_packages=[
-            {
-                'package_name': 'failed_package',
-                'category': 'oops',
-                'version': '4.5.6',
-            },
-        ],
-    )
+    responses['InstallToolchain'] = jsonify(failed_packages=[])
+    responses['InstallPackages'] = jsonify(failed_packages=[])
     return responses
 
   @property
   def image_service_responses(self):
     """Generate responses for ImageService."""
     responses = {}
-    responses['CreateImage'] = jsonify(
+    responses['Create'] = jsonify(
         success=True,
         images=[
-            {'path': 'cros/src/build/images/base.bin', 'type': 'BASE'},
+            {
+                'path': 'cros/src/build/images/base.bin',
+                'type': 'BASE'
+            },
         ],
-        failed_packages=[
-            {'package_name': 'image_package', 'category': 'A', 'version': '1'},
-        ],
+        failed_packages=[],
     )
-    responses['TestImage'] = jsonify(success=True)
+    responses['Test'] = jsonify(success=True)
     return responses
 
   @property

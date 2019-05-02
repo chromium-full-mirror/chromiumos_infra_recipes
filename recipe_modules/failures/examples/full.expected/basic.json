@@ -1,0 +1,18 @@
+[
+  {
+    "cmd": [],
+    "name": "failed packages"
+  },
+  {
+    "cmd": [],
+    "name": "failed packages.package",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

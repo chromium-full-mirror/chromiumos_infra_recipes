@@ -9,21 +9,18 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
-    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_artifacts',
     'cros_bisect',
+    'cros_build_api',
     'cros_prebuilts',
     'cros_relevance',
     'cros_sdk',
     'cros_source',
-    'dev',
+    'failures',
     'gerrit',
     'infra_config',
-    'overlayfs',
-    'repo',
-    'sync_chrome',
 ]
 
 from recipe_engine.config import Dict
@@ -31,6 +28,14 @@ from recipe_engine.recipe_api import Property
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import PackageInfo
+from PB.chromite.api.image import CreateImageRequest
+from PB.chromite.api.image import Image
+from PB.chromite.api.sysroot import SysrootCreateRequest
+from PB.chromite.api.sysroot import InstallToolchainRequest
+from PB.chromite.api.sysroot import InstallPackagesRequest
+from PB.chromite.api.test import ChromiteUnitTestRequest
+
 
 PROPERTIES = {
     'build_target': Property(kind=Dict()),
@@ -53,39 +58,13 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 ]
 
 
-def _run_cros_sdk_script(api, script, target, builder_config, *args):
-  # TODO: Replace with Build API equivalents.
-  cmd = ['/mnt/host/source/src/scripts/%s' % script, '--board', target]
-  if args:
-    cmd.extend(args)
-
-  env = {}
-  # TODO(crbug.com/950614): Most (internal) boards are able to find Chrome
-  # prebuilts w/o this USE flag. Remove if it is not needed.
-  if builder_config.chrome.internal:
-    env['USE'] = 'chrome_internal'
-
-  api.cros_sdk.run(script, cmd, env)
-
-
-def _apply_gerrit_changes(api, gerrit_changes):
-  with api.step.nest('apply cherry-pick changes'):
-    patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
-    api.cros_source.apply_gerrit_patch_sets(patch_sets)
-
-
 def RunSteps(api, build_target, build_image, upload_artifacts,
              upload_prebuilts, run_chromite_tests):
-  # TODO(evanhernandez): Many bots in the Chrome OS fleet have corrupted gsutil
-  # creds lock thanks to some incorrectly privileged code. As a hack around this
-  # problem, delete the creds lock before starting execution.
-  # Remove this after ~2 weeks.
-  api.step('remove stale gsutil cache',
-           ['sudo', 'rm', '-rf', '/home/chrome-bot/.gsutil'])
-
   build_target = BuildTarget(**build_target)
   build_config = api.infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
+  gitiles_commit = api.buildbucket.gitiles_commit
+  gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
   api.cros_bisect.set_bisect_builder(build_target.name)
 
@@ -93,36 +72,46 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
-      # Sync workspace to gitiles_commit manifest snapshot.
-      api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
+      api.cros_source.sync_gitiles_snapshot(gitiles_commit)
 
-      if api.buildbucket.build.input.gerrit_changes:
-        _apply_gerrit_changes(api, api.buildbucket.build.input.gerrit_changes)
-
-      # Use a named cache for the chroot.
-      api.cros_sdk.configure(
-          chroot_parent_path=api.path['cache'].join('cros_chroot'))
+      if gerrit_changes:
+        with api.step.nest('cherry-pick gerrit changes'):
+          patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
+          api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
       if run_chromite_tests:
-        api.cros_sdk.run('run_tests', ['/mnt/host/source/chromite/run_tests'])
+        api.cros_build_api.TestService.ChromiteUnitTest(
+            ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot))
         return
 
-      _run_cros_sdk_script(api, 'setup_board', build_target.name, build_config)
+      with api.step.nest('create sysroot'):
+        sysroot = api.cros_build_api.SysrootService.Create(
+            SysrootCreateRequest(build_target=build_target,
+                                 chroot=api.cros_sdk.chroot)).sysroot
 
       if api.cros_relevance.is_build_pointless(api.buildbucket.build, build_target):
         return
 
-      # Packages subset will be present when FindIt asks for bisection build.
-      # TODO: put this back when switch to Build API so it can take the
-      # PackageInfos directly.
-      # packages = api.cros_bisect.get_packages()
-      packages = []
-      _run_cros_sdk_script(api, 'build_packages', build_target.name,
-                           build_config, *packages)
+      with api.step.nest('install toolchain'):
+        response = api.cros_build_api.SysrootService.InstallToolchain(
+            InstallToolchainRequest(sysroot=sysroot,
+                                    chroot=api.cros_sdk.chroot))
+        api.failures.raise_failed_packages(response.failed_packages)
+
+      with api.step.nest('install packages'):
+        # Packages subset will be present when FindIt asks for bisection build.
+        packages = api.cros_bisect.get_packages()
+        response = api.cros_build_api.SysrootService.InstallPackages(
+            InstallPackagesRequest(sysroot=sysroot, packages=packages))
+        api.failures.raise_failed_packages(response.failed_packages)
 
       if build_image:
-        _run_cros_sdk_script(api, 'build_image', build_target.name,
-                             build_config, 'test')
+        with api.step.nest('build image'):
+          response = api.cros_build_api.ImageService.Create(
+              CreateImageRequest(build_target=build_target,
+                                 chroot=api.cros_sdk.chroot,
+                                 image_types=[Image.TEST]))
+          api.failures.raise_failed_packages(response.failed_packages)
 
       if upload_artifacts:
         # TODO(crbug.com/905039): Stop using dummy artifact kind.

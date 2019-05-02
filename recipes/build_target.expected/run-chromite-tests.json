@@ -13,7 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/cros_sdk/chroot"
+      "[CACHE]/cros_sdk/chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path.ensure chroot path",
@@ -47,7 +47,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "symlink",
-      "[START_DIR]/cros_sdk/chroot",
+      "[CACHE]/cros_sdk/chroot",
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
     "infra_step": true,
@@ -82,7 +82,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "symlink",
-      "[START_DIR]/cros_sdk/chroot",
+      "[CACHE]/cros_sdk/chroot",
       "[START_DIR]/chromiumos_master/chroot"
     ],
     "infra_step": true,
@@ -90,15 +90,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "rm",
-      "-rf",
-      "/home/chrome-bot/.gsutil"
-    ],
-    "name": "remove stale gsutil cache"
   },
   {
     "cmd": [
@@ -402,7 +393,7 @@
   },
   {
     "cmd": [],
-    "name": "apply cherry-pick changes"
+    "name": "cherry-pick gerrit changes"
   },
   {
     "cmd": [
@@ -413,7 +404,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "apply cherry-pick changes.read deploy_cipd.json",
+    "name": "cherry-pick gerrit changes.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -437,7 +428,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "apply cherry-pick changes.ensure_installed",
+    "name": "cherry-pick gerrit changes.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -458,7 +449,7 @@
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "apply cherry-pick changes.gerrit-fetch-changes",
+    "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_files\": false}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
@@ -506,7 +497,7 @@
   },
   {
     "cmd": [],
-    "name": "apply cherry-pick changes.apply gerrit patch sets",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -521,7 +512,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "apply cherry-pick changes.apply gerrit patch sets.repo forall",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.repo forall",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -538,7 +529,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply cherry-pick changes.apply gerrit patch sets.git fetch",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -551,7 +542,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply cherry-pick changes.apply gerrit patch sets.git rev-parse",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -565,7 +556,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply cherry-pick changes.apply gerrit patch sets.git cherry-pick",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -578,15 +569,43 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply cherry-pick changes.apply gerrit patch sets.git rev-parse (2)",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "configure chroot path (2)"
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_sdk/chroot\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "write input file"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "chromite.api.TestService/ChromiteUnitTest"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call build API: chromite.api.TestService/ChromiteUnitTest"
   },
   {
     "cmd": [
@@ -595,137 +614,13 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot/chroot"
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "configure chroot path (2).ensure chroot path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "configure chroot path (2).ensure chromiumos_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "[START_DIR]/chromiumos_workspace/chroot"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "configure chroot path (2).remove original chroot link",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CACHE]/cros_chroot/chroot",
-      "[START_DIR]/chromiumos_workspace/chroot"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "configure chroot path (2).link chromiumos_workspace to chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "configure chroot path (2).ensure chromiumos_master",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "[START_DIR]/chromiumos_master/chroot"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "configure chroot path (2).remove original chroot link (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CACHE]/cros_chroot/chroot",
-      "[START_DIR]/chromiumos_master/chroot"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "configure chroot path (2).link chromiumos_master to chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "--",
-      "/mnt/host/source/chromite/run_tests"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "run_tests"
+    "name": "read output file"
   },
   {
     "cmd": [],

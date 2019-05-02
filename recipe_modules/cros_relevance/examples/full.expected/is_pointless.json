@@ -13,7 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/cros_sdk/chroot"
+      "[CACHE]/cros_sdk/chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path.ensure chroot path",
@@ -47,7 +47,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "symlink",
-      "[START_DIR]/cros_sdk/chroot",
+      "[CACHE]/cros_sdk/chroot",
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
     "infra_step": true,
@@ -82,7 +82,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "symlink",
-      "[START_DIR]/cros_sdk/chroot",
+      "[CACHE]/cros_sdk/chroot",
       "[START_DIR]/chromiumos_master/chroot"
     ],
     "infra_step": true,
