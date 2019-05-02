@@ -851,6 +851,7 @@
     "name": "pointless build check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Build is necessary. Continuing.@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"buildIsPointless\": false@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",

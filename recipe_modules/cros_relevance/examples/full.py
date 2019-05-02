@@ -19,5 +19,9 @@ def RunSteps(api):
 def GenTests(api):
   builder = 'builder'
   build_config = [dict(build_target='build_target')]
-  yield (api.test('basic') +
-         api.cros_relevance.simulate_run_pointless_build_checker())
+  yield (api.test('not_pointless') +
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             build_is_pointless=False))
+  yield (api.test('is_pointless') +
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             build_is_pointless=True))

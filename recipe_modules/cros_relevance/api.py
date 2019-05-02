@@ -70,6 +70,12 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       result = jsonpb.ParseDict(output, PointlessBuildCheckResponse(),
                                 ignore_unknown_fields=True)
       step_result.presentation.logs['relevance_output'] = [str(result)]
+      if result.build_is_pointless.value:
+        self.m.step.active_result.presentation.step_text = (
+            'Build is unnecessary. Terminating now.')
+      else:
+        self.m.step.active_result.presentation.step_text = (
+            'Build is necessary. Continuing.')
       return result.build_is_pointless.value
 
   def _ensure_pointless_build_checker(self):
