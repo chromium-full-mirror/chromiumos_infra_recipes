@@ -73,6 +73,10 @@ class ImageService(Stub):
   """Stub for ImageService."""
 
 
+class SdkService(Stub):
+  """Stub for SdkService."""
+
+
 class SysrootService(Stub):
   """Stub for SysrootService."""
 

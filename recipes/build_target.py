@@ -31,6 +31,7 @@ from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
+from PB.chromite.api.sdk import CreateRequest as SdkCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
@@ -79,9 +80,18 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
+      with api.step.nest('init sdk'):
+        response = api.cros_build_api.SdkService.Create(
+            SdkCreateRequest(
+                flags=SdkCreateRequest.Flags(no_replace=True, bootstrap=False,
+                                             no_use_image=True),
+                chroot=api.cros_sdk.chroot))
+        api.step('using sdk version %s' % response.version.version, None)
+
       if run_chromite_tests:
-        api.cros_build_api.TestService.ChromiteUnitTest(
-            ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot))
+        with api.step.nest('run chromite unit tests'):
+          api.cros_build_api.TestService.ChromiteUnitTest(
+              ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot))
         return
 
       with api.step.nest('create sysroot'):

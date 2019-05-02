@@ -68,6 +68,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def sdk_service_responses(self):
+    responses = {}
+    responses['Create'] = jsonify(version={'version': 123})
+    responses['Update'] = jsonify(version={'version': 123})
+    return responses
+
+  @property
   def sysroot_service_responses(self):
     """Generate responses for SysrootService."""
     responses = {}
@@ -118,6 +125,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'BinhostService': self.binhost_service_responses,
         'DependencyService': self.dependency_service_responses,
         'ImageService': self.image_service_responses,
+        'SdkService': self.sdk_service_responses,
         'SysrootService': self.sysroot_service_responses,
         'TestService': self.test_service_responses,
     }
