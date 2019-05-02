@@ -232,7 +232,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#111)(self, endpoint, input_proto, output_type, test_output_data=None, sudo=False):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#111)(self, endpoint, input_proto, output_type, test_output_data=None, sudo=False, name=None):**
 
 Call the build API with the given input proto.
 
@@ -250,6 +250,7 @@ Args:
   sudo (bool): If True, run the build API as sudo. Note this is risky.
       and therefore this option is deprecated. For example, if the API
       call ever invokes cros_sdk, it will fail.
+  name (str): Name for the step. Generated automatically if not specified.
 
 Returns:
   google.protobuf: The parsed response proto.

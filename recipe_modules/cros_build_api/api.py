@@ -109,7 +109,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       setattr(self, stub.__name__, stub(self))
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
-               sudo=False):
+               sudo=False, name=None):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -126,46 +126,50 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       sudo (bool): If True, run the build API as sudo. Note this is risky.
           and therefore this option is deprecated. For example, if the API
           call ever invokes cros_sdk, it will fail.
+      name (str): Name for the step. Generated automatically if not specified.
 
     Returns:
       google.protobuf: The parsed response proto.
     """
-    messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
-    input_path = messages_path.join('input_proto.json')
-    output_path = messages_path.join('output_proto.json')
+    with self.m.step.nest(name or 'call %s' % endpoint) as step:
+      messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
+      input_path = messages_path.join('input_proto.json')
+      output_path = messages_path.join('output_proto.json')
 
-    # Write the input proto JSON to a temp file (which is how it's passed to
-    # the build API).
-    self.m.file.write_raw('write input file', input_path,
-                          json_format.MessageToJson(input_proto))
+      # Write the input proto JSON to a temp file (which is how it's passed to
+      # the build API) and record it to the step logs for debugging.
+      input_json = json_format.MessageToJson(input_proto)
+      self.m.file.write_raw('write input file', input_path, input_json)
+      step.presentation.logs['input message'] = [input_json]
 
-    cmd = [
-        self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
-        '--input-json', input_path, '--output-json', output_path, endpoint
-    ]
-
-    # TODO(crbug.com/950959): Do not support sudo commands once obviated.
-    if sudo:
-      # An unfortunate consequence of running the build API as root is that we
-      # must set the umask so that files created by the build API are readable
-      # by the parent process. Hence, the horrid command.
       cmd = [
-          'sudo', '/bin/bash', '-c',
-          'umask 0000 && %s' % ' '.join(map(str, cmd))
+          self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
+          '--input-json', input_path, '--output-json', output_path, endpoint
       ]
 
-    # build_api needs to invoke other chromite/bin binaries, hence this dir
-    # needs to be on the PATH.
-    chromite_bin_dir = self.m.cros_source.workspace_path.join('chromite/bin')
-    with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
-      self.m.step('call build API: %s' % endpoint, cmd)
+      # TODO(crbug.com/950959): Do not support sudo commands once obviated.
+      if sudo:
+        # An unfortunate consequence of running the build API as root is that we
+        # must set the umask so that files created by the build API are readable
+        # by the parent process. Hence, the horrid command.
+        cmd = [
+            'sudo', '/bin/bash', '-c',
+            'umask 0000 && %s' % ' '.join(map(str, cmd))
+        ]
 
-    # If no test data is provided, see if we have our own.
-    if test_output_data is None:
-      test_output_data = self.test_api.response_for_endpoint(endpoint)
+      # build_api needs to invoke other chromite/bin binaries, hence this dir
+      # needs to be on the PATH.
+      chromite_bin_dir = self.m.cros_source.workspace_path.join('chromite/bin')
+      with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
+        self.m.step('call build API: %s' % endpoint, cmd)
 
-    output_data = self.m.file.read_raw('read output file', output_path,
-                                       test_data=test_output_data)
-    output_msg = reflection.MakeClass(output_type)()
+      # If no test data is provided, see if we have our own.
+      if test_output_data is None:
+        test_output_data = self.test_api.response_for_endpoint(endpoint)
 
-    return json_format.Parse(output_data, output_msg)
+      # Finally, parse the output to a proto and record it in the logs.
+      output_json = self.m.file.read_raw('read output file', output_path,
+                                         test_data=test_output_data)
+      step.presentation.logs['output message'] = [output_json]
+      output_proto = reflection.MakeClass(output_type)()
+      return json_format.Parse(output_json, output_proto)

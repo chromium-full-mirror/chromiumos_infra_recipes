@@ -108,6 +108,22 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input message@{@@@",
+      "@@@STEP_LOG_LINE@input message@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"name\": \"my_build_target\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }, @@@",
+      "@@@STEP_LOG_LINE@input message@  \"outputPath\": \"/tmp/depgraph-my_build_target.json\"@@@",
+      "@@@STEP_LOG_LINE@input message@}@@@",
+      "@@@STEP_LOG_END@input message@@@",
+      "@@@STEP_LOG_LINE@output message@{\"build_dependency_graph_file\": \"[START_DIR]/dir/for/depservice\"}@@@",
+      "@@@STEP_LOG_END@output message@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -119,9 +135,9 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
-    "name": "pointless build check.write input file",
+    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -138,9 +154,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "pointless build check.call build API: chromite.api.DependencyService/GetBuildDependencyGraph",
+    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API: chromite.api.DependencyService/GetBuildDependencyGraph",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -155,9 +171,9 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "pointless build check.read output file",
+    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

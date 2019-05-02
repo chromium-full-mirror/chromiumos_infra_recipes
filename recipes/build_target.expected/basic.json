@@ -396,6 +396,25 @@
     "name": "init sdk"
   },
   {
+    "cmd": [],
+    "name": "init sdk.call chromite.api.SdkService/Create",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input message@{@@@",
+      "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/cros_sdk/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }, @@@",
+      "@@@STEP_LOG_LINE@input message@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"noReplace\": true, @@@",
+      "@@@STEP_LOG_LINE@input message@    \"noUseImage\": true@@@",
+      "@@@STEP_LOG_LINE@input message@  }@@@",
+      "@@@STEP_LOG_LINE@input message@}@@@",
+      "@@@STEP_LOG_END@input message@@@",
+      "@@@STEP_LOG_LINE@output message@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_END@output message@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -408,9 +427,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "init sdk.write input file",
+    "name": "init sdk.call chromite.api.SdkService/Create.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -428,9 +447,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "init sdk.call build API: chromite.api.SdkService/Create",
+    "name": "init sdk.call chromite.api.SdkService/Create.call build API: chromite.api.SdkService/Create",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -446,9 +465,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "init sdk.read output file",
+    "name": "init sdk.call chromite.api.SdkService/Create.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -463,6 +482,24 @@
     "name": "create sysroot"
   },
   {
+    "cmd": [],
+    "name": "create sysroot.call chromite.api.SysrootService/Create",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input message@{@@@",
+      "@@@STEP_LOG_LINE@input message@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }, @@@",
+      "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/cros_sdk/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }@@@",
+      "@@@STEP_LOG_LINE@input message@}@@@",
+      "@@@STEP_LOG_END@input message@@@",
+      "@@@STEP_LOG_LINE@output message@{\"sysroot\": {\"path\": \"/build/target\", \"build_target\": {\"name\": \"target\"}}}@@@",
+      "@@@STEP_LOG_END@output message@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -475,9 +512,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "create sysroot.write input file",
+    "name": "create sysroot.call chromite.api.SysrootService/Create.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -495,9 +532,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "create sysroot.call build API: chromite.api.SysrootService/Create",
+    "name": "create sysroot.call chromite.api.SysrootService/Create.call build API: chromite.api.SysrootService/Create",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -513,9 +550,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "create sysroot.read output file",
+    "name": "create sysroot.call chromite.api.SysrootService/Create.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -535,6 +572,22 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input message@{@@@",
+      "@@@STEP_LOG_LINE@input message@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }, @@@",
+      "@@@STEP_LOG_LINE@input message@  \"outputPath\": \"/tmp/depgraph-amd64-generic.json\"@@@",
+      "@@@STEP_LOG_LINE@input message@}@@@",
+      "@@@STEP_LOG_END@input message@@@",
+      "@@@STEP_LOG_LINE@output message@{\"build_dependency_graph_file\": \"[START_DIR]/dir/for/depservice\"}@@@",
+      "@@@STEP_LOG_END@output message@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -547,9 +600,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "pointless build check.write input file",
+    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -567,9 +620,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "pointless build check.call build API: chromite.api.DependencyService/GetBuildDependencyGraph",
+    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API: chromite.api.DependencyService/GetBuildDependencyGraph",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -585,9 +638,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "pointless build check.read output file",
+    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -651,6 +704,27 @@
     "name": "install toolchain"
   },
   {
+    "cmd": [],
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input message@{@@@",
+      "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/cros_sdk/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }, @@@",
+      "@@@STEP_LOG_LINE@input message@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input message@      \"name\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@input message@    }, @@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"/build/target\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }@@@",
+      "@@@STEP_LOG_LINE@input message@}@@@",
+      "@@@STEP_LOG_END@input message@@@",
+      "@@@STEP_LOG_LINE@output message@{\"failed_packages\": []}@@@",
+      "@@@STEP_LOG_END@output message@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -663,9 +737,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "install toolchain.write input file",
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -683,9 +757,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "install toolchain.call build API: chromite.api.SysrootService/InstallToolchain",
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.call build API: chromite.api.SysrootService/InstallToolchain",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -701,14 +775,32 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "install toolchain.read output file",
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
     "name": "install packages"
+  },
+  {
+    "cmd": [],
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input message@{@@@",
+      "@@@STEP_LOG_LINE@input message@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input message@      \"name\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@input message@    }, @@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"/build/target\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }@@@",
+      "@@@STEP_LOG_LINE@input message@}@@@",
+      "@@@STEP_LOG_END@input message@@@",
+      "@@@STEP_LOG_LINE@output message@{\"failed_packages\": []}@@@",
+      "@@@STEP_LOG_END@output message@@@"
+    ]
   },
   {
     "cmd": [
@@ -723,9 +815,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "install packages.write input file",
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -743,9 +835,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "install packages.call build API: chromite.api.SysrootService/InstallPackages",
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.call build API: chromite.api.SysrootService/InstallPackages",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -761,14 +853,35 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "install packages.read output file",
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
     "name": "build image"
+  },
+  {
+    "cmd": [],
+    "name": "build image.call chromite.api.ImageService/Create",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input message@{@@@",
+      "@@@STEP_LOG_LINE@input message@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }, @@@",
+      "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/cros_sdk/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }, @@@",
+      "@@@STEP_LOG_LINE@input message@  \"imageTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input message@    \"TEST\"@@@",
+      "@@@STEP_LOG_LINE@input message@  ]@@@",
+      "@@@STEP_LOG_LINE@input message@}@@@",
+      "@@@STEP_LOG_END@input message@@@",
+      "@@@STEP_LOG_LINE@output message@{\"images\": [{\"path\": \"cros/src/build/images/base.bin\", \"type\": \"BASE\"}], \"failed_packages\": [], \"success\": true}@@@",
+      "@@@STEP_LOG_END@output message@@@"
+    ]
   },
   {
     "cmd": [
@@ -783,9 +896,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build image.write input file",
+    "name": "build image.call chromite.api.ImageService/Create.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -803,9 +916,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "build image.call build API: chromite.api.ImageService/Create",
+    "name": "build image.call chromite.api.ImageService/Create.call build API: chromite.api.ImageService/Create",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -821,9 +934,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build image.read output file",
+    "name": "build image.call chromite.api.ImageService/Create.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

@@ -580,6 +580,25 @@
     "name": "init sdk"
   },
   {
+    "cmd": [],
+    "name": "init sdk.call chromite.api.SdkService/Create",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input message@{@@@",
+      "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/cros_sdk/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }, @@@",
+      "@@@STEP_LOG_LINE@input message@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"noReplace\": true, @@@",
+      "@@@STEP_LOG_LINE@input message@    \"noUseImage\": true@@@",
+      "@@@STEP_LOG_LINE@input message@  }@@@",
+      "@@@STEP_LOG_LINE@input message@}@@@",
+      "@@@STEP_LOG_END@input message@@@",
+      "@@@STEP_LOG_LINE@output message@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_END@output message@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -592,9 +611,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "init sdk.write input file",
+    "name": "init sdk.call chromite.api.SdkService/Create.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -612,9 +631,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "init sdk.call build API: chromite.api.SdkService/Create",
+    "name": "init sdk.call chromite.api.SdkService/Create.call build API: chromite.api.SdkService/Create",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -630,9 +649,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "init sdk.read output file",
+    "name": "init sdk.call chromite.api.SdkService/Create.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -647,6 +666,21 @@
     "name": "run chromite unit tests"
   },
   {
+    "cmd": [],
+    "name": "run chromite unit tests.call chromite.api.TestService/ChromiteUnitTest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input message@{@@@",
+      "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/cros_sdk/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input message@  }@@@",
+      "@@@STEP_LOG_LINE@input message@}@@@",
+      "@@@STEP_LOG_END@input message@@@",
+      "@@@STEP_LOG_LINE@output message@{}@@@",
+      "@@@STEP_LOG_END@output message@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -659,9 +693,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "run chromite unit tests.write input file",
+    "name": "run chromite unit tests.call chromite.api.TestService/ChromiteUnitTest.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -679,9 +713,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "run chromite unit tests.call build API: chromite.api.TestService/ChromiteUnitTest",
+    "name": "run chromite unit tests.call chromite.api.TestService/ChromiteUnitTest.call build API: chromite.api.TestService/ChromiteUnitTest",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -697,9 +731,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "run chromite unit tests.read output file",
+    "name": "run chromite unit tests.call chromite.api.TestService/ChromiteUnitTest.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
