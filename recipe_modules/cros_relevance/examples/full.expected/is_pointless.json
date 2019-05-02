@@ -95,6 +95,7 @@
     "cmd": [],
     "name": "pointless build check",
     "~followup_annotations": [
+      "@@@STEP_TEXT@Build is unnecessary. Terminating now.@@@",
       "@@@STEP_LOG_LINE@request@build_target {@@@",
       "@@@STEP_LOG_LINE@request@  name: \"my_build_target\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -105,7 +106,8 @@
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
-      "@@@STEP_LOG_END@relevance_output@@@"
+      "@@@STEP_LOG_END@relevance_output@@@",
+      "@@@SET_BUILD_PROPERTY@pointless_build@true@@@"
     ]
   },
   {
@@ -224,7 +226,6 @@
     "name": "pointless build check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Build is unnecessary. Terminating now.@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"buildIsPointless\": true@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",

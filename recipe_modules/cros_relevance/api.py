@@ -71,10 +71,11 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                                 ignore_unknown_fields=True)
       step_result.presentation.logs['relevance_output'] = [str(result)]
       if result.build_is_pointless.value:
-        self.m.step.active_result.presentation.step_text = (
+        step_result.presentation.step_text = (
             'Build is unnecessary. Terminating now.')
+        step_result.presentation.properties['pointless_build'] = True
       else:
-        self.m.step.active_result.presentation.step_text = (
+        step_result.presentation.step_text = (
             'Build is necessary. Continuing.')
       return result.build_is_pointless.value
 

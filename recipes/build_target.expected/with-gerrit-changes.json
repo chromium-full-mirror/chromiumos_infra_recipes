@@ -743,6 +743,7 @@
     "cmd": [],
     "name": "pointless build check",
     "~followup_annotations": [
+      "@@@STEP_TEXT@Build is necessary. Continuing.@@@",
       "@@@STEP_LOG_LINE@request@build_target {@@@",
       "@@@STEP_LOG_LINE@request@  name: \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -876,7 +877,6 @@
     "name": "pointless build check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Build is necessary. Continuing.@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"buildIsPointless\": false@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
