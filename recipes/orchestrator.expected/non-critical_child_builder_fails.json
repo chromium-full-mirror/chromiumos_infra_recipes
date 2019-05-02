@@ -623,6 +623,8 @@
       "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
+      "-qs-account",
+      "cq",
       "suite1"
     ],
     "name": "run tests.test builds.schedule.hard_wear.hw.suite1",
@@ -645,6 +647,8 @@
       "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
+      "-qs-account",
+      "cq",
       "suite2"
     ],
     "name": "run tests.test builds.schedule.hard_wear.hw.suite2",

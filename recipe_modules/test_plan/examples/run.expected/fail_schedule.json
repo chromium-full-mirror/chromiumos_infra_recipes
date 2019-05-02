@@ -72,6 +72,8 @@
       "build_target_skylab-board",
       "-timeout-mins",
       "120",
+      "-qs-account",
+      "cq",
       "suite1"
     ],
     "name": "run plan.schedule.build_target.hw.suite1",

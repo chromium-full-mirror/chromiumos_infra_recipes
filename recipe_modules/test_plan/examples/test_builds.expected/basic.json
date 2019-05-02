@@ -164,6 +164,8 @@
       "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
+      "-qs-account",
+      "cq",
       "suite1"
     ],
     "name": "test_non-deferred.schedule.hard_wear.hw.suite1",
@@ -186,6 +188,8 @@
       "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
+      "-qs-account",
+      "cq",
       "suite2"
     ],
     "name": "test_non-deferred.schedule.hard_wear.hw.suite2",
@@ -397,6 +401,8 @@
       "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
+      "-qs-account",
+      "cq",
       "suite1"
     ],
     "name": "test_deferred.schedule.hard_wear.hw.suite1",
@@ -419,6 +425,8 @@
       "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
+      "-qs-account",
+      "cq",
       "suite2"
     ],
     "name": "test_deferred.schedule.hard_wear.hw.suite2",

@@ -105,6 +105,8 @@
       "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
+      "-qs-account",
+      "cq",
       "test-suite"
     ],
     "name": "run plan.schedule.hard_wear.hw.test-suite",

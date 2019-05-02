@@ -79,6 +79,7 @@ class SkylabApi(recipe_api.RecipeApi):
             '-image', test_unit.build_payload.artifacts_gs_path,
             '-board', test.skylab_board,
             '-timeout-mins', 120,
+            '-qs-account', 'cq',
             test_suite,
         ]
 
