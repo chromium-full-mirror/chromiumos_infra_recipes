@@ -8,6 +8,7 @@
   * [cros_build](#recipe_modules-cros_build)
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
+  * [cros_history](#recipe_modules-cros_history)
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
   * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
@@ -41,6 +42,7 @@
   * [cros_build:examples/full](#recipes-cros_build_examples_full)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
+  * [cros_history:examples/full](#recipes-cros_history_examples_full)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_relevance:examples/full](#recipes-cros_relevance_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
@@ -293,6 +295,27 @@ Args:
 &emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#136)(self):**
 
 &mdash; **def [run](/recipe_modules/cros_dupit/api.py#126)(self):**
+### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
+
+[DEPS](/recipe_modules/cros_history/__init__.py#9): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+#### **class [HistoryAwareApi](/recipe_modules/cros_history/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to use build history to avoid redundant builds.
+
+&mdash; **def [passed\_builds](/recipe_modules/cros_history/api.py#26)(self, patches):**
+
+Retrieve passed builds with the same patches.
+
+Args:
+  * patches (list[GerritChange]): patches in the current build.
+
+Returns:
+  A list([build_pb2.Build]) with at most one build per builder.
+
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#21)(self):**
+
+Generate start time in seconds.
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1459,6 +1482,11 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
 
 &mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#13)(api):**
+### *recipes* / [cros\_history:examples/full](/recipe_modules/cros_history/examples/full.py)
+
+[DEPS](/recipe_modules/cros_history/examples/full.py#11): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/full.py#26)(api, input_patches, output_builds):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -1545,15 +1573,15 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/infra_config/examples/no_builder_config.py#13)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_build](#recipe_modules-cros_build), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [test\_manager](#recipe_modules-test_manager), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [cros\_build](#recipe_modules-cros_build), [cros\_history](#recipe_modules-cros_history), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [test\_manager](#recipe_modules-test_manager), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#53)(api, update_manifest_refs):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, update_manifest_refs):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#126)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#134)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1562,7 +1590,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_build\_inputs](/recipes/orchestrator.py#107)(api):**
+&mdash; **def [validate\_build\_inputs](/recipes/orchestrator.py#115)(api):**
 
 Assert that orchestrator build inputs are correct.
 
@@ -1572,7 +1600,7 @@ Args:
 Raises:
   ValueError: If input values are invalid for this orchestrator run.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#93)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#101)(refs):**
 
 Assert all given refs start with refs/heads.
 
@@ -1714,4 +1742,5 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0589a429cf3c164004dae4ced4c75784a50afd81/README.recipes.md#recipe_modules-step
 [recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0589a429cf3c164004dae4ced4c75784a50afd81/README.recipes.md#recipe_modules-swarming
 [recipe_engine/recipe_modules/tempfile]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0589a429cf3c164004dae4ced4c75784a50afd81/README.recipes.md#recipe_modules-tempfile
+[recipe_engine/recipe_modules/time]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0589a429cf3c164004dae4ced4c75784a50afd81/README.recipes.md#recipe_modules-time
 [recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0589a429cf3c164004dae4ced4c75784a50afd81/recipe_engine/recipe_api.py#838

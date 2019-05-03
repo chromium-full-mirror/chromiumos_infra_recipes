@@ -631,7 +631,7 @@
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LINK@Skylab task UI: suite1@http://s.com/6@@@"
+      "@@@STEP_LINK@Skylab task UI: suite1@http://s.com/8@@@"
     ]
   },
   {
@@ -655,7 +655,7 @@
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LINK@Skylab task UI: suite2@http://s.com/7@@@"
+      "@@@STEP_LINK@Skylab task UI: suite2@http://s.com/9@@@"
     ]
   },
   {
@@ -782,15 +782,15 @@
       "/path/to/tmp/json",
       "-task-output-stdout",
       "json",
-      "6",
-      "7"
+      "8",
+      "9"
     ],
     "infra_step": true,
     "name": "run tests.collect test results.s.com",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"6\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"8\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
@@ -803,10 +803,10 @@
       "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"6\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"8\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"7\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"9\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
@@ -819,7 +819,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"9\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",

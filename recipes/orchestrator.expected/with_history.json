@@ -235,70 +235,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "update manifest start ref"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "update manifest start ref.repo forall",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos|src/chromeos|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/chromeos",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "infra_step": true,
-    "name": "update manifest start ref.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "infra_step": true,
-    "name": "update manifest start ref.git rev-parse",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "https://chromium.googlesource.com/chromeos",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:refs/heads/foo"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "infra_step": true,
-    "name": "update manifest start ref.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "python",
       "-u",
@@ -377,6 +313,54 @@
   },
   {
     "cmd": [],
+    "name": "Looking for successful builds"
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "Looking for successful builds.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"pageSize\": 1000, \"predicate\": {\"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}], \"status\": \"SUCCESS\"}}}]}",
+    "stdout": "/path/to/tmp/json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1000, @@@",
+      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-09T12:53:21Z\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"change\": \"1234\"@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ], @@@",
+      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run child builds"
   },
   {
@@ -388,7 +372,7 @@
     ],
     "infra_step": true,
     "name": "run child builds.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -427,6 +411,11 @@
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"1234\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
@@ -450,6 +439,11 @@
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"critical\": \"NO\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"1234\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
@@ -687,7 +681,7 @@
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LINK@Skylab task UI: suite1@http://s.com/4@@@"
+      "@@@STEP_LINK@Skylab task UI: suite1@http://s.com/2@@@"
     ]
   },
   {
@@ -711,7 +705,7 @@
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LINK@Skylab task UI: suite2@http://s.com/5@@@"
+      "@@@STEP_LINK@Skylab task UI: suite2@http://s.com/3@@@"
     ]
   },
   {
@@ -838,15 +832,15 @@
       "/path/to/tmp/json",
       "-task-output-stdout",
       "json",
-      "4",
-      "5"
+      "2",
+      "3"
     ],
     "infra_step": true,
     "name": "run tests.collect test results.s.com",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"4\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"2\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
@@ -859,10 +853,10 @@
       "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"4\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"2\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"5\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"3\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
@@ -875,7 +869,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"5\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"3\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -935,70 +929,6 @@
       "@@@STEP_LOG_END@SUCCESS - my_task_1@@@",
       "@@@STEP_LOG_LINE@SUCCESS - my_task_0@hello world!@@@",
       "@@@STEP_LOG_END@SUCCESS - my_task_0@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update manifest success ref"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "update manifest success ref.repo forall",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos|src/chromeos|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/chromeos",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "infra_step": true,
-    "name": "update manifest success ref.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "infra_step": true,
-    "name": "update manifest success ref.git rev-parse",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "https://chromium.googlesource.com/chromeos",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:refs/heads/bar"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "infra_step": true,
-    "name": "update manifest success ref.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

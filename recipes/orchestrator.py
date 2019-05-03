@@ -19,6 +19,7 @@ DEPS = [
     'cros_version',
     'dev',
     'git',
+    'cros_history',
     'infra_config',
     'test_manager',
     'test_plan',
@@ -65,17 +66,24 @@ def RunSteps(api, update_manifest_refs):
     api.cros_version.read_workspace_version()
 
     requests = []
+    completed_builds = []
+    passed_builders = set()
 
     orchestrator_builder_config = api.infra_config.get_builder_config(
         api.buildbucket.build.builder.builder)
+    if api.buildbucket.build.input.gerrit_changes:
+      completed_builds = api.cros_history.passed_builds(
+          api.buildbucket.build.input.gerrit_changes)
+      passed_builders = set(build.builder.builder for build in completed_builds)
     for child in orchestrator_builder_config.orchestrator.children:
-      child_builder_config = api.infra_config.get_builder_config(child)
-      requests.append(
-          api.buildbucket.schedule_request(
-              builder=child,
-              critical=child_builder_config.general.critical.value))
+      if child not in passed_builders:
+        child_builder_config = api.infra_config.get_builder_config(child)
+        requests.append(
+            api.buildbucket.schedule_request(
+                builder=child,
+                critical=child_builder_config.general.critical.value))
 
-    completed_builds = api.buildbucket.run(
+    completed_builds += api.buildbucket.run(
         requests, timeout=60 * 60 * 4, step_name='run child builds',
         url_title_fn=api.cros_build.get_build_title)
     # Defer exceptions until the end, so that we recover gracefully
@@ -158,8 +166,22 @@ def GenTests(api):
     build.input.gitiles_commit.Clear()
     return api.buildbucket.build(build)
 
+  def cq_orchestrator_build_with_gerrit_change():
+    """Generate a test build proto with no gitiles commit project."""
+    build = api.buildbucket.ci_build_message(project='chromeos',
+                                             bucket='postsubmit',
+                                             builder='postsubmit-orchestrator')
+    build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
+    return api.buildbucket.build(build)
+
   yield (api.test('basic') +  #
          postsubmit_orchestrator_build() +
+         api.test_plan.simulate_test_builds('run tests.test builds'))
+
+  yield (api.test('with_history') +  #
+         cq_orchestrator_build_with_gerrit_change() +
+         api.buildbucket.simulated_search_results(
+             [], 'Looking for successful builds.buildbucket.search') +
          api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (api.test('missing_gitiles_commit') +  #
