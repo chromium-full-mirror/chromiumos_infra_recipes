@@ -13,80 +13,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/cros_sdk/chroot"
+      "[CACHE]/chroot/chroot"
     ],
     "infra_step": true,
-    "name": "configure chroot path.ensure chroot path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.ensure chromiumos_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CACHE]/cros_sdk/chroot",
-      "[START_DIR]/chromiumos_workspace/chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.link chromiumos_workspace to chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.ensure chromiumos_master",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CACHE]/cros_sdk/chroot",
-      "[START_DIR]/chromiumos_master/chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.link chromiumos_master to chroot",
+    "name": "configure chroot path.ensure chroot directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -393,7 +323,11 @@
   },
   {
     "cmd": [],
-    "name": "init sdk"
+    "name": "init sdk",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@sdk version@123@@@",
+      "@@@STEP_LOG_END@sdk version@@@"
+    ]
   },
   {
     "cmd": [],
@@ -402,7 +336,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input message@{@@@",
       "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/cros_sdk/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@input message@  }, @@@",
       "@@@STEP_LOG_LINE@input message@  \"flags\": {@@@",
       "@@@STEP_LOG_LINE@input message@    \"noReplace\": true, @@@",
@@ -422,7 +356,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_sdk/chroot\"\n  }, \n  \"flags\": {\n    \"noReplace\": true, \n    \"noUseImage\": true\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/chroot/chroot\"\n  }, \n  \"flags\": {\n    \"noReplace\": true, \n    \"noUseImage\": true\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -472,9 +406,46 @@
   },
   {
     "cmd": [],
-    "name": "init sdk.using sdk version 123",
+    "name": "init sdk.link chroot in chromiumos_workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.link chroot in chromiumos_workspace.ensure chromiumos_workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[CACHE]/chroot/chroot",
+      "[START_DIR]/chromiumos_workspace/chroot"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.link chroot in chromiumos_workspace.link chromiumos_workspace to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -491,7 +462,7 @@
       "@@@STEP_LOG_LINE@input message@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@input message@  }, @@@",
       "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/cros_sdk/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@input message@  }@@@",
       "@@@STEP_LOG_LINE@input message@}@@@",
       "@@@STEP_LOG_END@input message@@@",
@@ -507,7 +478,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_sdk/chroot\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/chroot/chroot\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -710,7 +681,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input message@{@@@",
       "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/cros_sdk/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@input message@  }, @@@",
       "@@@STEP_LOG_LINE@input message@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@input message@    \"buildTarget\": {@@@",
@@ -732,7 +703,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_sdk/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

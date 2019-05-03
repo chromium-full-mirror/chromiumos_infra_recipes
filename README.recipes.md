@@ -338,7 +338,7 @@ Returns:
   bool: Whether the build can be terminated early.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
-[DEPS](/recipe_modules/cros_sdk/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_sdk/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for interacting with cros_sdk, the interface to the CrOS SDK.
 
@@ -346,7 +346,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#48)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#42)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -358,7 +358,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#43)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#37)(self):**
 
 Return a chromiumos.common.Chroot.
 
@@ -369,15 +369,22 @@ Configure CrosSdkApi.
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#38)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#32)(self):**
 
 Returns a Path to the cros_sdk script.
 
 &mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#18)(self):**
 
-Initialize CrosSdkApi.
+Cache the chroot path.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#85)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#63)(self, checkout_path):**
+
+Link the chroot to a chromiumos checkout.
+
+Args:
+  checkout_path (Path): Path to the checkout root.
+
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#81)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 

@@ -13,80 +13,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/cros_sdk/chroot"
+      "[CACHE]/chroot/chroot"
     ],
     "infra_step": true,
-    "name": "configure chroot path.ensure chroot path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.ensure chromiumos_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CACHE]/cros_sdk/chroot",
-      "[START_DIR]/chromiumos_workspace/chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.link chromiumos_workspace to chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.ensure chromiumos_master",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CACHE]/cros_sdk/chroot",
-      "[START_DIR]/chromiumos_master/chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.link chromiumos_master to chroot",
+    "name": "configure chroot path.ensure chroot directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -96,7 +26,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CACHE]/cros_sdk/chroot",
+      "[CACHE]/chroot/chroot",
       "--",
       "egencache",
       "--update",
@@ -136,7 +66,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CACHE]/cros_sdk/chroot",
+      "[CACHE]/chroot/chroot",
       "--",
       "portageq",
       "best_visible",

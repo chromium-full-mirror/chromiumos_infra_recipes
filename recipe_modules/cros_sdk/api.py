@@ -16,8 +16,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
   """A module for interacting with cros_sdk."""
 
   def initialize(self):
-    """Initialize CrosSdkApi."""
-    self.configure(self.m.path['cache'].join('cros_sdk'))
+    """Cache the chroot path."""
+    self.configure(self.m.path['cache'].join('chroot'))
 
   def configure(self, chroot_parent_path):
     """Configure CrosSdkApi.
@@ -27,13 +27,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('configure chroot path'):
       self._chroot_path = chroot_parent_path.join('chroot')
-      self.m.file.ensure_directory('ensure chroot path', self._chroot_path)
-      # TODO(crbug.com/949721): Currently, chromite depends on the chroot living
-      # within the source tree. As a workaround, link the external chroot to
-      # both source trees to make it look legit. New chromite services should
-      # accept the chroot path as a parameter.
-      self._link_chroot(self.m.cros_source.workspace_path)
-      self._link_chroot(self.m.cros_source.master_path)
+      self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
 
   @property
   def cros_sdk_path(self):
@@ -66,21 +60,23 @@ class CrosSdkApi(recipe_api.RecipeApi):
     cmd += args
     return self.m.step(name, cmd, **kwargs)
 
-  def _link_chroot(self, checkout_path):
+  def link_chroot(self, checkout_path):
     """Link the chroot to a chromiumos checkout.
 
     Args:
       checkout_path (Path): Path to the checkout root.
     """
     checkout_basename = self.m.path.basename(checkout_path)
-    self.m.file.ensure_directory('ensure %s' % checkout_basename, checkout_path)
+    with self.m.step.nest('link chroot in %s' % checkout_basename):
+      self.m.file.ensure_directory('ensure %s' % checkout_basename,
+                                   checkout_path)
 
-    chroot_link = checkout_path.join('chroot')
-    if self.m.path.exists(chroot_link):
-      self.m.file.remove('remove original chroot link', chroot_link)
+      chroot_link = checkout_path.join('chroot')
+      if self.m.path.exists(chroot_link):
+        self.m.file.remove('remove original chroot link', chroot_link)
 
-    self.m.file.symlink('link %s to chroot' % checkout_basename,
-                        self._chroot_path, chroot_link)
+      self.m.file.symlink('link %s to chroot' % checkout_basename,
+                          self._chroot_path, chroot_link)
 
   def run(self, name, cmd, env=None, workspace=None, **kwargs):
     """Runs a command in a cros_sdk chroot.

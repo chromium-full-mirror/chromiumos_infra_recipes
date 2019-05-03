@@ -20,6 +20,11 @@ def RunSteps(api):
   api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},
                    workspace=workspace)
 
+  api.cros_sdk.link_chroot(api.path['cleanup'].join('checkout'))
+
+  # Link a second time to handle case where link exists.
+  api.cros_sdk.link_chroot(api.path['cleanup'].join('checkout'))
+
 
 def GenTests(api):
   yield api.test('basic')

@@ -80,13 +80,18 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-      with api.step.nest('init sdk'):
+      with api.step.nest('init sdk') as step:
         response = api.cros_build_api.SdkService.Create(
             SdkCreateRequest(
                 flags=SdkCreateRequest.Flags(no_replace=True, bootstrap=False,
                                              no_use_image=True),
                 chroot=api.cros_sdk.chroot))
-        api.step('using sdk version %s' % response.version.version, None)
+        step.presentation.logs['sdk version'] = [str(response.version.version)]
+        # TODO(crbug.com/949721): Currently, chromite depends on the chroot
+        # living within the source tree. As a workaround, link the external
+        # chroot the workspace to make it look legit. New chromite services
+        # should accept the chroot path as a parameter.
+        api.cros_sdk.link_chroot(api.cros_source.workspace_path)
 
       if run_chromite_tests:
         with api.step.nest('run chromite unit tests'):
