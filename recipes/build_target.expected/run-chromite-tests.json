@@ -518,18 +518,18 @@
     "name": "init sdk.call chromite.api.SdkService/Create",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@input message@{@@@",
-      "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/chroot/chroot\"@@@",
-      "@@@STEP_LOG_LINE@input message@  }, @@@",
-      "@@@STEP_LOG_LINE@input message@  \"flags\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"noReplace\": true, @@@",
-      "@@@STEP_LOG_LINE@input message@    \"noUseImage\": true@@@",
-      "@@@STEP_LOG_LINE@input message@  }@@@",
-      "@@@STEP_LOG_LINE@input message@}@@@",
-      "@@@STEP_LOG_END@input message@@@",
-      "@@@STEP_LOG_LINE@output message@{\"version\": {\"version\": 123}}@@@",
-      "@@@STEP_LOG_END@output message@@@"
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"noReplace\": true, @@@",
+      "@@@STEP_LOG_LINE@request@    \"noUseImage\": true@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -565,7 +565,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "init sdk.call chromite.api.SdkService/Create.call build API: chromite.api.SdkService/Create",
+    "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -641,14 +641,14 @@
     "name": "run chromite unit tests.call chromite.api.TestService/ChromiteUnitTest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@input message@{@@@",
-      "@@@STEP_LOG_LINE@input message@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"path\": \"[CACHE]/chroot/chroot\"@@@",
-      "@@@STEP_LOG_LINE@input message@  }@@@",
-      "@@@STEP_LOG_LINE@input message@}@@@",
-      "@@@STEP_LOG_END@input message@@@",
-      "@@@STEP_LOG_LINE@output message@{}@@@",
-      "@@@STEP_LOG_END@output message@@@"
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -684,7 +684,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "run chromite unit tests.call chromite.api.TestService/ChromiteUnitTest.call build API: chromite.api.TestService/ChromiteUnitTest",
+    "name": "run chromite unit tests.call chromite.api.TestService/ChromiteUnitTest.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

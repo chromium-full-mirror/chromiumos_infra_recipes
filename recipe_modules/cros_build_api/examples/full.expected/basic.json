@@ -3,12 +3,12 @@
     "cmd": [],
     "name": "call chromite.api.TestApiService/InputOutputMethod",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@input message@{@@@",
-      "@@@STEP_LOG_LINE@input message@  \"id\": \"MYD\"@@@",
-      "@@@STEP_LOG_LINE@input message@}@@@",
-      "@@@STEP_LOG_END@input message@@@",
-      "@@@STEP_LOG_LINE@output message@{\"result\": \"good\"}@@@",
-      "@@@STEP_LOG_END@output message@@@"
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"id\": \"MYD\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"result\": \"good\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -40,7 +40,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "call chromite.api.TestApiService/InputOutputMethod.call build API: chromite.api.TestApiService/InputOutputMethod",
+    "name": "call chromite.api.TestApiService/InputOutputMethod.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -66,14 +66,14 @@
     "cmd": [],
     "name": "call chromite.api.ArtifactsService/BundleFirmware",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@input message@{@@@",
-      "@@@STEP_LOG_LINE@input message@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@input message@  }@@@",
-      "@@@STEP_LOG_LINE@input message@}@@@",
-      "@@@STEP_LOG_END@input message@@@",
-      "@@@STEP_LOG_LINE@output message@{\"artifacts\": [{\"path\": \"[START_DIR]/tmp/artifact.tar.gz\"}]}@@@",
-      "@@@STEP_LOG_END@output message@@@"
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": [{\"path\": \"[START_DIR]/tmp/artifact.tar.gz\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -107,7 +107,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "call chromite.api.ArtifactsService/BundleFirmware.call build API: chromite.api.ArtifactsService/BundleFirmware",
+    "name": "call chromite.api.ArtifactsService/BundleFirmware.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

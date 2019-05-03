@@ -140,7 +140,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # the build API) and record it to the step logs for debugging.
       input_json = json_format.MessageToJson(input_proto)
       self.m.file.write_raw('write input file', input_path, input_json)
-      step.presentation.logs['input message'] = [input_json]
+      step.presentation.logs['request'] = [input_json]
 
       cmd = [
           self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
@@ -161,7 +161,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # needs to be on the PATH.
       chromite_bin_dir = self.m.cros_source.workspace_path.join('chromite/bin')
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
-        self.m.step('call build API: %s' % endpoint, cmd)
+        self.m.step('call build API script', cmd)
 
       # If no test data is provided, see if we have our own.
       if test_output_data is None:
@@ -170,6 +170,6 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # Finally, parse the output to a proto and record it in the logs.
       output_json = self.m.file.read_raw('read output file', output_path,
                                          test_data=test_output_data)
-      step.presentation.logs['output message'] = [output_json]
+      step.presentation.logs['response'] = [output_json]
       output_proto = reflection.MakeClass(output_type)()
       return json_format.Parse(output_json, output_proto)

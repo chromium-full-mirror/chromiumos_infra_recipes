@@ -83,15 +83,15 @@
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input message@{@@@",
-      "@@@STEP_LOG_LINE@input message@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@input message@  }, @@@",
-      "@@@STEP_LOG_LINE@input message@  \"uri\": \"gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0-101/packages\"@@@",
-      "@@@STEP_LOG_LINE@input message@}@@@",
-      "@@@STEP_LOG_END@input message@@@",
-      "@@@STEP_LOG_LINE@output message@{\"uploads_dir\": \"[START_DIR]/uploads/dir\", \"upload_targets\": [{\"path\": \"foo.tbz2\"}]}@@@",
-      "@@@STEP_LOG_END@output message@@@"
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0-101/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"uploads_dir\": \"[START_DIR]/uploads/dir\", \"upload_targets\": [{\"path\": \"foo.tbz2\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -123,7 +123,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.call build API: chromite.api.BinhostService/PrepareBinhostUploads",
+    "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -199,17 +199,17 @@
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input message@{@@@",
-      "@@@STEP_LOG_LINE@input message@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@input message@  }, @@@",
-      "@@@STEP_LOG_LINE@input message@  \"key\": \"POSTSUBMIT_BINHOST\", @@@",
-      "@@@STEP_LOG_LINE@input message@  \"private\": true, @@@",
-      "@@@STEP_LOG_LINE@input message@  \"uri\": \"gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0-101/packages\"@@@",
-      "@@@STEP_LOG_LINE@input message@}@@@",
-      "@@@STEP_LOG_END@input message@@@",
-      "@@@STEP_LOG_LINE@output message@{\"output_file\": \"[START_DIR]/BINHOST.conf\"}@@@",
-      "@@@STEP_LOG_END@output message@@@"
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"key\": \"POSTSUBMIT_BINHOST\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"private\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0-101/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"output_file\": \"[START_DIR]/BINHOST.conf\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -243,7 +243,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.call build API: chromite.api.BinhostService/SetBinhost",
+    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

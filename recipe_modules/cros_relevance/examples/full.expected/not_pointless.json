@@ -43,15 +43,15 @@
     "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@input message@{@@@",
-      "@@@STEP_LOG_LINE@input message@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input message@    \"name\": \"my_build_target\"@@@",
-      "@@@STEP_LOG_LINE@input message@  }, @@@",
-      "@@@STEP_LOG_LINE@input message@  \"outputPath\": \"/tmp/depgraph-my_build_target.json\"@@@",
-      "@@@STEP_LOG_LINE@input message@}@@@",
-      "@@@STEP_LOG_END@input message@@@",
-      "@@@STEP_LOG_LINE@output message@{\"build_dependency_graph_file\": \"[START_DIR]/dir/for/depservice\"}@@@",
-      "@@@STEP_LOG_END@output message@@@"
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"my_build_target\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"outputPath\": \"/tmp/depgraph-my_build_target.json\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"build_dependency_graph_file\": \"[START_DIR]/dir/for/depservice\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -85,7 +85,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API: chromite.api.DependencyService/GetBuildDependencyGraph",
+    "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
