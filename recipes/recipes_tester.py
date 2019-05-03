@@ -21,10 +21,10 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/swarming',
     'depot_tools/gclient',
+    'failures',
     'gerrit',
     'git',
     'recipe_analyze',
-    'test_manager',
 ]
 
 # LUCI project to test.
@@ -204,7 +204,7 @@ def RunSteps(api):
 
   if led_results:
     swarming_results = _collect_results(api, led_results)
-    api.test_manager.verify_tests(swarming_results)
+    api.failures.verify_tests(swarming_results)
 
 
 def GenTests(api):

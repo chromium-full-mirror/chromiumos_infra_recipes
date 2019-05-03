@@ -30,7 +30,6 @@
   * [skylab](#recipe_modules-skylab)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
   * [sync_chrome](#recipe_modules-sync_chrome)
-  * [test_manager](#recipe_modules-test_manager) &mdash; Api for coordinating test execution steps.
   * [test_plan](#recipe_modules-test_plan)
   * [vm_test](#recipe_modules-vm_test)
 
@@ -73,7 +72,6 @@
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_execution/execute_plan](#recipes-test_execution_execute_plan) &mdash; Recipe for executing ChromeOS test plan.
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
-  * [test_manager:examples/full](#recipes-test_manager_examples_full) &mdash; Recipe to schedules child builders, watches for failures and triggers tests.
   * [test_plan:examples/generate](#recipes-test_plan_examples_generate)
   * [test_plan:examples/run](#recipes-test_plan_examples_run)
   * [test_plan:examples/test_builds](#recipes-test_plan_examples_test_builds)
@@ -701,6 +699,16 @@ Args:
 
 Raises:
   StepFailure: If failed_packages is not empty.
+
+&mdash; **def [verify\_tests](/recipe_modules/failures/api.py#35)(self, test_results):**
+
+Logs test status to UI, and raises on failed tests.
+
+Args:
+  * test_results (swarming.TaskResult): List of swarming TaskResults.
+
+Raises:
+  recipe_api.StepFailure on failing tests.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1295,34 +1303,6 @@ Must be run with cwd inside a chromiumos source root.
 
 Args:
   chrome_root (str): Directory to sync the Chrome source code to.
-### *recipe_modules* / [test\_manager](/recipe_modules/test_manager)
-
-[DEPS](/recipe_modules/test_manager/__init__.py#1): [cros\_build](#recipe_modules-cros_build), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-Api for coordinating test execution steps.
-
-#### **class [TestManagerApi](/recipe_modules/test_manager/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-&mdash; **def [run\_tests](/recipe_modules/test_manager/api.py#17)(self, builds, step_name='run tests'):**
-
-Shortcut for schedule_tests + collect_tests.
-
-Args:
-  * builds (list or generator of build_pb2.Build]): Builds to test.
-  * step_name (str): Optional step name.
-
-Returns:
-  list[swarming.TaskResult]
-
-&mdash; **def [verify\_tests](/recipe_modules/test_manager/api.py#31)(self, test_results):**
-
-Logs test status to UI, and raises on failed tests.
-
-Args:
-  * test_results (swarming.TaskResult): List of swarming TaskResults.
-
-Raises:
-  recipe_api.StepFailure on failing tests.
 ### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
 
 [DEPS](/recipe_modules/test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [infra\_config](#recipe_modules-infra_config), [repo](#recipe_modules-repo), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -1564,9 +1544,9 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
 ### *recipes* / [failures:examples/full](/recipe_modules/failures/examples/full.py)
 
-[DEPS](/recipe_modules/failures/examples/full.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/examples/full.py#6): [failures](#recipe_modules-failures), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#17)(api):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1596,7 +1576,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/infra_config/examples/no_builder_config.py#13)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_build](#recipe_modules-cros_build), [cros\_history](#recipe_modules-cros_history), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [test\_manager](#recipe_modules-test_manager), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [cros\_build](#recipe_modules-cros_build), [cros\_history](#recipe_modules-cros_history), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
@@ -1612,6 +1592,17 @@ Args:
   api (object): See RunSteps documentation.
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
+
+&mdash; **def [run\_tests](/recipes/orchestrator.py#168)(api, builds, step_name='run tests'):**
+
+Shortcut for schedule_tests + collect_tests.
+
+Args:
+  * builds (list or generator of build_pb2.Build]): Builds to test.
+  * step_name (str): Optional step name.
+
+Returns:
+  list[swarming.TaskResult]
 
 &mdash; **def [validate\_build\_inputs](/recipes/orchestrator.py#129)(api):**
 
@@ -1661,7 +1652,7 @@ Recipe for prototyping Chrome OS builders.
 &mdash; **def [RunSteps](/recipe_modules/recipe_analyze/examples/full.py#9)(api):**
 ### *recipes* / [recipes\_tester](/recipes/recipes_tester.py)
 
-[DEPS](/recipes/recipes_tester.py#14): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_analyze](#recipe_modules-recipe_analyze), [test\_manager](#recipe_modules-test_manager), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/recipes_tester.py#14): [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_analyze](#recipe_modules-recipe_analyze), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 Tests a recipe CL by running ChromeOS builders.
 
@@ -1710,17 +1701,6 @@ Recipe for executing ChromeOS VM test suite.
 This recipe runs out-of-band on VM test swarming bot.
 
 &mdash; **def [RunSteps](/recipes/test_execution/execute_vm_suite.py#32)(api):**
-### *recipes* / [test\_manager:examples/full](/recipe_modules/test_manager/examples/full.py)
-
-[DEPS](/recipe_modules/test_manager/examples/full.py#13): [cros\_build](#recipe_modules-cros_build), [test\_manager](#recipe_modules-test_manager), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-Recipe to schedules child builders, watches for failures and triggers tests.
-
-All builders run against the same source tree.
-
-NOTE: This recipe will be merged with the main orchestrator recipe shortly.
-
-&mdash; **def [RunSteps](/recipe_modules/test_manager/examples/full.py#23)(api):**
 ### *recipes* / [test\_plan:examples/generate](/recipe_modules/test_plan/examples/generate.py)
 
 [DEPS](/recipe_modules/test_plan/examples/generate.py#8): [test\_plan](#recipe_modules-test_plan)
@@ -1751,7 +1731,6 @@ NOTE: This recipe will be merged with the main orchestrator recipe shortly.
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/563a82246180d949917bcd444411bbeb82604e97/README.recipes.md#recipe_modules-buildbucket
 [recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/563a82246180d949917bcd444411bbeb82604e97/README.recipes.md#recipe_modules-cipd
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/563a82246180d949917bcd444411bbeb82604e97/README.recipes.md#recipe_modules-context
-[recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/563a82246180d949917bcd444411bbeb82604e97/README.recipes.md#recipe_modules-cq
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/563a82246180d949917bcd444411bbeb82604e97/README.recipes.md#recipe_modules-file
 [recipe_engine/recipe_modules/isolated]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/563a82246180d949917bcd444411bbeb82604e97/README.recipes.md#recipe_modules-isolated
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/563a82246180d949917bcd444411bbeb82604e97/README.recipes.md#recipe_modules-json

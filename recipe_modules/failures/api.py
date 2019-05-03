@@ -30,3 +30,30 @@ class FailuresApi(recipe_api.RecipeApi):
         step.presentation.status = self.m.step.FAILURE
     raise self.m.step.StepFailure(
         'Failed to install %d packages.' % len(failed_packages))
+
+
+  def verify_tests(self, test_results):
+    """Logs test status to UI, and raises on failed tests.
+
+    Args:
+      * test_results (swarming.TaskResult): List of swarming TaskResults.
+
+    Raises:
+      recipe_api.StepFailure on failing tests.
+    """
+    with self.m.step.nest('test results') as step_result:
+      success = True
+
+      for swarming_result in test_results:
+        # We don't have a great way of highlighting failed tests.
+        # Group failed tests together by prepending status.
+        log_name = 'SUCCESS - ' if swarming_result.success else 'FAILURE - '
+        log_name += swarming_result.name
+
+        # Until parallel recipes materializes, dump output to step log
+        step_result.presentation.logs[log_name] = [swarming_result.output]
+
+        success &= swarming_result.success
+
+      if not success:
+        raise self.m.step.StepFailure('Failed one or more tests')

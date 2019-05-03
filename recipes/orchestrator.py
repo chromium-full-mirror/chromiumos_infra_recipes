@@ -18,10 +18,10 @@ DEPS = [
     'cros_source',
     'cros_version',
     'dev',
+    'failures',
     'git',
     'cros_history',
     'infra_config',
-    'test_manager',
     'test_plan',
 ]
 
@@ -104,8 +104,8 @@ def RunSteps(api, update_manifest_refs, enable_history):
         ]
       else:
         untested_builds = completed_builds
-      test_results = api.test_manager.run_tests(untested_builds)
-      api.test_manager.verify_tests(test_results.get_result())
+      test_results = run_tests(api, completed_builds)
+      api.failures.verify_tests(test_results)
 
     # Victory! If we've made it this far, the child builders were successful
     # and we can update the success manifest ref if it is specified.
@@ -163,6 +163,22 @@ def maybe_update_manifest_ref(api, update_manifest_refs, ref_key):
         api.git.fetch_ref(git_repo, snapshot.id)
         refspec = '%s:%s' % (snapshot.id, update_manifest_refs[ref_key])
         api.git.push(git_repo, refspec)
+
+
+def run_tests(api, builds, step_name='run tests'):
+  """Shortcut for schedule_tests + collect_tests.
+
+  Args:
+    * builds (list or generator of build_pb2.Build]): Builds to test.
+    * step_name (str): Optional step name.
+
+  Returns:
+    list[swarming.TaskResult]
+  """
+  with api.step.nest(step_name):
+    tasks = api.test_plan.test_builds('test builds', list(builds))
+    return api.test_plan.collect_tests('collect test results',
+                                       tasks.get_result()).get_result()
 
 
 def GenTests(api):
