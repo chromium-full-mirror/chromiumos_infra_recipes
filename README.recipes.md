@@ -116,7 +116,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#65)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#68)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -141,7 +141,8 @@ Args:
 Outputs failure of the failed packages for FindIt consumption.
 
 Outputs failure of the indicated packages for consumption by FindIt
-under the output property "BuildCompileFailureOutput".
+under the output property "BuildCompileFailureOutput". If there are no
+failed packages this method outputs nothing.
 
 Args:
   failed_packages (list[PackageInfo]): list of PackageInfo representing the

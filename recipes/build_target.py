@@ -124,6 +124,7 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
         packages = api.cros_bisect.get_packages()
         response = api.cros_build_api.SysrootService.InstallPackages(
             InstallPackagesRequest(sysroot=sysroot, packages=packages))
+        api.cros_bisect.set_build_compile_failure(response.failed_packages)
         api.failures.raise_failed_packages(response.failed_packages)
 
       if build_image:

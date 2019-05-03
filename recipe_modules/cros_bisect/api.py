@@ -52,12 +52,15 @@ class CrosBisectApi(recipe_api.RecipeApi):
     """Outputs failure of the failed packages for FindIt consumption.
 
     Outputs failure of the indicated packages for consumption by FindIt
-    under the output property "BuildCompileFailureOutput".
+    under the output property "BuildCompileFailureOutput". If there are no
+    failed packages this method outputs nothing.
 
     Args:
       failed_packages (list[PackageInfo]): list of PackageInfo representing the
           failed packages.
     """
+    if not failed_packages:
+      return
     payload = self._create_failures_payload(failed_packages)
     res = self.m.step('set_build_compile_failure', cmd=None)
     res.presentation.properties['build_compile_failure_output'] = payload
