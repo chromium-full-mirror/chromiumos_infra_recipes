@@ -1672,22 +1672,11 @@ Recipe for executing ChromeOS test plan.
 &mdash; **def [RunSteps](/recipes/test_execution/execute_plan.py#21)(api):**
 ### *recipes* / [test\_execution/execute\_vm\_suite](/recipes/test_execution/execute_vm_suite.py)
 
-[DEPS](/recipes/test_execution/execute_vm_suite.py#12): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_test](#recipe_modules-cros_test), [overlayfs](#recipe_modules-overlayfs), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
 Recipe for executing ChromeOS VM test suite.
 
 This recipe runs out-of-band on VM test swarming bot.
 
 &mdash; **def [RunSteps](/recipes/test_execution/execute_vm_suite.py#32)(api):**
-
-&mdash; **def [copy\_tree](/recipes/test_execution/execute_vm_suite.py#146)(name, py, src, dest):**
-
-Shell out to bash cp to perform copy operations.
-
-Use in place of file api's copytree method, as copytree can be quite slow,
-and we have to merge several source directories to a single target directory.
-
-&mdash; **def [download\_files](/recipes/test_execution/execute_vm_suite.py#140)(files, gsutil, gs_bucket, gs_path, dest_path):**
 ### *recipes* / [test\_manager:examples/full](/recipe_modules/test_manager/examples/full.py)
 
 [DEPS](/recipe_modules/test_manager/examples/full.py#13): [cros\_build](#recipe_modules-cros_build), [test\_manager](#recipe_modules-test_manager), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
