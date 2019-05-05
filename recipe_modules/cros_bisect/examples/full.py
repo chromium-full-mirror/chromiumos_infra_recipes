@@ -14,24 +14,18 @@ from recipe_engine.recipe_api import Property
 
 from PB.chromiumos.common import PackageInfo
 
-PROPERTIES = {
-  # Used to verify the handling of a FindIt invocation and the retrieval
-  # of the packages to build. Contains a List(PackageInfo) but
-  # kind=List(PackageInfo) is not allowed here.
-  'expected_packages': Property(default=[]),
-  # Simulates if the build fails, and cros_bisect is asked to output failure
-  # information for FindIt. Contains a List(PackageInfo) but
-  # kind=List(PackageInfo) is not allowed here.
-  'failed_packages': Property(default=[]),
-}
+from PB.recipe_modules.chromeos.cros_bisect.examples.test import (
+    TestInputProperties)
 
-def RunSteps(api, expected_packages, failed_packages):
+PROPERTIES = TestInputProperties
+
+def RunSteps(api, properties):
   api.cros_bisect.set_bisect_builder('wally')
   api.assertions.assertItemsEqual(api.cros_bisect.get_packages(),
-                                  expected_packages)
+                                  properties.expected_packages)
 
-  if failed_packages:
-    api.cros_bisect.set_build_compile_failure(failed_packages)
+  if properties.failed_packages:
+    api.cros_bisect.set_build_compile_failure(properties.failed_packages)
 
 def GenTests(api):
   yield api.test('basic')
@@ -44,18 +38,16 @@ def GenTests(api):
                api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
            ]},
          ) + #
-         api.properties(
-           expected_packages=[
+         api.properties(TestInputProperties(expected_packages=[
                PackageInfo(package_name='foo', category='cat1', version='1'),
                PackageInfo(package_name='bar', category='cat1', version='2'),
                PackageInfo(package_name='baz', category='cat2', version='3'),
            ],
-         ))
+         )))
 
   yield (api.test('with-failed-build') + #
-         api.properties(
-           failed_packages=[
+         api.properties(TestInputProperties(failed_packages=[
                PackageInfo(package_name='uno', category='pkg', version='1'),
                PackageInfo(package_name='dos', category='pkg', version='2'),
            ],
-         ))
+         )))
