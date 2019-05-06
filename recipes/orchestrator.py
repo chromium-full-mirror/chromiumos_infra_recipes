@@ -49,9 +49,13 @@ PROPERTIES = {
             ),
             default={},
         ),
+    # Specifies whether to enable cros_history based resource saving.
+    'enable_history':
+        Property(kind=bool, default=False),
 }
 
-def RunSteps(api, update_manifest_refs):
+
+def RunSteps(api, update_manifest_refs, enable_history):
   validate_refs(update_manifest_refs.values())
   validate_build_inputs(api)
 
@@ -71,7 +75,7 @@ def RunSteps(api, update_manifest_refs):
 
     orchestrator_builder_config = api.infra_config.get_builder_config(
         api.buildbucket.build.builder.builder)
-    if api.buildbucket.build.input.gerrit_changes:
+    if enable_history and api.buildbucket.build.input.gerrit_changes:
       completed_builds = api.cros_history.passed_builds(
           api.buildbucket.build.input.gerrit_changes)
       passed_builders = set(build.builder.builder for build in completed_builds)
@@ -179,9 +183,9 @@ def GenTests(api):
          api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (api.test('with_history') +  #
-         cq_orchestrator_build_with_gerrit_change() +
-         api.buildbucket.simulated_search_results(
-             [], 'Looking for successful builds.buildbucket.search') +
+         cq_orchestrator_build_with_gerrit_change() + api.properties(
+             enable_history=True) + api.buildbucket.simulated_search_results(
+                 [], 'Looking for successful builds.buildbucket.search') +
          api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (api.test('missing_gitiles_commit') +  #
