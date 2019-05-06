@@ -34,6 +34,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     with self.m.step.nest('pointless build check') as step_result:
       dep_req = GetBuildDependencyGraphRequest(
         build_target=build_target,
+        output_path = '/tmp/depgraph-%s.json' % build_target.name,
       )
       step_result.presentation.logs['request'] = [str(dep_req)]
       resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
