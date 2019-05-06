@@ -68,6 +68,23 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def image_service_responses(self):
+    """Generate responses for ImageService."""
+    responses = {}
+    responses['Create'] = jsonify(
+        success=True,
+        images=[
+            {
+                'path': 'cros/src/build/images/base.bin',
+                'type': 'BASE'
+            },
+        ],
+        failed_packages=[],
+    )
+    responses['Test'] = jsonify(success=True)
+    return responses
+
+  @property
   def sdk_service_responses(self):
     responses = {}
     responses['Create'] = jsonify(version={'version': 123})
@@ -89,32 +106,15 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def image_service_responses(self):
-    """Generate responses for ImageService."""
-    responses = {}
-    responses['Create'] = jsonify(
-        success=True,
-        images=[
-            {
-                'path': 'cros/src/build/images/base.bin',
-                'type': 'BASE'
-            },
-        ],
-        failed_packages=[],
-    )
-    responses['Test'] = jsonify(success=True)
-    return responses
-
-  @property
   def test_service_responses(self):
     """Generate responses for TestService."""
     responses = {}
     responses['BuildTargetUnitTest'] = jsonify(
-        tarball_path="tarball/path",
+        tarball_path='tarball/path',
         failed_packages=[],
     )
-    responses['ChromiteUnitTest'] = "{}"
-    responses['DebugInfoTest'] = "{}"
+    responses['ChromiteUnitTest'] = '{}'
+    responses['DebugInfoTest'] = '{}'
     return responses
 
   @property

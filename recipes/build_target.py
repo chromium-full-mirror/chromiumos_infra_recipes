@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_artifacts',
@@ -36,6 +37,7 @@ from PB.chromite.api.sdk import CreateRequest as SdkCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
+from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromite.api.test import ChromiteUnitTestRequest
 
 
@@ -53,6 +55,9 @@ PROPERTIES = {
 
     # Whether or not to run the chromite tests and exit early.
     'run_chromite_tests': Property(kind=bool, default=False),
+
+    # Whether or not to run ebuild tests and exit early.
+    'run_ebuild_tests': Property(kind=bool, default=False),
 }
 
 UPLOADABLE_PREBUILTS_CONFIGS = [
@@ -60,8 +65,8 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 ]
 
 
-def RunSteps(api, build_target, build_image, upload_artifacts,
-             upload_prebuilts, run_chromite_tests):
+def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
+             run_chromite_tests, run_ebuild_tests):
   build_target = BuildTarget(**build_target)
   build_config = api.infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
@@ -131,6 +136,14 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
                   builder_path='%s/%s' % (build_config.id.name, version)))
           api.failures.raise_failed_packages(response.failed_packages)
 
+      if run_ebuild_tests:
+        with api.step.nest('run ebuild tests'):
+          response = api.cros_build_api.TestService.BuildTargetUnitTest(
+              BuildTargetUnitTestRequest(build_target=build_target,
+                                         chroot=api.cros_sdk.chroot,
+                                         result_path=str(api.path.mkdtemp())))
+          api.failures.raise_failed_packages(response.failed_packages)
+
       if upload_artifacts:
         # TODO(crbug.com/905039): Stop using dummy artifact kind.
         api.cros_artifacts.upload_artifacts(
@@ -190,6 +203,13 @@ def GenTests(api):
                                    builder='chromite-cq') +  #
          api.properties(build_target={'name': 'chromite'},
                         run_chromite_tests=True))
+
+  yield (api.test('run-ebuild-tests') +  #
+         api.buildbucket.try_build(project='chromeos', bucket='postsubmit',
+                                   builder='amd64-generic-postsubmit') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker() +  #
+         api.properties(build_target={'name': 'amd64-generic'},
+                        run_ebuild_tests=True))
 
   yield (api.test('pointless-build') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
