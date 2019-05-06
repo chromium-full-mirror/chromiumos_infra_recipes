@@ -40,19 +40,11 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
           dep_req)
       step_result.presentation.logs['response'] = [str(resp)]
-      # This chroot path won't be needed once GetBuildDependencyGraphResponse
-      # contains the DepGraph itself.
-      # Joins chroot with /tmp/filename, with /tmp/filename living in
-      # the chroot. Do not use os.path.join, since it thinks /tmp/filename is
-      # an absolute path, thus clobbering the first token.
-      dep_file = '%s%s%s' % (self.m.cros_source.workspace_path,
-                             '/chroot',
-                             resp.build_dependency_graph_file)
 
       self._ensure_pointless_build_checker()
       check_request = PointlessBuildCheckRequest(
         chromiumos_workspace_checkout_root = str(self.m.cros_source.master_path),
-        dep_graph_path = dep_file,
+        dep_graph = resp.dep_graph,
         repo_tool_path = str(self.m.repo.repo_path),
       )
       check_request.buildbucket_proto.serialized_proto = (
