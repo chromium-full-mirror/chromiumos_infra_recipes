@@ -4,7 +4,7 @@
 # Use of this source code is governed under the Apache License, Version 2.0
 # that can be found in the LICENSE file.
 
-from PB.chromiumos.pointless_build import PointlessBuildCheckResponse
+from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 from google.protobuf.json_format import MessageToDict
 from recipe_engine import recipe_test_api

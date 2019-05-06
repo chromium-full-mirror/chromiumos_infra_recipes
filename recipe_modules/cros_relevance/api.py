@@ -5,8 +5,8 @@
 # found in the LICENSE file.
 
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
-from PB.chromiumos.pointless_build import PointlessBuildCheckRequest
-from PB.chromiumos.pointless_build import PointlessBuildCheckResponse
+from PB.testplans.pointless_build import PointlessBuildCheckRequest
+from PB.testplans.pointless_build import PointlessBuildCheckResponse
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 from google.protobuf import json_format as jsonpb
