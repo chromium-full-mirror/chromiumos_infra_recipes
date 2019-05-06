@@ -18,6 +18,7 @@ DEPS = [
     'cros_relevance',
     'cros_sdk',
     'cros_source',
+    'cros_version',
     'failures',
     'gerrit',
     'infra_config',
@@ -122,10 +123,12 @@ def RunSteps(api, build_target, build_image, upload_artifacts,
 
       if build_image:
         with api.step.nest('build image'):
+          version = api.cros_version.read_workspace_version()
           response = api.cros_build_api.ImageService.Create(
-              CreateImageRequest(build_target=build_target,
-                                 chroot=api.cros_sdk.chroot,
-                                 image_types=[Image.TEST]))
+              CreateImageRequest(
+                  build_target=build_target, chroot=api.cros_sdk.chroot,
+                  image_types=[Image.TEST],
+                  builder_path='%s/%s' % (build_config.id.name, version)))
           api.failures.raise_failed_packages(response.failed_packages)
 
       if upload_artifacts:
