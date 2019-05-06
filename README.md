@@ -35,6 +35,60 @@ These tools are delivered to CI hosts via
 This process is automated by the `support/deploy_cipd.sh` script. See
 [support/README.txt](./support/README.txt) for more details.
 
+## Testing With `led`
+
+Expectation tests only mock the external services a recipe depends on. This means the expectation
+tests cannot catch bugs caused by calling external services incorrectly. For example, if a recipe
+made the call
+
+```sh
+ls --bad_flag
+```
+
+it would not be caught by `./recipes.py test train`. A more realistic example is the recipe makes
+incorrect assumptions about ACLs, paths, responses from the service, etc.
+
+One way to get more confidence the recipe code will work is by running it with the actual builder
+definitions and swarming environment, using the `led` command-line tool. This will call the external
+services with the same user, timeouts, swarming caches, etc. as the submitted recipes.
+
+**As stated above, `led` means the code will actually run commands on swarming. This means the code
+being tested can impact production resources, e.g. clobber a Google Storage file, break Skylab DUTs,
+etc. Do NOT blindly test code with `led`, and use the staging environment where possible, which may
+limit the blast radius of bugs.**
+
+To use `led`, first call `get-build` or `get-builder` to get a job definition. For example, to
+test a change to the Annealing builder, we could start by running
+
+```sh
+led get-builder staging:staging-Annealing > builder_def.json
+```
+
+which will produce a JSON object containing properties, swarming information, etc. Sometimes,
+builders require properties that are not set in the lucicfg definition. For example, `build_target`
+requires the `gitiles_commit` property. In this case, we could get a definition from a previous
+build. For example, say the last build of `staging-amd64-generic-postsubmit` has `id` `12345`. To
+get a job definition with the same properties (including `gitiles_commit`), run the command
+
+```sh
+led get-build 12345 > builder_def.json
+```
+
+Next, the `led edit-recipe-bundle` command patches your local recipes edits into the job definition,
+and `led launch` launches the job on swarming. The job definition is piped from each command to the
+next, so in practice an example command would be
+
+```sh
+led get-build 12345 | led edit-recipe-bundle | led launch
+```
+
+The output from `led launch` should give a link to the swarming task, e.g.
+
+```
+[I 2019-05-06 15:31:43] Launched swarming task: https://chrome-swarming.appspot.com/task?id=44a7e0cb7a0d6310
+[I 2019-05-06 15:31:43] LUCI UI: https://ci.chromium.org/swarming/task/44a7e0cb7a0d6310?server=chrome-swarming.appspot.com
+```
+
 ## Chrome OS Recipes Code Style
 
 * The Python code in this repo should largely conform to Chromium Python style
