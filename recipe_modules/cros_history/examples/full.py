@@ -17,15 +17,15 @@ DEPS = [
 
 from recipe_engine.recipe_api import Property
 
-PROPERTIES = {
-    'input_patches': Property(default=[]),
-    'output_builds': Property(default=[]),
-}
+from PB.recipe_modules.chromeos.cros_history.examples.test import (
+    TestInputProperties)
+
+PROPERTIES = TestInputProperties
 
 
-def RunSteps(api, input_patches, output_builds):
-  previous_builds = (api.cros_history.passed_builds(input_patches))
-  api.assertions.assertEqual(previous_builds, output_builds)
+def RunSteps(api, properties):
+  previous_builds = api.cros_history.passed_builds(properties.input_patches)
+  api.assertions.assertItemsEqual(previous_builds, properties.output_builds)
 
 
 def GenTests(api):
@@ -34,10 +34,10 @@ def GenTests(api):
   yield (api.test('patch_without_history') +
          api.buildbucket.simulated_search_results(
              [], 'Looking for successful builds.buildbucket.search') +
-         api.properties(input_patches=[
+         api.properties(TestInputProperties(input_patches=[
              common_pb2.GerritChange(change=1234),
              common_pb2.GerritChange(change=2341)
-         ]))
+         ])))
 
   yield (
       api.test('patch_with_history') +
@@ -45,8 +45,9 @@ def GenTests(api):
           build_pb2.Build(id=123, builder=build_pb2.BuilderID(builder='betty')),
           build_pb2.Build(id=231, builder=build_pb2.BuilderID(builder='reef'))
       ], 'Looking for successful builds.buildbucket.search') +
-      api.properties(input_patches=[common_pb2.GerritChange(change=2341)]) +
-      api.properties(output_builds=[
+      api.properties(TestInputProperties(input_patches=[
+          common_pb2.GerritChange(change=2341)])) +
+      api.properties(TestInputProperties(output_builds=[
           build_pb2.Build(id=123, builder=build_pb2.BuilderID(builder='betty')),
           build_pb2.Build(id=231, builder=build_pb2.BuilderID(builder='reef'))
-      ]))
+      ])))
