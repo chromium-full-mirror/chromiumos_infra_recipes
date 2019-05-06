@@ -159,11 +159,6 @@
   },
   {
     "failure": {
-      "exception": {
-        "traceback": [
-          "<omitted by recipe engine>"
-        ]
-      },
       "humanReason": "Infra Failure: Step(u'download.basic_builder') returned 1"
     },
     "name": "$result"

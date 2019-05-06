@@ -232,9 +232,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": "test.test builds.generate"
-      },
+      "failure": {},
       "humanReason": "Step('test.test builds.generate') failed with return_code 1"
     },
     "name": "$result"

@@ -159,11 +159,6 @@
   },
   {
     "failure": {
-      "exception": {
-        "traceback": [
-          "<omitted by recipe engine>"
-        ]
-      },
       "humanReason": "1 out of 4 aggregated steps failed: Infra Failure: Step(u'download.basic_builder') returned 1"
     },
     "name": "$result"

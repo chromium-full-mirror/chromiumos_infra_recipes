@@ -490,9 +490,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": "test.collect test results"
-      },
+      "failure": {},
       "humanReason": "Step('test.collect test results') failed with return_code 1"
     },
     "name": "$result"

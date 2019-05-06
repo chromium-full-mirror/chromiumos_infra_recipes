@@ -144,9 +144,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": ""
-      },
+      "failure": {},
       "humanReason": "cq-depend missing locally"
     },
     "name": "$result"

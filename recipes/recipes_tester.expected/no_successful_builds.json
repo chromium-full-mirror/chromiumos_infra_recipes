@@ -346,9 +346,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": ""
-      },
+      "failure": {},
       "humanReason": "No successful builds found for builder staging-Annealing"
     },
     "name": "$result"

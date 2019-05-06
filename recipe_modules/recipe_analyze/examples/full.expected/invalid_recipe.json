@@ -19,9 +19,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": ""
-      },
+      "failure": {},
       "humanReason": "recipes analyze failed with invalid recipes: [u'recipeA', u'recipeB']"
     },
     "name": "$result"

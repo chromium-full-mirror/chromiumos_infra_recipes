@@ -1,11 +1,6 @@
 [
   {
     "failure": {
-      "exception": {
-        "traceback": [
-          "<omitted by recipe engine>"
-        ]
-      },
       "humanReason": "Uncaught Exception: ValueError(\"orchestrator runs must supply a Gitiles commit in their input. Found none. If you'd like to retry a run that did have a Gitiles commit, try doing so through RPC explorer, e.g. https://screenshot.googleplex.com/FSEm8xB5CS3 Got input: gitiles_commit {\\n}\\n\",)"
     },
     "name": "$result"

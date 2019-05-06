@@ -1,11 +1,6 @@
 [
   {
     "failure": {
-      "exception": {
-        "traceback": [
-          "<omitted by recipe engine>"
-        ]
-      },
       "humanReason": "Uncaught Exception: ValueError('gerrit_changes required as input.',)"
     },
     "name": "$result"

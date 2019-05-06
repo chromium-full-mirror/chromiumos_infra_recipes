@@ -123,11 +123,6 @@
   },
   {
     "failure": {
-      "exception": {
-        "traceback": [
-          "<omitted by recipe engine>"
-        ]
-      },
       "humanReason": "Infra Failure: Step('test.collect') returned 1"
     },
     "name": "$result"

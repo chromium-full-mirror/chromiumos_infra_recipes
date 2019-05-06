@@ -16,9 +16,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": ""
-      },
+      "failure": {},
       "humanReason": "recipes analyze failed with error: Analyze failed"
     },
     "name": "$result"

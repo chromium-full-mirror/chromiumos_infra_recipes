@@ -112,9 +112,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": ""
-      },
+      "failure": {},
       "humanReason": "One or more child builders failed"
     },
     "name": "$result"

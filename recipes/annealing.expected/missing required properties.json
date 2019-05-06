@@ -23,11 +23,6 @@
   },
   {
     "failure": {
-      "exception": {
-        "traceback": [
-          "<omitted by recipe engine>"
-        ]
-      },
       "humanReason": "Uncaught Exception: ValueError(\"No default specified and no value provided for 'manifest_ref' from recipe 'chromeos::annealing'\",)"
     },
     "name": "$result"

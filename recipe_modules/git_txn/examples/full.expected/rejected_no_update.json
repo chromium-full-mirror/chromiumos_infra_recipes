@@ -91,9 +91,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": ""
-      },
+      "failure": {},
       "humanReason": "push rejected but remote ref was not updated"
     },
     "name": "$result"

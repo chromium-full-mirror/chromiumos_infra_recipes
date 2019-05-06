@@ -121,9 +121,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": ""
-      },
+      "failure": {},
       "humanReason": "The transaction could not be completed in the allowed number of retries."
     },
     "name": "$result"

@@ -80,11 +80,6 @@
   },
   {
     "failure": {
-      "exception": {
-        "traceback": [
-          "<omitted by recipe engine>"
-        ]
-      },
       "humanReason": "1 out of 2 aggregated steps failed: Infra Failure: Step('collect') returned 1"
     },
     "name": "$result"

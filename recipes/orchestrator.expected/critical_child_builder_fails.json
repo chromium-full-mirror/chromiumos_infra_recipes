@@ -916,9 +916,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": "Aggregate step failure."
-      },
+      "failure": {},
       "humanReason": "1 out of 2 aggregated steps failed: One or more child builders failed"
     },
     "name": "$result"

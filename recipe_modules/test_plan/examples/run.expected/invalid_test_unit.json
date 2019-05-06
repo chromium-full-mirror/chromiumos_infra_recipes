@@ -19,9 +19,7 @@
   },
   {
     "failure": {
-      "failure": {
-        "step": ""
-      },
+      "failure": {},
       "humanReason": "No test environment specified."
     },
     "name": "$result"
