@@ -7,6 +7,10 @@
 
 import contextlib
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -23,10 +27,12 @@ DEPS = [
     'test_manager',
 ]
 
-# Builders to run. Should be in the format led expects:
-# "bucket_name:builder_name". Only builders in the staging bucket should be
-# included.
-BUILDERS = ['luci.chromeos.staging:staging-Annealing']
+# LUCI project to test.
+PROJECT = 'chromeos'
+# Bucket to test in. Only the staging environment should be used.
+BUCKET = 'staging'
+# Builders to run.
+BUILDERS = ['staging-Annealing']
 
 # URL for the ChromeOS CI recipes repo.
 RECIPE_REPO_URL = 'https://chromium.googlesource.com/chromiumos/infra/recipes'
@@ -74,6 +80,34 @@ def _apply_gerrit_changes(api):
       api.git.cherry_pick(commit_id)
 
 
+def _get_last_successful_build(api, builder):
+  """Find the most recent successful build for 'builder'.
+
+  Args:
+    * api (object): See RunSteps documentation.
+    * builder (string): The name of the builder to search for.
+  Returns:
+    A Build proto.
+  Raises:
+    A StepFailure if no build is found.
+  """
+  # Note that buildbucket.search returns results ordered newest-to-oldest.
+  # TODO(crbug.com/957600): Use the limit param for search once it is available.
+  successful_builds = api.buildbucket.search(
+      rpc_pb2.BuildPredicate(
+          builder={
+              'project': PROJECT,
+              'bucket': BUCKET,
+              'builder': builder
+          }, status=common_pb2.SUCCESS, include_experimental=False))
+
+  if not successful_builds:
+    raise api.step.StepFailure(
+        'No successful builds found for builder {}'.format(builder))
+
+  return successful_builds[0]
+
+
 def _launch_builders(api):
   """Launch builders with recipe changes patched in.
 
@@ -104,7 +138,8 @@ def _launch_builders(api):
           'analyze and launch {}'.format(builder)) as builder_step:
         # Get an intermediate result from led to extract the builder definition.
         # Then, chain on calls to launch the builder (if it is relevant).
-        intermediate_result = api.led('get-builder', builder)
+        last_successful_build = _get_last_successful_build(api, builder)
+        intermediate_result = api.led('get-build', last_successful_build.id)
 
         recipe_names = set(
             job_slice['userland']['recipe_name']
@@ -187,8 +222,13 @@ def GenTests(api):
     return 'analyze and launch builders.analyze and launch {}.{}'.format(
         builder, step_name)
 
-  def led_get_builder_test_data(builder, recipe_name):
-    """Get step data for a 'led get-builder' command.
+  def buildbucket_search_test_data(builder):
+    return api.buildbucket.simulated_search_results(
+        builds=[build_pb2.Build(id=1, builder={'builder': builder})],
+        step_name=launch_step_name(builder, 'buildbucket.search'))
+
+  def led_get_build_test_data(builder, recipe_name):
+    """Get step data for a 'led get-build' command.
 
     Args:
       * builder (str): The name of the builder.
@@ -199,7 +239,7 @@ def GenTests(api):
       A TestData object.
     """
     return api.step_data(
-        launch_step_name(builder, 'led get-builder'), stdout=api.json.output({
+        launch_step_name(builder, 'led get-build'), stdout=api.json.output({
             'job_slices': [{
                 'userland': {
                     'recipe_name': recipe_name
@@ -244,19 +284,23 @@ def GenTests(api):
   yield (api.test('basic') +  #
          api.buildbucket.try_build(project='chromeos', bucket='infra',
                                    builder='recipes-tester') +  #
-         led_get_builder_test_data('luci.chromeos.staging:staging-Annealing',
-                                   'annealing') +  #
-         recipe_analyze_test_data('luci.chromeos.staging:staging-Annealing',
-                                  ['annealing']) +  #
-         led_get_launch_test_data('luci.chromeos.staging:staging-Annealing'))
+         buildbucket_search_test_data('staging-Annealing') +  #
+         led_get_build_test_data(builder='staging-Annealing',
+                                 recipe_name='annealing') +  #
+         recipe_analyze_test_data(builder='staging-Annealing',
+                                  recipes=['annealing']) +  #
+         led_get_launch_test_data(builder='staging-Annealing'))
 
   yield (api.test('builder_not_affected') +  #
          api.buildbucket.try_build(project='chromeos', bucket='infra',
                                    builder='recipes-tester') +  #
-         led_get_builder_test_data('luci.chromeos.staging:staging-Annealing',
-                                   'annealing') +  #
-         recipe_analyze_test_data('luci.chromeos.staging:staging-Annealing',
-                                  ['build_target']))
+         buildbucket_search_test_data('staging-Annealing') +  #
+         led_get_build_test_data('staging-Annealing', 'annealing') +  #
+         recipe_analyze_test_data('staging-Annealing', ['build_target']))
+
+  yield (api.test('no_successful_builds') +  #
+         api.buildbucket.try_build(project='chromeos', bucket='infra',
+                                   builder='recipes-tester'))
 
   yield (api.test('no_gerrit_changes') +  #
          api.expect_exception('ValueError'))

@@ -274,10 +274,7 @@
   },
   {
     "cmd": [],
-    "name": "analyze and launch builders",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@launched 0 / 1 builders@@@"
-    ]
+    "name": "analyze and launch builders"
   },
   {
     "cmd": [],
@@ -308,8 +305,7 @@
     "cmd": [],
     "name": "analyze and launch builders.analyze and launch staging-Annealing",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@builder staging-Annealing (recipe annealing) not affected@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -326,22 +322,7 @@
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"staging-Annealing\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            }, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        ]@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
@@ -360,82 +341,16 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@"
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CACHE]/led",
-      "-ensure-file",
-      "infra/tools/luci/led/${platform} latest",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/led/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/led/led",
-      "get-build",
-      "1"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.led get-build",
-    "stdout": "/path/to/tmp/json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"job_slices\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"userland\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"recipe_name\": \"annealing\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./recipes.py",
-      "analyze",
-      "{\"files\": [\"a/b/text.txt\", \"other_test.txt\"], \"recipes\": [\"annealing\"]}",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.recipe analyze",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"recipes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"build_target\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "jsonResult": null,
+    "failure": {
+      "failure": {
+        "step": ""
+      },
+      "humanReason": "No successful builds found for builder staging-Annealing"
+    },
     "name": "$result"
   }
 ]
