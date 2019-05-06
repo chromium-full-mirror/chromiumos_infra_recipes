@@ -70,6 +70,7 @@
   * [skylab:examples/create_suites](#recipes-skylab_examples_create_suites)
   * [support:examples/full](#recipes-support_examples_full)
   * [sync_chrome:examples/full](#recipes-sync_chrome_examples_full)
+  * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_execution/execute_plan](#recipes-test_execution_execute_plan) &mdash; Recipe for executing ChromeOS test plan.
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
   * [test_manager:examples/full](#recipes-test_manager_examples_full) &mdash; Recipe to schedules child builders, watches for failures and triggers tests.
@@ -1663,6 +1664,16 @@ Tests a recipe CL by running ChromeOS builders.
 [DEPS](/recipe_modules/sync_chrome/examples/full.py#6): [sync\_chrome](#recipe_modules-sync_chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/sync_chrome/examples/full.py#9)(api):**
+### *recipes* / [test\_chromite](/recipes/test_chromite.py)
+
+[DEPS](/recipes/test_chromite.py#12): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe that tests chromite.
+
+Though this recipe appears to be almost a subset of build_target, it lives
+on its own because it is agnostic of ChromeOS build targets.
+
+&mdash; **def [RunSteps](/recipes/test_chromite.py#26)(api):**
 ### *recipes* / [test\_execution/execute\_plan](/recipes/test_execution/execute_plan.py)
 
 [DEPS](/recipes/test_execution/execute_plan.py#13): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
