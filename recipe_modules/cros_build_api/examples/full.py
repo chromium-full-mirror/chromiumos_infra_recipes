@@ -63,6 +63,7 @@ def RunSteps(api):
       },
       'ImageService': {
           'Create': image.CreateImageResult,
+          'CreateVm': image.CreateVmResponse,
           'Test': image.TestImageResult,
       },
       'SdkService': {
@@ -78,6 +79,7 @@ def RunSteps(api):
           'BuildTargetUnitTest': test.BuildTargetUnitTestResponse,
           'ChromiteUnitTest': empty_pb2.Empty,
           'DebugInfoTest': empty_pb2.Empty,
+          'VmTest': empty_pb2.Empty,
       }
   }
   responses_by_service = api.cros_build_api.test_api.responses_by_service

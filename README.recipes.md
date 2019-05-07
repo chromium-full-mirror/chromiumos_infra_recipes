@@ -75,6 +75,7 @@
   * [test_plan:examples/generate](#recipes-test_plan_examples_generate)
   * [test_plan:examples/run](#recipes-test_plan_examples_run)
   * [test_plan:examples/test_builds](#recipes-test_plan_examples_test_builds)
+  * [test_vm](#recipes-test_vm) &mdash; Recipe for running Tast VM tests.
   * [vm_test:examples/full](#recipes-vm_test_examples_full)
 ## Recipe Modules
 
@@ -1706,6 +1707,26 @@ This recipe runs out-of-band on VM test swarming bot.
 [DEPS](/recipe_modules/test_plan/examples/test_builds.py#8): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/test_plan/examples/test_builds.py#11)(api):**
+### *recipes* / [test\_vm](/recipes/test_vm.py)
+
+[DEPS](/recipes/test_vm.py#29): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for running Tast VM tests.
+
+Because the scripts that run VM tests live within the build API,
+this recipe does a lot of what build_target does. Namely, it syncs to the
+snapshot used to build the test image, it applies gerrit patches, it inits
+the SDK, etc.
+
+The steps specific to VM testing are:
+  1. Download the test image.
+  2. Convert the test image to a VM. This happens here instead of build_target
+     because most targets do not run VM tests.
+  3. Call the build API to run VM tests.
+
+For now, only supports TAST VM tests.
+
+&mdash; **def [RunSteps](/recipes/test_vm.py#49)(api, properties):**
 ### *recipes* / [vm\_test:examples/full](/recipe_modules/vm_test/examples/full.py)
 
 [DEPS](/recipe_modules/vm_test/examples/full.py#5): [test\_plan](#recipe_modules-test_plan), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

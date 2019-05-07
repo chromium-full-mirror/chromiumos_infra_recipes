@@ -1,0 +1,28 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.test_vm;
+
+import "chromiumos/common.proto";
+
+message TestVmProperties {
+  // The build target under test.
+  chromiumos.BuildTarget build_target = 1;
+
+  // An artifact used for testing stored on Google Storage.
+  message TestArtifact {
+    string gs_bucket = 1;
+    string gs_path = 2;
+  }
+
+  // The image bundle.
+  TestArtifact image_zip = 2;
+
+  // Expressions describing tests to run. For autotest, this is typcally of
+  // the form "suite:name". For tast, it is either a test name ("example.Pass")
+  // or involves tast attributes (see go/tast-attr).
+  repeated string expressions = 3;
+}

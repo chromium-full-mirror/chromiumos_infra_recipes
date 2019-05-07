@@ -944,7 +944,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"images\": [{\"path\": \"cros/src/build/images/base.bin\", \"type\": \"BASE\"}], \"failed_packages\": [], \"success\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{\"images\": [{\"path\": \"[START_DIR]/cros/src/build/images/base.bin\", \"type\": \"BASE\"}], \"failed_packages\": [], \"success\": true}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
