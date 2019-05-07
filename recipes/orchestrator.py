@@ -132,6 +132,7 @@ def _load_manifest_commit_from_snapshot(api):
     return common_pb2.GitilesCommit(
       host='chrome-internal.googlesource.com',
       project='chromeos/manifest-internal',
+      ref='refs/heads/snapshot',
       id=commit)
 
 def validate_refs(refs):
