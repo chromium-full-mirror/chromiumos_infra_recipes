@@ -719,7 +719,13 @@
       "@@@STEP_LOG_LINE@request@  name: \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@build_dependency_graph_file: \"[START_DIR]/dir/for/depservice\"@@@",
+      "@@@STEP_LOG_LINE@response@dep_graph {@@@",
+      "@@@STEP_LOG_LINE@response@  package_deps {@@@",
+      "@@@STEP_LOG_LINE@response@    dependency_source_paths {@@@",
+      "@@@STEP_LOG_LINE@response@      path: \"some/source/dir\"@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
@@ -737,7 +743,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"build_dependency_graph_file\": \"[START_DIR]/dir/for/depservice\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -838,7 +844,7 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_json",
-      "{\"buildbucketProto\": {\"serializedProto\": \"CNDsgNmu8bWSfBIwCghjaHJvbWVvcxIKcG9zdHN1Ym1pdBoYYW1kNjQtZ2VuZXJpYy1wb3N0c3VibWl0Ihx1c2VyOmNvbW1pdC1ib3RAY2hyb21pdW0ub3JnMgYIucKi2AV6NBoyCiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRIIY2hyb21lb3MYwMQHIAc=\"}, \"chromiumosWorkspaceCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"depGraph\": {}, \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
+      "{\"buildbucketProto\": {\"serializedProto\": \"CNDsgNmu8bWSfBIwCghjaHJvbWVvcxIKcG9zdHN1Ym1pdBoYYW1kNjQtZ2VuZXJpYy1wb3N0c3VibWl0Ihx1c2VyOmNvbW1pdC1ib3RAY2hyb21pdW0ub3JnMgYIucKi2AV6NBoyCiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRIIY2hyb21lb3MYwMQHIAc=\"}, \"chromiumosWorkspaceCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"depGraph\": {\"packageDeps\": [{\"dependencySourcePaths\": [{\"path\": \"some/source/dir\"}]}]}, \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],
