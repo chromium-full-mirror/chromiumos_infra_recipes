@@ -51,7 +51,7 @@ PROPERTIES = {
         ),
     # Specifies whether to enable cros_history based resource saving.
     'enable_history':
-        Property(kind=bool, default=False),
+        Property(kind=bool, default=True),
 }
 
 
@@ -72,11 +72,14 @@ def RunSteps(api, update_manifest_refs, enable_history):
     requests = []
     completed_builds = []
     passed_builders = set()
+    tested_targets = set()
 
     orchestrator_builder_config = api.infra_config.get_builder_config(
         api.buildbucket.build.builder.builder)
     if enable_history and api.buildbucket.build.input.gerrit_changes:
       completed_builds = api.cros_history.passed_builds(
+          api.buildbucket.build.input.gerrit_changes)
+      tested_targets = api.cros_history.passed_targets(
           api.buildbucket.build.input.gerrit_changes)
       passed_builders = set(build.builder.builder for build in completed_builds)
     for child in orchestrator_builder_config.orchestrator.children:
@@ -94,7 +97,14 @@ def RunSteps(api, update_manifest_refs, enable_history):
     # from intermediate failures.
     with api.step.defer_results():
       api.cros_build.verify_builds(completed_builds)
-      test_results = api.test_manager.run_tests(completed_builds)
+      if api.buildbucket.build.input.gerrit_changes:
+        untested_builds = [
+            b for b in completed_builds
+            if (api.cros_history.get_build_target(b) not in tested_targets)
+        ]
+      else:
+        untested_builds = completed_builds
+      test_results = api.test_manager.run_tests(untested_builds)
       api.test_manager.verify_tests(test_results.get_result())
 
     # Victory! If we've made it this far, the child builders were successful
@@ -197,8 +207,7 @@ def GenTests(api):
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }) +
-         api.test_plan.simulate_test_builds('run tests.test builds'))
+         }) + api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (api.test('bad_update_ref') +  #
          api.properties(update_manifest_refs={'start': 'foo'}) +  #
@@ -217,8 +226,7 @@ def GenTests(api):
               }, status=common_pb2.SUCCESS, critical=common_pb2.NO),
           ],
           step_name='run child builds.collect',
-      ) +
-      api.test_plan.simulate_test_builds('run tests.test builds'))
+      ) + api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (
       api.test('non-critical_child_builder_fails') +  #
@@ -233,5 +241,4 @@ def GenTests(api):
               }, status=common_pb2.FAILURE, critical=common_pb2.NO),
           ],
           step_name='run child builds.collect',
-      ) +
-      api.test_plan.simulate_test_builds('run tests.test builds'))
+      ) + api.test_plan.simulate_test_builds('run tests.test builds'))

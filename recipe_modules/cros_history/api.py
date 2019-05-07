@@ -23,6 +23,22 @@ class HistoryAwareApi(recipe_api.RecipeApi):
     """Generate start time in seconds."""
     return self.m.time.time() - self._lookback_no_of_seconds
 
+  def get_build_target(self, build):
+    """Retrieve the build target for input build.
+
+    Args:
+      * build: input Build instance.
+
+    Returns:
+      A string with build_target of the input Build object. If not found,
+      return None.
+    """
+    if 'build_target' in build.input.properties:
+      if 'name' in build.input.properties['build_target']:
+        return build.input.properties['build_target']['name']
+
+    return None
+
   def passed_builds(self, patches):
     """Retrieve passed builds with the same patches.
 
@@ -59,11 +75,54 @@ class HistoryAwareApi(recipe_api.RecipeApi):
         build_url = self.m.buildbucket.build_url(build_id=build.id)
         step.presentation.links[build.builder.builder] = build_url
 
-  def _get_patch_history(self, patches):
+  def _log_previous_tests(self, build_target_map):
+    """Write a link to the previous passed tests.
+
+    Args:
+      * build_target_map dict(str->int): A mapping from build_target to
+          ID of the orchestrator build to link to.
+    """
+    if build_target_map:
+      step = self.m.step('cros_history', [])
+      step.presentation.step_text = 'Some tests have passed before:'
+      for build_target, build_id in build_target_map.iteritems():
+        build_url = self.m.buildbucket.build_url(build_id=build_id)
+        step.presentation.links[build_target] = build_url
+
+  def passed_targets(self, patches):
+    """Retrieve tests that have passed with same patches.
+
+    Args:
+      * patches (list[GerritChange]): patches in the current build.
+
+    Returns:
+      A set of build_targets that have passed testing.
+    """
+    with self.m.step.nest('Looking for successful tests'):
+      if not patches:
+        return set()
+
+      target_build_map = {}
+      for previous_build in self._get_patch_history(
+          patches, builder=self.m.buildbucket.build.builder):
+        test_results = previous_build.output.properties[
+            'build_target_test_status']
+        if test_results:
+          for build_target in test_results:
+            result_str = test_results[build_target]
+            if result_str == 'success':
+              if build_target not in target_build_map:
+                target_build_map[build_target] = previous_build.id
+
+      self._log_previous_tests(target_build_map)
+      return set(target_build_map.keys())
+
+  def _get_patch_history(self, patches, builder=None):
     """Get all the passed builds with current patch-set from Buildbucket.
 
     Args:
       * patches list([GerritChange]): patches to search for.
+      * builder BuilderID: query for only this builder.
 
     Returns:
       A boolean to indicate whether the config has passed before
@@ -72,7 +131,7 @@ class HistoryAwareApi(recipe_api.RecipeApi):
     create_time = common_pb2.TimeRange(
         start_time=timestamp_pb2.Timestamp(
             seconds=int(self.start_time_in_seconds)))
-    build_predicate = rpc_pb2.BuildPredicate(status=common_pb2.SUCCESS,
-                                             gerrit_changes=patches,
-                                             create_time=create_time)
+    build_predicate = rpc_pb2.BuildPredicate(
+        status=common_pb2.SUCCESS, builder=builder, gerrit_changes=patches,
+        create_time=create_time)
     return self.m.buildbucket.search(build_predicate)

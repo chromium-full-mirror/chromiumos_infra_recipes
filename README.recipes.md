@@ -305,7 +305,18 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [passed\_builds](/recipe_modules/cros_history/api.py#26)(self, patches):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#26)(self, build):**
+
+Retrieve the build target for input build.
+
+Args:
+  * build: input Build instance.
+
+Returns:
+  A string with build_target of the input Build object. If not found,
+  return None.
+
+&mdash; **def [passed\_builds](/recipe_modules/cros_history/api.py#42)(self, patches):**
 
 Retrieve passed builds with the same patches.
 
@@ -314,6 +325,16 @@ Args:
 
 Returns:
   A list([build_pb2.Build]) with at most one build per builder.
+
+&mdash; **def [passed\_targets](/recipe_modules/cros_history/api.py#92)(self, patches):**
+
+Retrieve tests that have passed with same patches.
+
+Args:
+  * patches (list[GerritChange]): patches in the current build.
+
+Returns:
+  A set of build_targets that have passed testing.
 
 &emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#21)(self):**
 
@@ -1486,9 +1507,9 @@ Recipe for building a BuildTarget image.
 &mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#13)(api):**
 ### *recipes* / [cros\_history:examples/full](/recipe_modules/cros_history/examples/full.py)
 
-[DEPS](/recipe_modules/cros_history/examples/full.py#11): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_history/examples/full.py#12): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/full.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/full.py#25)(api, properties):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -1583,7 +1604,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#58)(api, update_manifest_refs, enable_history):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#138)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#148)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1592,7 +1613,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_build\_inputs](/recipes/orchestrator.py#119)(api):**
+&mdash; **def [validate\_build\_inputs](/recipes/orchestrator.py#129)(api):**
 
 Assert that orchestrator build inputs are correct.
 
@@ -1602,7 +1623,7 @@ Args:
 Raises:
   ValueError: If input values are invalid for this orchestrator run.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#105)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#115)(refs):**
 
 Assert all given refs start with refs/heads.
 

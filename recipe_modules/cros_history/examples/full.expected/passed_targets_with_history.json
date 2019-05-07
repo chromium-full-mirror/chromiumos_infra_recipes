@@ -4,6 +4,14 @@
     "name": "Looking for successful builds"
   },
   {
+    "cmd": [],
+    "name": "Looking for successful tests"
+  },
+  {
+    "cmd": [],
+    "name": "Looking for successful tests (2)"
+  },
+  {
     "cmd": [
       "bb",
       "batch",
@@ -11,8 +19,8 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "Looking for successful builds.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"pageSize\": 1000, \"predicate\": {\"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"2341\"}], \"status\": \"SUCCESS\"}}}]}",
+    "name": "Looking for successful tests (2).buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"pageSize\": 1000, \"predicate\": {\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"2341\"}], \"status\": \"SUCCESS\"}}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -22,16 +30,15 @@
       "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"betty\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            }, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"123\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }, @@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"reef\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            }, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"231\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"output\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"build_target_test_status\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"betty\": \"failure\", @@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"reef\": \"success\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -45,6 +52,7 @@
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"pageSize\": 1000, @@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {}, @@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-09T12:53:21Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
@@ -60,18 +68,16 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@",
-      "@@@STEP_LINK@231@https://cr-buildbucket.appspot.com/build/231@@@"
+      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Looking for successful builds.filter build requests",
+    "name": "Looking for successful tests (2).cros_history",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Some builds have passed before:@@@",
-      "@@@STEP_LINK@betty@https://cr-buildbucket.appspot.com/build/123@@@",
-      "@@@STEP_LINK@reef@https://cr-buildbucket.appspot.com/build/231@@@"
+      "@@@STEP_TEXT@Some tests have passed before:@@@",
+      "@@@STEP_LINK@reef@https://cr-buildbucket.appspot.com/build/123@@@"
     ]
   },
   {
