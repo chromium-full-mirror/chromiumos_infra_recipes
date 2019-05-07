@@ -322,7 +322,7 @@
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
     "name": "analyze and launch builders.analyze and launch staging-Annealing.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-Annealing\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.builder,builds.createTime,builds.createdBy,builds.endTime,builds.id,builds.input,builds.number,builds.output,builds.startTime,builds.status,builds.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-Annealing\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -347,6 +347,7 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builds.builder,builds.createTime,builds.createdBy,builds.endTime,builds.id,builds.input,builds.number,builds.output,builds.startTime,builds.status,builds.updateTime\", @@@",
       "@@@STEP_LOG_LINE@request@        \"pageSize\": 1000, @@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
