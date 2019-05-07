@@ -5,7 +5,6 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
-  * [cros_build](#recipe_modules-cros_build)
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
@@ -22,6 +21,7 @@
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [infra_config](#recipe_modules-infra_config)
+  * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
@@ -37,7 +37,6 @@
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
-  * [cros_build:examples/full](#recipes-cros_build_examples_full)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_history:examples/full](#recipes-cros_history_examples_full)
@@ -56,6 +55,7 @@
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [infra_config:examples/full](#recipes-infra_config_examples_full)
   * [infra_config:examples/no_builder_config](#recipes-infra_config_examples_no_builder_config)
+  * [naming:examples/full](#recipes-naming_examples_full)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
@@ -144,72 +144,6 @@ failed packages this method outputs nothing.
 Args:
   failed_packages (list[PackageInfo]): list of PackageInfo representing the
       failed packages.
-### *recipe_modules* / [cros\_build](/recipe_modules/cros_build)
-
-[DEPS](/recipe_modules/cros_build/__init__.py#1): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-#### **class [CrosBuildApi](/recipe_modules/cros_build/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-High level build steps to be called from orchestrator / e2e tests.
-
-&emsp; **@recipe_api.composite_step**<br>&mdash; **def [collect](/recipe_modules/cros_build/api.py#52)(self, scheduled_builds, step_name='collect'):**
-
-Wait for builds to complete, and return results.
-
-Args:
-  * scheduled_builds (list[build_pb2.Build]): List of builds,
-      as returned from schedule step.
-  * step_name (str): Optional name of step.
-
-Returns:
-  generator[build_pb2.Build]
-
-&emsp; **@recipe_api.composite_step**<br>&mdash; **def [download\_build\_report](/recipe_modules/cros_build/api.py#121)(self, build):**
-
-Download builds reports from isolate.
-
-Builders should set the 'build_report_hash' output property to
-point to the isolate hash of the build report. We then download
-the report from swarming and pass it into the test planner.
-
-Args:
-  * build (build_pb2.Build): Completed build returned from the collect step.
-
-Returns:
-  * Path of build report.
-
-&mdash; **def [get\_build\_title](/recipe_modules/cros_build/api.py#79)(self, build):**
-
-Get a string to describe the build.
-
-
-Args:
-  * build (build_pb2.Build): The build to describe.
-
-Returns:
-  A string describing the build.
-
-&emsp; **@recipe_api.composite_step**<br>&mdash; **def [schedule\_child\_builders](/recipe_modules/cros_build/api.py#29)(self, name, builder, build_config):**
-
-Schedule buildbucket builds for all child builders.
-
-Args:
-  * name (str): Step name.
-  * builder (str): Name of builder.
-  * build_config (list[dict]): Build config to schedule.
-
-Returns:
-  list[build_pb2.Build]
-
-&emsp; **@recipe_api.composite_step**<br>&mdash; **def [verify\_builds](/recipe_modules/cros_build/api.py#92)(self, builds):**
-
-Verify all builds completed successfully.
-
-Args:
-  * builds (list[build_pb2.Build]): List of completed builds.
-
-Raises:
-  CompositeBuildFailure containing all failed builds.
 ### *recipe_modules* / [cros\_build\_api](/recipe_modules/cros_build_api)
 
 [DEPS](/recipe_modules/cros_build_api/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -647,15 +581,15 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
-[DEPS](/recipe_modules/failures/__init__.py#1): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/__init__.py#6): [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for raising failures and presenting them in cute ways.
 
-#### **class [FailuresApi](/recipe_modules/failures/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [FailuresApi](/recipe_modules/failures/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#14)(self, failed_packages):**
+&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#31)(self, failed_packages):**
 
 Display failed packages and raise a failure.
 
@@ -667,7 +601,17 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [verify\_tests](/recipe_modules/failures/api.py#35)(self, test_results):**
+&mdash; **def [verify\_builds](/recipe_modules/failures/api.py#52)(self, builds):**
+
+Verify all builds completed successfully.
+
+Args:
+  * builds (list[build_pb2.Build]): List of completed builds.
+
+Raises:
+  CompositeBuildFailure containing all failed builds.
+
+&mdash; **def [verify\_tests](/recipe_modules/failures/api.py#81)(self, test_results):**
 
 Logs test status to UI, and raises on failed tests.
 
@@ -979,6 +923,24 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/infra_config/api.py#17)(self):**
 
 Init the InfraConfigApi module.
+### *recipe_modules* / [naming](/recipe_modules/naming)
+
+API featuring shared helpers for naming things.
+
+#### **class [NamingApi](/recipe_modules/naming/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module with helpers for naming things.
+
+&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#13)(self, build):**
+
+Get a string to describe the build.
+
+
+Args:
+  * build (build_pb2.Build): The build to describe.
+
+Returns:
+  A string describing the build.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1433,15 +1395,6 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#22)(api, properties):**
-### *recipes* / [cros\_build:examples/full](/recipe_modules/cros_build/examples/full.py)
-
-[DEPS](/recipe_modules/cros_build/examples/full.py#6): [cros\_build](#recipe_modules-cros_build), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-&mdash; **def [RunSteps](/recipe_modules/cros_build/examples/full.py#31)(api):**
-
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [execution\_context](/recipe_modules/cros_build/examples/full.py#15)(api, deferred):**
-
-&mdash; **def [get\_result](/recipe_modules/cros_build/examples/full.py#24)(step_result):**
 ### *recipes* / [cros\_build\_api:examples/full](/recipe_modules/cros_build_api/examples/full.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -1506,9 +1459,9 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
 ### *recipes* / [failures:examples/full](/recipe_modules/failures/examples/full.py)
 
-[DEPS](/recipe_modules/failures/examples/full.py#6): [failures](#recipe_modules-failures), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/failures/examples/full.py#6): [failures](#recipe_modules-failures), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#25)(api, properties):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1536,9 +1489,14 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 [DEPS](/recipe_modules/infra_config/examples/no_builder_config.py#6): [infra\_config](#recipe_modules-infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/infra_config/examples/no_builder_config.py#13)(api):**
+### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
+
+[DEPS](/recipe_modules/naming/examples/full.py#6): [naming](#recipe_modules-naming), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#14)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_build](#recipe_modules-cros_build), [cros\_history](#recipe_modules-cros_history), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [naming](#recipe_modules-naming), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
@@ -1705,7 +1663,6 @@ For now, only supports TAST VM tests.
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/db2cbdb914cf9ba6fd0a0c2fa7adf2e9f5494a19/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/db2cbdb914cf9ba6fd0a0c2fa7adf2e9f5494a19/README.recipes.md#recipe_modules-cq
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/db2cbdb914cf9ba6fd0a0c2fa7adf2e9f5494a19/README.recipes.md#recipe_modules-file
-[recipe_engine/recipe_modules/isolated]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/db2cbdb914cf9ba6fd0a0c2fa7adf2e9f5494a19/README.recipes.md#recipe_modules-isolated
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/db2cbdb914cf9ba6fd0a0c2fa7adf2e9f5494a19/README.recipes.md#recipe_modules-json
 [recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/db2cbdb914cf9ba6fd0a0c2fa7adf2e9f5494a19/README.recipes.md#recipe_modules-led
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/db2cbdb914cf9ba6fd0a0c2fa7adf2e9f5494a19/README.recipes.md#recipe_modules-path

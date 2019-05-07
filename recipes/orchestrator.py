@@ -15,7 +15,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'cros_build',
     'cros_source',
     'cros_version',
     'dev',
@@ -23,6 +22,7 @@ DEPS = [
     'git',
     'cros_history',
     'infra_config',
+    'naming',
     'test_plan',
 ]
 
@@ -96,11 +96,11 @@ def RunSteps(api, update_manifest_refs, enable_history):
 
     completed_builds += api.buildbucket.run(
         requests, timeout=60 * 60 * 4, step_name='run child builds',
-        url_title_fn=api.cros_build.get_build_title)
+        url_title_fn=api.naming.get_build_title)
     # Defer exceptions until the end, so that we recover gracefully
     # from intermediate failures.
     with api.step.defer_results():
-      api.cros_build.verify_builds(completed_builds)
+      api.failures.verify_builds(completed_builds)
       if api.buildbucket.build.input.gerrit_changes:
         untested_builds = [
             b for b in completed_builds

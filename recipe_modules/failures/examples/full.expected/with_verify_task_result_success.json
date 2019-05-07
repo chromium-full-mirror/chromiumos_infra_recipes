@@ -90,6 +90,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "verify builds"
+  },
+  {
     "jsonResult": null,
     "name": "$result"
   }

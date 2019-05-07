@@ -91,10 +91,18 @@
   },
   {
     "cmd": [],
-    "name": "verify builds"
+    "name": "verify builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@One or more child builders failed:@@@",
+      "@@@STEP_LINK@foo/bar/baz/202@https://cr-buildbucket.appspot.com/build/202@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
-    "jsonResult": null,
+    "failure": {
+      "failure": {},
+      "humanReason": "One or more child builders failed"
+    },
     "name": "$result"
   }
 ]
