@@ -53,9 +53,6 @@ PROPERTIES = {
     # Whether or not to upload binary prebuilts to Google Storage.
     'upload_prebuilts': Property(kind=bool, default=False),
 
-    # Whether or not to run the chromite tests and exit early.
-    'run_chromite_tests': Property(kind=bool, default=False),
-
     # Whether or not to run ebuild tests and exit early.
     'run_ebuild_tests': Property(kind=bool, default=False),
 }
@@ -66,7 +63,7 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 
 
 def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
-             run_chromite_tests, run_ebuild_tests):
+             run_ebuild_tests):
   build_target = BuildTarget(**build_target)
   build_config = api.infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
@@ -98,12 +95,6 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
         # chroot the workspace to make it look legit. New chromite services
         # should accept the chroot path as a parameter.
         api.cros_sdk.link_chroot(api.cros_source.workspace_path)
-
-      if run_chromite_tests:
-        with api.step.nest('run chromite unit tests'):
-          api.cros_build_api.TestService.ChromiteUnitTest(
-              ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot))
-        return
 
       with api.step.nest('create sysroot'):
         sysroot = api.cros_build_api.SysrootService.Create(
@@ -198,12 +189,6 @@ def GenTests(api):
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
-
-  yield (api.test('run-chromite-tests') + #
-         api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='chromite-cq') +  #
-         api.properties(build_target={'name': 'chromite'},
-                        run_chromite_tests=True))
 
   yield (api.test('run-ebuild-tests') +  #
          api.buildbucket.try_build(project='chromeos', bucket='postsubmit',
