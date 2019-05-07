@@ -32,7 +32,7 @@ PROJECT = 'chromeos'
 # Bucket to test in. Only the staging environment should be used.
 BUCKET = 'staging'
 # Builders to run.
-BUILDERS = ['staging-Annealing']
+BUILDERS = ['staging-Annealing', 'staging-chromite-postsubmit']
 
 # URL for the ChromeOS CI recipes repo.
 RECIPE_REPO_URL = 'https://chromium.googlesource.com/chromiumos/infra/recipes'
@@ -281,22 +281,26 @@ def GenTests(api):
             'recipes': recipes
         }))
 
-  yield (api.test('basic') +  #
-         api.buildbucket.try_build(project='chromeos', bucket='infra',
-                                   builder='recipes-tester') +  #
-         buildbucket_search_test_data('staging-Annealing') +  #
-         led_get_build_test_data(builder='staging-Annealing',
-                                 recipe_name='annealing') +  #
-         recipe_analyze_test_data(builder='staging-Annealing',
-                                  recipes=['annealing']) +  #
-         led_get_launch_test_data(builder='staging-Annealing'))
-
-  yield (api.test('builder_not_affected') +  #
-         api.buildbucket.try_build(project='chromeos', bucket='infra',
-                                   builder='recipes-tester') +  #
-         buildbucket_search_test_data('staging-Annealing') +  #
-         led_get_build_test_data('staging-Annealing', 'annealing') +  #
-         recipe_analyze_test_data('staging-Annealing', ['build_target']))
+  yield (
+      api.test('basic') +  #
+      api.buildbucket.try_build(project='chromeos', bucket='infra',
+                                builder='recipes-tester') +
+      # Buildbucket search results.
+      buildbucket_search_test_data('staging-Annealing') +  #
+      buildbucket_search_test_data('staging-chromite-postsubmit') +
+      # led get-build results.
+      led_get_build_test_data(builder='staging-Annealing',
+                              recipe_name='annealing') +  #
+      led_get_build_test_data(builder='staging-chromite-postsubmit',
+                              recipe_name='test_chromite') +  #
+      # recipe analyze results. Note that the test_chromite recipe isn't
+      # affected.
+      recipe_analyze_test_data(builder='staging-Annealing',
+                               recipes=['annealing']) +  #
+      recipe_analyze_test_data(builder='staging-chromite-postsubmit',
+                               recipes=[]) +
+      # led launch results. Note that only annealing is launched.
+      led_get_launch_test_data(builder='staging-Annealing'))
 
   yield (api.test('no_successful_builds') +  #
          api.buildbucket.try_build(project='chromeos', bucket='infra',
