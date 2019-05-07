@@ -65,10 +65,6 @@ def RunSteps(api, update_manifest_refs, enable_history):
     # Point start ref to the input snapshot if specified.
     maybe_update_manifest_ref(api, update_manifest_refs, 'start')
 
-    # Calculate buildspec.
-    # TODO(lannm): Increment rc and push to manifest-versions.
-    api.cros_version.read_workspace_version()
-
     requests = []
     completed_builds = []
     passed_builders = set()
