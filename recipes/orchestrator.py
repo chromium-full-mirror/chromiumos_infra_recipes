@@ -53,7 +53,7 @@ PROPERTIES = {
         ),
     # Specifies whether to enable cros_history based resource saving.
     'enable_history':
-        Property(kind=bool, default=True),
+        Property(kind=bool, default=False),
 }
 
 
