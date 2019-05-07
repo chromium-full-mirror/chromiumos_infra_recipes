@@ -92,14 +92,13 @@ def _get_last_successful_build(api, builder):
     A StepFailure if no build is found.
   """
   # Note that buildbucket.search returns results ordered newest-to-oldest.
-  # TODO(crbug.com/957600): Use the limit param for search once it is available.
   successful_builds = api.buildbucket.search(
       rpc_pb2.BuildPredicate(
           builder={
               'project': PROJECT,
               'bucket': BUCKET,
               'builder': builder
-          }, status=common_pb2.SUCCESS, include_experimental=False))
+          }, status=common_pb2.SUCCESS, include_experimental=False), limit=1)
 
   if not successful_builds:
     raise api.step.StepFailure(
