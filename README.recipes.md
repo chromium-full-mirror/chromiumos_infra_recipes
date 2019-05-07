@@ -1576,15 +1576,15 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/infra_config/examples/no_builder_config.py#13)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_build](#recipe_modules-cros_build), [cros\_history](#recipe_modules-cros_history), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [cros\_build](#recipe_modules-cros_build), [cros\_history](#recipe_modules-cros_history), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#58)(api, update_manifest_refs, enable_history):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#59)(api, update_manifest_refs, enable_history):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#148)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#151)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1593,7 +1593,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [run\_tests](/recipes/orchestrator.py#168)(api, builds, step_name='run tests'):**
+&mdash; **def [run\_tests](/recipes/orchestrator.py#171)(api, builds, step_name='run tests'):**
 
 Shortcut for schedule_tests + collect_tests.
 
@@ -1604,7 +1604,7 @@ Args:
 Returns:
   list[swarming.TaskResult]
 
-&mdash; **def [validate\_build\_inputs](/recipes/orchestrator.py#129)(api):**
+&mdash; **def [validate\_build\_inputs](/recipes/orchestrator.py#132)(api):**
 
 Assert that orchestrator build inputs are correct.
 
@@ -1614,7 +1614,7 @@ Args:
 Raises:
   ValueError: If input values are invalid for this orchestrator run.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#115)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#118)(refs):**
 
 Assert all given refs start with refs/heads.
 
@@ -1731,6 +1731,7 @@ This recipe runs out-of-band on VM test swarming bot.
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/027f3197fcb0c799794870ea3ee830b48e684f22/README.recipes.md#recipe_modules-buildbucket
 [recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/027f3197fcb0c799794870ea3ee830b48e684f22/README.recipes.md#recipe_modules-cipd
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/027f3197fcb0c799794870ea3ee830b48e684f22/README.recipes.md#recipe_modules-context
+[recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/027f3197fcb0c799794870ea3ee830b48e684f22/README.recipes.md#recipe_modules-cq
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/027f3197fcb0c799794870ea3ee830b48e684f22/README.recipes.md#recipe_modules-file
 [recipe_engine/recipe_modules/isolated]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/027f3197fcb0c799794870ea3ee830b48e684f22/README.recipes.md#recipe_modules-isolated
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/027f3197fcb0c799794870ea3ee830b48e684f22/README.recipes.md#recipe_modules-json

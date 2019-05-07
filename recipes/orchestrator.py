@@ -11,6 +11,7 @@ All builders run against the same source tree.
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
@@ -104,8 +105,10 @@ def RunSteps(api, update_manifest_refs, enable_history):
         ]
       else:
         untested_builds = completed_builds
-      test_results = run_tests(api, completed_builds)
-      api.failures.verify_tests(test_results)
+
+      if not api.cq.state == api.cq.DRY:
+        test_results = run_tests(api, completed_builds)
+        api.failures.verify_tests(test_results)
 
     # Victory! If we've made it this far, the child builders were successful
     # and we can update the success manifest ref if it is specified.
@@ -228,6 +231,10 @@ def GenTests(api):
   yield (api.test('bad_update_ref') +  #
          api.properties(update_manifest_refs={'start': 'foo'}) +  #
          api.expect_exception("ValueError"))
+
+  yield (api.test('dry_run') +  #
+         postsubmit_orchestrator_build() +  #
+         api.cq(dry_run=True))
 
   yield (
       api.test('critical_child_builder_fails') +  #
