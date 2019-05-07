@@ -58,7 +58,8 @@ class InfraConfigApi(recipe_api.RecipeApi):
     Raises:
       A LookupError if no BuilderConfig is found for the specified builder.
     """
-    with self.m.context(infra_steps=True):
+    with self.m.step.nest('read build config'), self.m.context(
+        infra_steps=True):
       config = self._get_name_to_builder_config().get(builder_name)
       if not config:
         raise LookupError(
@@ -75,13 +76,14 @@ class InfraConfigApi(recipe_api.RecipeApi):
     Returns:
       Path pointing to specified config file.
     """
-    conf_contents = self.m.gitiles.download_file(
-        REPO_URL, "testingconfig/generated/%s" % config_name,
-        step_test_data=self.test_api.test_config_file)
+    with self.m.step.nest('read test config'), self.m.context(infra_steps=True):
+      conf_contents = self.m.gitiles.download_file(
+          REPO_URL, "testingconfig/generated/%s" % config_name,
+          step_test_data=self.test_api.test_config_file)
 
-    outdir = self.m.path['cleanup'].join('testconfig')
-    self.m.file.ensure_directory('make testconfig', outdir)
-    path = outdir.join(config_name)
+      outdir = self.m.path['cleanup'].join('testconfig')
+      self.m.file.ensure_directory('make testconfig', outdir)
+      path = outdir.join(config_name)
 
-    self.m.file.write_raw('save %s' % config_name, path, conf_contents)
-    return path
+      self.m.file.write_raw('save %s' % config_name, path, conf_contents)
+      return path

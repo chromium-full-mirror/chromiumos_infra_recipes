@@ -252,6 +252,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "sync to snapshot"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -264,7 +268,10 @@
       "text"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml"
+    "name": "sync to snapshot.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -279,7 +286,10 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "write manifest"
+    "name": "sync to snapshot.write manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -292,7 +302,10 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "repo sync"
+    "name": "sync to snapshot.repo sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],

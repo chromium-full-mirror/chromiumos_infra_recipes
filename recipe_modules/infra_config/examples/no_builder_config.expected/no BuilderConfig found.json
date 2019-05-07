@@ -1,5 +1,9 @@
 [
   {
+    "cmd": [],
+    "name": "read build config"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -12,7 +16,10 @@
       "text"
     ],
     "infra_step": true,
-    "name": "fetch master:generated/builder_configs.cfg"
+    "name": "read build config.fetch master:generated/builder_configs.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "jsonResult": null,

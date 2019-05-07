@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "set_bisect_builder",
+    "name": "set bisect builder",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"wally-bisect\"@@@"
     ]

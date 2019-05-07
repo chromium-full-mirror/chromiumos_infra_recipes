@@ -27,7 +27,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
     Args:
       build_target_name (str): build target name to set the bisect builder for.
     """
-    res = self.m.step('set_bisect_builder', cmd=None)
+    res = self.m.step('set bisect builder', cmd=None)
     res.presentation.properties['BISECT_BUILDER'] = build_target_name + '-bisect'
 
   def _create_failures_payload(self, failed_packages):
@@ -62,7 +62,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
     if not failed_packages:
       return
     payload = self._create_failures_payload(failed_packages)
-    res = self.m.step('set_build_compile_failure', cmd=None)
+    res = self.m.step('set build compile failure', cmd=None)
     res.presentation.properties['build_compile_failure_output'] = payload
 
   def get_packages(self):

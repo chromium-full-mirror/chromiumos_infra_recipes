@@ -474,7 +474,7 @@ of a build and then mounted into the master and/or workspace paths.
 
 Returns a context where master and workspace overlays are mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#186)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#187)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -487,7 +487,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#143)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#144)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -971,7 +971,7 @@ Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 ### *recipe_modules* / [infra\_config](/recipe_modules/infra_config)
 
-[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [InfraConfigApi](/recipe_modules/infra_config/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -999,7 +999,7 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#69)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#70)(self, config_name):**
 
 Gets Path of most recent test config.
 
