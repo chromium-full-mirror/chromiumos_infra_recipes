@@ -13,7 +13,6 @@
   * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
-  * [cros_test](#recipe_modules-cros_test) &mdash; API for interacting with cros_test chromite api.
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [depends](#recipe_modules-depends) &mdash; APIs for checking that CQ-DEPEND has been fulfilled.
   * [dev](#recipe_modules-dev) &mdash; API for development config.
@@ -46,7 +45,6 @@
   * [cros_relevance:examples/full](#recipes-cros_relevance_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
-  * [cros_test:examples/full](#recipes-cros_test_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dev:examples/full](#recipes-dev_examples_full)
@@ -540,38 +538,6 @@ The "workspace" checkout path.
 
 This is where the build is processed. It will contain the target base
 checkout and any modifications made by the build.
-### *recipe_modules* / [cros\_test](/recipe_modules/cros_test)
-
-[DEPS](/recipe_modules/cros_test/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
-
-API for interacting with cros_test chromite api.
-
-#### **class [CrosTestApi](/recipe_modules/cros_test/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-&emsp; **@property**<br>&mdash; **def [image\_path](/recipe_modules/cros_test/api.py#16)(self):**
-
-Returns a Path to image artifacts.
-
-&mdash; **def [run\_tast\_test](/recipe_modules/cros_test/api.py#39)(self, build_target, test_suite, test_exprs):**
-
-Run the specified test in a vm.
-
-Expects chromiumos_qemu_image.bin and id_rsa to be present in image_path.
-
-Args:
-  build_target (str): The build target to test against.
-  test_suite (str): Tast test suite.
-  test_exprs (tuple[str] | list[str]): List of Tast test args.
-
-&mdash; **def [run\_vm\_test](/recipe_modules/cros_test/api.py#21)(self, build_target, test_suite):**
-
-Run the specified test in a vm.
-
-Expects chromiumos_qemu_image.bin and id_rsa to be present in image_path.
-
-Args:
-  build_target (str): The build target to test against.
-  test_suite (str): A valid Autotest vm test suite.
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1511,11 +1477,6 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#17)(api):**
-### *recipes* / [cros\_test:examples/full](/recipe_modules/cros_test/examples/full.py)
-
-[DEPS](/recipe_modules/cros_test/examples/full.py#6): [cros\_test](#recipe_modules-cros_test), [recipe\_engine/file][recipe_engine/recipe_modules/file]
-
-&mdash; **def [RunSteps](/recipe_modules/cros_test/examples/full.py#12)(api):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
