@@ -30,6 +30,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from recipe_engine.config import ConfigGroup
 from recipe_engine.config import Single
+from recipe_engine.recipe_api import DeferredResult
 from recipe_engine.recipe_api import Property
 
 PROPERTIES = {
@@ -187,9 +188,18 @@ def run_tests(api, builds, step_name='run tests'):
     list[swarming.TaskResult]
   """
   with api.step.nest(step_name):
+    # TODO(dburger): Hack!!! Remove these isinstance calls when the
+    # DeferredResult situation is better understood. Before these were added
+    # this passed tests but failed in production. See https://crbug.com/960643.
     tasks = api.test_plan.test_builds('test builds', list(builds))
-    return api.test_plan.collect_tests('collect test results',
-                                       tasks.get_result()).get_result()
+    if isinstance(tasks, DeferredResult):
+      tasks = tasks.get_result()
+
+    results = api.test_plan.collect_tests('collect test results', tasks)
+    if isinstance(results, DeferredResult):
+      results = results.get_result()
+
+    return results
 
 
 def GenTests(api):
