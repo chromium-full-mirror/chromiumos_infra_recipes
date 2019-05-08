@@ -22,6 +22,7 @@
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
+  * [gitiles](#recipe_modules-gitiles) &mdash; APIs for dealing with Gitiles.
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
@@ -56,6 +57,7 @@
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
+  * [gitiles:examples/full](#recipes-gitiles_examples_full)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
@@ -940,6 +942,28 @@ Returns:
 
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
+### *recipe_modules* / [gitiles](/recipe_modules/gitiles)
+
+[DEPS](/recipe_modules/gitiles/__init__.py#1): [support](#recipe_modules-support)
+
+APIs for dealing with Gitiles.
+
+#### **class [GitilesApi](/recipe_modules/gitiles/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for Gitiles helpers.
+
+&mdash; **def [fetch\_revision](/recipe_modules/gitiles/api.py#13)(self, host, project, branch, test_output_data=None):**
+
+Call gitiles-fetch-ref support tool.
+
+Args:
+  host (str): Gerrit host, e.g. chrome-internal
+  project (str): Gerrit project, e.g. chromiumos/chromite
+  branch (str): Gerrit branch, e.g. master
+  test_output_data (dict): Test output for gitiles-fetch-ref.
+
+Returns:
+  str: the current revision hash of the specified branch
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
 API featuring shared helpers for naming things.
@@ -1490,6 +1514,11 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/git_txn/examples/full.py#12)(api):**
 
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#20)(api, attempt, git_subcmd, retcode=0, stdout=None):**
+### *recipes* / [gitiles:examples/full](/recipe_modules/gitiles/examples/full.py)
+
+[DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles)
+
+&mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#11)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [naming](#recipe_modules-naming), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -1497,15 +1526,15 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#14)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#60)(api, update_manifest_refs, enable_history):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#61)(api, update_manifest_refs, enable_history):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#153)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#151)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1514,7 +1543,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [run\_tests](/recipes/orchestrator.py#180)(api, builds, step_name='run tests'):**
+&mdash; **def [run\_tests](/recipes/orchestrator.py#178)(api, builds, step_name='run tests'):**
 
 Shortcut for schedule_tests + collect_tests.
 
@@ -1525,7 +1554,7 @@ Args:
 Returns:
   list[swarming.TaskResult]
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#139)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#137)(refs):**
 
 Assert all given refs start with refs/heads.
 

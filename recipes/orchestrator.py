@@ -22,6 +22,7 @@ DEPS = [
     'dev',
     'failures',
     'git',
+    'gitiles',
     'naming',
     'test_plan',
 ]
@@ -60,15 +61,13 @@ PROPERTIES = {
 def RunSteps(api, update_manifest_refs, enable_history):
   validate_refs(update_manifest_refs.values())
 
+  manifest_commit = api.buildbucket.gitiles_commit
+  if not manifest_commit.project:
+    manifest_commit = _load_manifest_commit_from_snapshot(api)
+
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
-    manifest_commit = api.buildbucket.gitiles_commit
-    if not manifest_commit.project:
-      # TODO(seanabraham): Read the snapshot hash from the Gerrit API to avoid
-      # depending on having a repo checkout.
-      manifest_commit = _load_manifest_commit_from_snapshot(api)
-
     # Point start ref to the input snapshot if specified.
     maybe_update_manifest_ref(api, update_manifest_refs, 'start')
 
@@ -119,7 +118,7 @@ def RunSteps(api, update_manifest_refs, enable_history):
 
 
 def _load_manifest_commit_from_snapshot(api):
-  """Fetches latest manifest snapshot commit from Gerrit.
+  """Fetches latest manifest snapshot commit from Gitiles.
 
   Args:
     api (object): See RunSteps documentation.
@@ -127,14 +126,13 @@ def _load_manifest_commit_from_snapshot(api):
   Returns:
     common_pb2.GitilesCommit
   """
-  with api.context(
-      cwd=api.cros_source.workspace_path.join('manifest-internal')):
-    commit = api.git.fetch_ref(api.cros_source.INTERNAL_MANIFEST_URL, 'snapshot')
-    return common_pb2.GitilesCommit(
+  rev = api.gitiles.fetch_revision(
+      'chrome-internal', 'chromeos/manifest-internal', 'snapshot')
+  return common_pb2.GitilesCommit(
       host='chrome-internal.googlesource.com',
       project='chromeos/manifest-internal',
       ref='refs/heads/snapshot',
-      id=commit)
+      id=rev)
 
 def validate_refs(refs):
   """Assert all given refs start with refs/heads.

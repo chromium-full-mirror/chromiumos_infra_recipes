@@ -1,0 +1,36 @@
+# -*- coding: utf-8 -*-
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""APIs for dealing with Gitiles."""
+
+from recipe_engine import recipe_api
+
+class GitilesApi(recipe_api.RecipeApi):
+  """A module for Gitiles helpers."""
+
+  def fetch_revision(self, host, project, branch, test_output_data=None):
+    """Call gitiles-fetch-ref support tool.
+
+    Args:
+      host (str): Gerrit host, e.g. chrome-internal
+      project (str): Gerrit project, e.g. chromiumos/chromite
+      branch (str): Gerrit branch, e.g. master
+      test_output_data (dict): Test output for gitiles-fetch-ref.
+
+    Returns:
+      str: the current revision hash of the specified branch
+    """
+    if test_output_data is None:
+      test_output_data = self.test_api.test_fetch_revision_output()
+    input = {
+        'branch': {
+            'host': host,
+            'project': project,
+            'branch': branch,
+        },
+    }
+    res = self.m.support.call('gitiles-fetch-ref', input,
+                              test_output_data=test_output_data)
+    return res['branch']['revision']
