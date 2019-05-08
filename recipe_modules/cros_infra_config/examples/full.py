@@ -6,12 +6,12 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'infra_config',
+    'cros_infra_config',
 ]
 
 
 def RunSteps(api):
-  builder_config = api.infra_config.get_builder_config(
+  builder_config = api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
 
   api.assertions.assertEqual(builder_config.id.name, "postsubmit-orchestrator")
@@ -22,7 +22,7 @@ def RunSteps(api):
   api.assertions.assertEqual(children[0], "amd64-generic-postsubmit")
   api.assertions.assertEqual(children[1], "arm-generic-postsubmit")
 
-  api.infra_config.get_test_config('config_name.cfg')
+  api.cros_infra_config.get_test_config('config_name.cfg')
 
 
 def GenTests(api):

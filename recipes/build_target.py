@@ -15,6 +15,7 @@ DEPS = [
     'cros_artifacts',
     'cros_bisect',
     'cros_build_api',
+    'cros_infra_config',
     'cros_prebuilts',
     'cros_relevance',
     'cros_sdk',
@@ -22,7 +23,6 @@ DEPS = [
     'cros_version',
     'failures',
     'gerrit',
-    'infra_config',
 ]
 
 from recipe_engine.config import Dict
@@ -65,7 +65,7 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
              run_ebuild_tests):
   build_target = BuildTarget(**build_target)
-  build_config = api.infra_config.get_builder_config(
+  build_config = api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
   gitiles_commit = api.buildbucket.gitiles_commit
   gerrit_changes = api.buildbucket.build.input.gerrit_changes

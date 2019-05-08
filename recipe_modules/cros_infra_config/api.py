@@ -11,7 +11,7 @@ from PB.chromiumos.builder_config import BuilderConfigs
 REPO_URL = "https://chrome-internal.googlesource.com/chromeos/infra/config"
 
 
-class InfraConfigApi(recipe_api.RecipeApi):
+class CrosInfraConfigApi(recipe_api.RecipeApi):
   """A module for accessing data in the chromeos/infra/config repo"""
 
   def initialize(self):

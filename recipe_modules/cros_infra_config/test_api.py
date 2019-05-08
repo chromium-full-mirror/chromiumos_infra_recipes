@@ -6,7 +6,7 @@
 from recipe_engine import recipe_test_api
 
 
-class InfraConfigTestApi(recipe_test_api.RecipeTestApi):
+class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the infra_config module."""
 
   def builder_configs_step_test_data(self):

@@ -9,6 +9,7 @@
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
+  * [cros_infra_config](#recipe_modules-cros_infra_config)
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
   * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
@@ -21,7 +22,6 @@
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
-  * [infra_config](#recipe_modules-infra_config)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
@@ -41,6 +41,8 @@
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_history:examples/full](#recipes-cros_history_examples_full)
+  * [cros_infra_config:examples/full](#recipes-cros_infra_config_examples_full)
+  * [cros_infra_config:examples/no_builder_config](#recipes-cros_infra_config_examples_no_builder_config)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_relevance:examples/full](#recipes-cros_relevance_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
@@ -54,8 +56,6 @@
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
-  * [infra_config:examples/full](#recipes-infra_config_examples_full)
-  * [infra_config:examples/no_builder_config](#recipes-infra_config_examples_no_builder_config)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
@@ -291,6 +291,49 @@ Returns:
 &emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#21)(self):**
 
 Generate start time in seconds.
+### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
+
+[DEPS](/recipe_modules/cros_infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for accessing data in the chromeos/infra/config repo
+
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#44)(self, builder_name):**
+
+Gets the BuilderConfig for the specified builder from the master branch.
+
+Finds the BuilderConfig whose id.name matches the specified Buildbucket
+builder.
+
+This function loads the checked in proto and forms a map from id.name to
+BuilderConfig on the first call. Subsequent calls just look up in the map,
+so will be much faster than the first call. This is meant for the case when
+many lookups are needed, e.g. a parent builder looks up all child configs.
+
+Args:
+  * builder_name (str): The Buildbucket builder to look for, matched against
+    BuilderConfig's id.name.
+
+Returns:
+  A BuilderConfigs proto.
+
+Raises:
+  A LookupError if no BuilderConfig is found for the specified builder.
+
+&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#70)(self, config_name):**
+
+Gets Path of most recent test config.
+
+Args:
+  * config_name (str): Config filename.
+
+Returns:
+  Path pointing to specified config file.
+
+&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#17)(self):**
+
+Init the InfraConfigApi module.
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -901,49 +944,6 @@ Returns:
 
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
-### *recipe_modules* / [infra\_config](/recipe_modules/infra_config)
-
-[DEPS](/recipe_modules/infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-#### **class [InfraConfigApi](/recipe_modules/infra_config/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for accessing data in the chromeos/infra/config repo
-
-&mdash; **def [get\_builder\_config](/recipe_modules/infra_config/api.py#42)(self, builder_name):**
-
-Gets the BuilderConfig for the specified builder from the master branch.
-
-Finds the BuilderConfig whose id.name matches the specified Buildbucket
-builder.
-
-This function loads the checked in proto and forms a map from id.name to
-BuilderConfig on the first call. Subsequent calls just look up in the map,
-so will be much faster than the first call. This is meant for the case when
-many lookups are needed, e.g. a parent builder looks up all child configs.
-
-Args:
-  * builder_name (str): The Buildbucket builder to look for, matched against
-    BuilderConfig's id.name.
-
-Returns:
-  A BuilderConfigs proto.
-
-Raises:
-  A LookupError if no BuilderConfig is found for the specified builder.
-
-&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#68)(self, config_name):**
-
-Gets Path of most recent test config.
-
-Args:
-  * config_name (str): Config filename.
-
-Returns:
-  Path pointing to specified config file.
-
-&mdash; **def [initialize](/recipe_modules/infra_config/api.py#17)(self):**
-
-Init the InfraConfigApi module.
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
 API featuring shared helpers for naming things.
@@ -1234,7 +1234,7 @@ Ensure the CIPD support package is installed.
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
 ### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
 
-[DEPS](/recipe_modules/test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [infra\_config](#recipe_modules-infra_config), [repo](#recipe_modules-repo), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/test_plan/__init__.py#1): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 #### **class [RunPlanApi](/recipe_modules/test_plan/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -1380,7 +1380,7 @@ Returns:
   A string containing the commit message.
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [infra\_config](#recipe_modules-infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building a BuildTarget image.
 
@@ -1415,6 +1415,16 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_history/examples/full.py#12): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_history/examples/full.py#25)(api, properties):**
+### *recipes* / [cros\_infra\_config:examples/full](/recipe_modules/cros_infra_config/examples/full.py)
+
+[DEPS](/recipe_modules/cros_infra_config/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/full.py#13)(api):**
+### *recipes* / [cros\_infra\_config:examples/no\_builder\_config](/recipe_modules/cros_infra_config/examples/no_builder_config.py)
+
+[DEPS](/recipe_modules/cros_infra_config/examples/no_builder_config.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/no_builder_config.py#13)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -1484,16 +1494,6 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/git_txn/examples/full.py#12)(api):**
 
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#20)(api, attempt, git_subcmd, retcode=0, stdout=None):**
-### *recipes* / [infra\_config:examples/full](/recipe_modules/infra_config/examples/full.py)
-
-[DEPS](/recipe_modules/infra_config/examples/full.py#6): [infra\_config](#recipe_modules-infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
-
-&mdash; **def [RunSteps](/recipe_modules/infra_config/examples/full.py#13)(api):**
-### *recipes* / [infra\_config:examples/no\_builder\_config](/recipe_modules/infra_config/examples/no_builder_config.py)
-
-[DEPS](/recipe_modules/infra_config/examples/no_builder_config.py#6): [infra\_config](#recipe_modules-infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
-
-&mdash; **def [RunSteps](/recipe_modules/infra_config/examples/no_builder_config.py#13)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [naming](#recipe_modules-naming), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -1501,7 +1501,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#14)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [infra\_config](#recipe_modules-infra_config), [naming](#recipe_modules-naming), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 

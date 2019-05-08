@@ -15,13 +15,13 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'cros_history',
+    'cros_infra_config',
     'cros_source',
     'cros_version',
     'dev',
     'failures',
     'git',
-    'cros_history',
-    'infra_config',
     'naming',
     'test_plan',
 ]
@@ -77,7 +77,7 @@ def RunSteps(api, update_manifest_refs, enable_history):
     passed_builders = set()
     tested_targets = set()
 
-    orchestrator_builder_config = api.infra_config.get_builder_config(
+    orchestrator_builder_config = api.cros_infra_config.get_builder_config(
         api.buildbucket.build.builder.builder)
     if enable_history and api.buildbucket.build.input.gerrit_changes:
       completed_builds = api.cros_history.passed_builds(
@@ -87,7 +87,7 @@ def RunSteps(api, update_manifest_refs, enable_history):
       passed_builders = set(build.builder.builder for build in completed_builds)
     for child in orchestrator_builder_config.orchestrator.children:
       if child not in passed_builders:
-        child_builder_config = api.infra_config.get_builder_config(child)
+        child_builder_config = api.cros_infra_config.get_builder_config(child)
         requests.append(
             api.buildbucket.schedule_request(
                 gitiles_commit=manifest_commit,

@@ -6,12 +6,13 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'infra_config',
+    'cros_infra_config',
 ]
 
 
 def RunSteps(api):
-  api.assertions.assertRaises(LookupError, api.infra_config.get_builder_config,
+  api.assertions.assertRaises(LookupError,
+                              api.cros_infra_config.get_builder_config,
                               api.buildbucket.build.builder.builder)
 
 
