@@ -874,13 +874,7 @@
   },
   {
     "cmd": [],
-    "name": "test results",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@SUCCESS - my_task_1@hello world!@@@",
-      "@@@STEP_LOG_END@SUCCESS - my_task_1@@@",
-      "@@@STEP_LOG_LINE@SUCCESS - my_task_0@hello world!@@@",
-      "@@@STEP_LOG_END@SUCCESS - my_task_0@@@"
-    ]
+    "name": "test results"
   },
   {
     "cmd": [],

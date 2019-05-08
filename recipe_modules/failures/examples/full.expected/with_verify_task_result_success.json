@@ -83,11 +83,7 @@
   },
   {
     "cmd": [],
-    "name": "test results",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@SUCCESS - vm-test@hello world!@@@",
-      "@@@STEP_LOG_END@SUCCESS - vm-test@@@"
-    ]
+    "name": "test results"
   },
   {
     "cmd": [],

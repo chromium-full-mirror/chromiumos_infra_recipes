@@ -91,15 +91,12 @@ class FailuresApi(recipe_api.RecipeApi):
       success = True
 
       for swarming_result in test_results:
-        # We don't have a great way of highlighting failed tests.
-        # Group failed tests together by prepending status.
-        log_name = 'SUCCESS - ' if swarming_result.success else 'FAILURE - '
-        log_name += swarming_result.name
-
-        # Until parallel recipes materializes, dump output to step log
-        step_result.presentation.logs[log_name] = [swarming_result.output]
-
         success &= swarming_result.success
+        if not swarming_result.success:
+          # We don't have a great way of highlighting failed tests.
+          log_name = 'FAILURE - {}'.format(swarming_result.name)
+          # Until parallel recipes materializes, dump output to step log
+          step_result.presentation.logs[log_name] = [swarming_result.output]
 
       if not success:
         raise self.m.step.StepFailure('Failed one or more tests')
