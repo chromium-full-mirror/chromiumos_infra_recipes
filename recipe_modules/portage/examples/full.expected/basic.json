@@ -56,8 +56,7 @@
       "chromite/bin/cros_mark_as_stable",
       "push",
       "--overlay-type",
-      "both",
-      "--dryrun"
+      "both"
     ],
     "name": "push portage package uprevs"
   },

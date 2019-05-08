@@ -13,7 +13,6 @@ DEPS = [
     'recipe_engine/step',
     'cros_sdk',
     'cros_source',
-    'dev',
     'gerrit',
     'overlayfs',
     'repo',
@@ -21,9 +20,6 @@ DEPS = [
 
 
 def RunSteps(api):
-  # Set dryrun to prevent accidental e.g. git pushes.
-  api.dev.configure(dryrun=True)
-
   # Use a named cache for the chroot.
   api.cros_sdk.configure(
       chroot_parent_path=api.path['cache'].join('cros_chroot'))

@@ -7,13 +7,11 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/path',
     'recipe_engine/raw_io',
-    'dev',
     'portage',
 ]
 
 
 def RunSteps(api):
-  api.dev.configure(dryrun=True)
   api.portage.regen_cache('my_overlay')
   api.portage.uprev_packages()
   api.portage.push_package_uprevs()

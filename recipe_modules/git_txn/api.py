@@ -23,8 +23,8 @@ class TooManyAttempts(Error):
 class GitTxnApi(recipe_api.RecipeApi):
   """A module for executing git transactions."""
 
-  def update_ref(self, remote, ref, update_callback, retries=3, automerge=False,
-                 dryrun=False):
+  def update_ref(self, remote, ref, update_callback, retries=3,
+                 automerge=False):
     """Transactionally update a remote git repository ref.
 
     The |ref| will be fetched from |remote| and checked out. Then
@@ -44,8 +44,6 @@ class GitTxnApi(recipe_api.RecipeApi):
           callback returns False the update will be cancelled but succeed.
       retries (int): Number of update attempts to make before failing.
       automerge (bool): Whether to use Gerrit's "auto-merge" feature.
-      dryrun (bool): If True, run git push with --dry-run (doesn't actually
-          push). Should only be used in non-prod settings.
 
     Returns:
       bool: True if the transaction succeeded, false if it explicitly aborts.
@@ -82,7 +80,7 @@ class GitTxnApi(recipe_api.RecipeApi):
             # See https://gerrit-review.googlesource.com/Documentation/user-upload.html#auto_merge
             dest_ref = 'refs/for/%s%%submit' % dest_ref
           dest_ref = 'HEAD:%s' % dest_ref
-          self.m.git.push(remote, dest_ref, capture_stdout=True, dryrun=dryrun)
+          self.m.git.push(remote, dest_ref, capture_stdout=True)
           return True
         except recipe_api.StepFailure as ex:
           # Only retry on remote 'rejected' errors.

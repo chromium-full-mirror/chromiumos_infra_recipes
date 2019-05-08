@@ -55,8 +55,6 @@ class PortageApi(recipe_api.RecipeApi):
         '--overlay-type',
         'both',
     ]
-    if self.m.dev.dryrun:
-      cmd += ['--dryrun']
     return self.m.step('push portage package uprevs', cmd)
 
   def portageq_best_visible_version(self, atom):

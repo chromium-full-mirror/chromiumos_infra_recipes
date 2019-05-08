@@ -713,7 +713,7 @@ Returns:
   List[PatchSet]: List of PatchSets in requested order.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
-[DEPS](/recipe_modules/git/__init__.py#1): [dev](#recipe_modules-dev), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with git.
 
@@ -754,7 +754,7 @@ Args:
   * files (list[str|Path]): A list of file paths to commit.
   * message (str): The commit message.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#266)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#262)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -766,7 +766,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#185)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#181)(self):**
 
 Returns the currently checked out branch name.
 
@@ -816,15 +816,15 @@ Args:
 Returns:
   A list[str] of changed files.
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#199)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#195)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#205)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#201)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#236)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#232)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -834,7 +834,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#215)(self, from_rev, to_rev):**
+&mdash; **def [log](/recipe_modules/git/api.py#211)(self, from_rev, to_rev):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -845,7 +845,7 @@ Args:
 Returns:
   List(Commit) A list of commit metas.
 
-&mdash; **def [position\_num](/recipe_modules/git/api.py#280)(self, ref='HEAD'):**
+&mdash; **def [position\_num](/recipe_modules/git/api.py#276)(self, ref='HEAD'):**
 
 Returns the chrome commit position.
 
@@ -858,7 +858,7 @@ Args:
 Returns:
   int: The Chrome commit position
 
-&mdash; **def [push](/recipe_modules/git/api.py#162)(self, remote, refspec, capture_stdout=False, dryrun=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#162)(self, remote, refspec, capture_stdout=False):**
 
 Runs 'git push'.
 
@@ -866,13 +866,11 @@ Args:
   remote (str): The remote repository to push to.
   refspec (str): The refspec to push.
   capture_stdout (bool): If True, return stdout in step data.
-  dryrun (bool): If True, run git push with --dry-run (doesn't actually
-      push). Should only be used in non-prod settings.
 
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#248)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#244)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -893,7 +891,7 @@ API for updating remote git repositories transactionally.
 
 A module for executing git transactions.
 
-&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#26)(self, remote, ref, update_callback, retries=3, automerge=False, dryrun=False):**
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#26)(self, remote, ref, update_callback, retries=3, automerge=False):**
 
 Transactionally update a remote git repository ref.
 
@@ -914,8 +912,6 @@ Args:
       callback returns False the update will be cancelled but succeed.
   retries (int): Number of update attempts to make before failing.
   automerge (bool): Whether to use Gerrit's "auto-merge" feature.
-  dryrun (bool): If True, run git push with --dry-run (doesn't actually
-      push). Should only be used in non-prod settings.
 
 Returns:
   bool: True if the transaction succeeded, false if it explicitly aborts.
@@ -923,7 +919,7 @@ Returns:
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#96)(self, remote, ref, message, dest, data, \*\*kwargs):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#94)(self, remote, ref, message, dest, data, \*\*kwargs):**
 
 Transactionally update a file in a remote git repository ref.
 
@@ -1013,7 +1009,7 @@ APIs for CrOS Portage.
 
 A module for CrOS Portage steps.
 
-&mdash; **def [portageq\_best\_visible\_version](/recipe_modules/portage/api.py#62)(self, atom):**
+&mdash; **def [portageq\_best\_visible\_version](/recipe_modules/portage/api.py#60)(self, atom):**
 
 Run portageq best_visible and parse out the version.
 
@@ -1484,9 +1480,9 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#16)(api):**
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
-[DEPS](/recipe_modules/git/examples/full.py#6): [dev](#recipe_modules-dev), [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/git/examples/full.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#13)(api):**
 ### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
 
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -1545,9 +1541,9 @@ Raises:
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
 ### *recipes* / [portage:examples/full](/recipe_modules/portage/examples/full.py)
 
-[DEPS](/recipe_modules/portage/examples/full.py#6): [dev](#recipe_modules-dev), [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/portage/examples/full.py#6): [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/portage/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/portage/examples/full.py#14)(api):**
 ### *recipes* / [portage:examples/portageq\_parse\_error](/recipe_modules/portage/examples/portageq_parse_error.py)
 
 [DEPS](/recipe_modules/portage/examples/portageq_parse_error.py#6): [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -1555,11 +1551,11 @@ Raises:
 &mdash; **def [RunSteps](/recipe_modules/portage/examples/portageq_parse_error.py#13)(api):**
 ### *recipes* / [prototype](/recipes/prototype.py)
 
-[DEPS](/recipes/prototype.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/prototype.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for prototyping Chrome OS builders.
 
-&mdash; **def [RunSteps](/recipes/prototype.py#23)(api):**
+&mdash; **def [RunSteps](/recipes/prototype.py#22)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

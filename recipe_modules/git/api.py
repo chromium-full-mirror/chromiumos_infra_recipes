@@ -159,15 +159,13 @@ other_test.txt
     """
     self._step(['commit', '--message', message, '--'] + files)
 
-  def push(self, remote, refspec, capture_stdout=False, dryrun=False):
+  def push(self, remote, refspec, capture_stdout=False):
     """Runs 'git push'.
 
     Args:
       remote (str): The remote repository to push to.
       refspec (str): The refspec to push.
       capture_stdout (bool): If True, return stdout in step data.
-      dryrun (bool): If True, run git push with --dry-run (doesn't actually
-          push). Should only be used in non-prod settings.
 
     Returns:
       StepData: See 'step.__call__'.
@@ -177,8 +175,6 @@ other_test.txt
     if capture_stdout:
       args += ['--porcelain']
       stdout = self.m.raw_io.output(add_output_log=True)
-    if self.m.dev.dryrun or dryrun:
-      args += ['--dry-run']
     args += [remote, refspec]
     return self._step(args, stdout=stdout)
 
