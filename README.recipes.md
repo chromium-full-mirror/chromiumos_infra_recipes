@@ -63,7 +63,6 @@
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
   * [portage:examples/portageq_parse_error](#recipes-portage_examples_portageq_parse_error)
-  * [prototype](#recipes-prototype) &mdash; Recipe for prototyping Chrome OS builders.
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [recipes_tester](#recipes-recipes_tester) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
@@ -1578,13 +1577,6 @@ Raises:
 [DEPS](/recipe_modules/portage/examples/portageq_parse_error.py#6): [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/portage/examples/portageq_parse_error.py#13)(api):**
-### *recipes* / [prototype](/recipes/prototype.py)
-
-[DEPS](/recipes/prototype.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-Recipe for prototyping Chrome OS builders.
-
-&mdash; **def [RunSteps](/recipes/prototype.py#22)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
