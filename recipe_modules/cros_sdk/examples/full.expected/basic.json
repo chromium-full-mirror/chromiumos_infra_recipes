@@ -13,7 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chroot/chroot"
+      "[CACHE]/cros_chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path.ensure chroot directory",
@@ -35,7 +35,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/test/chroot"
+      "[CLEANUP]/test/cros_chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path (2).ensure chroot directory",
@@ -48,7 +48,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CLEANUP]/test/chroot",
+      "[CLEANUP]/test/cros_chroot",
       "--help"
     ],
     "name": "get cros_sdk help"
@@ -58,7 +58,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CLEANUP]/test/chroot",
+      "[CLEANUP]/test/cros_chroot",
       "PATH=/bin",
       "--",
       "ls"
@@ -95,7 +95,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "symlink",
-      "[CLEANUP]/test/chroot",
+      "[CLEANUP]/test/cros_chroot",
       "[CLEANUP]/checkout/chroot"
     ],
     "infra_step": true,
@@ -150,7 +150,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "symlink",
-      "[CLEANUP]/test/chroot",
+      "[CLEANUP]/test/cros_chroot",
       "[CLEANUP]/checkout/chroot"
     ],
     "infra_step": true,

@@ -17,7 +17,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
   def initialize(self):
     """Cache the chroot path."""
-    self.configure(self.m.path['cache'].join('chroot'))
+    self.configure(self.m.path['cache'])
 
   def configure(self, chroot_parent_path):
     """Configure CrosSdkApi.
@@ -26,7 +26,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       chroot_parent_path (Path): Parent for chroot directory.
     """
     with self.m.step.nest('configure chroot path'):
-      self._chroot_path = chroot_parent_path.join('chroot')
+      self._chroot_path = chroot_parent_path.join('cros_chroot')
       self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
 
   @property

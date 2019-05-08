@@ -13,7 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chroot/chroot"
+      "[CACHE]/cros_chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path.ensure chroot directory",

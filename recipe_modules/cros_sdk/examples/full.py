@@ -14,7 +14,8 @@ def RunSteps(api):
   workspace = api.path['cleanup'].join('workspace')
 
   api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
-  api.assertions.assertTrue(api.cros_sdk.chroot.path.endswith('test/chroot'))
+  api.assertions.assertTrue(
+      api.cros_sdk.chroot.path.endswith('test/cros_chroot'))
 
   api.cros_sdk('get cros_sdk help', ['--help'])
   api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},

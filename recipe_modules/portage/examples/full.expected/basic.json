@@ -13,7 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chroot/chroot"
+      "[CACHE]/cros_chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path.ensure chroot directory",
@@ -26,7 +26,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CACHE]/chroot/chroot",
+      "[CACHE]/cros_chroot",
       "--",
       "egencache",
       "--update",
@@ -65,7 +65,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
-      "[CACHE]/chroot/chroot",
+      "[CACHE]/cros_chroot",
       "--",
       "portageq",
       "best_visible",
