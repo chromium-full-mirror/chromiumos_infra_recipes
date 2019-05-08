@@ -20,14 +20,18 @@ SKYLAB_VERSION = 'prod'
 class SkylabRequestMetadata(object):
   """Metadata of a requested task."""
 
-  def __init__(self, task_json, build_target):
+  def __init__(self, task_json, build_target, milo_display_name):
     self._task_json = task_json
     self._build_target = build_target
+    self._milo_display_name = milo_display_name
 
   @property
   def name(self):
     """Returns the name of the associated task."""
-    return self._task_json['task_name']  # pragma: nocover
+    # This would normally come from self._task_json['task_name']
+    # However, it's only ever used in our recipes as a name for referring
+    # to test runs, so it's convenient to rename it to something prettier.
+    return self._milo_display_name
 
   @property
   def id(self):
@@ -37,7 +41,7 @@ class SkylabRequestMetadata(object):
   @property
   def task_ui_link(self):
     """Returns the URL of the associated task in the Swarming UI."""
-    return self._task_json['task_url']  # pragma: nocover
+    return self._task_json['task_url']
 
   @property
   def swarming_server(self):
@@ -86,7 +90,9 @@ class SkylabApi(recipe_api.RecipeApi):
         result = self.m.easy.stdout_step(
             test_suite, cmd,
             test_stdout=self.test_api.example_result(test_suite))
-        task = SkylabRequestMetadata(json.loads(result), test_unit.build_target)
+        milo_display_name = '%s.hw.%s' % (test_unit.build_target.name, test_suite)
+        task = SkylabRequestMetadata(
+            json.loads(result), test_unit.build_target, milo_display_name)
         presented_links = self.m.step.active_result.presentation.links
         presented_links['Skylab task UI: %s' % task.name] = task.task_ui_link
         tasks.append(task)

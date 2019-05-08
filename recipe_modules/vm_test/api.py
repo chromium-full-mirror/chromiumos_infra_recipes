@@ -149,7 +149,7 @@ class VMTestApi(recipe_api.RecipeApi):
                             'vpython')
     request = (
         self.m.swarming.task_request().with_name(
-            'vm-test.%s.%s'% (str(build_target.name), str(test_suite))
+            '%s.vm.%s'% (str(build_target.name), str(test_suite))
         ).with_priority(SWARMING_MED_PRIORITY))
 
     cmd = [

@@ -80,7 +80,7 @@
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LINK@Skylab task UI: suite1@http://s.com/0@@@"
+      "@@@STEP_LINK@Skylab task UI: hard_wear.hw.suite1@http://s.com/0@@@"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LINK@Skylab task UI: suite2@http://s.com/1@@@"
+      "@@@STEP_LINK@Skylab task UI: hard_wear.hw.suite2@http://s.com/1@@@"
     ]
   },
   {
