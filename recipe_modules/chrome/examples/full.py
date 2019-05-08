@@ -3,11 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-DEPS = ['recipe_engine/path', 'sync_chrome']
+DEPS = ['recipe_engine/path', 'chrome']
 
 
 def RunSteps(api):
-  api.sync_chrome.sync_chrome(chrome_root=api.path['start_dir'].join('chrome'))
+  api.chrome.sync(chrome_root=api.path['start_dir'].join('chrome'))
 
 
 def GenTests(api):

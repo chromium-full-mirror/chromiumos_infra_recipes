@@ -3,6 +3,7 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
+  * [chrome](#recipe_modules-chrome)
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
@@ -28,13 +29,13 @@
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [skylab](#recipe_modules-skylab)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
-  * [sync_chrome](#recipe_modules-sync_chrome)
   * [test_plan](#recipe_modules-test_plan)
   * [vm_test](#recipe_modules-vm_test)
 
 **[Recipes](#Recipes)**
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
+  * [chrome:examples/full](#recipes-chrome_examples_full)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
@@ -66,7 +67,6 @@
   * [repo:examples/full](#recipes-repo_examples_full)
   * [skylab:examples/create_suites](#recipes-skylab_examples_create_suites)
   * [support:examples/full](#recipes-support_examples_full)
-  * [sync_chrome:examples/full](#recipes-sync_chrome_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_execution/execute_plan](#recipes-test_execution_execute_plan) &mdash; Recipe for executing ChromeOS test plan.
   * [test_execution/execute_vm_suite](#recipes-test_execution_execute_vm_suite) &mdash; Recipe for executing ChromeOS VM test suite.
@@ -77,6 +77,27 @@
   * [vm_test:examples/full](#recipes-vm_test_examples_full)
 ## Recipe Modules
 
+### *recipe_modules* / [chrome](/recipe_modules/chrome)
+
+[DEPS](/recipe_modules/chrome/__init__.py#1): [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/chrome/api.py#11)(self):**
+
+The path to use for gclient caching.
+
+All git repos are cached here, and it is used for clones, instead of cloning
+directly from the remote.
+
+&mdash; **def [sync](/recipe_modules/chrome/api.py#20)(self, chrome_root):**
+
+Sync Chrome source code.
+
+Must be run with cwd inside a chromiumos source root.
+
+Args:
+  chrome_root (str): Directory to sync the Chrome source code to.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
 [DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1211,27 +1232,6 @@ Returns:
 Ensure the CIPD support package is installed.
 
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
-### *recipe_modules* / [sync\_chrome](/recipe_modules/sync_chrome)
-
-[DEPS](/recipe_modules/sync_chrome/__init__.py#1): [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
-
-#### **class [SyncChromeApi](/recipe_modules/sync_chrome/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/sync_chrome/api.py#11)(self):**
-
-The path to use for gclient caching.
-
-All git repos are cached here, and it is used for clones, instead of cloning
-directly from the remote.
-
-&mdash; **def [sync\_chrome](/recipe_modules/sync_chrome/api.py#20)(self, chrome_root):**
-
-Sync Chrome source code.
-
-Must be run with cwd inside a chromiumos source root.
-
-Args:
-  chrome_root (str): Directory to sync the Chrome source code to.
 ### *recipe_modules* / [test\_plan](/recipe_modules/test_plan)
 
 [DEPS](/recipe_modules/test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [infra\_config](#recipe_modules-infra_config), [repo](#recipe_modules-repo), [skylab](#recipe_modules-skylab), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -1385,6 +1385,11 @@ Returns:
 Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#65)(api, build_target, build_image, upload_artifacts, upload_prebuilts, run_ebuild_tests):**
+### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
+
+[DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#9)(api):**
 ### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts)
@@ -1582,11 +1587,6 @@ Tests a recipe CL by running ChromeOS builders.
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
-### *recipes* / [sync\_chrome:examples/full](/recipe_modules/sync_chrome/examples/full.py)
-
-[DEPS](/recipe_modules/sync_chrome/examples/full.py#6): [sync\_chrome](#recipe_modules-sync_chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path]
-
-&mdash; **def [RunSteps](/recipe_modules/sync_chrome/examples/full.py#9)(api):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#12): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]

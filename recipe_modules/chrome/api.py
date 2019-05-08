@@ -6,7 +6,7 @@
 from recipe_engine import recipe_api
 
 
-class SyncChromeApi(recipe_api.RecipeApi):
+class ChromeApi(recipe_api.RecipeApi):
 
   @property
   def cache_path(self):
@@ -17,7 +17,7 @@ class SyncChromeApi(recipe_api.RecipeApi):
     """
     return self.m.path['cache'].join('chrome')
 
-  def sync_chrome(self, chrome_root):
+  def sync(self, chrome_root):
     """
     Sync Chrome source code.
 
