@@ -23,6 +23,7 @@ from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.image import CreateVmRequest
 from PB.chromite.api.image import Image
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
+from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.test import VmTestRequest
 from PB.recipes.chromeos.test_vm import TestVmProperties
 
@@ -66,6 +67,10 @@ def RunSteps(api, properties):
               flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
               chroot=api.cros_sdk.chroot))
       step.presentation.logs['sdk version'] = [str(response.version.version)]
+
+    with api.step.nest('update sdk'):
+      api.cros_build_api.SdkService.Update(
+          UpdateSdkRequest(chroot=api.cros_sdk.chroot))
 
     with api.step.nest('download test image'):
       test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')

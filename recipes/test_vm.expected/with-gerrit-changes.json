@@ -578,6 +578,78 @@
   },
   {
     "cmd": [],
+    "name": "update sdk"
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.call chromite.api.SdkService/Update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "update sdk.call chromite.api.SdkService/Update.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "chromite.api.SdkService/Update"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "update sdk.call chromite.api.SdkService/Update.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "download test image"
   },
   {
@@ -590,7 +662,7 @@
       "----",
       "cp",
       "gs://gs://chromeos-image-archive/amd64-generic-cq/R12-3.4.5-6/image.zip",
-      "[CLEANUP]/test-artifacts_tmp_3/image.zip"
+      "[CLEANUP]/test-artifacts_tmp_4/image.zip"
     ],
     "infra_step": true,
     "name": "download test image.gsutil download image bundle from GS",
@@ -604,7 +676,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/test-artifacts_tmp_3/image.zip\", \"include_files\": [\"chromiumos_test_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/test-artifacts_tmp_3/image\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/test-artifacts_tmp_4/image.zip\", \"include_files\": [\"chromiumos_test_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/test-artifacts_tmp_4/image\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -635,7 +707,7 @@
       "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/test-artifacts_tmp_3/image/chromiumos_test_image.bin\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/test-artifacts_tmp_4/image/chromiumos_test_image.bin\", @@@",
       "@@@STEP_LOG_LINE@request@    \"type\": \"TEST\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -655,8 +727,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"image\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }, \n    \"path\": \"[CLEANUP]/test-artifacts_tmp_3/image/chromiumos_test_image.bin\", \n    \"type\": \"TEST\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+      "{\n  \"image\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }, \n    \"path\": \"[CLEANUP]/test-artifacts_tmp_4/image/chromiumos_test_image.bin\", \n    \"type\": \"TEST\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "infra_step": true,
     "name": "convert test image to vm image.call chromite.api.ImageService/CreateVm.write input file",
@@ -668,9 +740,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "chromite.api.ImageService/CreateVm"
     ],
     "env_suffixes": {
@@ -691,7 +763,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -726,7 +798,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"sshOptions\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"privateKeyPath\": \"[CLEANUP]/test-artifacts_tmp_3/image/id_rsa\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"privateKeyPath\": \"[CLEANUP]/test-artifacts_tmp_4/image/id_rsa\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -742,8 +814,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"vmImage\": {\n    \"path\": \"[START_DIR]/cros/src/build/images/chromiumos_qemu_image.bin\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"vmTests\": [\n    {\n      \"pattern\": \"example.Pass\"\n    }\n  ], \n  \"testHarness\": \"TAST\", \n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"sshOptions\": {\n    \"privateKeyPath\": \"[CLEANUP]/test-artifacts_tmp_3/image/id_rsa\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+      "{\n  \"vmImage\": {\n    \"path\": \"[START_DIR]/cros/src/build/images/chromiumos_qemu_image.bin\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"vmTests\": [\n    {\n      \"pattern\": \"example.Pass\"\n    }\n  ], \n  \"testHarness\": \"TAST\", \n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"sshOptions\": {\n    \"privateKeyPath\": \"[CLEANUP]/test-artifacts_tmp_4/image/id_rsa\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "infra_step": true,
     "name": "run tast vm tests.call chromite.api.TestService/VmTest.write input file",
@@ -755,9 +827,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "chromite.api.TestService/VmTest"
     ],
     "env_suffixes": {
@@ -778,7 +850,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,

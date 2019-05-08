@@ -33,7 +33,8 @@ from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
-from PB.chromite.api.sdk import CreateRequest as SdkCreateRequest
+from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
+from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
@@ -85,8 +86,8 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
 
       with api.step.nest('init sdk') as step:
         response = api.cros_build_api.SdkService.Create(
-            SdkCreateRequest(
-                flags=SdkCreateRequest.Flags(no_replace=True,
+            CreateSdkRequest(
+                flags=CreateSdkRequest.Flags(no_replace=True,
                                              no_use_image=True),
                 chroot=api.cros_sdk.chroot))
         step.presentation.logs['sdk version'] = [str(response.version.version)]
@@ -95,6 +96,10 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
         # chroot the workspace to make it look legit. New chromite services
         # should accept the chroot path as a parameter.
         api.cros_sdk.link_chroot(api.cros_source.workspace_path)
+
+      with api.step.nest('update sdk'):
+        api.cros_build_api.SdkService.Update(
+            UpdateSdkRequest(chroot=api.cros_sdk.chroot))
 
       with api.step.nest('create sysroot'):
         sysroot = api.cros_build_api.SysrootService.Create(

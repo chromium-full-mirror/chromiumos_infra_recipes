@@ -1403,7 +1403,7 @@ Returns:
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#65)(api, build_target, build_image, upload_artifacts, upload_prebuilts, run_ebuild_tests):**
+&mdash; **def [RunSteps](/recipes/build_target.py#66)(api, build_target, build_image, upload_artifacts, upload_prebuilts, run_ebuild_tests):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1645,7 +1645,7 @@ This recipe runs out-of-band on VM test swarming bot.
 &mdash; **def [RunSteps](/recipe_modules/test_plan/examples/test_builds.py#11)(api):**
 ### *recipes* / [test\_vm](/recipes/test_vm.py)
 
-[DEPS](/recipes/test_vm.py#29): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_vm.py#30): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for running Tast VM tests.
 
@@ -1662,7 +1662,7 @@ The steps specific to VM testing are:
 
 For now, only supports TAST VM tests.
 
-&mdash; **def [RunSteps](/recipes/test_vm.py#49)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_vm.py#50)(api, properties):**
 ### *recipes* / [vm\_test:examples/full](/recipe_modules/vm_test/examples/full.py)
 
 [DEPS](/recipe_modules/vm_test/examples/full.py#5): [test\_plan](#recipe_modules-test_plan), [vm\_test](#recipe_modules-vm_test), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
