@@ -126,13 +126,14 @@ def _load_manifest_commit_from_snapshot(api):
   Returns:
     common_pb2.GitilesCommit
   """
-  rev = api.gitiles.fetch_revision(
-      'chrome-internal', 'chromeos/manifest-internal', 'snapshot')
-  return common_pb2.GitilesCommit(
-      host='chrome-internal.googlesource.com',
-      project='chromeos/manifest-internal',
-      ref='refs/heads/snapshot',
-      id=rev)
+  with api.step.nest('fetch manifest ref'):
+    rev = api.gitiles.fetch_revision(
+        'chrome-internal', 'chromeos/manifest-internal', 'snapshot')
+    return common_pb2.GitilesCommit(
+        host='chrome-internal.googlesource.com',
+        project='chromeos/manifest-internal',
+        ref='refs/heads/snapshot',
+        id=rev)
 
 def validate_refs(refs):
   """Assert all given refs start with refs/heads.
