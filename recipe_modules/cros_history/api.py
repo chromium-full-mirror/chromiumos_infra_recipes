@@ -54,7 +54,7 @@ class HistoryAwareApi(recipe_api.RecipeApi):
 
       previously_passed_builds = []
       passed_builders = set()
-      for build in self._get_patch_history(patches):
+      for build in self._get_patch_history(patches, success_only=True):
         if build.builder.builder not in passed_builders:
           passed_builders.add(build.builder.builder)
           previously_passed_builds.append(build)
@@ -117,12 +117,13 @@ class HistoryAwareApi(recipe_api.RecipeApi):
       self._log_previous_tests(target_build_map)
       return set(target_build_map.keys())
 
-  def _get_patch_history(self, patches, builder=None):
+  def _get_patch_history(self, patches, builder=None, success_only=False):
     """Get all the passed builds with current patch-set from Buildbucket.
 
     Args:
       * patches list([GerritChange]): patches to search for.
-      * builder BuilderID: query for only this builder.
+      * builder (BuilderID): query for only this builder.
+      * success_only (bool): query only successful builds.
 
     Returns:
       A boolean to indicate whether the config has passed before
@@ -131,7 +132,8 @@ class HistoryAwareApi(recipe_api.RecipeApi):
     create_time = common_pb2.TimeRange(
         start_time=timestamp_pb2.Timestamp(
             seconds=int(self.start_time_in_seconds)))
+    status = common_pb2.SUCCESS if success_only else None
     build_predicate = rpc_pb2.BuildPredicate(
-        status=common_pb2.SUCCESS, builder=builder, gerrit_changes=patches,
+        status=status, builder=builder, gerrit_changes=patches,
         create_time=create_time)
     return self.m.buildbucket.search(build_predicate)
