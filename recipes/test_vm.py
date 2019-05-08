@@ -63,8 +63,7 @@ def RunSteps(api, properties):
     with api.step.nest('init sdk') as step:
       response = api.cros_build_api.SdkService.Create(
           CreateSdkRequest(
-              flags=CreateSdkRequest.Flags(no_replace=True, bootstrap=False,
-                                           no_use_image=True),
+              flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
               chroot=api.cros_sdk.chroot))
       step.presentation.logs['sdk version'] = [str(response.version.version)]
 

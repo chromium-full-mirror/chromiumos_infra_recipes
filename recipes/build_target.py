@@ -86,7 +86,7 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
       with api.step.nest('init sdk') as step:
         response = api.cros_build_api.SdkService.Create(
             SdkCreateRequest(
-                flags=SdkCreateRequest.Flags(no_replace=True, bootstrap=False,
+                flags=SdkCreateRequest.Flags(no_replace=True,
                                              no_use_image=True),
                 chroot=api.cros_sdk.chroot))
         step.presentation.logs['sdk version'] = [str(response.version.version)]
