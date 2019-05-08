@@ -258,14 +258,6 @@
   },
   {
     "cmd": [],
-    "name": "read build config (2)"
-  },
-  {
-    "cmd": [],
-    "name": "read build config (3)"
-  },
-  {
-    "cmd": [],
     "name": "run child builds"
   },
   {

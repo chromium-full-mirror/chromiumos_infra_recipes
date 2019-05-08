@@ -25,9 +25,13 @@ class InfraConfigApi(recipe_api.RecipeApi):
     Loads the proto and builds the map if it hasn't already been done.
     """
     if not self._name_to_builder_config:
-      builder_configs_file = self.m.gitiles.download_file(
-          REPO_URL, "generated/builder_configs.cfg",
-          step_test_data=self.test_api.builder_configs_step_test_data)
+      # Step nesting needs to happen here or it shows up many times in Milo,
+      # once for each builder.
+      with self.m.step.nest('read build config'), self.m.context(
+          infra_steps=True):
+        builder_configs_file = self.m.gitiles.download_file(
+            REPO_URL, "generated/builder_configs.cfg",
+            step_test_data=self.test_api.builder_configs_step_test_data)
       # Ignore unknown fields, as this repo may not be using the newest version
       # of the proto.
       builder_configs = jsonpb.Parse(builder_configs_file, BuilderConfigs(),
@@ -58,14 +62,10 @@ class InfraConfigApi(recipe_api.RecipeApi):
     Raises:
       A LookupError if no BuilderConfig is found for the specified builder.
     """
-    with self.m.step.nest('read build config'), self.m.context(
-        infra_steps=True):
-      config = self._get_name_to_builder_config().get(builder_name)
-      if not config:
-        raise LookupError(
-            "No BuilderConfig for builder {}".format(builder_name))
-
-      return config
+    config = self._get_name_to_builder_config().get(builder_name)
+    if not config:
+      raise LookupError("No BuilderConfig for builder {}".format(builder_name))
+    return config
 
   def get_test_config(self, config_name):
     """Gets Path of most recent test config.

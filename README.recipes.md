@@ -888,7 +888,7 @@ Raises:
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [get\_builder\_config](/recipe_modules/infra_config/api.py#40)(self, builder_name):**
+&mdash; **def [get\_builder\_config](/recipe_modules/infra_config/api.py#42)(self, builder_name):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -910,7 +910,7 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#70)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/infra_config/api.py#68)(self, config_name):**
 
 Gets Path of most recent test config.
 
