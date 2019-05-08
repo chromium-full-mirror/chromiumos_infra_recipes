@@ -50,6 +50,8 @@ github.com/texttheater/golang-levenshtein v0.0.0-20180516184445-d188e65d659e h1:
 github.com/texttheater/golang-levenshtein v0.0.0-20180516184445-d188e65d659e/go.mod h1:XDKHRm5ThF8YJjx001LtgelzsoaEcvnA7lVWz9EeX3g=
 go.chromium.org/luci v0.0.0-20190114200033-fb39777d1b49 h1:t+j7F4HG6oLYks27GhDir6C+sLzWewN8ZsjDVkVeCVs=
 go.chromium.org/luci v0.0.0-20190114200033-fb39777d1b49/go.mod h1:MIQewVTLvOvc0UioV0JNqTNO/RspKFS0XEeoKrOxsdM=
+go.chromium.org/luci v0.0.0-20190508132914-521f1612b5b3 h1:UC1frBdnl88N4GBAoexzKXqyoyV0KIdBR/nKFvBPG04=
+go.chromium.org/luci v0.0.0-20190508132914-521f1612b5b3/go.mod h1:MIQewVTLvOvc0UioV0JNqTNO/RspKFS0XEeoKrOxsdM=
 go.opencensus.io v0.18.0/go.mod h1:vKdFvxhtzZ9onBp9VKHK8z/sRpBMnKAsufL7wlDrCOA=
 golang.org/x/lint v0.0.0-20180702182130-06c8688daad7/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
 golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=

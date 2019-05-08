@@ -14,7 +14,7 @@ require (
 	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
 	github.com/texttheater/golang-levenshtein v0.0.0-20180516184445-d188e65d659e // indirect
-	go.chromium.org/luci v0.0.0-20190114200033-fb39777d1b49
+	go.chromium.org/luci v0.0.0-20190508132914-521f1612b5b3
 	golang.org/x/net v0.0.0-20190110200230-915654e7eabc // indirect
 	golang.org/x/oauth2 v0.0.0-20190110195249-fd3eaa146cbb // indirect
 	google.golang.org/api v0.1.0 // indirect
