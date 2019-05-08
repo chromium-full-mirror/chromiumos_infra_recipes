@@ -83,8 +83,10 @@ def RunSteps(api, properties):
 
     with api.step.nest('convert test image to vm image'):
       create_vm_response = api.cros_build_api.ImageService.CreateVm(
-          CreateVmRequest(image=Image(path=test_image_path, type=Image.TEST),
-                          chroot=api.cros_sdk.chroot))
+          CreateVmRequest(
+              image=Image(build_target=properties.build_target,
+                          path=test_image_path, type=Image.TEST),
+              chroot=api.cros_sdk.chroot))
 
     with api.step.nest('run tast vm tests'):
       # TODO(evanhernandez): Read and present the test results.

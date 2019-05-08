@@ -632,6 +632,9 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"image\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/test-artifacts_tmp_3/image/chromiumos_test_image.bin\", @@@",
       "@@@STEP_LOG_LINE@request@    \"type\": \"TEST\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
@@ -652,7 +655,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"image\": {\n    \"path\": \"[CLEANUP]/test-artifacts_tmp_3/image/chromiumos_test_image.bin\", \n    \"type\": \"TEST\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/chroot/chroot\"\n  }\n}",
+      "{\n  \"image\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }, \n    \"path\": \"[CLEANUP]/test-artifacts_tmp_3/image/chromiumos_test_image.bin\", \n    \"type\": \"TEST\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/chroot/chroot\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
