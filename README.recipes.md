@@ -1537,7 +1537,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#61)(api, update_manifest_refs, enable_history):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#177)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#179)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1546,7 +1546,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [run\_tests](/recipes/orchestrator.py#204)(api, builds, step_name='run tests'):**
+&mdash; **def [run\_tests](/recipes/orchestrator.py#206)(api, builds, step_name='run tests'):**
 
 Shortcut for schedule_tests + collect_tests.
 
@@ -1557,7 +1557,7 @@ Args:
 Returns:
   list[swarming.TaskResult]
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#163)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#165)(refs):**
 
 Assert all given refs start with refs/heads.
 

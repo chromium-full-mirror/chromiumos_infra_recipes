@@ -394,15 +394,6 @@
   },
   {
     "cmd": [],
-    "name": "verify builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@One or more child builders failed:@@@",
-      "@@@STEP_LINK@//amd64-generic-postsubmit/8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run tests"
   },
   {
@@ -823,6 +814,15 @@
   },
   {
     "cmd": [],
+    "name": "verify builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@One or more child builders failed:@@@",
+      "@@@STEP_LINK@//amd64-generic-postsubmit/8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "test results",
     "~followup_annotations": [
       "@@@STEP_TEXT@3 succeeded, 0 failed@@@"
@@ -859,7 +859,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 out of 3 aggregated steps failed: One or more child builders failed"
+      "humanReason": "1 out of 1 aggregated steps failed: One or more child builders failed"
     },
     "name": "$result"
   }

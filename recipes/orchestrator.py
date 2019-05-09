@@ -96,19 +96,21 @@ def RunSteps(api, update_manifest_refs, enable_history):
     completed_builds += api.buildbucket.run(
         requests, timeout=60 * 60 * 4, step_name='run child builds',
         url_title_fn=api.naming.get_build_title)
-    # Defer exceptions until the end, so that we recover gracefully
-    # from intermediate failures.
+
+    if api.buildbucket.build.input.gerrit_changes:
+      untested_builds = _get_untested_builds(api, completed_builds,
+                                             tested_targets)
+    else:
+      untested_builds = completed_builds
+
+    test_results = []
+    if not api.cq.state == api.cq.DRY:
+      test_results = run_tests(api, untested_builds)
+
+    # Verify tests in a deferred context so that all failures appear.
     with api.step.defer_results():
       api.failures.verify_builds(completed_builds)
-      if api.buildbucket.build.input.gerrit_changes:
-        untested_builds = _get_untested_builds(api, completed_builds,
-                                               tested_targets)
-      else:
-        untested_builds = completed_builds
-
-      if not api.cq.state == api.cq.DRY:
-        test_results = run_tests(api, untested_builds)
-        api.failures.verify_tests(test_results)
+      api.failures.verify_tests(test_results)
 
     # Victory! If we've made it this far, the child builders were successful
     # and we can update the success manifest ref if it is specified.
@@ -212,17 +214,8 @@ def run_tests(api, builds, step_name='run tests'):
     list[swarming.TaskResult]
   """
   with api.step.nest(step_name):
-    # TODO(dburger): Hack!!! Remove these isinstance calls when the
-    # DeferredResult situation is better understood. Before these were added
-    # this passed tests but failed in production. See https://crbug.com/960643.
     tasks = api.test_plan.test_builds('test builds', list(builds))
-    if isinstance(tasks, DeferredResult):
-      tasks = tasks.get_result()
-
     results = api.test_plan.collect_tests('collect test results', tasks)
-    if isinstance(results, DeferredResult):
-      results = results.get_result()
-
     return results
 
 

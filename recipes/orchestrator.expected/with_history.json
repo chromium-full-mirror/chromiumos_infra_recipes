@@ -542,10 +542,6 @@
   },
   {
     "cmd": [],
-    "name": "verify builds"
-  },
-  {
-    "cmd": [],
     "name": "get untested builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@1/2 builds untested@@@",
@@ -972,6 +968,10 @@
       "@@@STEP_LOG_END@Swarming task output: my_task_1@@@",
       "@@@SET_BUILD_PROPERTY@build_target_test_status@{\"hard_wear\": \"success\", \"vert_masheen\": \"success\"}@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "verify builds"
   },
   {
     "cmd": [],

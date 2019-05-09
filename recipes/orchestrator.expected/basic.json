@@ -386,10 +386,6 @@
   },
   {
     "cmd": [],
-    "name": "verify builds"
-  },
-  {
-    "cmd": [],
     "name": "run tests"
   },
   {
@@ -807,6 +803,10 @@
       "@@@STEP_LOG_END@Swarming task output: my_task_1@@@",
       "@@@SET_BUILD_PROPERTY@build_target_test_status@{\"hard_wear\": \"success\", \"vert_masheen\": \"success\"}@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "verify builds"
   },
   {
     "cmd": [],
