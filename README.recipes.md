@@ -14,6 +14,7 @@
   * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
+  * [cros_test_plan](#recipe_modules-cros_test_plan)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [depends](#recipe_modules-depends) &mdash; APIs for checking that CQ-DEPEND has been fulfilled.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
@@ -47,6 +48,7 @@
   * [cros_relevance:examples/full](#recipes-cros_relevance_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
+  * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
@@ -535,6 +537,26 @@ The "workspace" checkout path.
 
 This is where the build is processed. It will contain the target base
 checkout and any modifications made by the build.
+### *recipe_modules* / [cros\_test\_plan](/recipe_modules/cros_test_plan)
+
+[DEPS](/recipe_modules/cros_test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#42)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for generating and parsing test plans.
+
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#50)(self, builds, name=None):**
+
+Generate test plan.
+
+Args:
+  * name (str): The step name.
+  * builds (list[build_pb2.Build]): builds to test.
+
+Returns:
+  GenerateTestPlanResponse of test plan.
+
+&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#47)(self):**
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1446,6 +1468,11 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#17)(api):**
+### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
+
+[DEPS](/recipe_modules/cros_test_plan/examples/full.py#8): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#14)(api):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]

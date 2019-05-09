@@ -1,0 +1,112 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+from recipe_engine import recipe_test_api
+
+from PB.chromiumos.common import BuildTarget
+from PB.testplans.target_test_requirements_config import GceTestCfg
+from PB.testplans.target_test_requirements_config import HwTestCfg
+from PB.testplans.target_test_requirements_config import MoblabVmTestCfg
+from PB.testplans.target_test_requirements_config import TastVmTestCfg
+from PB.testplans.target_test_requirements_config import VmTestCfg
+from PB.testplans.generate_test_plan import BuildPayload
+from PB.testplans.generate_test_plan import TestUnit
+from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+
+
+class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
+  """Test examples for cros_test_plan api."""
+
+  def test_unit(self, **kwargs):
+    values = dict(
+        build_target=BuildTarget(name='target'),
+        build_payload=BuildPayload(
+            artifacts_gs_bucket='gs://chromeos-image-archive',
+            artifacts_gs_path='target-cq/R12-3.4.5-6789',
+        ),
+    )
+    values.update(kwargs)
+    return TestUnit(**values)
+
+  @property
+  def gce_test_unit(self):
+    return self.test_unit(
+        gce_test_cfg=GceTestCfg(
+            gce_test=[
+                GceTestCfg.GceTest(
+                    test_type='gce',
+                    test_suite='gce-test-suite',
+                    timeout_sec=123,
+                    use_ctest=True,
+                ),
+            ],),)
+
+  @property
+  def hw_test_unit(self):
+    return self.test_unit(
+        hw_test_cfg=HwTestCfg(
+            hw_test=[
+                HwTestCfg.HwTest(
+                    suite='bvt-cq',
+                    skylab_board='target',
+                    timeout_sec=123,
+                    critical=True,
+                    minimum_duts=2,
+                    retry=True,
+                    max_retries=3,
+                    suite_min_duts=2,
+                    offload_failures_only=True,
+                ),
+            ],),)
+
+  @property
+  def moblab_vm_test_unit(self):
+    return self.test_unit(
+        moblab_vm_test_cfg=MoblabVmTestCfg(
+            moblab_test=[
+                MoblabVmTestCfg.MoblabTest(
+                    test_type='moblab-vm',
+                    timeout_sec=123,
+                ),
+            ],),)
+
+  @property
+  def tast_vm_test_unit(self):
+    return self.test_unit(
+        tast_vm_test_cfg=TastVmTestCfg(
+            tast_vm_test=[
+                TastVmTestCfg.TastVmTest(
+                    suite_name='tast-suite',
+                    tast_test_expr=[
+                        TastVmTestCfg.TastTestExpr(test_expr='exampe.Pass'),
+                    ],
+                    timeout_sec=123,
+                ),
+            ],),)
+
+  @property
+  def vm_test_unit(self):
+    return self.test_unit(
+        vm_test_cfg=VmTestCfg(
+            vm_test=[
+                VmTestCfg.VmTest(
+                    test_type='vm_suite',
+                    test_suite='autotest-suite',
+                    timeout_sec=123,
+                    retry=True,
+                    max_retries=3,
+                    use_ctest=True,
+                ),
+            ],),)
+
+  @property
+  def generate_test_plan_response(self):
+    return GenerateTestPlanResponse(test_unit=[
+        self.gce_test_unit,
+        self.hw_test_unit,
+        self.moblab_vm_test_unit,
+        self.tast_vm_test_unit,
+        self.vm_test_unit,
+    ])
