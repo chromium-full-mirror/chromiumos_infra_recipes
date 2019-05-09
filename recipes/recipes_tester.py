@@ -24,6 +24,7 @@ DEPS = [
     'failures',
     'gerrit',
     'git',
+    'naming',
     'recipe_analyze',
 ]
 
@@ -98,7 +99,8 @@ def _get_last_successful_build(api, builder):
               'project': PROJECT,
               'bucket': BUCKET,
               'builder': builder
-          }, status=common_pb2.SUCCESS, include_experimental=False), limit=1)
+          }, status=common_pb2.SUCCESS, include_experimental=False), limit=1,
+      url_title_fn=api.naming.get_build_title)
 
   if not successful_builds:
     raise api.step.StepFailure(

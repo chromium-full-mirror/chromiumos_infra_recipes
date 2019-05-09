@@ -136,4 +136,5 @@ class HistoryAwareApi(recipe_api.RecipeApi):
     build_predicate = rpc_pb2.BuildPredicate(
         status=status, builder=builder, gerrit_changes=patches,
         create_time=create_time)
-    return self.m.buildbucket.search(build_predicate)
+    return self.m.buildbucket.search(build_predicate,
+                                     url_title_fn=self.m.naming.get_build_title)

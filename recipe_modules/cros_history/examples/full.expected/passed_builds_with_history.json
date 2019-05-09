@@ -69,8 +69,8 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@",
-      "@@@STEP_LINK@231@https://cr-buildbucket.appspot.com/build/231@@@"
+      "@@@STEP_LINK@//betty/123@https://cr-buildbucket.appspot.com/build/123@@@",
+      "@@@STEP_LINK@//reef/231@https://cr-buildbucket.appspot.com/build/231@@@"
     ]
   },
   {
