@@ -82,18 +82,14 @@ def GenTests(api):
                   builder='reef'))
           ])))
 
-  struct_value = struct_pb2.Struct(
-      fields={
-          'reef': struct_pb2.Value(string_value='success'),
-          'betty': struct_pb2.Value(string_value='failure'),
-      })
-  properties = struct_pb2.Struct(fields={
-      'build_target_test_status': struct_pb2.Value(struct_value=struct_value)
-  })
   yield (api.test('passed_targets_with_history') +
          api.buildbucket.simulated_search_results([
              build_pb2.Build(
-                 id=123, output=build_pb2.Build.Output(properties=properties))
+                 id=123, output=build_pb2.Build.Output(
+                     properties=api.cros_history.test_status_property({
+                         'reef': 'success',
+                         'betty': 'failure'
+                     })))
          ], 'Looking for successful tests (2).buildbucket.search') +
          api.properties(
              TestInputProperties(

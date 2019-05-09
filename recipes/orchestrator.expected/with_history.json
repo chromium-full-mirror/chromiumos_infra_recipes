@@ -322,7 +322,27 @@
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"output\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"build_target_test_status\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"amd64-generic\": \"success\", @@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"arm-generic\": \"failure\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
@@ -349,7 +369,17 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@///123@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Looking for successful tests.cros_history",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Some tests have passed before:@@@",
+      "@@@STEP_LINK@amd64-generic@https://cr-buildbucket.appspot.com/build/123@@@"
     ]
   },
   {
@@ -479,11 +509,31 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"builder\": \"amd64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"8922054662172514000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"build_target\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"builder\": \"arm-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"8922054662172514001\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"build_target\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"name\": \"arm-generic\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
@@ -493,6 +543,15 @@
   {
     "cmd": [],
     "name": "verify builds"
+  },
+  {
+    "cmd": [],
+    "name": "get untested builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1/2 builds untested@@@",
+      "@@@STEP_LOG_LINE@untested_builds@//arm-generic-cq/8922054662172514001@@@",
+      "@@@STEP_LOG_END@untested_builds@@@"
+    ]
   },
   {
     "cmd": [],
@@ -545,7 +604,7 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_json",
-      "{\"buildbucketProtos\": [{\"serializedProto\": \"CNCtpKubruDoe2AM\"}, {\"serializedProto\": \"CNGtpKubruDoe2AM\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
+      "{\"buildbucketProtos\": [{\"serializedProto\": \"CNGtpKubruDoexIQGg5hcm0tZ2VuZXJpYy1jcWAMei0KKwopCgxidWlsZF90YXJnZXQSGSoXChUKBG5hbWUSDRoLYXJtLWdlbmVyaWM=\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],

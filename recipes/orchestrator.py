@@ -28,6 +28,7 @@ DEPS = [
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from google.protobuf import struct_pb2
 from recipe_engine.config import ConfigGroup
 from recipe_engine.config import Single
 from recipe_engine.recipe_api import DeferredResult
@@ -53,7 +54,7 @@ PROPERTIES = {
         ),
     # Specifies whether to enable cros_history based resource saving.
     'enable_history':
-        Property(kind=bool, default=False),
+        Property(kind=bool, default=True),
 }
 
 
@@ -100,15 +101,13 @@ def RunSteps(api, update_manifest_refs, enable_history):
     with api.step.defer_results():
       api.failures.verify_builds(completed_builds)
       if api.buildbucket.build.input.gerrit_changes:
-        untested_builds = [
-            b for b in completed_builds
-            if (api.cros_history.get_build_target(b) not in tested_targets)
-        ]
+        untested_builds = _get_untested_builds(api, completed_builds,
+                                               tested_targets)
       else:
         untested_builds = completed_builds
 
       if not api.cq.state == api.cq.DRY:
-        test_results = run_tests(api, completed_builds)
+        test_results = run_tests(api, untested_builds)
         api.failures.verify_tests(test_results)
 
     # Victory! If we've made it this far, the child builders were successful
@@ -133,6 +132,33 @@ def _load_manifest_commit_from_snapshot(api):
         project='chromeos/manifest-internal',
         ref='refs/heads/snapshot',
         id=rev)
+
+
+def _get_untested_builds(api, completed_builds, tested_targets):
+  """Get `completed_builds` that aren't in `tested_targets`.
+
+  Args:
+    api (object): See RunSteps documentation.
+    completed_builds (list[build_pb2.Build]): Completed builds returned from
+      Buildbucket.
+    tested_targets (set[str]): A set of build_targets that have passed testing.
+
+  Return:
+    A list[build_pb2.Build] (that is a subset of `completed_builds`).
+  """
+  with api.step.nest('get untested builds') as step:
+    untested_builds = [
+        b for b in completed_builds
+        if (api.cros_history.get_build_target(b) not in tested_targets)
+    ]
+    step.presentation.step_text = '{}/{} builds untested'.format(
+        len(untested_builds), len(completed_builds))
+    step.presentation.logs['untested_builds'] = [
+        api.naming.get_build_title(b) for b in untested_builds
+    ]
+
+    return untested_builds
+
 
 def validate_refs(refs):
   """Assert all given refs start with refs/heads.
@@ -223,15 +249,53 @@ def GenTests(api):
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return api.buildbucket.build(build)
 
+  def build_target_property(build_target):
+    """Generate a struct for the 'build_target' property.
+
+    Args:
+      * build_target (str): The name of the build target.
+    """
+    return struct_pb2.Struct(
+        fields={
+            'build_target':
+                struct_pb2.Value(
+                    struct_value=struct_pb2.Struct(fields={
+                        'name': struct_pb2.Value(string_value=build_target)
+                    }))
+        })
+
   yield (api.test('basic') +  #
          postsubmit_orchestrator_build() +
          api.test_plan.simulate_test_builds('run tests.test builds'))
 
-  yield (api.test('with_history') +  #
-         cq_orchestrator_build_with_gerrit_change() + api.properties(
-             enable_history=True) + api.buildbucket.simulated_search_results(
-                 [], 'Looking for successful builds.buildbucket.search') +
-         api.test_plan.simulate_test_builds('run tests.test builds'))
+  yield (
+      api.test('with_history') +  #
+      cq_orchestrator_build_with_gerrit_change() +  #
+      api.properties(enable_history=True) +  #
+      api.buildbucket.simulated_search_results(
+          [], 'Looking for successful builds.buildbucket.search') +  #
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(
+              id=123, output=build_pb2.Build.Output(
+                  properties=api.cros_history.test_status_property({
+                      'amd64-generic': 'success',
+                      'arm-generic': 'failure'
+                  })))
+      ], 'Looking for successful tests.buildbucket.search') +  #
+      api.buildbucket.simulated_collect_output(
+          [
+              build_pb2.Build(
+                  id=8922054662172514000,
+                  builder={'builder': 'amd64-generic-cq'},
+                  status=common_pb2.SUCCESS, input=dict(
+                      properties=build_target_property('amd64-generic'))),
+              build_pb2.Build(
+                  id=8922054662172514001, builder={'builder': 'arm-generic-cq'
+                                                  }, status=common_pb2.SUCCESS,
+                  input=dict(properties=build_target_property('arm-generic'))),
+          ],
+          step_name='run child builds.collect',
+      ) + api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (api.test('missing_gitiles_commit') +  #
          postsubmit_orchestrator_build_with_no_gitiles() +
