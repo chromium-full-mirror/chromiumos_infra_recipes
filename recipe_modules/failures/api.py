@@ -88,18 +88,20 @@ class FailuresApi(recipe_api.RecipeApi):
       recipe_api.StepFailure on failing tests.
     """
     with self.m.step.nest('test results') as step_result:
-      success = True
-
+      failure_count = 0
       for swarming_result in test_results:
-        success &= swarming_result.success
         if not swarming_result.success:
+          failure_count += 1
           # We don't have a great way of highlighting failed tests.
           log_name = 'FAILURE - {}'.format(swarming_result.name)
           # Until parallel recipes materializes, dump output to step log
           step_result.presentation.logs[log_name] = [swarming_result.output]
-
-      if not success:
+      step_result.presentation.step_text = (
+          '{} succeeded, {} failed'.format(
+              len(test_results)-failure_count, failure_count))
+      if failure_count > 0:
         raise self.m.step.StepFailure('Failed one or more tests')
+
 
   def _is_critical_failure(self, build):
     """Checks if the status was not SUCCESS and the build was critical.

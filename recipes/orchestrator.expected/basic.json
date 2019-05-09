@@ -810,7 +810,10 @@
   },
   {
     "cmd": [],
-    "name": "test results"
+    "name": "test results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@3 succeeded, 0 failed@@@"
+    ]
   },
   {
     "cmd": [],

@@ -85,6 +85,7 @@
     "cmd": [],
     "name": "test results",
     "~followup_annotations": [
+      "@@@STEP_TEXT@0 succeeded, 1 failed@@@",
       "@@@STEP_LOG_LINE@FAILURE - vm-test@hello world!@@@",
       "@@@STEP_LOG_END@FAILURE - vm-test@@@"
     ]
