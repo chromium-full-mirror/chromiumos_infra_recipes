@@ -57,14 +57,14 @@
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"my-bt.vm.test-suite\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task UI: my-bt.vm.test-suite@https://vm_swarming_server.com/task?id=0@@@"
+      "@@@STEP_LINK@Swarming task UI: vm-test@https://vm_swarming_server.com/task?id=0@@@"
     ]
   },
   {
@@ -90,14 +90,14 @@
       "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"my-bt.vm.test-suite\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task UI: my-bt.vm.test-suite@https://vm_swarming_server.com/task?id=0@@@"
+      "@@@STEP_LINK@Swarming task UI: vm-test@https://vm_swarming_server.com/task?id=0@@@"
     ]
   },
   {

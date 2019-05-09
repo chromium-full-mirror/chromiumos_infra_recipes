@@ -13,6 +13,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') + api.step_data(
-      'vm test', api.swarming.trigger(['vm-test'])) + api.step_data(
-          'tast test', api.swarming.trigger(['vm-test'])))
+  yield (
+    api.test('basic')
+    + api.step_data('vm test.test-suite', api.swarming.trigger(['vm-test']))
+    + api.step_data('tast test.test-suite', api.swarming.trigger(['vm-test']))
+  )
