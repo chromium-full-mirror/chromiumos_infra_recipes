@@ -16,7 +16,6 @@
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [depends](#recipe_modules-depends) &mdash; APIs for checking that CQ-DEPEND has been fulfilled.
-  * [dev](#recipe_modules-dev) &mdash; API for development config.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
@@ -50,7 +49,6 @@
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
-  * [dev:examples/full](#recipes-dev_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [easy:examples/full](#recipes-easy_examples_full)
   * [failures:examples/full](#recipes-failures_examples_full)
@@ -574,22 +572,6 @@ Checks that all CQ-DEPENDS in all CLs in the given manifest diffs are met.
 Args:
   manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
       namedtuples.
-### *recipe_modules* / [dev](/recipe_modules/dev)
-
-API for development config.
-
-#### **class [DevApi](/recipe_modules/dev/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for development config.
-
-&mdash; **def [configure](/recipe_modules/dev/api.py#18)(self, dryrun=None):**
-
-Configure the dev module.
-
-Args:
-  * dryrun (bool): If True, run all module in a dryrun mode.
-
-&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/dev/api.py#27)(self):**
 ### *recipe_modules* / [easy](/recipe_modules/easy)
 
 [DEPS](/recipe_modules/easy/__init__.py#1): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1024,7 +1006,7 @@ Args:
   * mount_path (Path): Path to unmount the OverlayFS from.
 ### *recipe_modules* / [portage](/recipe_modules/portage)
 
-[DEPS](/recipe_modules/portage/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [dev](#recipe_modules-dev), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/portage/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for CrOS Portage.
 
@@ -1362,7 +1344,7 @@ Returns:
 
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#24): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [dev](#recipe_modules-dev), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#24): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -1376,13 +1358,13 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#48)(api, manifest_ref):**
+&mdash; **def [RunSteps](/recipes/annealing.py#47)(api, manifest_ref):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#86)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#85)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#97)(api, manifest_ref):**
+&mdash; **def [make\_message](/recipes/annealing.py#96)(api, manifest_ref):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -1474,11 +1456,6 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
 
 &mdash; **def [RunSteps](/recipe_modules/depends/examples/full.py#17)(api):**
-### *recipes* / [dev:examples/full](/recipe_modules/dev/examples/full.py)
-
-[DEPS](/recipe_modules/dev/examples/full.py#8): [dev](#recipe_modules-dev)
-
-&mdash; **def [RunSteps](/recipe_modules/dev/examples/full.py#13)(api):**
 ### *recipes* / [dupit](/recipes/dupit.py)
 
 [DEPS](/recipes/dupit.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
@@ -1525,15 +1502,15 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#14)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [dev](#recipe_modules-dev), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [test\_plan](#recipe_modules-test_plan), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#61)(api, update_manifest_refs, enable_history):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#60)(api, update_manifest_refs, enable_history):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#152)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#151)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1542,7 +1519,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [run\_tests](/recipes/orchestrator.py#179)(api, builds, step_name='run tests'):**
+&mdash; **def [run\_tests](/recipes/orchestrator.py#178)(api, builds, step_name='run tests'):**
 
 Shortcut for schedule_tests + collect_tests.
 
@@ -1553,7 +1530,7 @@ Args:
 Returns:
   list[swarming.TaskResult]
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#138)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#137)(refs):**
 
 Assert all given refs start with refs/heads.
 

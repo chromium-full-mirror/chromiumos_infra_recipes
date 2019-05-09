@@ -32,7 +32,6 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'depends',
-    'dev',
     'git',
     'git_txn',
     'overlayfs',

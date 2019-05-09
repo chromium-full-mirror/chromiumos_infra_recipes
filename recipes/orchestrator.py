@@ -19,7 +19,6 @@ DEPS = [
     'cros_infra_config',
     'cros_source',
     'cros_version',
-    'dev',
     'failures',
     'git',
     'gitiles',

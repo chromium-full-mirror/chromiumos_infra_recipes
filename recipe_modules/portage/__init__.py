@@ -4,5 +4,4 @@ DEPS = [
     'recipe_engine/raw_io',
     'cros_sdk',
     'cros_source',
-    'dev',
 ]
