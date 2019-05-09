@@ -105,14 +105,15 @@ class HistoryAwareApi(recipe_api.RecipeApi):
       target_build_map = {}
       for previous_build in self._get_patch_history(
           patches, builder=self.m.buildbucket.build.builder):
-        test_results = previous_build.output.properties[
-            'build_target_test_status']
-        if test_results:
-          for build_target in test_results:
-            result_str = test_results[build_target]
-            if result_str == 'success':
-              if build_target not in target_build_map:
-                target_build_map[build_target] = previous_build.id
+        if 'build_target_test_status' in previous_build.output.properties:
+          test_results = previous_build.output.properties[
+              'build_target_test_status']
+          if test_results:
+            for build_target in test_results:
+              result_str = test_results[build_target]
+              if result_str == 'success':
+                if build_target not in target_build_map:
+                  target_build_map[build_target] = previous_build.id
 
       self._log_previous_tests(target_build_map)
       return set(target_build_map.keys())
