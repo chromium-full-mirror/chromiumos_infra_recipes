@@ -19,7 +19,8 @@ DEPS = [
     'gerrit',
 ]
 
-from PB.chromite.api.sdk import CreateRequest as SdkCreateRequest
+from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
+from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.test import ChromiteUnitTestRequest
 
 
@@ -35,17 +36,17 @@ def RunSteps(api):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-      with api.step.nest('init sdk') as step:
-        response = api.cros_build_api.SdkService.Create(
-            SdkCreateRequest(
-                flags=SdkCreateRequest.Flags(no_replace=True, bootstrap=False,
-                                             no_use_image=True),
-                chroot=api.cros_sdk.chroot))
-        step.presentation.logs['sdk version'] = [str(response.version.version)]
+      api.cros_build_api.SdkService.Create(
+          CreateSdkRequest(
+              flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
+              chroot=api.cros_sdk.chroot), name='init sdk')
 
-      with api.step.nest('run chromite unit tests'):
-        api.cros_build_api.TestService.ChromiteUnitTest(
-            ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot))
+      api.cros_build_api.SdkService.Update(
+          UpdateSdkRequest(chroot=api.cros_sdk.chroot), name='update sdk')
+
+      api.cros_build_api.TestService.ChromiteUnitTest(
+          ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot),
+          name='run chromite unit tests')
 
 
 def GenTests(api):

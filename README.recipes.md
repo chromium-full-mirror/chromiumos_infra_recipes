@@ -1590,7 +1590,7 @@ Recipe that tests chromite.
 Though this recipe appears to be almost a subset of build_target, it lives
 on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/test_chromite.py#26)(api):**
+&mdash; **def [RunSteps](/recipes/test_chromite.py#27)(api):**
 ### *recipes* / [test\_execution/execute\_plan](/recipes/test_execution/execute_plan.py)
 
 [DEPS](/recipes/test_execution/execute_plan.py#13): [test\_plan](#recipe_modules-test_plan), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
