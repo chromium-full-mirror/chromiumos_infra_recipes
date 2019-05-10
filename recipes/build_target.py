@@ -97,14 +97,14 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
         # should accept the chroot path as a parameter.
         api.cros_sdk.link_chroot(api.cros_source.workspace_path)
 
-      with api.step.nest('update sdk'):
-        api.cros_build_api.SdkService.Update(
-            UpdateSdkRequest(chroot=api.cros_sdk.chroot))
+      api.cros_build_api.SdkService.Update(
+          UpdateSdkRequest(chroot=api.cros_sdk.chroot), name='update sdk')
 
       with api.step.nest('create sysroot'):
-        sysroot = api.cros_build_api.SysrootService.Create(
+        create_sysroot_response = api.cros_build_api.SysrootService.Create(
             SysrootCreateRequest(build_target=build_target,
-                                 chroot=api.cros_sdk.chroot)).sysroot
+                                 chroot=api.cros_sdk.chroot))
+        sysroot = create_sysroot_response.sysroot
 
       if api.cros_relevance.is_build_pointless(api.buildbucket.build, build_target):
         return
@@ -119,7 +119,8 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
         # Packages subset will be present when FindIt asks for bisection build.
         packages = api.cros_bisect.get_packages()
         response = api.cros_build_api.SysrootService.InstallPackages(
-            InstallPackagesRequest(sysroot=sysroot, packages=packages))
+            InstallPackagesRequest(sysroot=sysroot, packages=packages,
+                                   use_flags=build_config.build.use_flags))
         api.cros_bisect.set_build_compile_failure(response.failed_packages)
         api.failures.raise_failed_packages(response.failed_packages)
 

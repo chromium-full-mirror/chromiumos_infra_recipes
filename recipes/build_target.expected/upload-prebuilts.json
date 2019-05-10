@@ -470,13 +470,8 @@
   },
   {
     "cmd": [],
-    "name": "update sdk"
-  },
-  {
-    "cmd": [],
-    "name": "update sdk.call chromite.api.SdkService/Update",
+    "name": "update sdk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
@@ -500,9 +495,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "update sdk.call chromite.api.SdkService/Update.write input file",
+    "name": "update sdk.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -520,9 +515,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
+    "name": "update sdk.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -538,9 +533,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "update sdk.call chromite.api.SdkService/Update.read output file",
+    "name": "update sdk.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
