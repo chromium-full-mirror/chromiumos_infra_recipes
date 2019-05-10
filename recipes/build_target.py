@@ -98,7 +98,8 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
         api.cros_sdk.link_chroot(api.cros_source.workspace_path)
 
       api.cros_build_api.SdkService.Update(
-          UpdateSdkRequest(chroot=api.cros_sdk.chroot), name='update sdk')
+          UpdateSdkRequest(chroot=api.cros_sdk.chroot,
+                           toolchain_targets=[build_target]), name='update sdk')
 
       with api.step.nest('create sysroot'):
         create_sysroot_response = api.cros_build_api.SysrootService.Create(
