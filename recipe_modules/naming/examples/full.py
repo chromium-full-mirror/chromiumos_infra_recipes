@@ -9,6 +9,7 @@ DEPS = [
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.testplans.target_test_requirements_config import HwTestCfg
 
 
 def RunSteps(api):
@@ -21,6 +22,10 @@ def RunSteps(api):
       project='qux', bucket='quux', builder='quuz'), id=202)
   api.assertions.assertEqual(api.naming.get_build_title(build),
                              'qux/quux/quuz/202')
+
+  hw_test = HwTestCfg.HwTest(skylab_board='target', suite='bvt-cq')
+  api.assertions.assertEqual(
+      api.naming.get_hw_test_title(hw_test), 'target/hw/bvt-cq')
 
 
 def GenTests(api):
