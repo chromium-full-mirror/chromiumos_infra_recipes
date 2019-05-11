@@ -454,135 +454,14 @@
   },
   {
     "cmd": [],
-    "name": "run tests.generate test plan",
+    "name": "run tests.test builds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_workspace\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"buildbucketProtos\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"serializedProto\": \"CNCtpKubruDoe2AM\"@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"serializedProto\": \"CNGtpKubruDoe2AM\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"testUnit\": [@@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"gceTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"gceTest\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"testSuite\": \"gce-test-suite\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"useCtest\": true, @@@",
-      "@@@STEP_LOG_LINE@response@            \"testType\": \"gce\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"timeoutSec\": 123@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"buildPayload\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsBucket\": \"gs://chromeos-image-archive\", @@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\"@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"hwTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"hwTest\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"retry\": true, @@@",
-      "@@@STEP_LOG_LINE@response@            \"timeoutSec\": 123, @@@",
-      "@@@STEP_LOG_LINE@response@            \"skylabBoard\": \"target\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"minimumDuts\": 2, @@@",
-      "@@@STEP_LOG_LINE@response@            \"critical\": true, @@@",
-      "@@@STEP_LOG_LINE@response@            \"offloadFailuresOnly\": true, @@@",
-      "@@@STEP_LOG_LINE@response@            \"suite\": \"bvt-cq\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"maxRetries\": 3, @@@",
-      "@@@STEP_LOG_LINE@response@            \"suiteMinDuts\": 2@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"buildPayload\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsBucket\": \"gs://chromeos-image-archive\", @@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\"@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"moblabVmTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"moblabTest\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"testType\": \"moblab-vm\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"timeoutSec\": 123@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"buildPayload\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsBucket\": \"gs://chromeos-image-archive\", @@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\"@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"buildPayload\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsBucket\": \"gs://chromeos-image-archive\", @@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\"@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"tastVmTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"tastVmTest\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"suiteName\": \"tast-suite\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"tastTestExpr\": [@@@",
-      "@@@STEP_LOG_LINE@response@              {@@@",
-      "@@@STEP_LOG_LINE@response@                \"testExpr\": \"exampe.Pass\"@@@",
-      "@@@STEP_LOG_LINE@response@              }@@@",
-      "@@@STEP_LOG_LINE@response@            ], @@@",
-      "@@@STEP_LOG_LINE@response@            \"timeoutSec\": 123@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"vmTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"vmTest\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"testSuite\": \"autotest-suite\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"retry\": true, @@@",
-      "@@@STEP_LOG_LINE@response@            \"timeoutSec\": 123, @@@",
-      "@@@STEP_LOG_LINE@response@            \"useCtest\": true, @@@",
-      "@@@STEP_LOG_LINE@response@            \"maxRetries\": 3, @@@",
-      "@@@STEP_LOG_LINE@response@            \"testType\": \"vm_suite\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"buildPayload\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsBucket\": \"gs://chromeos-image-archive\", @@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\"@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  ]@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run tests.generate test plan.ensure test_planner",
+    "name": "run tests.test builds.ensure test_planner",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -599,7 +478,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run tests.generate test plan.ensure test_planner.ensure_installed",
+    "name": "run tests.test builds.ensure test_planner.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -620,37 +499,77 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_json",
-      "[CLEANUP]/test-plan-_tmp_1/input.json",
+      "{\"buildbucketProtos\": [{\"serializedProto\": \"CNCtpKubruDoe2AM\"}, {\"serializedProto\": \"CNGtpKubruDoe2AM\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
       "--output_json",
-      "[CLEANUP]/test-plan-_tmp_1/output.json"
+      "/path/to/tmp/json"
     ],
-    "name": "run tests.generate test plan.call test_planner",
+    "name": "run tests.test builds.generate",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testUnit\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"buildPayload\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"artifactsGsPath\": \"path/to/artifact\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"hard_wear\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"hwTestCfg\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hwTest\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"hard_wear_skylab-board\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }, @@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"skylabBoard\": \"hard_wear_skylab-board\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"suite\": \"suite2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"buildPayload\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"artifactsGsPath\": \"path/to/artifact\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vert_masheen\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"vmTestCfg\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"vmTest\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"testSuite\": \"suite1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }, @@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"testSuite\": \"suite2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/test-plan-_tmp_1/output.json",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "run tests.generate test plan.read output json",
+    "cmd": [],
+    "name": "run tests.test builds.schedule",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run tests.ensure skylab",
+    "name": "run tests.test builds.schedule.hard_wear",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.test builds.schedule.hard_wear.ensure skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -665,9 +584,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run tests.ensure skylab.ensure_installed",
+    "name": "run tests.test builds.schedule.hard_wear.ensure skylab.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -683,10 +602,9 @@
   },
   {
     "cmd": [],
-    "name": "run tests.schedule target/hw/bvt-cq",
+    "name": "run tests.test builds.schedule.hard_wear.hw",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@swarming task@https://swarming.com/bvt-cq@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -697,31 +615,65 @@
       "-pool",
       "DUT_POOL_QUOTA",
       "-image",
-      "target-cq/R12-3.4.5-6789",
+      "path/to/artifact",
       "-board",
-      "target",
+      "hard_wear_skylab-board",
       "-timeout-mins",
       "120",
       "-qs-account",
       "cq",
-      "bvt-cq"
+      "suite1"
     ],
-    "name": "run tests.schedule target/hw/bvt-cq.skylab create-suite",
-    "stdout": "/path/to/tmp/json",
+    "name": "run tests.test builds.schedule.hard_wear.hw.suite1",
+    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-cq-task-id\", @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-cq\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LINK@Skylab task UI: hard_wear.hw.suite1@http://s.com/4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "create-suite",
+      "-json",
+      "-pool",
+      "DUT_POOL_QUOTA",
+      "-image",
+      "path/to/artifact",
+      "-board",
+      "hard_wear_skylab-board",
+      "-timeout-mins",
+      "120",
+      "-qs-account",
+      "cq",
+      "suite2"
+    ],
+    "name": "run tests.test builds.schedule.hard_wear.hw.suite2",
+    "stdout": "/path/to/tmp/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LINK@Skylab task UI: hard_wear.hw.suite2@http://s.com/5@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run tests.ensure swarming",
+    "name": "run tests.test builds.schedule.vert_masheen",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.test builds.schedule.vert_masheen.vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.test builds.schedule.vert_masheen.vm.ensure swarming",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -736,9 +688,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run tests.ensure swarming.ensure_installed",
+    "name": "run tests.test builds.schedule.vert_masheen.vm.ensure swarming.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -755,21 +707,87 @@
   {
     "cmd": [
       "[CACHE]/swarming_client/swarming",
+      "spawn-tasks",
+      "-server",
+      "https://vm_swarming_server.com",
+      "-json-input",
+      "{\"requests\": [{\"name\": \"vert_masheen.vm.suite1\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite1\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"build_target\\\": \\\"vert_masheen\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"role\", \"value\": \"vm_role\"}, {\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"10800\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"1800\", \"outputs\": []}}]}]}",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "run tests.test builds.schedule.vert_masheen.vm.suite1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"task - 0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LINK@Swarming task UI: task - 0@https://vm_swarming_server.com/task?id=0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/swarming_client/swarming",
+      "spawn-tasks",
+      "-server",
+      "https://vm_swarming_server.com",
+      "-json-input",
+      "{\"requests\": [{\"name\": \"vert_masheen.vm.suite2\", \"priority\": \"100\", \"service_account\": \"\", \"task_slices\": [{\"expiration_secs\": \"300\", \"properties\": {\"cipd_input\": {\"packages\": [{\"package_name\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", \"path\": \"recipes\", \"version\": \"refs/heads/master\"}, {\"package_name\": \"infra/tools/luci/vpython/${platform}\", \"path\": \"vpython\", \"version\": \"latest\"}]}, \"command\": [\"recipes/recipes\", \"run\", \"--workdir\", \"recipes/workdir\", \"--properties\", \"{\\\"$recipe_engine/path\\\": {\\\"cache_dir\\\": \\\"/b/bot/w/ir/cache\\\"}, \\\"test_suite\\\": \\\"suite2\\\", \\\"gs_path\\\": \\\"path/to/artifact\\\", \\\"build_target\\\": \\\"vert_masheen\\\", \\\"test_type\\\": \\\"vm\\\", \\\"recipe\\\": \\\"test_execution/execute_vm_suite\\\", \\\"gs_bucket\\\": \\\"chromeos-image-archive\\\"}\", \"test_execution/execute_vm_suite\"], \"dimensions\": [{\"key\": \"role\", \"value\": \"vm_role\"}, {\"key\": \"pool\", \"value\": \"vm_pool\"}], \"env\": [], \"env_prefixes\": [{\"key\": \"PATH\", \"value\": [\"vpython\"]}], \"execution_timeout_secs\": \"10800\", \"grace_period_secs\": \"30\", \"idempotent\": false, \"io_timeout_secs\": \"1800\", \"outputs\": []}}]}]}",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "run tests.test builds.schedule.vert_masheen.vm.suite2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"tasks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"request\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"task - 1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LINK@Swarming task UI: task - 1@https://vm_swarming_server.com/task?id=0@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.collect test results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/swarming_client/swarming",
       "collect",
       "-server",
-      "https://example.swarmingserver.appspot.com",
+      "https://s.com",
       "-task-summary-json",
       "/path/to/tmp/json",
       "-task-output-stdout",
       "json",
-      "bvt-cq-task-id"
+      "4",
+      "5"
     ],
     "infra_step": true,
-    "name": "run tests.collect skylab tasks",
+    "name": "run tests.collect test results.s.com",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"bvt-cq-task-id\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"4\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
@@ -782,13 +800,72 @@
       "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"bvt-cq-task-id\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"4\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"5\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"5\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@Swarming task output: my_task_1@hello world!@@@",
+      "@@@STEP_LOG_END@Swarming task output: my_task_1@@@",
       "@@@STEP_LOG_LINE@Swarming task output: my_task_0@hello world!@@@",
       "@@@STEP_LOG_END@Swarming task output: my_task_0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/swarming_client/swarming",
+      "collect",
+      "-server",
+      "https://vm_swarming_server.com",
+      "-task-summary-json",
+      "/path/to/tmp/json",
+      "-task-output-stdout",
+      "json",
+      "0",
+      "0"
+    ],
+    "infra_step": true,
+    "name": "run tests.collect test results.vm_swarming_server.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"0\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@Swarming task output: my_task_1@hello world!@@@",
+      "@@@STEP_LOG_END@Swarming task output: my_task_1@@@",
+      "@@@SET_BUILD_PROPERTY@build_target_test_status@{\"hard_wear\": \"success\", \"vert_masheen\": \"success\"}@@@"
     ]
   },
   {
@@ -799,7 +876,7 @@
     "cmd": [],
     "name": "test results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 succeeded, 0 failed@@@"
+      "@@@STEP_TEXT@3 succeeded, 0 failed@@@"
     ]
   },
   {

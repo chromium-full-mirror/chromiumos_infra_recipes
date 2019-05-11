@@ -15,17 +15,15 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'cros_history',
     'cros_infra_config',
     'cros_source',
-    'cros_test_plan',
     'cros_version',
     'failures',
     'git',
     'gitiles',
     'naming',
-    'skylab',
+    'test_plan',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -216,16 +214,9 @@ def run_tests(api, builds, step_name='run tests'):
     list[swarming.TaskResult]
   """
   with api.step.nest(step_name):
-    test_plan = api.cros_test_plan.generate(builds)
-
-    # Schedule hardware tests.
-    # TODO(evanhernandez): Support VM tests.
-    skylab_tasks = [
-        api.skylab.create_suite(test, unit.build_payload)
-        for unit in test_plan.hw
-        for test in unit.hw_test_cfg.hw_test
-    ]
-    return api.swarming.collect('collect skylab tasks', skylab_tasks)
+    tasks = api.test_plan.test_builds('test builds', list(builds))
+    results = api.test_plan.collect_tests('collect test results', tasks)
+    return results
 
 
 def GenTests(api):
@@ -266,7 +257,9 @@ def GenTests(api):
                     }))
         })
 
-  yield (api.test('basic') + postsubmit_orchestrator_build())
+  yield (api.test('basic') +  #
+         postsubmit_orchestrator_build() +
+         api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (
       api.test('with_history') +  #
@@ -295,7 +288,7 @@ def GenTests(api):
                   input=dict(properties=build_target_property('arm-generic'))),
           ],
           step_name='run child builds.collect',
-      ))
+      ) + api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (api.test('missing_gitiles_commit') +  #
          postsubmit_orchestrator_build_with_no_gitiles() +
@@ -310,7 +303,7 @@ def GenTests(api):
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }))
+         }) + api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (api.test('bad_update_ref') +  #
          api.properties(update_manifest_refs={'start': 'foo'}) +  #
@@ -333,7 +326,7 @@ def GenTests(api):
               }, status=common_pb2.SUCCESS, critical=common_pb2.NO),
           ],
           step_name='run child builds.collect',
-      ))
+      ) + api.test_plan.simulate_test_builds('run tests.test builds'))
 
   yield (
       api.test('non-critical_child_builder_fails') +  #
@@ -348,4 +341,4 @@ def GenTests(api):
               }, status=common_pb2.FAILURE, critical=common_pb2.NO),
           ],
           step_name='run child builds.collect',
-      ))
+      ) + api.test_plan.simulate_test_builds('run tests.test builds'))
