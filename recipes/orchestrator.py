@@ -93,9 +93,10 @@ def RunSteps(api, update_manifest_refs, enable_history):
                 builder=child,
                 critical=child_builder_config.general.critical.value))
 
-    completed_builds += api.buildbucket.run(
-        requests, timeout=60 * 60 * 4, step_name='run child builds',
-        url_title_fn=api.naming.get_build_title)
+    if requests:
+      completed_builds += api.buildbucket.run(
+          requests, timeout=60 * 60 * 4, step_name='run child builds',
+          url_title_fn=api.naming.get_build_title)
 
     if api.buildbucket.build.input.gerrit_changes:
       untested_builds = _get_untested_builds(api, completed_builds,
