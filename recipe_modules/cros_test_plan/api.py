@@ -59,6 +59,10 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
     with self.m.step.nest(name or 'generate test plan') as step:
       self._ensure_test_planner()
 
+      messages_path = self.m.path.mkdtemp(prefix='test-plan-')
+      input_file = messages_path.join('input.json')
+      output_file = messages_path.join('output.json')
+
       request_proto = GenerateTestPlanRequest(
           chromiumos_checkout_root=str(self.m.cros_source.workspace_path),
           repo_tool_path=str(self.m.repo.repo_path), buildbucket_protos=[
@@ -67,10 +71,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           ])
       request_json = json_format.MessageToJson(request_proto)
       step.presentation.logs['request'] = [request_json]
-
-      messages_path = self.m.path.mkdtemp(prefix='test-plan-')
-      input_file = messages_path.join('input.json')
-      output_file = messages_path.join('output.json')
+      self.m.file.write_raw('write input json', input_file, request_json)
 
       cmd = [
           self._test_planner_path, 'gen-test-plan', '--input_json', input_file,

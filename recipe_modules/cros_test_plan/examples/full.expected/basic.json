@@ -158,6 +158,23 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\", \n  \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_workspace\", \n  \"buildbucketProtos\": [\n    {}\n  ]\n}",
+      "[CLEANUP]/test-plan-_tmp_1/input.json"
+    ],
+    "infra_step": true,
+    "name": "generate test plan.write input json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_json",
