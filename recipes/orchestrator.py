@@ -229,8 +229,11 @@ def run_tests(api, builds, step_name='run tests'):
         for unit in test_plan.hw
         for test in unit.hw_test_cfg.hw_test
     ]
-    with api.swarming.with_server(api.skylab.server):
-      return api.swarming.collect('collect skylab tasks', skylab_tasks)
+    results = []
+    if skylab_tasks:
+      with api.swarming.with_server(api.skylab.server):
+        results = api.swarming.collect('collect skylab tasks', skylab_tasks)
+    return results
 
 
 def GenTests(api):
