@@ -93,7 +93,8 @@
     "~followup_annotations": [
       "@@@STEP_TEXT@1 succeeded, 1 failed@@@",
       "@@@STEP_LOG_LINE@FAILURE - bar@hello world!@@@",
-      "@@@STEP_LOG_END@FAILURE - bar@@@"
+      "@@@STEP_LOG_END@FAILURE - bar@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

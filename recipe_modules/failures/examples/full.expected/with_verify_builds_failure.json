@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "failed packages"
+    "name": "failed packages",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],

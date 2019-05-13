@@ -61,7 +61,10 @@
   },
   {
     "cmd": [],
-    "name": "git transaction retry 1 of 1"
+    "name": "git transaction retry 1 of 1",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "cmd": [

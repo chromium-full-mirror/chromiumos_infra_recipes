@@ -274,7 +274,10 @@
   },
   {
     "cmd": [],
-    "name": "analyze and launch builders"
+    "name": "analyze and launch builders",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -305,7 +308,8 @@
     "cmd": [],
     "name": "analyze and launch builders.analyze and launch staging-Annealing",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

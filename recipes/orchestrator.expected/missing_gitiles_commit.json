@@ -304,7 +304,10 @@
   },
   {
     "cmd": [],
-    "name": "update manifest start ref"
+    "name": "update manifest start ref",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "cmd": [],
@@ -332,6 +335,29 @@
     "name": "clean up overlayfs mounts.unmount overlay workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", line 375, in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", line 670, in run_steps",
+      "    properties_def, api=api)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", line 89, in invoke_with_properties",
+      "    arg_names, **additional_args)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", line 52, in _invoke_with_properties",
+      "    return callable_obj(*props, **additional_args)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 74, in RunSteps",
+      "    maybe_update_manifest_ref(api, update_manifest_refs, 'start')",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 201, in maybe_update_manifest_ref",
+      "    'Got input: %s' % api.buildbucket.gitiles_commit)",
+      "ValueError: orchestrator runs must supply a Gitiles commit in their input. Found none. If you'd like to retry a run that did have a Gitiles commit, try doing so through RPC explorer, e.g. https://screenshot.googleplex.com/FSEm8xB5CS3 Got input: "
     ]
   },
   {

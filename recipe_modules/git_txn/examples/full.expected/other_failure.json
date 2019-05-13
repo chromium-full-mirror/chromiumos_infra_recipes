@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "git transaction"
+    "name": "git transaction",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "cmd": [
@@ -62,7 +65,7 @@
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('git transaction.git push') returned 1"
+      "humanReason": "Infra Failure: Step('git transaction.git push') (retcode: 1)"
     },
     "name": "$result"
   }
