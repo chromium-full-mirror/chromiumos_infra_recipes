@@ -35,6 +35,11 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "chrome": {
                     "internal": true
+                  },
+                  "build": {
+                    "portage_profile": {
+                      "profile": "generic_build"
+                    }
                   }
                 },
                 {

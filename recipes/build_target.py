@@ -35,6 +35,7 @@ from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
+from PB.chromite.api.sysroot import Profile
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
@@ -102,8 +103,12 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
                            toolchain_targets=[build_target]), name='update sdk')
 
       with api.step.nest('create sysroot'):
+        profile = None
+        if build_config.build.portage_profile.profile:
+          profile = Profile(name=build_config.build.portage_profile.profile)
         create_sysroot_response = api.cros_build_api.SysrootService.Create(
             SysrootCreateRequest(build_target=build_target,
+                                 profile=profile,
                                  chroot=api.cros_sdk.chroot))
         sysroot = create_sysroot_response.sysroot
 

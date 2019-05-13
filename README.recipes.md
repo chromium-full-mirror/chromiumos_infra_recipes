@@ -1407,7 +1407,7 @@ Returns:
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#66)(api, build_target, build_image, upload_artifacts, upload_prebuilts, run_ebuild_tests):**
+&mdash; **def [RunSteps](/recipes/build_target.py#67)(api, build_target, build_image, upload_artifacts, upload_prebuilts, run_ebuild_tests):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path]
