@@ -53,7 +53,8 @@ class HistoryAwareApi(recipe_api.RecipeApi):
         return []
 
       previously_passed_builds = []
-      passed_builders = set()
+      # Start with cq-orchestrator so we don't add it to the result.
+      passed_builders = set([self.m.buildbucket.build.builder.builder])
       for build in self._get_patch_history(patches, success_only=True):
         if build.builder.builder not in passed_builders:
           passed_builders.add(build.builder.builder)

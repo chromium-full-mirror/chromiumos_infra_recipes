@@ -69,8 +69,13 @@ def GenTests(api):
       api.test('passed_builds_with_history') +
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, builder=build_pb2.BuilderID(builder='betty')),
-          build_pb2.Build(id=231, builder=build_pb2.BuilderID(builder='reef'))
+          build_pb2.Build(id=231, builder=build_pb2.BuilderID(builder='reef')),
+          build_pb2.Build(
+              id=312, builder=build_pb2.BuilderID(builder='cq-orchestrator')),
       ], 'Looking for successful builds (2).buildbucket.search') +
+      api.buildbucket.build(
+          build_pb2.Build(
+              builder=build_pb2.BuilderID(builder='cq-orchestrator'))) +
       api.properties(
           TestInputProperties(
               input_build_patches=[common_pb2.GerritChange(change=2341)])) +
