@@ -443,7 +443,7 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_json",
-      "{\"buildbucketProtos\": [{\"serializedProto\": \"CNCtpKubruDoexIaGhhhbWQ2NC1nZW5lcmljLXBvc3RzdWJtaXRgFKgBAQ==\"}, {\"serializedProto\": \"CNGtpKubruDoexIYGhZhcm0tZ2VuZXJpYy1wb3N0c3VibWl0YAyoAQI=\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
+      "{\"buildbucketProtos\": [{\"serializedProto\": \"CNGtpKubruDoexIYGhZhcm0tZ2VuZXJpYy1wb3N0c3VibWl0YAyoAQI=\"}], \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_master\", \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],

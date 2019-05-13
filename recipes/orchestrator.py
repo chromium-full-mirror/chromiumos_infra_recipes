@@ -106,7 +106,10 @@ def RunSteps(api, update_manifest_refs, enable_history):
 
     test_results = []
     if not api.cq.state == api.cq.DRY:
-      test_results = run_tests(api, untested_builds)
+      need_tests_builds = [
+          b for b in untested_builds if b.status == common_pb2.SUCCESS
+      ]
+      test_results = run_tests(api, need_tests_builds)
 
     # Verify tests in a deferred context so that all failures appear.
     with api.step.defer_results():
