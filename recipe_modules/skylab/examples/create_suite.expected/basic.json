@@ -1,28 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "run plan"
-  },
-  {
-    "cmd": [],
-    "name": "run plan.schedule",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run plan.schedule.build_target",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run plan.schedule.build_target.ensure skylab",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
+    "name": "ensure skylab"
   },
   {
     "cmd": [
@@ -36,9 +15,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run plan.schedule.build_target.ensure skylab.ensure_installed",
+    "name": "ensure skylab.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -54,9 +33,9 @@
   },
   {
     "cmd": [],
-    "name": "run plan.schedule.build_target.hw",
+    "name": "schedule target/hw/bvt-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_LINK@swarming task@https://swarming.com/bvt-cq@@@"
     ]
   },
   {
@@ -67,27 +46,28 @@
       "-pool",
       "DUT_POOL_QUOTA",
       "-image",
-      "path/to/artifact",
+      "target-cq/R12-3.4.5-6789",
       "-board",
-      "build_target_skylab-board",
+      "target",
       "-timeout-mins",
       "120",
       "-qs-account",
       "cq",
-      "suite1"
+      "bvt-cq"
     ],
-    "name": "run plan.schedule.build_target.hw.suite1",
-    "stdout": "/path/to/tmp/",
+    "name": "schedule target/hw/bvt-cq.skylab create-suite",
+    "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-cq-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "1 out of 1 aggregated steps failed: Step(u'run plan.schedule.build_target.hw.suite1') failed with return_code 1"
-    },
+    "jsonResult": null,
     "name": "$result"
   }
 ]
