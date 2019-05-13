@@ -30,6 +30,7 @@ from recipe_engine.recipe_api import Property
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import TEST
 from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
@@ -136,7 +137,7 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
           response = api.cros_build_api.ImageService.Create(
               CreateImageRequest(
                   build_target=build_target, chroot=api.cros_sdk.chroot,
-                  image_types=[Image.TEST],
+                  image_types=[TEST],
                   builder_path='%s/%s' % (build_config.id.name, version)))
           api.failures.raise_failed_packages(response.failed_packages)
 
