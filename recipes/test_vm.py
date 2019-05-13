@@ -24,6 +24,7 @@ from PB.chromite.api.image import CreateVmRequest
 from PB.chromite.api.image import Image
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
+from PB.chromite.api.image import VmImage
 from PB.chromite.api.test import VmTestRequest
 from PB.recipes.chromeos.test_vm import TestVmProperties
 
@@ -45,7 +46,8 @@ PROPERTIES = TestVmProperties
 
 
 PRIVATE_KEY_NAME = 'id_rsa'
-TEST_IMAGE_NAME = 'chromiumos_test_image.bin'
+VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
+
 
 def RunSteps(api, properties):
   api.cros_source.ensure_synced_cache()
@@ -61,16 +63,15 @@ def RunSteps(api, properties):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-    with api.step.nest('init sdk') as step:
-      response = api.cros_build_api.SdkService.Create(
-          CreateSdkRequest(
-              flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
-              chroot=api.cros_sdk.chroot))
-      step.presentation.logs['sdk version'] = [str(response.version.version)]
+    api.cros_build_api.SdkService.Create(
+        CreateSdkRequest(
+            flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
+            chroot=api.cros_sdk.chroot), name='init sdk')
 
-    with api.step.nest('update sdk'):
-      api.cros_build_api.SdkService.Update(
-          UpdateSdkRequest(chroot=api.cros_sdk.chroot))
+    api.cros_build_api.SdkService.Update(
+        UpdateSdkRequest(chroot=api.cros_sdk.chroot,
+                         toolchain_targets=[properties.build_target]),
+        name='update sdk')
 
     with api.step.nest('download test image'):
       test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
@@ -79,31 +80,22 @@ def RunSteps(api, properties):
       api.gsutil.download(properties.image_zip.gs_bucket,
                           properties.image_zip.gs_path, test_image_zip,
                           name='download image bundle from GS')
-      api.archive.extract('unzip image bundle',
-                          test_image_zip, test_image_dir,
-                          include_files=[TEST_IMAGE_NAME, PRIVATE_KEY_NAME])
-      test_image_path = str(test_image_dir.join(TEST_IMAGE_NAME))
+      api.archive.extract('unzip image bundle', test_image_zip, test_image_dir,
+                          include_files=[VM_IMAGE_NAME, PRIVATE_KEY_NAME])
+      vm_image_path = str(test_image_dir.join(VM_IMAGE_NAME))
       private_key_path = str(test_image_dir.join(PRIVATE_KEY_NAME))
 
-    with api.step.nest('convert test image to vm image'):
-      create_vm_response = api.cros_build_api.ImageService.CreateVm(
-          CreateVmRequest(
-              image=Image(build_target=properties.build_target,
-                          path=test_image_path, type=Image.TEST),
-              chroot=api.cros_sdk.chroot))
-
-    with api.step.nest('run tast vm tests'):
-      # TODO(evanhernandez): Read and present the test results.
-      api.cros_build_api.TestService.VmTest(
-          VmTestRequest(
-              build_target=properties.build_target,
-              chroot=api.cros_sdk.chroot,
-              vm_image=create_vm_response.vm_image,
-              ssh_options=VmTestRequest.SshOptions(
-                  private_key_path=private_key_path),
-              test_harness=VmTestRequest.TAST,
-              vm_tests=[VmTestRequest.VmTest(pattern=exp)
-                        for exp in properties.expressions]))
+    # TODO(evanhernandez): Read and present the test results.
+    api.cros_build_api.TestService.VmTest(
+        VmTestRequest(
+            build_target=properties.build_target, chroot=api.cros_sdk.chroot,
+            vm_image=VmImage(path=vm_image_path),
+            ssh_options=VmTestRequest.SshOptions(
+                private_key_path=private_key_path),
+            test_harness=VmTestRequest.TAST, vm_tests=[
+                VmTestRequest.VmTest(pattern=exp)
+                for exp in properties.expressions
+            ]), name='run tast vm tests')
 
 
 def GenTests(api):
