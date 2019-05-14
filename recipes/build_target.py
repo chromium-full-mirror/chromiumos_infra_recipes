@@ -47,9 +47,6 @@ from PB.chromite.api.test import ChromiteUnitTestRequest
 PROPERTIES = {
     'build_target': Property(kind=Dict()),
 
-    # Whether or not to build an image.
-    'build_image': Property(kind=bool, default=True),
-
     # Whether or not to upload build/test artifacts.
     'upload_artifacts': Property(kind=bool, default=False),
 
@@ -65,7 +62,7 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 ]
 
 
-def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
+def RunSteps(api, build_target, upload_artifacts, upload_prebuilts,
              run_ebuild_tests):
   build_target = BuildTarget(**build_target)
   build_config = api.cros_infra_config.get_builder_config(
@@ -131,13 +128,14 @@ def RunSteps(api, build_target, build_image, upload_artifacts, upload_prebuilts,
         api.cros_bisect.set_build_compile_failure(response.failed_packages)
         api.failures.raise_failed_packages(response.failed_packages)
 
-      if build_image:
+      image_types = build_config.build.image_types
+      if image_types:
         with api.step.nest('build image'):
           version = api.cros_version.read_workspace_version()
           response = api.cros_build_api.ImageService.Create(
               CreateImageRequest(
                   build_target=build_target, chroot=api.cros_sdk.chroot,
-                  image_types=[TEST],
+                  image_types=image_types,
                   builder_path='%s/%s' % (build_config.id.name, version)))
           api.failures.raise_failed_packages(response.failed_packages)
 
@@ -194,7 +192,6 @@ def GenTests(api):
                  api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
                  api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
              ]},
-             build_image=False,
          ))
 
   yield (api.test('with-gerrit-changes') +  #

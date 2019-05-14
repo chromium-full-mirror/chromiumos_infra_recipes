@@ -42,7 +42,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   "build": {
                     "portage_profile": {
                       "profile": "generic_build"
-                    }
+                    },
+                    "image_types": ["TEST"]
                   }
                 },
                 {
