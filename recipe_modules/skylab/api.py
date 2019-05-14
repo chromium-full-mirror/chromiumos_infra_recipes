@@ -56,6 +56,8 @@ class SkylabApi(recipe_api.RecipeApi):
           120,
           '-qs-account',
           'cq',
+          '-task-name',
+          self.m.naming.get_hw_test_title(test),
           test.suite,
       ]
       task_json = self.m.easy.stdout_json_step(

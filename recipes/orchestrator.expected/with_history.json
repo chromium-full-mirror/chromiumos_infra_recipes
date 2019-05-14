@@ -819,6 +819,8 @@
       "120",
       "-qs-account",
       "cq",
+      "-task-name",
+      "target/hw/bvt-cq",
       "bvt-cq"
     ],
     "name": "run tests.schedule target/hw/bvt-cq.skylab create-suite",
