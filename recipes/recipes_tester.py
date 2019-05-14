@@ -53,7 +53,14 @@ def _checkout_recipes_repo(api):
   with api.step.nest('checkout recipes repo'):
     api.file.ensure_directory('ensure recipes workdir', recipes_workdir)
     with api.context(cwd=recipes_workdir):
-      cfg = api.gclient.make_config()
+      # By default, gclient uses a cache (independently of the dir where it is
+      # used). This may be causing the checkout to not get the latest commit,
+      # leading to cherry-pick conflicts.
+      #
+      # As a workaround, set the gclient cache dir to be a temporary dir, so it
+      # won't cache.
+      cfg = api.gclient.make_config(
+          CACHE_DIR=api.path['cleanup'].join('gclient'))
       soln = cfg.solutions.add()
       soln.name = 'src'
       soln.url = RECIPE_REPO_URL
