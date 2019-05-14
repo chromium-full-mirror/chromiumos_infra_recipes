@@ -41,6 +41,8 @@
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_history:examples/full](#recipes-cros_history_examples_full)
   * [cros_infra_config:examples/full](#recipes-cros_infra_config_examples_full)
+  * [cros_infra_config:examples/gitiles_failed_retry](#recipes-cros_infra_config_examples_gitiles_failed_retry)
+  * [cros_infra_config:examples/gitiles_success](#recipes-cros_infra_config_examples_gitiles_success)
   * [cros_infra_config:examples/no_builder_config](#recipes-cros_infra_config_examples_no_builder_config)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_relevance:examples/full](#recipes-cros_relevance_examples_full)
@@ -287,13 +289,13 @@ Returns:
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
 
-[DEPS](/recipe_modules/cros_infra_config/__init__.py#1): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_infra_config/__init__.py#6): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#44)(self, builder_name):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#53)(self, builder_name):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -315,7 +317,7 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#70)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#79)(self, config_name):**
 
 Gets Path of most recent test config.
 
@@ -325,7 +327,7 @@ Args:
 Returns:
   Path pointing to specified config file.
 
-&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#17)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#18)(self):**
 
 Init the InfraConfigApi module.
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
@@ -1349,6 +1351,20 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_infra_config/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/full.py#13)(api):**
+### *recipes* / [cros\_infra\_config:examples/gitiles\_failed\_retry](/recipe_modules/cros_infra_config/examples/gitiles_failed_retry.py)
+
+[DEPS](/recipe_modules/cros_infra_config/examples/gitiles_failed_retry.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/gitiles_failed_retry.py#14)(api):**
+
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_infra_config/examples/gitiles_failed_retry.py#20)(api, attempt):**
+### *recipes* / [cros\_infra\_config:examples/gitiles\_success](/recipe_modules/cros_infra_config/examples/gitiles_success.py)
+
+[DEPS](/recipe_modules/cros_infra_config/examples/gitiles_success.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/gitiles_success.py#12)(api):**
+
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_infra_config/examples/gitiles_success.py#17)(api, attempt):**
 ### *recipes* / [cros\_infra\_config:examples/no\_builder\_config](/recipe_modules/cros_infra_config/examples/no_builder_config.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/no_builder_config.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

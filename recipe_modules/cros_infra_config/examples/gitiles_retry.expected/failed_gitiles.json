@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "read build config"
+    "name": "read build config",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "cmd": [
@@ -19,7 +22,8 @@
     "name": "read build config.fetch master:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -38,7 +42,8 @@
     "name": "read build config.fetch master:generated/builder_configs.cfg (2)",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -57,68 +62,14 @@
     "name": "read build config.fetch master:generated/builder_configs.cfg (3)",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "read test config"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/config_name.cfg",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "name": "read test config.fetch master:testingconfig/generated/config_name.cfg",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/testconfig"
-    ],
-    "infra_step": true,
-    "name": "read test config.make testconfig",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "",
-      "[CLEANUP]/testconfig/config_name.cfg"
-    ],
-    "infra_step": true,
-    "name": "read test config.save config_name.cfg",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "jsonResult": null,
+    "failure": {
+      "humanReason": "Infra Failure: Step('read build config.fetch master:generated/builder_configs.cfg (3)') (timeout)"
+    },
     "name": "$result"
   }
 ]

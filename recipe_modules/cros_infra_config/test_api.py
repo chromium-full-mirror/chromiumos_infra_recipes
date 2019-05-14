@@ -9,6 +9,9 @@ from recipe_engine import recipe_test_api
 class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the infra_config module."""
 
+  # Number of seconds to wait on gitiles file download.
+  gitiles_timeout_seconds = 3 * 60
+
   def builder_configs_step_test_data(self):
     """A fn that can be passed to step_test_data to generate BuilderConfigs.
 

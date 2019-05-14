@@ -29,9 +29,17 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # once for each builder.
       with self.m.step.nest('read build config'), self.m.context(
           infra_steps=True):
-        builder_configs_file = self.m.gitiles.download_file(
-            REPO_URL, "generated/builder_configs.cfg",
-            step_test_data=self.test_api.builder_configs_step_test_data)
+        for retries in range(3):
+          try:
+            builder_configs_file = self.m.gitiles.download_file(
+                REPO_URL, "generated/builder_configs.cfg",
+                step_test_data=self.test_api.builder_configs_step_test_data,
+                timeout=self.test_api.gitiles_timeout_seconds)
+          except recipe_api.StepFailure as ex:
+            if ex.had_timeout and retries < 2:
+              continue
+            else:
+              raise
       # Ignore unknown fields, as this repo may not be using the newest version
       # of the proto.
       builder_configs = jsonpb.Parse(builder_configs_file, BuilderConfigs(),
