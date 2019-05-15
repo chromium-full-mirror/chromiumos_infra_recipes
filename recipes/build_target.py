@@ -139,8 +139,7 @@ def RunSteps(api, properties):
             build_config.artifacts.artifact_types)
 
       prebuilts = build_config.artifacts.prebuilts
-      if (properties.upload_prebuilts and
-          prebuilts in UPLOADABLE_PREBUILTS_CONFIGS):
+      if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
         # TODO(crbug.com/920418): Stop using dummy binhost.
         api.cros_prebuilts.upload_target_prebuilts(
             build_target, 'dummy',
@@ -159,13 +158,6 @@ def GenTests(api):
          api.cros_relevance.simulate_run_pointless_build_checker() +
          api.properties(build_target={'name': 'amd64-generic'},
                         upload_artifacts=True))
-
-  yield (api.test('upload-prebuilts') +  #
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='amd64-generic-postsubmit') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker() +
-         api.properties(build_target={'name': 'amd64-generic'},
-                        upload_prebuilts=True))
 
   yield (api.test('with-findit-bisect') +  #
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
