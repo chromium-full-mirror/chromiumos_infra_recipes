@@ -675,7 +675,7 @@ Args:
 Raises:
   CompositeBuildFailure containing all failed builds.
 
-&mdash; **def [verify\_tests](/recipe_modules/failures/api.py#81)(self, test_results):**
+&mdash; **def [verify\_tests](/recipe_modules/failures/api.py#82)(self, test_results):**
 
 Logs test status to UI, and raises on failed tests.
 

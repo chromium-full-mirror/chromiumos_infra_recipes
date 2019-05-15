@@ -58,7 +58,8 @@ class FailuresApi(recipe_api.RecipeApi):
     Raises:
       CompositeBuildFailure containing all failed builds.
     """
-    with self.m.step.nest('verify builds'):
+    with self.m.step.nest('verify builds') as step:
+      step.presentation.logs['all_builds'] = [str(b) for b in builds]
       failed_builds = [
           build for build in builds if self._is_critical_failure(build)
       ]

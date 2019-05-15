@@ -795,6 +795,19 @@
     "name": "verify builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@One or more child builders failed:@@@",
+      "@@@STEP_LOG_LINE@all_builds@id: 8922054662172514000@@@",
+      "@@@STEP_LOG_LINE@all_builds@builder {@@@",
+      "@@@STEP_LOG_LINE@all_builds@  builder: \"amd64-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@all_builds@}@@@",
+      "@@@STEP_LOG_LINE@all_builds@status: FAILURE@@@",
+      "@@@STEP_LOG_LINE@all_builds@critical: YES@@@",
+      "@@@STEP_LOG_LINE@all_builds@id: 8922054662172514001@@@",
+      "@@@STEP_LOG_LINE@all_builds@builder {@@@",
+      "@@@STEP_LOG_LINE@all_builds@  builder: \"arm-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@all_builds@}@@@",
+      "@@@STEP_LOG_LINE@all_builds@status: SUCCESS@@@",
+      "@@@STEP_LOG_LINE@all_builds@critical: NO@@@",
+      "@@@STEP_LOG_END@all_builds@@@",
       "@@@STEP_LINK@//amd64-generic-postsubmit/8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_FAILURE@@@"
     ]

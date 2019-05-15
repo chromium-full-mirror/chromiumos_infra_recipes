@@ -16,7 +16,18 @@
   },
   {
     "cmd": [],
-    "name": "verify builds"
+    "name": "verify builds",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@all_builds@id: 202@@@",
+      "@@@STEP_LOG_LINE@all_builds@builder {@@@",
+      "@@@STEP_LOG_LINE@all_builds@  project: \"foo\"@@@",
+      "@@@STEP_LOG_LINE@all_builds@  bucket: \"bar\"@@@",
+      "@@@STEP_LOG_LINE@all_builds@  builder: \"baz\"@@@",
+      "@@@STEP_LOG_LINE@all_builds@}@@@",
+      "@@@STEP_LOG_LINE@all_builds@status: FAILURE@@@",
+      "@@@STEP_LOG_LINE@all_builds@critical: NO@@@",
+      "@@@STEP_LOG_END@all_builds@@@"
+    ]
   },
   {
     "jsonResult": null,
