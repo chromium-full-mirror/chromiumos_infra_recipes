@@ -30,37 +30,14 @@ DEPS = [
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from google.protobuf import struct_pb2
-from recipe_engine.config import ConfigGroup
-from recipe_engine.config import Single
 from recipe_engine.recipe_api import DeferredResult
-from recipe_engine.recipe_api import Property
+from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 
-PROPERTIES = {
-    # Specifies which refs in the manifest repository should point to the
-    # snapshot ref used by the orchestrator, and when.
-    'update_manifest_refs':
-        Property(
-            kind=ConfigGroup(
-                # The start ref is updated before child builds are launched.
-                # An example start ref is 'postsubmit', which should update
-                # right when the orchestrator launches.
-                start=Single(str),
-
-                # The success ref is updated only if all child builds succeed.
-                # An example success ref is 'stable', which should update only
-                # when postsubmit builds succeed.
-                success=Single(str),
-            ),
-            default={},
-        ),
-    # Specifies whether to enable cros_history based resource saving.
-    'enable_history':
-        Property(kind=bool, default=True),
-}
+PROPERTIES = OrchestratorProperties
 
 
-def RunSteps(api, update_manifest_refs, enable_history):
-  validate_refs(update_manifest_refs.values())
+def RunSteps(api, properties):
+  validate_refs(properties.update_manifest_refs)
 
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
@@ -72,13 +49,13 @@ def RunSteps(api, update_manifest_refs, enable_history):
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
     # Point start ref to the input snapshot if specified.
-    maybe_update_manifest_ref(api, update_manifest_refs, 'start')
+    maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start')
 
     requests = []
     completed_builds = []
     passed_builders = set()
 
-    if enable_history and gerrit_changes:
+    if properties.enable_history and gerrit_changes:
       completed_builds = api.cros_history.get_passed_builds(
           api.buildbucket.build.input.gerrit_changes)
       passed_builders = set(build.builder.builder for build in completed_builds)
@@ -121,7 +98,7 @@ def RunSteps(api, update_manifest_refs, enable_history):
 
       # We will not run tests that have already passed for this patch set.
       passed_tests = []
-      if enable_history and gerrit_changes:
+      if properties.enable_history and gerrit_changes:
         passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
 
       # Schedule hardware tests.
@@ -149,7 +126,7 @@ def RunSteps(api, update_manifest_refs, enable_history):
 
     # Victory! If we've made it this far, the child builders were successful
     # and we can update the success manifest ref if it is specified.
-    maybe_update_manifest_ref(api, update_manifest_refs, 'success')
+    maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success')
 
 
 def load_manifest_commit_from_snapshot(api):
@@ -172,29 +149,41 @@ def load_manifest_commit_from_snapshot(api):
 
 
 def validate_refs(refs):
-  """Assert all given refs start with refs/heads.
+  """Assert the given refs start with refs/heads.
 
   Args:
-    refs (list[str]): Refs to validate.
+    refs (UpdateManifestRefs): Refs to validate.
 
   Raises:
     AssertionError: If any invalid ref is found.
   """
-  for ref in refs:
-    if not ref.startswith('refs/heads/'):
-      raise ValueError('ref %s is missing refs/heads/' % ref)
+  validate_ref(refs.start, 'start')
+  validate_ref(refs.success, 'success')
 
 
-def maybe_update_manifest_ref(api, update_manifest_refs, ref_key):
+def validate_ref(ref, name):
+  """Assert the given ref starts with refs/heads.
+
+  Args:
+    ref (string): the ref to validate, if any.
+    name (string): name of ref to validate.
+  """
+  if ref and not ref.startswith('refs/heads/'):
+    raise ValueError('%s ref %s is missing refs/heads/' % (name, ref))
+
+
+def maybe_update_manifest_ref(api, update_manifest_refs, name):
   """Update ref in manifest-internal to point to current snapshot.
 
   Args:
     api (object): See RunSteps documentation.
-    update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
-    ref_key: Key for ref to access in update_manifest_refs.
+    update_manifest_refs (UpdateManifestRefs): refs to maybe update.
+    name (string): name of ref to maybe update. Must correspond to
+        a property name on update_manifest_refs.
   """
-  if ref_key in update_manifest_refs:
-    with api.step.nest('update manifest %s ref' % ref_key):
+  ref = getattr(update_manifest_refs, name)
+  if ref:
+    with api.step.nest('update manifest %s ref' % name):
       if not api.buildbucket.gitiles_commit.project:
         raise ValueError('orchestrator runs must supply a Gitiles '
                          'commit in their input. Found none. If you\'d like to '
@@ -208,7 +197,7 @@ def maybe_update_manifest_ref(api, update_manifest_refs, ref_key):
       with api.context(cwd=api.cros_source.workspace_path.join(snapshot_path)):
         git_repo = 'https://%s/%s' % (snapshot.host, snapshot.project)
         api.git.fetch_ref(git_repo, snapshot.id)
-        refspec = '%s:%s' % (snapshot.id, update_manifest_refs[ref_key])
+        refspec = '%s:%s' % (snapshot.id, ref)
         api.git.push(git_repo, refspec)
 
 

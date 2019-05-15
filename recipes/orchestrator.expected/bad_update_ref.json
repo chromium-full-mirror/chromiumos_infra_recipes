@@ -9,22 +9,20 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", line 375, in run_steps",
       "    raw_result = recipe_obj.run_steps(api, engine)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", line 670, in run_steps",
-      "    properties_def, api=api)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", line 89, in invoke_with_properties",
-      "    arg_names, **additional_args)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", line 52, in _invoke_with_properties",
-      "    return callable_obj(*props, **additional_args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 63, in RunSteps",
-      "    validate_refs(update_manifest_refs.values())",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 185, in validate_refs",
-      "    raise ValueError('ref %s is missing refs/heads/' % ref)",
-      "ValueError: ref foo is missing refs/heads/"
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", line 663, in run_steps",
+      "    recipe_result = self.global_symbols['RunSteps'](*args)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 40, in RunSteps",
+      "    validate_refs(properties.update_manifest_refs)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 160, in validate_refs",
+      "    validate_ref(refs.start, 'start')",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 172, in validate_ref",
+      "    raise ValueError('%s ref %s is missing refs/heads/' % (name, ref))",
+      "ValueError: start ref foo is missing refs/heads/"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('ref foo is missing refs/heads/',)"
+      "humanReason": "Uncaught Exception: ValueError(u'start ref foo is missing refs/heads/',)"
     },
     "name": "$result"
   }
