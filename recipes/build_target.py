@@ -132,10 +132,11 @@ def RunSteps(api, properties):
                                          result_path=str(api.path.mkdtemp())))
           api.failures.raise_failed_packages(response.failed_packages)
 
-      if properties.upload_artifacts:
+      artifact_types = build_config.artifacts.artifact_types
+      if artifact_types:
         api.cros_artifacts.upload_artifacts(
             'upload artifacts', build_target, build_config.id.type,
-            build_config.artifacts.artifact_types)
+            artifact_types)
 
       prebuilts = build_config.artifacts.prebuilts
       if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
@@ -150,13 +151,6 @@ def GenTests(api):
                                   builder='amd64-generic-postsubmit') +  #
          api.cros_relevance.simulate_run_pointless_build_checker() +
          api.properties(build_target={'name': 'amd64-generic'}))
-
-  yield (api.test('upload-artifacts') +  #
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='amd64-generic-postsubmit') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker() +
-         api.properties(build_target={'name': 'amd64-generic'},
-                        upload_artifacts=True))
 
   yield (api.test('with-findit-bisect') +  #
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
