@@ -42,14 +42,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     Args:
       target (BuildTarget): The target whose artifacts will be uploaded.
-      kind (str): The kind of artifacts being uploaded, e.g., postsubmit.
-          Used as a descriptor in the GS path.
+      kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
+          e.g. POSTSUBMIT. Used as a descriptor in the GS path.
 
     Returns:
       The GS path at which artifacts should be uploaded.
     """
+    label = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
     version = self.m.cros_version.read_workspace_version()
-    return '%s-%s/%s' % (target.name, kind, version)
+    return '%s-%s/%s' % (target.name, label, version)
 
   def _get_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
@@ -102,8 +103,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Args:
       name (str): The step name.
       target (BuildTarget): The build target with artifacts of interest.
-      kind (str): The kind of artifacts being uploaded, e.g. 'postsubmit'.
-          This affects where the artifacts are placed in Google Storage.
+      kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
+          e.g. POSTSUBMIT. This affects where the artifacts are placed in
+          Google Storage.
       artifacts (list[ArtifactTypes]): List of artifacts
           to upload. See build config for options.
     """

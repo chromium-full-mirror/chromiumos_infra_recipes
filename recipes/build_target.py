@@ -133,9 +133,8 @@ def RunSteps(api, properties):
           api.failures.raise_failed_packages(response.failed_packages)
 
       if properties.upload_artifacts:
-        # TODO(crbug.com/905039): Stop using dummy artifact kind.
         api.cros_artifacts.upload_artifacts(
-            'upload dummy artifacts', build_target, 'dummy',
+            'upload artifacts', build_target, build_config.id.type,
             build_config.artifacts.artifact_types)
 
       prebuilts = build_config.artifacts.prebuilts
