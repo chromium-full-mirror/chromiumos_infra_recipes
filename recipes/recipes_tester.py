@@ -18,6 +18,7 @@ DEPS = [
     'recipe_engine/json',
     'recipe_engine/led',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'depot_tools/gclient',
@@ -28,12 +29,23 @@ DEPS = [
     'recipe_analyze',
 ]
 
+from recipe_engine.recipe_api import Property
+
+PROPERTIES = {
+    'builders':
+        Property(
+            kind=list, default=[
+                'staging-Annealing', 'staging-chromite-postsubmit',
+                'staging-amd64-generic-postsubmit'
+            ],
+            help=("A list of builders to test the CL on. Only builders in the "
+                  "staging environment should be used."))
+}
+
 # LUCI project to test.
 PROJECT = 'chromeos'
 # Bucket to test in. Only the staging environment should be used.
 BUCKET = 'staging'
-# Builders to run.
-BUILDERS = ['staging-Annealing', 'staging-chromite-postsubmit']
 
 # URL for the ChromeOS CI recipes repo.
 RECIPE_REPO_URL = 'https://chromium.googlesource.com/chromiumos/infra/recipes'
@@ -116,7 +128,7 @@ def _get_last_successful_build(api, builder):
   return successful_builds[0]
 
 
-def _launch_builders(api):
+def _launch_builders(api, builders):
   """Launch builders with recipe changes patched in.
 
   Builders are only launched if the files in the patched changes affect the
@@ -126,6 +138,7 @@ def _launch_builders(api):
 
   Args:
     * api (object): See RunSteps documentation.
+    * builders (list[str]): Builders to launch.
   Returns:
     A list of dicts. Each should contain a 'swarming' key, which is a dict
     containing 'host_name' and 'task_id' keys. I.e. results can be called like
@@ -141,7 +154,7 @@ def _launch_builders(api):
                                               to_rev='HEAD')
       affected_files_step.presentation.logs['affected files'] = affected_files
 
-    for builder in BUILDERS:
+    for builder in builders:
       with api.step.nest(
           'analyze and launch {}'.format(builder)) as builder_step:
         # Get an intermediate result from led to extract the builder definition.
@@ -168,7 +181,7 @@ def _launch_builders(api):
               'builder {} (recipe {}) not affected'.format(builder, recipe))
 
     launch_step.presentation.step_text = 'launched {} / {} builders'.format(
-        len(results), len(BUILDERS))
+        len(results), len(builders))
 
     return results
 
@@ -202,13 +215,22 @@ def _collect_results(api, led_results):
           [result['swarming']['task_id'] for result in led_results])
 
 
-def RunSteps(api):
+def RunSteps(api, builders):
+  if len(builders) == 0:
+    raise ValueError('builders must be non-empty')
+
+  for builder in builders:
+    if 'staging' not in builder:
+      raise ValueError(
+          'only staging builders can be used (builder {} not valid)'.format(
+              builder))
+
   if not api.buildbucket.build.input.gerrit_changes:
     raise ValueError('gerrit_changes required as input.')
 
   with _checkout_recipes_repo(api):
     _apply_gerrit_changes(api)
-    led_results = _launch_builders(api)
+    led_results = _launch_builders(api, builders)
 
   if led_results:
     swarming_results = _collect_results(api, led_results)
@@ -290,7 +312,10 @@ def GenTests(api):
         }))
 
   yield (
-      api.test('basic') +  #
+      api.test('basic') +
+      # Specify two builders to run.
+      api.properties(
+          builders=['staging-Annealing', 'staging-chromite-postsubmit']) +  #
       api.buildbucket.try_build(project='chromeos', bucket='infra',
                                 builder='recipes-tester') +
       # Buildbucket search results.
@@ -315,4 +340,12 @@ def GenTests(api):
                                    builder='recipes-tester'))
 
   yield (api.test('no_gerrit_changes') +  #
+         api.expect_exception('ValueError'))
+
+  yield (api.test('no_builders') +  #
+         api.properties(builders=[]) +  #
+         api.expect_exception('ValueError'))
+
+  yield (api.test('invalid_builders') +  #
+         api.properties(builders=['production-builder']) +  #
          api.expect_exception('ValueError'))
