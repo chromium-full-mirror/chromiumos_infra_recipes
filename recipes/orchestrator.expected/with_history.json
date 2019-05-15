@@ -409,7 +409,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@///123@https://cr-buildbucket.appspot.com/build/123@@@"
+      "@@@STEP_LINK@...123@https://cr-buildbucket.appspot.com/build/123@@@"
     ]
   },
   {
@@ -524,8 +524,8 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@chromeos/postsubmit/amd64-generic-postsubmit/8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_LINK@chromeos/postsubmit/arm-generic-postsubmit/8922054662172514001@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
+      "@@@STEP_LINK@chromeos.postsubmit.amd64-generic-postsubmit.8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@chromeos.postsubmit.arm-generic-postsubmit.8922054662172514001@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
     ]
   },
   {
@@ -584,7 +584,7 @@
     "name": "get untested builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@1/2 builds untested@@@",
-      "@@@STEP_LOG_LINE@untested_builds@//arm-generic-cq/8922054662172514001@@@",
+      "@@@STEP_LOG_LINE@untested_builds@..arm-generic-cq.8922054662172514001@@@",
       "@@@STEP_LOG_END@untested_builds@@@"
     ]
   },
@@ -837,7 +837,7 @@
   },
   {
     "cmd": [],
-    "name": "run tests.schedule target/hw/bvt-cq",
+    "name": "run tests.schedule target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@swarming task@https://swarming.com/bvt-cq@@@"
@@ -859,10 +859,10 @@
       "-qs-account",
       "cq",
       "-task-name",
-      "target/hw/bvt-cq",
+      "target.hw.bvt-cq",
       "bvt-cq"
     ],
-    "name": "run tests.schedule target/hw/bvt-cq.skylab create-suite",
+    "name": "run tests.schedule target.hw.bvt-cq.skylab create-suite",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

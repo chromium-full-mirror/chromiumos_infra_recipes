@@ -28,7 +28,7 @@
       "@@@STEP_LOG_LINE@all_builds@status: FAILURE@@@",
       "@@@STEP_LOG_LINE@all_builds@critical: YES@@@",
       "@@@STEP_LOG_END@all_builds@@@",
-      "@@@STEP_LINK@foo/bar/baz/202@https://cr-buildbucket.appspot.com/build/202@@@",
+      "@@@STEP_LINK@foo.bar.baz.202@https://cr-buildbucket.appspot.com/build/202@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

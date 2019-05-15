@@ -33,7 +33,7 @@
   },
   {
     "cmd": [],
-    "name": "schedule target/hw/bvt-cq",
+    "name": "schedule target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_LINK@swarming task@https://swarming.com/bvt-cq@@@"
     ]
@@ -54,10 +54,10 @@
       "-qs-account",
       "cq",
       "-task-name",
-      "target/hw/bvt-cq",
+      "target.hw.bvt-cq",
       "bvt-cq"
     ],
-    "name": "schedule target/hw/bvt-cq.skylab create-suite",
+    "name": "schedule target.hw.bvt-cq.skylab create-suite",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

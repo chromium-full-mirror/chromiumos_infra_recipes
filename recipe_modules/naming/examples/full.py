@@ -15,17 +15,17 @@ from PB.testplans.target_test_requirements_config import HwTestCfg
 def RunSteps(api):
   build = build_pb2.Build(builder=build_pb2.BuilderID(
       project='foo', bucket='bar', builder='baz'), number=101)
-  api.assertions.assertEqual(api.naming.get_build_title(build),
-                             'foo/bar/baz/101')
+  api.assertions.assertEqual(
+      api.naming.get_build_title(build), 'foo.bar.baz.101')
 
   build = build_pb2.Build(builder=build_pb2.BuilderID(
       project='qux', bucket='quux', builder='quuz'), id=202)
-  api.assertions.assertEqual(api.naming.get_build_title(build),
-                             'qux/quux/quuz/202')
+  api.assertions.assertEqual(
+      api.naming.get_build_title(build), 'qux.quux.quuz.202')
 
   hw_test = HwTestCfg.HwTest(skylab_board='target', suite='bvt-cq')
   api.assertions.assertEqual(
-      api.naming.get_hw_test_title(hw_test), 'target/hw/bvt-cq')
+      api.naming.get_hw_test_title(hw_test), 'target.hw.bvt-cq')
 
 
 def GenTests(api):

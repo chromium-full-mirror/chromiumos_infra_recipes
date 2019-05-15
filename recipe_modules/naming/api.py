@@ -20,7 +20,7 @@ class NamingApi(recipe_api.RecipeApi):
     Returns:
       str: A string describing the build.
     """
-    return '%s/%s/%s/%d' % (build.builder.project, build.builder.bucket,
+    return '%s.%s.%s.%d' % (build.builder.project, build.builder.bucket,
                             build.builder.builder, build.number or build.id)
 
   def get_hw_test_title(self, test):
@@ -32,4 +32,4 @@ class NamingApi(recipe_api.RecipeApi):
     Returns:
       str: A string describing the test.
     """
-    return '%s/hw/%s' % (test.skylab_board, test.suite)
+    return '%s.hw.%s' % (test.skylab_board, test.suite)

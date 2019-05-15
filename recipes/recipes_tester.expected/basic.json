@@ -361,7 +361,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@//staging-Annealing/1@https://cr-buildbucket.appspot.com/build/1@@@"
+      "@@@STEP_LINK@..staging-Annealing.1@https://cr-buildbucket.appspot.com/build/1@@@"
     ]
   },
   {
@@ -528,7 +528,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@//staging-chromite-postsubmit/1@https://cr-buildbucket.appspot.com/build/1@@@"
+      "@@@STEP_LINK@..staging-chromite-postsubmit.1@https://cr-buildbucket.appspot.com/build/1@@@"
     ]
   },
   {
