@@ -1,0 +1,23 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_target;
+
+import "chromiumos/common.proto";
+
+message BuildTargetProperties {
+  // The build target being built.
+  chromiumos.BuildTarget build_target = 1;
+
+  // Whether or not to upload build/test artifacts.
+  bool upload_artifacts = 2;
+
+  // Whether or not to upload binary prebuilts to Google Storage.
+  bool upload_prebuilts = 3;
+
+  // Whether or not to run ebuild tests and exit early.
+  bool run_ebuild_tests = 4;
+}

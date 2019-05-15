@@ -25,9 +25,6 @@ DEPS = [
     'gerrit',
 ]
 
-from recipe_engine.config import Dict
-from recipe_engine.recipe_api import Property
-
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import TEST
@@ -42,29 +39,17 @@ from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromite.api.test import ChromiteUnitTestRequest
+from PB.recipes.chromeos.build_target import BuildTargetProperties
 
-
-PROPERTIES = {
-    'build_target': Property(kind=Dict()),
-
-    # Whether or not to upload build/test artifacts.
-    'upload_artifacts': Property(kind=bool, default=False),
-
-    # Whether or not to upload binary prebuilts to Google Storage.
-    'upload_prebuilts': Property(kind=bool, default=False),
-
-    # Whether or not to run ebuild tests and exit early.
-    'run_ebuild_tests': Property(kind=bool, default=False),
-}
+PROPERTIES = BuildTargetProperties
 
 UPLOADABLE_PREBUILTS_CONFIGS = [
     BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
 ]
 
 
-def RunSteps(api, build_target, upload_artifacts, upload_prebuilts,
-             run_ebuild_tests):
-  build_target = BuildTarget(**build_target)
+def RunSteps(api, properties):
+  build_target = properties.build_target
   build_config = api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
   gitiles_commit = api.buildbucket.gitiles_commit
@@ -139,7 +124,7 @@ def RunSteps(api, build_target, upload_artifacts, upload_prebuilts,
                   builder_path='%s/%s' % (build_config.id.name, version)))
           api.failures.raise_failed_packages(response.failed_packages)
 
-      if run_ebuild_tests:
+      if properties.run_ebuild_tests:
         with api.step.nest('run ebuild tests'):
           response = api.cros_build_api.TestService.BuildTargetUnitTest(
               BuildTargetUnitTestRequest(build_target=build_target,
@@ -147,14 +132,15 @@ def RunSteps(api, build_target, upload_artifacts, upload_prebuilts,
                                          result_path=str(api.path.mkdtemp())))
           api.failures.raise_failed_packages(response.failed_packages)
 
-      if upload_artifacts:
+      if properties.upload_artifacts:
         # TODO(crbug.com/905039): Stop using dummy artifact kind.
         api.cros_artifacts.upload_artifacts(
             'upload dummy artifacts', build_target, 'dummy',
             build_config.artifacts.artifact_types)
 
       prebuilts = build_config.artifacts.prebuilts
-      if upload_prebuilts and prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
+      if (properties.upload_prebuilts and
+          prebuilts in UPLOADABLE_PREBUILTS_CONFIGS):
         # TODO(crbug.com/920418): Stop using dummy binhost.
         api.cros_prebuilts.upload_target_prebuilts(
             build_target, 'dummy',
