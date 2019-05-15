@@ -120,8 +120,8 @@ def RunSteps(api, update_manifest_refs, enable_history):
       # Schedule hardware tests.
       # TODO(evanhernandez): Support VM tests.
       skylab_tasks = [
-          api.skylab.create_suite(test, unit.build_payload)
-          for unit in test_plan.hw
+          api.skylab.create_suite(test, unit.common.build_payload)
+          for unit in test_plan.hw_test_units
           for test in unit.hw_test_cfg.hw_test
           if test.common.display_name not in passed_tests
        ]

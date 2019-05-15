@@ -13,14 +13,20 @@ from PB.testplans.target_test_requirements_config import TastVmTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.target_test_requirements_config import VmTestCfg
 from PB.testplans.generate_test_plan import BuildPayload
-from PB.testplans.generate_test_plan import TestUnit
+from PB.testplans.generate_test_plan import GceTestUnit
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+from PB.testplans.generate_test_plan import HwTestUnit
+from PB.testplans.generate_test_plan import MoblabVmTestUnit
+from PB.testplans.generate_test_plan import TastVmTestUnit
+from PB.testplans.generate_test_plan import TestUnit
+from PB.testplans.generate_test_plan import TestUnitCommon
+from PB.testplans.generate_test_plan import VmTestUnit
 
 
 class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for cros_test_plan api."""
 
-  def test_unit(self, **kwargs):
+  def test_unit_common(self, **kwargs):
     values = dict(
         build_target=BuildTarget(name='target'),
         build_payload=BuildPayload(
@@ -29,11 +35,12 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         ),
     )
     values.update(kwargs)
-    return TestUnit(**values)
+    return TestUnitCommon(**values)
 
   @property
   def gce_test_unit(self):
-    return self.test_unit(
+    return GceTestUnit(
+        common=self.test_unit_common(),
         gce_test_cfg=GceTestCfg(
             gce_test=[
                 GceTestCfg.GceTest(
@@ -47,7 +54,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
 
   @property
   def hw_test_unit(self):
-    return self.test_unit(
+    return HwTestUnit(
+        common=self.test_unit_common(),
         hw_test_cfg=HwTestCfg(
             hw_test=[
                 HwTestCfg.HwTest(
@@ -66,7 +74,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
 
   @property
   def moblab_vm_test_unit(self):
-    return self.test_unit(
+    return MoblabVmTestUnit(
+        common=self.test_unit_common(),
         moblab_vm_test_cfg=MoblabVmTestCfg(
             moblab_test=[
                 MoblabVmTestCfg.MoblabTest(
@@ -78,7 +87,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
 
   @property
   def tast_vm_test_unit(self):
-    return self.test_unit(
+    return TastVmTestUnit(
+        common=self.test_unit_common(),
         tast_vm_test_cfg=TastVmTestCfg(
             tast_vm_test=[
                 TastVmTestCfg.TastVmTest(
@@ -93,7 +103,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
 
   @property
   def vm_test_unit(self):
-    return self.test_unit(
+    return VmTestUnit(
+        common=self.test_unit_common(),
         vm_test_cfg=VmTestCfg(
             vm_test=[
                 VmTestCfg.VmTest(
@@ -109,10 +120,10 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
 
   @property
   def generate_test_plan_response(self):
-    return GenerateTestPlanResponse(test_unit=[
-        self.gce_test_unit,
-        self.hw_test_unit,
-        self.moblab_vm_test_unit,
-        self.tast_vm_test_unit,
-        self.vm_test_unit,
-    ])
+    return GenerateTestPlanResponse(
+        gce_test_units=[self.gce_test_unit],
+        hw_test_units=[self.hw_test_unit],
+        moblab_vm_test_units=[self.moblab_vm_test_unit],
+        tast_vm_test_units=[self.tast_vm_test_unit],
+        vm_test_units=[self.vm_test_unit],
+    )

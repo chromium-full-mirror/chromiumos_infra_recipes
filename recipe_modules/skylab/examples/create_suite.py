@@ -15,7 +15,7 @@ def RunSteps(api):
   hw_test_unit = api.cros_test_plan.test_api.hw_test_unit
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.common.display_name = 'my_little_hw_test'
-  payload = hw_test_unit.build_payload
+  payload = hw_test_unit.common.build_payload
 
   task_id = api.skylab.create_suite(hw_test, payload)
   api.assertions.assertIn(hw_test.suite, task_id)

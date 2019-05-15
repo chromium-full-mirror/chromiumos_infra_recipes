@@ -14,34 +14,8 @@ from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 
 
-class TestPlan(object):
-  """Logically groups test units from a test plan.
-
-  Each slot is a list of TestUnit protos. For example:
-
-    builds = ... # schedule buildbucket request.
-    test_plan = api.cros_test_plan.generate(builds)
-    hw_test_units = test_plan.hw    # returns all hardware test units
-  """
-
-  __slots__ = ['gce', 'hw', 'moblab_vm', 'vm', 'tast_vm']
-
-  def __init__(self, proto):
-    """Group test units by test type.
-
-    Args:
-      proto (GenerateTestPlanResponse): The test plan proto.
-    """
-    for slot in self.__slots__:
-      cfg_field = '%s_test_cfg' % slot
-      setattr(self, slot,
-              [unit for unit in proto.test_unit if unit.HasField(cfg_field)])
-
-
 class CrosTestPlanApi(recipe_api.RecipeApi):
   """A module for generating and parsing test plans."""
-
-  TestPlan = TestPlan
 
   def initialize(self):
     self._test_planner_path = None
@@ -87,7 +61,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       response_proto = json_format.Parse(response_json,
                                          GenerateTestPlanResponse(),
                                          ignore_unknown_fields=True)
-      return TestPlan(response_proto)
+      return response_proto
 
   def _ensure_test_planner(self):
     """Ensure the test_planner cli is installed."""

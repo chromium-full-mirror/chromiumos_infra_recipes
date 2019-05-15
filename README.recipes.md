@@ -537,11 +537,11 @@ checkout and any modifications made by the build.
 
 [DEPS](/recipe_modules/cros_test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#49)(self, builds, name=None):**
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#23)(self, builds, name=None):**
 
 Generate test plan.
 
@@ -552,7 +552,7 @@ Args:
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#46)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#20)(self):**
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
