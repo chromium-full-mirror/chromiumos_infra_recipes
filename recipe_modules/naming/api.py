@@ -22,14 +22,3 @@ class NamingApi(recipe_api.RecipeApi):
     """
     return '%s.%s.%s.%d' % (build.builder.project, build.builder.bucket,
                             build.builder.builder, build.number or build.id)
-
-  def get_hw_test_title(self, test):
-    """Create a string that describes the hardware test.
-
-    Args:
-      * test (HwTest): The hardware test to describe.
-
-    Returns:
-      str: A string describing the test.
-    """
-    return '%s.hw.%s' % (test.skylab_board, test.suite)

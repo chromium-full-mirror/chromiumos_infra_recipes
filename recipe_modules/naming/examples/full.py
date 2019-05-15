@@ -23,10 +23,6 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.naming.get_build_title(build), 'qux.quux.quuz.202')
 
-  hw_test = HwTestCfg.HwTest(skylab_board='target', suite='bvt-cq')
-  api.assertions.assertEqual(
-      api.naming.get_hw_test_title(hw_test), 'target.hw.bvt-cq')
-
 
 def GenTests(api):
   yield api.test('basic')

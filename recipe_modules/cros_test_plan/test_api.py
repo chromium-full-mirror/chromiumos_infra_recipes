@@ -10,6 +10,7 @@ from PB.testplans.target_test_requirements_config import GceTestCfg
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import MoblabVmTestCfg
 from PB.testplans.target_test_requirements_config import TastVmTestCfg
+from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.target_test_requirements_config import VmTestCfg
 from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import TestUnit
@@ -36,6 +37,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         gce_test_cfg=GceTestCfg(
             gce_test=[
                 GceTestCfg.GceTest(
+                    common=TestSuiteCommon(display_name='gtarget.gce.gtest'),
                     test_type='gce',
                     test_suite='gce-test-suite',
                     timeout_sec=123,
@@ -49,6 +51,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         hw_test_cfg=HwTestCfg(
             hw_test=[
                 HwTestCfg.HwTest(
+                    common=TestSuiteCommon(display_name='htarget.hw.bvt-cq'),
                     suite='bvt-cq',
                     skylab_board='target',
                     timeout_sec=123,
@@ -67,6 +70,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         moblab_vm_test_cfg=MoblabVmTestCfg(
             moblab_test=[
                 MoblabVmTestCfg.MoblabTest(
+                    common=TestSuiteCommon(display_name='mtarget.moblab.vm'),
                     test_type='moblab-vm',
                     timeout_sec=123,
                 ),
@@ -78,6 +82,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         tast_vm_test_cfg=TastVmTestCfg(
             tast_vm_test=[
                 TastVmTestCfg.TastVmTest(
+                    common=TestSuiteCommon(display_name='ttarget.tast.sweet'),
                     suite_name='tast-suite',
                     tast_test_expr=[
                         TastVmTestCfg.TastTestExpr(test_expr='exampe.Pass'),
@@ -92,6 +97,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         vm_test_cfg=VmTestCfg(
             vm_test=[
                 VmTestCfg.VmTest(
+                    common=TestSuiteCommon(display_name='vtarget.vm.auto'),
                     test_type='vm_suite',
                     test_suite='autotest-suite',
                     timeout_sec=123,

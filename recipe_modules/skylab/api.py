@@ -40,7 +40,7 @@ class SkylabApi(recipe_api.RecipeApi):
       str: The swarming task ID.
     """
     self._ensure_skylab()
-    name = name or 'schedule %s' % self.m.naming.get_hw_test_title(test)
+    name = name or 'schedule %s' % test.common.display_name
     with self.m.step.nest(name) as step:
       cmd = [
           self._client,
@@ -57,7 +57,7 @@ class SkylabApi(recipe_api.RecipeApi):
           '-qs-account',
           'cq',
           '-task-name',
-          self.m.naming.get_hw_test_title(test),
+          test.common.display_name,
           test.suite,
       ]
       task_json = self.m.easy.stdout_json_step(

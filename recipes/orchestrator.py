@@ -123,7 +123,7 @@ def RunSteps(api, update_manifest_refs, enable_history):
           api.skylab.create_suite(test, unit.build_payload)
           for unit in test_plan.hw
           for test in unit.hw_test_cfg.hw_test
-          if api.naming.get_hw_test_title(test) not in passed_tests
+          if test.common.display_name not in passed_tests
        ]
 
       # Wait for hardware tests.

@@ -981,16 +981,6 @@ Args:
 
 Returns:
   str: A string describing the build.
-
-&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#26)(self, test):**
-
-Create a string that describes the hardware test.
-
-Args:
-  * test (HwTest): The hardware test to describe.
-
-Returns:
-  str: A string describing the test.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
