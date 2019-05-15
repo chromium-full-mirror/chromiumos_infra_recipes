@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"support/internal/shared"
 	"sync"
 	"time"
 
@@ -107,14 +108,21 @@ func fetchHostChanges(
 		return err
 	}
 	queryParams := changesToQueryParams(changes, options)
-	results, more, err := client.ChangeQuery(ctx, queryParams)
-	if err != nil {
-		return err
-	}
-	if more {
-		// Shouldn't happen, but log just in case.
-		log.Print("WARNING: more results than expected!")
-	}
+	ctx, _ = context.WithTimeout(ctx, 5*time.Minute)
+	ch := make(chan []*gerrit.Change, 1)
+	shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
+		results, more, err := client.ChangeQuery(ctx, queryParams)
+		if err != nil {
+			return err
+		}
+		if more {
+			// Shouldn't happen, but log just in case.
+			log.Print("WARNING: more results than expected!")
+		}
+		ch <- results
+		return nil
+	})
+	results := <- ch
 	for _, c := range changes {
 		updateChangeFromResults(c, results)
 	}

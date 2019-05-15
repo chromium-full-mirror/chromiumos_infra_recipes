@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"support/internal/shared"
+	"time"
 )
 
 const(
@@ -36,10 +38,23 @@ func MustFetchBranch(ctx context.Context, httpClient *http.Client, branch Branch
 		log.Fatalf("error creating Gitiles client: %v", err)
 	}
 	ref := "refs/heads/" + branch.Branch
-	resp, err := client.Refs(ctx, &gitilespb.RefsRequest{Project: branch.Project, RefsPath: ref})
+	ctx, _ = context.WithTimeout(ctx, 5*time.Minute)
+	ch := make(chan *gitilespb.RefsResponse, 1)
+	err = shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
+		// This sets the deadline for the individual API call, while the outer context sets
+		// an overall timeout for all attempts.
+		innerCtx, _ := context.WithTimeout(ctx, 30*time.Second)
+		resp, err := client.Refs(innerCtx, &gitilespb.RefsRequest{Project: branch.Project, RefsPath: ref})
+		if err != nil {
+			return err
+		}
+		ch <- resp
+		return nil
+	})
 	if err != nil {
-		log.Fatalf("error fetching ref: %v", err)
+		log.Fatal(err)
 	}
+	resp := <- ch
 	// For some weird reason, a request of "refs/heads/master" comes back in the response as
 	// "refs/heads/master/refs/heads/master". Maybe it's a bug somewhere? In the meantime, let's
 	// handle this case and the eventually-fixed case.
