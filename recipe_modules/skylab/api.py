@@ -3,17 +3,18 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from collections import namedtuple
+
 from recipe_engine import recipe_api
+
+import structs
 
 
 class SkylabApi(recipe_api.RecipeApi):
-  """Skylab helper module.
+  """Module for issuing commands to Skylab"""
 
-  TODO(evanhernandez): Callers of this module should not need to know about
-  swarming tasks. All task creation/waiting should happen through the Skylab
-  CLI. Because Skylab only supports waiting for one task at a time, this will
-  be more feasible when we support parallel recipe steps.
-  """
+  SkylabTask = structs.SkylabTask
+  SkylabResult = structs.SkylabResult
 
   def __init__(self, skylab_server, skylab_version, **kwargs):
     super(SkylabApi, self).__init__(**kwargs)
@@ -22,11 +23,6 @@ class SkylabApi(recipe_api.RecipeApi):
 
   def initialize(self):
     self._client = None
-
-  @property
-  def server(self):
-    """The swarming server on which skylab tasks are run."""
-    return self._server
 
   def create_suite(self, test, payload, name=None):
     """Schedule a HW test suite.
@@ -37,7 +33,7 @@ class SkylabApi(recipe_api.RecipeApi):
       name (str): The step name. Defaults to 'schedule <test title>'
 
     Returns:
-      str: The swarming task ID.
+      SkylabTask: The swarming task ID.
     """
     self._ensure_skylab()
     name = name or 'schedule %s' % test.common.display_name
@@ -64,7 +60,30 @@ class SkylabApi(recipe_api.RecipeApi):
           'skylab create-suite', cmd,
           test_stdout=self.test_api.create_suite_json_output(test.suite))
       step.presentation.links['swarming task'] = task_json['task_url']
-      return task_json['task_id']
+      return self.SkylabTask(task_json['task_id'], test)
+
+  def wait_suites(self, tasks):
+    """Wait for all Skylab suites to finish executing and return the results.
+
+    Args:
+      tasks (list[SkylabTask]): The Skylab tasks to wait on.
+
+    Returns:
+      list[SkylabResult]: The results for each suite.
+    """
+    assert tasks, 'must supply at least one SkylabTask to wait_suites'
+
+    tasks_by_id = {task.id: task for task in tasks}
+
+    # TODO(evanhernandez): This should call skylab wait-suite, not swarming.
+    with self.m.swarming.with_server(self._server):
+      results = self.m.swarming.collect('collect skylab tasks',
+                                        tasks_by_id.keys())
+
+    return [
+        self.SkylabResult(task=tasks_by_id[result.id], success=result.success,
+                          output=result.output) for result in results
+    ]
 
   def _ensure_skylab(self):
     """Ensure the Skylab CLI is installed."""

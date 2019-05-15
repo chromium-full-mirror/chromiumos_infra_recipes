@@ -5,19 +5,21 @@
 
 DEPS = [
     'recipe_engine/assertions',
-    'recipe_engine/step',
-    'failures',
+    'recipe_engine/swarming',
     'skylab',
 ]
 
 
 def RunSteps(api):
-  results = [api.skylab.test_api.skylab_result(success=False)]
-  api.assertions.assertRaises(api.step.StepFailure, api.failures.verify_tests,
-                              results)
+  task = api.skylab.test_api.skylab_task()
 
-  results = [api.skylab.test_api.skylab_result()]
-  api.failures.verify_tests(results)
+  actual = api.skylab.wait_suites([task])
+  expected = [
+      api.skylab.test_api.skylab_result(task=task, success=True,
+                                        output='hello world!')
+  ]
+
+  api.assertions.assertEqual(actual, expected)
 
 
 def GenTests(api):

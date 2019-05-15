@@ -15,7 +15,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'cros_history',
     'cros_infra_config',
     'cros_source',
@@ -127,18 +126,18 @@ def RunSteps(api, update_manifest_refs, enable_history):
        ]
 
       # Wait for hardware tests.
-      tests = []
+      test_results = []
       if skylab_tasks:
-        with api.swarming.with_server(api.skylab.server):
-          tests = api.swarming.collect('collect skylab tasks', skylab_tasks)
+        test_results = api.skylab.wait_suites(skylab_tasks)
 
       # Record test results.
-      api.cros_history.set_passed_tests([t.name for t in tests if t.success])
+      api.cros_history.set_passed_tests(
+          [r.task.test.common.display_name for r in test_results if r.success])
 
     # Verify tests in a deferred context so that all failures appear.
     with api.step.defer_results():
       api.failures.verify_builds(completed_builds)
-      api.failures.verify_tests(tests)
+      api.failures.verify_tests(test_results)
 
     # Victory! If we've made it this far, the child builders were successful
     # and we can update the success manifest ref if it is specified.

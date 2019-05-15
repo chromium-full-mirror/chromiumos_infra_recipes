@@ -78,25 +78,24 @@ class FailuresApi(recipe_api.RecipeApi):
         raise CompositeBuildFailure('One or more child builders failed',
                                     failed_builds)
 
-
   def verify_tests(self, test_results):
     """Logs test status to UI, and raises on failed tests.
 
     Args:
-      * test_results (swarming.TaskResult): List of swarming TaskResults.
+      * test_results (SkylabResult): List of Skylab suite results.
 
     Raises:
       recipe_api.StepFailure on failing tests.
     """
     with self.m.step.nest('test results') as step_result:
       failure_count = 0
-      for swarming_result in test_results:
-        if not swarming_result.success:
+      for result in test_results:
+        if not result.success:
           failure_count += 1
           # We don't have a great way of highlighting failed tests.
-          log_name = 'FAILURE - {}'.format(swarming_result.name)
+          log_name = 'FAILURE - {}'.format(result.task.test.common.display_name)
           # Until parallel recipes materializes, dump output to step log
-          step_result.presentation.logs[log_name] = [swarming_result.output]
+          step_result.presentation.logs[log_name] = [result.output]
       step_result.presentation.step_text = (
           '{} succeeded, {} failed'.format(
               len(test_results)-failure_count, failure_count))

@@ -15,9 +15,9 @@
       "    arg_names, **additional_args)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", line 52, in _invoke_with_properties",
       "    return callable_obj(*props, **additional_args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 64, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 63, in RunSteps",
       "    validate_refs(update_manifest_refs.values())",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 178, in validate_refs",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 177, in validate_refs",
       "    raise ValueError('ref %s is missing refs/heads/' % ref)",
       "ValueError: ref foo is missing refs/heads/"
     ]

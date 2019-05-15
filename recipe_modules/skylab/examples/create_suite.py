@@ -17,11 +17,9 @@ def RunSteps(api):
   hw_test.common.display_name = 'my_little_hw_test'
   payload = hw_test_unit.common.build_payload
 
-  task_id = api.skylab.create_suite(hw_test, payload)
-  api.assertions.assertIn(hw_test.suite, task_id)
-
-  api.assertions.assertEqual(api.skylab.server, 'https://server.com')
+  task = api.skylab.create_suite(hw_test, payload)
+  api.assertions.assertEqual(task.test, hw_test)
 
 
 def GenTests(api):
-  yield api.test('basic') + api.properties(skylab_server='https://server.com')
+  yield api.test('basic')

@@ -70,6 +70,7 @@
   * [recipes_tester](#recipes-recipes_tester) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
   * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
+  * [skylab:examples/wait_suites](#recipes-skylab_examples_wait_suites)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running Tast VM tests.
@@ -676,12 +677,12 @@ Args:
 Raises:
   CompositeBuildFailure containing all failed builds.
 
-&mdash; **def [verify\_tests](/recipe_modules/failures/api.py#82)(self, test_results):**
+&mdash; **def [verify\_tests](/recipe_modules/failures/api.py#81)(self, test_results):**
 
 Logs test status to UI, and raises on failed tests.
 
 Args:
-  * test_results (swarming.TaskResult): List of swarming TaskResults.
+  * test_results (SkylabResult): List of Skylab suite results.
 
 Raises:
   recipe_api.StepFailure on failing tests.
@@ -1206,18 +1207,13 @@ Args:
   * kwargs: Keyword arguments to pass to 'repo.sync'.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
-[DEPS](/recipe_modules/skylab/__init__.py#3): [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/skylab/__init__.py#3): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-Skylab helper module.
+Module for issuing commands to Skylab
 
-TODO(evanhernandez): Callers of this module should not need to know about
-swarming tasks. All task creation/waiting should happen through the Skylab
-CLI. Because Skylab only supports waiting for one task at a time, this will
-be more feasible when we support parallel recipe steps.
-
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#31)(self, test, payload, name=None):**
+&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#27)(self, test, payload, name=None):**
 
 Schedule a HW test suite.
 
@@ -1227,13 +1223,19 @@ Args:
   name (str): The step name. Defaults to 'schedule <test title>'
 
 Returns:
-  str: The swarming task ID.
+  SkylabTask: The swarming task ID.
 
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#23)(self):**
+&mdash; **def [initialize](/recipe_modules/skylab/api.py#24)(self):**
 
-&emsp; **@property**<br>&mdash; **def [server](/recipe_modules/skylab/api.py#26)(self):**
+&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#65)(self, tasks):**
 
-The swarming server on which skylab tasks are run.
+Wait for all Skylab suites to finish executing and return the results.
+
+Args:
+  tasks (list[SkylabTask]): The Skylab tasks to wait on.
+
+Returns:
+  list[SkylabResult]: The results for each suite.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1425,7 +1427,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#24)(api, properties):**
 ### *recipes* / [failures:examples/verify\_tests](/recipe_modules/failures/examples/verify_tests.py)
 
-[DEPS](/recipe_modules/failures/examples/verify_tests.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/failures/examples/verify_tests.py#6): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/verify_tests.py#14)(api):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
@@ -1457,15 +1459,15 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#15)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#63)(api, update_manifest_refs, enable_history):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#62)(api, update_manifest_refs, enable_history):**
 
-&mdash; **def [load\_manifest\_commit\_from\_snapshot](/recipes/orchestrator.py#148)(api):**
+&mdash; **def [load\_manifest\_commit\_from\_snapshot](/recipes/orchestrator.py#147)(api):**
 
 Fetches latest manifest snapshot commit from Gitiles.
 
@@ -1475,7 +1477,7 @@ Args:
 Returns:
   common_pb2.GitilesCommit
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#181)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#180)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1484,7 +1486,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#167)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#166)(refs):**
 
 Assert all given refs start with refs/heads.
 
@@ -1530,6 +1532,11 @@ Tests a recipe CL by running ChromeOS builders.
 [DEPS](/recipe_modules/skylab/examples/create_suite.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_suite.py#14)(api):**
+### *recipes* / [skylab:examples/wait\_suites](/recipe_modules/skylab/examples/wait_suites.py)
+
+[DEPS](/recipe_modules/skylab/examples/wait_suites.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_suites.py#13)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
