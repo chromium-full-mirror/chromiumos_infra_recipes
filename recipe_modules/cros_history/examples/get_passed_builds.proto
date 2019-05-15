@@ -9,7 +9,7 @@ package recipe_modules.chromeos.cros_history.examples;
 import "go.chromium.org/luci/buildbucket/proto/build.proto";
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
-message TestInputProperties {
+message GetPassedBuildsProperties {
   repeated buildbucket.v2.GerritChange input_build_patches = 1;
   repeated buildbucket.v2.GerritChange input_target_patches = 2;
   repeated buildbucket.v2.Build output_builds = 3;

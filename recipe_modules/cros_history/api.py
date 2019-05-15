@@ -8,14 +8,19 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 
 from recipe_engine import recipe_api
+
+from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
 
-class HistoryAwareApi(recipe_api.RecipeApi):
+PASSED_TESTS_KEY = 'passed_tests'
+
+
+class CrosHistoryApi(recipe_api.RecipeApi):
   """A module to use build history to avoid redundant builds."""
 
   def __init__(self, lookback_no_of_seconds, *args, **kwargs):
-    super(HistoryAwareApi, self).__init__(*args, **kwargs)
+    super(CrosHistoryApi, self).__init__(*args, **kwargs)
     self._lookback_no_of_seconds = lookback_no_of_seconds
 
   @property
@@ -23,30 +28,14 @@ class HistoryAwareApi(recipe_api.RecipeApi):
     """Generate start time in seconds."""
     return self.m.time.time() - self._lookback_no_of_seconds
 
-  def get_build_target(self, build):
-    """Retrieve the build target for input build.
-
-    Args:
-      * build: input Build instance.
-
-    Returns:
-      A string with build_target of the input Build object. If not found,
-      return None.
-    """
-    if 'build_target' in build.input.properties:
-      if 'name' in build.input.properties['build_target']:
-        return build.input.properties['build_target']['name']
-
-    return None
-
-  def passed_builds(self, patches):
+  def get_passed_builds(self, patches):
     """Retrieve passed builds with the same patches.
 
     Args:
-      * patches (list[GerritChange]): patches in the current build.
+      patches (list[GerritChange]): patches in the current build.
 
     Returns:
-      A list([build_pb2.Build]) with at most one build per builder.
+      list([build_pb2.Build]): Passed builds with at most one build per builder.
     """
     with self.m.step.nest('Looking for successful builds'):
       if not patches:
@@ -67,7 +56,7 @@ class HistoryAwareApi(recipe_api.RecipeApi):
     """Write a link to the previously passed builds.
 
     Args:
-      * builds_list list([build_pb2.Build]): builds to print.
+      builds_list list([build_pb2.Build]): builds to print.
     """
     if builds_list:
       step = self.m.step('filter build requests', [])
@@ -76,48 +65,47 @@ class HistoryAwareApi(recipe_api.RecipeApi):
         build_url = self.m.buildbucket.build_url(build_id=build.id)
         step.presentation.links[build.builder.builder] = build_url
 
-  def _log_previous_tests(self, build_target_map):
-    """Write a link to the previous passed tests.
+  def get_passed_tests(self, patches):
+    """Find all tests that have passed with the given patches.
 
     Args:
-      * build_target_map dict(str->int): A mapping from build_target to
-          ID of the orchestrator build to link to.
-    """
-    if build_target_map:
-      step = self.m.step('cros_history', [])
-      step.presentation.step_text = 'Some tests have passed before:'
-      for build_target, build_id in build_target_map.iteritems():
-        build_url = self.m.buildbucket.build_url(build_id=build_id)
-        step.presentation.links[build_target] = build_url
-
-  def passed_targets(self, patches):
-    """Retrieve tests that have passed with same patches.
-
-    Args:
-      * patches (list[GerritChange]): patches in the current build.
+      patches (list[GerritChange]): Gerrit patches being tested.
 
     Returns:
-      A set of build_targets that have passed testing.
+      set[str]: Names of passed tests, if any.
     """
-    with self.m.step.nest('Looking for successful tests'):
-      if not patches:
-        return set()
+    if not patches:
+      return set()
 
-      target_build_map = {}
-      for previous_build in self._get_patch_history(
-          patches, builder=self.m.buildbucket.build.builder):
-        if 'build_target_test_status' in previous_build.output.properties:
-          test_results = previous_build.output.properties[
-              'build_target_test_status']
-          if test_results:
-            for build_target in test_results:
-              result_str = test_results[build_target]
-              if result_str == 'success':
-                if build_target not in target_build_map:
-                  target_build_map[build_target] = previous_build.id
+    with self.m.step.nest('get change test history') as step:
+      current_builder = self.m.buildbucket.build.builder
+      past_builds = self._get_patch_history(patches, builder=current_builder)
 
-      self._log_previous_tests(target_build_map)
-      return set(target_build_map.keys())
+      all_passed_tests = set()
+      for build in past_builds:
+        build_output = json_format.MessageToDict(build.output.properties)
+        passed_tests = build_output.get(PASSED_TESTS_KEY, [])
+        all_passed_tests |= set(passed_tests)
+
+      step.step_text = (
+          'some tests already passed: %s' %  ', '.join(all_passed_tests)
+          if all_passed_tests else 'found no test history')
+
+      return all_passed_tests
+
+  def set_passed_tests(self, tests):
+    """Record the tests that passed in the current run.
+
+    This exposes the tests to history, so future runs may know which tests
+    have passed and which have not.
+
+    Args:
+      tests (sequence[str]): (Unique) names of the tests that passed.
+    """
+    if len(tests) != len(set(tests)):
+      raise ValueError('test names must be unique, found: %r' % tests)
+    with self.m.step.nest('record passed tests') as step:
+      step.presentation.properties[PASSED_TESTS_KEY] = tests
 
   def _get_patch_history(self, patches, builder=None, success_only=False):
     """Get all the passed builds with current patch-set from Buildbucket.

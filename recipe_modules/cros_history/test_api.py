@@ -5,26 +5,21 @@
 
 from recipe_engine import recipe_test_api
 
-from google.protobuf import struct_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 
 class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the cros_history module."""
 
-  def test_status_property(self, build_target_to_status):
+  def build_with_passed_tests(self, tests):
     """Generate a struct for the 'build_target_test_status' property.
 
     Args:
-      * dict[str, str]: A map from build target name to status.
+      tests (list[str]): List of tests names that passed.
+
+    Returns:
+      Build: Containing the expected output properties.
     """
-    return struct_pb2.Struct(
-        fields={
-            'build_target_test_status':
-                struct_pb2.Value(
-                    struct_value=struct_pb2.Struct(
-                        fields={
-                            build_target: struct_pb2.Value(string_value=status)
-                            for build_target, status in build_target_to_status
-                            .items()
-                        }))
-        })
+    build = build_pb2.Build(id=123, builder=build_pb2.BuilderID(builder='nami'))
+    build.output.properties.update({'passed_tests': tests})
+    return build

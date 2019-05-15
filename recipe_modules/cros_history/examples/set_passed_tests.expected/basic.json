@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "record passed tests",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"a\", \"b\"]@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

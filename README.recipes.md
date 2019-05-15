@@ -39,7 +39,9 @@
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
-  * [cros_history:examples/full](#recipes-cros_history_examples_full)
+  * [cros_history:examples/get_passed_builds](#recipes-cros_history_examples_get_passed_builds)
+  * [cros_history:examples/get_passed_tests](#recipes-cros_history_examples_get_passed_tests)
+  * [cros_history:examples/set_passed_tests](#recipes-cros_history_examples_set_passed_tests)
   * [cros_infra_config:examples/full](#recipes-cros_infra_config_examples_full)
   * [cros_infra_config:examples/gitiles_failed_retry](#recipes-cros_infra_config_examples_gitiles_failed_retry)
   * [cros_infra_config:examples/gitiles_success](#recipes-cros_infra_config_examples_gitiles_success)
@@ -249,42 +251,41 @@ Args:
 
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [HistoryAwareApi](/recipe_modules/cros_history/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#26)(self, build):**
-
-Retrieve the build target for input build.
-
-Args:
-  * build: input Build instance.
-
-Returns:
-  A string with build_target of the input Build object. If not found,
-  return None.
-
-&mdash; **def [passed\_builds](/recipe_modules/cros_history/api.py#42)(self, patches):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#31)(self, patches):**
 
 Retrieve passed builds with the same patches.
 
 Args:
-  * patches (list[GerritChange]): patches in the current build.
+  patches (list[GerritChange]): patches in the current build.
 
 Returns:
-  A list([build_pb2.Build]) with at most one build per builder.
+  list([build_pb2.Build]): Passed builds with at most one build per builder.
 
-&mdash; **def [passed\_targets](/recipe_modules/cros_history/api.py#93)(self, patches):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#68)(self, patches):**
 
-Retrieve tests that have passed with same patches.
+Find all tests that have passed with the given patches.
 
 Args:
-  * patches (list[GerritChange]): patches in the current build.
+  patches (list[GerritChange]): Gerrit patches being tested.
 
 Returns:
-  A set of build_targets that have passed testing.
+  set[str]: Names of passed tests, if any.
 
-&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#21)(self):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#96)(self, tests):**
+
+Record the tests that passed in the current run.
+
+This exposes the tests to history, so future runs may know which tests
+have passed and which have not.
+
+Args:
+  tests (sequence[str]): (Unique) names of the tests that passed.
+
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#26)(self):**
 
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
@@ -1341,11 +1342,21 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
 
 &mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#13)(api):**
-### *recipes* / [cros\_history:examples/full](/recipe_modules/cros_history/examples/full.py)
+### *recipes* / [cros\_history:examples/get\_passed\_builds](/recipe_modules/cros_history/examples/get_passed_builds.py)
 
-[DEPS](/recipe_modules/cros_history/examples/full.py#12): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_history/examples/get_passed_builds.py#12): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/full.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_passed_builds.py#24)(api, properties):**
+### *recipes* / [cros\_history:examples/get\_passed\_tests](/recipe_modules/cros_history/examples/get_passed_tests.py)
+
+[DEPS](/recipe_modules/cros_history/examples/get_passed_tests.py#11): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_passed_tests.py#18)(api):**
+### *recipes* / [cros\_history:examples/set\_passed\_tests](/recipe_modules/cros_history/examples/set_passed_tests.py)
+
+[DEPS](/recipe_modules/cros_history/examples/set_passed_tests.py#9): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/set_passed_tests.py#17)(api):**
 ### *recipes* / [cros\_infra\_config:examples/full](/recipe_modules/cros_infra_config/examples/full.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -1464,7 +1475,17 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#63)(api, update_manifest_refs, enable_history):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#185)(api, update_manifest_refs, ref_key):**
+&mdash; **def [load\_manifest\_commit\_from\_snapshot](/recipes/orchestrator.py#148)(api):**
+
+Fetches latest manifest snapshot commit from Gitiles.
+
+Args:
+  api (object): See RunSteps documentation.
+
+Returns:
+  common_pb2.GitilesCommit
+
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#181)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1473,18 +1494,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [run\_tests](/recipes/orchestrator.py#212)(api, builds, step_name='run tests'):**
-
-Shortcut for schedule_tests + collect_tests.
-
-Args:
-  * builds (list or generator of build_pb2.Build]): Builds to test.
-  * step_name (str): Optional step name.
-
-Returns:
-  list[swarming.TaskResult]
-
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#171)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#167)(refs):**
 
 Assert all given refs start with refs/heads.
 

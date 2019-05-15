@@ -63,9 +63,11 @@ PROPERTIES = {
 def RunSteps(api, update_manifest_refs, enable_history):
   validate_refs(update_manifest_refs.values())
 
+  gerrit_changes = api.buildbucket.build.input.gerrit_changes
+
   manifest_commit = api.buildbucket.gitiles_commit
   if not manifest_commit.project:
-    manifest_commit = _load_manifest_commit_from_snapshot(api)
+    manifest_commit = load_manifest_commit_from_snapshot(api)
 
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
@@ -76,16 +78,14 @@ def RunSteps(api, update_manifest_refs, enable_history):
     requests = []
     completed_builds = []
     passed_builders = set()
-    tested_targets = set()
+
+    if enable_history and gerrit_changes:
+      completed_builds = api.cros_history.get_passed_builds(
+          api.buildbucket.build.input.gerrit_changes)
+      passed_builders = set(build.builder.builder for build in completed_builds)
 
     orchestrator_builder_config = api.cros_infra_config.get_builder_config(
         api.buildbucket.build.builder.builder)
-    if enable_history and api.buildbucket.build.input.gerrit_changes:
-      completed_builds = api.cros_history.passed_builds(
-          api.buildbucket.build.input.gerrit_changes)
-      tested_targets = api.cros_history.passed_targets(
-          api.buildbucket.build.input.gerrit_changes)
-      passed_builders = set(build.builder.builder for build in completed_builds)
     for child in orchestrator_builder_config.orchestrator.children:
       if child not in passed_builders:
         child_builder_config = api.cros_infra_config.get_builder_config(child)
@@ -100,30 +100,52 @@ def RunSteps(api, update_manifest_refs, enable_history):
           requests, timeout=60 * 60 * 4, step_name='run child builds',
           url_title_fn=api.naming.get_build_title)
 
-    if api.buildbucket.build.input.gerrit_changes:
-      untested_builds = _get_untested_builds(api, completed_builds,
-                                             tested_targets)
-    else:
-      untested_builds = completed_builds
+    # If this is a dry run, check that the builds passed and quit.
+    if api.cq.state == api.cq.DRY:
+      api.failures.verify_builds(completed_builds)
+      return
 
-    test_results = []
-    if not api.cq.state == api.cq.DRY:
-      need_tests_builds = [
-          b for b in untested_builds if b.status == common_pb2.SUCCESS
-      ]
-      test_results = run_tests(api, need_tests_builds)
+    # Otherwise, we have to run tests.
+    need_tests_builds = [
+        b for b in completed_builds if b.status == common_pb2.SUCCESS
+    ]
+    with api.step.nest('run tests'):
+      test_plan = api.cros_test_plan.generate(need_tests_builds)
+
+      # We will not run tests that have already passed for this patch set.
+      passed_tests = []
+      if enable_history and gerrit_changes:
+        passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
+
+      # Schedule hardware tests.
+      # TODO(evanhernandez): Support VM tests.
+      skylab_tasks = [
+          api.skylab.create_suite(test, unit.build_payload)
+          for unit in test_plan.hw
+          for test in unit.hw_test_cfg.hw_test
+          if api.naming.get_hw_test_title(test) not in passed_tests
+       ]
+
+      # Wait for hardware tests.
+      tests = []
+      if skylab_tasks:
+        with api.swarming.with_server(api.skylab.server):
+          tests = api.swarming.collect('collect skylab tasks', skylab_tasks)
+
+      # Record test results.
+      api.cros_history.set_passed_tests([t.name for t in tests if t.success])
 
     # Verify tests in a deferred context so that all failures appear.
     with api.step.defer_results():
       api.failures.verify_builds(completed_builds)
-      api.failures.verify_tests(test_results)
+      api.failures.verify_tests(tests)
 
     # Victory! If we've made it this far, the child builders were successful
     # and we can update the success manifest ref if it is specified.
     maybe_update_manifest_ref(api, update_manifest_refs, 'success')
 
 
-def _load_manifest_commit_from_snapshot(api):
+def load_manifest_commit_from_snapshot(api):
   """Fetches latest manifest snapshot commit from Gitiles.
 
   Args:
@@ -140,32 +162,6 @@ def _load_manifest_commit_from_snapshot(api):
         project='chromeos/manifest-internal',
         ref='refs/heads/snapshot',
         id=rev)
-
-
-def _get_untested_builds(api, completed_builds, tested_targets):
-  """Get `completed_builds` that aren't in `tested_targets`.
-
-  Args:
-    api (object): See RunSteps documentation.
-    completed_builds (list[build_pb2.Build]): Completed builds returned from
-      Buildbucket.
-    tested_targets (set[str]): A set of build_targets that have passed testing.
-
-  Return:
-    A list[build_pb2.Build] (that is a subset of `completed_builds`).
-  """
-  with api.step.nest('get untested builds') as step:
-    untested_builds = [
-        b for b in completed_builds
-        if (api.cros_history.get_build_target(b) not in tested_targets)
-    ]
-    step.presentation.step_text = '{}/{} builds untested'.format(
-        len(untested_builds), len(completed_builds))
-    step.presentation.logs['untested_builds'] = [
-        api.naming.get_build_title(b) for b in untested_builds
-    ]
-
-    return untested_builds
 
 
 def validate_refs(refs):
@@ -207,33 +203,6 @@ def maybe_update_manifest_ref(api, update_manifest_refs, ref_key):
         api.git.fetch_ref(git_repo, snapshot.id)
         refspec = '%s:%s' % (snapshot.id, update_manifest_refs[ref_key])
         api.git.push(git_repo, refspec)
-
-
-def run_tests(api, builds, step_name='run tests'):
-  """Shortcut for schedule_tests + collect_tests.
-
-  Args:
-    * builds (list or generator of build_pb2.Build]): Builds to test.
-    * step_name (str): Optional step name.
-
-  Returns:
-    list[swarming.TaskResult]
-  """
-  with api.step.nest(step_name):
-    test_plan = api.cros_test_plan.generate(builds)
-
-    # Schedule hardware tests.
-    # TODO(evanhernandez): Support VM tests.
-    skylab_tasks = [
-        api.skylab.create_suite(test, unit.build_payload)
-        for unit in test_plan.hw
-        for test in unit.hw_test_cfg.hw_test
-    ]
-    results = []
-    if skylab_tasks:
-      with api.swarming.with_server(api.skylab.server):
-        results = api.swarming.collect('collect skylab tasks', skylab_tasks)
-    return results
 
 
 def GenTests(api):
@@ -282,14 +251,9 @@ def GenTests(api):
       api.properties(enable_history=True) +  #
       api.buildbucket.simulated_search_results(
           [], 'Looking for successful builds.buildbucket.search') +  #
-      api.buildbucket.simulated_search_results([
-          build_pb2.Build(
-              id=123, output=build_pb2.Build.Output(
-                  properties=api.cros_history.test_status_property({
-                      'amd64-generic': 'success',
-                      'arm-generic': 'failure'
-                  })))
-      ], 'Looking for successful tests.buildbucket.search') +  #
+      api.buildbucket.simulated_search_results(
+          [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
+          'run tests.get change test history.buildbucket.search') +  #
       api.buildbucket.simulated_collect_output(
           [
               build_pb2.Build(
