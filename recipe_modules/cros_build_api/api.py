@@ -161,7 +161,9 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # needs to be on the PATH.
       chromite_bin_dir = self.m.cros_source.workspace_path.join('chromite/bin')
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
-        self.m.step('call build API script', cmd)
+        # For Build API retcode 2 indicates that the invocation failed in some
+        # way but a consumable response has been produced.
+        self.m.step('call build API script', cmd, ok_ret=(0, 2))
 
       # If no test data is provided, see if we have our own.
       if test_output_data is None:
