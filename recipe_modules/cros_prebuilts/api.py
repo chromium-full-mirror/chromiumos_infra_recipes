@@ -10,6 +10,7 @@ import os
 from recipe_engine import recipe_api
 
 from PB.chromite.api import binhost
+from PB.chromiumos import builder_config
 
 
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
@@ -23,16 +24,37 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
   def _prebuilts_uri(self, target, kind):
     """Determine the GS URI to upload prebuilts.
+
     Args:
       target (BuildTarget): The build target.
-      kind (str): The kind of prebuilts, e.g. "postsubmit"
+      kind (BuilderConfig.Id.Type): The kind of prebuilts, e.g. POSTSUBMIT
 
     Returns:
       The full GS URI in which to upload prebuilts.
     """
+    label = builder_config.BuilderConfig.Id.Type.Name(kind).lower()
     version = self.m.cros_version.read_workspace_version()
-    return '%s/board/%s/%s-%s/packages' % (self._gs_bucket, target.name, kind,
+    return '%s/board/%s/%s-%s/packages' % (self._gs_bucket, target.name, label,
                                            version)
+
+  def _binhost_key(self, kind):
+    """Return the binhost key for the given builder type.
+
+    Args:
+      kind (BuilderConfig.Id.Type): The builder type.
+
+    Returns:
+      BinhostKey: The binhost key.
+
+    Raises:
+      ValueError: If prebuilts are not supported for the given builder type.
+    """
+    name = builder_config.BuilderConfig.Id.Type.Name(kind)
+    try:
+      return binhost.BinhostKey.Value('%s_BINHOST' % name.upper())
+    except ValueError as err:
+      err.message = '%s builders may not upload prebuilts' % name.lower()
+      raise
 
   def _prepare_binhost_uploads(self, target, uri):
     """Determine which prebuilt archives should be uploaded to the binhost.
@@ -65,13 +87,12 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     Args:
       target (BuildTarget): Build target to update the binhost for.
       private (bool): Whether the target's binhost is private.
-      key (str): The binhost key, e.g. POSTSUBMIT_BINHOST.
+      key (BinhostKey): The binhost key, e.g. POSTSUBMIT_BINHOST.
       uri (str): The new binhost URI.
     """
     with self.m.step.nest('update binhost conf file'):
       request = binhost.SetBinhostRequest(build_target=target, private=private,
-                                          key=binhost.BinhostKey.Value(key),
-                                          uri=uri)
+                                          key=key, uri=uri)
       response = self.m.cros_build_api.BinhostService.SetBinhost(request)
       binhost_path = self.m.path.abs_to_path(response.output_file)
       binhost_data = self.m.file.read_text('read binhost conf', binhost_path)
@@ -92,7 +113,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project.path)):
         self.m.git_txn.update_ref_write_file(
-            project.remote, branch, 'Set %s=%s.' % (key, uri), binhost_path,
+            project.remote, branch,
+            'Set %s=%s.' % (binhost.BinhostKey.Name(key), uri), binhost_path,
             binhost_data, automerge=True)
 
   def _upload(self, root, paths, uri):
@@ -128,13 +150,13 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
     Args:
       target (BuildTarget): The build target to upload prebuilts for.
-      kind (str): Label describing kind of prebuilts to upload (e.g. 'chrome').
+      kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
       private (bool): Whether or not the target prebuilts are private.
     """
+    binhost_key = self._binhost_key(kind)
     with self.m.step.nest('upload prebuilts'):
       upload_uri = self._prebuilts_uri(target, kind)
       upload_root, upload_paths = self._prepare_binhost_uploads(
           target, upload_uri)
       self._upload(upload_root, upload_paths, upload_uri)
-      binhost_key = '%s_BINHOST' % kind.upper()
       self._set_binhost(target, private, binhost_key, upload_uri)

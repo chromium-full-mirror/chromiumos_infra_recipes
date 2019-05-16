@@ -4,18 +4,23 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/path',
     'recipe_engine/properties',
     'cros_prebuilts',
 ]
 
-from PB.chromiumos import common
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.builder_config import BuilderConfig
 
 
 def RunSteps(api):
-  target = common.BuildTarget()
-  target.name = 'target'
-  api.cros_prebuilts.upload_target_prebuilts(target, 'postsubmit')
+  target = BuildTarget(name='target')
+  api.cros_prebuilts.upload_target_prebuilts(target,
+                                             BuilderConfig.Id.POSTSUBMIT)
+  api.assertions.assertRaises(ValueError,
+                              api.cros_prebuilts.upload_target_prebuilts,
+                              target, BuilderConfig.Id.CQ)
 
 
 def GenTests(api):

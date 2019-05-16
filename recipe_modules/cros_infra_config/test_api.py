@@ -56,7 +56,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": true
                   },
                   "artifacts": {
-                    "prebuilts": "PRIVATE"
+                    "prebuilts": "NONE"
                   },
                   "chrome": {
                     "internal": true

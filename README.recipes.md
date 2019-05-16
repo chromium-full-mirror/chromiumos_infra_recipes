@@ -339,11 +339,11 @@ Init the InfraConfigApi module.
 
 API for uploading CrOS prebuilts to Google Storage.
 
-#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for uploading package prebuilts.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#123)(self, target, kind, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#145)(self, target, kind, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -352,7 +352,7 @@ This step works entirely within the workspace checkout.
 
 Args:
   target (BuildTarget): The build target to upload prebuilts for.
-  kind (str): Label describing kind of prebuilts to upload (e.g. 'chrome').
+  kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
   private (bool): Whether or not the target prebuilts are private.
 ### *recipe_modules* / [cros\_relevance](/recipe_modules/cros_relevance)
 
@@ -1376,9 +1376,9 @@ Recipe for building a BuildTarget image.
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/no_builder_config.py#13)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#17)(api):**
 ### *recipes* / [cros\_relevance:examples/full](/recipe_modules/cros_relevance/examples/full.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/full.py#9): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

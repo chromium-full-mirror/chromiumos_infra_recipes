@@ -140,9 +140,8 @@ def RunSteps(api, properties):
 
       prebuilts = build_config.artifacts.prebuilts
       if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
-        # TODO(crbug.com/920418): Stop using dummy binhost.
         api.cros_prebuilts.upload_target_prebuilts(
-            build_target, 'dummy',
+            build_target, build_config.id.type,
             private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
 def GenTests(api):

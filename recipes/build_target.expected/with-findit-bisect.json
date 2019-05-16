@@ -1371,7 +1371,7 @@
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0-101/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/postsubmit-R99-1234.56.0-101/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"uploads_dir\": \"[START_DIR]/uploads/dir\", \"upload_targets\": [{\"path\": \"foo.tbz2\"}]}@@@",
@@ -1386,7 +1386,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0-101/packages\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/postsubmit-R99-1234.56.0-101/packages\"\n}",
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1467,7 +1467,7 @@
       "----",
       "rsync",
       "[CLEANUP]/prebuilts_tmp_12",
-      "gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0-101/packages"
+      "gs://chromeos-prebuilt/board/amd64-generic/postsubmit-R99-1234.56.0-101/packages"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1492,9 +1492,9 @@
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"key\": \"DUMMY_BINHOST\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"key\": \"POSTSUBMIT_BINHOST\", @@@",
       "@@@STEP_LOG_LINE@request@  \"private\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0-101/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/postsubmit-R99-1234.56.0-101/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"output_file\": \"[START_DIR]/BINHOST.conf\"}@@@",
@@ -1509,7 +1509,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"key\": \"DUMMY_BINHOST\", \n  \"private\": true, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/dummy-R99-1234.56.0-101/packages\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"key\": \"POSTSUBMIT_BINHOST\", \n  \"private\": true, \n  \"uri\": \"gs://chromeos-prebuilt/board/amd64-generic/postsubmit-R99-1234.56.0-101/packages\"\n}",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
