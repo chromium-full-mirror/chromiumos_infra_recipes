@@ -20,11 +20,15 @@ For now, only supports TAST VM tests.
 """
 
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.image import CreateVmRequest
 from PB.chromite.api.image import Image
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.image import VmImage
+from PB.chromite.api.sysroot import SysrootCreateRequest
+from PB.chromite.api.sysroot import InstallToolchainRequest
+from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import VmTestRequest
 from PB.recipes.chromeos.test_vm import TestVmProperties
 
@@ -39,6 +43,7 @@ DEPS = [
     'cros_build_api',
     'cros_sdk',
     'cros_source',
+    'failures',
     'gerrit',
 ]
 
@@ -73,7 +78,7 @@ def RunSteps(api, properties):
                          toolchain_targets=[properties.build_target]),
         name='update sdk')
 
-    with api.step.nest('download test image'):
+    with api.step.nest('download vm image'):
       test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
       test_image_zip = test_artifacts_dir.join('image.zip')
       test_image_dir = test_artifacts_dir.join('image')
@@ -85,6 +90,33 @@ def RunSteps(api, properties):
       vm_image_path = str(test_image_dir.join(VM_IMAGE_NAME))
       private_key_path = str(test_image_dir.join(PRIVATE_KEY_NAME))
 
+    # Autotest assumes all the files it needs exist in the sysroot.
+    # Rather than hack the prebuilts into the sysroot, just rebuild.
+    # TODO(evanhernandez): Find a way to stop doing this. It's wasteful.
+    if properties.test_harness == VmTestRequest.AUTOTEST:
+      with api.step.nest('build autotest packages'):
+        sysroot = api.cros_build_api.SysrootService.Create(
+            SysrootCreateRequest(
+                build_target=properties.build_target,
+                chroot=api.cros_sdk.chroot,
+                flags=SysrootCreateRequest.Flags(chroot_current=True)),
+            name='create sysroot').sysroot
+
+        failed_packages = api.cros_build_api.SysrootService.InstallToolchain(
+            InstallToolchainRequest(sysroot=sysroot,
+                                    chroot=api.cros_sdk.chroot),
+            name='install toolchain').failed_packages
+        api.failures.raise_failed_packages(failed_packages)
+
+        failed_packages = api.cros_build_api.SysrootService.InstallPackages(
+            InstallPackagesRequest(
+                sysroot=sysroot,
+                chroot=api.cros_sdk.chroot,
+                packages=[PackageInfo(category='chromeos-base',
+                                      package_name='autotest-all')]),
+            name='install packages').failed_packages
+        api.failures.raise_failed_packages(failed_packages)
+
     # TODO(evanhernandez): Read and present the test results.
     api.cros_build_api.TestService.VmTest(
         VmTestRequest(
@@ -92,17 +124,29 @@ def RunSteps(api, properties):
             vm_image=VmImage(path=vm_image_path),
             ssh_options=VmTestRequest.SshOptions(
                 private_key_path=private_key_path),
-            test_harness=VmTestRequest.TAST, vm_tests=[
+            test_harness=properties.test_harness, vm_tests=[
                 VmTestRequest.VmTest(pattern=exp)
                 for exp in properties.expressions
             ]), name='run tast vm tests')
 
 
 def GenTests(api):
-  yield (api.test('with-gerrit-changes') +  #
+  yield (api.test('with-tast') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +
          api.properties(build_target={'name': 'amd64-generic'},
+                        test_harness=VmTestRequest.TAST,
+                        image_zip={
+                            'gs_bucket': 'gs://chromeos-image-archive',
+                            'gs_path': 'amd64-generic-cq/R12-3.4.5-6/image.zip',
+                        },
+                        expressions=['example.Pass']))
+
+  yield (api.test('with-autotest') +  #
+         api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                   builder='amd64-generic-cq') +
+         api.properties(build_target={'name': 'amd64-generic'},
+                        test_harness=VmTestRequest.AUTOTEST,
                         image_zip={
                             'gs_bucket': 'gs://chromeos-image-archive',
                             'gs_path': 'amd64-generic-cq/R12-3.4.5-6/image.zip',

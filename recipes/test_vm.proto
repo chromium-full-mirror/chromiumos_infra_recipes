@@ -7,10 +7,14 @@ syntax = "proto3";
 package recipes.chromeos.test_vm;
 
 import "chromiumos/common.proto";
+import "chromite/api/test.proto";
 
 message TestVmProperties {
   // The build target under test.
   chromiumos.BuildTarget build_target = 1;
+
+  // The test harness to use.
+  chromite.api.VmTestRequest.TestHarness test_harness = 2;
 
   // An artifact used for testing stored on Google Storage.
   message TestArtifact {
@@ -19,10 +23,10 @@ message TestVmProperties {
   }
 
   // The image bundle.
-  TestArtifact image_zip = 2;
+  TestArtifact image_zip = 3;
 
   // Expressions describing tests to run. For autotest, this is typcally of
   // the form "suite:name". For tast, it is either a test name ("example.Pass")
   // or involves tast attributes (see go/tast-attr).
-  repeated string expressions = 3;
+  repeated string expressions = 4;
 }
