@@ -12,11 +12,6 @@ message BuildTargetProperties {
   // The build target being built.
   chromiumos.BuildTarget build_target = 1;
 
-  // TODO: remove when config no longer sets this boolean. Decision is
-  // now determined from BuilderConfig.Artifacts.artifact_types.
-  // Whether or not to upload build/test artifacts.
-  bool upload_artifacts = 2;
-
   // Whether or not to run ebuild tests and exit early.
   bool run_ebuild_tests = 4;
 }
