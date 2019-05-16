@@ -3,6 +3,7 @@
     "cmd": [],
     "name": "get change build history",
     "~followup_annotations": [
+      "@@@STEP_TEXT@some builds already completed@@@",
       "@@@STEP_LINK@..betty.123@https://cr-buildbucket.appspot.com/build/123@@@",
       "@@@STEP_LINK@..reef.231@https://cr-buildbucket.appspot.com/build/231@@@"
     ]

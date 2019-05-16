@@ -236,7 +236,10 @@
   },
   {
     "cmd": [],
-    "name": "get change build history"
+    "name": "get change build history",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found no completed builds@@@"
+    ]
   },
   {
     "cmd": [
@@ -786,7 +789,8 @@
     "cmd": [],
     "name": "run tests.get change test history",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@some tests already passed: nami/hw/bvt-cq@@@"
     ]
   },
   {

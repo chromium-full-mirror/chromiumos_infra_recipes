@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "get change test history"
+    "name": "get change test history",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@some tests already passed: nami/hw/bvt-cq@@@"
+    ]
   },
   {
     "cmd": [

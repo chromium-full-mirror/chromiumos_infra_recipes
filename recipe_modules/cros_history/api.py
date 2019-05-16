@@ -47,8 +47,9 @@ class CrosHistoryApi(recipe_api.RecipeApi):
           passed_builders.add(build.builder.builder)
           passed_builds.append(build)
 
-      step.step_text = ('some builds already completed'
-                        if passed_builds else 'found no completed builds')
+      step.presentation.step_text = ('some builds already completed'
+                                     if passed_builds else
+                                     'found no completed builds')
       for build in passed_builds:
         title = self.m.naming.get_build_title(build)
         url = self.m.buildbucket.build_url(build_id=build.id)
@@ -76,7 +77,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         passed_tests = build_output.get(PASSED_TESTS_KEY, [])
         all_passed_tests |= set(passed_tests)
 
-      step.step_text = (
+      step.presentation.step_text = (
           'some tests already passed: %s' % ', '.join(all_passed_tests)
           if all_passed_tests else 'found no passed tests')
 

@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "get change build history"
+    "name": "get change build history",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found no completed builds@@@"
+    ]
   },
   {
     "cmd": [
