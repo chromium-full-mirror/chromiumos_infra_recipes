@@ -35,6 +35,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
                 REPO_URL, "generated/builder_configs.cfg",
                 step_test_data=self.test_api.builder_configs_step_test_data,
                 timeout=self.test_api.gitiles_timeout_seconds)
+            break
           except recipe_api.StepFailure as ex:
             if ex.had_timeout and retries < 2:
               continue

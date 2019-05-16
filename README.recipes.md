@@ -298,7 +298,7 @@ Generate start time in seconds.
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#52)(self, builder_name):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#53)(self, builder_name):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -320,7 +320,7 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#78)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#79)(self, config_name):**
 
 Gets Path of most recent test config.
 

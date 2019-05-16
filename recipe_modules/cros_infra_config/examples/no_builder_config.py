@@ -17,5 +17,5 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('no BuilderConfig found') + api.buildbucket.ci_build(
+  yield api.test('no_BuilderConfig_found') + api.buildbucket.ci_build(
       project='chromeos', bucket='postsubmit', builder='bad-builder-name')
