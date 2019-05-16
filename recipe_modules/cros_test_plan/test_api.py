@@ -18,7 +18,6 @@ from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import MoblabVmTestUnit
 from PB.testplans.generate_test_plan import TastVmTestUnit
-from PB.testplans.generate_test_plan import TestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.generate_test_plan import VmTestUnit
 
