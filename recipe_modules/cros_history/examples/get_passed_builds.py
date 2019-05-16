@@ -22,7 +22,6 @@ PROPERTIES = GetPassedBuildsProperties
 
 
 def RunSteps(api, properties):
-  api.assertions.assertEqual(api.cros_history.get_passed_builds([]), [])
   if properties.input_build_patches:
     previous_builds = api.cros_history.get_passed_builds(
         properties.input_build_patches)
@@ -33,13 +32,13 @@ def GenTests(api):
   yield (
       api.test('patch_without_history') +
       api.buildbucket.simulated_search_results(
-          [], 'Looking for successful builds (2).buildbucket.search') +
+          [], 'get change build history.buildbucket.search') + api.properties(
+              GetPassedBuildsProperties(input_build_patches=[
+                  common_pb2.GerritChange(change=1234),
+              ])) +
       api.properties(
-          GetPassedBuildsProperties(input_build_patches=[
-              common_pb2.GerritChange(change=1234),
-          ])) + api.properties(
-              GetPassedBuildsProperties(
-                  input_target_patches=[common_pb2.GerritChange(change=2341)])))
+          GetPassedBuildsProperties(
+              input_target_patches=[common_pb2.GerritChange(change=2341)])))
 
   yield (
       api.test('passed_builds_with_history') +
@@ -48,8 +47,7 @@ def GenTests(api):
           build_pb2.Build(id=231, builder=build_pb2.BuilderID(builder='reef')),
           build_pb2.Build(
               id=312, builder=build_pb2.BuilderID(builder='cq-orchestrator')),
-      ], 'Looking for successful builds (2).buildbucket.search') +
-      api.buildbucket.build(
+      ], 'get change build history.buildbucket.search') + api.buildbucket.build(
           build_pb2.Build(
               builder=build_pb2.BuilderID(builder='cq-orchestrator'))) +
       api.properties(

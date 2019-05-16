@@ -257,7 +257,7 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change() +  #
       api.properties(enable_history=True) +  #
       api.buildbucket.simulated_search_results(
-          [], 'Looking for successful builds.buildbucket.search') +  #
+          [], 'get change build history.buildbucket.search') +  #
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
           'run tests.get change test history.buildbucket.search') +  #

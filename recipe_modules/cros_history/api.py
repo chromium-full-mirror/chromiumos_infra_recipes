@@ -37,33 +37,24 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Returns:
       list([build_pb2.Build]): Passed builds with at most one build per builder.
     """
-    with self.m.step.nest('Looking for successful builds'):
-      if not patches:
-        return []
-
-      previously_passed_builds = []
+    assert patches, 'cannot get build history without gerrit changes'
+    with self.m.step.nest('get change build history') as step:
+      passed_builds = []
       # Start with cq-orchestrator so we don't add it to the result.
       passed_builders = set([self.m.buildbucket.build.builder.builder])
       for build in self._get_patch_history(patches, success_only=True):
         if build.builder.builder not in passed_builders:
           passed_builders.add(build.builder.builder)
-          previously_passed_builds.append(build)
+          passed_builds.append(build)
 
-      self._log_previous_builds(previously_passed_builds)
-      return previously_passed_builds
+      step.step_text = ('some builds already completed'
+                        if passed_builds else 'found no completed builds')
+      for build in passed_builds:
+        title = self.m.naming.get_build_title(build)
+        url = self.m.buildbucket.build_url(build_id=build.id)
+        step.presentation.links[title] = url
 
-  def _log_previous_builds(self, builds_list):
-    """Write a link to the previously passed builds.
-
-    Args:
-      builds_list list([build_pb2.Build]): builds to print.
-    """
-    if builds_list:
-      step = self.m.step('filter build requests', [])
-      step.presentation.step_text = 'Some builds have passed before:'
-      for build in builds_list:
-        build_url = self.m.buildbucket.build_url(build_id=build.id)
-        step.presentation.links[build.builder.builder] = build_url
+      return passed_builds
 
   def get_passed_tests(self, patches):
     """Find all tests that have passed with the given patches.
@@ -74,9 +65,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Returns:
       set[str]: Names of passed tests, if any.
     """
-    if not patches:
-      return set()
-
+    assert patches, 'cannot get test history without gerrit changes'
     with self.m.step.nest('get change test history') as step:
       current_builder = self.m.buildbucket.build.builder
       past_builds = self._get_patch_history(patches, builder=current_builder)
@@ -88,8 +77,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         all_passed_tests |= set(passed_tests)
 
       step.step_text = (
-          'some tests already passed: %s' %  ', '.join(all_passed_tests)
-          if all_passed_tests else 'found no test history')
+          'some tests already passed: %s' % ', '.join(all_passed_tests)
+          if all_passed_tests else 'found no passed tests')
 
       return all_passed_tests
 
