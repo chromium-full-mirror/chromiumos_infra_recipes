@@ -95,9 +95,17 @@ def RunSteps(api, update_manifest_refs, enable_history):
                 critical=child_builder_config.general.critical.value))
 
     if requests:
-      completed_builds += api.buildbucket.run(
+      # As of 2019-05-16, buildbucket.run uses an old-style collect command
+      # that doesn't return all of the fields we need on the Build proto.
+      # We thus need to do a get_multi call to get the fully populated Builds.
+      # TODO: revert https://crrev.com/c/1615374 once buildbucket.run's call
+      # to collect is improved to return the full proto.
+      new_builds = api.buildbucket.run(
           requests, timeout=60 * 60 * 4, step_name='run child builds',
           url_title_fn=api.naming.get_build_title)
+      populated_builds = api.buildbucket.get_multi(
+          [b.id for b in new_builds], step_name='get full build protos')
+      completed_builds += populated_builds.values()
 
     # If this is a dry run, check that the builds passed and quit.
     if api.cq.state == api.cq.DRY:
@@ -244,6 +252,17 @@ def GenTests(api):
 
   yield (api.test('basic') + postsubmit_orchestrator_build())
 
+  builds = [
+      build_pb2.Build(
+          id=8922054662172514000,
+          builder={'builder': 'amd64-generic-cq'},
+          status=common_pb2.SUCCESS, input=dict(
+              properties=build_target_property('amd64-generic'))),
+      build_pb2.Build(
+          id=8922054662172514001, builder={'builder': 'arm-generic-cq'
+                                          }, status=common_pb2.SUCCESS,
+          input=dict(properties=build_target_property('arm-generic'))),
+  ]
   yield (
       api.test('with_history') +  #
       cq_orchestrator_build_with_gerrit_change() +  #
@@ -254,19 +273,9 @@ def GenTests(api):
           [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
           'run tests.get change test history.buildbucket.search') +  #
       api.buildbucket.simulated_collect_output(
-          [
-              build_pb2.Build(
-                  id=8922054662172514000,
-                  builder={'builder': 'amd64-generic-cq'},
-                  status=common_pb2.SUCCESS, input=dict(
-                      properties=build_target_property('amd64-generic'))),
-              build_pb2.Build(
-                  id=8922054662172514001, builder={'builder': 'arm-generic-cq'
-                                                  }, status=common_pb2.SUCCESS,
-                  input=dict(properties=build_target_property('arm-generic'))),
-          ],
-          step_name='run child builds.collect',
-      ))
+          builds, step_name='run child builds.collect') +
+      api.buildbucket.simulated_get_multi(
+          builds, step_name='get full build protos'))
 
   yield (api.test('missing_gitiles_commit') +  #
          postsubmit_orchestrator_build_with_no_gitiles() +
@@ -291,32 +300,34 @@ def GenTests(api):
          postsubmit_orchestrator_build() +  #
          api.cq(dry_run=True))
 
+  builds = [
+      build_pb2.Build(id=8922054662172514000, builder={
+          'builder': 'amd64-generic-postsubmit'
+      }, status=common_pb2.FAILURE, critical=common_pb2.YES),
+      build_pb2.Build(id=8922054662172514001, builder={
+          'builder': 'arm-generic-postsubmit'
+      }, status=common_pb2.SUCCESS, critical=common_pb2.NO),
+  ]
   yield (
       api.test('critical_child_builder_fails') +  #
       postsubmit_orchestrator_build() +  #
       api.buildbucket.simulated_collect_output(
-          [
-              build_pb2.Build(id=8922054662172514000, builder={
-                  'builder': 'amd64-generic-postsubmit'
-              }, status=common_pb2.FAILURE, critical=common_pb2.YES),
-              build_pb2.Build(id=8922054662172514001, builder={
-                  'builder': 'arm-generic-postsubmit'
-              }, status=common_pb2.SUCCESS, critical=common_pb2.NO),
-          ],
-          step_name='run child builds.collect',
-      ))
+          builds, step_name='run child builds.collect') +
+      api.buildbucket.simulated_get_multi(
+          builds, step_name='get full build protos'))
 
+  builds = [
+      build_pb2.Build(id=8922054662172514000, builder={
+          'builder': 'amd64-generic-postsubmit'
+      }, status=common_pb2.SUCCESS, critical=common_pb2.YES),
+      build_pb2.Build(id=8922054662172514001, builder={
+          'builder': 'arm-generic-postsubmit'
+      }, status=common_pb2.FAILURE, critical=common_pb2.NO),
+  ]
   yield (
       api.test('non-critical_child_builder_fails') +  #
       postsubmit_orchestrator_build() +  #
       api.buildbucket.simulated_collect_output(
-          [
-              build_pb2.Build(id=8922054662172514000, builder={
-                  'builder': 'amd64-generic-postsubmit'
-              }, status=common_pb2.SUCCESS, critical=common_pb2.YES),
-              build_pb2.Build(id=8922054662172514001, builder={
-                  'builder': 'arm-generic-postsubmit'
-              }, status=common_pb2.FAILURE, critical=common_pb2.NO),
-          ],
-          step_name='run child builds.collect',
-      ))
+          builds, step_name='run child builds.collect') +
+      api.buildbucket.simulated_get_multi(
+          builds, step_name='get full build protos'))

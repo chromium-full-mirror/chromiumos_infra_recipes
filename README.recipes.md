@@ -1468,7 +1468,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#62)(api, update_manifest_refs, enable_history):**
 
-&mdash; **def [load\_manifest\_commit\_from\_snapshot](/recipes/orchestrator.py#147)(api):**
+&mdash; **def [load\_manifest\_commit\_from\_snapshot](/recipes/orchestrator.py#155)(api):**
 
 Fetches latest manifest snapshot commit from Gitiles.
 
@@ -1478,7 +1478,7 @@ Args:
 Returns:
   common_pb2.GitilesCommit
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#180)(api, update_manifest_refs, ref_key):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#188)(api, update_manifest_refs, ref_key):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1487,7 +1487,7 @@ Args:
   update_manifest_refs (dict): Maps ref key (e.g. start) to qualified ref.
   ref_key: Key for ref to access in update_manifest_refs.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#166)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#174)(refs):**
 
 Assert all given refs start with refs/heads.
 
