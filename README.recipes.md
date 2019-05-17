@@ -37,7 +37,9 @@
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
+  * [cros_build_api:examples/bad_retcodes](#recipes-cros_build_api_examples_bad_retcodes)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
+  * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_history:examples/get_passed_builds](#recipes-cros_history_examples_get_passed_builds)
   * [cros_history:examples/get_passed_tests](#recipes-cros_history_examples_get_passed_tests)
@@ -1325,11 +1327,21 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#22)(api, properties):**
+### *recipes* / [cros\_build\_api:examples/bad\_retcodes](/recipe_modules/cros_build_api/examples/bad_retcodes.py)
+
+[DEPS](/recipe_modules/cros_build_api/examples/bad_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/bad_retcodes.py#16)(api):**
 ### *recipes* / [cros\_build\_api:examples/full](/recipe_modules/cros_build_api/examples/full.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#26)(api):**
+### *recipes* / [cros\_build\_api:examples/ok\_retcodes](/recipe_modules/cros_build_api/examples/ok_retcodes.py)
+
+[DEPS](/recipe_modules/cros_build_api/examples/ok_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/ok_retcodes.py#16)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
