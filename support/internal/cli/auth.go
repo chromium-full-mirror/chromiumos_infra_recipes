@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"golang.org/x/oauth2"
 	"net/http"
 
 	"go.chromium.org/luci/auth"
@@ -29,4 +30,15 @@ func AuthenticatedHTTPClient() (*http.Client, error) {
 	}
 	authenticator := auth.NewAuthenticator(Context, auth.SilentLogin, authOptions)
 	return authenticator.Client()
+}
+
+// Return an authenticated TokenSource. Must be called after Init.
+func AuthenticatedTokenSource() (oauth2.TokenSource, error) {
+	assertInited(true)
+	authOptions, err := authFlags.Options()
+	if err != nil {
+		return nil, err
+	}
+	authenticator := auth.NewAuthenticator(Context, auth.SilentLogin, authOptions)
+	return authenticator.TokenSource()
 }
