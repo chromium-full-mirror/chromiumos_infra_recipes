@@ -139,8 +139,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         sync_path = symlink_tree.root.join(relative_path)
         symlink_tree.register_link(local_path, sync_path)
       symlink_tree.create_links('link files to upload')
-      self.m.gsutil(['rsync', symlink_tree.root, uri], parallel_upload=True,
-                    multithreaded=True)
+      self.m.gsutil(['rsync', '-r', symlink_tree.root, uri],
+                    parallel_upload=True, multithreaded=True)
 
   def upload_target_prebuilts(self, target, kind, private=True):
     """Upload binary prebuilts for the build target to Google Storage.

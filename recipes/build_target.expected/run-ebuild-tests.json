@@ -1712,6 +1712,7 @@
       "-m",
       "----",
       "rsync",
+      "-r",
       "[CLEANUP]/prebuilts_tmp_14",
       "gs://chromeos-prebuilt/board/amd64-generic/postsubmit-R99-1234.56.0-101/packages"
     ],
