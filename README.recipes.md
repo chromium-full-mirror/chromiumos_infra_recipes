@@ -1475,9 +1475,9 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#39)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#42)(api, properties):**
 
-&mdash; **def [load\_manifest\_commit\_from\_snapshot](/recipes/orchestrator.py#132)(api):**
+&mdash; **def [load\_manifest\_commit\_from\_snapshot](/recipes/orchestrator.py#153)(api):**
 
 Fetches latest manifest snapshot commit from Gitiles.
 
@@ -1487,7 +1487,7 @@ Args:
 Returns:
   common_pb2.GitilesCommit
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#175)(api, update_manifest_refs, name):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#196)(api, update_manifest_refs, name):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1497,7 +1497,7 @@ Args:
   name (string): name of ref to maybe update. Must correspond to
       a property name on update_manifest_refs.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#164)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#185)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -1505,7 +1505,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#151)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#172)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -1573,7 +1573,7 @@ on its own because it is agnostic of ChromeOS build targets.
 &mdash; **def [RunSteps](/recipes/test_chromite.py#27)(api):**
 ### *recipes* / [test\_vm](/recipes/test_vm.py)
 
-[DEPS](/recipes/test_vm.py#35): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_vm.py#37): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for running Tast VM tests.
 
@@ -1590,7 +1590,7 @@ The steps specific to VM testing are:
 
 For now, only supports TAST VM tests.
 
-&mdash; **def [RunSteps](/recipes/test_vm.py#57)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_vm.py#59)(api, properties):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7639f1999ac1d8992fc4fbb169d164b156d9a7f7/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/7639f1999ac1d8992fc4fbb169d164b156d9a7f7/recipes/README.recipes.md#recipe_modules-gclient

@@ -349,9 +349,9 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", line 663, in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 52, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 55, in RunSteps",
       "    maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start')",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 193, in maybe_update_manifest_ref",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 214, in maybe_update_manifest_ref",
       "    'Got input: %s' % api.buildbucket.gitiles_commit)",
       "ValueError: orchestrator runs must supply a Gitiles commit in their input. Found none. If you'd like to retry a run that did have a Gitiles commit, try doing so through RPC explorer, e.g. https://screenshot.googleplex.com/FSEm8xB5CS3 Got input: "
     ]

@@ -19,6 +19,8 @@ The steps specific to VM testing are:
 For now, only supports TAST VM tests.
 """
 
+import os
+
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.image import CreateVmRequest
@@ -82,9 +84,10 @@ def RunSteps(api, properties):
       test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
       test_image_zip = test_artifacts_dir.join('image.zip')
       test_image_dir = test_artifacts_dir.join('image')
-      api.gsutil.download(properties.image_zip.gs_bucket,
-                          properties.image_zip.gs_path, test_image_zip,
-                          name='download image bundle from GS')
+      api.gsutil.download(
+          properties.build_payload.artifacts_gs_bucket,
+          os.path.join(properties.build_payload.artifacts_gs_path, 'image.zip'),
+          test_image_zip, name='download image bundle from GS')
       api.archive.extract('unzip image bundle', test_image_zip, test_image_dir,
                           include_files=[VM_IMAGE_NAME, PRIVATE_KEY_NAME])
       vm_image_path = str(test_image_dir.join(VM_IMAGE_NAME))
@@ -134,21 +137,23 @@ def GenTests(api):
   yield (api.test('with-tast') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +
-         api.properties(build_target={'name': 'amd64-generic'},
-                        test_harness=VmTestRequest.TAST,
-                        image_zip={
-                            'gs_bucket': 'gs://chromeos-image-archive',
-                            'gs_path': 'amd64-generic-cq/R12-3.4.5-6/image.zip',
-                        },
-                        expressions=['example.Pass']))
+         api.properties(
+             build_target={'name': 'amd64-generic'},
+             test_harness=VmTestRequest.TAST,
+             build_payload={
+                 'artifacts_gs_bucket': 'gs://chromeos-image-archive',
+                 'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
+             },
+             expressions=['example.Pass']))
 
   yield (api.test('with-autotest') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +
-         api.properties(build_target={'name': 'amd64-generic'},
-                        test_harness=VmTestRequest.AUTOTEST,
-                        image_zip={
-                            'gs_bucket': 'gs://chromeos-image-archive',
-                            'gs_path': 'amd64-generic-cq/R12-3.4.5-6/image.zip',
-                        },
-                        expressions=['example.Pass']))
+         api.properties(
+             build_target={'name': 'amd64-generic'},
+             test_harness=VmTestRequest.AUTOTEST,
+             build_payload={
+                 'artifacts_gs_bucket': 'gs://chromeos-image-archive',
+                 'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
+             },
+             expressions=['example.Pass']))

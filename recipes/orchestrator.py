@@ -27,11 +27,14 @@ DEPS = [
     'skylab',
 ]
 
+from PB.chromite.api.test import VmTestRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from google.protobuf import struct_pb2
-from recipe_engine.recipe_api import DeferredResult
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
+from PB.recipes.chromeos.test_vm import TestVmProperties
+
+from google.protobuf import json_format
+from google.protobuf import struct_pb2
 
 PROPERTIES = OrchestratorProperties
 
@@ -101,8 +104,26 @@ def RunSteps(api, properties):
       if properties.enable_history and gerrit_changes:
         passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
 
+      # Schedule tast vm tests.
+      # TODO(evanhernandez): Verify the results once stable.
+      # TODO(evanhernandez): Also schedule autotest VM tests.
+      api.buildbucket.schedule([
+          api.buildbucket.schedule_request(
+              gitiles_commit=manifest_commit,
+              builder='test_vm',
+              critical=test.common.critical.value,
+              properties=json_format.MessageToDict(
+                  TestVmProperties(
+                      build_target=unit.common.build_target,
+                      test_harness=VmTestRequest.TAST,
+                      build_payload=unit.common.build_payload,
+                      expressions=[t.test_expr for t in test.tast_test_expr])))
+          for unit in test_plan.tast_vm_test_units
+          for test in unit.tast_vm_test_cfg.tast_vm_test
+          if test.common.display_name not in passed_tests
+      ])
+
       # Schedule hardware tests.
-      # TODO(evanhernandez): Support VM tests.
       skylab_tasks = [
           api.skylab.create_suite(test, unit.common.build_payload)
           for unit in test_plan.hw_test_units
