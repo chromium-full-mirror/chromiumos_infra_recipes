@@ -22,6 +22,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/swarming',
     'depot_tools/gclient',
+    'depot_tools/tryserver',
     'failures',
     'gerrit',
     'git',
@@ -49,6 +50,11 @@ BUCKET = 'staging'
 
 # URL for the ChromeOS CI recipes repo.
 RECIPE_REPO_URL = 'https://chromium.googlesource.com/chromiumos/infra/recipes'
+
+# A Git footer than can be included in commit messages to tell the recipe
+# tester to skip builders. See the "Recipe Tester Presubmit" in the README for
+# more details.
+SKIP_BUILDERS_FOOTER = 'Recipes-Tester-Skip-Builder'
 
 
 @contextlib.contextmanager
@@ -215,6 +221,33 @@ def _collect_results(api, led_results):
           [result['swarming']['task_id'] for result in led_results])
 
 
+def _get_non_skipped_builders(api, builders):
+  """Return a subset of 'builders' that are not skipped by CL footers.
+
+  Args:
+    * api (object): See RunSteps documentation.
+    * builders (list[str]): A list of builders to test.
+
+  Returns:
+    A list[str].
+  """
+  with api.step.nest('get non-skipped builders') as step:
+    skip_builders = api.tryserver.get_footer(SKIP_BUILDERS_FOOTER)
+
+    for skip_builder in skip_builders:
+      if skip_builder not in builders:
+        raise ValueError(('Builder {} is specified in the {} footer, but is '
+                          'not in the builders list ({})').format(
+                              skip_builder, SKIP_BUILDERS_FOOTER, builders))
+
+      builders.remove(skip_builder)
+
+    step.presentation.step_text = 'Non-skipped builders: {}'.format(builders)
+    step.presentation.logs['Skipped builders'] = skip_builders
+
+    return builders
+
+
 def RunSteps(api, builders):
   if len(builders) == 0:
     raise ValueError('builders must be non-empty')
@@ -228,9 +261,11 @@ def RunSteps(api, builders):
   if not api.buildbucket.build.input.gerrit_changes:
     raise ValueError('gerrit_changes required as input.')
 
+  non_skipped_builders = _get_non_skipped_builders(api, builders)
+
   with _checkout_recipes_repo(api):
     _apply_gerrit_changes(api)
-    led_results = _launch_builders(api, builders)
+    led_results = _launch_builders(api, non_skipped_builders)
 
   if led_results:
     swarming_results = _collect_results(api, led_results)
@@ -251,6 +286,46 @@ def GenTests(api):
     """
     return 'analyze and launch builders.analyze and launch {}.{}'.format(
         builder, step_name)
+
+  def get_non_skipped_builders_test_data(skipped_builders=None):
+    """Get step data for the 'gerrit changes' and 'parse description' steps.
+
+    Args:
+      * skipped_builders (list[str] or None): If not none, a list of builders to
+          skip with a CL footer.
+
+    Returns:
+      A tuple of TestData objects.
+    """
+    commit_message = 'A test change'
+
+    if skipped_builders:
+      footers = [
+          '{}:{}'.format(SKIP_BUILDERS_FOOTER, builder)
+          for builder in skipped_builders
+      ]
+      commit_message += '''
+
+{}
+'''.format('\n'.join(footers))
+
+    return (api.step_data(
+        'get non-skipped builders.gerrit changes',
+        api.json.output([{
+            'revisions': {
+                1: {
+                    '_number': 7,
+                    'commit': {
+                        'message': commit_message
+                    }
+                }
+            }
+        }])) +  #
+            api.step_data(
+                'get non-skipped builders.parse description',
+                api.json.output({
+                    SKIP_BUILDERS_FOOTER: skipped_builders
+                } if skipped_builders else {})))
 
   def buildbucket_search_test_data(builder):
     return api.buildbucket.simulated_search_results(
@@ -318,6 +393,8 @@ def GenTests(api):
           builders=['staging-Annealing', 'staging-chromite-postsubmit']) +  #
       api.buildbucket.try_build(project='chromeos', bucket='infra',
                                 builder='recipes-tester') +
+      # No builders are skipped
+      get_non_skipped_builders_test_data() +  #
       # Buildbucket search results.
       buildbucket_search_test_data('staging-Annealing') +  #
       buildbucket_search_test_data('staging-chromite-postsubmit') +
@@ -335,7 +412,39 @@ def GenTests(api):
       # led launch results. Note that only annealing is launched.
       led_get_launch_test_data(builder='staging-Annealing'))
 
+  yield (
+      api.test('skipped_builder') +  #
+      # Specify two builders to run.
+      api.properties(
+          builders=['staging-Annealing', 'staging-chromite-postsubmit']) +  #
+      api.buildbucket.try_build(project='chromeos', bucket='infra',
+                                builder='recipes-tester') +
+      # The annealing builder is skipped
+      get_non_skipped_builders_test_data(skipped_builders=['staging-Annealing']
+                                        ) +  #
+      # Buildbucket search results.
+      buildbucket_search_test_data('staging-chromite-postsubmit') +
+      # led get-build results.
+      led_get_build_test_data(builder='staging-chromite-postsubmit',
+                              recipe_name='test_chromite') +  #
+      # recipe analyze results. Note that the test_chromite recipe isn't
+      # affected.
+      recipe_analyze_test_data(builder='staging-chromite-postsubmit',
+                               recipes=[]))
+
+  yield (api.test('invalid_skip_builder_footer') +
+         # Specify two builders to run.
+         api.properties(
+             builders=['staging-Annealing', 'staging-chromite-postsubmit']) +  #
+         # The skipped builder isn't part of the specified builders.
+         get_non_skipped_builders_test_data(skipped_builders=['other-builder'])
+         +  #
+         api.buildbucket.try_build(project='chromeos', bucket='infra',
+                                   builder='recipes-tester') +  #
+         api.expect_exception('ValueError'))
+
   yield (api.test('no_successful_builds') +  #
+         get_non_skipped_builders_test_data() +  #
          api.buildbucket.try_build(project='chromeos', bucket='infra',
                                    builder='recipes-tester'))
 

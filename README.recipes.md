@@ -1536,11 +1536,11 @@ Raises:
 &mdash; **def [RunSteps](/recipe_modules/recipe_analyze/examples/full.py#9)(api):**
 ### *recipes* / [recipes\_tester](/recipes/recipes_tester.py)
 
-[DEPS](/recipes/recipes_tester.py#14): [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [recipe\_analyze](#recipe_modules-recipe_analyze), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/recipes_tester.py#14): [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [recipe\_analyze](#recipe_modules-recipe_analyze), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 Tests a recipe CL by running ChromeOS builders.
 
-&mdash; **def [RunSteps](/recipes/recipes_tester.py#218)(api, builders):**
+&mdash; **def [RunSteps](/recipes/recipes_tester.py#251)(api, builders):**
 ### *recipes* / [repo:examples/full](/recipe_modules/repo/examples/full.py)
 
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1596,6 +1596,7 @@ For now, only supports TAST VM tests.
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/25331bfed5960b4ca33fe8fec7ff7150f237946e/recipes/README.recipes.md#recipe_modules-gclient
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/25331bfed5960b4ca33fe8fec7ff7150f237946e/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/25331bfed5960b4ca33fe8fec7ff7150f237946e/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/25331bfed5960b4ca33fe8fec7ff7150f237946e/recipes/README.recipes.md#recipe_modules-tryserver
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9f95903cb308192351026428275ba8dc4f6e4378/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9f95903cb308192351026428275ba8dc4f6e4378/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9f95903cb308192351026428275ba8dc4f6e4378/README.recipes.md#recipe_modules-buildbucket

@@ -3,7 +3,8 @@
     "cmd": [],
     "name": "get non-skipped builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Non-skipped builders: ['staging-Annealing', 'staging-chromite-postsubmit']@@@",
+      "@@@STEP_TEXT@Non-skipped builders: ['staging-chromite-postsubmit']@@@",
+      "@@@STEP_LOG_LINE@Skipped builders@staging-Annealing@@@",
       "@@@STEP_LOG_END@Skipped builders@@@"
     ]
   },
@@ -39,7 +40,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"1\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 7, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"A test change\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"A test change\\n\\nRecipes-Tester-Skip-Builder:staging-Annealing\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -57,10 +58,14 @@
       "/path/to/tmp/json"
     ],
     "name": "get non-skipped builders.parse description",
-    "stdin": "A test change",
+    "stdin": "A test change\n\nRecipes-Tester-Skip-Builder:staging-Annealing\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"Recipes-Tester-Skip-Builder\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"staging-Annealing\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },
@@ -341,7 +346,7 @@
     "cmd": [],
     "name": "analyze and launch builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@launched 1 / 2 builders@@@"
+      "@@@STEP_TEXT@launched 0 / 1 builders@@@"
     ]
   },
   {
@@ -367,172 +372,6 @@
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "analyze and launch builders.analyze and launch staging-Annealing",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "infra_step": true,
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-Annealing\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
-    "stdout": "/path/to/tmp/json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"staging-Annealing\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            }, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        ]@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1, @@@",
-      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"builder\": \"staging-Annealing\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..staging-Annealing.1@https://cr-buildbucket.appspot.com/build/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CACHE]/led",
-      "-ensure-file",
-      "infra/tools/luci/led/${platform} latest",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/led/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/led/led",
-      "get-build",
-      "1"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.led get-build",
-    "stdout": "/path/to/tmp/json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"job_slices\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"userland\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"recipe_name\": \"annealing\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./recipes.py",
-      "analyze",
-      "{\"files\": [\"a/b/text.txt\", \"other_test.txt\"], \"recipes\": [\"annealing\"]}",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.recipe analyze",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"recipes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"annealing\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/led/led",
-      "edit-recipe-bundle"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit-recipe-bundle",
-    "stdin": "{\"job_slices\": [{\"userland\": {\"recipe_name\": \"annealing\"}}]}",
-    "stdout": "/path/to/tmp/json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@json.output (invalid)@@@",
-      "@@@STEP_LOG_LINE@json.output (exception)@No JSON object could be decoded@@@",
-      "@@@STEP_LOG_END@json.output (exception)@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/led/led",
-      "launch"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.led launch",
-    "stdout": "/path/to/tmp/json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"swarming\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"host_name\": \"chromium-swarm.appspot.com\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"task_id\": \"deadbeeeeef\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task@https://chromium-swarm.appspot.com/task?id=deadbeeeeef@@@"
     ]
   },
   {
@@ -598,6 +437,34 @@
   },
   {
     "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[CACHE]/led",
+      "-ensure-file",
+      "infra/tools/luci/led/${platform} latest",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/led/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
       "[CACHE]/led/led",
       "get-build",
       "1"
@@ -634,91 +501,6 @@
       "@@@STEP_LOG_LINE@json.output@  \"recipes\": []@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "collect results"
-  },
-  {
-    "cmd": [],
-    "name": "collect results.ensure swarming",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CACHE]/swarming_client",
-      "-ensure-file",
-      "infra/tools/luci/swarming/${platform} git_revision:fd7d55c05dac7486ba163c0d08827a0901afaa7b",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "collect results.ensure swarming.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-git_revision:fd7\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/swarming/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/swarming_client/swarming",
-      "collect",
-      "-server",
-      "chromium-swarm.appspot.com",
-      "-task-summary-json",
-      "/path/to/tmp/json",
-      "-task-output-stdout",
-      "json",
-      "deadbeeeeef"
-    ],
-    "infra_step": true,
-    "name": "collect results.collect swarming tasks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"deadbeeeeef\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"deadbeeeeef\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@Swarming task output: my_task_0@hello world!@@@",
-      "@@@STEP_LOG_END@Swarming task output: my_task_0@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "test results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@1 succeeded, 0 failed@@@"
     ]
   },
   {

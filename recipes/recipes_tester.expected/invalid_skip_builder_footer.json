@@ -1,0 +1,99 @@
+[
+  {
+    "cmd": [],
+    "name": "get non-skipped builders",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "--limit",
+      "1",
+      "-p",
+      "change=123456",
+      "-o",
+      "ALL_REVISIONS",
+      "-o",
+      "ALL_COMMITS"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "get non-skipped builders.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"1\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"A test change\\n\\nRecipes-Tester-Skip-Builder:other-builder\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--json",
+      "/path/to/tmp/json"
+    ],
+    "name": "get non-skipped builders.parse description",
+    "stdin": "A test change\n\nRecipes-Tester-Skip-Builder:other-builder\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"Recipes-Tester-Skip-Builder\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"other-builder\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", line 375, in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", line 670, in run_steps",
+      "    properties_def, api=api)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", line 89, in invoke_with_properties",
+      "    arg_names, **additional_args)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", line 52, in _invoke_with_properties",
+      "    return callable_obj(*props, **additional_args)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/recipes_tester.py\", line 264, in RunSteps",
+      "    non_skipped_builders = _get_non_skipped_builders(api, builders)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/recipes_tester.py\", line 241, in _get_non_skipped_builders",
+      "    skip_builder, SKIP_BUILDERS_FOOTER, builders))",
+      "ValueError: Builder other-builder is specified in the Recipes-Tester-Skip-Builder footer, but is not in the builders list (['staging-Annealing', 'staging-chromite-postsubmit'])"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: ValueError(\"Builder other-builder is specified in the Recipes-Tester-Skip-Builder footer, but is not in the builders list (['staging-Annealing', 'staging-chromite-postsubmit'])\",)"
+    },
+    "name": "$result"
+  }
+]
