@@ -751,7 +751,7 @@
       "-board",
       "target",
       "-timeout-mins",
-      "120",
+      "480",
       "-qs-account",
       "cq",
       "-task-name",

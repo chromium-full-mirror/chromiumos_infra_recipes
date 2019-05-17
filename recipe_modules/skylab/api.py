@@ -49,7 +49,7 @@ class SkylabApi(recipe_api.RecipeApi):
           '-board',
           test.skylab_board,
           '-timeout-mins',
-          120,
+          8 * 60, # 8 hours to account for skylab capacity under strain.
           '-qs-account',
           'cq',
           '-task-name',
