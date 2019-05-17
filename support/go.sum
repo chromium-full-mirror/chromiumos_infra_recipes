@@ -15,6 +15,8 @@ github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5y
 github.com/golang/protobuf v1.2.1-0.20190109072247-347cf4a86c1c h1:fQ4P1oAipLwec/j5tfZTYV/e5i9ICSk23uVL+TK9III=
 github.com/golang/protobuf v1.2.1-0.20190109072247-347cf4a86c1c/go.mod h1:Qd/q+1AKNOZr9uGQzbzCmRO6sUih6GTPZv6a1/R87v0=
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
+github.com/googleapis/gax-go v2.0.2+incompatible h1:silFMLAnr330+NRuag/VjIGF7TLp/LBrV2CJKFLWEww=
+github.com/googleapis/gax-go v2.0.2+incompatible/go.mod h1:SFVmujtThgffbyetf+mdk2eWhX2bMyUtNHzFKcPA9HY=
 github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e h1:JKmoR8x90Iww1ks85zJ1lfDGgIiMDuIptTOhJq+zKyg=
 github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e/go.mod h1:wJfORRmW1u3UXTncJ5qlYoELFm8eSnnEO6hX4iZ3EWY=
 github.com/grpc-ecosystem/grpc-gateway v1.5.0/go.mod h1:RSKVYQBd5MCa4OVpNdGskqpgL2+G+NZTnrVHpWWfpdw=
@@ -28,6 +30,8 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
+github.com/luci/luci-go v0.0.0-20190517210314-69f540cd2055 h1:neccrg29kvpRI+qGUTWcirnyQRLN01/KBLG7/XDzwqs=
+github.com/luci/luci-go v0.0.0-20190517210314-69f540cd2055/go.mod h1:k3ApF9lUbij/xWd3mIeo0MlMVJ4YBamc9AkaqV2lcnI=
 github.com/maruel/subcommands v0.0.0-20181220013616-967e945be48b h1:TMHxe8LaGdbpx9XSr14PPDWI4hmoeqOWgYct5HYotv0=
 github.com/maruel/subcommands v0.0.0-20181220013616-967e945be48b/go.mod h1:4cd1CVd4c9phb1z9fTkV+JbmnFm394Hp9rHEAOvD+vs=
 github.com/maruel/ut v1.0.0 h1:Tg5f5waOijrohsOwnMlr1bZmv+wHEbuMEacNBE8kQ7k=
@@ -52,6 +56,7 @@ go.chromium.org/luci v0.0.0-20190114200033-fb39777d1b49 h1:t+j7F4HG6oLYks27GhDir
 go.chromium.org/luci v0.0.0-20190114200033-fb39777d1b49/go.mod h1:MIQewVTLvOvc0UioV0JNqTNO/RspKFS0XEeoKrOxsdM=
 go.chromium.org/luci v0.0.0-20190508132914-521f1612b5b3 h1:UC1frBdnl88N4GBAoexzKXqyoyV0KIdBR/nKFvBPG04=
 go.chromium.org/luci v0.0.0-20190508132914-521f1612b5b3/go.mod h1:MIQewVTLvOvc0UioV0JNqTNO/RspKFS0XEeoKrOxsdM=
+go.opencensus.io v0.18.0 h1:Mk5rgZcggtbvtAun5aJzAtjKKN/t0R3jJPlWILlv938=
 go.opencensus.io v0.18.0/go.mod h1:vKdFvxhtzZ9onBp9VKHK8z/sRpBMnKAsufL7wlDrCOA=
 golang.org/x/lint v0.0.0-20180702182130-06c8688daad7/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
 golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=

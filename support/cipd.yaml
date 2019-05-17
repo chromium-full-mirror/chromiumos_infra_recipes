@@ -6,3 +6,4 @@ data:
   - file: gitiles-fetch-ref/gitiles-fetch-ref
   - file: repo-manifest-diff-projects/repo-manifest-diff-projects
   - file: repo-log-trace/repo-log-trace
+  - file: publish-message/publish-message
