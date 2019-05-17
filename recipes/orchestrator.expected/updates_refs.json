@@ -1,259 +1,20 @@
 [
   {
     "cmd": [],
-    "name": "ensure synced checkout"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "ensure synced checkout.ensure root path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.remove .repo/manifests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests.git"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.remove .repo/manifests.git",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--reference",
-      "/preload/chromeos"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.repo init",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--force-sync",
-      "--detach",
-      "--current-branch",
-      "--jobs",
-      "32",
-      "--no-tags",
-      "--optimized-fetch"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.repo sync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/upperdir"
-    ],
-    "infra_step": true,
-    "name": "mount overlay master.create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/workdir"
-    ],
-    "infra_step": true,
-    "name": "mount overlay master.create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "infra_step": true,
-    "name": "mount overlay master.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=master",
-      "overlay",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "infra_step": true,
-    "name": "mount overlay master.mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/upperdir"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace.create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/workdir"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace.create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=workspace",
-      "overlay",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace.mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "update manifest start ref"
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromeos",
+      "."
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "update manifest start ref.repo forall",
-    "stdout": "/path/to/tmp/",
+    "name": "update manifest start ref.git clone",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos|src/chromeos|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -263,7 +24,7 @@
       "https://chromium.googlesource.com/chromeos",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
+    "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
     "name": "update manifest start ref.git fetch",
     "~followup_annotations": [
@@ -276,7 +37,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
+    "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
     "name": "update manifest start ref.git rev-parse",
     "stdout": "/path/to/tmp/",
@@ -291,7 +52,7 @@
       "https://chromium.googlesource.com/chromeos",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:refs/heads/foo"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
+    "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
     "name": "update manifest start ref.git push",
     "~followup_annotations": [
@@ -708,7 +469,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\", \n  \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_workspace\", \n  \"buildbucketProtos\": [\n    {\n      \"serializedProto\": \"CNCtpKubruDoe2AM\"\n    }, \n    {\n      \"serializedProto\": \"CNGtpKubruDoe2AM\"\n    }\n  ]\n}",
-      "[CLEANUP]/test-plan-_tmp_1/input.json"
+      "[CLEANUP]/test-plan-_tmp_2/input.json"
     ],
     "infra_step": true,
     "name": "run tests.generate test plan.write input json",
@@ -721,9 +482,9 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_json",
-      "[CLEANUP]/test-plan-_tmp_1/input.json",
+      "[CLEANUP]/test-plan-_tmp_2/input.json",
       "--output_json",
-      "[CLEANUP]/test-plan-_tmp_1/output.json"
+      "[CLEANUP]/test-plan-_tmp_2/output.json"
     ],
     "name": "run tests.generate test plan.call test_planner",
     "~followup_annotations": [
@@ -738,7 +499,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_1/output.json",
+      "[CLEANUP]/test-plan-_tmp_2/output.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -926,20 +687,16 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromeos",
+      "."
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/tmp_tmp_3",
     "infra_step": true,
-    "name": "update manifest success ref.repo forall",
-    "stdout": "/path/to/tmp/",
+    "name": "update manifest success ref.git clone",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos|src/chromeos|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -949,7 +706,7 @@
       "https://chromium.googlesource.com/chromeos",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
+    "cwd": "[CLEANUP]/tmp_tmp_3",
     "infra_step": true,
     "name": "update manifest success ref.git fetch",
     "~followup_annotations": [
@@ -962,7 +719,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
+    "cwd": "[CLEANUP]/tmp_tmp_3",
     "infra_step": true,
     "name": "update manifest success ref.git rev-parse",
     "stdout": "/path/to/tmp/",
@@ -977,37 +734,9 @@
       "https://chromium.googlesource.com/chromeos",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:refs/heads/bar"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
+    "cwd": "[CLEANUP]/tmp_tmp_3",
     "infra_step": true,
     "name": "update manifest success ref.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up overlayfs mounts"
-  },
-  {
-    "cmd": [
-      "sudo",
-      "umount",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay master",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "umount",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

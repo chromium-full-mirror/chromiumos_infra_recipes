@@ -46,87 +46,85 @@ def RunSteps(api, properties):
     manifest_commit = load_manifest_commit_from_snapshot(api)
 
   # Set up source checkouts.
-  api.cros_source.ensure_synced_cache()
-  with api.cros_source.checkout_overlays_context():
-    # Point start ref to the input snapshot if specified.
-    maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start')
+  # Point start ref to the input snapshot if specified.
+  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start')
 
-    requests = []
-    completed_builds = []
-    passed_builders = set()
+  requests = []
+  completed_builds = []
+  passed_builders = set()
 
+  if properties.enable_history and gerrit_changes:
+    completed_builds = api.cros_history.get_passed_builds(
+        api.buildbucket.build.input.gerrit_changes)
+    passed_builders = set(build.builder.builder for build in completed_builds)
+
+  orchestrator_builder_config = api.cros_infra_config.get_builder_config(
+      api.buildbucket.build.builder.builder)
+  for child in orchestrator_builder_config.orchestrator.children:
+    if child not in passed_builders:
+      child_builder_config = api.cros_infra_config.get_builder_config(child)
+      requests.append(
+          api.buildbucket.schedule_request(
+              gitiles_commit=manifest_commit,
+              builder=child,
+              critical=child_builder_config.general.critical.value))
+
+  if requests:
+    # As of 2019-05-16, buildbucket.run uses an old-style collect command
+    # that doesn't return all of the fields we need on the Build proto.
+    # We thus need to do a get_multi call to get the fully populated Builds.
+    # TODO: revert https://crrev.com/c/1615374 once buildbucket.run's call
+    # to collect is improved to return the full proto.
+    new_builds = api.buildbucket.run(
+        requests, timeout=60 * 60 * 4, step_name='run child builds',
+        url_title_fn=api.naming.get_build_title)
+    populated_builds = api.buildbucket.get_multi(
+        [b.id for b in new_builds], step_name='get full build protos')
+    completed_builds += populated_builds.values()
+
+  # If this is a dry run, check that the builds passed and quit.
+  if api.cq.state == api.cq.DRY:
+    api.failures.verify_builds(completed_builds)
+    return
+
+  # Otherwise, we have to run tests.
+  need_tests_builds = [
+      b for b in completed_builds if b.status == common_pb2.SUCCESS
+  ]
+  with api.step.nest('run tests'):
+    test_plan = api.cros_test_plan.generate(need_tests_builds)
+
+    # We will not run tests that have already passed for this patch set.
+    passed_tests = []
     if properties.enable_history and gerrit_changes:
-      completed_builds = api.cros_history.get_passed_builds(
-          api.buildbucket.build.input.gerrit_changes)
-      passed_builders = set(build.builder.builder for build in completed_builds)
+      passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
 
-    orchestrator_builder_config = api.cros_infra_config.get_builder_config(
-        api.buildbucket.build.builder.builder)
-    for child in orchestrator_builder_config.orchestrator.children:
-      if child not in passed_builders:
-        child_builder_config = api.cros_infra_config.get_builder_config(child)
-        requests.append(
-            api.buildbucket.schedule_request(
-                gitiles_commit=manifest_commit,
-                builder=child,
-                critical=child_builder_config.general.critical.value))
+    # Schedule hardware tests.
+    # TODO(evanhernandez): Support VM tests.
+    skylab_tasks = [
+        api.skylab.create_suite(test, unit.common.build_payload)
+        for unit in test_plan.hw_test_units
+        for test in unit.hw_test_cfg.hw_test
+        if test.common.display_name not in passed_tests
+      ]
 
-    if requests:
-      # As of 2019-05-16, buildbucket.run uses an old-style collect command
-      # that doesn't return all of the fields we need on the Build proto.
-      # We thus need to do a get_multi call to get the fully populated Builds.
-      # TODO: revert https://crrev.com/c/1615374 once buildbucket.run's call
-      # to collect is improved to return the full proto.
-      new_builds = api.buildbucket.run(
-          requests, timeout=60 * 60 * 4, step_name='run child builds',
-          url_title_fn=api.naming.get_build_title)
-      populated_builds = api.buildbucket.get_multi(
-          [b.id for b in new_builds], step_name='get full build protos')
-      completed_builds += populated_builds.values()
+    # Wait for hardware tests.
+    test_results = []
+    if skylab_tasks:
+      test_results = api.skylab.wait_suites(skylab_tasks)
 
-    # If this is a dry run, check that the builds passed and quit.
-    if api.cq.state == api.cq.DRY:
-      api.failures.verify_builds(completed_builds)
-      return
+    # Record test results.
+    api.cros_history.set_passed_tests(
+        [r.task.test.common.display_name for r in test_results if r.success])
 
-    # Otherwise, we have to run tests.
-    need_tests_builds = [
-        b for b in completed_builds if b.status == common_pb2.SUCCESS
-    ]
-    with api.step.nest('run tests'):
-      test_plan = api.cros_test_plan.generate(need_tests_builds)
+  # Verify tests in a deferred context so that all failures appear.
+  with api.step.defer_results():
+    api.failures.verify_builds(completed_builds)
+    api.failures.verify_tests(test_results)
 
-      # We will not run tests that have already passed for this patch set.
-      passed_tests = []
-      if properties.enable_history and gerrit_changes:
-        passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
-
-      # Schedule hardware tests.
-      # TODO(evanhernandez): Support VM tests.
-      skylab_tasks = [
-          api.skylab.create_suite(test, unit.common.build_payload)
-          for unit in test_plan.hw_test_units
-          for test in unit.hw_test_cfg.hw_test
-          if test.common.display_name not in passed_tests
-       ]
-
-      # Wait for hardware tests.
-      test_results = []
-      if skylab_tasks:
-        test_results = api.skylab.wait_suites(skylab_tasks)
-
-      # Record test results.
-      api.cros_history.set_passed_tests(
-          [r.task.test.common.display_name for r in test_results if r.success])
-
-    # Verify tests in a deferred context so that all failures appear.
-    with api.step.defer_results():
-      api.failures.verify_builds(completed_builds)
-      api.failures.verify_tests(test_results)
-
-    # Victory! If we've made it this far, the child builders were successful
-    # and we can update the success manifest ref if it is specified.
-    maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success')
+  # Victory! If we've made it this far, the child builders were successful
+  # and we can update the success manifest ref if it is specified.
+  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success')
 
 
 def load_manifest_commit_from_snapshot(api):
@@ -192,10 +190,11 @@ def maybe_update_manifest_ref(api, update_manifest_refs, name):
                          'https://screenshot.googleplex.com/FSEm8xB5CS3 '
                          'Got input: %s' % api.buildbucket.gitiles_commit)
       snapshot = api.buildbucket.gitiles_commit
-      snapshot_path = api.cros_source.find_project_path(snapshot.project,
-                                                        'master')
-      with api.context(cwd=api.cros_source.workspace_path.join(snapshot_path)):
+
+      checkout_path = api.path.mkdtemp()
+      with api.context(cwd=checkout_path):
         git_repo = 'https://%s/%s' % (snapshot.host, snapshot.project)
+        api.git.clone(git_repo)
         api.git.fetch_ref(git_repo, snapshot.id)
         refspec = '%s:%s' % (snapshot.id, ref)
         api.git.push(git_repo, refspec)

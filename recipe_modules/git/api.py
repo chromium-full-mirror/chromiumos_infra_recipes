@@ -292,3 +292,16 @@ other_test.txt
         ok_ret='any')
     assert result.retcode == 0, 'malformed commit footers for %s' % ref
     return int(result.stdout.strip())
+
+  def clone(self, repo_url, target_path=None):
+    """Clones a Git repo into the current directory.
+
+    Args:
+      * repo_url (str): The URL of the repo to clone.
+      * target_path (Path): Path in which to clone the repo, or None to specify
+          current directory.
+    """
+    if target_path is None:
+      # Clone into current directory (no extra subdirectory) by default.
+      target_path = '.'
+    self._step(['clone', repo_url, target_path])

@@ -748,6 +748,15 @@ Runs 'git cherry-pick'.
 Args:
   * commit (str): The commit to cherry pick.
 
+&mdash; **def [clone](/recipe_modules/git/api.py#296)(self, repo_url, target_path=None):**
+
+Clones a Git repo into the current directory.
+
+Args:
+  * repo_url (str): The URL of the repo to clone.
+  * target_path (Path): Path in which to clone the repo, or None to specify
+      current directory.
+
 &mdash; **def [commit\_files](/recipe_modules/git/api.py#153)(self, files, message):**
 
 Runs 'git commit' with the given files.
@@ -1477,7 +1486,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#39)(api, properties):**
 
-&mdash; **def [load\_manifest\_commit\_from\_snapshot](/recipes/orchestrator.py#132)(api):**
+&mdash; **def [load\_manifest\_commit\_from\_snapshot](/recipes/orchestrator.py#130)(api):**
 
 Fetches latest manifest snapshot commit from Gitiles.
 
@@ -1487,7 +1496,7 @@ Args:
 Returns:
   common_pb2.GitilesCommit
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#175)(api, update_manifest_refs, name):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#173)(api, update_manifest_refs, name):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1497,7 +1506,7 @@ Args:
   name (string): name of ref to maybe update. Must correspond to
       a property name on update_manifest_refs.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#164)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#162)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -1505,7 +1514,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#151)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#149)(refs):**
 
 Assert the given refs start with refs/heads.
 
