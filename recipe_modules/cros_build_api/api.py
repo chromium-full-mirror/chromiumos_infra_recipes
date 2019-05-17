@@ -109,7 +109,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       setattr(self, stub.__name__, stub(self))
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
-               sudo=False, name=None):
+               name=None):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -123,9 +123,6 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       input_proto (google.protobuf): The input proto object.
       output_type (google.protobuf.descriptor): The output proto type.
       test_output_data (str): JSON to use as a response during testing.
-      sudo (bool): If True, run the build API as sudo. Note this is risky.
-          and therefore this option is deprecated. For example, if the API
-          call ever invokes cros_sdk, it will fail.
       name (str): Name for the step. Generated automatically if not specified.
 
     Returns:
@@ -146,16 +143,6 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
           self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
           '--input-json', input_path, '--output-json', output_path, endpoint
       ]
-
-      # TODO(crbug.com/950959): Do not support sudo commands once obviated.
-      if sudo:
-        # An unfortunate consequence of running the build API as root is that we
-        # must set the umask so that files created by the build API are readable
-        # by the parent process. Hence, the horrid command.
-        cmd = [
-            'sudo', '/bin/bash', '-c',
-            'umask 0000 && %s' % ' '.join(map(str, cmd))
-        ]
 
       # build_api needs to invoke other chromite/bin binaries, hence this dir
       # needs to be on the PATH.
