@@ -2,16 +2,6 @@
   {
     "cmd": [
       "git",
-      "clone",
-      "https://mygithost.google.com/somerepo",
-      "."
-    ],
-    "infra_step": true,
-    "name": "git clone"
-  },
-  {
-    "cmd": [
-      "git",
       "fetch",
       "remote"
     ],
@@ -119,6 +109,20 @@
   {
     "cmd": [
       "git",
+      "diff-index",
+      "--quiet",
+      "HEAD",
+      "some/file/path"
+    ],
+    "infra_step": true,
+    "name": "diff check.git diff-index",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "log",
       "--pretty=%H%x1E%B%x00",
       "START_REF...END_REF"
@@ -204,8 +208,18 @@
   {
     "cmd": [
       "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (2)",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
-      "master"
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "infra_step": true,
     "name": "git checkout (2)"
