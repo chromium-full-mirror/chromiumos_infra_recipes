@@ -94,8 +94,7 @@ class FailuresApi(recipe_api.RecipeApi):
 
       for failed_hw_test in failed_hw_tests:
         title = 'FAILURE - %s' % failed_hw_test.task.test.common.display_name
-        logs = [failed_hw_test.output]
-        step.presentation.logs[title] = logs
+        step.presentation.links[title] = failed_hw_test.task.url
 
       raise self.m.step.StepFailure('{} hw tests failed'.format(fail_count))
 

@@ -11,7 +11,7 @@ from collections import namedtuple
 # Fields:
 #   id (str): The task ID.
 #   test (HwTest): The test running on Skylab.
-SkylabTask = namedtuple('SkylabTask', ['id', 'test'])
+SkylabTask = namedtuple('SkylabTask', ['id', 'url', 'test'])
 
 # Describes a skylab result.
 # Fields:

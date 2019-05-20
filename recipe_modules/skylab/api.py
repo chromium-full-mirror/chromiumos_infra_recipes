@@ -59,8 +59,10 @@ class SkylabApi(recipe_api.RecipeApi):
       task_json = self.m.easy.stdout_json_step(
           'skylab create-suite', cmd,
           test_stdout=self.test_api.create_suite_json_output(test.suite))
-      step.presentation.links['swarming task'] = task_json['task_url']
-      return self.SkylabTask(task_json['task_id'], test)
+      task_id = task_json['task_id']
+      task_url = task_json['task_url']
+      step.presentation.links['swarming task'] = task_url
+      return self.SkylabTask(id=task_id, url=task_url, test=test)
 
   def wait_suites(self, tasks):
     """Wait for all Skylab suites to finish executing and return the results.

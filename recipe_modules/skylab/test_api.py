@@ -28,8 +28,11 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         skylab_board=board or 'target',
     )
 
-  def skylab_task(self, id=None, test=None):
-    return structs.SkylabTask(id=id or 'task-id', test=test or self.hw_test())
+  def skylab_task(self, id=None, url=None, test=None):
+    return structs.SkylabTask(
+        id=id or 'task-id',
+        url=url or 'https://google.com',
+        test=test or self.hw_test())
 
   def skylab_result(self, task=None, success=True, output=None):
     return structs.SkylabResult(

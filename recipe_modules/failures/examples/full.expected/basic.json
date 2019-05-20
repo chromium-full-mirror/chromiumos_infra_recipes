@@ -63,8 +63,7 @@
     "name": "hw test results (3)",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
-      "@@@STEP_LOG_LINE@FAILURE - target.hw.bvt-cq@Successfully ran all tests!@@@",
-      "@@@STEP_LOG_END@FAILURE - target.hw.bvt-cq@@@",
+      "@@@STEP_LINK@FAILURE - target.hw.bvt-cq@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
