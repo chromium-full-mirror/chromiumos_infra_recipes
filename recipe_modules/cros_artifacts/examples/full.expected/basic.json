@@ -160,7 +160,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_1",
-      "artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101"
+      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101"
     ],
     "infra_step": true,
     "name": "upload ebuild logs.gsutil rsync",
@@ -337,7 +337,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_3",
-      "artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101"
+      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101"
     ],
     "infra_step": true,
     "name": "upload firmware archive.gsutil rsync",
@@ -818,7 +818,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_5",
-      "artifacts_gs_bucket/target-cq/R99-1234.56.0-101"
+      "gs://artifacts_gs_bucket/target-cq/R99-1234.56.0-101"
     ],
     "infra_step": true,
     "name": "upload test artifacts.gsutil rsync",

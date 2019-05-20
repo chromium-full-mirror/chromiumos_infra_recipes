@@ -34,7 +34,9 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "artifacts": {
                     "prebuilts": "PRIVATE",
-                    "artifact_types": ["IMAGE_ZIP"]
+                    "artifact_types": ["IMAGE_ZIP"],
+                    "artifacts_gs_bucket": "chromeos-image-archive",
+                    "prebuilts_gs_bucket": "chromeos-prebuilt"
                   },
                   "chrome": {
                     "internal": true
@@ -104,5 +106,4 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
 
   def test_config_file(self):
     """A step_test_data function to simulate test config download."""
-
     return self.m.gitiles.make_encoded_file("")

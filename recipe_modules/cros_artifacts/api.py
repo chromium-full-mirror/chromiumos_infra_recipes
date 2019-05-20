@@ -118,7 +118,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         files_by_artifact[name] = files
 
       gs_path = self._artifacts_gs_path(target, kind)
-      upload_uri = '%s/%s' % (gs_bucket, gs_path)
+      upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
       self.m.gsutil(['rsync', staging_root, upload_uri], parallel_upload=True,
                     multithreaded=True)
 
