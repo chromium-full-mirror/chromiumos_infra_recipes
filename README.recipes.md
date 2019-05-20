@@ -109,7 +109,7 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#95)(self, name, target, kind, artifacts):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#94)(self, name, target, kind, gs_bucket, artifacts):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -124,6 +124,7 @@ Args:
   kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
       e.g. POSTSUBMIT. This affects where the artifacts are placed in
       Google Storage.
+  gs_bucket (str): Google storage bucket to upload artifacts to.
   artifacts (list[ArtifactTypes]): List of artifacts
       to upload. See build config for options.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
@@ -342,7 +343,7 @@ API for uploading CrOS prebuilts to Google Storage.
 
 A module for uploading package prebuilts.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#141)(self, target, kind, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#139)(self, target, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -352,6 +353,7 @@ This step works entirely within the workspace checkout.
 Args:
   target (BuildTarget): The build target to upload prebuilts for.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
+  gs_bucket (str): Google storage bucket to upload prebuilts to.
   private (bool): Whether or not the target prebuilts are private.
 ### *recipe_modules* / [cros\_relevance](/recipe_modules/cros_relevance)
 

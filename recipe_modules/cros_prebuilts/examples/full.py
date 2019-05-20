@@ -17,10 +17,13 @@ from PB.chromiumos.builder_config import BuilderConfig
 def RunSteps(api):
   target = BuildTarget(name='target')
   api.cros_prebuilts.upload_target_prebuilts(target,
-                                             BuilderConfig.Id.POSTSUBMIT)
+                                             BuilderConfig.Id.POSTSUBMIT,
+                                             'prebuilts_gs_bucket')
   api.assertions.assertRaises(ValueError,
                               api.cros_prebuilts.upload_target_prebuilts,
-                              target, BuilderConfig.Id.CQ)
+                              target,
+                              BuilderConfig.Id.CQ,
+                              'prebuilts_gs_bucket')
 
 
 def GenTests(api):

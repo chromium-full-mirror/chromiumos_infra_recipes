@@ -87,7 +87,7 @@
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"target\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0-101/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"uploads_dir\": \"[START_DIR]/uploads/dir\", \"upload_targets\": [{\"path\": \"foo.tbz2\"}]}@@@",
@@ -102,7 +102,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"uri\": \"gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0-101/packages\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"uri\": \"prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101/packages\"\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -182,7 +182,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/prebuilts_tmp_2",
-      "gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0-101/packages"
+      "prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101/packages"
     ],
     "infra_step": true,
     "name": "upload prebuilts.upload prebuilt blobs to GS.gsutil rsync",
@@ -208,7 +208,7 @@
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"key\": \"POSTSUBMIT_BINHOST\", @@@",
       "@@@STEP_LOG_LINE@request@  \"private\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0-101/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"output_file\": \"[START_DIR]/BINHOST.conf\"}@@@",
@@ -223,7 +223,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"key\": \"POSTSUBMIT_BINHOST\", \n  \"private\": true, \n  \"uri\": \"gs://chromeos-prebuilt/board/target/postsubmit-R99-1234.56.0-101/packages\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"key\": \"POSTSUBMIT_BINHOST\", \n  \"private\": true, \n  \"uri\": \"prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101/packages\"\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,

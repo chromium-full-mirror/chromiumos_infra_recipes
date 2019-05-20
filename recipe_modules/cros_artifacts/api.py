@@ -31,9 +31,8 @@ ENDPOINTS_BY_ARTIFACT = {
 class CrosArtifactsApi(recipe_api.RecipeApi):
   """A module for bundling and uploading build artifacts."""
 
-  def __init__(self, artifacts_gs_bucket, **kwargs):
+  def __init__(self, **kwargs):
     super(CrosArtifactsApi, self).__init__(**kwargs)
-    self._gs_bucket = artifacts_gs_bucket
 
   def _artifacts_gs_path(self, target, kind):
     """Returns the GS path for artifacts of the given kind for the given target.
@@ -92,7 +91,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ]
       return artifact_name, artifact_files
 
-  def upload_artifacts(self, name, target, kind, artifacts):
+  def upload_artifacts(self, name, target, kind, gs_bucket, artifacts):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -106,6 +105,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. This affects where the artifacts are placed in
           Google Storage.
+      gs_bucket (str): Google storage bucket to upload artifacts to.
       artifacts (list[ArtifactTypes]): List of artifacts
           to upload. See build config for options.
     """
@@ -118,13 +118,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         files_by_artifact[name] = files
 
       gs_path = self._artifacts_gs_path(target, kind)
-      upload_uri = '%s/%s' % (self._gs_bucket, gs_path)
+      upload_uri = '%s/%s' % (gs_bucket, gs_path)
       self.m.gsutil(['rsync', staging_root, upload_uri], parallel_upload=True,
                     multithreaded=True)
 
       res = self.m.step('output artifact GS paths', cmd=None)
       res.presentation.properties['artifacts'] = {
-          'gs_bucket': self._gs_bucket,
+          'gs_bucket': gs_bucket,
           'gs_path': gs_path,
           'files_by_artifact': files_by_artifact,
       }

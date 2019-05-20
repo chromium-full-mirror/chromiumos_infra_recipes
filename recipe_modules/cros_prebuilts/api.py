@@ -16,25 +16,24 @@ from PB.chromiumos import builder_config
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
   """A module for uploading package prebuilts."""
 
-  def __init__(self, prebuilts_gs_bucket, prebuilts_use_staging_branch,
-               **kwargs):
+  def __init__(self, prebuilts_use_staging_branch, **kwargs):
     super(CrosPrebuiltsApi, self).__init__(**kwargs)
-    self._gs_bucket = prebuilts_gs_bucket
     self._use_staging_branch = prebuilts_use_staging_branch
 
-  def _prebuilts_uri(self, target, kind):
+  def _prebuilts_uri(self, target, kind, gs_bucket):
     """Determine the GS URI to upload prebuilts.
 
     Args:
       target (BuildTarget): The build target.
       kind (BuilderConfig.Id.Type): The kind of prebuilts, e.g. POSTSUBMIT
+      gs_bucket (str): Google storage bucket to upload prebuilts to.
 
     Returns:
       The full GS URI in which to upload prebuilts.
     """
     label = builder_config.BuilderConfig.Id.Type.Name(kind).lower()
     version = self.m.cros_version.read_workspace_version()
-    return '%s/board/%s/%s-%s/packages' % (self._gs_bucket, target.name, label,
+    return '%s/board/%s/%s-%s/packages' % (gs_bucket, target.name, label,
                                            version)
 
   def _binhost_key(self, kind):
@@ -138,7 +137,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       self.m.gsutil(['rsync', '-r', symlink_tree.root, uri],
                     parallel_upload=True, multithreaded=True)
 
-  def upload_target_prebuilts(self, target, kind, private=True):
+  def upload_target_prebuilts(self, target, kind, gs_bucket, private=True):
     """Upload binary prebuilts for the build target to Google Storage.
 
     Determines what to upload, uploads it, and points Portage to the upload URI.
@@ -147,11 +146,12 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     Args:
       target (BuildTarget): The build target to upload prebuilts for.
       kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
+      gs_bucket (str): Google storage bucket to upload prebuilts to.
       private (bool): Whether or not the target prebuilts are private.
     """
     binhost_key = self._binhost_key(kind)
     with self.m.step.nest('upload prebuilts'):
-      upload_uri = self._prebuilts_uri(target, kind)
+      upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
       upload_root, upload_paths = self._prepare_binhost_uploads(
           target, upload_uri)
       self._upload(upload_root, upload_paths, upload_uri)

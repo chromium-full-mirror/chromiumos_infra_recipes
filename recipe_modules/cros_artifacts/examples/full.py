@@ -17,12 +17,15 @@ def RunSteps(api):
 
   api.cros_artifacts.upload_artifacts('upload ebuild logs', target,
                                       BuilderConfig.Id.POSTSUBMIT,
+                                      'artifacts_gs_bucket',
                                       [BuilderConfig.Artifacts.EBUILD_LOGS])
   api.cros_artifacts.upload_artifacts('upload firmware archive', target,
                                       BuilderConfig.Id.POSTSUBMIT,
+                                      'artifacts_gs_bucket',
                                       [BuilderConfig.Artifacts.FIRMWARE])
   api.cros_artifacts.upload_artifacts(
-      'upload test artifacts', target, BuilderConfig.Id.CQ, [
+      'upload test artifacts', target, BuilderConfig.Id.CQ,
+      'artifacts_gs_bucket', [
           BuilderConfig.Artifacts.IMAGE_ZIP,
           BuilderConfig.Artifacts.AUTOTEST_FILES,
           BuilderConfig.Artifacts.TAST_FILES,

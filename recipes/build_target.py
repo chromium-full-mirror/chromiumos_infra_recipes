@@ -136,12 +136,13 @@ def RunSteps(api, properties):
       if artifact_types:
         api.cros_artifacts.upload_artifacts(
             'upload artifacts', build_target, build_config.id.type,
-            artifact_types)
+            build_config.artifacts.artifacts_gs_bucket, artifact_types)
 
       prebuilts = build_config.artifacts.prebuilts
       if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
         api.cros_prebuilts.upload_target_prebuilts(
             build_target, build_config.id.type,
+            build_config.artifacts.prebuilts_gs_bucket,
             private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
 def GenTests(api):

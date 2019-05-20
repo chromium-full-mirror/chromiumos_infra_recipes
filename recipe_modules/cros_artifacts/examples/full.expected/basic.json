@@ -160,7 +160,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/target-postsubmit/R99-1234.56.0-101"
+      "artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101"
     ],
     "infra_step": true,
     "name": "upload ebuild logs.gsutil rsync",
@@ -173,7 +173,7 @@
     "name": "upload ebuild logs.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"gs://chromeos-image-archive\", \"gs_path\": \"target-postsubmit/R99-1234.56.0-101\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-postsubmit/R99-1234.56.0-101\"}@@@"
     ]
   },
   {
@@ -337,7 +337,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_3",
-      "gs://chromeos-image-archive/target-postsubmit/R99-1234.56.0-101"
+      "artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101"
     ],
     "infra_step": true,
     "name": "upload firmware archive.gsutil rsync",
@@ -350,7 +350,7 @@
     "name": "upload firmware archive.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"gs://chromeos-image-archive\", \"gs_path\": \"target-postsubmit/R99-1234.56.0-101\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-postsubmit/R99-1234.56.0-101\"}@@@"
     ]
   },
   {
@@ -818,7 +818,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_5",
-      "gs://chromeos-image-archive/target-cq/R99-1234.56.0-101"
+      "artifacts_gs_bucket/target-cq/R99-1234.56.0-101"
     ],
     "infra_step": true,
     "name": "upload test artifacts.gsutil rsync",
@@ -831,7 +831,7 @@
     "name": "upload test artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"gs://chromeos-image-archive\", \"gs_path\": \"target-cq/R99-1234.56.0-101\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-cq/R99-1234.56.0-101\"}@@@"
     ]
   },
   {
