@@ -18,16 +18,18 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         'task_url': 'https://swarming.com/%s' % label,
     }
 
-  def skylab_task(self, id=None, test=None):
-    return structs.SkylabTask(
-        id=id or 'task-id',
-        test=test or HwTestCfg.HwTest(
-            common=TestSuiteCommon(display_name='target.hw.bvt-cq'),
-            suite='bvt-cq',
-            skylab_board='target',
-            critical=True,
+  def hw_test(self, name=None, suite=None, board=None, critical=True):
+    return HwTestCfg.HwTest(
+        common=TestSuiteCommon(
+            display_name=name or 'target.hw.bvt-cq',
+            critical={'value': critical},
         ),
+        suite=suite or 'bvt-cq',
+        skylab_board=board or 'target',
     )
+
+  def skylab_task(self, id=None, test=None):
+    return structs.SkylabTask(id=id or 'task-id', test=test or self.hw_test())
 
   def skylab_result(self, task=None, success=True, output=None):
     return structs.SkylabResult(

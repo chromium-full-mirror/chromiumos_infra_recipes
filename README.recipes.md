@@ -58,7 +58,6 @@
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [easy:examples/full](#recipes-easy_examples_full)
   * [failures:examples/full](#recipes-failures_examples_full)
-  * [failures:examples/verify_tests](#recipes-failures_examples_verify_tests)
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
@@ -654,11 +653,91 @@ Returns:
 
 API for raising failures and presenting them in cute ways.
 
-#### **class [FailuresApi](/recipe_modules/failures/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [FailuresApi](/recipe_modules/failures/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#31)(self, failed_packages):**
+&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#132)(self, build):**
+
+Determine if the build failed.
+
+Args:
+  build (Build): The buildbucket Build in question.
+
+Returns:
+  bool: True if the build failed.
+
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#165)(self, build):**
+
+Determine in the build failed and was critical.
+
+Args:
+  build (Build): The buildbucket build in question.
+
+Returns:
+  bool: True if the build failed and was critical.
+
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#177)(self, hw_test):**
+
+Determine if the vm test failed and was critical.
+
+Args:
+  hw_test (SkylabResult): The hardware test result in question.
+
+Returns:
+  bool: True if the test failed and was critical.
+
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#189)(self, vm_test):**
+
+Determine if the vm test failed and was critical.
+
+Args:
+  vm_test (Build): The buildbucket build for the VM test.
+
+Returns:
+  bool: True if the test failed and was critical
+
+&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#143)(self, hw_test):**
+
+Determine if the hardware test failed.
+
+Args:
+  hw_test (SkylabResult): The hardware test result in question.
+
+Returns:
+  bool: True if the test failed.
+
+&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#154)(self, vm_test):**
+
+Determine if the VM test failed.
+
+Args:
+  vm_test (Build): The buildbucket build for the VM test.
+
+Returns:
+  bool: True if the test failed.
+
+&mdash; **def [raise\_failed\_builds](/recipe_modules/failures/api.py#41)(self, builds):**
+
+Verify all builds completed successfully.
+
+Args:
+  * builds (list[build_pb2.Build]): List of completed builds.
+
+Raises:
+  CompositeBuildFailure containing all failed builds.
+
+&mdash; **def [raise\_failed\_hw\_tests](/recipe_modules/failures/api.py#72)(self, hw_tests):**
+
+Logs hardware test status to UI, and raises on failed tests.
+
+Args:
+  * hw_tests (list[SkylabResult]): List of Skylab suite results.
+
+Raises:
+  recipe_api.StepFailure: If any tests failed.
+
+&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#18)(self, packages):**
 
 Display failed packages and raise a failure.
 
@@ -670,25 +749,15 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [verify\_builds](/recipe_modules/failures/api.py#52)(self, builds):**
+&mdash; **def [raise\_failed\_vm\_tests](/recipe_modules/failures/api.py#102)(self, vm_tests):**
 
-Verify all builds completed successfully.
-
-Args:
-  * builds (list[build_pb2.Build]): List of completed builds.
-
-Raises:
-  CompositeBuildFailure containing all failed builds.
-
-&mdash; **def [verify\_tests](/recipe_modules/failures/api.py#81)(self, test_results):**
-
-Logs test status to UI, and raises on failed tests.
+Logs VM test status to UI, and raises on failed tests.
 
 Args:
-  * test_results (SkylabResult): List of Skylab suite results.
+  * vm_tests (list[Build]): List of VM test buildbucket results.
 
 Raises:
-  recipe_api.StepFailure on failing tests.
+  recipe_api.StepFailure: If any tests failed.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1444,14 +1513,11 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
 ### *recipes* / [failures:examples/full](/recipe_modules/failures/examples/full.py)
 
-[DEPS](/recipe_modules/failures/examples/full.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/failures/examples/full.py#6): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#24)(api, properties):**
-### *recipes* / [failures:examples/verify\_tests](/recipe_modules/failures/examples/verify_tests.py)
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#20)(api):**
 
-[DEPS](/recipe_modules/failures/examples/verify_tests.py#6): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/verify_tests.py#14)(api):**
+&mdash; **def [vm\_build](/recipe_modules/failures/examples/full.py#96)(\*\*kwargs):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

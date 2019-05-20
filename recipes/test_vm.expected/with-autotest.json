@@ -838,6 +838,14 @@
   },
   {
     "cmd": [],
+    "name": "build autotest packages.installation results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@all packages installed successfully@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build autotest packages.install packages",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -914,6 +922,14 @@
     "name": "build autotest packages.install packages.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build autotest packages.installation results (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@all packages installed successfully@@@"
     ]
   },
   {

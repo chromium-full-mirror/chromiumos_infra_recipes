@@ -1,24 +1,105 @@
 [
   {
     "cmd": [],
-    "name": "failed packages",
+    "name": "installation results",
     "~followup_annotations": [
+      "@@@STEP_TEXT@all packages installed successfully@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "installation results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed to install: /package@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "failed packages.package",
+    "name": "build results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@all builds succeeded@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@status: SUCCESS@@@",
+      "@@@STEP_LOG_END@buildbucket build dump@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all builds succeeded@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@status: FAILURE@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@critical: NO@@@",
+      "@@@STEP_LOG_END@buildbucket build dump@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (3)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@status: FAILURE@@@",
+      "@@@STEP_LOG_END@buildbucket build dump@@@",
+      "@@@STEP_LINK@...0@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "verify builds",
+    "name": "hw test results",
     "~followup_annotations": [
-      "@@@STEP_LOG_END@all_builds@@@"
+      "@@@STEP_TEXT@all hw tests passed@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "hw test results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all hw tests passed@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "hw test results (3)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
+      "@@@STEP_LOG_LINE@FAILURE - target.hw.bvt-cq@Successfully ran all tests!@@@",
+      "@@@STEP_LOG_END@FAILURE - target.hw.bvt-cq@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "vm test results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all vm tests passed@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "vm test results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all vm tests passed@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "vm test results (3)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
+      "@@@STEP_LINK@FAILURE - target.vm.suite@https://status: FAILURE",
+      "output {",
+      "  properties {",
+      "    fields {",
+      "      key: \"name\"",
+      "      value {",
+      "        string_value: \"target.vm.suite\"",
+      "      }",
+      "    }",
+      "  }",
+      "}",
+      "/build/0@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

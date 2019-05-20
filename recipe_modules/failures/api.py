@@ -7,28 +7,15 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+from google.protobuf import json_format
+
 from recipe_engine import recipe_api
-
-
-class CompositeBuildFailure(recipe_api.StepFailure):
-
-  def __init__(self, name_or_reason, builds, result=None):
-    self.builds = builds
-    super(CompositeBuildFailure, self).__init__(name_or_reason, result=result)
-
-  def reason_message(self):
-    return "{}: {}".format(
-        self.name,
-        "\n".join([str(build.id) for build in self.builds]))  # pragma: no cover
-
-  def __str__(self):  # pragma: nocover
-    return "One or more Step Failures in %s" % self.name
 
 
 class FailuresApi(recipe_api.RecipeApi):
   """A module for presenting errors and raising StepFailures."""
 
-  def raise_failed_packages(self, failed_packages):
+  def raise_failed_packages(self, packages):
     """Display failed packages and raise a failure.
 
     Each package will be shown as a failed substep.
@@ -39,17 +26,19 @@ class FailuresApi(recipe_api.RecipeApi):
     Raises:
       StepFailure: If failed_packages is not empty.
     """
-    if not failed_packages:
-      return
-    with self.m.step.nest('failed packages'):
-      for failed_package in failed_packages:
-        step = self.m.step(failed_package.package_name, None)
-        step.presentation.status = self.m.step.FAILURE
-    raise self.m.step.StepFailure(
-        'Failed to install %d packages.' % len(failed_packages))
+    with self.m.step.nest('installation results') as step:
+      if not packages:
+        step.presentation.step_text = 'all packages installed successfully'
+        return
 
+      packages_str = '\n'.join(
+          ['{}/{}'.format(p.category, p.package_name) for p in packages])
+      step.presentation.step_text = 'failed to install: {}'.format(packages_str)
+      step.presentation.status = self.m.step.FAILURE
+      raise self.m.step.StepFailure(
+          '{} packages failed to install'.format(len(packages)))
 
-  def verify_builds(self, builds):
+  def raise_failed_builds(self, builds):
     """Verify all builds completed successfully.
 
     Args:
@@ -58,56 +47,152 @@ class FailuresApi(recipe_api.RecipeApi):
     Raises:
       CompositeBuildFailure containing all failed builds.
     """
-    with self.m.step.nest('verify builds') as step:
-      step.presentation.logs['all_builds'] = [str(b) for b in builds]
-      failed_builds = [
-          build for build in builds if self._is_critical_failure(build)
-      ]
+    with self.m.step.nest('build results') as step:
+      step.presentation.logs['buildbucket build dump'] = map(str, builds)
+      failed_builds = filter(self.is_critical_build_failure, builds)
 
-      if failed_builds:
-        presentation = self.m.step.active_result.presentation
-        presentation.status = self.m.step.FAILURE
-        presentation.step_text = 'One or more child builders failed:'
+      if not failed_builds:
+        step.presentation.step_text = 'all builds succeeded'
+        return
 
-        for build in failed_builds:
-          build_url = self.m.buildbucket.build_url(build_id=build.id)
-          build_title = self.m.naming.get_build_title(build)
-          presentation.links[build_title] = build_url
-        # TODO(crbug.com/950061): Do we still need to raise an exception if the
-        # status is FAILURE above?
-        raise CompositeBuildFailure('One or more child builders failed',
-                                    failed_builds)
+      fail_count = len(failed_builds)
+      success_count = len(builds) - fail_count
 
-  def verify_tests(self, test_results):
-    """Logs test status to UI, and raises on failed tests.
+      step.presentation.status = self.m.step.FAILURE
+      step.presentation.step_text = '{} builds failed, {} succeeded'.format(
+          fail_count, success_count)
+
+      for build in failed_builds:
+        build_url = self.m.buildbucket.build_url(build_id=build.id)
+        build_title = self.m.naming.get_build_title(build)
+        step.presentation.links[build_title] = build_url
+
+      raise self.m.step.StepFailure('{} builds failed'.format(fail_count))
+
+  def raise_failed_hw_tests(self, hw_tests):
+    """Logs hardware test status to UI, and raises on failed tests.
 
     Args:
-      * test_results (SkylabResult): List of Skylab suite results.
+      * hw_tests (list[SkylabResult]): List of Skylab suite results.
 
     Raises:
-      recipe_api.StepFailure on failing tests.
+      recipe_api.StepFailure: If any tests failed.
     """
-    with self.m.step.nest('test results') as step_result:
-      failure_count = 0
-      for result in test_results:
-        if not result.success:
-          failure_count += 1
-          # We don't have a great way of highlighting failed tests.
-          log_name = 'FAILURE - {}'.format(result.task.test.common.display_name)
-          # Until parallel recipes materializes, dump output to step log
-          step_result.presentation.logs[log_name] = [result.output]
-      step_result.presentation.step_text = (
-          '{} succeeded, {} failed'.format(
-              len(test_results)-failure_count, failure_count))
-      if failure_count > 0:
-        raise self.m.step.StepFailure('Failed one or more tests')
+    with self.m.step.nest('hw test results') as step:
+      failed_hw_tests = filter(self.is_critical_hw_test_failure, hw_tests)
 
+      if not failed_hw_tests:
+        step.presentation.step_text = 'all hw tests passed'
+        return
 
-  def _is_critical_failure(self, build):
-    """Checks if the status was not SUCCESS and the build was critical.
+      fail_count = len(failed_hw_tests)
+      success_count = len(hw_tests) - fail_count
+
+      step.presentation.status = self.m.step.FAILURE
+      step.presentation.step_text = '{} tests failed, {} succeeded'.format(
+          fail_count, success_count)
+
+      for failed_hw_test in failed_hw_tests:
+        title = 'FAILURE - %s' % failed_hw_test.task.test.common.display_name
+        logs = [failed_hw_test.output]
+        step.presentation.logs[title] = logs
+
+      raise self.m.step.StepFailure('{} hw tests failed'.format(fail_count))
+
+  def raise_failed_vm_tests(self, vm_tests):
+    """Logs VM test status to UI, and raises on failed tests.
 
     Args:
-      * build (Build proto): The completed build to check.
+      * vm_tests (list[Build]): List of VM test buildbucket results.
+
+    Raises:
+      recipe_api.StepFailure: If any tests failed.
     """
-    return (build.status != common_pb2.SUCCESS
-            and self.m.buildbucket.is_critical(build))
+    with self.m.step.nest('vm test results') as step:
+      failed_vm_tests = filter(self.is_critical_vm_test_failure, vm_tests)
+
+      if not failed_vm_tests:
+        step.presentation.step_text = 'all vm tests passed'
+        return
+
+      fail_count = len(failed_vm_tests)
+      success_count = len(vm_tests) - fail_count
+
+      step.presentation.step_text = '{} tests failed, {} succeeded'.format(
+          fail_count, success_count)
+      step.presentation.status = self.m.step.FAILURE
+
+      for failed_vm_test in failed_vm_tests:
+        properties = json_format.MessageToDict(failed_vm_test.output.properties)
+        title = 'FAILURE - %s' % properties['name']
+        url = self.m.buildbucket.build_url(failed_vm_test)
+        step.presentation.links[title] = url
+      # TODO(evanhernandez): Raise exception for these results.
+
+  def is_build_failure(self, build):
+    """Determine if the build failed.
+
+    Args:
+      build (Build): The buildbucket Build in question.
+
+    Returns:
+      bool: True if the build failed.
+    """
+    return build.status != common_pb2.SUCCESS
+
+  def is_hw_test_failure(self, hw_test):
+    """Determine if the hardware test failed.
+
+    Args:
+      hw_test (SkylabResult): The hardware test result in question.
+
+    Returns:
+      bool: True if the test failed.
+    """
+    return not hw_test.success
+
+  def is_vm_test_failure(self, vm_test):
+    """Determine if the VM test failed.
+
+    Args:
+      vm_test (Build): The buildbucket build for the VM test.
+
+    Returns:
+      bool: True if the test failed.
+    """
+    return self.is_build_failure(vm_test)
+
+  def is_critical_build_failure(self, build):
+    """Determine in the build failed and was critical.
+
+    Args:
+      build (Build): The buildbucket build in question.
+
+    Returns:
+      bool: True if the build failed and was critical.
+    """
+    return (self.is_build_failure(build) and
+            self.m.buildbucket.is_critical(build))
+
+  def is_critical_hw_test_failure(self, hw_test):
+    """Determine if the vm test failed and was critical.
+
+    Args:
+      hw_test (SkylabResult): The hardware test result in question.
+
+    Returns:
+      bool: True if the test failed and was critical.
+    """
+    return (self.is_hw_test_failure(hw_test) and
+            hw_test.task.test.common.critical.value)
+
+  def is_critical_vm_test_failure(self, vm_test):
+    """Determine if the vm test failed and was critical.
+
+    Args:
+      vm_test (Build): The buildbucket build for the VM test.
+
+    Returns:
+      bool: True if the test failed and was critical
+    """
+    return self.is_critical_build_failure(vm_test)

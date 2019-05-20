@@ -86,7 +86,7 @@ def RunSteps(api, properties):
 
   # If this is a dry run, check that the builds passed and quit.
   if api.cq.state == api.cq.DRY:
-    api.failures.verify_builds(completed_builds)
+    api.failures.raise_failed_builds(completed_builds)
     return
 
   # Otherwise, we have to run tests.
@@ -140,8 +140,8 @@ def RunSteps(api, properties):
 
   # Verify tests in a deferred context so that all failures appear.
   with api.step.defer_results():
-    api.failures.verify_builds(completed_builds)
-    api.failures.verify_tests(test_results)
+    api.failures.raise_failed_builds(completed_builds)
+    api.failures.raise_failed_hw_tests(test_results)
 
   # Victory! If we've made it this far, the child builders were successful
   # and we can update the success manifest ref if it is specified.

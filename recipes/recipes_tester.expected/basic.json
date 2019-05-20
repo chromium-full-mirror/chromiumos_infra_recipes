@@ -715,13 +715,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "test results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@1 succeeded, 0 failed@@@"
-    ]
-  },
-  {
     "jsonResult": null,
     "name": "$result"
   }

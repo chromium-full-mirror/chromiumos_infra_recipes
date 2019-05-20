@@ -736,20 +736,21 @@
   },
   {
     "cmd": [],
-    "name": "verify builds",
+    "name": "build results",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@all_builds@id: 8922054662172514000@@@",
-      "@@@STEP_LOG_LINE@all_builds@status: SUCCESS@@@",
-      "@@@STEP_LOG_LINE@all_builds@id: 8922054662172514001@@@",
-      "@@@STEP_LOG_LINE@all_builds@status: SUCCESS@@@",
-      "@@@STEP_LOG_END@all_builds@@@"
+      "@@@STEP_TEXT@all builds succeeded@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@id: 8922054662172514000@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@status: SUCCESS@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@id: 8922054662172514001@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@status: SUCCESS@@@",
+      "@@@STEP_LOG_END@buildbucket build dump@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test results",
+    "name": "hw test results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 succeeded, 0 failed@@@"
+      "@@@STEP_TEXT@all hw tests passed@@@"
     ]
   },
   {

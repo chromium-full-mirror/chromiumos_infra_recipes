@@ -269,7 +269,8 @@ def RunSteps(api, builders):
 
   if led_results:
     swarming_results = _collect_results(api, led_results)
-    api.failures.verify_tests(swarming_results)
+    # TODO(andrewlamb): Implement function to verify these results.
+    # api.failures.verify_tests(swarming_results)
 
 
 def GenTests(api):
