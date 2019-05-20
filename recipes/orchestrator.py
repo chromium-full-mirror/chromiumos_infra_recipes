@@ -91,9 +91,10 @@ def RunSteps(api, properties):
 
   # Otherwise, we have to run tests.
   need_tests_builds = [
-      b for b in completed_builds if b.status == common_pb2.SUCCESS
+      b for b in completed_builds if not api.failures.is_build_failure(b)
   ]
-  with api.step.nest('run tests'):
+
+  with api.step.nest('schedule tests'):
     test_plan = api.cros_test_plan.generate(
         need_tests_builds, manifest_commit.id)
 
@@ -102,16 +103,41 @@ def RunSteps(api, properties):
     if properties.enable_history and gerrit_changes:
       passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
 
-    # Schedule tast vm tests.
-    # TODO(evanhernandez): Verify the results once stable.
-    # TODO(evanhernandez): Also schedule autotest VM tests.
-    api.buildbucket.schedule([
+    # Schedule hardware tests.
+    skylab_tasks = [
+        api.skylab.create_suite(test, unit.common.build_payload)
+        for unit in test_plan.hw_test_units
+        for test in unit.hw_test_cfg.hw_test
+        if test.common.display_name not in passed_tests
+    ]
+
+    # Schedule autotest vm tests.
+    vm_tests = api.buildbucket.schedule([
         api.buildbucket.schedule_request(
             gitiles_commit=manifest_commit,
             builder='test_vm',
             critical=test.common.critical.value,
             properties=json_format.MessageToDict(
                 TestVmProperties(
+                    name=test.common.display_name,
+                    build_target=unit.common.build_target,
+                    test_harness=VmTestRequest.AUTOTEST,
+                    build_payload=unit.common.build_payload,
+                    expressions=[test.test_suite])))
+        for unit in test_plan.vm_test_units
+        for test in unit.vm_test_cfg.vm_test
+        if test.common.display_name not in passed_tests
+    ])
+
+    # Schedule tast vm tests.
+    vm_tests += api.buildbucket.schedule([
+        api.buildbucket.schedule_request(
+            gitiles_commit=manifest_commit,
+            builder='test_vm',
+            critical=test.common.critical.value,
+            properties=json_format.MessageToDict(
+                TestVmProperties(
+                    name=test.common.display_name,
                     build_target=unit.common.build_target,
                     test_harness=VmTestRequest.TAST,
                     build_payload=unit.common.build_payload,
@@ -121,27 +147,29 @@ def RunSteps(api, properties):
         if test.common.display_name not in passed_tests
     ])
 
-    # Schedule hardware tests.
-    skylab_tasks = [
-        api.skylab.create_suite(test, unit.common.build_payload)
-        for unit in test_plan.hw_test_units
-        for test in unit.hw_test_cfg.hw_test
-        if test.common.display_name not in passed_tests
-      ]
-
-    # Wait for hardware tests.
-    test_results = []
+  with api.step.nest('verify tests'):
+    hw_results = []
     if skylab_tasks:
-      test_results = api.skylab.wait_suites(skylab_tasks)
+      hw_results = api.skylab.wait_suites(skylab_tasks)
+
+    vm_results = []
+    if vm_tests:
+      vm_results = api.buildbucket.collect_builds(
+          [vt.id for vt in vm_tests]).values()
 
     # Record test results.
-    api.cros_history.set_passed_tests(
-        [r.task.test.common.display_name for r in test_results if r.success])
+    # TODO(evanhernandez): Record VM test history.
+    passed_tests = [
+        hw_result.task.test.common.display_name for hw_result in hw_results
+        if not api.failures.is_hw_test_failure(hw_result)
+    ]
+    api.cros_history.set_passed_tests(passed_tests)
 
-  # Verify tests in a deferred context so that all failures appear.
-  with api.step.defer_results():
-    api.failures.raise_failed_builds(completed_builds)
-    api.failures.raise_failed_hw_tests(test_results)
+    # Verify builds/tests in a deferred context so that all failures appear.
+    with api.step.defer_results():
+      api.failures.raise_failed_builds(completed_builds)
+      api.failures.raise_failed_hw_tests(hw_results)
+      api.failures.raise_failed_vm_tests(vm_results)
 
   # Victory! If we've made it this far, the child builders were successful
   # and we can update the success manifest ref if it is specified.
@@ -279,7 +307,7 @@ def GenTests(api):
           [], 'get change build history.buildbucket.search') +  #
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
-          'run tests.get change test history.buildbucket.search') +  #
+          'schedule tests.get change test history.buildbucket.search') +  #
       api.buildbucket.simulated_collect_output(
           builds, step_name='run child builds.collect') +
       api.buildbucket.simulated_get_multi(

@@ -11,17 +11,20 @@ import "chromite/api/test.proto";
 import "testplans/generate_test_plan.proto";
 
 message TestVmProperties {
+  // A unique name for the test, used to record test results.
+  string name = 1;
+
   // The build target under test.
-  chromiumos.BuildTarget build_target = 1;
+  chromiumos.BuildTarget build_target = 2;
 
   // The test harness to use.
-  chromite.api.VmTestRequest.TestHarness test_harness = 2;
+  chromite.api.VmTestRequest.TestHarness test_harness = 3;
 
   // The build payload to test.
-  testplans.BuildPayload build_payload = 3;
+  testplans.BuildPayload build_payload = 4;
 
   // Expressions describing tests to run. For autotest, this is typcally of
   // the form "suite:name". For tast, it is either a test name ("example.Pass")
   // or involves tast attributes (see go/tast-attr).
-  repeated string expressions = 4;
+  repeated string expressions = 5;
 }
