@@ -20,12 +20,13 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
   def initialize(self):
     self._test_planner_path = None
 
-  def generate(self, builds, name=None):
+  def generate(self, builds, manifest_commit, name=None):
     """Generate test plan.
 
     Args:
       * name (str): The step name.
       * builds (list[build_pb2.Build]): builds to test.
+      * manifest_commit (str): manifest-internal hash for the build.
 
     Returns:
       GenerateTestPlanResponse of test plan.
@@ -38,8 +39,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       output_file = messages_path.join('output.json')
 
       request_proto = GenerateTestPlanRequest(
-          chromiumos_checkout_root=str(self.m.cros_source.workspace_path),
-          repo_tool_path=str(self.m.repo.repo_path), buildbucket_protos=[
+          manifest_commit=manifest_commit,
+          buildbucket_protos=[
               ProtoBytes(serialized_proto=Build.SerializeToString(build))
               for build in builds
           ])

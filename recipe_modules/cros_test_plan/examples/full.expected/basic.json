@@ -4,8 +4,7 @@
     "name": "generate test plan",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_workspace\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"manifestCommit\": \"1234abcd\", @@@",
       "@@@STEP_LOG_LINE@request@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@request@    {}@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
@@ -197,7 +196,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\", \n  \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_workspace\", \n  \"buildbucketProtos\": [\n    {}\n  ]\n}",
+      "{\n  \"manifestCommit\": \"1234abcd\", \n  \"buildbucketProtos\": [\n    {}\n  ]\n}",
       "[CLEANUP]/test-plan-_tmp_1/input.json"
     ],
     "infra_step": true,

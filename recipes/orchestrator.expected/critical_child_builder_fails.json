@@ -226,8 +226,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_workspace\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
       "@@@STEP_LOG_LINE@request@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"serializedProto\": \"CNGtpKubruDoexIYGhZhcm0tZ2VuZXJpYy1wb3N0c3VibWl0YAyoAQI=\"@@@",
@@ -421,7 +420,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"repoToolPath\": \"RECIPE_REPO[depot_tools]/repo\", \n  \"chromiumosCheckoutRoot\": \"[START_DIR]/chromiumos_workspace\", \n  \"buildbucketProtos\": [\n    {\n      \"serializedProto\": \"CNGtpKubruDoexIYGhZhcm0tZ2VuZXJpYy1wb3N0c3VibWl0YAyoAQI=\"\n    }\n  ]\n}",
+      "{\n  \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \n  \"buildbucketProtos\": [\n    {\n      \"serializedProto\": \"CNGtpKubruDoexIYGhZhcm0tZ2VuZXJpYy1wb3N0c3VibWl0YAyoAQI=\"\n    }\n  ]\n}",
       "[CLEANUP]/test-plan-_tmp_1/input.json"
     ],
     "infra_step": true,

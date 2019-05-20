@@ -12,7 +12,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  test_plan = api.cros_test_plan.generate([Build()])
+  test_plan = api.cros_test_plan.generate([Build()], '1234abcd')
 
 
 def GenTests(api):

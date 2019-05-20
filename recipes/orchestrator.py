@@ -94,7 +94,8 @@ def RunSteps(api, properties):
       b for b in completed_builds if b.status == common_pb2.SUCCESS
   ]
   with api.step.nest('run tests'):
-    test_plan = api.cros_test_plan.generate(need_tests_builds)
+    test_plan = api.cros_test_plan.generate(
+        need_tests_builds, manifest_commit.id)
 
     # We will not run tests that have already passed for this patch set.
     passed_tests = []
