@@ -625,9 +625,16 @@
   },
   {
     "cmd": [],
-    "name": "schedule tests.ensure skylab",
+    "name": "schedule tests.schedule hardware tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule tests.schedule hardware tests.ensure skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -642,9 +649,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "schedule tests.ensure skylab.ensure_installed",
+    "name": "schedule tests.schedule hardware tests.ensure skylab.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -660,9 +667,9 @@
   },
   {
     "cmd": [],
-    "name": "schedule tests.schedule htarget.hw.bvt-cq",
+    "name": "schedule tests.schedule hardware tests.schedule htarget.hw.bvt-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@swarming task@https://swarming.com/bvt-cq@@@"
     ]
   },
@@ -685,10 +692,10 @@
       "htarget.hw.bvt-cq",
       "bvt-cq"
     ],
-    "name": "schedule tests.schedule htarget.hw.bvt-cq.skylab create-suite",
+    "name": "schedule tests.schedule hardware tests.schedule htarget.hw.bvt-cq.skylab create-suite",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-cq-task-id\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-cq\"@@@",
@@ -704,7 +711,7 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "schedule tests.buildbucket.schedule",
+    "name": "schedule tests.schedule autotest vm tests",
     "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"test_vm\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\"}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"autotest-suite\"], \"name\": \"vtarget.vm.auto\", \"testHarness\": \"AUTOTEST\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
@@ -782,7 +789,7 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "schedule tests.buildbucket.schedule (2)",
+    "name": "schedule tests.schedule tast vm tests",
     "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"test_vm\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\"}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"exampe.Pass\"], \"name\": \"ttarget.tast.sweet\", \"testHarness\": \"TAST\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001340\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [

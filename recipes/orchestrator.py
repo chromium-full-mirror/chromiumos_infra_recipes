@@ -103,15 +103,14 @@ def RunSteps(api, properties):
     if properties.enable_history and gerrit_changes:
       passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
 
-    # Schedule hardware tests.
-    skylab_tasks = [
-        api.skylab.create_suite(test, unit.common.build_payload)
-        for unit in test_plan.hw_test_units
-        for test in unit.hw_test_cfg.hw_test
-        if test.common.display_name not in passed_tests
-    ]
+    with api.step.nest('schedule hardware tests'):
+      skylab_tasks = [
+          api.skylab.create_suite(test, unit.common.build_payload)
+          for unit in test_plan.hw_test_units
+          for test in unit.hw_test_cfg.hw_test
+          if test.common.display_name not in passed_tests
+      ]
 
-    # Schedule autotest vm tests.
     vm_tests = api.buildbucket.schedule([
         api.buildbucket.schedule_request(
             gitiles_commit=manifest_commit,
@@ -127,9 +126,8 @@ def RunSteps(api, properties):
         for unit in test_plan.vm_test_units
         for test in unit.vm_test_cfg.vm_test
         if test.common.display_name not in passed_tests
-    ])
+    ], step_name='schedule autotest vm tests')
 
-    # Schedule tast vm tests.
     vm_tests += api.buildbucket.schedule([
         api.buildbucket.schedule_request(
             gitiles_commit=manifest_commit,
@@ -145,7 +143,7 @@ def RunSteps(api, properties):
         for unit in test_plan.tast_vm_test_units
         for test in unit.tast_vm_test_cfg.tast_vm_test
         if test.common.display_name not in passed_tests
-    ])
+    ], step_name='schedule tast vm tests')
 
   with api.step.nest('verify tests'):
     hw_results = []
