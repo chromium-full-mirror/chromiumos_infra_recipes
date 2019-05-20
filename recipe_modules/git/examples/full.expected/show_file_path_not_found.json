@@ -2,6 +2,16 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://mygithost.google.com/somerepo",
+      "."
+    ],
+    "infra_step": true,
+    "name": "git clone"
+  },
+  {
+    "cmd": [
+      "git",
       "fetch",
       "remote"
     ],
