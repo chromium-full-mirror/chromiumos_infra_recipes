@@ -37,7 +37,7 @@ PROPERTIES = {
         Property(
             kind=list, default=[
                 'staging-Annealing', 'staging-chromite-postsubmit',
-                'staging-amd64-generic-postsubmit'
+                'staging-amd64-generic-cq'
             ],
             help=("A list of builders to test the CL on. Only builders in the "
                   "staging environment should be used."))
