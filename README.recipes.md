@@ -190,7 +190,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#111)(self, endpoint, input_proto, output_type, test_output_data=None, name=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#111)(self, endpoint, input_proto, output_type, test_output_data=None, name=None, infra_step=False):**
 
 Call the build API with the given input proto.
 
@@ -206,6 +206,8 @@ Args:
   output_type (google.protobuf.descriptor): The output proto type.
   test_output_data (str): JSON to use as a response during testing.
   name (str): Name for the step. Generated automatically if not specified.
+  infra_step (bool): Whether this build API call should be treated as an
+      infrastructure step.
 
 Returns:
   google.protobuf: The parsed response proto.
@@ -342,7 +344,7 @@ API for uploading CrOS prebuilts to Google Storage.
 
 A module for uploading package prebuilts.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#140)(self, target, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#142)(self, target, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -1326,7 +1328,7 @@ APIs for running recipes/support tools.
 
 A module for support tool steps.
 
-&mdash; **def [call](/recipe_modules/support/api.py#40)(self, tool, input_data, test_output_data=None):**
+&mdash; **def [call](/recipe_modules/support/api.py#40)(self, tool, input_data, test_output_data=None, infra_step=True):**
 
 Run a tool from the support package.
 
@@ -1334,6 +1336,7 @@ Args:
   tool (str): Tool name.
   input_data: Data to be passed as input to the tool (serialized to JSON).
   test_output_data (dict|list|Callable): Data to return in tests.
+  infra_step (bool): Whether or not this is an infrastructure step.
 
 Returns:
   Data passed as output from the tool (deserialized from JSON).

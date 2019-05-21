@@ -36,6 +36,7 @@
       "rsync://mirrors.do.not.exists/distfiles",
       "[CACHE]/gentoo_distfiles"
     ],
+    "infra_step": true,
     "name": "Sync distfiles from rsync://mirrors.do.not.exists/distfiles"
   },
   {

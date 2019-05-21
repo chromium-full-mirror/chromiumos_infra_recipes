@@ -80,7 +80,7 @@ class DupItApi(recipe_api.RecipeApi):
     ]
     rsync_commands += [self.rsync_mirror_address, self.local_distfiles_cache]
     self.m.step('Sync distfiles from %s' % self.rsync_mirror_address,
-                rsync_commands)
+                rsync_commands, infra_step=True)
 
   def _rsync_to_latest_gs_distfiles(self):
     # Recursively sync all files to latest_gs_distfiles_uri & remove stale

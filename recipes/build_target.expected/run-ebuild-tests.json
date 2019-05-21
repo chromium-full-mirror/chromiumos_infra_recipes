@@ -400,6 +400,7 @@
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_files\": false}",
     "stdout": "/path/to/tmp/json",
@@ -948,6 +949,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
     "name": "pointless build check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1438,6 +1440,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1689,6 +1692,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1815,6 +1819,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"

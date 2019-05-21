@@ -84,7 +84,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       endpoint = self._get_endpoint(artifact)
       request = artifacts.BundleRequest(build_target=target,
                                         output_dir=str(path))
-      response = endpoint(request)
+      response = endpoint(request, infra_step=True)
 
       artifact_files = [
           os.path.relpath(art.path, str(path)) for art in response.artifacts

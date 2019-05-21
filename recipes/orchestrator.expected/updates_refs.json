@@ -492,6 +492,7 @@
       "--output_json",
       "[CLEANUP]/test-plan-_tmp_2/output.json"
     ],
+    "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -583,6 +584,7 @@
       "htarget.hw.bvt-cq",
       "bvt-cq"
     ],
+    "infra_step": true,
     "name": "run tests.schedule tests.schedule hardware tests.schedule htarget.hw.bvt-cq.skylab create-suite",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [

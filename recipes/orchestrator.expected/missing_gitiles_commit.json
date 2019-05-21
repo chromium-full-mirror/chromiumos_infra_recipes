@@ -54,6 +54,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/gitiles-fetch-ref/gitiles-fetch-ref"
     ],
+    "infra_step": true,
     "name": "fetch manifest ref.gitiles-fetch-ref",
     "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal\", \"project\": \"chromeos/manifest-internal\"}}",
     "stdout": "/path/to/tmp/json",

@@ -48,6 +48,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/gitiles-fetch-ref/gitiles-fetch-ref"
     ],
+    "infra_step": true,
     "name": "gitiles-fetch-ref",
     "stdin": "{\"branch\": {\"branch\": \"master\", \"host\": \"testgerrit\", \"project\": \"my/project\"}}",
     "stdout": "/path/to/tmp/json",

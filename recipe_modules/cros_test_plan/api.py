@@ -52,7 +52,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           self._test_planner_path, 'gen-test-plan', '--input_json', input_file,
           '--output_json', output_file
       ]
-      self.m.step('call test_planner', cmd)
+      self.m.step('call test_planner', cmd, infra_step=True)
 
       test_data = json_format.MessageToJson(
           self.test_api.generate_test_plan_response)

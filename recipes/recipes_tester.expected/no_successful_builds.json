@@ -250,6 +250,7 @@
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "name": "apply gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_files\": false}",
     "stdout": "/path/to/tmp/json",

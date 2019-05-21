@@ -68,7 +68,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('prepare binhost uploads'):
       response = self.m.cros_build_api.BinhostService.PrepareBinhostUploads(
-          binhost.PrepareBinhostUploadsRequest(build_target=target, uri=uri))
+          binhost.PrepareBinhostUploadsRequest(build_target=target, uri=uri),
+          infra_step=True)
       upload_root = self.m.path.abs_to_path(response.uploads_dir)
       upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths
@@ -88,7 +89,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     with self.m.step.nest('update binhost conf file'):
       request = binhost.SetBinhostRequest(build_target=target, private=private,
                                           key=key, uri=uri)
-      response = self.m.cros_build_api.BinhostService.SetBinhost(request)
+      response = self.m.cros_build_api.BinhostService.SetBinhost(
+          request, infra_step=True)
       binhost_path = self.m.path.abs_to_path(response.output_file)
       binhost_data = self.m.file.read_text('read binhost conf', binhost_path)
 

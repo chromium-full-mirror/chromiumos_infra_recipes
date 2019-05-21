@@ -56,7 +56,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           '--output_json',
           self.m.json.output(),
       ]
-      test_plan_res = self.m.step('run check', cmd)
+      test_plan_res = self.m.step('run check', cmd, infra_step=True)
       output = test_plan_res.json.output
       result = jsonpb.ParseDict(output, PointlessBuildCheckResponse(),
                                 ignore_unknown_fields=True)

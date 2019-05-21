@@ -155,6 +155,7 @@
       "--output_json",
       "/path/to/tmp/json"
     ],
+    "infra_step": true,
     "name": "pointless build check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

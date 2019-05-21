@@ -48,6 +48,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],
+    "infra_step": true,
     "name": "gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_files\": false}",
     "stdout": "/path/to/tmp/json",
@@ -97,6 +98,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],
+    "infra_step": true,
     "name": "gerrit-fetch-changes (2)",
     "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_files\": false}",
     "stdout": "/path/to/tmp/json",

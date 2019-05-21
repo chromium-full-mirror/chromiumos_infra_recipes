@@ -57,7 +57,7 @@ class SkylabApi(recipe_api.RecipeApi):
           test.suite,
       ]
       task_json = self.m.easy.stdout_json_step(
-          'skylab create-suite', cmd,
+          'skylab create-suite', cmd, infra_step=True,
           test_stdout=self.test_api.create_suite_json_output(test.suite))
       task_id = task_json['task_id']
       task_url = task_json['task_url']

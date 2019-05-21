@@ -109,7 +109,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       setattr(self, stub.__name__, stub(self))
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
-               name=None):
+               name=None, infra_step=False):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -124,6 +124,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       output_type (google.protobuf.descriptor): The output proto type.
       test_output_data (str): JSON to use as a response during testing.
       name (str): Name for the step. Generated automatically if not specified.
+      infra_step (bool): Whether this build API call should be treated as an
+          infrastructure step.
 
     Returns:
       google.protobuf: The parsed response proto.
@@ -150,7 +152,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
         # For Build API retcode 2 indicates that the invocation failed in some
         # way but a consumable response has been produced.
-        self.m.step('call build API script', cmd, ok_ret=(0, 2))
+        self.m.step('call build API script', cmd, ok_ret=(0, 2),
+                    infra_step=infra_step)
 
       # If no test data is provided, see if we have our own.
       if test_output_data is None:

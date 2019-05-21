@@ -57,6 +57,7 @@
       "my_little_hw_test",
       "bvt-cq"
     ],
+    "infra_step": true,
     "name": "schedule my_little_hw_test.skylab create-suite",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [

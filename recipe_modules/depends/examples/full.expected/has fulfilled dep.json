@@ -88,6 +88,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],
+    "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled (2).gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": \"12345\", \"host\": \"chromium\", \"patch_set\": -1}, {\"change_number\": \"67890\", \"host\": \"chrome-internal\", \"patch_set\": -1}]}",
     "stdout": "/path/to/tmp/json",

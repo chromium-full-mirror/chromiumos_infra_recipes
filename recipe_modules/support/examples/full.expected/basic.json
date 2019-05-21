@@ -48,6 +48,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/my-tool/my-tool"
     ],
+    "infra_step": true,
     "name": "my-tool",
     "stdin": "{\"input\": \"data\"}",
     "stdout": "/path/to/tmp/json",

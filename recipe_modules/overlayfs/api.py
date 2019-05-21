@@ -63,7 +63,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
       self.m.step('mount', [
           'sudo', '-n', 'mount', '-t', 'overlay', '--options', mount_options,
           'overlay', mount_path
-      ])
+      ], infra_step=True)
       self._cleanup_mount(name, mount_path)
 
   def unmount(self, name, mount_path):

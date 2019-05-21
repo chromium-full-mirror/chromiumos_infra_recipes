@@ -764,6 +764,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
     "name": "pointless build check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1167,6 +1168,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1418,6 +1420,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1544,6 +1547,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
