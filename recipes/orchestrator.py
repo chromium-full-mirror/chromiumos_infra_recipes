@@ -44,12 +44,20 @@ def RunSteps(api, properties):
 
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
-  manifest_commit = api.buildbucket.gitiles_commit
-  if not manifest_commit.project:
-    manifest_commit = load_manifest_commit_from_snapshot(api)
+  snapshot = api.buildbucket.gitiles_commit
+  if not snapshot.project:
+    with api.step.nest('fetch snapshot ref'):
+      snapshot_sha1 = api.gitiles.fetch_revision(
+          'chrome-internal', 'chromeos/manifest-internal', 'snapshot')
+      snapshot = common_pb2.GitilesCommit(
+          host='chrome-internal.googlesource.com',
+          project='chromeos/manifest-internal',
+          ref='refs/heads/snapshot',
+          id=snapshot_sha1)
 
   # Point start ref to the input snapshot if specified.
-  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start')
+  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
+                            snapshot)
 
   requests = []
   completed_builds = []
@@ -67,7 +75,7 @@ def RunSteps(api, properties):
       child_builder_config = api.cros_infra_config.get_builder_config(child)
       requests.append(
           api.buildbucket.schedule_request(
-              gitiles_commit=manifest_commit,
+              gitiles_commit=snapshot,
               builder=child,
               critical=child_builder_config.general.critical.value))
 
@@ -96,8 +104,7 @@ def RunSteps(api, properties):
 
   with api.step.nest('run tests'):
     with api.step.nest('schedule tests'):
-      test_plan = api.cros_test_plan.generate(
-          need_tests_builds, manifest_commit.id)
+      test_plan = api.cros_test_plan.generate(need_tests_builds, snapshot.id)
 
       # We will not run tests that have already passed for this patch set.
       passed_tests = []
@@ -114,7 +121,7 @@ def RunSteps(api, properties):
 
       vm_tests = api.buildbucket.schedule([
           api.buildbucket.schedule_request(
-              gitiles_commit=manifest_commit,
+              gitiles_commit=snapshot,
               builder='test_vm',
               critical=test.common.critical.value,
               properties=json_format.MessageToDict(
@@ -131,7 +138,7 @@ def RunSteps(api, properties):
 
       vm_tests += api.buildbucket.schedule([
           api.buildbucket.schedule_request(
-              gitiles_commit=manifest_commit,
+              gitiles_commit=snapshot,
               builder='test_vm',
               critical=test.common.critical.value,
               properties=json_format.MessageToDict(
@@ -173,26 +180,8 @@ def RunSteps(api, properties):
 
   # Victory! If we've made it this far, the child builders were successful
   # and we can update the success manifest ref if it is specified.
-  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success')
-
-
-def load_manifest_commit_from_snapshot(api):
-  """Fetches latest manifest snapshot commit from Gitiles.
-
-  Args:
-    api (object): See RunSteps documentation.
-
-  Returns:
-    common_pb2.GitilesCommit
-  """
-  with api.step.nest('fetch manifest ref'):
-    rev = api.gitiles.fetch_revision(
-        'chrome-internal', 'chromeos/manifest-internal', 'snapshot')
-    return common_pb2.GitilesCommit(
-        host='chrome-internal.googlesource.com',
-        project='chromeos/manifest-internal',
-        ref='refs/heads/snapshot',
-        id=rev)
+  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success',
+                            snapshot)
 
 
 def validate_refs(refs):
@@ -219,32 +208,26 @@ def validate_ref(ref, name):
     raise ValueError('%s ref %s is missing refs/heads/' % (name, ref))
 
 
-def maybe_update_manifest_ref(api, update_manifest_refs, name):
+def maybe_update_manifest_ref(api, update_manifest_refs, name, commit):
   """Update ref in manifest-internal to point to current snapshot.
 
   Args:
-    api (object): See RunSteps documentation.
+    api (RecipeApi): See RunSteps documentation.
     update_manifest_refs (UpdateManifestRefs): refs to maybe update.
     name (string): name of ref to maybe update. Must correspond to
         a property name on update_manifest_refs.
+    commit (GitilesCommit): The commit to update the manifest ref to.
   """
+  assert commit.project, 'malformed gitiles commit: %r' % commit
   ref = getattr(update_manifest_refs, name)
   if ref:
     with api.step.nest('update manifest %s ref' % name):
-      if not api.buildbucket.gitiles_commit.project:
-        raise ValueError('orchestrator runs must supply a Gitiles '
-                         'commit in their input. Found none. If you\'d like to '
-                         'retry a run that did have a Gitiles commit, try doing '
-                         'so through RPC explorer, e.g. '
-                         'https://screenshot.googleplex.com/FSEm8xB5CS3 '
-                         'Got input: %s' % api.buildbucket.gitiles_commit)
-      snapshot = api.buildbucket.gitiles_commit
       checkout_path = api.path.mkdtemp()
       with api.context(cwd=checkout_path):
-        git_repo = 'https://%s/%s' % (snapshot.host, snapshot.project)
+        git_repo = 'https://%s/%s' % (commit.host, commit.project)
         api.git.clone(git_repo)
-        api.git.fetch_ref(git_repo, snapshot.id)
-        refspec = '%s:%s' % (snapshot.id, ref)
+        api.git.fetch_ref(git_repo, commit.id)
+        refspec = '%s:%s' % (commit.id, ref)
         api.git.push(git_repo, refspec)
 
 
@@ -313,16 +296,15 @@ def GenTests(api):
       api.buildbucket.simulated_get_multi(
           builds, step_name='get full build protos'))
 
-  yield (api.test('missing_gitiles_commit') +  #
-         postsubmit_orchestrator_build_with_no_gitiles() +
+  yield (api.test('updates_refs') +  #
+         postsubmit_orchestrator_build() +  #
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }) +
-         api.expect_exception("ValueError"))
+         }))
 
-  yield (api.test('updates_refs') +  #
-         postsubmit_orchestrator_build() +  #
+  yield (api.test('missing_gitiles_commit') +  #
+         postsubmit_orchestrator_build_with_no_gitiles() +
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
