@@ -46,6 +46,9 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       "profile": "generic_build"
                     },
                     "image_types": ["TEST"]
+                  },
+                  "unit_tests": {
+                    "package_blacklist": []
                   }
                 },
                 {
@@ -62,6 +65,13 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "chrome": {
                     "internal": true
+                  },
+                  "unit_tests": {
+                    "package_blacklist": [{
+                      "package_name": "chromite",
+                      "category": "chromeos-base",
+                      "version": ""
+                    }]
                   }
                 },
                 {

@@ -127,9 +127,10 @@ def RunSteps(api, properties):
       if properties.run_ebuild_tests:
         with api.step.nest('run ebuild tests'):
           response = api.cros_build_api.TestService.BuildTargetUnitTest(
-              BuildTargetUnitTestRequest(build_target=build_target,
-                                         chroot=api.cros_sdk.chroot,
-                                         result_path=str(api.path.mkdtemp())))
+              BuildTargetUnitTestRequest(
+                  build_target=build_target, chroot=api.cros_sdk.chroot,
+                  result_path=str(api.path.mkdtemp()),
+                  package_blacklist=build_config.unit_tests.package_blacklist))
           api.failures.raise_failed_packages(response.failed_packages)
 
       artifact_types = build_config.artifacts.artifact_types
@@ -169,7 +170,8 @@ def GenTests(api):
          api.cros_relevance.simulate_run_pointless_build_checker() +
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
-         api.properties(build_target={'name': 'amd64-generic'}))
+         api.properties(build_target={'name': 'amd64-generic'},
+                        run_ebuild_tests=True))
 
   yield (api.test('run-ebuild-tests') +  #
          api.buildbucket.try_build(project='chromeos', bucket='postsubmit',
