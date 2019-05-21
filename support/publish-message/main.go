@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"support/internal/cli"
 	"support/internal/pubsub"
@@ -15,6 +14,10 @@ type input struct {
 	ProjectID string `json:"project_id"`
 	TopicID   string `json:"topic_id"`
 	Data      string `json:"data"`
+}
+
+type output struct {
+	MessageID string `json:"message_id"`
 }
 
 func main() {
@@ -39,5 +42,5 @@ func main() {
 		log.Fatalf("Failed to publish message: %v", err)
 	}
 
-	fmt.Printf("Published message with ID: %s\n", id)
+	cli.MustMarshalOutput(output{MessageID: id})
 }
