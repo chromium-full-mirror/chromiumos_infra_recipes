@@ -78,7 +78,7 @@ def RunSteps(api, properties):
     # TODO: revert https://crrev.com/c/1615374 once buildbucket.run's call
     # to collect is improved to return the full proto.
     new_builds = api.buildbucket.run(
-        requests, timeout=60 * 60 * 4, step_name='run child builds',
+        requests, timeout=60 * 60 * 4, step_name='run builds',
         url_title_fn=api.naming.get_build_title)
     populated_builds = api.buildbucket.get_multi(
         [b.id for b in new_builds], step_name='get full build protos')
@@ -94,76 +94,78 @@ def RunSteps(api, properties):
       b for b in completed_builds if not api.failures.is_build_failure(b)
   ]
 
-  with api.step.nest('schedule tests'):
-    test_plan = api.cros_test_plan.generate(
-        need_tests_builds, manifest_commit.id)
+  with api.step.nest('run tests'):
+    with api.step.nest('schedule tests'):
+      test_plan = api.cros_test_plan.generate(
+          need_tests_builds, manifest_commit.id)
 
-    # We will not run tests that have already passed for this patch set.
-    passed_tests = []
-    if properties.enable_history and gerrit_changes:
-      passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
+      # We will not run tests that have already passed for this patch set.
+      passed_tests = []
+      if properties.enable_history and gerrit_changes:
+        passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
 
-    with api.step.nest('schedule hardware tests'):
-      skylab_tasks = [
-          api.skylab.create_suite(test, unit.common.build_payload)
-          for unit in test_plan.hw_test_units
-          for test in unit.hw_test_cfg.hw_test
+      with api.step.nest('schedule hardware tests'):
+        skylab_tasks = [
+            api.skylab.create_suite(test, unit.common.build_payload)
+            for unit in test_plan.hw_test_units
+            for test in unit.hw_test_cfg.hw_test
+            if test.common.display_name not in passed_tests
+        ]
+
+      vm_tests = api.buildbucket.schedule([
+          api.buildbucket.schedule_request(
+              gitiles_commit=manifest_commit,
+              builder='test_vm',
+              critical=test.common.critical.value,
+              properties=json_format.MessageToDict(
+                  TestVmProperties(
+                      name=test.common.display_name,
+                      build_target=unit.common.build_target,
+                      test_harness=VmTestRequest.AUTOTEST,
+                      build_payload=unit.common.build_payload,
+                      expressions=[test.test_suite])))
+          for unit in test_plan.vm_test_units
+          for test in unit.vm_test_cfg.vm_test
           if test.common.display_name not in passed_tests
-      ]
+      ], step_name='schedule autotest vm tests')
 
-    vm_tests = api.buildbucket.schedule([
-        api.buildbucket.schedule_request(
-            gitiles_commit=manifest_commit,
-            builder='test_vm',
-            critical=test.common.critical.value,
-            properties=json_format.MessageToDict(
-                TestVmProperties(
-                    name=test.common.display_name,
-                    build_target=unit.common.build_target,
-                    test_harness=VmTestRequest.AUTOTEST,
-                    build_payload=unit.common.build_payload,
-                    expressions=[test.test_suite])))
-        for unit in test_plan.vm_test_units
-        for test in unit.vm_test_cfg.vm_test
-        if test.common.display_name not in passed_tests
-    ], step_name='schedule autotest vm tests')
+      vm_tests += api.buildbucket.schedule([
+          api.buildbucket.schedule_request(
+              gitiles_commit=manifest_commit,
+              builder='test_vm',
+              critical=test.common.critical.value,
+              properties=json_format.MessageToDict(
+                  TestVmProperties(
+                      name=test.common.display_name,
+                      build_target=unit.common.build_target,
+                      test_harness=VmTestRequest.TAST,
+                      build_payload=unit.common.build_payload,
+                      expressions=[t.test_expr for t in test.tast_test_expr])))
+          for unit in test_plan.tast_vm_test_units
+          for test in unit.tast_vm_test_cfg.tast_vm_test
+          if test.common.display_name not in passed_tests
+       ], step_name='schedule tast vm tests')
 
-    vm_tests += api.buildbucket.schedule([
-        api.buildbucket.schedule_request(
-            gitiles_commit=manifest_commit,
-            builder='test_vm',
-            critical=test.common.critical.value,
-            properties=json_format.MessageToDict(
-                TestVmProperties(
-                    name=test.common.display_name,
-                    build_target=unit.common.build_target,
-                    test_harness=VmTestRequest.TAST,
-                    build_payload=unit.common.build_payload,
-                    expressions=[t.test_expr for t in test.tast_test_expr])))
-        for unit in test_plan.tast_vm_test_units
-        for test in unit.tast_vm_test_cfg.tast_vm_test
-        if test.common.display_name not in passed_tests
-    ], step_name='schedule tast vm tests')
+    with api.step.nest('collect tests'):
+      hw_results = []
+      if skylab_tasks:
+        hw_results = api.skylab.wait_suites(skylab_tasks)
 
-  with api.step.nest('verify tests'):
-    hw_results = []
-    if skylab_tasks:
-      hw_results = api.skylab.wait_suites(skylab_tasks)
+      vm_results = []
+      if vm_tests:
+        vm_results = api.buildbucket.collect_builds(
+            [vt.id for vt in vm_tests]).values()
 
-    vm_results = []
-    if vm_tests:
-      vm_results = api.buildbucket.collect_builds(
-          [vt.id for vt in vm_tests]).values()
+      # Record test results.
+      # TODO(evanhernandez): Record VM test history.
+      passed_tests = [
+          hw_result.task.test.common.display_name for hw_result in hw_results
+          if not api.failures.is_hw_test_failure(hw_result)
+       ]
+      api.cros_history.set_passed_tests(passed_tests)
 
-    # Record test results.
-    # TODO(evanhernandez): Record VM test history.
-    passed_tests = [
-        hw_result.task.test.common.display_name for hw_result in hw_results
-        if not api.failures.is_hw_test_failure(hw_result)
-    ]
-    api.cros_history.set_passed_tests(passed_tests)
-
-    # Verify builds/tests in a deferred context so that all failures appear.
+  # Verify builds/tests in a deferred context so that all failures appear.
+  with api.step.nest('results'):
     with api.step.defer_results():
       api.failures.raise_failed_builds(completed_builds)
       api.failures.raise_failed_hw_tests(hw_results)
@@ -305,9 +307,9 @@ def GenTests(api):
           [], 'get change build history.buildbucket.search') +  #
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
-          'schedule tests.get change test history.buildbucket.search') +  #
+          'run tests.schedule tests.get change test history.buildbucket.search') + #
       api.buildbucket.simulated_collect_output(
-          builds, step_name='run child builds.collect') +
+          builds, step_name='run builds.collect') +
       api.buildbucket.simulated_get_multi(
           builds, step_name='get full build protos'))
 
@@ -346,7 +348,7 @@ def GenTests(api):
       api.test('critical_child_builder_fails') +  #
       postsubmit_orchestrator_build() +  #
       api.buildbucket.simulated_collect_output(
-          builds, step_name='run child builds.collect') +
+          builds, step_name='run builds.collect') +
       api.buildbucket.simulated_get_multi(
           builds, step_name='get full build protos'))
 
@@ -362,6 +364,6 @@ def GenTests(api):
       api.test('non-critical_child_builder_fails') +  #
       postsubmit_orchestrator_build() +  #
       api.buildbucket.simulated_collect_output(
-          builds, step_name='run child builds.collect') +
+          builds, step_name='run builds.collect') +
       api.buildbucket.simulated_get_multi(
           builds, step_name='get full build protos'))

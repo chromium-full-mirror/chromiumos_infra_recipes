@@ -76,7 +76,7 @@
   },
   {
     "cmd": [],
-    "name": "run child builds"
+    "name": "run builds"
   },
   {
     "cmd": [
@@ -86,7 +86,7 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "run child builds.schedule",
+    "name": "run builds.schedule",
     "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
@@ -195,7 +195,7 @@
       "8922054662172514001"
     ],
     "infra_step": true,
-    "name": "run child builds.collect",
+    "name": "run builds.collect",
     "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -304,13 +304,20 @@
   },
   {
     "cmd": [],
-    "name": "schedule tests"
+    "name": "run tests"
   },
   {
     "cmd": [],
-    "name": "schedule tests.generate test plan",
+    "name": "run tests.schedule tests",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate test plan",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
       "@@@STEP_LOG_LINE@request@  \"buildbucketProtos\": [@@@",
@@ -468,9 +475,9 @@
   },
   {
     "cmd": [],
-    "name": "schedule tests.generate test plan.ensure test_planner",
+    "name": "run tests.schedule tests.generate test plan.ensure test_planner",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -485,9 +492,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "schedule tests.generate test plan.ensure test_planner.ensure_installed",
+    "name": "run tests.schedule tests.generate test plan.ensure test_planner.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -513,9 +520,9 @@
       "[CLEANUP]/test-plan-_tmp_1/input.json"
     ],
     "infra_step": true,
-    "name": "schedule tests.generate test plan.write input json",
+    "name": "run tests.schedule tests.generate test plan.write input json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -527,9 +534,9 @@
       "--output_json",
       "[CLEANUP]/test-plan-_tmp_1/output.json"
     ],
-    "name": "schedule tests.generate test plan.call test_planner",
+    "name": "run tests.schedule tests.generate test plan.call test_planner",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -544,16 +551,16 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "schedule tests.generate test plan.read output json",
+    "name": "run tests.schedule tests.generate test plan.read output json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "schedule tests.get change test history",
+    "name": "run tests.schedule tests.get change test history",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@some tests already passed: nami/hw/bvt-cq@@@"
     ]
   },
@@ -565,11 +572,11 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "schedule tests.get change test history.buildbucket.search",
+    "name": "run tests.schedule tests.get change test history.buildbucket.search",
     "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"postsubmit-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:23Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -625,16 +632,16 @@
   },
   {
     "cmd": [],
-    "name": "schedule tests.schedule hardware tests",
+    "name": "run tests.schedule tests.schedule hardware tests",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "schedule tests.schedule hardware tests.ensure skylab",
+    "name": "run tests.schedule tests.schedule hardware tests.ensure skylab",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -649,9 +656,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "schedule tests.schedule hardware tests.ensure skylab.ensure_installed",
+    "name": "run tests.schedule tests.schedule hardware tests.ensure skylab.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -667,9 +674,9 @@
   },
   {
     "cmd": [],
-    "name": "schedule tests.schedule hardware tests.schedule htarget.hw.bvt-cq",
+    "name": "run tests.schedule tests.schedule hardware tests.schedule htarget.hw.bvt-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@swarming task@https://swarming.com/bvt-cq@@@"
     ]
   },
@@ -692,10 +699,10 @@
       "htarget.hw.bvt-cq",
       "bvt-cq"
     ],
-    "name": "schedule tests.schedule hardware tests.schedule htarget.hw.bvt-cq.skylab create-suite",
+    "name": "run tests.schedule tests.schedule hardware tests.schedule htarget.hw.bvt-cq.skylab create-suite",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-cq-task-id\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-cq\"@@@",
@@ -711,11 +718,11 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "schedule tests.schedule autotest vm tests",
+    "name": "run tests.schedule tests.schedule autotest vm tests",
     "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"test_vm\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\"}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"autotest-suite\"], \"name\": \"vtarget.vm.auto\", \"testHarness\": \"AUTOTEST\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -789,11 +796,11 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "schedule tests.schedule tast vm tests",
+    "name": "run tests.schedule tests.schedule tast vm tests",
     "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"test_vm\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\"}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"exampe.Pass\"], \"name\": \"ttarget.tast.sweet\", \"testHarness\": \"TAST\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001340\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -861,13 +868,16 @@
   },
   {
     "cmd": [],
-    "name": "verify tests"
+    "name": "run tests.collect tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "verify tests.ensure swarming",
+    "name": "run tests.collect tests.ensure swarming",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -882,9 +892,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "verify tests.ensure swarming.ensure_installed",
+    "name": "run tests.collect tests.ensure swarming.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -911,9 +921,9 @@
       "bvt-cq-task-id"
     ],
     "infra_step": true,
-    "name": "verify tests.collect skylab tasks",
+    "name": "run tests.collect tests.collect skylab tasks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"bvt-cq-task-id\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
@@ -951,10 +961,10 @@
       "8922054662172514003"
     ],
     "infra_step": true,
-    "name": "verify tests.buildbucket.collect",
+    "name": "run tests.collect tests.buildbucket.collect",
     "timeout": 3600,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"8922054662172514002\", @@@",
@@ -970,15 +980,19 @@
   },
   {
     "cmd": [],
-    "name": "verify tests.record passed tests",
+    "name": "run tests.collect tests.record passed tests",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\"]@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "verify tests.build results",
+    "name": "results"
+  },
+  {
+    "cmd": [],
+    "name": "results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all builds succeeded@@@",
@@ -1031,7 +1045,7 @@
   },
   {
     "cmd": [],
-    "name": "verify tests.hw test results",
+    "name": "results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all hw tests passed@@@"
@@ -1039,7 +1053,7 @@
   },
   {
     "cmd": [],
-    "name": "verify tests.vm test results",
+    "name": "results.vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all vm tests passed@@@"
