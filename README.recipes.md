@@ -4,6 +4,7 @@
 
 **[Recipe Modules](#Recipe-Modules)**
   * [chrome](#recipe_modules-chrome)
+  * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
@@ -35,6 +36,7 @@
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [chrome:examples/full](#recipes-chrome_examples_full)
+  * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_build_api:examples/bad_retcodes](#recipes-cros_build_api_examples_bad_retcodes)
@@ -98,6 +100,24 @@ Must be run with cwd inside a chromiumos source root.
 
 Args:
   chrome_root (str): Directory to sync the Chrome source code to.
+### *recipe_modules* / [cloud\_pubsub](/recipe_modules/cloud_pubsub)
+
+[DEPS](/recipe_modules/cloud_pubsub/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+APIs for using Cloud Pub/Sub
+
+#### **class [CloudPubsubApi](/recipe_modules/cloud_pubsub/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for Cloud Pub/Sub
+
+&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#14)(self, project_id, topic_id, data):**
+
+Publish a message to Cloud Pub/Sub
+
+Args:
+  * project_id (str): The project name.
+  * topic_id (str): The topic name.
+  * data (str): The data to put in the message.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
 [DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1400,6 +1420,11 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#9)(api):**
+### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
+
+[DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)
+
+&mdash; **def [RunSteps](/recipe_modules/cloud_pubsub/examples/full.py#9)(api):**
 ### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts)
