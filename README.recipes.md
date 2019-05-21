@@ -266,7 +266,7 @@ Args:
 Returns:
   list([build_pb2.Build]): Passed builds with at most one build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#60)(self, patches):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#61)(self, patches):**
 
 Find all tests that have passed with the given patches.
 
@@ -276,7 +276,7 @@ Args:
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#86)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#87)(self, tests):**
 
 Record the tests that passed in the current run.
 

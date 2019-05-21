@@ -50,6 +50,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       step.presentation.step_text = ('some builds already completed'
                                      if passed_builds else
                                      'found no completed builds')
+      passed_builds.sort(key=lambda build: build.builder.builder)
       for build in passed_builds:
         title = self.m.naming.get_build_title(build)
         url = self.m.buildbucket.build_url(build_id=build.id)
