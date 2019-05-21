@@ -63,9 +63,9 @@ class FailuresApi(recipe_api.RecipeApi):
           fail_count, success_count)
 
       for build in failed_builds:
-        build_url = self.m.buildbucket.build_url(build_id=build.id)
-        build_title = self.m.naming.get_build_title(build)
-        step.presentation.links[build_title] = build_url
+        url = self.m.buildbucket.build_url(build_id=build.id)
+        title = '[FAILED] {}'.format(self.m.naming.get_build_title(build))
+        step.presentation.links[title] = url
 
       raise self.m.step.StepFailure('{} builds failed'.format(fail_count))
 
@@ -93,7 +93,8 @@ class FailuresApi(recipe_api.RecipeApi):
           fail_count, success_count)
 
       for failed_hw_test in failed_hw_tests:
-        title = 'FAILURE - %s' % failed_hw_test.task.test.common.display_name
+        title = '[FAILED] {}'.format(
+            failed_hw_test.task.test.common.display_name)
         step.presentation.links[title] = failed_hw_test.task.url
 
       raise self.m.step.StepFailure('{} hw tests failed'.format(fail_count))
@@ -123,7 +124,7 @@ class FailuresApi(recipe_api.RecipeApi):
 
       for failed_vm_test in failed_vm_tests:
         properties = json_format.MessageToDict(failed_vm_test.output.properties)
-        title = 'FAILURE - %s' % properties['name']
+        title = '[FAILED] {}'.format(properties['name'])
         url = self.m.buildbucket.build_url(failed_vm_test)
         step.presentation.links[title] = url
       # TODO(evanhernandez): Raise exception for these results.

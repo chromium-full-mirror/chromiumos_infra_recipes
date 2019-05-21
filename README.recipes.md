@@ -657,7 +657,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#131)(self, build):**
+&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#132)(self, build):**
 
 Determine if the build failed.
 
@@ -667,7 +667,7 @@ Args:
 Returns:
   bool: True if the build failed.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#164)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#165)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -677,7 +677,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#176)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#177)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -687,7 +687,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#188)(self, vm_test):**
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#189)(self, vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -697,7 +697,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#142)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#143)(self, hw_test):**
 
 Determine if the hardware test failed.
 
@@ -707,7 +707,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#153)(self, vm_test):**
+&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#154)(self, vm_test):**
 
 Determine if the VM test failed.
 
@@ -749,7 +749,7 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [raise\_failed\_vm\_tests](/recipe_modules/failures/api.py#101)(self, vm_tests):**
+&mdash; **def [raise\_failed\_vm\_tests](/recipe_modules/failures/api.py#102)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 
