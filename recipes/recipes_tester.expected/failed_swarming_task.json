@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "get non-skipped builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Non-skipped builders: ['staging-Annealing', 'staging-chromite-postsubmit']@@@",
+      "@@@STEP_TEXT@Non-skipped builders: ['staging-Annealing']@@@",
       "@@@STEP_LOG_END@Skipped builders@@@"
     ]
   },
@@ -341,7 +341,7 @@
     "cmd": [],
     "name": "analyze and launch builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@launched 1 / 2 builders@@@"
+      "@@@STEP_TEXT@launched 1 / 1 builders@@@"
     ]
   },
   {
@@ -537,107 +537,6 @@
   },
   {
     "cmd": [],
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@builder staging-chromite-postsubmit (recipe test_chromite) not affected@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "infra_step": true,
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-chromite-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
-    "stdout": "/path/to/tmp/json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"staging-chromite-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            }, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        ]@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1, @@@",
-      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"builder\": \"staging-chromite-postsubmit\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..staging-chromite-postsubmit@https://cr-buildbucket.appspot.com/build/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/led/led",
-      "get-build",
-      "1"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.led get-build",
-    "stdout": "/path/to/tmp/json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"job_slices\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"userland\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"recipe_name\": \"test_chromite\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./recipes.py",
-      "analyze",
-      "{\"files\": [\"a/b/text.txt\", \"other_test.txt\"], \"recipes\": [\"test_chromite\"]}",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.recipe analyze",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"recipes\": []@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "collect results"
   },
   {
@@ -692,34 +591,39 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"deadbeeeeef\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"1\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 1, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"A swarming task\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"deadbeeeeef\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"1\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@Swarming task output: my_task_0@hello world!@@@",
-      "@@@STEP_LOG_END@Swarming task output: my_task_0@@@"
+      "@@@STEP_LOG_LINE@Swarming task output: A swarming task@hello world!@@@",
+      "@@@STEP_LOG_END@Swarming task output: A swarming task@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "analyze swarming results"
+    "name": "analyze swarming results",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
-    "jsonResult": null,
+    "failure": {
+      "humanReason": "Swarming task failed:\nhello world!"
+    },
     "name": "$result"
   }
 ]

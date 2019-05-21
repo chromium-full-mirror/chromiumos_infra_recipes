@@ -248,6 +248,22 @@ def _get_non_skipped_builders(api, builders):
     return builders
 
 
+def _analyze_swarming_results(api, swarming_results):
+  """Raise a StepFailure if any swarming task was unsuccessful.
+
+  Args:
+    * api(object): See RunSteps documentation.
+    * swarming_results (list[swarming TaskResult]): Results returned from
+      swarming.collect.
+
+  Raises:
+    StepFailure
+  """
+  with api.step.nest('analyze swarming results'):
+    for result in swarming_results:
+      result.analyze()
+
+
 def RunSteps(api, builders):
   if len(builders) == 0:
     raise ValueError('builders must be non-empty')
@@ -269,8 +285,7 @@ def RunSteps(api, builders):
 
   if led_results:
     swarming_results = _collect_results(api, led_results)
-    # TODO(andrewlamb): Implement function to verify these results.
-    # api.failures.verify_tests(swarming_results)
+    _analyze_swarming_results(api, swarming_results)
 
 
 def GenTests(api):
@@ -387,6 +402,19 @@ def GenTests(api):
             'recipes': recipes
         }))
 
+  def collect_results_failed_test_data():
+    """Get step data for failures in a 'swarming.collect' command.
+
+    Returns:
+      A TestData object.
+    """
+    return api.step_data(
+        'collect results.collect swarming tasks',
+        api.swarming.collect([
+            api.swarming.task_result(id='1', name="A swarming task",
+                                     failure=True)
+        ]))
+
   yield (
       api.test('basic') +
       # Specify two builders to run.
@@ -432,6 +460,26 @@ def GenTests(api):
       # affected.
       recipe_analyze_test_data(builder='staging-chromite-postsubmit',
                                recipes=[]))
+
+  yield (api.test('failed_swarming_task') +
+         # Specify one builder to run.
+         api.properties(builders=['staging-Annealing']) +  #
+         api.buildbucket.try_build(project='chromeos', bucket='infra',
+                                   builder='recipes-tester') +
+         # No builders are skipped
+         get_non_skipped_builders_test_data() +
+         # Buildbucket search results
+         buildbucket_search_test_data('staging-Annealing') +
+         # led get-build results
+         led_get_build_test_data(builder='staging-Annealing',
+                                 recipe_name='annealing') +
+         # recipe analyze results. Note that the annealing recipe is affected
+         recipe_analyze_test_data(builder='staging-Annealing',
+                                  recipes=['annealing']) +
+         # led launch results
+         led_get_launch_test_data(builder='staging-Annealing') +
+         # swarming TaskResults contain a failed task.
+         collect_results_failed_test_data())
 
   yield (api.test('invalid_skip_builder_footer') +
          # Specify two builders to run.
