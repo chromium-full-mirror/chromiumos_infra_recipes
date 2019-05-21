@@ -154,7 +154,7 @@ def RunSteps(api, properties):
       vm_results = []
       if vm_tests:
         vm_results = api.buildbucket.collect_builds(
-            [vt.id for vt in vm_tests]).values()
+            [vt.id for vt in vm_tests], step_name='collect vm tests').values()
 
       # Record test results.
       # TODO(evanhernandez): Record VM test history.
