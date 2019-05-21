@@ -14,14 +14,21 @@ DEPS = [
 
 def RunSteps(api):
   bt = BuildTarget(name='my_build_target')
-  result = api.cros_relevance.is_build_pointless(build_pb2.Build(), bt)
+  api.cros_relevance.is_build_pointless(build_pb2.Build(), bt, dep_graph_check=False)
+  api.cros_relevance.is_build_pointless(build_pb2.Build(), bt)
 
 def GenTests(api):
   builder = 'builder'
   build_config = [dict(build_target='build_target')]
   yield (api.test('not_pointless') +
          api.cros_relevance.simulate_run_pointless_build_checker(
+             build_is_pointless=False) +
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             suffix='(2)',
              build_is_pointless=False))
   yield (api.test('is_pointless') +
          api.cros_relevance.simulate_run_pointless_build_checker(
+             build_is_pointless=True) +
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             suffix='(2)',
              build_is_pointless=True))
