@@ -125,7 +125,7 @@ class FailuresApi(recipe_api.RecipeApi):
       for failed_vm_test in failed_vm_tests:
         properties = json_format.MessageToDict(failed_vm_test.output.properties)
         title = '[FAILED] {}'.format(properties['name'])
-        url = self.m.buildbucket.build_url(failed_vm_test)
+        url = self.m.buildbucket.build_url(failed_vm_test.id)
         step.presentation.links[title] = url
       # TODO(evanhernandez): Raise exception for these results.
 

@@ -86,18 +86,7 @@
     "name": "vm test results (3)",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
-      "@@@STEP_LINK@[FAILED] target.vm.suite@https://status: FAILURE",
-      "output {",
-      "  properties {",
-      "    fields {",
-      "      key: \"name\"",
-      "      value {",
-      "        string_value: \"target.vm.suite\"",
-      "      }",
-      "    }",
-      "  }",
-      "}",
-      "/build/0@@@",
+      "@@@STEP_LINK@[FAILED] target.vm.suite@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
