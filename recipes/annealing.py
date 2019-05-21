@@ -19,6 +19,8 @@ The annealing builders run in serial and do the following:
 import urlparse
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipes.chromeos.annealing import AnnealingProperties
+
 from recipe_engine.recipe_api import Property
 
 DEPS = [
@@ -29,27 +31,22 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'cros_sdk',
     'cros_source',
     'depends',
     'git',
     'git_txn',
-    'overlayfs',
     'repo',
 ]
 
-PROPERTIES = {
-    # REQUIRED. The name of the git reference to create snapshots on.
-    'manifest_ref': Property(kind=str)
-}
+
+PROPERTIES = AnnealingProperties
 
 
-def RunSteps(api, manifest_ref):
-  # Cache the chroot.
-  api.cros_sdk.configure(
-      chroot_parent_path=api.path['cache'].join('cros_chroot'))
+def RunSteps(api, properties):
+  manifest_ref = properties.manifest_ref
+  if not manifest_ref:
+    raise ValueError('must set manifest ref')
 
-  # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path.join('manifest-internal')):
@@ -117,11 +114,11 @@ def make_message(api, manifest_ref):
 
 def GenTests(api):
   yield (api.test('basic') +  #
-         api.properties(manifest_ref="snapshot"))
+         api.properties(AnnealingProperties(manifest_ref="snapshot")))
 
   yield (
       api.test('has manifest change') +  #
-      api.properties(manifest_ref="snapshot") +  #
+      api.properties(AnnealingProperties(manifest_ref="snapshot")) +  #
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
               '<manifest><project path="PATH" revision="TO_REV" /></manifest>'))
@@ -132,4 +129,5 @@ def GenTests(api):
           )))
 
   yield (api.test('missing required properties') +  #
+         api.properties(AnnealingProperties()) + #
          api.expect_exception('ValueError'))
