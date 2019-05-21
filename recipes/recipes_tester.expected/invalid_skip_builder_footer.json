@@ -83,9 +83,9 @@
       "    arg_names, **additional_args)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in _invoke_with_properties",
       "    return callable_obj(*props, **additional_args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/recipes_tester.py\", line 280, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/recipes_tester.py\", line 319, in RunSteps",
       "    non_skipped_builders = _get_non_skipped_builders(api, builders)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/recipes_tester.py\", line 241, in _get_non_skipped_builders",
+      "  File \"RECIPE_REPO[chromeos]/recipes/recipes_tester.py\", line 260, in _get_non_skipped_builders",
       "    skip_builder, SKIP_BUILDERS_FOOTER, builders))",
       "ValueError: Builder other-builder is specified in the Recipes-Tester-Skip-Builder footer, but is not in the builders list (['staging-Annealing', 'staging-chromite-postsubmit'])"
     ]

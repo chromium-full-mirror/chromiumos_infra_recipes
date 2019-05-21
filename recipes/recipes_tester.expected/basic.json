@@ -643,6 +643,13 @@
   },
   {
     "cmd": [],
+    "name": "collect results.extract host name",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "collect results.ensure swarming",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -717,7 +724,17 @@
   },
   {
     "cmd": [],
-    "name": "analyze swarming results"
+    "name": "analyze swarming results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all tasks succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyze swarming results.extract host name",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "jsonResult": null,

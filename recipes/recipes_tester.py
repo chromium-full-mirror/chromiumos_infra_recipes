@@ -192,6 +192,33 @@ def _launch_builders(api, builders):
     return results
 
 
+def _extract_host_name(api, led_results):
+  """Extract host name from the results of 'led launch'.
+
+  Asserts there is only one host name.
+
+  Args:
+    * api (object): See RunSteps documentation.
+    * led_results (list[dict]): A list of results from 'led launch'. Each must
+      contain a 'swarming' key, which is a dict containing 'host_name' and
+      'task_id' keys. I.e. results can be called like
+      "results[0]['swarming']['host_name']".
+
+  Returns:
+    A str.
+  """
+  with api.step.nest('extract host name'):
+    host_names = set(result['swarming']['host_name'] for result in led_results)
+
+    # All builders should be in the staging bucket, and run on the same
+    # swarming server.
+    assert len(host_names) == 1, (
+        'There should be exactly 1 swarming host name.'
+        ' Actual host names: {}').format(host_names)
+
+    return list(host_names)[0]
+
+
 def _collect_results(api, led_results):
   """Collect results from swarming, blocking if necessary.
 
@@ -207,15 +234,7 @@ def _collect_results(api, led_results):
   """
   assert led_results
   with api.step.nest('collect results'):
-    host_names = set(result['swarming']['host_name'] for result in led_results)
-
-    # All builders should be in the staging bucket, and run on the same
-    # swarming server.
-    assert len(host_names) == 1, (
-        'There should be exactly 1 swarming host name.'
-        ' Actual host names: {}').format(host_names)
-
-    with api.swarming.with_server(list(host_names)[0]):
+    with api.swarming.with_server(_extract_host_name(api, led_results)):
       return api.swarming.collect(
           'collect swarming tasks',
           [result['swarming']['task_id'] for result in led_results])
@@ -248,20 +267,40 @@ def _get_non_skipped_builders(api, builders):
     return builders
 
 
-def _analyze_swarming_results(api, swarming_results):
+def _analyze_swarming_results(api, swarming_results, led_results):
   """Raise a StepFailure if any swarming task was unsuccessful.
 
   Args:
     * api(object): See RunSteps documentation.
     * swarming_results (list[swarming TaskResult]): Results returned from
       swarming.collect.
+    * led_results (list[dict]): A list of results from 'led launch'. Each must
+      contain a 'swarming' key, which is a dict containing 'host_name' and
+      'task_id' keys. I.e. results can be called like
+      "results[0]['swarming']['host_name']".
 
   Raises:
     StepFailure
   """
-  with api.step.nest('analyze swarming results'):
+  with api.step.nest('analyze swarming results') as step:
+    host_name = _extract_host_name(api, led_results)
+    fail_count = 0
     for result in swarming_results:
-      result.analyze()
+      if not result.success:
+        fail_count += 1
+
+        url = 'https://{}/task?id={}'.format(host_name, result.id)
+        step.presentation.links['[FAILED] {}'.format(result.name)] = url
+
+    if fail_count:
+      step.presentation.step_text = '{} tasks failed, {} succeeded'.format(
+          fail_count,
+          len(swarming_results) - fail_count)
+      step.presentation.status = api.step.FAILURE
+
+      raise api.step.StepFailure('{} tasks failed'.format(fail_count))
+    else:
+      step.presentation.step_text = 'all tasks succeeded'
 
 
 def RunSteps(api, builders):
@@ -285,7 +324,7 @@ def RunSteps(api, builders):
 
   if led_results:
     swarming_results = _collect_results(api, led_results)
-    _analyze_swarming_results(api, swarming_results)
+    _analyze_swarming_results(api, swarming_results, led_results)
 
 
 def GenTests(api):
