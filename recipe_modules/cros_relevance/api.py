@@ -21,30 +21,35 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """Initializes the module."""
     self._pointless_build_checker_path = None
 
-  def is_build_pointless(self, build, build_target):
+  def is_build_pointless(self, build, build_target, dep_graph_check=True):
     """Determines if the build can be terminated early.
 
     Args:
       build (build_pb2.Build): The child builder to check.
       build_target (chromiumos.BuildTarget): The BuildTarget being built.
+      dep_graph_check (bool): Whether to invoke GetBuildDependencyGraph as part
+          of the pointless build check. If True, the chromiumos workspace must
+          have been checked out in advance.
 
     Returns:
       bool: Whether the build can be terminated early.
     """
     with self.m.step.nest('pointless build check') as step_result:
-      dep_req = GetBuildDependencyGraphRequest(
-        build_target=build_target,
-      )
-      step_result.presentation.logs['request'] = [str(dep_req)]
-      resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
-          dep_req)
-      step_result.presentation.logs['response'] = [str(resp)]
+      dep_graph = None
+      if dep_graph_check:
+        dep_req = GetBuildDependencyGraphRequest(
+          build_target=build_target,
+        )
+        resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
+            GetBuildDependencyGraphRequest(
+                build_target=build_target,
+            ))
+        dep_graph = resp.dep_graph
 
       self._ensure_pointless_build_checker()
       check_request = PointlessBuildCheckRequest(
-        chromiumos_workspace_checkout_root = str(self.m.cros_source.master_path),
-        dep_graph = resp.dep_graph,
-        repo_tool_path = str(self.m.repo.repo_path),
+        manifest_commit = build.input.gitiles_commit.id,
+        dep_graph = dep_graph,
       )
       check_request.buildbucket_proto.serialized_proto = (
           build_pb2.Build.SerializeToString(build))

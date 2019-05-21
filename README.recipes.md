@@ -368,13 +368,16 @@ A module for determining if a build is unnecessary.
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#24)(self, build, build_target):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#24)(self, build, build_target, dep_graph_check=True):**
 
 Determines if the build can be terminated early.
 
 Args:
   build (build_pb2.Build): The child builder to check.
   build_target (chromiumos.BuildTarget): The BuildTarget being built.
+  dep_graph_check (bool): Whether to invoke GetBuildDependencyGraph as part
+      of the pointless build check. If True, the chromiumos workspace must
+      have been checked out in advance.
 
 Returns:
   bool: Whether the build can be terminated early.
