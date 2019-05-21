@@ -13,12 +13,11 @@ class NamingApi(recipe_api.RecipeApi):
   def get_build_title(self, build):
     """Get a string to describe the build.
 
-
     Args:
-      * build (build_pb2.Build): The build to describe.
+      build (Build): The build to describe.
 
     Returns:
       str: A string describing the build.
     """
-    return '%s.%s.%s.%d' % (build.builder.project, build.builder.bucket,
-                            build.builder.builder, build.number or build.id)
+    return '%s.%s.%s' % (build.builder.project, build.builder.bucket,
+                         build.builder.builder)

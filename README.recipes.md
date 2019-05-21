@@ -1057,9 +1057,8 @@ A module with helpers for naming things.
 
 Get a string to describe the build.
 
-
 Args:
-  * build (build_pb2.Build): The build to describe.
+  build (Build): The build to describe.
 
 Returns:
   str: A string describing the build.

@@ -14,15 +14,9 @@ from PB.testplans.target_test_requirements_config import HwTestCfg
 
 def RunSteps(api):
   build = build_pb2.Build(builder=build_pb2.BuilderID(
-      project='foo', bucket='bar', builder='baz'), number=101)
+      project='foo', bucket='bar', builder='baz'))
   api.assertions.assertEqual(
-      api.naming.get_build_title(build), 'foo.bar.baz.101')
-
-  build = build_pb2.Build(builder=build_pb2.BuilderID(
-      project='qux', bucket='quux', builder='quuz'), id=202)
-  api.assertions.assertEqual(
-      api.naming.get_build_title(build), 'qux.quux.quuz.202')
-
+      api.naming.get_build_title(build), 'foo.bar.baz')
 
 def GenTests(api):
   yield api.test('basic')
