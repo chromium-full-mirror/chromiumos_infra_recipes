@@ -1433,11 +1433,11 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#52)(api, properties):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#128)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#129)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#139)(api, manifest_ref):**
+&mdash; **def [make\_message](/recipes/annealing.py#140)(api, manifest_ref):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 

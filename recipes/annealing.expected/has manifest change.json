@@ -329,10 +329,7 @@
     "name": "record new gerrit changes.PATH",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@host: \"chromium\"@@@",
-      "@@@STEP_LOG_LINE@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@project: \"chromiumos/chromite\"@@@",
-      "@@@STEP_LOG_LINE@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@change: 1@@@",
-      "@@@STEP_LOG_END@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@@@"
+      "@@@STEP_LINK@message@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
