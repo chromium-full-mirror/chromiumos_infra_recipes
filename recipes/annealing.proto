@@ -6,7 +6,16 @@ syntax = "proto3";
 
 package recipes.chromeos.annealing;
 
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
 message AnnealingProperties {
   // The name of the git reference to create snapshots on. Required.
   string manifest_ref = 1;
+}
+
+// Annealing determines what Gerrit changes have landed since its last run,
+// and uploads its findings to Isolate. This proto stores that data.
+message SnapshotGerritChanges {
+  // All Gerrit changes since the last snapshot.
+  repeated buildbucket.v2.GerritChange gerrit_changes = 2;
 }
