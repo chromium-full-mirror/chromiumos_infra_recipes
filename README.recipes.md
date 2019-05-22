@@ -1612,7 +1612,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#20)(api):**
 
-&mdash; **def [vm\_build](/recipe_modules/failures/examples/full.py#96)(\*\*kwargs):**
+&mdash; **def [vm\_build](/recipe_modules/failures/examples/full.py#97)(\*\*kwargs):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

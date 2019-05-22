@@ -19,6 +19,7 @@
     "name": "build results",
     "~followup_annotations": [
       "@@@STEP_TEXT@all builds succeeded@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@id: 101@@@",
       "@@@STEP_LOG_LINE@buildbucket build dump@status: SUCCESS@@@",
       "@@@STEP_LOG_END@buildbucket build dump@@@"
     ]
@@ -28,6 +29,7 @@
     "name": "build results (2)",
     "~followup_annotations": [
       "@@@STEP_TEXT@all builds succeeded@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@id: 202@@@",
       "@@@STEP_LOG_LINE@buildbucket build dump@status: FAILURE@@@",
       "@@@STEP_LOG_LINE@buildbucket build dump@critical: NO@@@",
       "@@@STEP_LOG_END@buildbucket build dump@@@"
@@ -38,9 +40,10 @@
     "name": "build results (3)",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 builds failed, 0 succeeded@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@id: 303@@@",
       "@@@STEP_LOG_LINE@buildbucket build dump@status: FAILURE@@@",
       "@@@STEP_LOG_END@buildbucket build dump@@@",
-      "@@@STEP_LINK@[FAILED] ..@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LINK@[FAILED] ..@https://cr-buildbucket.appspot.com/build/303@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -86,7 +89,7 @@
     "name": "vm test results (3)",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
-      "@@@STEP_LINK@[FAILED] target.vm.suite@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LINK@[FAILED] target.vm.suite@https://cr-buildbucket.appspot.com/build/606@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

@@ -18,14 +18,17 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 
 def RunSteps(api):
-  build_success = build_pb2.Build(status=common_pb2.SUCCESS)
-  build_failure = build_pb2.Build(status=common_pb2.FAILURE,
+  build_success = build_pb2.Build(id=101, status=common_pb2.SUCCESS)
+  build_failure = build_pb2.Build(id=202,
+                                  status=common_pb2.FAILURE,
                                   critical=common_pb2.NO)
-  build_critical_failure = build_pb2.Build(status=common_pb2.FAILURE)
+  build_critical_failure = build_pb2.Build(id=303, status=common_pb2.FAILURE)
 
-  vm_success = vm_build(status=common_pb2.SUCCESS)
-  vm_failure = vm_build(status=common_pb2.FAILURE, critical=common_pb2.NO)
-  vm_critical_failure = vm_build(status=common_pb2.FAILURE)
+  vm_success = vm_build(id=404, status=common_pb2.SUCCESS)
+  vm_failure = vm_build(id=505,
+                        status=common_pb2.FAILURE,
+                        critical=common_pb2.NO)
+  vm_critical_failure = vm_build(id=606, status=common_pb2.FAILURE)
 
   skylab_success = api.skylab.test_api.skylab_result()
   skylab_failure = api.skylab.test_api.skylab_result(
