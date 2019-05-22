@@ -9,7 +9,7 @@
       "Reviewed-On"
     ],
     "infra_step": true,
-    "name": "git_footers.py",
+    "name": "read git footers",
     "stdout": "/path/to/tmp/"
   },
   {
@@ -21,7 +21,7 @@
       "--position-num"
     ],
     "infra_step": true,
-    "name": "git_footers.py (2)",
+    "name": "read git footers (2)",
     "stdout": "/path/to/tmp/"
   },
   {

@@ -322,8 +322,13 @@
   },
   {
     "cmd": [],
-    "name": "record new gerrit changes",
+    "name": "record new gerrit changes"
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes.PATH",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@host: \"chromium\"@@@",
       "@@@STEP_LOG_LINE@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@project: \"chromiumos/chromite\"@@@",
       "@@@STEP_LOG_LINE@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@change: 1@@@",
@@ -339,10 +344,10 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/PATH",
     "infra_step": true,
-    "name": "record new gerrit changes.git log",
+    "name": "record new gerrit changes.PATH.git log",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -356,10 +361,94 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/PATH",
     "infra_step": true,
-    "name": "record new gerrit changes.git_footers.py",
+    "name": "record new gerrit changes.PATH.read git footers",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"gerritChanges\": [\n    {\n      \"project\": \"chromiumos/chromite\", \n      \"host\": \"chromium\", \n      \"change\": \"1\"\n    }\n  ]\n}",
+      "[CLEANUP]/snapshot-gerrit-changes-_tmp_1/snapshot_gerrit_changes.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "record new gerrit changes.write gerrit changes json",
+    "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes.ensure isolated",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[CACHE]/isolated_client",
+      "-ensure-file",
+      "infra/tools/luci/isolated/${platform} git_revision:4520b945a32ae72645adf048ff86bfdc87ac9810",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "record new gerrit changes.ensure isolated.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-git_revision:452\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/isolated/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/isolated_client/isolated",
+      "archive",
+      "-verbose",
+      "-isolate-server",
+      "https://example.isolateserver.appspot.com",
+      "-namespace",
+      "default-gzip",
+      "-dump-hash",
+      "/path/to/tmp/",
+      "-files",
+      "[CLEANUP]/snapshot-gerrit-changes-_tmp_1:snapshot_gerrit_changes.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "record new gerrit changes.upload gerrit changes to isolate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@isolated UI@https://example.isolateserver.appspot.com/browse?namespace=default-gzip&hash=%5Bdummy+hash%5D@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes.output isolate id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@snapshot_gerrit_changes@\"[dummy hash]\"@@@"
     ]
   },
   {

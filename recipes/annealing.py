@@ -20,6 +20,9 @@ import urlparse
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.annealing import AnnealingProperties
+from PB.recipes.chromeos.annealing import SnapshotGerritChanges
+
+from google.protobuf import json_format
 
 from recipe_engine.recipe_api import Property
 
@@ -27,6 +30,8 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/isolated',
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -92,9 +97,11 @@ def record_gerrit_changes(api, manifest_diffs):
     * api (object): See RunSteps documentation.
     * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
   """
-  with api.step.nest('record new gerrit changes') as step:
+  with api.step.nest('record new gerrit changes'):
+    gerrit_changes = []
     for diff in manifest_diffs:
-      with api.context(cwd=api.cros_source.workspace_path.join(diff.path)):
+      with api.step.nest(diff.path) as step, api.context(
+          cwd=api.cros_source.workspace_path.join(diff.path)):
         commits = api.git.log(diff.from_rev, diff.to_rev)
         for commit in commits:
           reviewed_on_footers = api.git_footers.get(commit.rev, 'Reviewed-on')
@@ -102,7 +109,20 @@ def record_gerrit_changes(api, manifest_diffs):
             gerrit_change_url = reviewed_on_footers[0]
             gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
             step.presentation.logs[gerrit_change_url] = [str(gerrit_change)]
-          # TODO(evanhernandez): Also upload to Isolate.
+            gerrit_changes.append(gerrit_change)
+
+    output_dir = api.path.mkdtemp(prefix='snapshot-gerrit-changes-')
+    output_file = output_dir.join('snapshot_gerrit_changes.json')
+    output_proto = SnapshotGerritChanges(gerrit_changes=gerrit_changes)
+    output_json = json_format.MessageToJson(output_proto)
+    api.file.write_raw('write gerrit changes json', output_file, output_json)
+
+    isolated = api.isolated.isolated(output_dir)
+    isolated.add_file(output_file)
+    isolated_hash = isolated.archive('upload gerrit changes to isolate')
+
+    step = api.step('output isolate id', None)
+    step.presentation.properties['snapshot_gerrit_changes'] = isolated_hash
 
 
 def make_gitiles_commit(api, repo_url, commit_id):
@@ -139,7 +159,7 @@ def make_message(api, manifest_ref):
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
+  yield (api.test('basic') + #
          api.properties(AnnealingProperties(manifest_ref='snapshot')))
 
   yield (
@@ -154,7 +174,7 @@ def GenTests(api):
               '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'
           )) + #
       api.git_footers.step_data(
-          'record new gerrit changes.git_footers.py',
+          'record new gerrit changes.PATH.read git footers',
           api.gerrit.test_gerrit_change_url()))
 
   yield (api.test('missing required properties') +  #

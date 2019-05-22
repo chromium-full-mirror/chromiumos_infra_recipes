@@ -1430,7 +1430,7 @@ Ensure the CIPD support package is installed.
 
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#26): [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#29): [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -1444,13 +1444,13 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#47)(api, properties):**
+&mdash; **def [RunSteps](/recipes/annealing.py#52)(api, properties):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#108)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#128)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#119)(api, manifest_ref):**
+&mdash; **def [make\_message](/recipes/annealing.py#139)(api, manifest_ref):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -1466,7 +1466,7 @@ Args:
 Returns:
   A string containing the commit message.
 
-&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#88)(api, manifest_diffs):**
+&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#93)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 
@@ -1775,6 +1775,7 @@ For now, only supports TAST VM tests.
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/71751d787ce1cce2996836a9af823cf961638ccf/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/71751d787ce1cce2996836a9af823cf961638ccf/README.recipes.md#recipe_modules-cq
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/71751d787ce1cce2996836a9af823cf961638ccf/README.recipes.md#recipe_modules-file
+[recipe_engine/recipe_modules/isolated]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/71751d787ce1cce2996836a9af823cf961638ccf/README.recipes.md#recipe_modules-isolated
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/71751d787ce1cce2996836a9af823cf961638ccf/README.recipes.md#recipe_modules-json
 [recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/71751d787ce1cce2996836a9af823cf961638ccf/README.recipes.md#recipe_modules-led
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/71751d787ce1cce2996836a9af823cf961638ccf/README.recipes.md#recipe_modules-path

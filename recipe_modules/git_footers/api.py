@@ -25,7 +25,7 @@ class GitFootersApi(recipe_api.RecipeApi):
     kwargs.setdefault('step_test_data',
                       self.test_api.step_test_data_factory('value'))
     result = self.m.python(
-        'git_footers.py', self.m.depot_tools.root.join('git_footers.py'),
+        'read git footers', self.m.depot_tools.root.join('git_footers.py'),
         args, stdout=self.m.raw_io.output(), **kwargs)
     return [l.strip() for l in result.stdout.splitlines() if l.strip()]
 
