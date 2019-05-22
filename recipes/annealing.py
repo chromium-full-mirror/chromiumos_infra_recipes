@@ -33,7 +33,9 @@ DEPS = [
     'recipe_engine/step',
     'cros_source',
     'depends',
+    'gerrit',
     'git',
+    'git_footers',
     'git_txn',
     'repo',
 ]
@@ -65,6 +67,10 @@ def RunSteps(api, properties):
       # Otherwise we need to ensure all of those diffs have fulfilled deps.
       api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
+      # Then, record the diffs. We are specifically interested in what
+      # gerrit changes have landed.
+      record_gerrit_changes(api, manifest_diffs)
+
     snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
     api.git.fetch_ref(snapshot_repo_url, manifest_ref)
     api.git.checkout('FETCH_HEAD')
@@ -77,6 +83,26 @@ def RunSteps(api, properties):
     snapshot_commit = make_gitiles_commit(api, snapshot_repo_url,
                                           api.git.head_commit())
     api.buildbucket.set_output_gitiles_commit(snapshot_commit)
+
+
+def record_gerrit_changes(api, manifest_diffs):
+  """Find all Gerrit changes that landed since the last snapshot.
+
+  Args:
+    * api (object): See RunSteps documentation.
+    * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
+  """
+  with api.step.nest('record new gerrit changes') as step:
+    for diff in manifest_diffs:
+      with api.context(cwd=api.cros_source.workspace_path.join(diff.path)):
+        commits = api.git.log(diff.from_rev, diff.to_rev)
+        for commit in commits:
+          reviewed_on_footers = api.git_footers.get(commit.rev, 'Reviewed-on')
+          if reviewed_on_footers:
+            gerrit_change_url = reviewed_on_footers[0]
+            gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+            step.presentation.logs[gerrit_change_url] = [str(gerrit_change)]
+          # TODO(evanhernandez): Also upload to Isolate.
 
 
 def make_gitiles_commit(api, repo_url, commit_id):
@@ -114,11 +140,11 @@ def make_message(api, manifest_ref):
 
 def GenTests(api):
   yield (api.test('basic') +  #
-         api.properties(AnnealingProperties(manifest_ref="snapshot")))
+         api.properties(AnnealingProperties(manifest_ref='snapshot')))
 
   yield (
       api.test('has manifest change') +  #
-      api.properties(AnnealingProperties(manifest_ref="snapshot")) +  #
+      api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
               '<manifest><project path="PATH" revision="TO_REV" /></manifest>'))
@@ -126,7 +152,10 @@ def GenTests(api):
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'
-          )))
+          )) + #
+      api.git_footers.step_data(
+          'record new gerrit changes.git_footers.py',
+          api.gerrit.test_gerrit_change_url()))
 
   yield (api.test('missing required properties') +  #
          api.properties(AnnealingProperties()) + #

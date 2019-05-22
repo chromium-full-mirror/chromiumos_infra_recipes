@@ -15,6 +15,7 @@ def RunSteps(api):
   api.assertions.assertEqual(api.git_footers.get('HEAD', 'Reviewed-On'),
                              ['HEAD:Reviewed-On'])
   api.assertions.assertEqual(api.git_footers.position_num('HEAD'), 101)
+  api.assertions.assertTrue(api.git_footers.test_api.step_data('foo', 'bar'))
 
 
 def GenTests(api):

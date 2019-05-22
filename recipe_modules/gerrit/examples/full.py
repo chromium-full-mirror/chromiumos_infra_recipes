@@ -46,6 +46,7 @@ def RunSteps(api):
     pass
 
   api.gerrit.test_api.test_patch_set()
+  api.gerrit.test_api.test_gerrit_change_url()
 
   gerrit_change_url = (
       'https://chromium-review.googlesource.com/c/'

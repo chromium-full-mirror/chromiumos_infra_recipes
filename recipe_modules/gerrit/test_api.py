@@ -59,3 +59,6 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
             'change_number': 12345,
             'patch_set': 1,
         }))
+
+  def test_gerrit_change_url(self):
+    return 'https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1'

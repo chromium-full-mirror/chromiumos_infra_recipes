@@ -1026,7 +1026,7 @@ Args:
 Returns:
   list[str]: All matching footer values.
 
-&mdash; **def [get](/recipe_modules/git_footers/api.py#31)(self, ref, key, \*\*kwargs):**
+&mdash; **def [get](/recipe_modules/git_footers/api.py#32)(self, ref, key, \*\*kwargs):**
 
 Return the footer value(s) in the given ref for the given key.
 
@@ -1037,7 +1037,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
 
-&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#45)(self, ref, \*\*kwargs):**
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#47)(self, ref, \*\*kwargs):**
 
 Return the footer value for Cr-Commit-Position.
 
@@ -1430,7 +1430,7 @@ Ensure the CIPD support package is installed.
 
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#26): [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#26): [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -1444,13 +1444,13 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#45)(api, properties):**
+&mdash; **def [RunSteps](/recipes/annealing.py#47)(api, properties):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#82)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#108)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#93)(api, manifest_ref):**
+&mdash; **def [make\_message](/recipes/annealing.py#119)(api, manifest_ref):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -1465,6 +1465,14 @@ Args:
 
 Returns:
   A string containing the commit message.
+
+&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#88)(api, manifest_diffs):**
+
+Find all Gerrit changes that landed since the last snapshot.
+
+Args:
+  * api (object): See RunSteps documentation.
+  * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
