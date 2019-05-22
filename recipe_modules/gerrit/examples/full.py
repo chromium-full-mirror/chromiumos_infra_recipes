@@ -47,6 +47,24 @@ def RunSteps(api):
 
   api.gerrit.test_api.test_patch_set()
 
+  gerrit_change_url = (
+      'https://chromium-review.googlesource.com/c/'
+      'chromiumos/chromite/+/12345/6')
+  gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+  api.assertions.assertEqual(gerrit_change.host, 'chromium')
+  api.assertions.assertEqual(gerrit_change.project, 'chromiumos/chromite')
+  api.assertions.assertEqual(gerrit_change.change, 12345)
+  api.assertions.assertEqual(gerrit_change.patchset, 6)
+
+  gerrit_change_url = (
+      'https://chrome-internal-review.googlesource.com/c/'
+      'chromeos/infra/config/+/12345')
+  gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+  api.assertions.assertEqual(gerrit_change.host, 'chrome-internal')
+  api.assertions.assertEqual(gerrit_change.project, 'chromeos/infra/config')
+  api.assertions.assertEqual(gerrit_change.change, 12345)
+  api.assertions.assertEqual(gerrit_change.patchset, 0)
+
 
 def GenTests(api):
   yield api.test('basic')

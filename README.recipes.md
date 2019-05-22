@@ -789,15 +789,15 @@ Raises:
 
 APIs for managing Gerrit changes.
 
-#### **class [GerritApi](/recipe_modules/gerrit/api.py#99)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GerritApi](/recipe_modules/gerrit/api.py#103)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gerrit helpers.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#102)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#106)(self, \*args, \*\*kwargs):**
 
 Initialize GerritApi.
 
-&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#122)(self, gerrit_changes, include_files=False, test_output_data=None):**
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#126)(self, gerrit_changes, include_files=False, test_output_data=None):**
 
 Fetch and return PatchSets from Gerrit.
 
@@ -810,6 +810,20 @@ Args:
 
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
+
+&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#171)(self, gerrit_change_url):**
+
+Parse GerritChange proto from a gerrit change URL.
+
+This function expects the URL to be formatted as:
+
+  https://<host>-review.googlesource.com/c/<project>/+/<change number>
+
+Args:
+  gerrit_change_url (str): The change URL.
+
+Returns:
+  GerritChange: The parsed proto.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
 [DEPS](/recipe_modules/git/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

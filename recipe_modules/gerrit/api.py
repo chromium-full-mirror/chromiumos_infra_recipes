@@ -6,8 +6,12 @@
 """APIs for managing Gerrit changes."""
 
 import collections
+import re
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 from recipe_engine import recipe_api
+
 
 # Strip these suffixes from hosts for "short" host display.
 SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
@@ -163,3 +167,28 @@ class GerritApi(recipe_api.RecipeApi):
       ]
       raise self.m.step.StepFailure('missing gerrit patch(es)')
     return patch_sets
+
+  def parse_gerrit_change(self, gerrit_change_url):
+    """Parse GerritChange proto from a gerrit change URL.
+
+    This function expects the URL to be formatted as:
+
+      https://<host>-review.googlesource.com/c/<project>/+/<change number>
+
+    Args:
+      gerrit_change_url (str): The change URL.
+
+    Returns:
+      GerritChange: The parsed proto.
+    """
+    assert gerrit_change_url, 'gerrit change URL must be nonempty'
+    match = re.match(
+        r'https://([^.]+)-review.googlesource.com/c/([^+]+)/\+/(\d+)(/\d+)?',
+        gerrit_change_url.rstrip('/'))
+    assert match, 'malformed gerrit change URL: %s' % gerrit_change_url
+    host, project, change, patchset = match.groups()
+    return GerritChange(
+        host=host,
+        project=project,
+        change=int(change),
+        patchset=int(patchset.lstrip('/')) if patchset else 0)
