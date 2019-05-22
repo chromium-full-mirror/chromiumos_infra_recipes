@@ -22,8 +22,7 @@ class GitFootersApi(recipe_api.RecipeApi):
       list[str]: All matching footer values.
     """
     kwargs.setdefault('infra_step', True)
-    kwargs.setdefault('step_test_data',
-                      self.test_api.step_test_data_factory('value'))
+    kwargs.setdefault('step_test_data', self.test_api.output_factory('value'))
     result = self.m.python(
         'git_footers.py', self.m.depot_tools.root.join('git_footers.py'),
         args, stdout=self.m.raw_io.output(), **kwargs)
@@ -39,9 +38,8 @@ class GitFootersApi(recipe_api.RecipeApi):
     Returns:
       list[str]: The footer value(s) found in the ref's commit message.
     """
-    kwargs.setdefault(
-        'step_test_data',
-        self.test_api.step_test_data_factory('%s:%s' % (ref, key)))
+    kwargs.setdefault('step_test_data',
+                      self.test_api.output_factory('%s:%s' % (ref, key)))
     return self(ref, '--key', key, **kwargs)
 
   def position_num(self, ref, **kwargs):
@@ -53,8 +51,7 @@ class GitFootersApi(recipe_api.RecipeApi):
     Returns:
       list[str]: The position number for the ref.
     """
-    kwargs.setdefault('step_test_data',
-                      self.test_api.step_test_data_factory('101'))
+    kwargs.setdefault('step_test_data', self.test_api.output_factory('101'))
     output = self(ref, '--position-num', **kwargs)
     assert len(output) == 1, 'expected exactly one Cr-Commit-Position footer'
     return int(output[0].strip())

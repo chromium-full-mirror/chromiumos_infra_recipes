@@ -321,48 +321,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "record new gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@host: \"chromium\"@@@",
-      "@@@STEP_LOG_LINE@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@project: \"chromiumos/chromite\"@@@",
-      "@@@STEP_LOG_LINE@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@change: 1@@@",
-      "@@@STEP_LOG_END@https:&#x2f;&#x2f;chromium-review.googlesource.com&#x2f;c&#x2f;chromiumos&#x2f;chromite&#x2f;+&#x2f;1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "--pretty=%H%x1E%B%x00",
-      "FROM_REV...TO_REV"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/PATH",
-    "infra_step": true,
-    "name": "record new gerrit changes.git log",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-      "--key",
-      "Reviewed-on"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/PATH",
-    "infra_step": true,
-    "name": "record new gerrit changes.git_footers.py",
-    "stdout": "/path/to/tmp/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "git",
       "fetch",
