@@ -1,0 +1,31 @@
+[
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "HEAD",
+      "--key",
+      "Reviewed-On"
+    ],
+    "infra_step": true,
+    "name": "git_footers.py",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "HEAD",
+      "--position-num"
+    ],
+    "infra_step": true,
+    "name": "git_footers.py (2)",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

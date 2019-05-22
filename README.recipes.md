@@ -22,6 +22,7 @@
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
+  * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) &mdash; APIs for dealing with Gitiles.
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
@@ -62,6 +63,7 @@
   * [failures:examples/full](#recipes-failures_examples_full)
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
+  * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
   * [naming:examples/full](#recipes-naming_examples_full)
@@ -1003,6 +1005,47 @@ Args:
 Returns:
   str: The contents of the file.
   None: The file does not exist at the given revision.
+### *recipe_modules* / [git\_footers](/recipe_modules/git_footers)
+
+[DEPS](/recipe_modules/git_footers/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+API wrapping the git_footers script..
+
+#### **class [GitFootersApi](/recipe_modules/git_footers/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for calling git_footers.
+
+&mdash; **def [\_\_call\_\_](/recipe_modules/git_footers/api.py#14)(self, \*args, \*\*kwargs):**
+
+Call git_footers.py with the given args.
+
+Args:
+  args: Arguments for git_footers.py
+  kwargs: Keyword arguments for recipe_engine/python.
+
+Returns:
+  list[str]: All matching footer values.
+
+&mdash; **def [get](/recipe_modules/git_footers/api.py#31)(self, ref, key, \*\*kwargs):**
+
+Return the footer value(s) in the given ref for the given key.
+
+Args:
+  ref (str): The git ref.
+  key (str): The footer key to look for.
+
+Returns:
+  list[str]: The footer value(s) found in the ref's commit message.
+
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#45)(self, ref, \*\*kwargs):**
+
+Return the footer value for Cr-Commit-Position.
+
+Args:
+  ref (str): The git ref.
+
+Returns:
+  list[str]: The position number for the ref.
 ### *recipe_modules* / [git\_txn](/recipe_modules/git_txn)
 
 [DEPS](/recipe_modules/git_txn/__init__.py#1): [git](#recipe_modules-git), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1572,6 +1615,13 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 [DEPS](/recipe_modules/git/examples/full.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#13)(api):**
+### *recipes* / [git\_footers:examples/full](/recipe_modules/git_footers/examples/full.py)
+
+[DEPS](/recipe_modules/git_footers/examples/full.py#8): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+Test git_footers calls.
+
+&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#14)(api):**
 ### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
 
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
