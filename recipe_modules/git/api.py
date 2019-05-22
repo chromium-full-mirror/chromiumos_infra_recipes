@@ -273,26 +273,6 @@ other_test.txt
     revs = '%s..%s' % (from_commit, to_ref)
     self._step(['bundle', 'create', output_path, revs])
 
-  def position_num(self, ref='HEAD'):
-    """Returns the chrome commit position.
-
-    The ref must be present in the local checkout, and it must contain the
-    Cr-Commit-Position footer or this function will fail.
-
-    Args:
-      ref (str): The ref to fetch to get the position num of.
-
-    Returns:
-      int: The Chrome commit position
-    """
-    result = self.m.python(
-        'git_footers.py', self.m.depot_tools.root.join('git_footers.py'),
-        args=[ref, '--position-num'], stdout=self.m.raw_io.output(),
-        step_test_data=lambda: self.m.raw_io.test_api.stream_output('101'),
-        ok_ret='any')
-    assert result.retcode == 0, 'malformed commit footers for %s' % ref
-    return int(result.stdout.strip())
-
   def clone(self, repo_url, target_path=None):
     """Clones a Git repo into the current directory.
 

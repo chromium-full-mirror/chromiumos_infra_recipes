@@ -492,7 +492,8 @@
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "git_footers.py",
+    "infra_step": true,
+    "name": "read git footers",
     "stdout": "/path/to/tmp/"
   },
   {

@@ -75,7 +75,7 @@ class CrosVersionApi(recipe_api.RecipeApi):
           cwd=self.m.cros_source.workspace_path.join('manifest-internal')):
         snapshot = self.m.buildbucket.gitiles_commit.id
         self.m.git.fetch_ref(self.m.cros_source.INTERNAL_MANIFEST_URL, snapshot)
-        version_args['snapshot'] = self.m.git.position_num(ref=snapshot)
+        version_args['snapshot'] = self.m.git_footers.position_num(snapshot)
 
     version = Version(**version_args)
     self.m.step.active_result.presentation.step_text = 'version: %s' % version

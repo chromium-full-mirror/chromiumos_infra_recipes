@@ -141,7 +141,8 @@
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "upload ebuild logs.read snapshot number.git_footers.py",
+    "infra_step": true,
+    "name": "upload ebuild logs.read snapshot number.read git footers",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -319,7 +320,8 @@
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "upload firmware archive.read snapshot number.git_footers.py",
+    "infra_step": true,
+    "name": "upload firmware archive.read snapshot number.read git footers",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -805,7 +807,8 @@
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "upload test artifacts.read snapshot number.git_footers.py",
+    "infra_step": true,
+    "name": "upload test artifacts.read snapshot number.read git footers",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

@@ -585,7 +585,7 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#20)(self):**
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
-[DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS version numbers.
 
@@ -828,7 +828,7 @@ Returns:
   GerritChange: The parsed proto.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
-[DEPS](/recipe_modules/git/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git/__init__.py#1): [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with git.
 
@@ -861,7 +861,7 @@ Runs 'git cherry-pick'.
 Args:
   * commit (str): The commit to cherry pick.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#296)(self, repo_url, target_path=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#276)(self, repo_url, target_path=None):**
 
 Clones a Git repo into the current directory.
 
@@ -968,19 +968,6 @@ Args:
 
 Returns:
   List(Commit) A list of commit metas.
-
-&mdash; **def [position\_num](/recipe_modules/git/api.py#276)(self, ref='HEAD'):**
-
-Returns the chrome commit position.
-
-The ref must be present in the local checkout, and it must contain the
-Cr-Commit-Position footer or this function will fail.
-
-Args:
-  ref (str): The ref to fetch to get the position num of.
-
-Returns:
-  int: The Chrome commit position
 
 &mdash; **def [push](/recipe_modules/git/api.py#162)(self, remote, refspec, capture_stdout=False):**
 

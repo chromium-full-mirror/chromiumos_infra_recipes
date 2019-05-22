@@ -29,7 +29,6 @@ def RunSteps(api):
   api.git.is_reachable('deadbeef')
   api.git.show_file('deadbeef', 'some/path')
   api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')
-  api.git.position_num()
   api.assertions.assertEqual(
       api.git.get_diff_files('master', 'HEAD'),
       ['a/b/text.txt', 'other_test.txt'])

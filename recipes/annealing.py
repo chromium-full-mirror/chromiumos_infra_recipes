@@ -151,7 +151,7 @@ def make_message(api, manifest_ref):
   Returns:
     A string containing the commit message.
   """
-  position = api.git.position_num()
+  position = api.git_footers.position_num('HEAD')
   message = 'Annealing manifest snapshot\n\n'
   message += 'Cr-Commit-Position: refs/heads/%s@{#%d}' % (manifest_ref,
                                                           position + 1)

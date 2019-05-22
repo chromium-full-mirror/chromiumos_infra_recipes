@@ -54,7 +54,8 @@
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "read snapshot number.git_footers.py",
+    "infra_step": true,
+    "name": "read snapshot number.read git footers",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
