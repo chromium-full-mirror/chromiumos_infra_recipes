@@ -226,7 +226,7 @@ other_test.txt
     commits = []
     for record in stdout.split('\x00'):
       ref, message = record.split('\x1E')
-      commits.append(Commit(ref, message))
+      commits.append(Commit(ref.strip('\n'), message))
     return commits
 
   def is_reachable(self, revision):
