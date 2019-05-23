@@ -122,7 +122,9 @@ def record_gerrit_changes(api, manifest_diffs):
 
     isolated = api.isolated.isolated(output_dir)
     isolated.add_file(output_file)
-    isolated_hash = isolated.archive('upload gerrit changes to isolate')
+    # TODO(evanhernandez): Re-enable upload after isolated is fixed.
+    isolated_hash = None
+    # isolated_hash = isolated.archive('upload gerrit changes to isolate')
 
     step = api.step('output isolate id', None)
     step.presentation.properties['snapshot_gerrit_changes'] = isolated_hash
