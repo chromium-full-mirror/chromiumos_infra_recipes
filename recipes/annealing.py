@@ -64,6 +64,7 @@ def RunSteps(api, properties):
         api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
 
     # TODO(athilenius): It would be nice to set the 'Info' column here.
+    gerrit_commits = []
     if manifest_diffs is not None:
       # If there are zero diffs (empty array) then there is nothing
       # interesting to be done.
@@ -75,14 +76,15 @@ def RunSteps(api, properties):
 
       # Then, record the diffs. We are specifically interested in what
       # gerrit changes have landed.
-      record_gerrit_changes(api, manifest_diffs)
+      gerrit_commits = record_gerrit_changes(api, manifest_diffs)
 
-    snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
-    with api.step.nest('publish snapshot'):
+    with api.step.nest('publish snapshot') as step:
+      snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
+      snapshot_commit_message = make_message(api, manifest_ref, gerrit_commits)
       api.git.fetch_ref(snapshot_repo_url, manifest_ref)
       api.git.checkout('FETCH_HEAD')
       api.git_txn.update_ref_write_file(
-          snapshot_repo_url, manifest_ref, make_message(api, manifest_ref),
+          snapshot_repo_url, manifest_ref, snapshot_commit_message,
           api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
           snapshot_xml)
 
@@ -98,9 +100,13 @@ def record_gerrit_changes(api, manifest_diffs):
   Args:
     * api (object): See RunSteps documentation.
     * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
+
+  Returns:
+    list[Commit]: The Gerrit-reviewed commits since the last snapshot.
   """
   with api.step.nest('record new gerrit changes'):
     gerrit_changes = []
+    gerrit_commits = []
     for diff in manifest_diffs:
       with api.step.nest(diff.path) as step, api.context(
           cwd=api.cros_source.workspace_path.join(diff.path)):
@@ -115,6 +121,7 @@ def record_gerrit_changes(api, manifest_diffs):
             gerrit_change_title = api.naming.get_commit_title(commit)
             step.presentation.links[gerrit_change_title] = gerrit_change_url
             gerrit_changes.append(gerrit_change)
+            gerrit_commits.append(commit)
 
     output_dir = api.path.mkdtemp(prefix='snapshot-gerrit-changes-')
     output_file = output_dir.join('snapshot_gerrit_changes.json')
@@ -131,6 +138,10 @@ def record_gerrit_changes(api, manifest_diffs):
     step = api.step('output isolate id', None)
     step.presentation.properties['snapshot_gerrit_changes'] = isolated_hash
 
+    # TODO(evanhernandez): Storing/returning these commits is a stain.
+    # Stop this once the Milo blame list accepts Gerrit changes as input.
+    return gerrit_commits
+
 
 def make_gitiles_commit(api, repo_url, commit_id):
   """Create a GitilesCommit for the given |repo_url| and |commit_id|."""
@@ -142,8 +153,7 @@ def make_gitiles_commit(api, repo_url, commit_id):
       id=commit_id,
   )
 
-
-def make_message(api, manifest_ref):
+def make_message(api, manifest_ref, gerrit_commits):
   """Creates and returns the commit message with a Cr-Commit-Position.
 
   Creates and returns the commit message with a Cr-Commit-Position
@@ -151,18 +161,37 @@ def make_message(api, manifest_ref):
 
   Cr-Commit-Position: refs/heads/snapshot@{#%d}
 
+  Also appends the commit messages for all Gerrit changes since the last
+  snapshot.
+
   Args:
     * api (object): See RunSteps documentation.
     * manifest_ref (str): The git reference to use in the commit message.
+    * gerrit_commits (list[Commit]): List of Gerrit-pushed commits since the
+        last snapshot.
 
   Returns:
     A string containing the commit message.
   """
-  position = api.git_footers.position_num('HEAD')
-  message = 'Annealing manifest snapshot\n\n'
-  message += 'Cr-Commit-Position: refs/heads/%s@{#%d}' % (manifest_ref,
-                                                          position + 1)
-  return message
+  with api.step.nest('create snapshot commit message'):
+    position = api.git_footers.position_num('HEAD') + 1
+    lines = [
+        'annealing manifest snapshot %d' % position,
+        '************ Gerrit Changes ************',
+    ]
+
+    for gerrit_commit in gerrit_commits:
+      message = gerrit_commit.message
+      footers = api.git_footers.from_message(message)
+      for footer in footers:
+        message = message.replace(footer, '').strip('\n')
+      lines.append(message)
+
+    lines.append('****************************************')
+    lines.append('Cr-Commit-Position: refs/heads/%s@{#%d}' % (manifest_ref,
+                                                              position))
+
+    return '\n\n'.join(lines)
 
 
 def GenTests(api):

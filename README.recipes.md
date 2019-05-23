@@ -1461,11 +1461,11 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#53)(api, properties):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#135)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#146)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#146)(api, manifest_ref):**
+&mdash; **def [make\_message](/recipes/annealing.py#156)(api, manifest_ref, gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -1474,20 +1474,28 @@ suitable for use by FindIt, as in:
 
 Cr-Commit-Position: refs/heads/snapshot@{#%d}
 
+Also appends the commit messages for all Gerrit changes since the last
+snapshot.
+
 Args:
   * api (object): See RunSteps documentation.
   * manifest_ref (str): The git reference to use in the commit message.
+  * gerrit_commits (list[Commit]): List of Gerrit-pushed commits since the
+      last snapshot.
 
 Returns:
   A string containing the commit message.
 
-&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#95)(api, manifest_diffs):**
+&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#97)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 
 Args:
   * api (object): See RunSteps documentation.
   * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
+
+Returns:
+  list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
