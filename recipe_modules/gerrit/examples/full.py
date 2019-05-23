@@ -48,6 +48,7 @@ def RunSteps(api):
   api.gerrit.test_api.test_patch_set()
   api.gerrit.test_api.test_gerrit_change_url()
 
+  # Parse full gerrit change URL.
   gerrit_change_url = (
       'https://chromium-review.googlesource.com/c/'
       'chromiumos/chromite/+/12345/6')
@@ -57,6 +58,7 @@ def RunSteps(api):
   api.assertions.assertEqual(gerrit_change.change, 12345)
   api.assertions.assertEqual(gerrit_change.patchset, 6)
 
+  # Parse full gerrit change URL without patchset.
   gerrit_change_url = (
       'https://chrome-internal-review.googlesource.com/c/'
       'chromeos/infra/config/+/12345')
@@ -64,7 +66,33 @@ def RunSteps(api):
   api.assertions.assertEqual(gerrit_change.host, 'chrome-internal')
   api.assertions.assertEqual(gerrit_change.project, 'chromeos/infra/config')
   api.assertions.assertEqual(gerrit_change.change, 12345)
-  api.assertions.assertEqual(gerrit_change.patchset, 0)
+  api.assertions.assertFalse(gerrit_change.patchset)
+
+  # Parse full gerrit change URL without https://
+  gerrit_change_url = (
+      'chrome-internal-review.googlesource.com/c/'
+      'chromeos/infra/config/+/12345')
+  gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+  api.assertions.assertEqual(gerrit_change.host, 'chrome-internal')
+  api.assertions.assertEqual(gerrit_change.project, 'chromeos/infra/config')
+  api.assertions.assertEqual(gerrit_change.change, 12345)
+  api.assertions.assertFalse(gerrit_change.patchset)
+
+  # Parse dumb gerrit change URL.
+  gerrit_change_url = 'https://chrome-internal-review.googlesource.com/12345'
+  gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+  api.assertions.assertEqual(gerrit_change.host, 'chrome-internal')
+  api.assertions.assertEqual(gerrit_change.change, 12345)
+  api.assertions.assertFalse(gerrit_change.project)
+  api.assertions.assertFalse(gerrit_change.patchset)
+
+  # Parse dumb gerrit change URL without https://
+  gerrit_change_url = 'chrome-internal-review.googlesource.com/12345'
+  gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+  api.assertions.assertEqual(gerrit_change.host, 'chrome-internal')
+  api.assertions.assertEqual(gerrit_change.change, 12345)
+  api.assertions.assertFalse(gerrit_change.project)
+  api.assertions.assertFalse(gerrit_change.patchset)
 
 
 def GenTests(api):

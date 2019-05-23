@@ -182,13 +182,23 @@ class GerritApi(recipe_api.RecipeApi):
       GerritChange: The parsed proto.
     """
     assert gerrit_change_url, 'gerrit change URL must be nonempty'
+    gerrit_change_url = gerrit_change_url.rstrip('/')
+
+    # First check if this is a verbose Gerrit URL.
     match = re.match(
-        r'https://([^.]+)-review.googlesource.com/c/([^+]+)/\+/(\d+)(/\d+)?',
-        gerrit_change_url.rstrip('/'))
+        r'(?:https://)?([^.]+)-review.googlesource.com/c/([^+]+)/\+/(\d+)(/\d+)?',
+        gerrit_change_url)
+    if match:
+      host, project, change, patchset = match.groups()
+      return GerritChange(
+          host=host,
+          project=project,
+          change=int(change),
+          patchset=int(patchset.lstrip('/')) if patchset else 0)
+
+    # Otherwise, it's a dumb one.
+    match = re.match(r'(?:https://)?([^.]+)-review.googlesource.com/(\d+)',
+                     gerrit_change_url)
     assert match, 'malformed gerrit change URL: %s' % gerrit_change_url
-    host, project, change, patchset = match.groups()
-    return GerritChange(
-        host=host,
-        project=project,
-        change=int(change),
-        patchset=int(patchset.lstrip('/')) if patchset else 0)
+    host, change = match.groups()
+    return GerritChange(host=host, change=int(change))
