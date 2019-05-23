@@ -33,8 +33,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """
     label = builder_config.BuilderConfig.Id.Type.Name(kind).lower()
     version = self.m.cros_version.read_workspace_version()
-    return 'gs://%s/board/%s/%s-%s/packages' % (gs_bucket, target.name, label,
-                                                version)
+    build_id = self.m.buildbucket.build.id
+    return 'gs://%s/board/%s/%s-%s-%d/packages' % (gs_bucket, target.name,
+                                                   label, version, build_id)
 
   def _binhost_key(self, kind):
     """Return the binhost key for the given builder type.

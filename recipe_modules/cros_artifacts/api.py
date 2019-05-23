@@ -49,7 +49,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     label = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
     version = self.m.cros_version.read_workspace_version()
-    return '%s-%s/%s' % (target.name, label, version)
+    build_id = self.m.buildbucket.build.id
+    return '%s-%s/%s-%d' % (target.name, label, version, build_id)
 
   def _get_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
