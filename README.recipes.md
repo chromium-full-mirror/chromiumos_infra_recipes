@@ -39,6 +39,8 @@
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
+  * [cros_artifacts:examples/gsutil_retry_fail](#recipes-cros_artifacts_examples_gsutil_retry_fail)
+  * [cros_artifacts:examples/gsutil_retry_success](#recipes-cros_artifacts_examples_gsutil_retry_success)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_build_api:examples/bad_retcodes](#recipes-cros_build_api_examples_bad_retcodes)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
@@ -1494,6 +1496,20 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts)
 
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#14)(api):**
+### *recipes* / [cros\_artifacts:examples/gsutil\_retry\_fail](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py)
+
+[DEPS](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py#17)(api):**
+
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py#26)(api, attempt):**
+### *recipes* / [cros\_artifacts:examples/gsutil\_retry\_success](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py)
+
+[DEPS](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py#15)(api):**
+
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py#23)(api, attempt):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

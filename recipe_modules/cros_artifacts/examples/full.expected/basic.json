@@ -166,6 +166,7 @@
     ],
     "infra_step": true,
     "name": "upload ebuild logs.gsutil rsync",
+    "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -345,6 +346,7 @@
     ],
     "infra_step": true,
     "name": "upload firmware archive.gsutil rsync",
+    "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -832,6 +834,7 @@
     ],
     "infra_step": true,
     "name": "upload test artifacts.gsutil rsync",
+    "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
