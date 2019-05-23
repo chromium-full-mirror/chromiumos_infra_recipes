@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'git',
     'naming',
 ]
 
@@ -17,6 +18,13 @@ def RunSteps(api):
       project='foo', bucket='bar', builder='baz'))
   api.assertions.assertEqual(
       api.naming.get_build_title(build), 'foo.bar.baz')
+  commit = api.git.Commit('abcdef', '''
+title
+
+...and then a longer description. Have you heard the tragedy of Darth
+Plagueis the Wise?
+  ''')
+  api.assertions.assertEqual(api.naming.get_commit_title(commit), 'title')
 
 def GenTests(api):
   yield api.test('basic')

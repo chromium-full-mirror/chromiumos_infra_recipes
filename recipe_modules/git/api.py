@@ -11,11 +11,11 @@ from collections import namedtuple
 
 from recipe_engine import recipe_api
 
-Commit = namedtuple('Commit', ['rev', 'message'])
-
 
 class GitApi(recipe_api.RecipeApi):
   """A module for interacting with git."""
+
+  Commit = namedtuple('Commit', ['rev', 'message'])
 
   def _step(self, args, name=None, test_stdout=None, **kwargs):
     """Executes 'git' with the supplied arguments.
@@ -226,7 +226,7 @@ other_test.txt
     commits = []
     for record in stdout.split('\x00'):
       ref, message = record.split('\x1E')
-      commits.append(Commit(ref.strip('\n'), message))
+      commits.append(self.Commit(ref.strip('\n'), message))
     return commits
 
   def is_reachable(self, revision):

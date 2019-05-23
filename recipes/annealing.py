@@ -42,6 +42,7 @@ DEPS = [
     'git',
     'git_footers',
     'git_txn',
+    'naming',
     'repo',
 ]
 
@@ -108,8 +109,8 @@ def record_gerrit_changes(api, manifest_diffs):
           if reviewed_on_footers:
             gerrit_change_url = reviewed_on_footers[0]
             gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
-            gerrit_change_desc = commit.message.splitlines()[0]
-            step.presentation.links[gerrit_change_desc] = gerrit_change_url
+            gerrit_change_title = api.naming.get_commit_title(commit)
+            step.presentation.links[gerrit_change_title] = gerrit_change_url
             gerrit_changes.append(gerrit_change)
 
     output_dir = api.path.mkdtemp(prefix='snapshot-gerrit-changes-')

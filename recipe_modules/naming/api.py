@@ -21,3 +21,18 @@ class NamingApi(recipe_api.RecipeApi):
     """
     return '%s.%s.%s' % (build.builder.project, build.builder.bucket,
                          build.builder.builder)
+
+  def get_commit_title(self, commit):
+    """Get a string to describe the commit.
+
+    This is typically the first line of the commit message.
+
+    Args:
+      commit (Commit): The commit in question. See recipe_modules/git/api.py
+
+    Returns:
+      str: The commit title.
+    """
+    lines = [l.strip() for l in commit.message.splitlines() if l.strip()]
+    assert lines, 'unexpected empty commit message: %s' % commit.message
+    return lines[0]
