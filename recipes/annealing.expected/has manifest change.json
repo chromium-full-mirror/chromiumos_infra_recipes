@@ -352,13 +352,13 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
       "--key",
       "Reviewed-on"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/NAME",
     "infra_step": true,
     "name": "record new gerrit changes.NAME.read git footers",
+    "stdin": "message",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

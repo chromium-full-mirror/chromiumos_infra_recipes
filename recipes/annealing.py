@@ -106,7 +106,8 @@ def record_gerrit_changes(api, manifest_diffs):
           cwd=api.cros_source.workspace_path.join(diff.path)):
         commits = api.git.log(diff.from_rev, diff.to_rev)
         for commit in commits:
-          reviewed_on_footers = api.git_footers.get(commit.rev, 'Reviewed-on')
+          reviewed_on_footers = api.git_footers.from_message(commit.message,
+                                                             'Reviewed-on')
           if reviewed_on_footers:
             gerrit_change_url = reviewed_on_footers[0]
             gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)

@@ -1015,7 +1015,18 @@ Args:
 Returns:
   list[str]: All matching footer values.
 
-&mdash; **def [get](/recipe_modules/git_footers/api.py#32)(self, ref, key, \*\*kwargs):**
+&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#32)(self, message, key, \*\*kwargs):**
+
+Return the footer value(s) in the commit message for the given key.
+
+Args:
+  message (str): The git commit message.
+  key (str): The footer key to look for.
+
+Returns:
+  list[str]: The footer value(s) found in the commit message.
+
+&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#48)(self, ref, key, \*\*kwargs):**
 
 Return the footer value(s) in the given ref for the given key.
 
@@ -1026,7 +1037,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
 
-&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#47)(self, ref, \*\*kwargs):**
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#63)(self, ref, \*\*kwargs):**
 
 Return the footer value for Cr-Commit-Position.
 
@@ -1447,11 +1458,11 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#53)(api, properties):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#134)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#135)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#145)(api, manifest_ref):**
+&mdash; **def [make\_message](/recipes/annealing.py#146)(api, manifest_ref):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 

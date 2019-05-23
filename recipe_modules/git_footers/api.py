@@ -29,7 +29,23 @@ class GitFootersApi(recipe_api.RecipeApi):
         args, stdout=self.m.raw_io.output(), **kwargs)
     return [l.strip() for l in result.stdout.splitlines() if l.strip()]
 
-  def get(self, ref, key, **kwargs):
+  def from_message(self, message, key, **kwargs):
+    """Return the footer value(s) in the commit message for the given key.
+
+    Args:
+      message (str): The git commit message.
+      key (str): The footer key to look for.
+
+    Returns:
+      list[str]: The footer value(s) found in the commit message.
+    """
+    kwargs.setdefault('stdin', self.m.raw_io.input_text(message))
+    kwargs.setdefault(
+        'step_test_data',
+        self.test_api.step_test_data_factory('%s:%s' % (message, key)))
+    return self('--key', key, **kwargs)
+
+  def from_ref(self, ref, key, **kwargs):
     """Return the footer value(s) in the given ref for the given key.
 
     Args:

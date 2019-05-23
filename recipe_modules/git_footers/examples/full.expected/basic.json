@@ -17,11 +17,24 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "key"
+    ],
+    "infra_step": true,
+    "name": "read git footers (2)",
+    "stdin": "message",
+    "stdout": "/path/to/tmp/"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
       "HEAD",
       "--position-num"
     ],
     "infra_step": true,
-    "name": "read git footers (2)",
+    "name": "read git footers (3)",
     "stdout": "/path/to/tmp/"
   },
   {
