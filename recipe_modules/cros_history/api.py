@@ -80,7 +80,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
       step.presentation.step_text = ('some tests already passed'
                                      if all_passed_tests else
-                                     'found no passed tests')
+                                     'found no previously passed tests')
       if all_passed_tests:
         step.presentation.logs['list of passed tests'] = sorted(
             all_passed_tests)
