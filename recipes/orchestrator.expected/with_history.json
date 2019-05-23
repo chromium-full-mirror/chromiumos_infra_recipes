@@ -562,7 +562,9 @@
     "name": "run tests.schedule tests.get change test history",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@some tests already passed: nami/hw/bvt-cq@@@"
+      "@@@STEP_TEXT@some tests already passed@@@",
+      "@@@STEP_LOG_LINE@list of passed tests@nami/hw/bvt-cq@@@",
+      "@@@STEP_LOG_END@list of passed tests@@@"
     ]
   },
   {

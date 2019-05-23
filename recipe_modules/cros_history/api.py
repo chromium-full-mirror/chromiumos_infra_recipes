@@ -78,9 +78,12 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         passed_tests = build_output.get(PASSED_TESTS_KEY, [])
         all_passed_tests |= set(passed_tests)
 
-      step.presentation.step_text = (
-          'some tests already passed: %s' % ', '.join(all_passed_tests)
-          if all_passed_tests else 'found no passed tests')
+      step.presentation.step_text = ('some tests already passed'
+                                     if all_passed_tests else
+                                     'found no passed tests')
+      if all_passed_tests:
+        step.presentation.logs['list of passed tests'] = sorted(
+            all_passed_tests)
 
       return all_passed_tests
 

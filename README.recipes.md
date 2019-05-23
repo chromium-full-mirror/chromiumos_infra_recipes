@@ -302,7 +302,7 @@ Args:
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#87)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#90)(self, tests):**
 
 Record the tests that passed in the current run.
 
