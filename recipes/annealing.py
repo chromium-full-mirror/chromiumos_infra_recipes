@@ -78,12 +78,13 @@ def RunSteps(api, properties):
       record_gerrit_changes(api, manifest_diffs)
 
     snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
-    api.git.fetch_ref(snapshot_repo_url, manifest_ref)
-    api.git.checkout('FETCH_HEAD')
-    api.git_txn.update_ref_write_file(
-        snapshot_repo_url, manifest_ref, make_message(api, manifest_ref),
-        api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
-        snapshot_xml)
+    with api.step.nest('publish snapshot'):
+      api.git.fetch_ref(snapshot_repo_url, manifest_ref)
+      api.git.checkout('FETCH_HEAD')
+      api.git_txn.update_ref_write_file(
+          snapshot_repo_url, manifest_ref, make_message(api, manifest_ref),
+          api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
+          snapshot_xml)
 
     # Use the newly created snapshot commit as the build output.
     snapshot_commit = make_gitiles_commit(api, snapshot_repo_url,
