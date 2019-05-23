@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const(
+const (
 	shortGitilesHostSuffix = ".googlesource.com"
 )
 
@@ -54,7 +54,7 @@ func MustFetchBranch(ctx context.Context, httpClient *http.Client, branch Branch
 	if err != nil {
 		log.Fatal(err)
 	}
-	resp := <- ch
+	resp := <-ch
 	// For some weird reason, a request of "refs/heads/master" comes back in the response as
 	// "refs/heads/master/refs/heads/master". Maybe it's a bug somewhere? In the meantime, let's
 	// handle this case and the eventually-fixed case.

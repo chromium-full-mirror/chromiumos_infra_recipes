@@ -14,7 +14,7 @@ var (
 
 	inited = false
 
-	inputPath string
+	inputPath  string
 	outputPath string
 )
 

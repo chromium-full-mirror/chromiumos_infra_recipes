@@ -7,12 +7,11 @@ import (
 	"go.chromium.org/luci/auth"
 	"go.chromium.org/luci/auth/client/authcli"
 	"go.chromium.org/luci/hardcoded/chromeinfra"
-
 )
 
 var (
 	authOptions = chromeinfra.DefaultAuthOptions()
-	authFlags authcli.Flags
+	authFlags   authcli.Flags
 )
 
 // Set the auth scopes. Must be called before Init.

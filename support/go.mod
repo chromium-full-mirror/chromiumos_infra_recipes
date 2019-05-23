@@ -13,12 +13,15 @@ require (
 	github.com/maruel/subcommands v0.0.0-20181220013616-967e945be48b // indirect
 	github.com/maruel/ut v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.0.0 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
 	github.com/texttheater/golang-levenshtein v0.0.0-20180516184445-d188e65d659e // indirect
-	go.chromium.org/luci v0.0.0-20190508132914-521f1612b5b3
+	go.chromium.org/luci v0.0.0-20190523222004-16e0bc1b9a58
 	golang.org/x/net v0.0.0-20190110200230-915654e7eabc // indirect
 	golang.org/x/oauth2 v0.0.0-20190110195249-fd3eaa146cbb
 	google.golang.org/api v0.1.0
+	google.golang.org/grpc v1.17.0
+	gotest.tools v2.2.0+incompatible
 )

@@ -122,7 +122,7 @@ func fetchHostChanges(
 		ch <- results
 		return nil
 	})
-	results := <- ch
+	results := <-ch
 	for _, c := range changes {
 		updateChangeFromResults(c, results)
 	}
