@@ -113,7 +113,8 @@ def RunSteps(api, properties):
 
       with api.step.nest('schedule hardware tests'):
         skylab_tasks = [
-            api.skylab.create_suite(test, unit.common.build_payload)
+            api.skylab.create_suite(test, unit.common.build_payload,
+                                    gerrit_changes)
             for unit in test_plan.hw_test_units
             for test in unit.hw_test_cfg.hw_test
             if test.common.display_name not in passed_tests

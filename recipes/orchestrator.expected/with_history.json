@@ -695,7 +695,7 @@
       "-timeout-mins",
       "480",
       "-qs-account",
-      "cq",
+      "pcq",
       "-task-name",
       "htarget.hw.bvt-cq",
       "bvt-cq"

@@ -52,7 +52,7 @@
       "-timeout-mins",
       "480",
       "-qs-account",
-      "cq",
+      "postsubmit",
       "-task-name",
       "my_little_hw_test",
       "bvt-cq"

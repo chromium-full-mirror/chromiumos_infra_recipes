@@ -24,7 +24,7 @@ class SkylabApi(recipe_api.RecipeApi):
   def initialize(self):
     self._client = None
 
-  def create_suite(self, test, payload, name=None):
+  def create_suite(self, test, payload, is_cq=False, name=None):
     """Schedule a HW test suite.
 
     Args:
@@ -37,6 +37,7 @@ class SkylabApi(recipe_api.RecipeApi):
     """
     self._ensure_skylab()
     name = name or 'schedule %s' % test.common.display_name
+    account = 'pcq' if is_cq else 'postsubmit'
     with self.m.step.nest(name) as step:
       cmd = [
           self._client,
@@ -51,7 +52,7 @@ class SkylabApi(recipe_api.RecipeApi):
           '-timeout-mins',
           8 * 60, # 8 hours to account for skylab capacity under strain.
           '-qs-account',
-          'cq',
+          account,
           '-task-name',
           test.common.display_name,
           test.suite,

@@ -1362,7 +1362,7 @@ Args:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#27)(self, test, payload, name=None):**
+&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#27)(self, test, payload, is_cq=False, name=None):**
 
 Schedule a HW test suite.
 
@@ -1376,7 +1376,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/skylab/api.py#24)(self):**
 
-&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#67)(self, tasks):**
+&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#68)(self, tasks):**
 
 Wait for all Skylab suites to finish executing and return the results.
 
@@ -1644,7 +1644,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#42)(api, properties):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#211)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#212)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1655,7 +1655,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#200)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#201)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -1663,7 +1663,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#187)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#188)(refs):**
 
 Assert the given refs start with refs/heads.
 
