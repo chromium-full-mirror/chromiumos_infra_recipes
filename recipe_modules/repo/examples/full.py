@@ -43,22 +43,22 @@ def RunSteps(api):
 
   from_manifest = """
     <manifest>
-      <project path="SAMPLE" revision="FROM_REV"/>
-      <project path="NO_CHANGE" revision="NO_CHANGE_REV"/>
-      <project path="DELETED" revision="REV"/>
+      <project name="NAME" path="PATH" revision="FROM_REV"/>
+      <project name="NO_CHANGE" revision="NO_CHANGE_REV"/>
+      <project name="DELETED" revision="REV"/>
     </manifest>
   """
 
   to_manifest = """
     <manifest>
-      <project path="SAMPLE" revision="TO_REV"/>
-      <project path="NO_CHANGE" revision="NO_CHANGE_REV"/>
+      <project name="NAME" path="PATH" revision="TO_REV"/>
+      <project name="NO_CHANGE" revision="NO_CHANGE_REV"/>
     </manifest>
   """
 
   [diff] = api.repo.diff_manifests(from_manifest, to_manifest)
-  assert diff.path == 'SAMPLE' and diff.from_rev == 'FROM_REV' and \
-         diff.to_rev == 'TO_REV'
+  assert diff.name == 'NAME' and diff.path == 'PATH' and \
+         diff.from_rev == 'FROM_REV' and diff.to_rev == 'TO_REV'
 
   api.repo.diff_remote_and_local_manifests('URL', 'REV', '<manifest />')
 

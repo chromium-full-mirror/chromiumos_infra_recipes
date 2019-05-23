@@ -245,7 +245,7 @@
     "name": "repo manifest",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@<manifest><project path=\"PATH\" revision=\"TO_REV\" /></manifest>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest><project name=\"NAME\" revision=\"TO_REV\" /></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -299,7 +299,7 @@
     "cmd": [],
     "name": "ensure manifest cq-depends fulfilled",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@diff manifest@PATH upreved from FROM_REV to TO_REV@@@",
+      "@@@STEP_LOG_LINE@diff manifest@NAME upreved from FROM_REV to TO_REV@@@",
       "@@@STEP_LOG_END@diff manifest@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@No CQ-DEPEND found in any CLs@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@"
@@ -312,7 +312,7 @@
       "--pretty=%H%x1E%B%x00",
       "FROM_REV...TO_REV"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/PATH",
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
     "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled.git log",
     "stdout": "/path/to/tmp/",
@@ -326,7 +326,7 @@
   },
   {
     "cmd": [],
-    "name": "record new gerrit changes.PATH",
+    "name": "record new gerrit changes.NAME",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@message@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -339,9 +339,9 @@
       "--pretty=%H%x1E%B%x00",
       "FROM_REV...TO_REV"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/PATH",
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
     "infra_step": true,
-    "name": "record new gerrit changes.PATH.git log",
+    "name": "record new gerrit changes.NAME.git log",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -356,9 +356,9 @@
       "--key",
       "Reviewed-on"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/PATH",
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
     "infra_step": true,
-    "name": "record new gerrit changes.PATH.read git footers",
+    "name": "record new gerrit changes.NAME.read git footers",
     "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -567,7 +567,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "<manifest><project path=\"PATH\" revision=\"TO_REV\" /></manifest>",
+      "<manifest><project name=\"NAME\" revision=\"TO_REV\" /></manifest>",
       "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",

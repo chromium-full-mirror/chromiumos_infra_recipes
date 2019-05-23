@@ -109,6 +109,7 @@ def record_gerrit_changes(api, manifest_diffs):
           if reviewed_on_footers:
             gerrit_change_url = reviewed_on_footers[0]
             gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+            gerrit_change.project = gerrit_change.project or diff.name
             gerrit_change_title = api.naming.get_commit_title(commit)
             step.presentation.links[gerrit_change_title] = gerrit_change_url
             gerrit_changes.append(gerrit_change)
@@ -169,14 +170,14 @@ def GenTests(api):
       api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
-              '<manifest><project path="PATH" revision="TO_REV" /></manifest>'))
+              '<manifest><project name="NAME" revision="TO_REV" /></manifest>'))
       +  #
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
-              '<manifest><project path="PATH" revision="FROM_REV" /></manifest>'
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )) + #
       api.git_footers.step_data(
-          'record new gerrit changes.PATH.read git footers',
+          'record new gerrit changes.NAME.read git footers',
           api.gerrit.test_gerrit_change_url()))
 
   yield (api.test('missing required properties') +  #

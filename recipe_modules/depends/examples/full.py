@@ -18,7 +18,7 @@ def RunSteps(api):
 
     api.depends.ensure_manifest_cq_depends_fulfilled([])
 
-    diffs = [api.repo.ManifestDiff('PATH', 'FROM_REV', 'TO_REV')]
+    diffs = [api.repo.ManifestDiff('NAME', 'PATH', 'FROM_REV', 'TO_REV')]
     api.depends.ensure_manifest_cq_depends_fulfilled(diffs)
 
 def GenTests(api):

@@ -21,7 +21,7 @@ MANIFEST_MOCK = """
     </manifest>
   """
 
-ManifestDiff = namedtuple('ManifestDiff', ['path', 'from_rev', 'to_rev'])
+ManifestDiff = namedtuple('ManifestDiff', ['name', 'path', 'from_rev', 'to_rev'])
 
 ProjectInfo = namedtuple('ProjectInfo', ['name', 'path', 'remote', 'branch'])
 
@@ -259,13 +259,15 @@ class RepoApi(recipe_api.RecipeApi):
       if from_path not in to_paths:
         # Project was deleted, we don't care. Move on, nothing to see here!
         continue
+      from_name = from_attrs['name']
       from_revision = from_attrs['revision']
       to_revision = to_paths[from_path]['revision']
       if from_revision == to_revision:
         # The revision didn't change (aka no CLs landed between the last
         # snapshot and this one for that path.
         continue
-      changes.append(ManifestDiff(from_path, from_revision, to_revision))
+      changes.append(
+          ManifestDiff(from_name, from_path, from_revision, to_revision))
     return changes
 
   def diff_manifests_informational(self, old_manifest_path, new_manifest_path):
