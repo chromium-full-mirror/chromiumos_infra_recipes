@@ -1015,29 +1015,32 @@ Args:
 Returns:
   list[str]: All matching footer values.
 
-&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#32)(self, message, key, \*\*kwargs):**
+&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#32)(self, message, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the commit message for the given key.
 
 Args:
   message (str): The git commit message.
-  key (str): The footer key to look for.
+  key (str): The footer key to look for. If not set, returns all footers
+      found in the message. Note that if this parameter is set, it is
+      EXCLUDED from the returned footer string(s). If it is not set, the
+      footers are formatted as '<key>:<value>'.
 
 Returns:
   list[str]: The footer value(s) found in the commit message.
 
-&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#48)(self, ref, key, \*\*kwargs):**
+&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#54)(self, ref, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the given ref for the given key.
 
 Args:
   ref (str): The git ref.
-  key (str): The footer key to look for.
+  key (str): The footer key to look for. See from_message docstring.
 
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
 
-&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#63)(self, ref, \*\*kwargs):**
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#72)(self, ref, \*\*kwargs):**
 
 Return the footer value for Cr-Commit-Position.
 
