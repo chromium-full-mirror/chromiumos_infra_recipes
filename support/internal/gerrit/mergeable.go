@@ -62,11 +62,11 @@ func MustGetMergeable(ctx context.Context, httpClient *http.Client, input Mergea
 		// an overall timeout for all attempts.
 		innerCtx, _ := context.WithTimeout(ctx, 30*time.Second)
 		resp, err := client.GetMergeable(innerCtx, &gerritpb.GetMergeableRequest{
-			Project: input.Project,
-			Number: input.Number,
+			Project:    input.Project,
+			Number:     input.Number,
 			RevisionId: input.RevisionId,
-			Strategy: gerritpb.MergeableStrategy(gerritpb.MergeableStrategy_value[input.Strategy]),
-			Source: input.Source})
+			Strategy:   gerritpb.MergeableStrategy(gerritpb.MergeableStrategy_value[input.Strategy]),
+			Source:     input.Source})
 		if err != nil {
 			return err
 		}
