@@ -179,14 +179,8 @@ def make_message(api, manifest_ref, gerrit_commits):
 
     if gerrit_commits:
       lines.append('************ Gerrit Changes ************')
-
-      for gerrit_commit in gerrit_commits:
-        message = gerrit_commit.message
-        footers = api.git_footers.from_message(message)
-        for footer in footers:
-          message = message.replace(footer, '').strip('\n')
-        lines.append(message)
-
+      lines.extend('\n\n----------------------------------------\n\n'.join(
+          commit.message for commit in gerrit_commits))
       lines.append('****************************************')
     else:
       lines.append('********* No New Gerrit Changes *********')
