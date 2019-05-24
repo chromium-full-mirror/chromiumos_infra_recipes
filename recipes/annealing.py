@@ -179,7 +179,7 @@ def make_message(api, manifest_ref, gerrit_commits):
 
     if gerrit_commits:
       lines.append('************ Gerrit Changes ************')
-      lines.extend('\n\n----------------------------------------\n\n'.join(
+      lines.append('\n\n----------------------------------------\n\n'.join(
           commit.message for commit in gerrit_commits))
       lines.append('****************************************')
     else:
