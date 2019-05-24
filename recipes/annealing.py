@@ -175,19 +175,22 @@ def make_message(api, manifest_ref, gerrit_commits):
   """
   with api.step.nest('create snapshot commit message'):
     position = api.git_footers.position_num('HEAD') + 1
-    lines = [
-        'annealing manifest snapshot %d' % position,
-        '************ Gerrit Changes ************',
-    ]
+    lines = ['annealing manifest snapshot %d' % position]
 
-    for gerrit_commit in gerrit_commits:
-      message = gerrit_commit.message
-      footers = api.git_footers.from_message(message)
-      for footer in footers:
-        message = message.replace(footer, '').strip('\n')
-      lines.append(message)
+    if gerrit_commits:
+      lines.append('************ Gerrit Changes ************')
 
-    lines.append('****************************************')
+      for gerrit_commit in gerrit_commits:
+        message = gerrit_commit.message
+        footers = api.git_footers.from_message(message)
+        for footer in footers:
+          message = message.replace(footer, '').strip('\n')
+        lines.append(message)
+
+      lines.append('****************************************')
+    else:
+      lines.append('********* No New Gerrit Changes *********')
+
     lines.append('Cr-Commit-Position: refs/heads/%s@{#%d}' % (manifest_ref,
                                                               position))
 
@@ -199,7 +202,7 @@ def GenTests(api):
          api.properties(AnnealingProperties(manifest_ref='snapshot')))
 
   yield (
-      api.test('has manifest change') +  #
+      api.test('has-manifest-change') +  #
       api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
@@ -212,6 +215,20 @@ def GenTests(api):
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers',
           api.gerrit.test_gerrit_change_url()))
+
+  yield (
+      api.test('no-gerrit-change') +  #
+      api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
+      api.step_data(
+          'repo manifest', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="TO_REV" /></manifest>'))
+      +  #
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )) + #
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''))
 
   yield (api.test('missing required properties') +  #
          api.properties(AnnealingProperties()) + #
