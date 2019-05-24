@@ -80,9 +80,9 @@ def RunSteps(api, properties):
 
     with api.step.nest('publish snapshot') as step:
       snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
-      snapshot_commit_message = make_message(api, manifest_ref, gerrit_commits)
       api.git.fetch_ref(snapshot_repo_url, manifest_ref)
       api.git.checkout('FETCH_HEAD')
+      snapshot_commit_message = make_message(api, manifest_ref, gerrit_commits)
       api.git_txn.update_ref_write_file(
           snapshot_repo_url, manifest_ref, snapshot_commit_message,
           api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
