@@ -59,7 +59,6 @@
     "infra_step": true,
     "name": "publish message.publish-message",
     "stdin": "{\"data\": \"Some test data\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
-    "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

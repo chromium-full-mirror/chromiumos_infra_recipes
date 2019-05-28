@@ -10,7 +10,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "repo forall",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@raw_io.output@fake_project|src/fake_project|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
@@ -350,7 +349,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "apply gerrit patch sets.repo forall",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master@@@",
@@ -380,7 +378,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -407,7 +404,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse (2)",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -545,7 +541,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace/a/b",
     "infra_step": true,
     "name": "checkout project commits archive.git rev-parse",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -586,7 +581,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
     "infra_step": true,
     "name": "checkout project commits archive.git rev-parse (2)",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

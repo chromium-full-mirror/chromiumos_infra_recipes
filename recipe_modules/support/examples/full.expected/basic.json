@@ -51,7 +51,6 @@
     "infra_step": true,
     "name": "my-tool",
     "stdin": "{\"input\": \"data\"}",
-    "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"output\": \"data\"@@@",

@@ -24,7 +24,6 @@
     ],
     "infra_step": true,
     "name": "git transaction.git rev-parse",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -52,7 +51,6 @@
     ],
     "infra_step": true,
     "name": "git transaction.git push",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
@@ -87,7 +85,6 @@
     ],
     "infra_step": true,
     "name": "git transaction retry 1 of 1.git rev-parse",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

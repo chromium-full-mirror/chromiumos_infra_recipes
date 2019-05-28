@@ -30,7 +30,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace/PATH",
     "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled (2).git log",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -89,7 +88,6 @@
     "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled (2).gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": \"12345\", \"host\": \"chromium\", \"patch_set\": -1}, {\"change_number\": \"67890\", \"host\": \"chrome-internal\", \"patch_set\": -1}]}",
-    "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -121,7 +119,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure manifest cq-depends fulfilled (2).repo forall",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@my/project|src/my/project|cros|refs/heads/master@@@",

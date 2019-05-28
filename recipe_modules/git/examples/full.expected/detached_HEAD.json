@@ -35,8 +35,7 @@
       "FETCH_HEAD"
     ],
     "infra_step": true,
-    "name": "git rev-parse",
-    "stdout": "/path/to/tmp/"
+    "name": "git rev-parse"
   },
   {
     "cmd": [
@@ -79,7 +78,6 @@
     ],
     "infra_step": true,
     "name": "git push",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -94,7 +92,6 @@
     ],
     "infra_step": true,
     "name": "git push (2)",
-    "stdout": "/path/to/tmp/",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -138,8 +135,7 @@
       "START_REF...END_REF"
     ],
     "infra_step": true,
-    "name": "git log",
-    "stdout": "/path/to/tmp/"
+    "name": "git log"
   },
   {
     "cmd": [
@@ -168,8 +164,7 @@
       "deadbeef:some/path"
     ],
     "infra_step": true,
-    "name": "git show",
-    "stdout": "/path/to/tmp/"
+    "name": "git show"
   },
   {
     "cmd": [
@@ -190,8 +185,7 @@
       "master...HEAD"
     ],
     "infra_step": true,
-    "name": "git diff",
-    "stdout": "/path/to/tmp/"
+    "name": "git diff"
   },
   {
     "cmd": [
@@ -201,8 +195,7 @@
       "HEAD"
     ],
     "infra_step": true,
-    "name": "git symbolic-ref",
-    "stdout": "/path/to/tmp/"
+    "name": "git symbolic-ref"
   },
   {
     "cmd": [
@@ -211,8 +204,7 @@
       "HEAD"
     ],
     "infra_step": true,
-    "name": "git rev-parse (2)",
-    "stdout": "/path/to/tmp/"
+    "name": "git rev-parse (2)"
   },
   {
     "cmd": [
