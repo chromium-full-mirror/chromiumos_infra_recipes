@@ -55,7 +55,6 @@
       "vpython",
       "chromite/bin/cros_mark_as_stable",
       "push",
-      "--dryrun",
       "--overlay-type",
       "both"
     ],

@@ -52,7 +52,6 @@ class PortageApi(recipe_api.RecipeApi):
         'vpython',
         'chromite/bin/cros_mark_as_stable',
         'push',
-        '--dryrun',
         '--overlay-type',
         'both',
     ]
