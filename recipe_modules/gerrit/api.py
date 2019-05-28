@@ -10,6 +10,7 @@ import re
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
+from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
 
@@ -202,3 +203,26 @@ class GerritApi(recipe_api.RecipeApi):
     assert match, 'malformed gerrit change URL: %s' % gerrit_change_url
     host, change = match.groups()
     return GerritChange(host=host, change=int(change))
+
+  def changes_are_submittable(self, changes, test_output_data=None):
+    """Checks if the provided changes can be merged onto their Git branches.
+
+    Args:
+      changes (list(common_pb2.GerritChange)): the changes to check
+
+    Returns:
+      bool: whether the changes are submittable
+    """
+    with self.m.step.nest('submittable changes check') as step:
+      input = dict(gerrit_changes=[jsonpb.MessageToDict(c) for c in changes])
+      if test_output_data is None:
+        test_output_data = lambda: self.test_api.test_changes_are_submittable()
+      result = self.m.support.call('git-test-submit', input,
+                                   test_output_data=test_output_data)
+      if result['errors']:
+        step.presentation.step_text = 'Unable to cherry-pick changes'
+        step.presentation.logs['cherry-pick-failures'] = result['errors']
+        step.presentation.status = 'FAILURE'
+        return False
+      step.presentation.step_text = 'Confirmed changes can be cherry-picked'
+      return True

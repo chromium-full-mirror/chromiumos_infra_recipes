@@ -31,6 +31,10 @@ def RunSteps(api):
   api.assertions.assertEqual(patch.display_url,
                              'https://chromium-review.googlesource.com/91827')
   api.assertions.assertIn('my/fake/file', patch.file_infos)
+  api.gerrit.changes_are_submittable([change])
+  api.gerrit.changes_are_submittable([change],
+      test_output_data=api.gerrit.test_api.test_changes_are_submittable(
+          errors=['could not cherry pick']))
 
   # Missing FetchInfo.
   del patch._rev_info['fetch']
@@ -47,6 +51,7 @@ def RunSteps(api):
 
   api.gerrit.test_api.test_patch_set()
   api.gerrit.test_api.test_gerrit_change_url()
+  api.gerrit.test_api.test_changes_are_submittable()
 
   # Parse full gerrit change URL.
   gerrit_change_url = (

@@ -94,6 +94,55 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "submittable changes check",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Confirmed changes can be cherry-picked@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/git-test-submit/git-test-submit"
+    ],
+    "infra_step": true,
+    "name": "submittable changes check.git-test-submit",
+    "stdin": "{\"gerrit_changes\": [{\"change\": \"91827\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"1\"}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"errors\": []@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "submittable changes check (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Unable to cherry-pick changes@@@",
+      "@@@STEP_LOG_LINE@cherry-pick-failures@could not cherry pick@@@",
+      "@@@STEP_LOG_END@cherry-pick-failures@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/git-test-submit/git-test-submit"
+    ],
+    "infra_step": true,
+    "name": "submittable changes check (2).git-test-submit",
+    "stdin": "{\"gerrit_changes\": [{\"change\": \"91827\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"1\"}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"errors\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"could not cherry pick\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
     ],

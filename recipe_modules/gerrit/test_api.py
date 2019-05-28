@@ -62,3 +62,11 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
 
   def test_gerrit_change_url(self):
     return 'https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1'
+
+  def test_changes_are_submittable(self, errors=[]):
+    """Test output for changes_are_submitted.
+
+    Args:
+      errors (list(str)): errors that the support binary reports.
+    """
+    return {'errors': errors}

@@ -832,15 +832,25 @@ Raises:
 
 APIs for managing Gerrit changes.
 
-#### **class [GerritApi](/recipe_modules/gerrit/api.py#103)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GerritApi](/recipe_modules/gerrit/api.py#104)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gerrit helpers.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#106)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#107)(self, \*args, \*\*kwargs):**
 
 Initialize GerritApi.
 
-&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#126)(self, gerrit_changes, include_files=False, test_output_data=None):**
+&mdash; **def [changes\_are\_submittable](/recipe_modules/gerrit/api.py#207)(self, changes, test_output_data=None):**
+
+Checks if the provided changes can be merged onto their Git branches.
+
+Args:
+  changes (list(common_pb2.GerritChange)): the changes to check
+
+Returns:
+  bool: whether the changes are submittable
+
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#127)(self, gerrit_changes, include_files=False, test_output_data=None):**
 
 Fetch and return PatchSets from Gerrit.
 
@@ -854,7 +864,7 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#171)(self, gerrit_change_url):**
+&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#172)(self, gerrit_change_url):**
 
 Parse GerritChange proto from a gerrit change URL.
 
