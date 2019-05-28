@@ -43,6 +43,7 @@ DEPS = [
     'git_footers',
     'git_txn',
     'naming',
+    'portage',
     'repo',
 ]
 
@@ -92,6 +93,12 @@ def RunSteps(api, properties):
     snapshot_commit = make_gitiles_commit(api, snapshot_repo_url,
                                           api.git.head_commit())
     api.buildbucket.set_output_gitiles_commit(snapshot_commit)
+
+    # Uprev all ebuilds so changes are discovered.
+    # TODO(evanhernandez): Move this before snapshot creation once verified.
+    # TODO(evanhernandez): Migrate to the build API.
+    api.portage.uprev_packages()
+    api.portage.push_package_uprevs()
 
 
 def record_gerrit_changes(api, manifest_diffs):
