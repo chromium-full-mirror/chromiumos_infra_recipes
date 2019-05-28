@@ -69,7 +69,7 @@ def RunSteps(api, properties):
         older_running_builds = api.cros_history.get_matching_builds(
             api.buildbucket.build, status=common_pb2.STARTED,
             start_build_id=api.buildbucket.build.id)
-        if older_running_builds:
+        if len(older_running_builds) > 1:
           # Current build is redundant. Exit with failure.
           step.presentation.step_text = 'found these inflight run(s)'
           for build in older_running_builds:
