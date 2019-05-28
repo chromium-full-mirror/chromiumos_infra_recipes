@@ -21,7 +21,6 @@ DEPS = [
     'cros_test_plan',
     'cros_version',
     'failures',
-    'gerrit',
     'git',
     'gitiles',
     'naming',
@@ -64,10 +63,6 @@ def RunSteps(api, properties):
   completed_builds = []
   passed_builders = set()
 
-  if gerrit_changes:
-    # Run this check and temporarily disregard the output, at least until we've
-    # seen it work successfully in prod.
-    api.gerrit.changes_are_submittable(gerrit_changes)
   if properties.enable_history and gerrit_changes:
     if properties.assert_singleton:
       with api.step.nest('find inflight orchestrator') as step:
