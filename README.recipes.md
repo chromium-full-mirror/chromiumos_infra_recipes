@@ -3,6 +3,7 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
+  * [analysis_service](#recipe_modules-analysis_service)
   * [chrome](#recipe_modules-chrome)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
@@ -34,6 +35,7 @@
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
 
 **[Recipes](#Recipes)**
+  * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [chrome:examples/full](#recipes-chrome_examples_full)
@@ -84,6 +86,29 @@
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running Tast VM tests.
 ## Recipe Modules
 
+### *recipe_modules* / [analysis\_service](/recipe_modules/analysis_service)
+
+[DEPS](/recipe_modules/analysis_service/__init__.py#1): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#81)(self, request, response):**
+
+Publish request and response on Cloud Pub/Sub.
+
+Wraps request and response in a AnalysisServiceEvent. If request's type is
+not found exactly once in the AnalysisServiceEvent 'request' oneof, an
+assertion is thrown (similar for response).
+
+Does not check that request and response are corresponding types, e.g. it is
+possible to send a InstallPackagesRequest and SysrootCreateResponse; it is
+up to the caller to not do this.
+
+Args:
+  request (proto in AnalysisServiceEvent 'request' oneof): The request to
+    log
+  response (proto in AnalysisServiceEvent 'response' oneof): The response to
+    log
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
 [DEPS](/recipe_modules/chrome/__init__.py#1): [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1456,6 +1481,11 @@ Ensure the CIPD support package is installed.
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
 ## Recipes
 
+### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
+
+[DEPS](/recipe_modules/analysis_service/examples/full.py#6): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#32)(api):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
 [DEPS](/recipes/annealing.py#29): [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
