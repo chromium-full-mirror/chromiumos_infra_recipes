@@ -203,13 +203,13 @@
   {
     "cmd": [
       "git",
-      "diff-index",
+      "diff",
       "--quiet",
       "HEAD",
       "file/path.txt"
     ],
     "infra_step": true,
-    "name": "git transaction (3).diff check.git diff-index",
+    "name": "git transaction (3).diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

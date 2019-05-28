@@ -567,14 +567,14 @@
   {
     "cmd": [
       "git",
-      "diff-index",
+      "diff",
       "--quiet",
       "HEAD",
       "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "publish snapshot.git transaction.diff check.git diff-index",
+    "name": "publish snapshot.git transaction.diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

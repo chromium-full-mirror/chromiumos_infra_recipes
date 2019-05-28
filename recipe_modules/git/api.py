@@ -69,7 +69,7 @@ class GitApi(recipe_api.RecipeApi):
     #  git ls-files --error-unmatch <FILE>
     #    0 - no change & change
     #    1 - untracked new file
-    #  git diff-index --quiet HEAD <FILE>
+    #  git diff --quiet HEAD <FILE>
     #    0 - no change to existing file
     #    1 - change to existing file || staged new file
     #    128 - other (missing file)
@@ -78,7 +78,7 @@ class GitApi(recipe_api.RecipeApi):
                     ok_ret=(0, 1)).retcode != 0:
         return True
 
-      return self._step(['diff-index', '--quiet', 'HEAD', path],
+      return self._step(['diff', '--quiet', 'HEAD', path],
                         ok_ret=(0, 1)).retcode != 0
 
   def get_diff_files(self, from_rev, to_rev):

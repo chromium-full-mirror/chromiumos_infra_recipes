@@ -119,13 +119,13 @@
   {
     "cmd": [
       "git",
-      "diff-index",
+      "diff",
       "--quiet",
       "HEAD",
       "some/file/path"
     ],
     "infra_step": true,
-    "name": "diff check.git diff-index",
+    "name": "diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

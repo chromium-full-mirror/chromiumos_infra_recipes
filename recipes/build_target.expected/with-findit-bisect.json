@@ -1753,14 +1753,14 @@
   {
     "cmd": [
       "git",
-      "diff-index",
+      "diff",
       "--quiet",
       "HEAD",
       "[START_DIR]/BINHOST.conf"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts.update binhost conf file.git transaction.diff check.git diff-index",
+    "name": "upload prebuilts.update binhost conf file.git transaction.diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
