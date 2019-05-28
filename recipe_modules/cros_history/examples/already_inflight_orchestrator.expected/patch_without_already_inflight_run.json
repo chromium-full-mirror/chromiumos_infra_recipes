@@ -1,9 +1,9 @@
 [
   {
     "cmd": [],
-    "name": "get change build history",
+    "name": "look for inflight orchestrator",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found no completed builds@@@"
+      "@@@STEP_TEXT@No running instance found@@@"
     ]
   },
   {
@@ -14,15 +14,19 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "get change build history.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"build\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}], \"status\": \"SUCCESS\"}}}]}",
+    "name": "look for inflight orchestrator.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 2, \"predicate\": {\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"2341\"}], \"status\": \"STARTED\"}}}]}",
     "stdout": "/path/to/tmp/json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {}@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -32,24 +36,25 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1000, @@@",
+      "@@@STEP_LOG_LINE@request@        \"pageSize\": 2, @@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"build\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {}, @@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-09T12:53:21Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"gerritChanges\": [@@@",
       "@@@STEP_LOG_LINE@request@            {@@@",
-      "@@@STEP_LOG_LINE@request@              \"change\": \"1234\"@@@",
+      "@@@STEP_LOG_LINE@request@              \"change\": \"2341\"@@@",
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          ], @@@",
-      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"status\": \"STARTED\"@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@..@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {

@@ -24,4 +24,4 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('has-passed-tests') + api.buildbucket.simulated_search_results(
       [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
-      'get change test history.buildbucket.search')
+      'get change test history.find matching builds.buildbucket.search')

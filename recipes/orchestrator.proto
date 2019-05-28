@@ -24,4 +24,7 @@ message OrchestratorProperties {
 
   // Specifies whether to enable cros_history based resource saving.
   bool enable_history = 2;
+
+  // Specifies whether to enable exiting redundant builds.
+  bool assert_singleton = 3;
 }

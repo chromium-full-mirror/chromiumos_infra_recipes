@@ -12,7 +12,6 @@ from recipe_engine import recipe_api
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
-
 PASSED_TESTS_KEY = 'passed_tests'
 
 
@@ -42,7 +41,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       passed_builds = []
       # Start with cq-orchestrator so we don't add it to the result.
       passed_builders = set([self.m.buildbucket.build.builder.builder])
-      for build in self._get_patch_history(patches, success_only=True):
+      for build in self._get_patch_history(patches, status=common_pb2.SUCCESS):
         if build.builder.builder not in passed_builders:
           passed_builders.add(build.builder.builder)
           passed_builds.append(build)
@@ -69,8 +68,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
     assert patches, 'cannot get test history without gerrit changes'
     with self.m.step.nest('get change test history') as step:
-      current_builder = self.m.buildbucket.build.builder
-      past_builds = self._get_patch_history(patches, builder=current_builder)
+      current_build = self.m.buildbucket.build
+      past_builds = self.get_matching_builds(current_build)
 
       all_passed_tests = set()
       for build in past_builds:
@@ -101,24 +100,42 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     with self.m.step.nest('record passed tests') as step:
       step.presentation.properties[PASSED_TESTS_KEY] = tests
 
-  def _get_patch_history(self, patches, builder=None, success_only=False):
+  def get_matching_builds(self, build, status=None, start_build_id=None):
+    """Get builds with the matching builder and gerrit_changes.
+
+    Args:
+      build (build_pb2.Build): build to match for.
+      status (common_pb2.Status): query for builds with this status.
+      start_build_id (int): query builds older than this ID.
+
+    Returns:
+      list[Build] which meet the conditions ordered from latest to oldest.
+    """
+    with self.m.step.nest('find matching builds'):
+      return self._get_patch_history(patches=build.input.gerrit_changes,
+                                     builder=build.builder, status=status,
+                                     start_build_id=start_build_id)
+
+  def _get_patch_history(self, patches, builder=None, limit=None, status=None,
+                         start_build_id=None):
     """Get all the passed builds with current patch-set from Buildbucket.
 
     Args:
       * patches list([GerritChange]): patches to search for.
       * builder (BuilderID): query for only this builder.
-      * success_only (bool): query only successful builds.
+      * limit (int): limit the list returned to this number.
+      * status (common_pb2.Status): query for builds with this status.
+      * start_build_id: query builds older than this ID.
 
     Returns:
-      A boolean to indicate whether the config has passed before
-      with the patch-set.
+      list[Build] which meet the conditions ordered from latest to oldest.
     """
     create_time = common_pb2.TimeRange(
         start_time=timestamp_pb2.Timestamp(
             seconds=int(self.start_time_in_seconds)))
-    status = common_pb2.SUCCESS if success_only else None
+    build_range = rpc_pb2.BuildRange(start_build_id=start_build_id)
     build_predicate = rpc_pb2.BuildPredicate(
-        status=status, builder=builder, gerrit_changes=patches,
-        create_time=create_time)
-    return self.m.buildbucket.search(build_predicate,
+        builder=builder, status=status, gerrit_changes=patches,
+        create_time=create_time, build=build_range)
+    return self.m.buildbucket.search(build_predicate, limit=limit,
                                      url_title_fn=self.m.naming.get_build_title)

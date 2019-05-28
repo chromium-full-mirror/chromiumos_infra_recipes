@@ -64,8 +64,23 @@ def RunSteps(api, properties):
   passed_builders = set()
 
   if properties.enable_history and gerrit_changes:
-    completed_builds = api.cros_history.get_passed_builds(
-        api.buildbucket.build.input.gerrit_changes)
+    if properties.assert_singleton:
+      with api.step.nest('find inflight orchestrator') as step:
+        older_running_builds = api.cros_history.get_matching_builds(
+            api.buildbucket.build, status=common_pb2.STARTED,
+            start_build_id=api.buildbucket.build.id)
+        if older_running_builds:
+          # Current build is redundant. Exit with failure.
+          step.presentation.step_text = 'found these inflight run(s)'
+          for build in older_running_builds:
+            title = api.naming.get_build_title(build)
+            url = api.buildbucket.build_url(build_id=build.id)
+            step.presentation.links[title] = url
+          raise api.step.StepFailure('Current build is redundant. Exiting.')
+        else:
+          step.presentation.step_text = 'no inflight run found'
+
+    completed_builds = api.cros_history.get_passed_builds(gerrit_changes)
     passed_builders = set(build.builder.builder for build in completed_builds)
 
   orchestrator_builder_config = api.cros_infra_config.get_builder_config(
@@ -85,9 +100,9 @@ def RunSteps(api, properties):
     # We thus need to do a get_multi call to get the fully populated Builds.
     # TODO: revert https://crrev.com/c/1615374 once buildbucket.run's call
     # to collect is improved to return the full proto.
-    new_builds = api.buildbucket.run(
-        requests, timeout=60 * 60 * 4, step_name='run builds',
-        url_title_fn=api.naming.get_build_title)
+    new_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4,
+                                     step_name='run builds',
+                                     url_title_fn=api.naming.get_build_title)
     populated_builds = api.buildbucket.get_multi(
         [b.id for b in new_builds], step_name='get full build protos')
     completed_builds += populated_builds.values()
@@ -122,16 +137,14 @@ def RunSteps(api, properties):
 
       vm_tests = api.buildbucket.schedule([
           api.buildbucket.schedule_request(
-              gitiles_commit=snapshot,
-              builder='test_vm',
+              gitiles_commit=snapshot, builder='test_vm',
               critical=test.common.critical.value,
               properties=json_format.MessageToDict(
-                  TestVmProperties(
-                      name=test.common.display_name,
-                      build_target=unit.common.build_target,
-                      test_harness=VmTestRequest.AUTOTEST,
-                      build_payload=unit.common.build_payload,
-                      expressions=[test.test_suite])))
+                  TestVmProperties(name=test.common.display_name,
+                                   build_target=unit.common.build_target,
+                                   test_harness=VmTestRequest.AUTOTEST,
+                                   build_payload=unit.common.build_payload,
+                                   expressions=[test.test_suite])))
           for unit in test_plan.vm_test_units
           for test in unit.vm_test_cfg.vm_test
           if test.common.display_name not in passed_tests
@@ -139,8 +152,7 @@ def RunSteps(api, properties):
 
       vm_tests += api.buildbucket.schedule([
           api.buildbucket.schedule_request(
-              gitiles_commit=snapshot,
-              builder='test_vm',
+              gitiles_commit=snapshot, builder='test_vm',
               critical=test.common.critical.value,
               properties=json_format.MessageToDict(
                   TestVmProperties(
@@ -148,11 +160,12 @@ def RunSteps(api, properties):
                       build_target=unit.common.build_target,
                       test_harness=VmTestRequest.TAST,
                       build_payload=unit.common.build_payload,
-                      expressions=[t.test_expr for t in test.tast_test_expr])))
+                      expressions=[t.test_expr
+                                   for t in test.tast_test_expr])))
           for unit in test_plan.tast_vm_test_units
           for test in unit.tast_vm_test_cfg.tast_vm_test
           if test.common.display_name not in passed_tests
-       ], step_name='schedule tast vm tests')
+      ], step_name='schedule tast vm tests')
 
     with api.step.nest('collect tests'):
       hw_results = []
@@ -167,9 +180,10 @@ def RunSteps(api, properties):
       # Record test results.
       # TODO(evanhernandez): Record VM test history.
       passed_tests = [
-          hw_result.task.test.common.display_name for hw_result in hw_results
+          hw_result.task.test.common.display_name
+          for hw_result in hw_results
           if not api.failures.is_hw_test_failure(hw_result)
-       ]
+      ]
       api.cros_history.set_passed_tests(passed_tests)
 
   # Verify builds/tests in a deferred context so that all failures appear.
@@ -183,7 +197,6 @@ def RunSteps(api, properties):
   # and we can update the success manifest ref if it is specified.
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success',
                             snapshot)
-
 
 def validate_refs(refs):
   """Assert the given refs start with refs/heads.
@@ -274,28 +287,43 @@ def GenTests(api):
 
   builds = [
       build_pb2.Build(
-          id=8922054662172514000,
-          builder={'builder': 'amd64-generic-cq'},
-          status=common_pb2.SUCCESS, input=dict(
-              properties=build_target_property('amd64-generic'))),
+          id=8922054662172514000, builder={'builder': 'amd64-generic-cq'},
+          status=common_pb2.SUCCESS,
+          input=dict(properties=build_target_property('amd64-generic'))),
       build_pb2.Build(
-          id=8922054662172514001, builder={'builder': 'arm-generic-cq'
-                                          }, status=common_pb2.SUCCESS,
+          id=8922054662172514001, builder={'builder': 'arm-generic-cq'},
+          status=common_pb2.SUCCESS,
           input=dict(properties=build_target_property('arm-generic'))),
   ]
-  yield (
-      api.test('with_history') +  #
-      cq_orchestrator_build_with_gerrit_change() +  #
-      api.properties(enable_history=True) +  #
-      api.buildbucket.simulated_search_results(
-          [], 'get change build history.buildbucket.search') +  #
-      api.buildbucket.simulated_search_results(
-          [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
-          'run tests.schedule tests.get change test history.buildbucket.search') + #
-      api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +
-      api.buildbucket.simulated_get_multi(
-          builds, step_name='get full build protos'))
+  yield (api.test('with_history') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.properties(enable_history=True) +  #
+         api.buildbucket.simulated_search_results(
+             [], 'get change build history.buildbucket.search') +  #
+         api.buildbucket.simulated_search_results(
+             [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
+             'run tests.schedule tests.get change test history'
+             '.find matching builds.buildbucket.search') +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect')
+         + api.buildbucket.simulated_get_multi(
+             builds, step_name='get full build protos'))
+
+  yield (api.test('fails_if_inflight_orchs') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.properties(enable_history=True) +  #
+         api.properties(assert_singleton=True) +  #
+         api.buildbucket.simulated_search_results(
+             builds, step_name='find inflight orchestrator.'
+             'find matching builds.buildbucket.search'))
+
+  yield (api.test('runs_if_no_inflight_orchs') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.properties(enable_history=True) +  #
+         api.properties(assert_singleton=True) +  #
+         api.buildbucket.simulated_search_results(
+             [], step_name='find inflight orchestrator.'
+             'find matching builds.buildbucket.search'))
 
   yield (api.test('updates_refs') +  #
          postsubmit_orchestrator_build() +  #
@@ -320,33 +348,31 @@ def GenTests(api):
          api.cq(dry_run=True))
 
   builds = [
-      build_pb2.Build(id=8922054662172514000, builder={
-          'builder': 'amd64-generic-postsubmit'
-      }, status=common_pb2.FAILURE, critical=common_pb2.YES),
-      build_pb2.Build(id=8922054662172514001, builder={
-          'builder': 'arm-generic-postsubmit'
-      }, status=common_pb2.SUCCESS, critical=common_pb2.NO),
+      build_pb2.Build(id=8922054662172514000,
+                      builder={'builder': 'amd64-generic-postsubmit'},
+                      status=common_pb2.FAILURE, critical=common_pb2.YES),
+      build_pb2.Build(id=8922054662172514001,
+                      builder={'builder': 'arm-generic-postsubmit'},
+                      status=common_pb2.SUCCESS, critical=common_pb2.NO),
   ]
-  yield (
-      api.test('critical_child_builder_fails') +  #
-      postsubmit_orchestrator_build() +  #
-      api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +
-      api.buildbucket.simulated_get_multi(
-          builds, step_name='get full build protos'))
+  yield (api.test('critical_child_builder_fails') +  #
+         postsubmit_orchestrator_build() +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect')
+         + api.buildbucket.simulated_get_multi(
+             builds, step_name='get full build protos'))
 
   builds = [
-      build_pb2.Build(id=8922054662172514000, builder={
-          'builder': 'amd64-generic-postsubmit'
-      }, status=common_pb2.SUCCESS, critical=common_pb2.YES),
-      build_pb2.Build(id=8922054662172514001, builder={
-          'builder': 'arm-generic-postsubmit'
-      }, status=common_pb2.FAILURE, critical=common_pb2.NO),
+      build_pb2.Build(id=8922054662172514000,
+                      builder={'builder': 'amd64-generic-postsubmit'},
+                      status=common_pb2.SUCCESS, critical=common_pb2.YES),
+      build_pb2.Build(id=8922054662172514001,
+                      builder={'builder': 'arm-generic-postsubmit'},
+                      status=common_pb2.FAILURE, critical=common_pb2.NO),
   ]
-  yield (
-      api.test('non-critical_child_builder_fails') +  #
-      postsubmit_orchestrator_build() +  #
-      api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +
-      api.buildbucket.simulated_get_multi(
-          builds, step_name='get full build protos'))
+  yield (api.test('non-critical_child_builder_fails') +  #
+         postsubmit_orchestrator_build() +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect')
+         + api.buildbucket.simulated_get_multi(
+             builds, step_name='get full build protos'))
