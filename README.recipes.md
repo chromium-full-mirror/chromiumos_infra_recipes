@@ -92,7 +92,7 @@
 
 #### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#81)(self, request, response):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#90)(self, request, response):**
 
 Publish request and response on Cloud Pub/Sub.
 
