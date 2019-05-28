@@ -53,7 +53,7 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check",
+    "name": "pre-sync pointless build check",
     "~followup_annotations": [
       "@@@STEP_TEXT@Build is unnecessary. Terminating now.@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
@@ -65,7 +65,7 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check.ensure pointless_build_checker",
+    "name": "pre-sync pointless build check.ensure pointless_build_checker",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -82,7 +82,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "pointless build check.ensure pointless_build_checker.ensure_installed",
+    "name": "pre-sync pointless build check.ensure pointless_build_checker.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -108,7 +108,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "pointless build check.run check",
+    "name": "pre-sync pointless build check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

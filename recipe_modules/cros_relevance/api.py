@@ -21,7 +21,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """Initializes the module."""
     self._pointless_build_checker_path = None
 
-  def is_build_pointless(self, build, build_target, dep_graph_check=True):
+  def is_build_pointless(self, build, build_target, dep_graph_check=True,
+                         name=None):
     """Determines if the build can be terminated early.
 
     Args:
@@ -30,16 +31,14 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       dep_graph_check (bool): Whether to invoke GetBuildDependencyGraph as part
           of the pointless build check. If True, the chromiumos workspace must
           have been checked out in advance.
+      name (str): The step name.
 
     Returns:
       bool: Whether the build can be terminated early.
     """
-    with self.m.step.nest('pointless build check') as step_result:
+    with self.m.step.nest(name or 'pointless build check') as step_result:
       dep_graph = None
       if dep_graph_check:
-        dep_req = GetBuildDependencyGraphRequest(
-          build_target=build_target,
-        )
         resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
             GetBuildDependencyGraphRequest(
                 build_target=build_target,

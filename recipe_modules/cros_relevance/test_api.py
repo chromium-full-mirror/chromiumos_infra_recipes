@@ -14,21 +14,18 @@ class CrosRelevanceTestApi(recipe_test_api.RecipeTestApi):
   """Module that aids in testing CrosRelevanceApi."""
 
   def simulate_run_pointless_build_checker(
-      self, suffix='', build_is_pointless=False):
+      self, name=None, build_is_pointless=False):
     """Mocks running of the pointless build checker binary.
 
     Args:
       build_is_pointless (bool): whether the build can be terminated early.
-      step_name_suffix (str): suffix to append to step name. This is useful
-          for adding a '(2)' or similar.
+      name (str): the step name.
 
     Returns:
       step_data
     """
-    if suffix:
-      suffix = ' {}'.format(suffix)
     resp = PointlessBuildCheckResponse()
     resp.build_is_pointless.value = build_is_pointless
     return self.step_data(
-        'pointless build check{}.run check'.format(suffix),
+        '{}.run check'.format(name or 'pointless build check'),
         self.m.json.output(MessageToDict(resp)))

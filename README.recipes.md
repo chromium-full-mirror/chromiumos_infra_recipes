@@ -430,7 +430,7 @@ A module for determining if a build is unnecessary.
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#24)(self, build, build_target, dep_graph_check=True):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#24)(self, build, build_target, dep_graph_check=True, name=None):**
 
 Determines if the build can be terminated early.
 
@@ -440,6 +440,7 @@ Args:
   dep_graph_check (bool): Whether to invoke GetBuildDependencyGraph as part
       of the pointless build check. If True, the chromiumos workspace must
       have been checked out in advance.
+  name (str): The step name.
 
 Returns:
   bool: Whether the build can be terminated early.

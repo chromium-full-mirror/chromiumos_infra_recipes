@@ -24,11 +24,11 @@ def GenTests(api):
          api.cros_relevance.simulate_run_pointless_build_checker(
              build_is_pointless=False) +
          api.cros_relevance.simulate_run_pointless_build_checker(
-             suffix='(2)',
+             name='pointless build check (2)',
              build_is_pointless=False))
   yield (api.test('is_pointless') +
          api.cros_relevance.simulate_run_pointless_build_checker(
              build_is_pointless=True) +
          api.cros_relevance.simulate_run_pointless_build_checker(
-             suffix='(2)',
+             name='pointless build check (2)',
              build_is_pointless=True))

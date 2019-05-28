@@ -53,7 +53,7 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check",
+    "name": "pre-sync pointless build check",
     "~followup_annotations": [
       "@@@STEP_TEXT@Build is necessary. Continuing.@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
@@ -63,7 +63,7 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check.ensure pointless_build_checker",
+    "name": "pre-sync pointless build check.ensure pointless_build_checker",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -80,7 +80,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "pointless build check.ensure pointless_build_checker.ensure_installed",
+    "name": "pre-sync pointless build check.ensure pointless_build_checker.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -106,7 +106,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "pointless build check.run check",
+    "name": "pre-sync pointless build check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -691,7 +691,7 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check (2)",
+    "name": "post-sync pointless build check",
     "~followup_annotations": [
       "@@@STEP_TEXT@Build is necessary. Continuing.@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
@@ -701,7 +701,7 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check (2).call chromite.api.DependencyService/GetBuildDependencyGraph",
+    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -727,7 +727,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "pointless build check (2).call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
+    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -747,7 +747,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "pointless build check (2).call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
+    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -765,7 +765,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "pointless build check (2).call chromite.api.DependencyService/GetBuildDependencyGraph.read output file",
+    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -781,7 +781,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "pointless build check (2).run check",
+    "name": "post-sync pointless build check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
