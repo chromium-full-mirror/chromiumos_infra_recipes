@@ -130,10 +130,15 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Returns:
       list[Build] which meet the conditions ordered from latest to oldest.
     """
-    create_time = common_pb2.TimeRange(
-        start_time=timestamp_pb2.Timestamp(
-            seconds=int(self.start_time_in_seconds)))
-    build_range = rpc_pb2.BuildRange(start_build_id=start_build_id)
+    # BuildRange and TimeRange are mutually exclusive.
+    if start_build_id:
+      build_range = rpc_pb2.BuildRange(start_build_id=start_build_id)
+      create_time = None
+    else:
+      build_range = None
+      create_time = common_pb2.TimeRange(
+          start_time=timestamp_pb2.Timestamp(
+              seconds=int(self.start_time_in_seconds)))
     build_predicate = rpc_pb2.BuildPredicate(
         builder=builder, status=status, gerrit_changes=patches,
         create_time=create_time, build=build_range)
