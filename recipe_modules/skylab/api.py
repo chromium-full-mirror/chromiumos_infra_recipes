@@ -16,10 +16,10 @@ class SkylabApi(recipe_api.RecipeApi):
   SkylabTask = structs.SkylabTask
   SkylabResult = structs.SkylabResult
 
-  def __init__(self, skylab_server, skylab_version, **kwargs):
+  def __init__(self, properties, **kwargs):
     super(SkylabApi, self).__init__(**kwargs)
-    self._server = skylab_server
-    self._version = skylab_version
+    self._server = properties.skylab_server or 'https://chromeos-swarming.appspot.com'
+    self._version = properties.skylab_version or 'prod'
 
   def initialize(self):
     self._client = None
