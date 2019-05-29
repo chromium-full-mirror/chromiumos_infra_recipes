@@ -34,11 +34,18 @@ def RunSteps(api):
                                                InstallPackagesRequest())
   install_packages_response = json_format.Parse(INSTALL_PACKAGES_RESPONSE,
                                                 InstallPackagesResponse())
+  api.assertions.assertTrue(
+      api.analysis_service.can_publish_event(
+          request=install_packages_request, response=install_packages_response))
   api.analysis_service.publish_event(request=install_packages_request,
                                      response=install_packages_response)
 
   # Pass in the request and response backwards, shouldn't work in this case
   # because the types are wrong.
+  api.assertions.assertFalse(
+      api.analysis_service.can_publish_event(request=install_packages_response,
+                                             response=install_packages_request))
+  # Try calling anyway, should raise an error.
   api.assertions.assertRaises(ValueError, api.analysis_service.publish_event,
                               request=install_packages_response,
                               response=install_packages_request)

@@ -17,6 +17,44 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     self._pubsub_project_id = pubsub_project_id
     self._pubsub_topic_id = pubsub_topic_id
 
+  def _get_field_name_by_matching_type(self, oneof_name, message):
+    """Get the field on AnalysisServiceEvent for 'oneof_name' and 'message'.
+
+    Args:
+      oneof_name (str): The name of a oneof on 'analysis_service_event'.
+      message (proto in an AnalysisServiceEvent oneof): The proto that will be
+        copied to 'analysis_service_event'.
+
+    For example, if 'oneof_name' is request, and 'message' is of type,
+    InstallPackagesRequest, the returned field name will be
+    'install_packages_request'.
+
+    Return:
+      A str if there is a matching field, None otherwise.
+    """
+    # The type name of 'message'.
+    message_type_name = message.DESCRIPTOR.full_name
+
+    # Iterate the possible values of 'oneof_name'. Create a list of all that
+    # match the type of 'message'.
+    oneof_descriptor = AnalysisServiceEvent(
+    ).DESCRIPTOR.oneofs_by_name[oneof_name]
+
+    matching_field_descriptors = []
+    for field_descriptor in oneof_descriptor.fields:
+      if field_descriptor.message_type.full_name == message_type_name:
+        matching_field_descriptors.append(field_descriptor)
+
+    # Check there is no more than one value of 'oneof_name' that has the same
+    # type as 'message'.
+    assert len(matching_field_descriptors) <= 1, (
+        'Expected exactly no more than one type in {} to be of type {}. '
+        'Found {}.').format(oneof_name, message_type_name,
+                            len(matching_field_descriptors))
+
+    return (matching_field_descriptors[0].name
+            if matching_field_descriptors else None)
+
   def _set_oneof_by_matching_type(self, analysis_service_event, oneof_name,
                                   message):
     """Set the appropriate oneof by searching on type.
@@ -50,28 +88,13 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     assert analysis_service_event.WhichOneof(
         oneof_name) is None, '{} is already set.'.format(oneof_name)
 
-    # The type name of 'message'.
-    message_type_name = message.DESCRIPTOR.full_name
+    matching_field_name = self._get_field_name_by_matching_type(
+        oneof_name, message)
 
-    # Iterate the possible values of 'oneof_name'. Create a list of all that
-    # match the type of 'message'.
-    oneof_descriptor = analysis_service_event.DESCRIPTOR.oneofs_by_name[
-        oneof_name]
+    # Callers should check can_publish_event, so there must be a returned
+    # field name.
+    assert matching_field_name
 
-    matching_field_descriptors = []
-    for field_descriptor in oneof_descriptor.fields:
-      if field_descriptor.message_type.full_name == message_type_name:
-        matching_field_descriptors.append(field_descriptor)
-
-    # Check there is exactly one value of 'oneof_name' that has the same type
-    # as 'message'.
-    if len(matching_field_descriptors) != 1:
-      raise ValueError(
-          'Expected exactly one type in {} to be of type {}. Found {}.'.format(
-              oneof_name, message_type_name, len(matching_field_descriptors)))
-
-    # Copy 'message' onto 'analysis_service_event'.
-    field_descriptor = matching_field_descriptors[0]
     # It is possible for the Python types of 'analysis_service_event.<field>'
     # and 'message' to be different, even if they represent types that should
     # be able to be copied to each other. For example,
@@ -81,18 +104,41 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     #
     # TODO(crbug.com/967721): Directly copy once type mismatch is fixed.
     getattr(analysis_service_event,
-            field_descriptor.name).ParseFromString(message.SerializeToString())
+            matching_field_name).ParseFromString(message.SerializeToString())
 
     # Check 'oneof_name' is now set.
     assert analysis_service_event.WhichOneof(
         oneof_name) is not None, 'Expected {} to be set.'.format(oneof_name)
 
+  def can_publish_event(self, request, response):
+    """Return whether 'request' and 'response' can be published.
+
+    Based on whether the types are both part of AnalysisServiceEvent. For
+    example,
+    `can_publish_event(InstallPackagesRequest(), InstallPackagesResponse())` is
+    true because the AnalysisServiceEvent contains these fields.
+
+    `can_publish_event(NewRequest(), NewResponse())` would not be true, because
+    those fields are not added to AnalysisServiceEvent.
+
+    Args:
+      request (proto in AnalysisServiceEvent 'request' oneof): The request to
+        log
+      response (proto in AnalysisServiceEvent 'response' oneof): The response to
+        log
+
+    Return:
+      bool
+    """
+    return self._get_field_name_by_matching_type(
+        'request', request) and self._get_field_name_by_matching_type(
+            'response', response)
+
   def publish_event(self, request, response):
     """Publish request and response on Cloud Pub/Sub.
 
-    Wraps request and response in a AnalysisServiceEvent. If request's type is
-    not found exactly once in the AnalysisServiceEvent 'request' oneof, an
-    assertion is thrown (similar for response).
+    Wraps request and response in a AnalysisServiceEvent. 'can_publish_event'
+    must be called before (and return true).
 
     Does not check that request and response are corresponding types, e.g. it is
     possible to send a InstallPackagesRequest and SysrootCreateResponse; it is
@@ -105,6 +151,10 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
         log
     """
     with self.m.step.nest('publish event') as step:
+      if not self.can_publish_event(request, response):
+        raise ValueError(
+            'Must check can_publish_event before calling publish_event.')
+
       analysis_service_event = AnalysisServiceEvent()
       self._set_oneof_by_matching_type(analysis_service_event,
                                        oneof_name='request', message=request)

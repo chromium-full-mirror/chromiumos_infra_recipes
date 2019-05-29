@@ -93,13 +93,33 @@
 
 #### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#90)(self, request, response):**
+&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#113)(self, request, response):**
+
+Return whether 'request' and 'response' can be published.
+
+Based on whether the types are both part of AnalysisServiceEvent. For
+example,
+`can_publish_event(InstallPackagesRequest(), InstallPackagesResponse())` is
+true because the AnalysisServiceEvent contains these fields.
+
+`can_publish_event(NewRequest(), NewResponse())` would not be true, because
+those fields are not added to AnalysisServiceEvent.
+
+Args:
+  request (proto in AnalysisServiceEvent 'request' oneof): The request to
+    log
+  response (proto in AnalysisServiceEvent 'response' oneof): The response to
+    log
+
+Return:
+  bool
+
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#137)(self, request, response):**
 
 Publish request and response on Cloud Pub/Sub.
 
-Wraps request and response in a AnalysisServiceEvent. If request's type is
-not found exactly once in the AnalysisServiceEvent 'request' oneof, an
-assertion is thrown (similar for response).
+Wraps request and response in a AnalysisServiceEvent. 'can_publish_event'
+must be called before (and return true).
 
 Does not check that request and response are corresponding types, e.g. it is
 possible to send a InstallPackagesRequest and SysrootCreateResponse; it is
