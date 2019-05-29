@@ -517,7 +517,7 @@
       "-timeout-mins",
       "480",
       "-qs-account",
-      "postsubmit",
+      "pcq",
       "-task-name",
       "htarget.hw.bvt-cq",
       "bvt-cq"

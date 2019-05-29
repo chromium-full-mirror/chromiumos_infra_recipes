@@ -20,6 +20,7 @@ class SkylabApi(recipe_api.RecipeApi):
     super(SkylabApi, self).__init__(**kwargs)
     self._server = properties.skylab_server or 'https://chromeos-swarming.appspot.com'
     self._version = properties.skylab_version or 'prod'
+    self._qs_account = properties.skylab_qs_account or 'pcq'
 
   def initialize(self):
     self._client = None
@@ -37,7 +38,6 @@ class SkylabApi(recipe_api.RecipeApi):
     """
     self._ensure_skylab()
     name = name or 'schedule %s' % test.common.display_name
-    account = 'pcq' if is_cq else 'postsubmit'
     with self.m.step.nest(name) as step:
       cmd = [
           self._client,
@@ -52,7 +52,7 @@ class SkylabApi(recipe_api.RecipeApi):
           '-timeout-mins',
           8 * 60, # 8 hours to account for skylab capacity under strain.
           '-qs-account',
-          account,
+          self._qs_account,
           '-task-name',
           test.common.display_name,
           test.suite,
