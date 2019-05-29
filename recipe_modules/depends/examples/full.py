@@ -25,15 +25,17 @@ def GenTests(api):
   yield api.test('basic')
 
   yield (api.test('has fulfilled dep') +  #
-         api.step_data('ensure manifest cq-depends fulfilled (2).git log',
+         api.step_data('ensure manifest cq-depend fulfilled (2).git log',
                        stdout=api.raw_io.output(
-                           'deadbeef\x1ECQ-DEPEND=12345,*67890\x00')) +  #
-         api.step_data('ensure manifest cq-depends fulfilled (2).git merge-base',
+                           'deadbeef\x1ECq-Depend: chromium:12345,'
+                           'chrome-internal:67890\x00')) +  #
+         api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
                        retcode=0))
 
   yield (api.test('has missing dep') +  #
-         api.step_data('ensure manifest cq-depends fulfilled (2).git log',
+         api.step_data('ensure manifest cq-depend fulfilled (2).git log',
                        stdout=api.raw_io.output(
-                           'deadbeef\x1ECQ-DEPEND=12345,*67890\x00')) +  #
-         api.step_data('ensure manifest cq-depends fulfilled (2).git merge-base',
+                           'deadbeef\x1ECq-Depend:chromium:12345,'
+                           'chrome-internal:67890\x00')) +  #
+         api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
                        retcode=128))

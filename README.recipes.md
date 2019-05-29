@@ -18,7 +18,7 @@
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_test_plan](#recipe_modules-cros_test_plan)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
-  * [depends](#recipe_modules-depends) &mdash; APIs for checking that CQ-DEPEND has been fulfilled.
+  * [depends](#recipe_modules-depends) &mdash; APIs for checking that Cq-Depend has been fulfilled.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
@@ -646,17 +646,17 @@ Raises:
 
 [DEPS](/recipe_modules/depends/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-APIs for checking that CQ-DEPEND has been fulfilled.
+APIs for checking that Cq-Depend has been fulfilled.
 
 #### **class [DependsApi](/recipe_modules/depends/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module for checking that CQ-DEPEND has been fulfilled.
+A module for checking that Cq-Depend has been fulfilled.
 
-&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#54)(self, manifest_diffs):**
+&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#58)(self, manifest_diffs):**
 
-Checks that CQ-DEPENDS deps between manifests are met.
+Checks that Cq-Depend deps between manifests are met.
 
-Checks that all CQ-DEPENDS in all CLs in the given manifest diffs are met.
+Checks that all Cq-Depend in all CLs in the given manifest diffs are met.
 
 Args:
   manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`

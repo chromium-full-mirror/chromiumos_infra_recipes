@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""APIs for checking that CQ-DEPEND has been fulfilled."""
+"""APIs for checking that Cq-Depend has been fulfilled."""
 import re
 from collections import namedtuple
 
@@ -16,7 +16,7 @@ Dep = namedtuple('Dep', ['host', 'cl_number'])
 
 
 class DependsApi(recipe_api.RecipeApi):
-  """A module for checking that CQ-DEPEND has been fulfilled."""
+  """A module for checking that Cq-Depend has been fulfilled."""
 
   def _gather_deps(self, manifest_diffs):
     """Gathers all deps from all CLs between the given manifest diffs.
@@ -27,7 +27,7 @@ class DependsApi(recipe_api.RecipeApi):
     Returns:
       List[Dep]: A list of `Dep` named tuples.
     """
-    # Gather all CQ-DEPEND entries in all change messages.
+    # Gather all Cq-Depend entries in all change messages.
     deps = []
     for manifest_diff in manifest_diffs:
       # For each manifest diff, get a log of commits at that path
@@ -36,8 +36,8 @@ class DependsApi(recipe_api.RecipeApi):
         git_commits = self.m.git.log(manifest_diff.from_rev,
                                      manifest_diff.to_rev)
         for commit in git_commits:
-          # Accumulate CQ-DEPEND CLs from commits
-          dep_lines = re.findall(r'^\s*CQ-DEPEND=(.*)$', commit.message,
+          # Accumulate Cq-Depend CLs from commits
+          dep_lines = re.findall(r'^\s*Cq-Depend:(.*)$', commit.message,
                                  re.IGNORECASE)
           if len(dep_lines) == 0:
             continue
@@ -45,22 +45,26 @@ class DependsApi(recipe_api.RecipeApi):
           for dep_line in dep_lines:
             deps += re.split(r'[\s,]+', dep_line)
     # Turn the deps into (host, cl) tuples
-    public = [Dep(PUBLIC_HOST, dep) for dep in deps if not dep.startswith('*')]
-    private = [
-        Dep(PRIVATE_HOST, dep[1:]) for dep in deps if dep.startswith('*')
-    ]
-    return public + private
+    valid_deps = []
+    private_prefix = PRIVATE_HOST + ':'
+    public_prefix = PUBLIC_HOST + ':'
+    for dep in deps:
+      if dep.startswith(public_prefix):
+        valid_deps.append(Dep(PUBLIC_HOST, dep[len(public_prefix):]))
+      if dep.startswith(private_prefix):
+        valid_deps.append(Dep(PRIVATE_HOST, dep[len(private_prefix):]))
+    return valid_deps
 
   def ensure_manifest_cq_depends_fulfilled(self, manifest_diffs):
-    """Checks that CQ-DEPENDS deps between manifests are met.
+    """Checks that Cq-Depend deps between manifests are met.
 
-    Checks that all CQ-DEPENDS in all CLs in the given manifest diffs are met.
+    Checks that all Cq-Depend in all CLs in the given manifest diffs are met.
 
     Args:
       manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
           namedtuples.
     """
-    with self.m.step.nest('ensure manifest cq-depends fulfilled') as step:
+    with self.m.step.nest('ensure manifest cq-depend fulfilled') as step:
       # Short-circuit if the manifest didn't change.
       if len(manifest_diffs) == 0:
         step.presentation.step_text = 'manifest did not change'
@@ -72,14 +76,14 @@ class DependsApi(recipe_api.RecipeApi):
         manifest_diff_log.append('%s upreved from %s to %s' %
                                  (diff.path, diff.from_rev, diff.to_rev))
 
-      # Gather all CQ-DEPEND entries in all change messages.
+      # Gather all Cq-Depend entries in all change messages.
       deps = self._gather_deps(manifest_diffs)
 
       dep_log = step.presentation.logs.setdefault('gather cq-depend', [])
 
       # Nothing needs to be checked if there are 0 deps.
       if len(deps) == 0:
-        dep_log.append('No CQ-DEPEND found in any CLs')
+        dep_log.append('No Cq-Depend found in any CLs')
         return
 
       for dep in deps:

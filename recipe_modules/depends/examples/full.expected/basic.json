@@ -1,18 +1,18 @@
 [
   {
     "cmd": [],
-    "name": "ensure manifest cq-depends fulfilled",
+    "name": "ensure manifest cq-depend fulfilled",
     "~followup_annotations": [
       "@@@STEP_TEXT@manifest did not change@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "ensure manifest cq-depends fulfilled (2)",
+    "name": "ensure manifest cq-depend fulfilled (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@diff manifest@PATH upreved from FROM_REV to TO_REV@@@",
       "@@@STEP_LOG_END@diff manifest@@@",
-      "@@@STEP_LOG_LINE@gather cq-depend@No CQ-DEPEND found in any CLs@@@",
+      "@@@STEP_LOG_LINE@gather cq-depend@No Cq-Depend found in any CLs@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@"
     ]
   },
@@ -25,7 +25,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/PATH",
     "infra_step": true,
-    "name": "ensure manifest cq-depends fulfilled (2).git log",
+    "name": "ensure manifest cq-depend fulfilled (2).git log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
