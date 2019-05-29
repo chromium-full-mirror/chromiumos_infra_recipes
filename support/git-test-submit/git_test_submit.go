@@ -34,9 +34,7 @@ func main() {
 
 	ctx := context.Background()
 
-	output := &Output{
-		Errors: []string{},
-	}
+	output := &Output{}
 	if input.TempDir == "" {
 		input.TempDir = os.TempDir()
 	}
