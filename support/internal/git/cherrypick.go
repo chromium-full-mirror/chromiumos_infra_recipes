@@ -49,7 +49,7 @@ func CheckCherryPick(
 			}
 			log.Printf("clone repoDir %s", repoDir)
 			for _, c := range changes {
-				fmt.Printf("*\n* Checking change %s:%d\n*\n", c.Host, c.Number)
+				log.Printf("\n*\n* Checking change %s:%d\n*\n", c.Host, c.Number)
 				err := FetchAndCherryPick(ctx, c.RevisionInfo, url, repoDir)
 				if err != nil {
 					log.Printf("error cherry-picking %s", c.RevisionInfo.Ref)

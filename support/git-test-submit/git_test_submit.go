@@ -38,6 +38,10 @@ func main() {
 	if input.TempDir == "" {
 		input.TempDir = os.TempDir()
 	}
+	if err := os.MkdirAll(input.TempDir, 0755); err != nil {
+		// Will only happen if parentDir isn't already a dir and it failed to be created.
+		log.Fatalf("%s is not a directory", input.TempDir)
+	}
 	errs := git.CheckCherryPick(ctx, httpClient, input.TempDir, input.GerritChanges)
 	for i, err := range errs {
 		log.Printf("Error %d/%d\n%s", i+1, len(errs), err.Error())
