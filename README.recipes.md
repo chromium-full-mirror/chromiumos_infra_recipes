@@ -828,7 +828,7 @@ Raises:
   recipe_api.StepFailure: If any tests failed.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
-[DEPS](/recipe_modules/gerrit/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gerrit/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for managing Gerrit changes.
 
@@ -840,12 +840,12 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [changes\_are\_submittable](/recipe_modules/gerrit/api.py#207)(self, changes, test_output_data=None):**
+&mdash; **def [changes\_are\_submittable](/recipe_modules/gerrit/api.py#207)(self, gerrit_changes, test_output_data=None):**
 
 Checks if the provided changes can be merged onto their Git branches.
 
 Args:
-  changes (list(common_pb2.GerritChange)): the changes to check
+  gerrit_changes (list(common_pb2.GerritChange)): the changes to check
 
 Returns:
   bool: whether the changes are submittable

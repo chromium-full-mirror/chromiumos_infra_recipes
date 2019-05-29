@@ -3,7 +3,6 @@ package git
 import (
 	"context"
 	"fmt"
-	"go.chromium.org/luci/buildbucket/proto"
 	"log"
 	"net/http"
 	"strings"
@@ -22,9 +21,9 @@ func CheckCherryPick(
 	ctx context.Context,
 	httpClient *http.Client,
 	tmpRoot string,
-	changes []buildbucketpb.GerritChange) []error {
+	changes sgerrit.Changes) []error {
 	errs := make([]error, 0)
-	sChanges := mustFetchChanges(changes, ctx, httpClient)
+	sChanges := sgerrit.MustFetchChanges(ctx, httpClient, changes, sgerrit.Options{})
 
 	// e.g.
 	// https://chromium-review.googlesource.com/chromiumos/third_party/kernel -> master -> change
@@ -61,19 +60,6 @@ func CheckCherryPick(
 		}
 	}
 	return errs
-}
-
-func mustFetchChanges(changes []buildbucketpb.GerritChange, ctx context.Context, httpClient *http.Client) sgerrit.Changes {
-	var sChanges sgerrit.Changes
-	for _, gc := range changes {
-		sChanges = append(sChanges, &sgerrit.Change{
-			Host:     gc.Host,
-			Number:   int(gc.Change),
-			PatchSet: int(gc.Patchset),
-		})
-	}
-	sgerrit.MustFetchChanges(ctx, httpClient, sChanges, sgerrit.Options{})
-	return sChanges
 }
 
 // fullHost converts a Gerrit host into a canonical https form, e.g.

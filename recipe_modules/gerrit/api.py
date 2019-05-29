@@ -204,20 +204,30 @@ class GerritApi(recipe_api.RecipeApi):
     host, change = match.groups()
     return GerritChange(host=host, change=int(change))
 
-  def changes_are_submittable(self, changes, test_output_data=None):
+  def changes_are_submittable(self, gerrit_changes, test_output_data=None):
     """Checks if the provided changes can be merged onto their Git branches.
 
     Args:
-      changes (list(common_pb2.GerritChange)): the changes to check
+      gerrit_changes (list(common_pb2.GerritChange)): the changes to check
 
     Returns:
       bool: whether the changes are submittable
     """
     with self.m.step.nest('submittable changes check') as step:
-      input = dict(gerrit_changes=[jsonpb.MessageToDict(c) for c in changes])
+      changes = []
+      for gc in gerrit_changes:
+        changes.append({
+            'host': gc.host,
+            'change_number': int(gc.change),
+            'patch_set': int(gc.patchset),
+        })
+      req = {
+        'gerrit_changes': changes,
+        'temp_dir': self.m.path['cleanup'].join('submittable_check'),
+      }
       if test_output_data is None:
         test_output_data = lambda: self.test_api.test_changes_are_submittable()
-      result = self.m.support.call('git-test-submit', input,
+      result = self.m.support.call('git-test-submit', req,
                                    test_output_data=test_output_data)
       if result['errors']:
         step.presentation.step_text = 'Unable to cherry-pick changes'

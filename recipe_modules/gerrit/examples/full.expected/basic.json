@@ -106,7 +106,7 @@
     ],
     "infra_step": true,
     "name": "submittable changes check.git-test-submit",
-    "stdin": "{\"gerrit_changes\": [{\"change\": \"91827\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"1\"}]}",
+    "stdin": "{\"gerrit_changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -131,7 +131,7 @@
     ],
     "infra_step": true,
     "name": "submittable changes check (2).git-test-submit",
-    "stdin": "{\"gerrit_changes\": [{\"change\": \"91827\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"1\"}]}",
+    "stdin": "{\"gerrit_changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

@@ -3,18 +3,17 @@ package main
 import (
 	"context"
 	"go.chromium.org/luci/auth"
-	"go.chromium.org/luci/buildbucket/proto"
 	"go.chromium.org/luci/common/api/gerrit"
 	"log"
 	"os"
 	"support/internal/cli"
+	sgerrit "support/internal/gerrit"
 	"support/internal/git"
 )
 
 type Input struct {
-	TempDir       string                       `json:"temp_dir"`
-	GerritChanges []buildbucketpb.GerritChange `json:"gerrit_changes"`
-	GitilesCommit buildbucketpb.GitilesCommit  `json:"manifest_commit"`
+	TempDir       string          `json:"temp_dir"`
+	GerritChanges sgerrit.Changes `json:"gerrit_changes"`
 }
 
 type Output struct {
