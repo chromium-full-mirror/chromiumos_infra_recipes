@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "submittable changes check",
+    "name": "check if changes submittable",
     "~followup_annotations": [
       "@@@STEP_TEXT@Confirmed changes can be cherry-picked@@@"
     ]
@@ -14,7 +14,7 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "name": "submittable changes check.read deploy_cipd.json",
+    "name": "check if changes submittable.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -37,7 +37,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "submittable changes check.ensure_installed",
+    "name": "check if changes submittable.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -58,7 +58,7 @@
       "[START_DIR]/cros-recipes-support/git-test-submit/git-test-submit"
     ],
     "infra_step": true,
-    "name": "submittable changes check.git-test-submit",
+    "name": "check if changes submittable.git-test-submit",
     "stdin": "{\"gerrit_changes\": [{\"change_number\": 1234, \"host\": \"\", \"patch_set\": 0}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

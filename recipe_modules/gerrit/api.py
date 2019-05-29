@@ -213,7 +213,7 @@ class GerritApi(recipe_api.RecipeApi):
     Returns:
       bool: whether the changes are submittable
     """
-    with self.m.step.nest('submittable changes check') as step:
+    with self.m.step.nest('check if changes submittable') as step:
       changes = []
       for gc in gerrit_changes:
         changes.append({
