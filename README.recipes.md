@@ -62,6 +62,7 @@
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
+  * [crostfe](#recipes-crostfe) &mdash; Recipe for the ChromeOS Test Frontend.
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [easy:examples/full](#recipes-easy_examples_full)
@@ -1685,6 +1686,25 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#13)(api):**
+### *recipes* / [crostfe](/recipes/crostfe.py)
+
+[DEPS](/recipes/crostfe.py#13): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for the ChromeOS Test Frontend.
+
+TODO: Migrate to a recipes repo owned by the test team.
+
+&mdash; **def [RunSteps](/recipes/crostfe.py#33)(api, properties):**
+
+&mdash; **def [validate\_request](/recipes/crostfe.py#20)(api, properties):**
+
+Validate the CrosTfeProperties.
+
+Args:
+  * api (object): See RunSteps documentation.
+  * properties (CrosTfeProperties): The input request.
+
+Raises: An exception if there are invalid properties.
 ### *recipes* / [depends:examples/full](/recipe_modules/depends/examples/full.py)
 
 [DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]

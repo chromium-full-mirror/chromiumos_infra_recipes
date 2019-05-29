@@ -1,0 +1,10 @@
+[
+  {
+    "cmd": [],
+    "name": "validate request"
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]
