@@ -20,11 +20,14 @@ def RunSteps(api):
                               ['a', 'a', 'b'])
 
   # Otherwise just make sure the build property is set correctly.
-  expected = ['a', 'b']
-  api.cros_history.set_passed_tests(expected)
-  actual = api.step.active_result.presentation.properties.get('passed_tests')
-  api.assertions.assertItemsEqual(actual, expected)
+  api.cros_history.set_passed_tests(['a', 'b'])
 
 
 def GenTests(api):
-  yield api.test('basic')
+  expect = ['a', 'b']
+  yield (
+    api.test('basic')
+    + api.post_check(lambda check, steps: check(
+        steps['record passed tests'].output_properties['passed_tests'] == expect
+    ))
+  )
