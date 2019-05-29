@@ -8,7 +8,6 @@ import (
 	"go.chromium.org/luci/common/api/gerrit"
 	"io/ioutil"
 	"log"
-	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -39,10 +38,6 @@ func (c realRunner) run(ctx context.Context, dir string, stdoutBuf, stderrBuf *b
 // Clone does a `git clone` on the provided repo URL into a subdirectory of the supplied dir, and
 // returns the path to the folder of the checkout.
 func Clone(ctx context.Context, url string, branch string, parentDir string) (string, error) {
-	if err := os.MkdirAll(parentDir, 0755); err != nil {
-		// Will only happen if parentDir isn't already a dir and it failed to be created.
-		return "", err
-	}
 	dir, err := ioutil.TempDir(parentDir, "gitclone")
 	if err != nil {
 		return dir, err
