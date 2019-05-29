@@ -1,5 +1,9 @@
 [
   {
+    "cmd": [],
+    "name": "mount overlay a"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -72,6 +76,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "mount overlay b"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -142,6 +150,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay c"
   },
   {
     "cmd": [
@@ -256,6 +268,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "mount overlay a (2)"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -268,7 +284,7 @@
       "[CLEANUP]/overlayfs/upperdir"
     ],
     "infra_step": true,
-    "name": "mount overlay a.create upperdir (2)",
+    "name": "mount overlay a (2).create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -286,7 +302,7 @@
       "[CLEANUP]/overlayfs/workdir"
     ],
     "infra_step": true,
-    "name": "mount overlay a.create workdir (2)",
+    "name": "mount overlay a (2).create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -304,7 +320,7 @@
       "[START_DIR]/mount_a"
     ],
     "infra_step": true,
-    "name": "mount overlay a.create mount path (2)",
+    "name": "mount overlay a (2).create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -322,10 +338,14 @@
       "[START_DIR]/mount_a"
     ],
     "infra_step": true,
-    "name": "mount overlay a.mount (2)",
+    "name": "mount overlay a (2).mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay b (2)"
   },
   {
     "cmd": [
@@ -340,7 +360,7 @@
       "[CLEANUP]/overlayfs/upperdir"
     ],
     "infra_step": true,
-    "name": "mount overlay b.create upperdir (2)",
+    "name": "mount overlay b (2).create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -358,7 +378,7 @@
       "[CLEANUP]/overlayfs/workdir"
     ],
     "infra_step": true,
-    "name": "mount overlay b.create workdir (2)",
+    "name": "mount overlay b (2).create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -376,7 +396,7 @@
       "[START_DIR]/mount_b"
     ],
     "infra_step": true,
-    "name": "mount overlay b.create mount path (2)",
+    "name": "mount overlay b (2).create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -394,7 +414,7 @@
       "[START_DIR]/mount_b"
     ],
     "infra_step": true,
-    "name": "mount overlay b.mount (2)",
+    "name": "mount overlay b (2).mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -416,6 +436,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "mount overlay c (2)"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -428,7 +452,7 @@
       "[CLEANUP]/overlayfs/upperdir"
     ],
     "infra_step": true,
-    "name": "mount overlay c.create upperdir (2)",
+    "name": "mount overlay c (2).create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -446,7 +470,7 @@
       "[CLEANUP]/overlayfs/workdir"
     ],
     "infra_step": true,
-    "name": "mount overlay c.create workdir (2)",
+    "name": "mount overlay c (2).create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -464,7 +488,7 @@
       "[START_DIR]/mount_c"
     ],
     "infra_step": true,
-    "name": "mount overlay c.create mount path (2)",
+    "name": "mount overlay c (2).create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -482,7 +506,7 @@
       "[START_DIR]/mount_c"
     ],
     "infra_step": true,
-    "name": "mount overlay c.mount (2)",
+    "name": "mount overlay c (2).mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

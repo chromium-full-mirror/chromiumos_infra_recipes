@@ -113,6 +113,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "mount overlay master"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -183,6 +187,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay workspace"
   },
   {
     "cmd": [

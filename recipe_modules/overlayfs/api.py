@@ -43,28 +43,29 @@ class OverlayfsApi(recipe_api.RecipeApi):
           See mount(8) "Mount options for overlay".
     """
     assert name.isalnum(), 'overlayfs mount names must be alphanumeric'
-    with self.m.context(namespace='mount overlay %s' % name, infra_steps=True):
-      # Create overlayfs directories.
-      work_base = self._base_work_path
-      if upperdir_path is None:
-        upperdir_path = work_base.join('upperdir')
-      self.m.file.ensure_directory('create upperdir', upperdir_path)
-      workdir_path = work_base.join('workdir')
-      self.m.file.ensure_directory('create workdir', workdir_path)
-      self.m.file.ensure_directory('create mount path', mount_path)
+    with self.m.step.nest('mount overlay %s' % name):
+      with self.m.context(infra_steps=True):
+        # Create overlayfs directories.
+        work_base = self._base_work_path
+        if upperdir_path is None:
+          upperdir_path = work_base.join('upperdir')
+        self.m.file.ensure_directory('create upperdir', upperdir_path)
+        workdir_path = work_base.join('workdir')
+        self.m.file.ensure_directory('create workdir', workdir_path)
+        self.m.file.ensure_directory('create mount path', mount_path)
 
-      # Do mount.
-      mount_options = ','.join([
-          'lowerdir=%s' % lowerdir_path,
-          'upperdir=%s' % upperdir_path,
-          'workdir=%s' % workdir_path,
-          'x-chromeos-overlay.name=%s' % name,
-      ])
-      self.m.step('mount', [
-          'sudo', '-n', 'mount', '-t', 'overlay', '--options', mount_options,
-          'overlay', mount_path
-      ], infra_step=True)
-      self._cleanup_mount(name, mount_path)
+        # Do mount.
+        mount_options = ','.join([
+            'lowerdir=%s' % lowerdir_path,
+            'upperdir=%s' % upperdir_path,
+            'workdir=%s' % workdir_path,
+            'x-chromeos-overlay.name=%s' % name,
+        ])
+        self.m.step('mount', [
+            'sudo', '-n', 'mount', '-t', 'overlay', '--options', mount_options,
+            'overlay', mount_path
+        ], infra_step=True)
+        self._cleanup_mount(name, mount_path)
 
   def unmount(self, name, mount_path):
     """Unmount an OverlayFS.

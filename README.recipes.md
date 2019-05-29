@@ -1245,7 +1245,7 @@ A module for interacting with OverlayFS mounts.
 
 Initialize OverlayfsApi.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#82)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#83)(self):**
 
 Returns a context that cleans up any overlayfs mounts created in it.
 
@@ -1263,7 +1263,7 @@ Args:
   * upperdir_path (Path): Optional Path to the OverlayFS "upperdir".
       See mount(8) "Mount options for overlay".
 
-&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#69)(self, name, mount_path):**
+&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#70)(self, name, mount_path):**
 
 Unmount an OverlayFS.
 
