@@ -47,6 +47,7 @@
   * [cros_build_api:examples/bad_retcodes](#recipes-cros_build_api_examples_bad_retcodes)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
+  * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_history:examples/get_matching_builds](#recipes-cros_history_examples_get_matching_builds)
   * [cros_history:examples/get_passed_builds](#recipes-cros_history_examples_get_passed_builds)
@@ -240,7 +241,7 @@ Args:
       failed packages.
 ### *recipe_modules* / [cros\_build\_api](/recipe_modules/cros_build_api)
 
-[DEPS](/recipe_modules/cros_build_api/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_build_api/__init__.py#6): [analysis\_service](#recipe_modules-analysis_service), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with the protobuf-based Build API.
 
@@ -1640,6 +1641,11 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_build_api/examples/ok_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/ok_retcodes.py#16)(api):**
+### *recipes* / [cros\_build\_api:examples/publish\_events](/recipe_modules/cros_build_api/examples/publish_events.py)
+
+[DEPS](/recipe_modules/cros_build_api/examples/publish_events.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/publish_events.py#14)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)

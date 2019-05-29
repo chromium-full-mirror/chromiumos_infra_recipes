@@ -165,4 +165,17 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
                                          test_data=test_output_data)
       step.presentation.logs['response'] = [output_json]
       output_proto = reflection.MakeClass(output_type)()
-      return json_format.Parse(output_json, output_proto)
+      json_format.Parse(output_json, output_proto)
+
+      # Publish Build API responses on Cloud Pub/Sub if they are registered.
+      #
+      # Catch exceptions, as this functionality is just being tested out right
+      # now.
+      # TODO(crbug.com/964444): Remove try once this is stable.
+      try:
+        if self.m.analysis_service.can_publish_event(input_proto, output_proto):
+          self.m.analysis_service.publish_event(input_proto, output_proto)
+      except Exception as e:
+        step.presentation.logs['Failure reason'] = [repr(e)]
+
+      return output_proto
