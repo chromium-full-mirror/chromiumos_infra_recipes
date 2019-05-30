@@ -1803,7 +1803,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#43)(api, properties):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#230)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#235)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1814,7 +1814,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#219)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#224)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -1822,7 +1822,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#206)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#211)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -1831,6 +1831,20 @@ Args:
 
 Raises:
   AssertionError: If any invalid ref is found.
+
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#258)(api, properties):**
+
+Merge 'properties' and 'api.cq.props_for_child_build'.
+
+Should be used to insert 'props_for_child_build' into properties being passed
+to a Buildbucket request.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  properties (dict): A dictionary of properties.
+
+Return:
+  The merged dict.
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

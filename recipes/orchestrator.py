@@ -95,9 +95,9 @@ def RunSteps(api, properties):
       child_builder_config = api.cros_infra_config.get_builder_config(child)
       requests.append(
           api.buildbucket.schedule_request(
-              gitiles_commit=snapshot,
-              builder=child,
-              critical=child_builder_config.general.critical.value))
+              gitiles_commit=snapshot, builder=child,
+              critical=child_builder_config.general.critical.value,
+              properties=api.cq.props_for_child_build))
 
   if requests:
     # As of 2019-05-16, buildbucket.run uses an old-style collect command
@@ -144,12 +144,14 @@ def RunSteps(api, properties):
           api.buildbucket.schedule_request(
               gitiles_commit=snapshot, builder='test_vm',
               critical=test.common.critical.value,
-              properties=json_format.MessageToDict(
-                  TestVmProperties(name=test.common.display_name,
-                                   build_target=unit.common.build_target,
-                                   test_harness=VmTestRequest.AUTOTEST,
-                                   build_payload=unit.common.build_payload,
-                                   expressions=[test.test_suite])))
+              properties=with_props_for_child_build(
+                  api,
+                  json_format.MessageToDict(
+                      TestVmProperties(name=test.common.display_name,
+                                       build_target=unit.common.build_target,
+                                       test_harness=VmTestRequest.AUTOTEST,
+                                       build_payload=unit.common.build_payload,
+                                       expressions=[test.test_suite]))))
           for unit in test_plan.vm_test_units
           for test in unit.vm_test_cfg.vm_test
           if test.common.display_name not in passed_tests
@@ -159,14 +161,17 @@ def RunSteps(api, properties):
           api.buildbucket.schedule_request(
               gitiles_commit=snapshot, builder='test_vm',
               critical=test.common.critical.value,
-              properties=json_format.MessageToDict(
-                  TestVmProperties(
-                      name=test.common.display_name,
-                      build_target=unit.common.build_target,
-                      test_harness=VmTestRequest.TAST,
-                      build_payload=unit.common.build_payload,
-                      expressions=[t.test_expr
-                                   for t in test.tast_test_expr])))
+              properties=with_props_for_child_build(
+                  api,
+                  json_format.MessageToDict(
+                      TestVmProperties(
+                          name=test.common.display_name,
+                          build_target=unit.common.build_target,
+                          test_harness=VmTestRequest.TAST,
+                          build_payload=unit.common.build_payload, expressions=[
+                              t.test_expr
+                              for t in test.tast_test_expr
+                          ]))))
           for unit in test_plan.tast_vm_test_units
           for test in unit.tast_vm_test_cfg.tast_vm_test
           if test.common.display_name not in passed_tests
@@ -248,6 +253,23 @@ def maybe_update_manifest_ref(api, update_manifest_refs, name, commit):
         api.git.fetch_ref(git_repo, commit.id)
         refspec = '%s:%s' % (commit.id, ref)
         api.git.push(git_repo, refspec)
+
+
+def with_props_for_child_build(api, properties):
+  """Merge 'properties' and 'api.cq.props_for_child_build'.
+
+  Should be used to insert 'props_for_child_build' into properties being passed
+  to a Buildbucket request.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    properties (dict): A dictionary of properties.
+
+  Return:
+    The merged dict.
+  """
+  properties.update(api.cq.props_for_child_build)
+  return properties
 
 
 def GenTests(api):
