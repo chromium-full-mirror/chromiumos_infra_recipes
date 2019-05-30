@@ -991,8 +991,6 @@
       "/path/to/tmp/json",
       "-task-output-stdout",
       "json",
-      "-timeout",
-      "32400",
       "bvt-cq-task-id"
     ],
     "infra_step": true,

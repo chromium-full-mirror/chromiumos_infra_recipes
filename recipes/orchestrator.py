@@ -175,7 +175,7 @@ def RunSteps(api, properties):
     with api.step.nest('collect tests'):
       hw_results = []
       if skylab_tasks:
-        hw_results = api.skylab.wait_suites(skylab_tasks, timeout=9 * 60 * 60)
+        hw_results = api.skylab.wait_suites(skylab_tasks)
 
       vm_results = []
       if vm_tests:

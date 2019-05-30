@@ -65,12 +65,11 @@ class SkylabApi(recipe_api.RecipeApi):
       step.presentation.links['swarming task'] = task_url
       return self.SkylabTask(id=task_id, url=task_url, test=test)
 
-  def wait_suites(self, tasks, timeout=None):
+  def wait_suites(self, tasks):
     """Wait for all Skylab suites to finish executing and return the results.
 
     Args:
       tasks (list[SkylabTask]): The Skylab tasks to wait on.
-      timeout (int): timeout for the swarming collect step.
 
     Returns:
       list[SkylabResult]: The results for each suite.
@@ -82,7 +81,7 @@ class SkylabApi(recipe_api.RecipeApi):
     # TODO(evanhernandez): This should call skylab wait-suite, not swarming.
     with self.m.swarming.with_server(self._server):
       results = self.m.swarming.collect('collect skylab tasks',
-                                        tasks_by_id.keys(), timeout=timeout)
+                                        tasks_by_id.keys())
 
     return [
         self.SkylabResult(task=tasks_by_id[result.id], success=result.success,
