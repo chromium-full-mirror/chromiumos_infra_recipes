@@ -1833,6 +1833,19 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#43)(api, properties):**
 
+&mdash; **def [bool\_experiment](/recipes/orchestrator.py#280)(api, experiment_name):**
+
+Checks if a bool-valued experiment is enabled.
+
+experiment_name is expected to be an input property on a build.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  experiment_name (str): the experimental input property name.
+
+Returns:
+  bool, whether the experiment is enabled.
+
 &mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#240)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
@@ -1843,20 +1856,6 @@ Args:
   name (string): name of ref to maybe update. Must correspond to
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
-
-&mdash; **def [test\_commit\_owner](/recipes/orchestrator.py#280)(api, user_email):**
-
-Checks if the provided email address is in the build's blamelist.
-
-This is intended as an experiment gate, so that a developers can easily
-restrict orchestrator code to their own commits.
-
-Args:
-  api (RecipeApi): See RunSteps documentation.
-  user_email (str): an email address.
-
-Returns:
-  bool, whether the email address is in the blamelist.
 
 &mdash; **def [validate\_ref](/recipes/orchestrator.py#229)(ref, name):**
 

@@ -64,8 +64,8 @@ def RunSteps(api, properties):
   completed_builds = []
   passed_builders = set()
 
-  # This is just here to test the test_commit_owner method.
-  if test_commit_owner(api, 'seanabraham@chromium.org'):
+  # This is just here to test flag-gating.
+  if bool_experiment(api, 'experiment_enable_second_git_test_submit'):
     if gerrit_changes:  # pragma: nocover
       api.gerrit.changes_are_submittable(gerrit_changes)  # pragma: nocover
 
@@ -277,24 +277,22 @@ def with_props_for_child_build(api, properties):
   return properties
 
 
-def test_commit_owner(api, user_email):
-  """Checks if the provided email address is in the build's blamelist.
+def bool_experiment(api, experiment_name):
+  """Checks if a bool-valued experiment is enabled.
 
-  This is intended as an experiment gate, so that a developers can easily
-  restrict orchestrator code to their own commits.
+  experiment_name is expected to be an input property on a build.
 
   Args:
     api (RecipeApi): See RunSteps documentation.
-    user_email (str): an email address.
+    experiment_name (str): the experimental input property name.
 
   Returns:
-    bool, whether the email address is in the blamelist.
+    bool, whether the experiment is enabled.
   """
   input_props = api.buildbucket.build.input.properties  # pragma: nocover
-  blamelist = input_props.fields['blamelist'].list_value  # pragma: nocover
-  # Make sure the items are strings, not unicode
-  blamelist = [str(b) for b in blamelist]  # pragma: nocover
-  return user_email in blamelist  # pragma: nocover
+  if experiment_name in input_props.fields:   # pragma: nocover
+    return input_props.fields[experiment_name].bool_value  # pragma: nocover
+  return False  # pragma: nocover
 
 
 def GenTests(api):
