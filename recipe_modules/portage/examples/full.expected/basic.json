@@ -40,6 +40,20 @@
   {
     "cmd": [
       "vpython",
+      "chromite/scripts/cros_uprev",
+      "--overlay-type",
+      "both",
+      "--chroot",
+      "[CACHE]/cros_chroot",
+      "--all",
+      "--boards",
+      "a:b"
+    ],
+    "name": "uprev portage packages"
+  },
+  {
+    "cmd": [
+      "vpython",
       "chromite/bin/cros_mark_as_stable",
       "commit",
       "--all",
@@ -48,7 +62,7 @@
       "--overlay-type",
       "both"
     ],
-    "name": "uprev portage packages"
+    "name": "commit portage package uprevs"
   },
   {
     "cmd": [

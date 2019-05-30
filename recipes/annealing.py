@@ -103,7 +103,7 @@ def RunSteps(api, properties):
     # in the NEXT snapshot. We choose the least wasteful option.
     with api.step.nest('uprev packages'), api.context(
         cwd=api.cros_source.workspace_path):
-      api.portage.uprev_packages()
+      api.portage.commit_package_uprevs()
       api.portage.push_package_uprevs()
 
 

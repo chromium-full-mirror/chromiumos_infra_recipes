@@ -13,7 +13,8 @@ DEPS = [
 
 def RunSteps(api):
   api.portage.regen_cache('my_overlay')
-  api.portage.uprev_packages()
+  api.portage.uprev_packages(boards=['a', 'b'])
+  api.portage.commit_package_uprevs()
   api.portage.push_package_uprevs()
   api.assertions.assertEqual(
       api.portage.portageq_best_visible_version('chromeos-chrome'),

@@ -23,6 +23,7 @@ DEPS = [
     'cros_version',
     'failures',
     'gerrit',
+    'portage',
 ]
 
 from PB.chromiumos.builder_config import BuilderConfig
@@ -73,6 +74,9 @@ def RunSteps(api, properties):
         with api.step.nest('cherry-pick gerrit changes'):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
+
+      # TODO(evanhernandez): Replace with build API call.
+      api.portage.uprev_packages(boards=[build_target.name])
 
       with api.step.nest('init sdk') as step:
         response = api.cros_build_api.SdkService.Create(

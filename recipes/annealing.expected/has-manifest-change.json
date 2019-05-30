@@ -637,7 +637,7 @@
       "both"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "uprev packages.uprev portage packages",
+    "name": "uprev packages.commit portage package uprevs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
