@@ -12,7 +12,8 @@ DEPS = [
 
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.builder_config import BuilderConfig
-
+from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
+    CrosPrebuiltsProperties)
 
 def RunSteps(api):
   target = BuildTarget(name='target')
@@ -30,4 +31,7 @@ def GenTests(api):
   yield api.test('basic')
 
   yield (api.test('staging_branch') +  #
-         api.properties(prebuilts_use_staging_branch=True))
+         api.properties(**{
+             "$chromeos/cros_prebuilts":
+             CrosPrebuiltsProperties(use_staging_branch=True)
+         }))

@@ -3,7 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine.recipe_api import Property
+from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
+    CrosPrebuiltsProperties)
 
 DEPS = [
     'depot_tools/gsutil',
@@ -21,11 +22,4 @@ DEPS = [
     'repo',
 ]
 
-PROPERTIES = {
-    'prebuilts_use_staging_branch':
-        Property(
-            kind=bool, default=False,
-            help='If true, the prebuilt conf file will be uploaded to a branch '
-            'named "staging" instead of the real branch. Should only be set in '
-            'the staging environment.')
-}
+PROPERTIES = CrosPrebuiltsProperties

@@ -16,9 +16,9 @@ from PB.chromiumos import builder_config
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
   """A module for uploading package prebuilts."""
 
-  def __init__(self, prebuilts_use_staging_branch, **kwargs):
+  def __init__(self, properties, **kwargs):
     super(CrosPrebuiltsApi, self).__init__(**kwargs)
-    self._use_staging_branch = prebuilts_use_staging_branch
+    self._use_staging_branch = properties.use_staging_branch
 
   def _prebuilts_uri(self, target, kind, gs_bucket):
     """Determine the GS URI to upload prebuilts.
