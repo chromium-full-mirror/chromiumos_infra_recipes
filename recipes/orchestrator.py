@@ -64,6 +64,11 @@ def RunSteps(api, properties):
   completed_builds = []
   passed_builders = set()
 
+  # This is just here to test the test_commit_owner method.
+  if test_commit_owner(api, 'seanabraham@chromium.org'):
+    if gerrit_changes:  # pragma: nocover
+      api.gerrit.changes_are_submittable(gerrit_changes)  # pragma: nocover
+
   if gerrit_changes:
     # Run the patch submittability check, but ignore the output until we've
     # seen it work for a while in prod.
@@ -270,6 +275,26 @@ def with_props_for_child_build(api, properties):
   """
   properties.update(api.cq.props_for_child_build)
   return properties
+
+
+def test_commit_owner(api, user_email):
+  """Checks if the provided email address is in the build's blamelist.
+
+  This is intended as an experiment gate, so that a developers can easily
+  restrict orchestrator code to their own commits.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    user_email (str): an email address.
+
+  Returns:
+    bool, whether the email address is in the blamelist.
+  """
+  input_props = api.buildbucket.build.input.properties  # pragma: nocover
+  blamelist = input_props.fields['blamelist'].list_value  # pragma: nocover
+  # Make sure the items are strings, not unicode
+  blamelist = [str(b) for b in blamelist]  # pragma: nocover
+  return user_email in blamelist  # pragma: nocover
 
 
 def GenTests(api):
