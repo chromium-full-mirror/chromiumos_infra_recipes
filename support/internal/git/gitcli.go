@@ -69,7 +69,11 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	}
 
 	log.Printf("creating patch of %s in %s", revision.Ref, repoDir)
-	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "format-patch", "FETCH_HEAD^1..FETCH_HEAD"); err != nil {
+	// Use a big --unified value to make incorrect cherry-picks less likely.
+	// This effectively means the patch will contain the entirety of each
+	// changed file.
+	formatPatchCmd := []string{"format-patch", "FETCH_HEAD^1..FETCH_HEAD", "--unified", "100000000"}
+	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", formatPatchCmd...); err != nil {
 		return errors.New(stderrBuf.String())
 	}
 	patchFile := strings.Trim(stdoutBuf.String(), "\n")
