@@ -41,6 +41,8 @@ from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromite.api.test import ChromiteUnitTestRequest
 from PB.recipes.chromeos.build_target import BuildTargetProperties
+from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
+    CrosBisectProperties)
 
 PROPERTIES = BuildTargetProperties
 
@@ -181,13 +183,12 @@ def GenTests(api):
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='post-sync pointless build check') +
          api.properties(
-             build_target={'name': 'amd64-generic'},
-             findit_bisect={'targets': [
-                 api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
-                 api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
-                 api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
-             ]},
-         ))
+             **{'build_target': {'name': 'amd64-generic'},
+                '$chromeos/cros_bisect': CrosBisectProperties(targets=[
+                    api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
+                    api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
+                    api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
+                ])}))
 
   yield (api.test('with-gerrit-changes') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(

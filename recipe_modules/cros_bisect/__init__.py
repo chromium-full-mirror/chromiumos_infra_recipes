@@ -1,11 +1,12 @@
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 DEPS = [
     'recipe_engine/step',
 ]
 
-from recipe_engine.config import Dict
-from recipe_engine.recipe_api import Property
+from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
+    CrosBisectProperties)
 
-PROPERTIES = {
-  # BuildRerunCompileFailureInput when invoked by FindIt for bisection build.
-  'findit_bisect': Property(kind=Dict(), default={}),
-}
+PROPERTIES = CrosBisectProperties

@@ -203,7 +203,7 @@ Args:
       to upload. See build config for options.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
 
-[DEPS](/recipe_modules/cros_bisect/__init__.py#1): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_bisect/__init__.py#5): [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for interacting with FindIt.
 
@@ -1604,7 +1604,7 @@ Returns:
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#52)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#54)(api, properties):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -1638,7 +1638,7 @@ Recipe for building a BuildTarget image.
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#24)(api, properties):**
 ### *recipes* / [cros\_build\_api:examples/bad\_retcodes](/recipe_modules/cros_build_api/examples/bad_retcodes.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/bad_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

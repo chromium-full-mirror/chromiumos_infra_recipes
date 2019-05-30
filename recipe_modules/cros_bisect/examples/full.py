@@ -14,6 +14,8 @@ from recipe_engine.recipe_api import Property
 
 from PB.chromiumos.common import PackageInfo
 
+from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
+    CrosBisectProperties)
 from PB.recipe_modules.chromeos.cros_bisect.examples.test import (
     TestInputProperties)
 
@@ -31,11 +33,11 @@ def GenTests(api):
 
   yield (api.test('with-findit-bisect') +  #
          api.properties(
-           findit_bisect={'targets': [
-               api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
-               api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
-               api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
-           ]},
+             **{'$chromeos/cros_bisect': CrosBisectProperties(targets=[
+                 api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
+                 api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
+                 api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
+             ])}
          ) + #
          api.properties(TestInputProperties(expected_packages=[
                PackageInfo(package_name='foo', category='cat1', version='1'),

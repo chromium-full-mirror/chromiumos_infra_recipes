@@ -14,9 +14,9 @@ from recipe_engine import recipe_api
 class CrosBisectApi(recipe_api.RecipeApi):
   """A module for interacting with FindIt."""
 
-  def __init__(self, findit_bisect, *args, **kwargs):
+  def __init__(self, properties, *args, **kwargs):
     super(CrosBisectApi, self).__init__(*args, **kwargs)
-    self._findit_bisect = findit_bisect
+    self._targets = properties.targets
 
   def set_bisect_builder(self, build_target_name):
     """Sets the BISECT_BUILDER output property.
@@ -74,5 +74,4 @@ class CrosBisectApi(recipe_api.RecipeApi):
     Returns:
       list[PackageInfo]: list of packages to build as specified by FindIt
     """
-    serialized_targets = self._findit_bisect.get('targets', [])
-    return [jsonpb.Parse(st, PackageInfo()) for st in serialized_targets]
+    return [jsonpb.Parse(t, PackageInfo()) for t in self._targets]
