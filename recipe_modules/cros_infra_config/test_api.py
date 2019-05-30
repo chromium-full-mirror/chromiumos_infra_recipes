@@ -48,7 +48,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "image_types": ["TEST"]
                   },
                   "unit_tests": {
-                    "package_blacklist": []
+                    "package_blacklist": [],
+                    "ebuilds_run_spec": "RUN"
                   }
                 },
                 {
@@ -71,7 +72,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       "package_name": "chromite",
                       "category": "chromeos-base",
                       "version": ""
-                    }]
+                    }],
+                    "ebuilds_run_spec": "RUN"
                   }
                 },
                 {
@@ -82,6 +84,19 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "general": {
                     "critical": false
+                  }
+                },
+                {
+                  "id": {
+                    "name": "grunt-unittest-only-postsubmit",
+                    "branch": "master",
+                    "type": "POSTSUBMIT"
+                  },
+                  "general": {
+                    "critical": false
+                  },
+                  "unit_tests": {
+                    "ebuilds_run_spec": "RUN_EXIT"
                   }
                 },
                 {

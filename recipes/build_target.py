@@ -137,7 +137,8 @@ def RunSteps(api, properties):
               timeout=45 * 60)
           api.failures.raise_failed_packages(response.failed_packages)
 
-      if properties.run_ebuild_tests:
+      if build_config.unit_tests.ebuilds_run_spec in [BuilderConfig.RUN,
+                                                      BuilderConfig.RUN_EXIT]:
         with api.step.nest('run ebuild tests'):
           response = api.cros_build_api.TestService.BuildTargetUnitTest(
               BuildTargetUnitTestRequest(
@@ -145,6 +146,9 @@ def RunSteps(api, properties):
                   result_path=str(api.path.mkdtemp()),
                   package_blacklist=build_config.unit_tests.package_blacklist))
           api.failures.raise_failed_packages(response.failed_packages)
+
+      if build_config.unit_tests.ebuilds_run_spec == BuilderConfig.RUN_EXIT:
+        return
 
       artifact_types = build_config.artifacts.artifact_types
       if artifact_types:
@@ -192,8 +196,7 @@ def GenTests(api):
              name='post-sync pointless build check') +
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
-         api.properties(build_target={'name': 'amd64-generic'},
-                        run_ebuild_tests=True))
+         api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('run-ebuild-tests') +  #
          api.buildbucket.try_build(project='chromeos', bucket='postsubmit',
@@ -202,8 +205,18 @@ def GenTests(api):
              name='pre-sync pointless build check') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='post-sync pointless build check') +
-         api.properties(build_target={'name': 'amd64-generic'},
-                        run_ebuild_tests=True))
+         api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('run-exit-ebuild-tests') +  #
+         api.buildbucket.try_build(
+             project='chromeos',
+             bucket='postsubmit',
+             builder='grunt-unittest-only-postsubmit') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='pre-sync pointless build check') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='post-sync pointless build check') +
+         api.properties(build_target={'name': 'grunt'}))
 
   yield (api.test('pointless-build-first-check') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
