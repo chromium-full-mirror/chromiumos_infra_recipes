@@ -33,14 +33,14 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/crostfe.py\", line 82, in RunSteps",
-      "    raise NotImplementedError('autotest backend')",
-      "NotImplementedError: autotest backend"
+      "  File \"RECIPE_REPO[chromeos]/recipes/cros_test_platform.py\", line 86, in RunSteps",
+      "    raise ValueError('invalid backend %s' % backend)",
+      "ValueError: invalid backend foobar"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: NotImplementedError('autotest backend',)"
+      "humanReason": "Uncaught Exception: ValueError('invalid backend foobar',)"
     },
     "name": "$result"
   }

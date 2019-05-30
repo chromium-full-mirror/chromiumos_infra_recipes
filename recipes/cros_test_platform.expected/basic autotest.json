@@ -1,9 +1,24 @@
 [
   {
     "cmd": [],
-    "name": "validate request",
+    "name": "validate request"
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests"
+  },
+  {
+    "cmd": [],
+    "name": "select backend"
+  },
+  {
+    "cmd": [
+      "echo",
+      "skylab"
+    ],
+    "name": "select backend.backend selector",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -18,16 +33,14 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/crostfe.py\", line 76, in RunSteps",
-      "    validate_request(api, properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/crostfe.py\", line 32, in validate_request",
-      "    raise ValueError(\"params.board must be specified\")",
-      "ValueError: params.board must be specified"
+      "  File \"RECIPE_REPO[chromeos]/recipes/cros_test_platform.py\", line 82, in RunSteps",
+      "    raise NotImplementedError('autotest backend')",
+      "NotImplementedError: autotest backend"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('params.board must be specified',)"
+      "humanReason": "Uncaught Exception: NotImplementedError('autotest backend',)"
     },
     "name": "$result"
   }

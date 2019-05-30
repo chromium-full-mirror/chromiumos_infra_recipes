@@ -4,12 +4,12 @@
 
 syntax = "proto3";
 
-package recipes.chromeos.crostfe;
+package recipes.chromeos.cros_test_platform;
 
-message CrosTfeProperties {
+message CrosTestPlatformRequest {
   message RequestParams {
     string board = 1;
   }
 
   RequestParams params = 1;
-}
+  }

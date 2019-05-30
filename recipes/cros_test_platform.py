@@ -8,7 +8,7 @@
 TODO: Migrate to a recipes repo owned by the test team.
 """
 
-from PB.recipes.chromeos.crostfe import CrosTfeProperties
+from PB.recipes.chromeos.cros_test_platform import CrosTestPlatformRequest
 
 DEPS = [
     'recipe_engine/properties',
@@ -16,14 +16,14 @@ DEPS = [
     'recipe_engine/step',
 ]
 
-PROPERTIES = CrosTfeProperties
+PROPERTIES = CrosTestPlatformRequest
 
 def validate_request(api, properties):
-  """Validate the CrosTfeProperties.
+  """Validate the CrosTestPlatformRequest.
 
   Args:
     * api (object): See RunSteps documentation.
-    * properties (CrosTfeProperties): The input request.
+    * properties (CrosTestPlatformRequest): The input request.
 
   Raises: An exception if there are invalid properties.
   """
@@ -36,7 +36,7 @@ def enumerate_tests(api, properties):
 
   Args:
     * api (object): See RunSteps documentation.
-    * properties (CrosTfeProperties): The input request.
+    * properties (CrosTestPlatformRequest): The input request.
 
   Returns:
     TODO(akeshet): A list of EnumeratedTest protos.
@@ -88,23 +88,27 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield (api.test('basic skylab') + #
-         api.properties(CrosTfeProperties(params={'board': 'test_board'})) + #
+         api.properties(
+            CrosTestPlatformRequest(params={'board': 'test_board'})) + #
          api.step_data('select backend.backend selector',
                        stdout=api.raw_io.output('skylab')) + #
          api.expect_exception('NotImplementedError'))
 
   yield (api.test('basic autotest') + #
-         api.properties(CrosTfeProperties(params={'board': 'test_board'})) + #
+         api.properties(
+            CrosTestPlatformRequest(params={'board': 'test_board'})) + #
          api.step_data('select backend.backend selector',
                        stdout=api.raw_io.output('autotest')) + #
          api.expect_exception('NotImplementedError'))
 
   yield (api.test('invalid backend') + #
-         api.properties(CrosTfeProperties(params={'board': 'test_board'})) + #
+         api.properties(
+            CrosTestPlatformRequest(params={'board': 'test_board'})) + #
          api.step_data('select backend.backend selector',
                        stdout=api.raw_io.output('foobar')) + #
          api.expect_exception('ValueError'))
 
   yield (api.test('board_param_missing') + #
-         api.properties(CrosTfeProperties(params={'board': ''})) + #
+         api.properties(
+            CrosTestPlatformRequest(params={'board': ''})) + #
          api.expect_exception('ValueError'))
