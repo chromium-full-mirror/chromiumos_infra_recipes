@@ -12,10 +12,11 @@ from recipe_engine import recipe_api
 
 class AnalysisServiceApi(recipe_api.RecipeApi):
 
-  def __init__(self, pubsub_project_id, pubsub_topic_id, *args, **kwargs):
+  def __init__(self, properties, *args, **kwargs):
     super(AnalysisServiceApi, self).__init__(*args, **kwargs)
-    self._pubsub_project_id = pubsub_project_id
-    self._pubsub_topic_id = pubsub_topic_id
+    self._pubsub_project_id = properties.pubsub_project_id or "chromeos-bot"
+    self._pubsub_topic_id = (properties.pubsub_topic_id or
+                             "analysis-service-events")
 
   def _get_field_name_by_matching_type(self, oneof_name, message):
     """Get the field on AnalysisServiceEvent for 'oneof_name' and 'message'.

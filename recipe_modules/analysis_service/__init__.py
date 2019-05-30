@@ -1,12 +1,10 @@
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 DEPS = ['recipe_engine/step', 'cloud_pubsub']
 
-from recipe_engine.recipe_api import Property
+from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
+    AnalysisServiceProperties)
 
-PROPERTIES = {
-    'pubsub_project_id':
-        Property(kind=str, default="chromeos-bot",
-                 help="The Cloud Pub/Sub project to publish events to."),
-    'pubsub_topic_id':
-        Property(kind=str, default="analysis-service-events",
-                 help="The Cloud Pub/Sub topic to publish events to.")
-}
+PROPERTIES = AnalysisServiceProperties
