@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "get non-skipped builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Non-skipped builders: ['staging-Annealing']@@@",
+      "@@@STEP_TEXT@Non-skipped builders: [u'staging-Annealing']@@@",
       "@@@STEP_LOG_END@Skipped builders@@@"
     ]
   },

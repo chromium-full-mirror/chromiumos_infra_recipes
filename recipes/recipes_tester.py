@@ -30,23 +30,18 @@ DEPS = [
     'recipe_analyze',
 ]
 
-from recipe_engine.recipe_api import Property
+from PB.recipes.chromeos.recipes_tester import RecipesTesterProperties
 
-PROPERTIES = {
-    'builders':
-        Property(
-            kind=list, default=[
-                'staging-Annealing', 'staging-chromite-postsubmit',
-                'staging-amd64-generic-postsubmit'
-            ],
-            help=("A list of builders to test the CL on. Only builders in the "
-                  "staging environment should be used."))
-}
+PROPERTIES = RecipesTesterProperties
 
 # LUCI project to test.
 PROJECT = 'chromeos'
 # Bucket to test in. Only the staging environment should be used.
 BUCKET = 'staging'
+
+DEFAULT_BUILDERS = ['staging-Annealing',
+                    'staging-chromite-postsubmit',
+                    'staging-amd64-generic-postsubmit']
 
 # URL for the ChromeOS CI recipes repo.
 RECIPE_REPO_URL = 'https://chromium.googlesource.com/chromiumos/infra/recipes'
@@ -303,9 +298,8 @@ def _analyze_swarming_results(api, swarming_results, led_results):
       step.presentation.step_text = 'all tasks succeeded'
 
 
-def RunSteps(api, builders):
-  if len(builders) == 0:
-    raise ValueError('builders must be non-empty')
+def RunSteps(api, properties):
+  builders = properties.builders or DEFAULT_BUILDERS
 
   for builder in builders:
     if 'staging' not in builder:
@@ -458,7 +452,8 @@ def GenTests(api):
       api.test('basic') +
       # Specify two builders to run.
       api.properties(
-          builders=['staging-Annealing', 'staging-chromite-postsubmit']) +  #
+          **{'builders':
+             ['staging-Annealing', 'staging-chromite-postsubmit']}) +  #
       api.buildbucket.try_build(project='chromeos', bucket='infra',
                                 builder='recipes-tester') +
       # No builders are skipped
@@ -484,7 +479,8 @@ def GenTests(api):
       api.test('skipped_builder') +  #
       # Specify two builders to run.
       api.properties(
-          builders=['staging-Annealing', 'staging-chromite-postsubmit']) +  #
+          **{'builders':
+             ['staging-Annealing', 'staging-chromite-postsubmit']}) +  #
       api.buildbucket.try_build(project='chromeos', bucket='infra',
                                 builder='recipes-tester') +
       # The annealing builder is skipped
@@ -502,7 +498,7 @@ def GenTests(api):
 
   yield (api.test('failed_swarming_task') +
          # Specify one builder to run.
-         api.properties(builders=['staging-Annealing']) +  #
+         api.properties(**{'builders': ['staging-Annealing']}) +  #
          api.buildbucket.try_build(project='chromeos', bucket='infra',
                                    builder='recipes-tester') +
          # No builders are skipped
@@ -523,7 +519,8 @@ def GenTests(api):
   yield (api.test('invalid_skip_builder_footer') +
          # Specify two builders to run.
          api.properties(
-             builders=['staging-Annealing', 'staging-chromite-postsubmit']) +  #
+             **{'builders':
+                ['staging-Annealing', 'staging-chromite-postsubmit']}) +  #
          # The skipped builder isn't part of the specified builders.
          get_non_skipped_builders_test_data(skipped_builders=['other-builder'])
          +  #
@@ -539,10 +536,6 @@ def GenTests(api):
   yield (api.test('no_gerrit_changes') +  #
          api.expect_exception('ValueError'))
 
-  yield (api.test('no_builders') +  #
-         api.properties(builders=[]) +  #
-         api.expect_exception('ValueError'))
-
   yield (api.test('invalid_builders') +  #
-         api.properties(builders=['production-builder']) +  #
+         api.properties(**{'builders': ['production-builder']}) +  #
          api.expect_exception('ValueError'))
