@@ -349,7 +349,7 @@ def GenTests(api):
          api.expect_exception("ValueError"))
 
   yield (api.test('dry_run') +  #
-         postsubmit_orchestrator_build() +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(dry_run=True))
 
   builds = [
