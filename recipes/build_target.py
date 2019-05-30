@@ -129,7 +129,8 @@ def RunSteps(api, properties):
               CreateImageRequest(
                   build_target=build_target, chroot=api.cros_sdk.chroot,
                   image_types=image_types,
-                  builder_path='%s/%s' % (build_config.id.name, version)))
+                  builder_path='%s/%s' % (build_config.id.name, version)),
+              timeout=45 * 60)
           api.failures.raise_failed_packages(response.failed_packages)
 
       if properties.run_ebuild_tests:
@@ -217,4 +218,3 @@ def GenTests(api):
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
-
