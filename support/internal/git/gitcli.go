@@ -45,7 +45,7 @@ func Clone(ctx context.Context, url string, branch string, parentDir string) (st
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Minute)
 	defer cancel()
 	var stdoutBuf, stderrBuf bytes.Buffer
-	cloneCmd := []string{"clone", "--depth", "1", url, "-b", branch, "."}
+	cloneCmd := []string{"clone", "--depth=1", url, "-b", branch, "."}
 	if err := runnerImpl.run(ctx, dir, &stdoutBuf, &stderrBuf, "git", cloneCmd...); err != nil {
 		return dir, errors.New(stderrBuf.String())
 	}
@@ -64,7 +64,7 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	defer cancel()
 	var stdoutBuf, stderrBuf bytes.Buffer
 	if err := runnerImpl.run(
-		ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "fetch", "--depth", "2", url, revision.Ref); err != nil {
+		ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "fetch", "--depth=2", url, revision.Ref); err != nil {
 		return errors.New(stderrBuf.String())
 	}
 
@@ -72,7 +72,7 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	// Use a big --unified value to make incorrect cherry-picks less likely.
 	// This effectively means the patch will contain the entirety of each
 	// changed file.
-	formatPatchCmd := []string{"format-patch", "FETCH_HEAD^1..FETCH_HEAD", "--unified", "100000000"}
+	formatPatchCmd := []string{"format-patch", "--unified=100000000", "FETCH_HEAD^1..FETCH_HEAD"}
 	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", formatPatchCmd...); err != nil {
 		return errors.New(stderrBuf.String())
 	}
