@@ -104,7 +104,7 @@ def RunSteps(api, properties):
     with api.step.nest('uprev packages'), api.context(
         cwd=api.cros_source.workspace_path):
       api.portage.commit_package_uprevs()
-      api.portage.push_package_uprevs()
+      api.portage.push_package_uprevs(dryrun=not properties.publish_uprevs)
 
 
 def record_gerrit_changes(api, manifest_diffs):

@@ -69,9 +69,9 @@
       "vpython",
       "chromite/bin/cros_mark_as_stable",
       "push",
-      "--dryrun",
       "--overlay-type",
-      "both"
+      "both",
+      "--dryrun"
     ],
     "name": "push portage package uprevs"
   },
