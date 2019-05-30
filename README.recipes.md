@@ -1474,12 +1474,13 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/skylab/api.py#25)(self):**
 
-&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#68)(self, tasks):**
+&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#68)(self, tasks, timeout=None):**
 
 Wait for all Skylab suites to finish executing and return the results.
 
 Args:
   tasks (list[SkylabTask]): The Skylab tasks to wait on.
+  timeout (int): timeout for the swarming collect step.
 
 Returns:
   list[SkylabResult]: The results for each suite.
