@@ -58,7 +58,8 @@ def RunSteps(api):
       'https://chromium-review.googlesource.com/c/'
       'chromiumos/chromite/+/12345/6')
   gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
-  api.assertions.assertEqual(gerrit_change.host, 'chromium')
+  api.assertions.assertEqual(gerrit_change.host,
+                             'chromium-review.googlesource.com')
   api.assertions.assertEqual(gerrit_change.project, 'chromiumos/chromite')
   api.assertions.assertEqual(gerrit_change.change, 12345)
   api.assertions.assertEqual(gerrit_change.patchset, 6)
@@ -68,7 +69,8 @@ def RunSteps(api):
       'https://chrome-internal-review.googlesource.com/c/'
       'chromeos/infra/config/+/12345')
   gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
-  api.assertions.assertEqual(gerrit_change.host, 'chrome-internal')
+  api.assertions.assertEqual(gerrit_change.host,
+                             'chrome-internal-review.googlesource.com')
   api.assertions.assertEqual(gerrit_change.project, 'chromeos/infra/config')
   api.assertions.assertEqual(gerrit_change.change, 12345)
   api.assertions.assertFalse(gerrit_change.patchset)
@@ -78,7 +80,8 @@ def RunSteps(api):
       'chrome-internal-review.googlesource.com/c/'
       'chromeos/infra/config/+/12345')
   gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
-  api.assertions.assertEqual(gerrit_change.host, 'chrome-internal')
+  api.assertions.assertEqual(gerrit_change.host,
+                             'chrome-internal-review.googlesource.com')
   api.assertions.assertEqual(gerrit_change.project, 'chromeos/infra/config')
   api.assertions.assertEqual(gerrit_change.change, 12345)
   api.assertions.assertFalse(gerrit_change.patchset)
@@ -86,7 +89,8 @@ def RunSteps(api):
   # Parse dumb gerrit change URL.
   gerrit_change_url = 'https://chrome-internal-review.googlesource.com/12345'
   gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
-  api.assertions.assertEqual(gerrit_change.host, 'chrome-internal')
+  api.assertions.assertEqual(gerrit_change.host,
+                             'chrome-internal-review.googlesource.com')
   api.assertions.assertEqual(gerrit_change.change, 12345)
   api.assertions.assertFalse(gerrit_change.project)
   api.assertions.assertFalse(gerrit_change.patchset)
@@ -94,11 +98,27 @@ def RunSteps(api):
   # Parse dumb gerrit change URL without https://
   gerrit_change_url = 'chrome-internal-review.googlesource.com/12345'
   gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
-  api.assertions.assertEqual(gerrit_change.host, 'chrome-internal')
+  api.assertions.assertEqual(gerrit_change.host,
+                             'chrome-internal-review.googlesource.com')
   api.assertions.assertEqual(gerrit_change.change, 12345)
   api.assertions.assertFalse(gerrit_change.project)
   api.assertions.assertFalse(gerrit_change.patchset)
 
+  # Parse URL from smart gerrit change.
+  gerrit_change = common_pb2.GerritChange(
+      host='chromium-review.googlesource.com',
+      project='chromiumos/chromite', change=123, patchset=4)
+  gerrit_change_url = api.gerrit.parse_gerrit_change_url(gerrit_change)
+  api.assertions.assertEqual(
+      gerrit_change_url,
+      'https://chromium-review.googlesource.com/c/chromiumos/chromite/+/123/4')
+
+  # Parse URL from dumb gerrit change.
+  gerrit_change = common_pb2.GerritChange(
+      host='chromium-review.googlesource.com', change=12345)
+  gerrit_change_url = api.gerrit.parse_gerrit_change_url(gerrit_change)
+  api.assertions.assertEqual(gerrit_change_url,
+                             'https://chromium-review.googlesource.com/12345')
 
 def GenTests(api):
   yield api.test('basic')

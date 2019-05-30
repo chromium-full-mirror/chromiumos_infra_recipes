@@ -85,6 +85,7 @@
   * [skylab:examples/wait_suites](#recipes-skylab_examples_wait_suites)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
+  * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running Tast VM tests.
 ## Recipe Modules
 
@@ -863,7 +864,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [changes\_are\_submittable](/recipe_modules/gerrit/api.py#207)(self, gerrit_changes, test_output_data=None):**
+&mdash; **def [changes\_are\_submittable](/recipe_modules/gerrit/api.py#227)(self, gerrit_changes, test_output_data=None):**
 
 Checks if the provided changes can be merged onto their Git branches.
 
@@ -900,6 +901,16 @@ Args:
 
 Returns:
   GerritChange: The parsed proto.
+
+&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#205)(self, gerrit_change):**
+
+Transform a GerritChange proto into a Gerrit change URL.
+
+Args:
+  gerrit_change (GerritChange): The change in question.
+
+Returns:
+  str: The Gerrit URL.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
 [DEPS](/recipe_modules/git/__init__.py#1): [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1954,6 +1965,13 @@ Though this recipe appears to be almost a subset of build_target, it lives
 on its own because it is agnostic of ChromeOS build targets.
 
 &mdash; **def [RunSteps](/recipes/test_chromite.py#27)(api):**
+### *recipes* / [test\_manifest](/recipes/test_manifest.py)
+
+[DEPS](/recipes/test_manifest.py#10): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Verifies a repo manifest.
+
+&mdash; **def [RunSteps](/recipes/test_manifest.py#21)(api, properties):**
 ### *recipes* / [test\_vm](/recipes/test_vm.py)
 
 [DEPS](/recipes/test_vm.py#37): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

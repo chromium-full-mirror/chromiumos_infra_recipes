@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "check for manifest changes",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no changes to manifest, exiting@@@"
+    ]
+  },
+  {
+    "jsonResult": null,
+    "name": "$result"
+  }
+]

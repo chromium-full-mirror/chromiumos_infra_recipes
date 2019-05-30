@@ -396,7 +396,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"gerritChanges\": [\n    {\n      \"project\": \"chromiumos/chromite\", \n      \"host\": \"chromium\", \n      \"change\": \"1\"\n    }\n  ]\n}",
+      "{\n  \"gerritChanges\": [\n    {\n      \"project\": \"chromiumos/chromite\", \n      \"host\": \"chromium-review.googlesource.com\", \n      \"change\": \"1\"\n    }\n  ]\n}",
       "[CLEANUP]/snapshot-gerrit-changes-_tmp_1/snapshot_gerrit_changes.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",

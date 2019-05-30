@@ -186,9 +186,8 @@ class GerritApi(recipe_api.RecipeApi):
     gerrit_change_url = gerrit_change_url.rstrip('/')
 
     # First check if this is a verbose Gerrit URL.
-    match = re.match(
-        r'(?:https://)?([^.]+)-review.googlesource.com/c/([^+]+)/\+/(\d+)(/\d+)?',
-        gerrit_change_url)
+    match = re.match(r'(?:https://)?([^/]+)/c/([^+]+)/\+/(\d+)(/\d+)?',
+                     gerrit_change_url)
     if match:
       host, project, change, patchset = match.groups()
       return GerritChange(
@@ -198,11 +197,32 @@ class GerritApi(recipe_api.RecipeApi):
           patchset=int(patchset.lstrip('/')) if patchset else 0)
 
     # Otherwise, it's a dumb one.
-    match = re.match(r'(?:https://)?([^.]+)-review.googlesource.com/(\d+)',
-                     gerrit_change_url)
+    match = re.match(r'(?:https://)?([^/]+)/(\d+)', gerrit_change_url)
     assert match, 'malformed gerrit change URL: %s' % gerrit_change_url
     host, change = match.groups()
     return GerritChange(host=host, change=int(change))
+
+  def parse_gerrit_change_url(self, gerrit_change):
+    """Transform a GerritChange proto into a Gerrit change URL.
+
+    Args:
+      gerrit_change (GerritChange): The change in question.
+
+    Returns:
+      str: The Gerrit URL.
+    """
+    assert gerrit_change.host, 'found GerritChange with no host'
+    assert gerrit_change.change, 'found GerritChange with no change number'
+
+    qualified_host = 'https://%s' % gerrit_change.host
+    if gerrit_change.project:
+      url = '%s/c/%s/+/%d' % (qualified_host, gerrit_change.project.strip('/'),
+                              gerrit_change.change)
+      if gerrit_change.patchset:
+        url = '%s/%d' % (url, gerrit_change.patchset)
+      return url
+    else:
+      return '%s/%d' % (qualified_host, gerrit_change.change)
 
   def changes_are_submittable(self, gerrit_changes, test_output_data=None):
     """Checks if the provided changes can be merged onto their Git branches.
