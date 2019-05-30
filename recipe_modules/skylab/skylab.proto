@@ -10,4 +10,6 @@ message SkylabProperties {
   string skylab_server = 1;
   string skylab_version = 2;
   string skylab_qs_account = 3;
+  // Has to follow go format here: golang.org/pkg/time/#ParseDuration
+  string skylab_timeout = 4;
 }

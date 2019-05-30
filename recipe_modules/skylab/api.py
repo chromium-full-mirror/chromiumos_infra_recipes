@@ -21,6 +21,7 @@ class SkylabApi(recipe_api.RecipeApi):
     self._server = str(properties.skylab_server) or 'https://chromeos-swarming.appspot.com'
     self._version = str(properties.skylab_version) or 'prod'
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
+    self._skylab_timeout = str(properties.skylab_timeout) or '9h'
 
   def initialize(self):
     self._client = None
@@ -81,7 +82,8 @@ class SkylabApi(recipe_api.RecipeApi):
     # TODO(evanhernandez): This should call skylab wait-suite, not swarming.
     with self.m.swarming.with_server(self._server):
       results = self.m.swarming.collect('collect skylab tasks',
-                                        tasks_by_id.keys())
+                                        tasks_by_id.keys(),
+                                        timeout=self._skylab_timeout)
 
     return [
         self.SkylabResult(task=tasks_by_id[result.id], success=result.success,
