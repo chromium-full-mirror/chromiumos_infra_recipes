@@ -1718,15 +1718,45 @@ Recipe for building a BuildTarget image.
 &mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#13)(api):**
 ### *recipes* / [crostfe](/recipes/crostfe.py)
 
-[DEPS](/recipes/crostfe.py#13): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/crostfe.py#13): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/crostfe.py#33)(api, properties):**
+&mdash; **def [RunSteps](/recipes/crostfe.py#75)(api, properties):**
 
-&mdash; **def [validate\_request](/recipes/crostfe.py#20)(api, properties):**
+&mdash; **def [enumerate\_tests](/recipes/crostfe.py#34)(api, properties):**
+
+Resolve request into list of tests and their metadata.
+
+Args:
+  * api (object): See RunSteps documentation.
+  * properties (CrosTfeProperties): The input request.
+
+Returns:
+  TODO(akeshet): A list of EnumeratedTest protos.
+
+&mdash; **def [select\_backend](/recipes/crostfe.py#49)(api, enumerated_tests, migration_config):**
+
+Select which backend (cautotest, skylab) will handle test requests.
+
+This step will be deleted once the entire device fleet has been migrated from
+cautotest to skylab.
+
+Args:
+  * api (object): See RunSteps documentation.
+  * enumerated_tests (list[EnumeratedTest proto]): tests to run.
+  * migration_config (MigrationConfig proto): migration configuration.
+
+Raises: An exception if a backend cannot be selected for these requests (for
+      instance, if the set of tests are too heterogenous to be handled by
+      a single backend).
+
+Returns:
+  TODO(akeshet): Enum(autotest, skylab) indication of backend to use.
+
+&mdash; **def [validate\_request](/recipes/crostfe.py#21)(api, properties):**
 
 Validate the CrosTfeProperties.
 
