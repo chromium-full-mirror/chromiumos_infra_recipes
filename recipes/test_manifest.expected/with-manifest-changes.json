@@ -1,14 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "check for manifest changes",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@found changes to manifest, continuing@@@",
-      "@@@STEP_LINK@https://chrome-internal-review.googlesource.com/c/chromeos/manifest-internal/+/123456/7@https://chrome-internal-review.googlesource.com/c/chromeos/manifest-internal/+/123456/7@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "ensure synced checkout"
   },
   {
@@ -310,14 +302,14 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 7}], \"include_files\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_files\": false}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chrome-internal-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
@@ -336,7 +328,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chrome-internal.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -382,7 +374,7 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromium/src",
+      "https://chromium.googlesource.com/chromium/src",
       "refs/changes/56/123456/7:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
@@ -435,7 +427,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromeos/manifest-internal",
+      "manifest",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
@@ -443,24 +435,24 @@
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/manifest-internal|src/chromeos/manifest-internal|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@manifest|src/manifest|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "try sync chromeos/manifest-internal"
+    "name": "try sync manifest"
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--manifest-name",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal/default.xml"
+      "[START_DIR]/chromiumos_workspace/src/manifest/default.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "try sync chromeos/manifest-internal.repo sync",
+    "name": "try sync manifest.repo sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
