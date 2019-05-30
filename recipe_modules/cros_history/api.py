@@ -18,14 +18,14 @@ PASSED_TESTS_KEY = 'passed_tests'
 class CrosHistoryApi(recipe_api.RecipeApi):
   """A module to use build history to avoid redundant builds."""
 
-  def __init__(self, lookback_no_of_seconds, *args, **kwargs):
+  def __init__(self, properties, *args, **kwargs):
     super(CrosHistoryApi, self).__init__(*args, **kwargs)
-    self._lookback_no_of_seconds = lookback_no_of_seconds
+    self._lookback_seconds = properties.lookback_seconds or 5 * 24 * 60 * 60
 
   @property
   def start_time_in_seconds(self):
     """Generate start time in seconds."""
-    return self.m.time.time() - self._lookback_no_of_seconds
+    return self.m.time.time() - self._lookback_seconds
 
   def get_passed_builds(self, patches):
     """Retrieve passed builds with the same patches.
