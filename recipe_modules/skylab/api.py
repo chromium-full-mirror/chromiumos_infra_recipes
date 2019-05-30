@@ -18,9 +18,9 @@ class SkylabApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, **kwargs):
     super(SkylabApi, self).__init__(**kwargs)
-    self._server = properties.skylab_server or 'https://chromeos-swarming.appspot.com'
-    self._version = properties.skylab_version or 'prod'
-    self._qs_account = properties.skylab_qs_account or 'pcq'
+    self._server = str(properties.skylab_server) or 'https://chromeos-swarming.appspot.com'
+    self._version = str(properties.skylab_version) or 'prod'
+    self._qs_account = str(properties.skylab_qs_account) or 'pcq'
 
   def initialize(self):
     self._client = None
