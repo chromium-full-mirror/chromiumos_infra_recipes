@@ -1,6 +1,28 @@
 [
   {
     "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.ensure chroot directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "ensure synced checkout"
   },
   {
@@ -585,13 +607,53 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "git rev-parse"
+    "name": "publish snapshot.git rev-parse (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "set_output_gitiles_commit",
+    "name": "publish snapshot.set_output_gitiles_commit",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/master\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "chromite/bin/cros_mark_as_stable",
+      "commit",
+      "--all",
+      "--buildroot",
+      "[START_DIR]/chromiumos_workspace",
+      "--overlay-type",
+      "both"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "uprev packages.uprev portage packages",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "chromite/bin/cros_mark_as_stable",
+      "push",
+      "--dryrun",
+      "--overlay-type",
+      "both"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "uprev packages.push portage package uprevs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

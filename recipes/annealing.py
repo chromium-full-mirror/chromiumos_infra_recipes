@@ -43,6 +43,7 @@ DEPS = [
     'git_footers',
     'git_txn',
     'naming',
+    'portage',
     'repo',
 ]
 
@@ -56,42 +57,54 @@ def RunSteps(api, properties):
     raise ValueError('must set manifest ref')
 
   api.cros_source.ensure_synced_cache()
-  with api.cros_source.checkout_overlays_context(), api.context(
-      cwd=api.cros_source.workspace_path.join('manifest-internal')):
+  with api.cros_source.checkout_overlays_context():
+    with api.context(
+        cwd=api.cros_source.workspace_path.join('manifest-internal')):
+      snapshot_xml = api.repo.manifest_snapshot()
+      manifest_diffs = api.repo.diff_remote_and_local_manifests(
+          api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
 
-    snapshot_xml = api.repo.manifest_snapshot()
-    manifest_diffs = api.repo.diff_remote_and_local_manifests(
-        api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
+      # TODO(athilenius): It would be nice to set the 'Info' column here.
+      gerrit_commits = []
+      if manifest_diffs is not None:
+        # If there are zero diffs (empty array) then there is nothing
+        # interesting to be done.
+        if len(manifest_diffs) == 0:
+          return
 
-    # TODO(athilenius): It would be nice to set the 'Info' column here.
-    gerrit_commits = []
-    if manifest_diffs is not None:
-      # If there are zero diffs (empty array) then there is nothing
-      # interesting to be done.
-      if len(manifest_diffs) == 0:
-        return
+        # Otherwise we need to ensure all of those diffs have fulfilled deps.
+        api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
-      # Otherwise we need to ensure all of those diffs have fulfilled deps.
-      api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
+        # Then, record the diffs. We are specifically interested in what
+        # gerrit changes have landed.
+        gerrit_commits = record_gerrit_changes(api, manifest_diffs)
 
-      # Then, record the diffs. We are specifically interested in what
-      # gerrit changes have landed.
-      gerrit_commits = record_gerrit_changes(api, manifest_diffs)
+      with api.step.nest('publish snapshot') as step:
+        snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
+        api.git.fetch_ref(snapshot_repo_url, manifest_ref)
+        api.git.checkout('FETCH_HEAD')
+        snapshot_commit_message = make_message(api, manifest_ref, gerrit_commits)
+        api.git_txn.update_ref_write_file(
+            snapshot_repo_url, manifest_ref, snapshot_commit_message,
+            api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
+            snapshot_xml)
 
-    with api.step.nest('publish snapshot') as step:
-      snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
-      api.git.fetch_ref(snapshot_repo_url, manifest_ref)
-      api.git.checkout('FETCH_HEAD')
-      snapshot_commit_message = make_message(api, manifest_ref, gerrit_commits)
-      api.git_txn.update_ref_write_file(
-          snapshot_repo_url, manifest_ref, snapshot_commit_message,
-          api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
-          snapshot_xml)
+        # Use the newly created snapshot commit as the build output.
+        snapshot_commit = make_gitiles_commit(api, snapshot_repo_url,
+                                              api.git.head_commit())
+        api.buildbucket.set_output_gitiles_commit(snapshot_commit)
 
-    # Use the newly created snapshot commit as the build output.
-    snapshot_commit = make_gitiles_commit(api, snapshot_repo_url,
-                                          api.git.head_commit())
-    api.buildbucket.set_output_gitiles_commit(snapshot_commit)
+    # It may seem weird that we publish uprevs after publishing the snapshot.
+    # Unfortunately, publishing uprevs takes ~10 minutes, in which time it is
+    # not unlikely that commits will land upstream and be trivially merged by
+    # Gerrit. This means the local uprev commits will have different sha1s
+    # from the remote uprev commits. The only two ways around it are (a)
+    # run repo sync a second time, after uprevs, or (b) include the uprevs
+    # in the NEXT snapshot. We choose the least wasteful option.
+    with api.step.nest('uprev packages'), api.context(
+        cwd=api.cros_source.workspace_path):
+      api.portage.uprev_packages()
+      api.portage.push_package_uprevs()
 
 
 def record_gerrit_changes(api, manifest_diffs):
