@@ -65,13 +65,9 @@ def RunSteps(api, properties):
   passed_builders = set()
 
   if gerrit_changes:
-    # Only run this code for a single test CL.
-    contains_test_cl = False
-    for gc in gerrit_changes:
-      if int(gc.change) == 1634795:
-        contains_test_cl = True  # pragma: nocover
-    if contains_test_cl:
-      api.gerrit.changes_are_submittable(gerrit_changes)  # pragma: nocover
+    # Run the patch submittability check, but ignore the output until we've
+    # seen it work for a while in prod.
+    api.gerrit.changes_are_submittable(gerrit_changes)
   if properties.enable_history and gerrit_changes:
     if properties.assert_singleton:
       with api.step.nest('find inflight orchestrator') as step:

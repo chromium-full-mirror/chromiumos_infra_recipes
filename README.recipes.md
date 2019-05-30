@@ -89,7 +89,7 @@
 
 ### *recipe_modules* / [analysis\_service](/recipe_modules/analysis_service)
 
-[DEPS](/recipe_modules/analysis_service/__init__.py#1): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/analysis_service/__init__.py#5): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -1793,7 +1793,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#43)(api, properties):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#234)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#230)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1804,7 +1804,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#223)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#219)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -1812,7 +1812,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#210)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#206)(refs):**
 
 Assert the given refs start with refs/heads.
 
