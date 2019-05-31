@@ -37,7 +37,7 @@ class DependsApi(recipe_api.RecipeApi):
                                      manifest_diff.to_rev)
         for commit in git_commits:
           # Accumulate Cq-Depend CLs from commits
-          dep_lines = re.findall(r'^\s*Cq-Depend:(.*)$', commit.message,
+          dep_lines = re.findall(r'\s*Cq-Depend:(.*)', commit.message,
                                  re.IGNORECASE)
           if len(dep_lines) == 0:
             continue
