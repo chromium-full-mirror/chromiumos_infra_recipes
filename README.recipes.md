@@ -430,7 +430,7 @@ API for uploading CrOS prebuilts to Google Storage.
 
 A module for uploading package prebuilts.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#143)(self, target, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#155)(self, target, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 

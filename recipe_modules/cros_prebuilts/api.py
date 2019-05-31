@@ -115,7 +115,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
             'Set %s=%s.' % (binhost.BinhostKey.Name(key), uri), binhost_path,
             binhost_data, automerge=True)
 
-  def _upload(self, root, paths, uri):
+  def _upload(self, root, paths, uri, acls):
     """Upload the paths within root to the GS URI.
 
     This function symlinks all paths within the root directory to a temporary
@@ -128,6 +128,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       uri: The Google Storage URI to upload the paths to. Their path at the URI
           will match their path relative to the root. E.g., foo/bar.tbz2 will be
           uploaded to <uri>/foo/bar.tbz2.
+      acls: (List[AclArg]): acls to apply to the uploaded prebuilts.
     """
     with self.m.step.nest('upload prebuilt blobs to GS'):
       sync_root = self.m.path.mkdtemp(prefix='prebuilts')
@@ -139,6 +140,17 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       symlink_tree.create_links('link files to upload')
       self.m.gsutil(['rsync', '-r', symlink_tree.root, uri],
                     parallel_upload=True, multithreaded=True)
+      self.m.gsutil(['acl', 'ch', '-r', self._acl_string(acls), uri],
+                    multithreaded=True)
+
+  def _acl_string(self, acls):
+    """Converts a list of acls into a single string to use in api call.
+
+    Args:
+      acls: (List[AclArg]): acls to convert to single acl string.
+    """
+    acl_chunks = [a.arg + ' ' + a.value for a in acls]
+    return ' '.join(acl_chunks)
 
   def upload_target_prebuilts(self, target, kind, gs_bucket, private=True):
     """Upload binary prebuilts for the build target to Google Storage.
@@ -154,8 +166,11 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """
     binhost_key = self._binhost_key(kind)
     with self.m.step.nest('upload prebuilts'):
+      acls = self.m.cros_build_api.BinhostService.GetPrivatePrebuiltAclArgs(
+          binhost.AclArgsRequest(build_target=target),
+          infra_step=True, name='read gs acls').args
       upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
       upload_root, upload_paths = self._prepare_binhost_uploads(
           target, upload_uri)
-      self._upload(upload_root, upload_paths, upload_uri)
+      self._upload(upload_root, upload_paths, upload_uri, acls)
       self._set_binhost(target, private, binhost_key, upload_uri)

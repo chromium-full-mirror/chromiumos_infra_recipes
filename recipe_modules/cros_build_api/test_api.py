@@ -56,6 +56,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'path': 'foo.tbz2'
         }])
     responses['SetBinhost'] = jsonify(output_file=self.path('BINHOST.conf'))
+    responses['GetPrivatePrebuiltAclArgs'] = jsonify(args=[
+        {'arg': 'arg1', 'value': 'value1'},
+        {'arg': 'arg2', 'value': 'value2'},
+    ])
     return responses
 
   @property

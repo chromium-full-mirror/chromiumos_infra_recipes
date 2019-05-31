@@ -57,6 +57,7 @@ def RunSteps(api):
       'BinhostService': {
           'PrepareBinhostUploads': binhost.PrepareBinhostUploadsResponse,
           'SetBinhost': binhost.SetBinhostResponse,
+          'GetPrivatePrebuiltAclArgs': binhost.AclArgsResponse,
       },
       'DependencyService': {
           'GetBuildDependencyGraph': depgraph.GetBuildDependencyGraphResponse,
