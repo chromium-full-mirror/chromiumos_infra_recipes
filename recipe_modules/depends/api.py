@@ -94,7 +94,7 @@ class DependsApi(recipe_api.RecipeApi):
       json_data = {
           'changes': [{
               'host': dep.host,
-              'change_number': dep.cl_number,
+              'change_number': int(dep.cl_number),
               'patch_set': -1
           } for dep in deps]
       }

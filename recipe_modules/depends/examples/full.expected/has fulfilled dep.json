@@ -89,7 +89,7 @@
     ],
     "infra_step": true,
     "name": "ensure manifest cq-depend fulfilled (2).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": \"12345\", \"host\": \"chromium\", \"patch_set\": -1}, {\"change_number\": \"67890\", \"host\": \"chrome-internal\", \"patch_set\": -1}]}",
+    "stdin": "{\"changes\": [{\"change_number\": 12345, \"host\": \"chromium\", \"patch_set\": -1}, {\"change_number\": 67890, \"host\": \"chrome-internal\", \"patch_set\": -1}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
