@@ -190,6 +190,15 @@
   {
     "cmd": [
       "git",
+      "status",
+      "--porcelain"
+    ],
+    "infra_step": true,
+    "name": "git status"
+  },
+  {
+    "cmd": [
+      "git",
       "symbolic-ref",
       "--short",
       "HEAD"

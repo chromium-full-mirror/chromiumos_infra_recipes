@@ -32,6 +32,9 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.git.get_diff_files('master', 'HEAD'),
       ['a/b/text.txt', 'other_test.txt'])
+  api.assertions.assertEqual(
+      api.git.get_working_dir_diff_files(),
+      ['changed.txt', 'new.txt'])
 
   with api.git.head_context():
     pass

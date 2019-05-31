@@ -88,6 +88,7 @@
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
+  * [test_proto](#recipes-test_proto) &mdash; Verifies the proto repository.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running Tast VM tests.
 ## Recipe Modules
 
@@ -933,7 +934,7 @@ and not modified, which you can use `diff_check` to check for.
 Args:
   * path (str|Path): The file path to stage.
 
-&mdash; **def [checkout](/recipe_modules/git/api.py#132)(self, commit, force=False):**
+&mdash; **def [checkout](/recipe_modules/git/api.py#146)(self, commit, force=False):**
 
 Runs 'git checkout'.
 
@@ -941,14 +942,14 @@ Args:
   * commit (str): The commit (technically "tree-like") to checkout.
   * force (bool): If True, throw away local changes (--force).
 
-&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#145)(self, commit):**
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#159)(self, commit):**
 
 Runs 'git cherry-pick'.
 
 Args:
   * commit (str): The commit to cherry pick.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#276)(self, repo_url, target_path=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#290)(self, repo_url, target_path=None):**
 
 Clones a Git repo into the current directory.
 
@@ -957,7 +958,7 @@ Args:
   * target_path (Path): Path in which to clone the repo, or None to specify
       current directory.
 
-&mdash; **def [commit\_files](/recipe_modules/git/api.py#153)(self, files, message):**
+&mdash; **def [commit\_files](/recipe_modules/git/api.py#167)(self, files, message):**
 
 Runs 'git commit' with the given files.
 
@@ -965,7 +966,7 @@ Args:
   * files (list[str|Path]): A list of file paths to commit.
   * message (str): The commit message.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#262)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#276)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -977,7 +978,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#181)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#195)(self):**
 
 Returns the currently checked out branch name.
 
@@ -997,7 +998,7 @@ Returns:
       otherwise.
   
 
-&mdash; **def [fetch](/recipe_modules/git/api.py#103)(self, remote, refspecs=None):**
+&mdash; **def [fetch](/recipe_modules/git/api.py#117)(self, remote, refspecs=None):**
 
 Runs 'git fetch'.
 
@@ -1005,7 +1006,7 @@ Args:
   * remote (str): The remote repository to fetch from.
   * refspecs (list[str]): The refspecs to fetch.
 
-&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#115)(self, remote, ref):**
+&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#129)(self, remote, ref):**
 
 Fetch a single remote ref with 'git fetch'.
 
@@ -1027,15 +1028,19 @@ Args:
 Returns:
   A list[str] of changed files.
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#195)(self):**
+&mdash; **def [get\_working\_dir\_diff\_files](/recipe_modules/git/api.py#103)(self):**
+
+Finds all changed files (including untracked).
+
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#209)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#201)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#215)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#232)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#246)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -1045,7 +1050,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#211)(self, from_rev, to_rev):**
+&mdash; **def [log](/recipe_modules/git/api.py#225)(self, from_rev, to_rev):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -1056,7 +1061,7 @@ Args:
 Returns:
   List(Commit) A list of commit metas.
 
-&mdash; **def [push](/recipe_modules/git/api.py#162)(self, remote, refspec, capture_stdout=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#176)(self, remote, refspec, capture_stdout=False):**
 
 Runs 'git push'.
 
@@ -1068,7 +1073,7 @@ Args:
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#244)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#258)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -1988,6 +1993,13 @@ on its own because it is agnostic of ChromeOS build targets.
 Verifies a repo manifest.
 
 &mdash; **def [RunSteps](/recipes/test_manifest.py#19)(api):**
+### *recipes* / [test\_proto](/recipes/test_proto.py)
+
+[DEPS](/recipes/test_proto.py#8): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Verifies the proto repository.
+
+&mdash; **def [RunSteps](/recipes/test_proto.py#19)(api):**
 ### *recipes* / [test\_vm](/recipes/test_vm.py)
 
 [DEPS](/recipes/test_vm.py#37): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

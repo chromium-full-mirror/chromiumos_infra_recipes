@@ -100,6 +100,20 @@ other_test.txt
         stdout=self.m.raw_io.output(), test_stdout=test_stdout)
     return step_data.stdout.strip().split('\n')
 
+  def get_working_dir_diff_files(self):
+    """Finds all changed files (including untracked)."""
+    test_stdout = """
+ M changed.txt
+?? new.txt
+"""
+    step_data = self._step(
+        ['status', '--porcelain'], stdout=self.m.raw_io.output(),
+        test_stdout=test_stdout)
+
+    # Need to strip the diff mode characters, e.g. "?? "
+    return [line[2:].strip() for line in step_data.stdout.strip().splitlines()]
+
+
   def fetch(self, remote, refspecs=None):
     """Runs 'git fetch'.
 
