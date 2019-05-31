@@ -61,6 +61,8 @@
   * [cros_relevance:examples/full](#recipes-cros_relevance_examples_full)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
+  * [cros_source:examples/gitiles_failure](#recipes-cros_source_examples_gitiles_failure)
+  * [cros_source:examples/gitiles_success](#recipes-cros_source_examples_gitiles_success)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_test_platform](#recipes-cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
@@ -562,7 +564,7 @@ of a build and then mounted into the master and/or workspace paths.
 
 Returns a context where master and workspace overlays are mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#187)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#196)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -575,7 +577,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#144)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#153)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -1726,6 +1728,20 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#17)(api):**
+### *recipes* / [cros\_source:examples/gitiles\_failure](/recipe_modules/cros_source/examples/gitiles_failure.py)
+
+[DEPS](/recipe_modules/cros_source/examples/gitiles_failure.py#6): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/gitiles_failure.py#14)(api):**
+
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_source/examples/gitiles_failure.py#20)(api, attempt):**
+### *recipes* / [cros\_source:examples/gitiles\_success](/recipe_modules/cros_source/examples/gitiles_success.py)
+
+[DEPS](/recipe_modules/cros_source/examples/gitiles_success.py#6): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/gitiles_success.py#13)(api):**
+
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_source/examples/gitiles_success.py#19)(api, attempt):**
 ### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#8): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

@@ -134,9 +134,18 @@ class CrosSourceApi(recipe_api.RecipeApi):
                                        gitiles_commit.project)
 
       step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file('<manifest></manifest>')
-      snapshot_xml = self.m.gitiles.download_file(gitiles_url, 'snapshot.xml',
-                                                  branch=gitiles_commit.id,
-                                                  step_test_data=step_test_data)
+      for retries in range(3):
+        try:
+          snapshot_xml = self.m.gitiles.download_file(
+              gitiles_url, 'snapshot.xml', branch=gitiles_commit.id,
+              step_test_data=step_test_data,
+              timeout=self.test_api.gitiles_timeout_seconds)
+          break
+        except recipe_api.StepFailure as ex:
+          if ex.had_timeout and retries < 2:
+            continue
+          else:
+            raise
 
       self.m.repo.sync_manifest(manifest_data=snapshot_xml, detach=True,
                                 optimized_fetch=True)

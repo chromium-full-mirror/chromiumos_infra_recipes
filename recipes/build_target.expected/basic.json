@@ -376,6 +376,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "sync to snapshot.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",
+    "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
