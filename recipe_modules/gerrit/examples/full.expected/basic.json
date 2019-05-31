@@ -95,9 +95,9 @@
   },
   {
     "cmd": [],
-    "name": "check if changes submittable",
+    "name": "check for merge conflicts",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Confirmed changes can be cherry-picked@@@"
+      "@@@STEP_TEXT@confirmed no merge conflicts@@@"
     ]
   },
   {
@@ -105,7 +105,7 @@
       "[START_DIR]/cros-recipes-support/git-test-submit/git-test-submit"
     ],
     "infra_step": true,
-    "name": "check if changes submittable.git-test-submit",
+    "name": "check for merge conflicts.git-test-submit",
     "stdin": "{\"gerrit_changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -117,9 +117,9 @@
   },
   {
     "cmd": [],
-    "name": "check if changes submittable (2)",
+    "name": "check for merge conflicts (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Unable to cherry-pick changes@@@",
+      "@@@STEP_TEXT@unable to cherry-pick changes@@@",
       "@@@STEP_LOG_LINE@cherry-pick-failures@could not cherry pick@@@",
       "@@@STEP_LOG_END@cherry-pick-failures@@@",
       "@@@STEP_FAILURE@@@"
@@ -130,7 +130,7 @@
       "[START_DIR]/cros-recipes-support/git-test-submit/git-test-submit"
     ],
     "infra_step": true,
-    "name": "check if changes submittable (2).git-test-submit",
+    "name": "check for merge conflicts (2).git-test-submit",
     "stdin": "{\"gerrit_changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

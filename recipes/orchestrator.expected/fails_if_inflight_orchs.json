@@ -1,9 +1,9 @@
 [
   {
     "cmd": [],
-    "name": "check if changes submittable",
+    "name": "check for merge conflicts",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Confirmed changes can be cherry-picked@@@"
+      "@@@STEP_TEXT@confirmed no merge conflicts@@@"
     ]
   },
   {
@@ -14,7 +14,7 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "name": "check if changes submittable.read deploy_cipd.json",
+    "name": "check for merge conflicts.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -37,7 +37,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "check if changes submittable.ensure_installed",
+    "name": "check for merge conflicts.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -58,7 +58,7 @@
       "[START_DIR]/cros-recipes-support/git-test-submit/git-test-submit"
     ],
     "infra_step": true,
-    "name": "check if changes submittable.git-test-submit",
+    "name": "check for merge conflicts.git-test-submit",
     "stdin": "{\"gerrit_changes\": [{\"change_number\": 1234, \"host\": \"\", \"patch_set\": 0}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -72,7 +72,7 @@
     "cmd": [],
     "name": "find inflight orchestrator",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found these inflight run(s)@@@",
+      "@@@STEP_TEXT@found inflight run(s)@@@",
       "@@@STEP_LINK@..amd64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_LINK@..arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
       "@@@STEP_FAILURE@@@"
@@ -170,7 +170,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Current build is redundant. Exiting."
+      "humanReason": "current build is redundant, exiting"
     },
     "name": "$result"
   }

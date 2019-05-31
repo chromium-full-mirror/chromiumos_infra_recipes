@@ -39,13 +39,13 @@ class Stub(object):
     service_descriptor = descriptor_pool.Default().FindServiceByName(service)
     method_descriptor = service_descriptor.FindMethodByName(method)
     if method_descriptor is None:
-      raise KeyError('No such method %s in service %s.' % (method, service))
+      raise KeyError('no such method %s in service %s' % (method, service))
 
     # Check that the input type aligns with what is expected.
     given_input_type = input_proto.DESCRIPTOR.full_name
     method_input_type = method_descriptor.input_type.full_name
     if given_input_type != method_input_type:
-      raise TypeError('Expected input type %r, got %r' % (method_input_type,
+      raise TypeError('expected input type %r, got %r' % (method_input_type,
                                                           given_input_type))
 
     # We good we good we good. Now we can actually call the build API.

@@ -31,7 +31,7 @@ class FailuresApi(recipe_api.RecipeApi):
         step.presentation.step_text = 'all packages installed successfully'
         return
 
-      packages_str = '\n'.join(
+      packages_str = ', '.join(
           ['{}/{}'.format(p.category, p.package_name) for p in packages])
       step.presentation.step_text = 'failed to install: {}'.format(packages_str)
       step.presentation.status = self.m.step.FAILURE
@@ -124,7 +124,7 @@ class FailuresApi(recipe_api.RecipeApi):
 
       for failed_vm_test in failed_vm_tests:
         properties = json_format.MessageToDict(failed_vm_test.output.properties)
-        title = '[FAILED] {}'.format(properties['name'])
+        title = '[FAILED BUT IGNORED] {}'.format(properties['name'])
         url = self.m.buildbucket.build_url(build_id=failed_vm_test.id)
         step.presentation.links[title] = url
       # TODO(evanhernandez): Raise exception for these results.

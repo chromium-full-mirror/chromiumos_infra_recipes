@@ -48,7 +48,7 @@ class DupItApi(recipe_api.RecipeApi):
 
     self.m.gsutil(
         cmd=gsutil_rsync_commands,
-        name='Download distfiles from %s' % self.latest_gs_distfiles_uri,
+        name='download distfiles from %s' % self.latest_gs_distfiles_uri,
         parallel_upload=True, multithreaded=True)
 
   def _rsync_from_public_gentoo_distfiles(self):
@@ -79,7 +79,7 @@ class DupItApi(recipe_api.RecipeApi):
         '--bwlimit=%s' % self.rsync_mirror_rate_limit
     ]
     rsync_commands += [self.rsync_mirror_address, self.local_distfiles_cache]
-    self.m.step('Sync distfiles from %s' % self.rsync_mirror_address,
+    self.m.step('sync distfiles from %s' % self.rsync_mirror_address,
                 rsync_commands, infra_step=True)
 
   def _rsync_to_latest_gs_distfiles(self):
@@ -92,7 +92,7 @@ class DupItApi(recipe_api.RecipeApi):
 
     self.m.gsutil(
         cmd=gsutil_rsync_commands,
-        name='Sync latest distfiles to %s' % self.latest_gs_distfiles_uri,
+        name='sync latest distfiles to %s' % self.latest_gs_distfiles_uri,
         parallel_upload=True, multithreaded=True)
 
   def _copy_new_files_to_all_gs_distfiles(self):
@@ -120,7 +120,7 @@ class DupItApi(recipe_api.RecipeApi):
     ]
 
     self.m.gsutil(cmd=gsutil_cp_commands,
-                  name='Upload new distfiles to %s' % self.all_gs_distfiles_uri,
+                  name='upload new distfiles to %s' % self.all_gs_distfiles_uri,
                   parallel_upload=True, multithreaded=True)
 
   def run(self):

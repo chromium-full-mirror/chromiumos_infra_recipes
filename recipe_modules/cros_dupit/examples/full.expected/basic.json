@@ -16,7 +16,7 @@
       "[CACHE]/gentoo_distfiles"
     ],
     "infra_step": true,
-    "name": "gsutil Download distfiles from gs://stark-trek/mini-cache/latest_distfiles/"
+    "name": "gsutil download distfiles from gs://stark-trek/mini-cache/latest_distfiles/"
   },
   {
     "cmd": [
@@ -37,7 +37,7 @@
       "[CACHE]/gentoo_distfiles"
     ],
     "infra_step": true,
-    "name": "Sync distfiles from rsync://mirrors.do.not.exists/distfiles"
+    "name": "sync distfiles from rsync://mirrors.do.not.exists/distfiles"
   },
   {
     "cmd": [
@@ -58,7 +58,7 @@
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
     "infra_step": true,
-    "name": "gsutil Upload new distfiles to gs://stark-trek/the-ultimate-computer/distfiles/"
+    "name": "gsutil upload new distfiles to gs://stark-trek/the-ultimate-computer/distfiles/"
   },
   {
     "cmd": [
@@ -78,7 +78,7 @@
       "gs://stark-trek/mini-cache/latest_distfiles/"
     ],
     "infra_step": true,
-    "name": "gsutil Sync latest distfiles to gs://stark-trek/mini-cache/latest_distfiles/"
+    "name": "gsutil sync latest distfiles to gs://stark-trek/mini-cache/latest_distfiles/"
   },
   {
     "jsonResult": null,

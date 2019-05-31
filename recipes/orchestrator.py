@@ -81,14 +81,14 @@ def RunSteps(api, properties):
             start_build_id=api.buildbucket.build.id)
         if len(older_running_builds) > 1:
           # Current build is redundant. Exit with failure.
-          step.presentation.step_text = 'found these inflight run(s)'
+          step.presentation.step_text = 'found inflight run(s)'
           for build in older_running_builds:
             title = api.naming.get_build_title(build)
             url = api.buildbucket.build_url(build_id=build.id)
             step.presentation.links[title] = url
-          raise api.step.StepFailure('Current build is redundant. Exiting.')
+          raise api.step.StepFailure('current build is redundant, exiting')
         else:
-          step.presentation.step_text = 'no inflight run found'
+          step.presentation.step_text = 'found no inflight run'
 
     completed_builds = api.cros_history.get_passed_builds(gerrit_changes)
     passed_builders = set(build.builder.builder for build in completed_builds)

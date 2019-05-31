@@ -233,7 +233,7 @@ class GerritApi(recipe_api.RecipeApi):
     Returns:
       bool: whether the changes are submittable
     """
-    with self.m.step.nest('check if changes submittable') as step:
+    with self.m.step.nest('check for merge conflicts') as step:
       changes = []
       for gc in gerrit_changes:
         changes.append({
@@ -250,9 +250,9 @@ class GerritApi(recipe_api.RecipeApi):
       result = self.m.support.call('git-test-submit', req,
                                    test_output_data=test_output_data)
       if result['errors']:
-        step.presentation.step_text = 'Unable to cherry-pick changes'
+        step.presentation.step_text = 'unable to cherry-pick changes'
         step.presentation.logs['cherry-pick-failures'] = result['errors']
         step.presentation.status = 'FAILURE'
         return False
-      step.presentation.step_text = 'Confirmed changes can be cherry-picked'
+      step.presentation.step_text = 'confirmed no merge conflicts'
       return True
