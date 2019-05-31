@@ -168,7 +168,6 @@
     "name": "gclient recurse (git config user.email)"
   },
   {
-    "jsonResult": null,
     "name": "$result"
   }
 ]

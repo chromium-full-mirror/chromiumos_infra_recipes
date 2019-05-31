@@ -75,7 +75,6 @@
     "name": "read chromeos_version.sh (2)"
   },
   {
-    "jsonResult": null,
     "name": "$result"
   }
 ]

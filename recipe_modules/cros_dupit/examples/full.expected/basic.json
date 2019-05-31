@@ -81,7 +81,6 @@
     "name": "gsutil sync latest distfiles to gs://stark-trek/mini-cache/latest_distfiles/"
   },
   {
-    "jsonResult": null,
     "name": "$result"
   }
 ]
