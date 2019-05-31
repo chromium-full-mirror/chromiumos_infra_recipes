@@ -91,17 +91,17 @@ The output from `led launch` should give a link to the swarming task, e.g.
 
 ## Recipe Tester Presubmit
 
-Recipe changes run through a presubmit job that verifies them on actual ChromeOS CI builders 
-(essentially automating the `led` testing process). 
+Recipe changes run through a presubmit job that verifies them on actual ChromeOS CI builders
+(essentially automating the `led` testing process).
 
 The builders to be run are controlled with the `builders` property on the `recipes_tester` recipe.
-Builders will not be run if the recipe change does not affect them (as determined by 
+Builders will not be run if the recipe change does not affect them (as determined by
 `./recipes.py analyze`, which checks if the recipe or any of its dependencies has been modified).
 
-If you are confident that your change does not need testing, you can include the 
+If you are confident that your change does not need testing, you can include the
 `Recipes-Tester-Skip-Builder` footer in your CL. **That this should be done sparingly. If the
 presubmit is flaky, the root cause should be fixed. Please put a justification in the CL
-description for why the builder is skipped**. The footer syntax is a bit picky; an example commit 
+description for why the builder is skipped**. The footer syntax is a bit picky; an example commit
 message would look like
 
 ```
