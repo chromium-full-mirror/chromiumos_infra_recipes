@@ -23,11 +23,10 @@ import os
 
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
+from PB.chromiumos.common import Path
 from PB.chromite.api.image import CreateVmRequest
-from PB.chromite.api.image import Image
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
-from PB.chromite.api.image import VmImage
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
@@ -124,7 +123,7 @@ def RunSteps(api, properties):
     api.cros_build_api.TestService.VmTest(
         VmTestRequest(
             build_target=properties.build_target, chroot=api.cros_sdk.chroot,
-            vm_image=VmImage(path=vm_image_path),
+            vm_path=Path(path=vm_image_path, location=Path.OUTSIDE),
             ssh_options=VmTestRequest.SshOptions(
                 private_key_path=private_key_path),
             test_harness=properties.test_harness, vm_tests=[
