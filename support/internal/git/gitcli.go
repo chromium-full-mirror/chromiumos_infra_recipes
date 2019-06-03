@@ -78,7 +78,7 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	}
 	patchFile := strings.Trim(stdoutBuf.String(), "\n")
 	log.Printf("patching branch")
-	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "am", patchFile); err != nil {
+	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "am", "--3way", patchFile); err != nil {
 		// clean up the am state to reset the repo for the next patch.
 		runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "am", "--abort")
 		return errors.New(stderrBuf.String())
