@@ -38,6 +38,7 @@ DEPS = [
     'recipe_engine/archive',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
@@ -65,6 +66,7 @@ def RunSteps(api, properties):
       api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
       gerrit_changes = api.buildbucket.build.input.gerrit_changes
       if gerrit_changes:
+        gerrit_changes = api.cq.ordered_gerrit_changes
         with api.step.nest('cherry-pick gerrit changes'):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
@@ -135,24 +137,22 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield (api.test('with-tast') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='amd64-generic-cq') +
+                                   builder='amd64-generic-cq') +  #
+         api.cq(full_run=True) +  #
          api.properties(
              build_target={'name': 'amd64-generic'},
-             test_harness=VmTestRequest.TAST,
-             build_payload={
+             test_harness=VmTestRequest.TAST, build_payload={
                  'artifacts_gs_bucket': 'gs://chromeos-image-archive',
                  'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
-             },
-             expressions=['example.Pass']))
+             }, expressions=['example.Pass']))
 
   yield (api.test('with-autotest') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +
+         api.cq(full_run=True) +  #
          api.properties(
              build_target={'name': 'amd64-generic'},
-             test_harness=VmTestRequest.AUTOTEST,
-             build_payload={
+             test_harness=VmTestRequest.AUTOTEST, build_payload={
                  'artifacts_gs_bucket': 'gs://chromeos-image-archive',
                  'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
-             },
-             expressions=['example.Pass']))
+             }, expressions=['example.Pass']))
