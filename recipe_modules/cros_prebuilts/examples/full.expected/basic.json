@@ -14,6 +14,8 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@stdout@@@@",
+      "@@@STEP_LOG_END@stdout@@@",
       "@@@STEP_LOG_LINE@response@{\"args\": [{\"value\": \"value1\", \"arg\": \"arg1\"}, {\"value\": \"value2\", \"arg\": \"arg2\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -158,6 +160,8 @@
       "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@stdout@@@@",
+      "@@@STEP_LOG_END@stdout@@@",
       "@@@STEP_LOG_LINE@response@{\"uploads_dir\": \"[START_DIR]/uploads/dir\", \"upload_targets\": [{\"path\": \"foo.tbz2\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -301,6 +305,8 @@
       "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@stdout@@@@",
+      "@@@STEP_LOG_END@stdout@@@",
       "@@@STEP_LOG_LINE@response@{\"output_file\": \"[START_DIR]/BINHOST.conf\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
