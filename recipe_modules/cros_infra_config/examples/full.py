@@ -9,8 +9,6 @@ DEPS = [
     'cros_infra_config',
 ]
 
-from PB.chromiumos.builder_config import BuilderConfig
-
 
 def RunSteps(api):
   builder_config = api.cros_infra_config.get_builder_config(
@@ -25,14 +23,6 @@ def RunSteps(api):
   api.assertions.assertEqual(children[1], "arm-generic-postsubmit")
 
   api.cros_infra_config.get_test_config('config_name.cfg')
-
-  with api.cros_infra_config.use_run_spec_context(
-      BuilderConfig.RUN) as should_exit:
-    api.assertions.assertFalse(should_exit)
-
-  with api.cros_infra_config.use_run_spec_context(
-      BuilderConfig.RUN_EXIT) as should_exit:
-    api.assertions.assertTrue(should_exit)
 
 def GenTests(api):
   yield api.test('basic') + api.buildbucket.ci_build(

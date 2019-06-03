@@ -139,8 +139,8 @@ def RunSteps(api, properties):
               timeout=45 * 60)
           api.failures.raise_failed_packages(response.failed_packages)
 
-      with api.cros_infra_config.use_run_spec_context(
-          build_config.unit_tests.ebuilds_run_spec) as should_exit:
+      if build_config.unit_tests.ebuilds_run_spec in [BuilderConfig.RUN,
+                                                      BuilderConfig.RUN_EXIT]:
         with api.step.nest('run ebuild tests'):
           response = api.cros_build_api.TestService.BuildTargetUnitTest(
               BuildTargetUnitTestRequest(
@@ -148,7 +148,7 @@ def RunSteps(api, properties):
                   result_path=str(api.path.mkdtemp()),
                   package_blacklist=build_config.unit_tests.package_blacklist))
           api.failures.raise_failed_packages(response.failed_packages)
-        if should_exit:
+        if build_config.unit_tests.ebuilds_run_spec == BuilderConfig.RUN_EXIT:
           return
 
       artifact_types = build_config.artifacts.artifact_types
@@ -206,6 +206,17 @@ def GenTests(api):
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='post-sync pointless build check') +
          api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('no-run-ebuild-tests') +  #
+         api.buildbucket.try_build(
+             project='chromeos',
+             bucket='postsubmit',
+             builder='grunt-postsubmit') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='pre-sync pointless build check') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='post-sync pointless build check') +
+         api.properties(build_target={'name': 'grunt'}))
 
   yield (api.test('run-exit-ebuild-tests') +  #
          api.buildbucket.try_build(

@@ -378,11 +378,11 @@ Generate start time in seconds.
 
 [DEPS](/recipe_modules/cros_infra_config/__init__.py#6): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#56)(self, builder_name):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#54)(self, builder_name):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -404,7 +404,7 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#82)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#80)(self, config_name):**
 
 Gets Path of most recent test config.
 
@@ -414,23 +414,9 @@ Args:
 Returns:
   Path pointing to specified config file.
 
-&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#20)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#18)(self):**
 
 Init the InfraConfigApi module.
-
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [use\_run\_spec\_context](/recipe_modules/cros_infra_config/api.py#103)(self, run_spec):**
-
-Returns a context for execution per the run spec.
-
-Controls execution per a BuilderConfig.RUN_SPEC. If the run spec is RUN
-or RUN_EXIT yield is invoked. The yield invocation passes whether the
-invoking context should exit.
-
-Args:
-  * run_spec (BuilderConfig.RUN_SPEC): the run spec controlling execution.
-
-Returns:
-    Yield invocation with boolean indicating whether to exit.
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1701,7 +1687,7 @@ Recipe for building a BuildTarget image.
 
 [DEPS](/recipe_modules/cros_infra_config/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/full.py#13)(api):**
 ### *recipes* / [cros\_infra\_config:examples/gitiles\_failed\_retry](/recipe_modules/cros_infra_config/examples/gitiles_failed_retry.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/gitiles_failed_retry.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

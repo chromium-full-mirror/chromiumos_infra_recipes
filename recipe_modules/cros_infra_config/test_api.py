@@ -88,6 +88,19 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "grunt-postsubmit",
+                    "branch": "master",
+                    "type": "POSTSUBMIT"
+                  },
+                  "general": {
+                    "critical": false
+                  },
+                  "unit_tests": {
+                    "ebuilds_run_spec": "NO_RUN"
+                  }
+                },
+                {
+                  "id": {
                     "name": "grunt-unittest-only-postsubmit",
                     "branch": "master",
                     "type": "POSTSUBMIT"
