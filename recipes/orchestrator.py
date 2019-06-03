@@ -64,11 +64,6 @@ def RunSteps(api, properties):
   completed_builds = []
   passed_builders = set()
 
-  # This is just here to test flag-gating.
-  if bool_experiment(api, 'experiment_enable_second_git_test_submit'):
-    if gerrit_changes:  # pragma: nocover
-      api.gerrit.changes_are_submittable(gerrit_changes)  # pragma: nocover
-
   if gerrit_changes:
     # Run the patch submittability check, but ignore the output until we've
     # seen it work for a while in prod.
@@ -275,24 +270,6 @@ def with_props_for_child_build(api, properties):
   """
   properties.update(api.cq.props_for_child_build)
   return properties
-
-
-def bool_experiment(api, experiment_name):
-  """Checks if a bool-valued experiment is enabled.
-
-  experiment_name is expected to be an input property on a build.
-
-  Args:
-    api (RecipeApi): See RunSteps documentation.
-    experiment_name (str): the experimental input property name.
-
-  Returns:
-    bool, whether the experiment is enabled.
-  """
-  input_props = api.buildbucket.build.input.properties  # pragma: nocover
-  if experiment_name in input_props.fields:   # pragma: nocover
-    return input_props.fields[experiment_name].bool_value  # pragma: nocover
-  return False  # pragma: nocover
 
 
 def GenTests(api):
