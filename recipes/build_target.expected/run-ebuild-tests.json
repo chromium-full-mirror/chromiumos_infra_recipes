@@ -1948,7 +1948,10 @@
       "acl",
       "ch",
       "-r",
-      "arg1 value1 arg2 value2",
+      "arg1",
+      "value1",
+      "arg2",
+      "value2",
       "gs://chromeos-prebuilt/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

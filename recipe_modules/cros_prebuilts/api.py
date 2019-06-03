@@ -140,17 +140,21 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       symlink_tree.create_links('link files to upload')
       self.m.gsutil(['rsync', '-r', symlink_tree.root, uri],
                     parallel_upload=True, multithreaded=True)
-      self.m.gsutil(['acl', 'ch', '-r', self._acl_string(acls), uri],
-                    multithreaded=True)
+      cmd = ['acl', 'ch', '-r']
+      self._add_acls(acls, cmd)
+      cmd.append(uri)
+      self.m.gsutil(cmd, multithreaded=True)
 
-  def _acl_string(self, acls):
-    """Converts a list of acls into a single string to use in api call.
+  def _add_acls(self, acls, cmd):
+    """Adds the acl arguments as arguments to command.
 
     Args:
       acls: (List[AclArg]): acls to convert to single acl string.
+      cmd: (List[str]): list of arguments for gsutil invocation.
     """
-    acl_chunks = [a.arg + ' ' + a.value for a in acls]
-    return ' '.join(acl_chunks)
+    for acl in acls:
+      cmd.append(acl.arg)
+      cmd.append(acl.value)
 
   def upload_target_prebuilts(self, target, kind, gs_bucket, private=True):
     """Upload binary prebuilts for the build target to Google Storage.

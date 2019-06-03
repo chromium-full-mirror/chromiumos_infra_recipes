@@ -275,7 +275,10 @@
       "acl",
       "ch",
       "-r",
-      "arg1 value1 arg2 value2",
+      "arg1",
+      "value1",
+      "arg2",
+      "value2",
       "gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages"
     ],
     "infra_step": true,
