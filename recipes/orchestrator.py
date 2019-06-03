@@ -44,6 +44,8 @@ def RunSteps(api, properties):
   validate_refs(properties.update_manifest_refs)
 
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
+  if gerrit_changes:
+    gerrit_changes = api.cq.ordered_gerrit_changes
 
   snapshot = api.buildbucket.gitiles_commit
   if not snapshot.project:
@@ -287,12 +289,15 @@ def GenTests(api):
     build.input.gitiles_commit.Clear()
     return api.buildbucket.build(build)
 
+  def gerrit_changes():
+    return [common_pb2.GerritChange(change=1234)]
+
   def cq_orchestrator_build_with_gerrit_change():
     """Generate a test build proto with no gitiles commit project."""
     build = api.buildbucket.ci_build_message(project='chromeos',
                                              bucket='postsubmit',
                                              builder='postsubmit-orchestrator')
-    build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
+    build.input.gerrit_changes.extend(gerrit_changes())
     return api.buildbucket.build(build)
 
   def build_target_property(build_target):
@@ -324,6 +329,7 @@ def GenTests(api):
   ]
   yield (api.test('with_history') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
+         api.cq(full_run=True, gerrit_changes=gerrit_changes()) + #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
              [], 'get change build history.buildbucket.search') +  #
@@ -338,6 +344,7 @@ def GenTests(api):
 
   yield (api.test('fails_if_inflight_orchs') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
+         api.cq(full_run=True, gerrit_changes=gerrit_changes()) + #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
          api.buildbucket.simulated_search_results(
@@ -346,6 +353,7 @@ def GenTests(api):
 
   yield (api.test('runs_if_no_inflight_orchs') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
+         api.cq(full_run=True, gerrit_changes=gerrit_changes()) + #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
          api.buildbucket.simulated_search_results(
