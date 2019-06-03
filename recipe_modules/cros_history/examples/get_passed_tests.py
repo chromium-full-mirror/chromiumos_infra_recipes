@@ -16,9 +16,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.assertions.assertItemsEqual(
-      api.cros_history.get_passed_tests([common_pb2.GerritChange(change=123)]),
-      ['nami/hw/bvt-cq'])
+  api.assertions.assertItemsEqual(api.cros_history.get_passed_tests(),
+                                  ['nami/hw/bvt-cq'])
 
 
 def GenTests(api):

@@ -335,7 +335,7 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#103)(self, build, status=None, start_build_id=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#96)(self, build, status=None, start_build_id=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -347,27 +347,21 @@ Args:
 Returns:
   list[Build] which meet the conditions ordered from latest to oldest.
 
-&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#30)(self, patches):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#30)(self):**
 
-Retrieve passed builds with the same patches.
-
-Args:
-  patches (list[GerritChange]): patches in the current build.
+Retrieve passed builds with the same patches as current build.
 
 Returns:
   list([build_pb2.Build]): Passed builds with at most one build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#60)(self, patches):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#57)(self):**
 
 Find all tests that have passed with the given patches.
-
-Args:
-  patches (list[GerritChange]): Gerrit patches being tested.
 
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#89)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#82)(self, tests):**
 
 Record the tests that passed in the current run.
 

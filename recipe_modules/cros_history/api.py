@@ -27,20 +27,17 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """Generate start time in seconds."""
     return self.m.time.time() - self._lookback_seconds
 
-  def get_passed_builds(self, patches):
-    """Retrieve passed builds with the same patches.
-
-    Args:
-      patches (list[GerritChange]): patches in the current build.
+  def get_passed_builds(self):
+    """Retrieve passed builds with the same patches as current build.
 
     Returns:
       list([build_pb2.Build]): Passed builds with at most one build per builder.
     """
-    assert patches, 'cannot get build history without gerrit changes'
     with self.m.step.nest('get change build history') as step:
       passed_builds = []
       # Start with cq-orchestrator so we don't add it to the result.
       passed_builders = set([self.m.buildbucket.build.builder.builder])
+      patches = self.m.buildbucket.build.input.gerrit_changes
       for build in self._get_patch_history(patches, status=common_pb2.SUCCESS):
         if build.builder.builder not in passed_builders:
           passed_builders.add(build.builder.builder)
@@ -57,16 +54,12 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
       return passed_builds
 
-  def get_passed_tests(self, patches):
+  def get_passed_tests(self):
     """Find all tests that have passed with the given patches.
-
-    Args:
-      patches (list[GerritChange]): Gerrit patches being tested.
 
     Returns:
       set[str]: Names of passed tests, if any.
     """
-    assert patches, 'cannot get test history without gerrit changes'
     with self.m.step.nest('get change test history') as step:
       current_build = self.m.buildbucket.build
       past_builds = self.get_matching_builds(current_build)

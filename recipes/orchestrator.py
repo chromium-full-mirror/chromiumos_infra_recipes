@@ -87,7 +87,7 @@ def RunSteps(api, properties):
         else:
           step.presentation.step_text = 'found no inflight run'
 
-    completed_builds = api.cros_history.get_passed_builds(gerrit_changes)
+    completed_builds = api.cros_history.get_passed_builds()
     passed_builders = set(build.builder.builder for build in completed_builds)
 
   orchestrator_builder_config = api.cros_infra_config.get_builder_config(
@@ -131,7 +131,7 @@ def RunSteps(api, properties):
       # We will not run tests that have already passed for this patch set.
       passed_tests = []
       if properties.enable_history and gerrit_changes:
-        passed_tests = api.cros_history.get_passed_tests(gerrit_changes)
+        passed_tests = api.cros_history.get_passed_tests()
 
       with api.step.nest('schedule hardware tests'):
         skylab_tasks = [
