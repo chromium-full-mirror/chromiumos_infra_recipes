@@ -8,6 +8,7 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/path',
     'recipe_engine/step',
     'cros_source',
@@ -24,6 +25,7 @@ def RunSteps(api):
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path):
     if gerrit_changes:
+      gerrit_changes = api.cq.ordered_gerrit_changes
       with api.step.nest('cherry-pick gerrit changes'):
         patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
         api.cros_source.apply_gerrit_patch_sets(patch_sets)
@@ -41,9 +43,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('without-gerrit-changes')
 
-  yield (
-      api.test('with-manifest-changes') +
-      api.buildbucket.try_build(project='manifest') +
-      api.path.exists(
-          api.path['start_dir'].join(
-              'chromiumos_workspace/src/manifest/default.xml')))
+  yield (api.test('with-manifest-changes') +  #
+         api.buildbucket.try_build(project='manifest') +  #
+         api.cq(full_run=True) +  #
+         api.path.exists(api.path['start_dir'].join(
+             'chromiumos_workspace/src/manifest/default.xml')))
