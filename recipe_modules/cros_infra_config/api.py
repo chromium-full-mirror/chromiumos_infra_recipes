@@ -3,9 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import contextlib
+
 from recipe_engine import recipe_api
 from google.protobuf import json_format as jsonpb
 
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.builder_config import BuilderConfigs
 
 REPO_URL = "https://chrome-internal.googlesource.com/chromeos/infra/config"
@@ -96,3 +99,20 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
       self.m.file.write_raw('save %s' % config_name, path, conf_contents)
       return path
+
+  @contextlib.contextmanager
+  def use_run_spec_context(self, run_spec):
+    """Returns a context for execution per the run spec.
+
+    Controls execution per a BuilderConfig.RUN_SPEC. If the run spec is RUN
+    or RUN_EXIT yield is invoked. The yield invocation passes whether the
+    invoking context should exit.
+
+    Args:
+      * run_spec (BuilderConfig.RUN_SPEC): the run spec controlling execution.
+
+    Returns:
+        Yield invocation with boolean indicating whether to exit.
+    """
+    if run_spec in [BuilderConfig.RUN, BuilderConfig.RUN_EXIT]:
+      yield run_spec == BuilderConfig.RUN_EXIT

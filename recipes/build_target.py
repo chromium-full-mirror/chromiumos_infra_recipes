@@ -139,8 +139,8 @@ def RunSteps(api, properties):
               timeout=45 * 60)
           api.failures.raise_failed_packages(response.failed_packages)
 
-      if build_config.unit_tests.ebuilds_run_spec in [BuilderConfig.RUN,
-                                                      BuilderConfig.RUN_EXIT]:
+      with api.cros_infra_config.use_run_spec_context(
+          build_config.unit_tests.ebuilds_run_spec) as should_exit:
         with api.step.nest('run ebuild tests'):
           response = api.cros_build_api.TestService.BuildTargetUnitTest(
               BuildTargetUnitTestRequest(
@@ -148,9 +148,8 @@ def RunSteps(api, properties):
                   result_path=str(api.path.mkdtemp()),
                   package_blacklist=build_config.unit_tests.package_blacklist))
           api.failures.raise_failed_packages(response.failed_packages)
-
-      if build_config.unit_tests.ebuilds_run_spec == BuilderConfig.RUN_EXIT:
-        return
+        if should_exit:
+          return
 
       artifact_types = build_config.artifacts.artifact_types
       if artifact_types:
