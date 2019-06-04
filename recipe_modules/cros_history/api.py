@@ -4,6 +4,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 
@@ -36,9 +37,14 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     with self.m.step.nest('get change build history') as step:
       passed_builds = []
       # Start with cq-orchestrator so we don't add it to the result.
-      passed_builders = set([self.m.buildbucket.build.builder.builder])
+      current_builder_id = self.m.buildbucket.build.builder
+      passed_builders = set([current_builder_id.builder])
       patches = self.m.buildbucket.build.input.gerrit_changes
-      for build in self._get_patch_history(patches, status=common_pb2.SUCCESS):
+      # We don't want to specify the builder, but, we should specify the bucket
+      builder_shell = build_pb2.BuilderID(project=current_builder_id.project,
+                                          bucket=current_builder_id.bucket)
+      for build in self._get_patch_history(patches, builder=builder_shell,
+                                           status=common_pb2.SUCCESS):
         if build.builder.builder not in passed_builders:
           passed_builders.add(build.builder.builder)
           passed_builds.append(build)
