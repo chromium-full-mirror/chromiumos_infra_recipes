@@ -8,6 +8,7 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -40,6 +41,7 @@ from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromite.api.test import ChromiteUnitTestRequest
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
@@ -57,6 +59,8 @@ def RunSteps(api, properties):
       api.buildbucket.build.builder.builder)
   gitiles_commit = api.buildbucket.gitiles_commit
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
+  if gerrit_changes:
+    gerrit_changes = api.cq.ordered_gerrit_changes
 
   api.cros_bisect.set_bisect_builder(build_target.name)
 
@@ -165,9 +169,21 @@ def RunSteps(api, properties):
             private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
 def GenTests(api):
+  mock_CLs = [
+      common_pb2.GerritChange(change=1234),
+      common_pb2.GerritChange(change=2341),
+  ]
+
+  def cq_build_with_gerrit_change():
+    """Generate a test build proto with no gitiles commit project."""
+    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
+                                             builder='amd64-generic-cq')
+    build.input.gerrit_changes.extend(mock_CLs)
+    return api.buildbucket.build(build)
+
   yield (api.test('basic') +  #
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='amd64-generic-postsubmit') +  #
+         api.cq(full_run=True) +  #
+         cq_build_with_gerrit_change() +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +
          api.cros_relevance.simulate_run_pointless_build_checker(
@@ -175,32 +191,40 @@ def GenTests(api):
          api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('with-findit-bisect') +  #
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='amd64-generic-postsubmit') +  #
+         api.cq(full_run=True) +  #
+         cq_build_with_gerrit_change() +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='post-sync pointless build check') +
-         api.properties(
-             **{'build_target': {'name': 'amd64-generic'},
-                '$chromeos/cros_bisect': CrosBisectProperties(targets=[
-                    api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
-                    api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
-                    api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
-                ])}))
+             name='post-sync pointless build check') + api.properties(
+                 **{
+                     'build_target': {
+                         'name': 'amd64-generic'
+                     },
+                     '$chromeos/cros_bisect':
+                         CrosBisectProperties(targets=[
+                             api.cros_bisect.serialized_package_info(
+                                 'foo', 'cat1', '1'),
+                             api.cros_bisect.serialized_package_info(
+                                 'bar', 'cat1', '2'),
+                             api.cros_bisect.serialized_package_info(
+                                 'baz', 'cat2', '3'),
+                         ])
+                 }))
 
-  yield (api.test('with-gerrit-changes') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='pre-sync pointless build check') +
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='post-sync pointless build check') +
-         api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='amd64-generic-cq') +  #
-         api.properties(build_target={'name': 'amd64-generic'}))
+  yield (
+      api.test('with-gerrit-changes') +  #
+      api.cq(full_run=True) +  #
+      api.cros_relevance.simulate_run_pointless_build_checker(
+          name='pre-sync pointless build check') +
+      api.cros_relevance.simulate_run_pointless_build_checker(
+          name='post-sync pointless build check') + api.buildbucket.try_build(
+              project='chromeos', bucket='cq', builder='amd64-generic-cq') +  #
+      api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('run-ebuild-tests') +  #
-         api.buildbucket.try_build(project='chromeos', bucket='postsubmit',
-                                   builder='amd64-generic-postsubmit') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='amd64-generic-postsubmit') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
@@ -208,10 +232,8 @@ def GenTests(api):
          api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('no-run-ebuild-tests') +  #
-         api.buildbucket.try_build(
-             project='chromeos',
-             bucket='postsubmit',
-             builder='grunt-postsubmit') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='grunt-postsubmit') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
@@ -219,10 +241,8 @@ def GenTests(api):
          api.properties(build_target={'name': 'grunt'}))
 
   yield (api.test('run-exit-ebuild-tests') +  #
-         api.buildbucket.try_build(
-             project='chromeos',
-             bucket='postsubmit',
-             builder='grunt-unittest-only-postsubmit') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='grunt-unittest-only-postsubmit') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
@@ -230,19 +250,19 @@ def GenTests(api):
          api.properties(build_target={'name': 'grunt'}))
 
   yield (api.test('pointless-build-first-check') +  #
+         api.cq(full_run=True) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='pre-sync pointless build check',
-             build_is_pointless=True) +
+             name='pre-sync pointless build check', build_is_pointless=True) +
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('pointless-build-second-check') +  #
+         api.cq(full_run=True) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='post-sync pointless build check',
-             build_is_pointless=True) +
+             name='post-sync pointless build check', build_is_pointless=True) +
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
