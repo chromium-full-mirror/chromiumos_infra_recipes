@@ -91,12 +91,6 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         ],
         failed_packages=[],
     )
-    responses['CreateVm'] = jsonify(
-        vm_image={
-            'path': self.path(
-                'cros/src/build/images/chromiumos_qemu_image.bin'),
-        }
-    )
     responses['Test'] = jsonify(success=True)
     return responses
 

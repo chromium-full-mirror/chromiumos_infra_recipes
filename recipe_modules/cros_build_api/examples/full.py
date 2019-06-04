@@ -64,7 +64,6 @@ def RunSteps(api):
       },
       'ImageService': {
           'Create': image.CreateImageResult,
-          'CreateVm': image.CreateVmResponse,
           'Test': image.TestImageResult,
       },
       'SdkService': {

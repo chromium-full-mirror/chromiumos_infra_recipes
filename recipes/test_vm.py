@@ -24,7 +24,6 @@ import os
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import Path
-from PB.chromite.api.image import CreateVmRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sysroot import SysrootCreateRequest
