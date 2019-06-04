@@ -11,5 +11,5 @@ e.g.
 
 ```bash
 cd path/to/recipes/support
-go run git-test-submit/git_test_submit.go --input-json=git-test-submit/sample-input-kernel.json
+go run git-test-submit/git_test_submit.go --input-json=git-test-submit/sample-input.json
 ```
