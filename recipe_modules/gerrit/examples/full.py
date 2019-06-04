@@ -35,6 +35,7 @@ def RunSteps(api):
   api.gerrit.changes_are_submittable([change],
       test_output_data=api.gerrit.test_api.test_changes_are_submittable(
           errors=['could not cherry pick']))
+  api.gerrit.test_api.simulated_changes_are_submittable(submittable=False)
 
   # Missing FetchInfo.
   del patch._rev_info['fetch']

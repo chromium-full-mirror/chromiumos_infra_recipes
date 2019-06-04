@@ -70,3 +70,19 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
       errors (list(str)): errors that the support binary reports.
     """
     return {'errors': errors}
+
+  def simulated_changes_are_submittable(self, submittable=True):
+    """Simulates the step_data for invoking git-test-submit binary.
+
+    Args:
+      submittable (bool): whether the binary should return that the CLs can be
+          cherry-picked.
+
+    Returns:
+      bool
+    """
+    output = {'errors': []}
+    if not submittable:
+      output['errors'].append('some cherry pick error')
+    return self.step_data('check for merge conflicts.git-test-submit',
+                          stdout=self.m.json.output(output))

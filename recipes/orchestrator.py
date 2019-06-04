@@ -66,10 +66,9 @@ def RunSteps(api, properties):
   completed_builds = []
   passed_builders = set()
 
-  if gerrit_changes:
-    # Run the patch submittability check, but ignore the output until we've
-    # seen it work for a while in prod.
-    api.gerrit.changes_are_submittable(gerrit_changes)
+  if gerrit_changes and not api.gerrit.changes_are_submittable(gerrit_changes):
+    raise api.step.StepFailure('failed to cherry-pick changes, '
+                               'please rebase and retry')
   if properties.enable_history and gerrit_changes:
     if properties.assert_singleton:
       with api.step.nest('find inflight orchestrator') as step:
@@ -327,6 +326,11 @@ def GenTests(api):
           status=common_pb2.SUCCESS,
           input=dict(properties=build_target_property('arm-generic'))),
   ]
+  yield (api.test('fails_if_changes_not_submittable') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
+         api.gerrit.simulated_changes_are_submittable(submittable=False))
+
   yield (api.test('with_history') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True, gerrit_changes=gerrit_changes()) + #
