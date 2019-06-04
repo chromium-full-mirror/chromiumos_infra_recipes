@@ -11,7 +11,4 @@ import "chromiumos/common.proto";
 message BuildTargetProperties {
   // The build target being built.
   chromiumos.BuildTarget build_target = 1;
-
-  // Whether or not to run ebuild tests and exit early.
-  bool run_ebuild_tests = 4;
 }
