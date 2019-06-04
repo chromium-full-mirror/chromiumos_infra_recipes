@@ -146,11 +146,14 @@ def RunSteps(api, properties):
       if build_config.unit_tests.ebuilds_run_spec in [BuilderConfig.RUN,
                                                       BuilderConfig.RUN_EXIT]:
         with api.step.nest('run ebuild tests'):
+          flags = BuildTargetUnitTestRequest.Flags(
+              empty_sysroot=build_config.unit_tests.empty_sysroot)
           response = api.cros_build_api.TestService.BuildTargetUnitTest(
               BuildTargetUnitTestRequest(
                   build_target=build_target, chroot=api.cros_sdk.chroot,
                   result_path=str(api.path.mkdtemp()),
-                  package_blacklist=build_config.unit_tests.package_blacklist))
+                  package_blacklist=build_config.unit_tests.package_blacklist,
+                  flags=flags))
           api.failures.raise_failed_packages(response.failed_packages)
         if build_config.unit_tests.ebuilds_run_spec == BuilderConfig.RUN_EXIT:
           return
