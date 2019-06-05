@@ -902,7 +902,7 @@
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect vm tests",
-    "timeout": 3600,
+    "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
