@@ -97,3 +97,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
       self.m.file.write_raw('save %s' % config_name, path, conf_contents)
       return path
+
+  def should_run(self, run_spec):
+    return run_spec in [BuilderConfig.RUN, BuilderConfig.RUN_EXIT]
+
+  def should_exit(self, run_spec):
+    return run_spec == BuilderConfig.RUN_EXIT

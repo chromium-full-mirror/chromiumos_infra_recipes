@@ -417,6 +417,10 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#18)(self):**
 
 Init the InfraConfigApi module.
+
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#104)(self, run_spec):**
+
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#101)(self, run_spec):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1687,7 +1691,7 @@ Recipe for building a BuildTarget image.
 
 [DEPS](/recipe_modules/cros_infra_config/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/full.py#15)(api):**
 ### *recipes* / [cros\_infra\_config:examples/gitiles\_failed\_retry](/recipe_modules/cros_infra_config/examples/gitiles_failed_retry.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/gitiles_failed_retry.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -122,14 +122,18 @@ def RunSteps(api, properties):
                                     chroot=api.cros_sdk.chroot))
         api.failures.raise_failed_packages(response.failed_packages)
 
-      with api.step.nest('install packages'):
-        # Packages subset will be present when FindIt asks for bisection build.
-        packages = api.cros_bisect.get_packages()
-        response = api.cros_build_api.SysrootService.InstallPackages(
-            InstallPackagesRequest(sysroot=sysroot, packages=packages,
-                                   use_flags=build_config.build.use_flags))
-        api.cros_bisect.set_build_compile_failure(response.failed_packages)
-        api.failures.raise_failed_packages(response.failed_packages)
+      install_packages = build_config.build.install_packages
+      if api.cros_infra_config.should_run(install_packages):
+        with api.step.nest('install packages'):
+          # Packages subset will be present when FindIt doing bisection build.
+          packages = api.cros_bisect.get_packages()
+          response = api.cros_build_api.SysrootService.InstallPackages(
+              InstallPackagesRequest(sysroot=sysroot, packages=packages,
+                                     use_flags=build_config.build.use_flags))
+          api.cros_bisect.set_build_compile_failure(response.failed_packages)
+          api.failures.raise_failed_packages(response.failed_packages)
+        if api.cros_infra_config.should_exit(install_packages):
+          return
 
       image_types = build_config.build.image_types
       if image_types:
@@ -143,8 +147,8 @@ def RunSteps(api, properties):
               timeout=45 * 60)
           api.failures.raise_failed_packages(response.failed_packages)
 
-      if build_config.unit_tests.ebuilds_run_spec in [BuilderConfig.RUN,
-                                                      BuilderConfig.RUN_EXIT]:
+      ebuilds_run_spec = build_config.unit_tests.ebuilds_run_spec
+      if api.cros_infra_config.should_run(ebuilds_run_spec):
         with api.step.nest('run ebuild tests'):
           flags = BuildTargetUnitTestRequest.Flags(
               empty_sysroot=build_config.unit_tests.empty_sysroot)
@@ -155,7 +159,7 @@ def RunSteps(api, properties):
                   package_blacklist=build_config.unit_tests.package_blacklist,
                   flags=flags))
           api.failures.raise_failed_packages(response.failed_packages)
-        if build_config.unit_tests.ebuilds_run_spec == BuilderConfig.RUN_EXIT:
+        if api.cros_infra_config.should_exit(ebuilds_run_spec):
           return
 
       artifact_types = build_config.artifacts.artifact_types
@@ -224,6 +228,15 @@ def GenTests(api):
           name='post-sync pointless build check') + api.buildbucket.try_build(
               project='chromeos', bucket='cq', builder='amd64-generic-cq') +  #
       api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('run-exit-install-packages') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='amd64-generic-bisect') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='pre-sync pointless build check') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='post-sync pointless build check') +
+         api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('run-ebuild-tests') +  #
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',

@@ -45,7 +45,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "portage_profile": {
                       "profile": "generic_build"
                     },
-                    "image_types": ["TEST"]
+                    "image_types": ["TEST"],
+                    "install_packages": "RUN"
                   },
                   "unit_tests": {
                     "package_blacklist": [],
@@ -67,6 +68,9 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   "chrome": {
                     "internal": true
                   },
+                  "build": {
+                    "install_packages": "RUN"
+                  },
                   "unit_tests": {
                     "package_blacklist": [{
                       "package_name": "chromite",
@@ -78,12 +82,31 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "amd64-generic-bisect",
+                    "branch": "master",
+                    "type": "POSTSUBMIT"
+                  },
+                  "general": {
+                    "critical": true
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "install_packages": "RUN_EXIT"
+                  }
+                },
+                {
+                  "id": {
                     "name": "arm-generic-postsubmit",
                     "branch": "master",
                     "type": "POSTSUBMIT"
                   },
                   "general": {
                     "critical": false
+                  },
+                  "build": {
+                    "install_packages": "RUN"
                   }
                 },
                 {
@@ -94,6 +117,9 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "general": {
                     "critical": false
+                  },
+                  "build": {
+                    "install_packages": "RUN"
                   },
                   "unit_tests": {
                     "ebuilds_run_spec": "NO_RUN"
@@ -107,6 +133,9 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "general": {
                     "critical": false
+                  },
+                  "build": {
+                    "install_packages": "RUN"
                   },
                   "unit_tests": {
                     "ebuilds_run_spec": "RUN_EXIT"
