@@ -126,7 +126,8 @@ def RunSteps(api, properties):
             build_target=properties.build_target, chroot=api.cros_sdk.chroot,
             vm_path=Path(path=vm_image_path, location=Path.OUTSIDE),
             ssh_options=VmTestRequest.SshOptions(
-                private_key_path=private_key_path),
+                private_key_path=Path(path=private_key_path,
+                                      location=Path.OUTSIDE)),
             test_harness=properties.test_harness, vm_tests=[
                 VmTestRequest.VmTest(pattern=exp)
                 for exp in properties.expressions
