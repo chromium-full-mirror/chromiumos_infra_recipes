@@ -198,12 +198,16 @@ def RunSteps(api, properties):
             timeout=60 * 60 * 4).values()
 
       # Record test results.
-      # TODO(evanhernandez): Record VM test history.
       passed_tests = [
           hw_result.task.test.common.display_name
           for hw_result in hw_results
           if not api.failures.is_hw_test_failure(hw_result)
       ]
+      passed_tests.extend([
+          api.naming.get_vm_test_title(vm_result)
+          for vm_result in vm_results
+          if not api.failures.is_vm_test_failure(vm_result)
+      ])
       api.cros_history.set_passed_tests(passed_tests)
 
   # Verify builds/tests in a deferred context so that all failures appear.
@@ -308,6 +312,11 @@ def GenTests(api):
     build.input.gerrit_changes.extend(gerrit_changes())
     return api.buildbucket.build(build)
 
+  def vm_test_build():
+    output = build_pb2.Build.Output()
+    output.properties.update({'name': 'vm-test'})
+    return build_pb2.Build(output=output)
+
   def build_target_property(build_target):
     """Generate a struct for the 'build_target' property.
 
@@ -323,7 +332,13 @@ def GenTests(api):
                     }))
         })
 
-  yield (api.test('basic') + postsubmit_orchestrator_build())
+  vm_tests = [
+      vm_test_build(),
+  ]
+
+  yield (api.test('basic') + postsubmit_orchestrator_build() +
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
   builds = [
       build_pb2.Build(
@@ -335,6 +350,7 @@ def GenTests(api):
           status=common_pb2.SUCCESS,
           input=dict(properties=build_target_property('arm-generic'))),
   ]
+
   yield (api.test('fails_if_changes_not_submittable') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
@@ -353,7 +369,9 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect')
          + api.buildbucket.simulated_get_multi(
-             builds, step_name='get full build protos'))
+             builds, step_name='get full build protos') +
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
   yield (api.test('fails_if_inflight_orchs') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
@@ -371,28 +389,36 @@ def GenTests(api):
          api.properties(assert_singleton=True) +  #
          api.buildbucket.simulated_search_results(
              [], step_name='find inflight orchestrator.'
-             'find matching builds.buildbucket.search'))
+             'find matching builds.buildbucket.search') +
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
   yield (api.test('retry_only_critical_builds') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
-             builds, step_name='find matching builds.buildbucket.search'))
+             builds, step_name='find matching builds.buildbucket.search') +
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
   yield (api.test('updates_refs') +  #
          postsubmit_orchestrator_build() +  #
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }))
+         }) +
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
   yield (api.test('missing_gitiles_commit') +  #
          postsubmit_orchestrator_build_with_no_gitiles() +
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }))
+         }) +
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
   yield (api.test('bad_update_ref') +  #
          api.properties(update_manifest_refs={'start': 'foo'}) +  #
@@ -413,9 +439,11 @@ def GenTests(api):
   yield (api.test('critical_child_builder_fails') +  #
          postsubmit_orchestrator_build() +  #
          api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect')
-         + api.buildbucket.simulated_get_multi(
-             builds, step_name='get full build protos'))
+             builds, step_name='run builds.collect') +
+         api.buildbucket.simulated_get_multi(
+             builds, step_name='get full build protos') +
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
@@ -430,4 +458,6 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect')
          + api.buildbucket.simulated_get_multi(
-             builds, step_name='get full build protos'))
+             builds, step_name='get full build protos') +
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests'))

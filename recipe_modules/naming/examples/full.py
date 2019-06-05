@@ -12,12 +12,12 @@ DEPS = [
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.testplans.target_test_requirements_config import HwTestCfg
 
-
 def RunSteps(api):
   build = build_pb2.Build(builder=build_pb2.BuilderID(
       project='foo', bucket='bar', builder='baz'))
   api.assertions.assertEqual(
       api.naming.get_build_title(build), 'foo.bar.baz')
+
   commit = api.git.Commit('abcdef', '''
 title
 
@@ -25,6 +25,16 @@ title
 Plagueis the Wise?
   ''')
   api.assertions.assertEqual(api.naming.get_commit_title(commit), 'title')
+
+  properties = {'name': 'vm-test'}
+
+  vm_test = build_pb2.Build()
+  vm_test.input.properties.update(properties)
+  api.assertions.assertEqual(api.naming.get_vm_test_title(vm_test), 'vm-test')
+
+  vm_test = build_pb2.Build()
+  vm_test.output.properties.update(properties)
+  api.assertions.assertEqual(api.naming.get_vm_test_title(vm_test), 'vm-test')
 
 def GenTests(api):
   yield api.test('basic')

@@ -1222,11 +1222,11 @@ Returns:
 
 API featuring shared helpers for naming things.
 
-#### **class [NamingApi](/recipe_modules/naming/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [NamingApi](/recipe_modules/naming/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with helpers for naming things.
 
-&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#13)(self, build):**
+&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#18)(self, build):**
 
 Get a string to describe the build.
 
@@ -1236,7 +1236,7 @@ Args:
 Returns:
   str: A string describing the build.
 
-&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#25)(self, commit):**
+&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#46)(self, commit):**
 
 Get a string to describe the commit.
 
@@ -1247,6 +1247,16 @@ Args:
 
 Returns:
   str: The commit title.
+
+&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#30)(self, vm_test):**
+
+Get a string to describe the VM test.
+
+Args:
+  vm_test (Build): The buildbucket build for the VM test.
+
+Returns:
+  str: A string describing the VM test.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1861,7 +1871,7 @@ Test git_footers calls.
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#15)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1872,7 +1882,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#43)(api, properties):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#245)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#249)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1883,7 +1893,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#234)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#238)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -1891,7 +1901,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#221)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#225)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -1901,7 +1911,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#268)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#272)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 

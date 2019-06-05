@@ -1141,12 +1141,11 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"id\": \"8922054662172514002\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"id\": \"8922054662172514003\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"output\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"vm-test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -1162,7 +1161,10 @@
   },
   {
     "cmd": [],
-    "name": "results"
+    "name": "results",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -1230,7 +1232,9 @@
     "name": "results.vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all vm tests passed@@@"
+      "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
+      "@@@STEP_LINK@[FAILED BUT IGNORED] vm-test@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

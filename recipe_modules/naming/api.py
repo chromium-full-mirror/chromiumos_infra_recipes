@@ -5,7 +5,12 @@
 
 """API featuring shared helpers for naming things."""
 
+from PB.recipes.chromeos.test_vm import TestVmProperties
+
 from recipe_engine import recipe_api
+
+from google.protobuf import json_format
+
 
 class NamingApi(recipe_api.RecipeApi):
   """A module with helpers for naming things."""
@@ -21,6 +26,22 @@ class NamingApi(recipe_api.RecipeApi):
     """
     return '%s.%s.%s' % (build.builder.project, build.builder.bucket,
                          build.builder.builder)
+
+  def get_vm_test_title(self, vm_test):
+    """Get a string to describe the VM test.
+
+    Args:
+      vm_test (Build): The buildbucket build for the VM test.
+
+    Returns:
+      str: A string describing the VM test.
+    """
+    all_properties = vm_test.input.properties or vm_test.output.properties
+    input_properties = json_format.Parse(
+        json_format.MessageToJson(all_properties),
+        TestVmProperties(), ignore_unknown_fields=True)
+    assert input_properties.name, 'missing name: %r' % input_properties
+    return input_properties.name
 
   def get_commit_title(self, commit):
     """Get a string to describe the commit.
