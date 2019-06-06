@@ -158,7 +158,9 @@ def RunSteps(api, properties):
                                        build_target=unit.common.build_target,
                                        test_harness=VmTestRequest.AUTOTEST,
                                        build_payload=unit.common.build_payload,
-                                       expressions=[test.test_suite]))))
+                                       expressions=[
+                                           'suite:' + test.test_suite
+                                       ]))))
           for unit in test_plan.vm_test_units
           for test in unit.vm_test_cfg.vm_test
           if test.common.display_name not in passed_tests
