@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for running Tast VM tests.
+"""Recipe for running VM tests.
 
 Because the scripts that run VM tests live within the build API,
 this recipe does a lot of what build_target does. Namely, it syncs to the
@@ -11,12 +11,11 @@ snapshot used to build the test image, it applies gerrit patches, it inits
 the SDK, etc.
 
 The steps specific to VM testing are:
-  1. Download the test image.
-  2. Convert the test image to a VM. This happens here instead of build_target
-     because most targets do not run VM tests.
-  3. Call the build API to run VM tests.
-
-For now, only supports TAST VM tests.
+  1. Setup workspace so it aligns with the workspace in which the image was
+     build, i.e. sync to snapshot, apply gerrit changes, init/upate SDK, etc.
+  2. Download the test image.
+  3. If the VM tests run within the autotest harness, build autotest.
+  4. Call the build API to run VM tests.
 """
 
 import os

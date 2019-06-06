@@ -88,8 +88,9 @@
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
+  * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Tast VM tests.
   * [test_proto](#recipes-test_proto) &mdash; Verifies the proto repository.
-  * [test_vm](#recipes-test_vm) &mdash; Recipe for running Tast VM tests.
+  * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
 ## Recipe Modules
 
 ### *recipe_modules* / [analysis\_service](/recipe_modules/analysis_service)
@@ -1988,16 +1989,9 @@ on its own because it is agnostic of ChromeOS build targets.
 Verifies a repo manifest.
 
 &mdash; **def [RunSteps](/recipes/test_manifest.py#20)(api):**
-### *recipes* / [test\_proto](/recipes/test_proto.py)
+### *recipes* / [test\_moblab\_vm](/recipes/test_moblab_vm.py)
 
-[DEPS](/recipes/test_proto.py#8): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-Verifies the proto repository.
-
-&mdash; **def [RunSteps](/recipes/test_proto.py#20)(api):**
-### *recipes* / [test\_vm](/recipes/test_vm.py)
-
-[DEPS](/recipes/test_vm.py#35): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_moblab_vm.py#35): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for running Tast VM tests.
 
@@ -2014,7 +2008,33 @@ The steps specific to VM testing are:
 
 For now, only supports TAST VM tests.
 
-&mdash; **def [RunSteps](/recipes/test_vm.py#58)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_moblab_vm.py#58)(api, properties):**
+### *recipes* / [test\_proto](/recipes/test_proto.py)
+
+[DEPS](/recipes/test_proto.py#8): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Verifies the proto repository.
+
+&mdash; **def [RunSteps](/recipes/test_proto.py#20)(api):**
+### *recipes* / [test\_vm](/recipes/test_vm.py)
+
+[DEPS](/recipes/test_vm.py#34): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for running VM tests.
+
+Because the scripts that run VM tests live within the build API,
+this recipe does a lot of what build_target does. Namely, it syncs to the
+snapshot used to build the test image, it applies gerrit patches, it inits
+the SDK, etc.
+
+The steps specific to VM testing are:
+  1. Setup workspace so it aligns with the workspace in which the image was
+     build, i.e. sync to snapshot, apply gerrit changes, init/upate SDK, etc.
+  2. Download the test image.
+  3. If the VM tests run within the autotest harness, build autotest.
+  4. Call the build API to run VM tests.
+
+&mdash; **def [RunSteps](/recipes/test_vm.py#57)(api, properties):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/073b8ac2ff8e7fdfba3e99db0d09611e20c2f202/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/073b8ac2ff8e7fdfba3e99db0d09611e20c2f202/recipes/README.recipes.md#recipe_modules-gclient
