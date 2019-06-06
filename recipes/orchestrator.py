@@ -67,8 +67,10 @@ def RunSteps(api, properties):
   passed_builders = set()
 
   if gerrit_changes and not api.gerrit.changes_are_submittable(gerrit_changes):
-    raise api.step.StepFailure('failed to cherry-pick changes, '
-                               'please rebase and retry')
+    # TODO(crbug.com/971739): bring this check back once it works properly.
+    pass
+    # raise api.step.StepFailure('failed to cherry-pick changes, '
+    #                           'please rebase and retry')
   if properties.enable_history and gerrit_changes:
     if properties.assert_singleton:
       with api.step.nest('find inflight orchestrator') as step:
