@@ -1005,7 +1005,7 @@
   },
   {
     "cmd": [],
-    "name": "run tast vm tests",
+    "name": "run autotest vm tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"testHarness\": \"AUTOTEST\", @@@",
@@ -1050,7 +1050,7 @@
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "infra_step": true,
-    "name": "run tast vm tests.write input file",
+    "name": "run autotest vm tests.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1069,7 +1069,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "run tast vm tests.call build API script",
+    "name": "run autotest vm tests.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1086,7 +1086,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "run tast vm tests.read output file",
+    "name": "run autotest vm tests.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

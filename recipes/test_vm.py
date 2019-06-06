@@ -121,6 +121,7 @@ def RunSteps(api, properties):
         api.failures.raise_failed_packages(failed_packages)
 
     # TODO(evanhernandez): Read and present the test results.
+    test_harness_name = VmTestRequest.TestHarness.Name(properties.test_harness)
     api.cros_build_api.TestService.VmTest(
         VmTestRequest(
             build_target=properties.build_target, chroot=api.cros_sdk.chroot,
@@ -131,7 +132,7 @@ def RunSteps(api, properties):
             test_harness=properties.test_harness, vm_tests=[
                 VmTestRequest.VmTest(pattern=exp)
                 for exp in properties.expressions
-            ]), name='run tast vm tests')
+            ]), name='run %s vm tests' % test_harness_name.lower())
 
 
 def GenTests(api):
