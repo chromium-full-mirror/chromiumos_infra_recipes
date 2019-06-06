@@ -62,6 +62,7 @@ def RunSteps(api, properties):
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
                             snapshot)
 
+  retry_count = 0
   requests = []
   completed_builds = []
   passed_builders = set()
@@ -86,6 +87,9 @@ def RunSteps(api, properties):
         else:
           step.presentation.step_text = 'found no inflight run'
 
+    retry_count = len(
+        api.cros_history.get_matching_builds(api.buildbucket.build,
+                                             status=common_pb2.FAILURE))
     completed_builds = api.cros_history.get_passed_builds()
     passed_builders = set(build.builder.builder for build in completed_builds)
 
@@ -94,11 +98,13 @@ def RunSteps(api, properties):
   for child in orchestrator_builder_config.orchestrator.children:
     if child not in passed_builders:
       child_builder_config = api.cros_infra_config.get_builder_config(child)
-      requests.append(
-          api.buildbucket.schedule_request(
-              gitiles_commit=snapshot, builder=child,
-              critical=child_builder_config.general.critical.value,
-              properties=api.cq.props_for_child_build))
+      critical = child_builder_config.general.critical.value
+      if critical == common_pb2.YES or retry_count == 0:
+        # Applies to CQ only. Retry just the critical builds.
+        requests.append(
+            api.buildbucket.schedule_request(
+                gitiles_commit=snapshot, builder=child, critical=critical,
+                properties=api.cq.props_for_child_build))
 
   if requests:
     # As of 2019-05-16, buildbucket.run uses an old-style collect command
@@ -364,6 +370,13 @@ def GenTests(api):
          api.buildbucket.simulated_search_results(
              [], step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search'))
+
+  yield (api.test('retry_only_critical_builds') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
+         api.properties(enable_history=True) +  #
+         api.buildbucket.simulated_search_results(
+             builds, step_name='find matching builds.buildbucket.search'))
 
   yield (api.test('updates_refs') +  #
          postsubmit_orchestrator_build() +  #

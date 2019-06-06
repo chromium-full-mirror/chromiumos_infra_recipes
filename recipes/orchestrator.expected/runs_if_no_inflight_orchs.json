@@ -133,6 +133,53 @@
   },
   {
     "cmd": [],
+    "name": "find matching builds"
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "find matching builds.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"postsubmit-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}], \"status\": \"FAILURE\"}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1000, @@@",
+      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"bucket\": \"postsubmit\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"builder\": \"postsubmit-orchestrator\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-09T12:53:21Z\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"change\": \"1234\"@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ], @@@",
+      "@@@STEP_LOG_LINE@request@          \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "get change build history",
     "~followup_annotations": [
       "@@@STEP_TEXT@found no completed builds@@@"
@@ -147,7 +194,7 @@
     ],
     "infra_step": true,
     "name": "get change build history.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}], \"status\": \"SUCCESS\"}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:23Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}], \"status\": \"SUCCESS\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -164,7 +211,7 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-09T12:53:21Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-09T12:53:23Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"gerritChanges\": [@@@",
       "@@@STEP_LOG_LINE@request@            {@@@",
@@ -694,7 +741,7 @@
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.get change test history.find matching builds.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"postsubmit-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:23Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"postsubmit-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:24Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -712,7 +759,7 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-09T12:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-09T12:53:24Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"gerritChanges\": [@@@",
       "@@@STEP_LOG_LINE@request@            {@@@",
