@@ -117,9 +117,12 @@ def RunSteps(api, properties):
         return
 
       with api.step.nest('install toolchain'):
+        flags = InstallToolchainRequest.Flags(
+            compile_source=build_config.build.compile_toolchain)
         response = api.cros_build_api.SysrootService.InstallToolchain(
             InstallToolchainRequest(sysroot=sysroot,
-                                    chroot=api.cros_sdk.chroot))
+                                    chroot=api.cros_sdk.chroot,
+                                    flags=flags))
         api.failures.raise_failed_packages(response.failed_packages)
 
       install_packages = build_config.build.install_packages
