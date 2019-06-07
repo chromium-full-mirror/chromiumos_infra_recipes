@@ -329,13 +329,13 @@ Args:
 &mdash; **def [run](/recipe_modules/cros_dupit/api.py#126)(self):**
 ### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
 
-[DEPS](/recipe_modules/cros_history/__init__.py#9): [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_history/__init__.py#9): [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#102)(self, build, status=None, start_build_id=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#101)(self, build, status=None, start_build_id=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -696,7 +696,17 @@ APIs for easy steps.
 
 A module for easy steps.
 
-&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#66)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+&mdash; **def [set\_property\_step](/recipe_modules/easy/api.py#14)(self, property_name, value, step_name=None):**
+
+An empty step to set a property in output.properties.
+
+Args:
+  property_name (str): The name of the property.
+  value: The value of the property to be set. Can be
+    int, float, list, or dict.
+  step_name (str): The name of the step.
+
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#80)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data deserialized from JSON.
 
@@ -710,7 +720,7 @@ Args:
 Returns:
   dict|list: JSON-deserialized stdout data.
 
-&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#42)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#56)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data.
 
@@ -724,7 +734,7 @@ Args:
 Returns:
   str: Raw stdout data.
 
-&mdash; **def [step](/recipe_modules/easy/api.py#14)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
+&mdash; **def [step](/recipe_modules/easy/api.py#28)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
 
 Convenience features on top of the normal 'step' call.
 

@@ -26,6 +26,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set property",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@property@\"value\"@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

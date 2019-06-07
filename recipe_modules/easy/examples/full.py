@@ -20,6 +20,8 @@ def RunSteps(api):
   json_stdout = api.easy.stdout_json_step('json', ['jq'], stdin_json={'a': 1},
                                    test_stdout={'b': 2})
   assert json_stdout == {'b': 2}
+  api.easy.set_property_step('property', 'value')
+
 
 def GenTests(api):
   yield api.test('basic')

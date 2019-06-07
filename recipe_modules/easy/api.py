@@ -11,6 +11,20 @@ from recipe_engine import recipe_api
 class EasyApi(recipe_api.RecipeApi):
   """A module for easy steps."""
 
+  def set_property_step(self, property_name, value, step_name=None):
+    """An empty step to set a property in output.properties.
+
+    Args:
+      property_name (str): The name of the property.
+      value: The value of the property to be set. Can be
+        int, float, list, or dict.
+      step_name (str): The name of the step.
+    """
+    if not step_name:
+      step_name = 'set ' + property_name
+    step = self.m.step(step_name, cmd=None)
+    step.presentation.properties[property_name] = value
+
   def step(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None,
            **kwargs):
     """Convenience features on top of the normal 'step' call.

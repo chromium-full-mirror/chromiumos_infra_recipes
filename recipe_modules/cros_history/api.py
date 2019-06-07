@@ -96,8 +96,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
     if len(tests) != len(set(tests)):
       raise ValueError('test names must be unique, found: %r' % tests)
-    with self.m.step.nest('record passed tests') as step:
-      step.presentation.properties[PASSED_TESTS_KEY] = tests
+    self.m.easy.set_property_step(PASSED_TESTS_KEY, tests)
 
   def get_matching_builds(self, build, status=None, start_build_id=None):
     """Get builds with the matching builder and gerrit_changes.

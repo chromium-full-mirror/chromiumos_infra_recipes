@@ -878,7 +878,7 @@
   },
   {
     "cmd": [],
-    "name": "run tests.collect tests.record passed tests",
+    "name": "run tests.collect tests.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"vm-test\"]@@@"
