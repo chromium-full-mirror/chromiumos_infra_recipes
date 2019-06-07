@@ -1,21 +1,21 @@
 [
   {
     "cmd": [],
-    "name": "upload ebuild logs",
+    "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload ebuild logs.bundle EBUILD_LOGS for upload",
+    "name": "upload artifacts.bundle EBUILD_LOGS for upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload ebuild logs.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs",
+    "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -43,7 +43,7 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
-    "name": "upload ebuild logs.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.write input file",
+    "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -63,7 +63,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upload ebuild logs.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.call build API script",
+    "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -80,7 +80,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload ebuild logs.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.read output file",
+    "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -97,14 +97,14 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload ebuild logs.read chromeos_version.sh",
+    "name": "upload artifacts.read chromeos_version.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload ebuild logs.read snapshot number",
+    "name": "upload artifacts.read snapshot number",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -118,7 +118,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload ebuild logs.read snapshot number.git fetch",
+    "name": "upload artifacts.read snapshot number.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -131,7 +131,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload ebuild logs.read snapshot number.git rev-parse",
+    "name": "upload artifacts.read snapshot number.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -146,7 +146,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload ebuild logs.read snapshot number.read git footers",
+    "name": "upload artifacts.read snapshot number.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
@@ -168,7 +168,7 @@
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184"
     ],
     "infra_step": true,
-    "name": "upload ebuild logs.gsutil rsync",
+    "name": "upload artifacts.gsutil rsync",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -191,7 +191,7 @@
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184"
     ],
     "infra_step": true,
-    "name": "upload ebuild logs.gsutil rsync (2)",
+    "name": "upload artifacts.gsutil rsync (2)",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -214,7 +214,7 @@
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184"
     ],
     "infra_step": true,
-    "name": "upload ebuild logs.gsutil rsync (3)",
+    "name": "upload artifacts.gsutil rsync (3)",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

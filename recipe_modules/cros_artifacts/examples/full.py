@@ -15,23 +15,23 @@ def RunSteps(api):
   target = common.BuildTarget()
   target.name = 'target'
 
-  api.cros_artifacts.upload_artifacts('upload ebuild logs', target,
-                                      BuilderConfig.Id.POSTSUBMIT,
+  api.cros_artifacts.upload_artifacts(target, BuilderConfig.Id.POSTSUBMIT,
                                       'artifacts_gs_bucket',
-                                      [BuilderConfig.Artifacts.EBUILD_LOGS])
-  api.cros_artifacts.upload_artifacts('upload firmware archive', target,
-                                      BuilderConfig.Id.POSTSUBMIT,
+                                      [BuilderConfig.Artifacts.EBUILD_LOGS],
+                                      name='upload ebuild logs')
+  api.cros_artifacts.upload_artifacts(target, BuilderConfig.Id.POSTSUBMIT,
                                       'artifacts_gs_bucket',
-                                      [BuilderConfig.Artifacts.FIRMWARE])
+                                      [BuilderConfig.Artifacts.FIRMWARE],
+                                      name='upload firmware archive')
   api.cros_artifacts.upload_artifacts(
-      'upload test artifacts', target, BuilderConfig.Id.CQ,
+      target, BuilderConfig.Id.CQ,
       'artifacts_gs_bucket', [
           BuilderConfig.Artifacts.IMAGE_ZIP,
           BuilderConfig.Artifacts.AUTOTEST_FILES,
           BuilderConfig.Artifacts.TAST_FILES,
           BuilderConfig.Artifacts.PINNED_GUEST_IMAGES,
           BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD,
-      ])
+      ], name='upload test artifacts')
 
 
 def GenTests(api):

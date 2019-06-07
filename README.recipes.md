@@ -184,7 +184,7 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#95)(self, name, target, kind, gs_bucket, artifacts):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#95)(self, target, kind, gs_bucket, artifacts, name=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -194,7 +194,6 @@ to a list of artifact paths (relative to the GS path) for each artifact
 type that was uploaded.
 
 Args:
-  name (str): The step name.
   target (BuildTarget): The build target with artifacts of interest.
   kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
       e.g. POSTSUBMIT. This affects where the artifacts are placed in
@@ -202,6 +201,7 @@ Args:
   gs_bucket (str): Google storage bucket to upload artifacts to.
   artifacts (list[ArtifactTypes]): List of artifacts
       to upload. See build config for options.
+  name (str): The step name. Defaults to 'upload artifacts'.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
 
 [DEPS](/recipe_modules/cros_bisect/__init__.py#5): [recipe\_engine/step][recipe_engine/recipe_modules/step]

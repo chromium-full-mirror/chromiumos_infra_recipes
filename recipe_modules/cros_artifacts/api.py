@@ -92,7 +92,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ]
       return artifact_name, artifact_files
 
-  def upload_artifacts(self, name, target, kind, gs_bucket, artifacts):
+  def upload_artifacts(self, target, kind, gs_bucket, artifacts, name=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -101,7 +101,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     type that was uploaded.
 
     Args:
-      name (str): The step name.
       target (BuildTarget): The build target with artifacts of interest.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. This affects where the artifacts are placed in
@@ -109,8 +108,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       gs_bucket (str): Google storage bucket to upload artifacts to.
       artifacts (list[ArtifactTypes]): List of artifacts
           to upload. See build config for options.
+      name (str): The step name. Defaults to 'upload artifacts'.
     """
-    with self.m.step.nest(name):
+    with self.m.step.nest(name or 'upload artifacts'):
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
 
       files_by_artifact = {}

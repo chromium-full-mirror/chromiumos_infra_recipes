@@ -19,12 +19,12 @@ def RunSteps(api):
   target.name = 'target'
   api.assertions.assertRaises(
       api.step.StepFailure, api.cros_artifacts.upload_artifacts,
-      'upload ebuild logs', target, BuilderConfig.Id.POSTSUBMIT,
+      target, BuilderConfig.Id.POSTSUBMIT,
       'artifacts_gs_bucket', [BuilderConfig.Artifacts.EBUILD_LOGS])
 
 
 def attempt_download_file(api, attempt):
-  step_text = 'upload ebuild logs.gsutil rsync'
+  step_text = 'upload artifacts.gsutil rsync'
   if attempt > 1:
     step_text += ' (' + str(attempt) + ')'
   return api.step_data(

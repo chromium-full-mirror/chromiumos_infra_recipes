@@ -168,7 +168,7 @@ def RunSteps(api, properties):
       artifact_types = build_config.artifacts.artifact_types
       if artifact_types:
         api.cros_artifacts.upload_artifacts(
-            'upload artifacts', build_target, build_config.id.type,
+            build_target, build_config.id.type,
             build_config.artifacts.artifacts_gs_bucket, artifact_types)
 
       prebuilts = build_config.artifacts.prebuilts
