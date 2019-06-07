@@ -38,6 +38,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_source',
     'depends',
+    'easy',
     'gerrit',
     'git',
     'git_footers',
@@ -148,8 +149,8 @@ def record_gerrit_changes(api, manifest_diffs):
     isolated_hash = None
     # isolated_hash = isolated.archive('upload gerrit changes to isolate')
 
-    step = api.step('output isolate id', None)
-    step.presentation.properties['snapshot_gerrit_changes'] = isolated_hash
+    api.easy.set_property_step('snapshot_gerrit_changes', isolated_hash,
+                               step_name='output isolate id')
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.
     # Stop this once the Milo blame list accepts Gerrit changes as input.
