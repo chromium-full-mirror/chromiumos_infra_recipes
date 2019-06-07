@@ -121,7 +121,8 @@ class CrosSourceApi(recipe_api.RecipeApi):
         with self.m.context(cwd=self.workspace_path.join(project_path)):
           commit_id = self.m.git.fetch_ref(patch_set.git_fetch_url,
                                            patch_set.git_fetch_ref)
-          self.m.git.cherry_pick(commit_id)
+          # This line will fail if the change cannot be cherry-picked.
+          self.m.git.cherry_pick(commit_id, infra_step=False)
           new_commit_id = self.m.git.head_commit()
           new_commits.append(ProjectCommit(project_path, new_commit_id))
 

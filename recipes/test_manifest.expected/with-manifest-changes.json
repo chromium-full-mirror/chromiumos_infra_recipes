@@ -404,7 +404,6 @@
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

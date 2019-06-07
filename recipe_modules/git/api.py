@@ -156,13 +156,14 @@ other_test.txt
     args += [commit]
     self._step(args)
 
-  def cherry_pick(self, commit):
+  def cherry_pick(self, commit, infra_step=True):
     """Runs 'git cherry-pick'.
 
     Args:
       * commit (str): The commit to cherry pick.
+      * infra_step (bool): Whether this is an infra step.
     """
-    self._step(['cherry-pick', commit])
+    self._step(['cherry-pick', commit], infra_step=infra_step)
 
   def commit_files(self, files, message):
     """Runs 'git commit' with the given files.
