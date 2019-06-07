@@ -138,3 +138,42 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
               'gs_path': gs_path,
               'files_by_artifact': files_by_artifact,
           }, step_name='output artifact GS paths')
+
+  def download_artifacts(self, build_payload, artifacts, name=None):
+    """Download the given artifacts from the given build payload.
+
+    Args:
+      build_payload (BuildPayload): Describes where build artifacts are on GS.
+      artifacts (list[ArtifactTypes]): The artifact types to download.
+      name (str): The step name. Defaults to 'download artifacts'.
+
+    Returns:
+      dict: Maps ArtifactType to Path where artifact was downloaded.
+
+    Raises:
+      ValueError: If the artifact not found in the build payload.
+    """
+    with self.m.step.nest(name or 'download artifacts'):
+      gs_bucket = build_payload.artifacts_gs_bucket
+      gs_path = build_payload.artifacts_gs_path
+      # TODO(evanhernandez): Read this from build payload once available.
+      file_names_by_artifact = {
+          'IMAGE_ZIP': 'image.zip',
+      }
+
+      download_root = self.m.path.mkdtemp(prefix='downloaded-artifacts-')
+      download_paths_by_artifact = {}
+      for artifact in artifacts:
+        artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
+
+        gs_file_name = file_names_by_artifact.get(artifact_name)
+        if gs_file_name is None:
+          raise ValueError('artifact %s not found in payload' % artifact_name)
+
+        download_path = download_root.join(gs_file_name)
+        self.m.gsutil.download(gs_bucket, os.path.join(gs_path, gs_file_name),
+                               download_path,
+                               name='download %s' % artifact_name)
+        download_paths_by_artifact[artifact] = download_path
+
+      return download_paths_by_artifact

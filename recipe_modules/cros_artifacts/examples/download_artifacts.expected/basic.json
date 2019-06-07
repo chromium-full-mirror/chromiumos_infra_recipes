@@ -1,0 +1,34 @@
+[
+  {
+    "cmd": [],
+    "name": "download artifacts"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://gs://bucket/path/image.zip",
+      "[CLEANUP]/downloaded-artifacts-_tmp_1/image.zip"
+    ],
+    "infra_step": true,
+    "name": "download artifacts.gsutil download IMAGE_ZIP",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "download artifacts (2)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

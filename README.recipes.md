@@ -40,6 +40,7 @@
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
+  * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
   * [cros_artifacts:examples/gsutil_retry_fail](#recipes-cros_artifacts_examples_gsutil_retry_fail)
   * [cros_artifacts:examples/gsutil_retry_success](#recipes-cros_artifacts_examples_gsutil_retry_success)
@@ -183,6 +184,21 @@ API for uploading CrOS build artifacts to Google Storage.
 #### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
+
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#142)(self, build_payload, artifacts, name=None):**
+
+Download the given artifacts from the given build payload.
+
+Args:
+  build_payload (BuildPayload): Describes where build artifacts are on GS.
+  artifacts (list[ArtifactTypes]): The artifact types to download.
+  name (str): The step name. Defaults to 'download artifacts'.
+
+Returns:
+  dict: Maps ArtifactType to Path where artifact was downloaded.
+
+Raises:
+  ValueError: If the artifact not found in the build payload.
 
 &mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#95)(self, target, kind, gs_bucket, artifacts, name=None):**
 
@@ -1639,6 +1655,11 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)
 
 &mdash; **def [RunSteps](/recipe_modules/cloud_pubsub/examples/full.py#9)(api):**
+### *recipes* / [cros\_artifacts:examples/download\_artifacts](/recipe_modules/cros_artifacts/examples/download_artifacts.py)
+
+[DEPS](/recipe_modules/cros_artifacts/examples/download_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/download_artifacts.py#16)(api):**
 ### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts)
