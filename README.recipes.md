@@ -1817,9 +1817,9 @@ Raises: An exception if there are invalid properties.
 &mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#13)(api):**
 ### *recipes* / [depends:examples/full](/recipe_modules/depends/examples/full.py)
 
-[DEPS](/recipe_modules/depends/examples/full.py#6): [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
+[DEPS](/recipe_modules/depends/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
 
-&mdash; **def [RunSteps](/recipe_modules/depends/examples/full.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/depends/examples/full.py#18)(api):**
 ### *recipes* / [dupit](/recipes/dupit.py)
 
 [DEPS](/recipes/dupit.py#8): [cros\_dupit](#recipe_modules-cros_dupit)

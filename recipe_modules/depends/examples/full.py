@@ -9,17 +9,20 @@ DEPS = [
   'recipe_engine/raw_io',
   'recipe_engine/tempfile',
 
+  'cros_source',
   'depends',
   'repo',
 ]
 
 
 def RunSteps(api):
+    api.cros_source.ensure_synced_cache()
+    with api.cros_source.checkout_overlays_context(), api.context(
+        cwd=api.cros_source.workspace_path):
+      api.depends.ensure_manifest_cq_depends_fulfilled([])
 
-    api.depends.ensure_manifest_cq_depends_fulfilled([])
-
-    diffs = [api.repo.ManifestDiff('NAME', 'PATH', 'FROM_REV', 'TO_REV')]
-    api.depends.ensure_manifest_cq_depends_fulfilled(diffs)
+      diffs = [api.repo.ManifestDiff('NAME', 'PATH', 'FROM_REV', 'TO_REV')]
+      api.depends.ensure_manifest_cq_depends_fulfilled(diffs)
 
 def GenTests(api):
   yield api.test('basic')

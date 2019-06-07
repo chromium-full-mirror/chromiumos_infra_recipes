@@ -99,22 +99,36 @@ class DependsApi(recipe_api.RecipeApi):
           } for dep in deps]
       }
       test_data = {
-          'changes': [{
+          'changes': [
+            {
               'info': {
-                  'project': 'my/project',
+                  # This project name corresponds to a repo test_data project.
+                  'project': 'c',
                   'branch': 'master',
                   'current_revision': 'deadbeef',
-              }
-          }, {
+              },
+            },
+            {
+              'info': {
+                  # Imitates a project outside the chromiumos checkout.
+                  'project': 'not-a-project',
+                  'branch': 'master',
+                  'current_revision': 'deadbeef',
+              },
+            },
+            {
               'change_number': 1234,
-              'info': None
-          }]
+              'info': None,
+            },
+          ]
       }
       gerrit_results = self.m.support.call('gerrit-fetch-changes', json_data,
                                            test_output_data=test_data)
 
       # Log dep fulfilment in human-readable format as well
       dep_local_log = step.presentation.logs.setdefault('dep local', [])
+
+      project_names = {p.name for p in self.m.repo.project_infos()}
 
       # Ensure each change is in the local checkout.
       for change in gerrit_results['changes']:
@@ -126,9 +140,10 @@ class DependsApi(recipe_api.RecipeApi):
         project = change['info']['project']
         branch = change['info']['branch']
         rev = change['info']['current_revision']
-        if project == 'chromium/src':
-          # TODO(crbug.com/972054): generalize this check
-          continue  # pragma: nocover
+        if project not in project_names:
+          dep_local_log.append('change %s in non-Chrome OS repo %s' %
+                               (change.get('change_number'), project))
+          continue
         path = self.m.cros_source.find_project_path(project, branch)
 
         # Ensure that rev exists in the git repo at that path. Fail otherwise.
