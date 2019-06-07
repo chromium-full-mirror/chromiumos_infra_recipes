@@ -132,9 +132,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           else:
             raise
 
-      res = self.m.step('output artifact GS paths', cmd=None)
-      res.presentation.properties['artifacts'] = {
-          'gs_bucket': gs_bucket,
-          'gs_path': gs_path,
-          'files_by_artifact': files_by_artifact,
-      }
+      self.m.easy.set_property_step(
+          'artifacts', {
+              'gs_bucket': gs_bucket,
+              'gs_path': gs_path,
+              'files_by_artifact': files_by_artifact,
+          }, step_name='output artifact GS paths')
