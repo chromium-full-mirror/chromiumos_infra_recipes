@@ -123,8 +123,8 @@ class FailuresApi(recipe_api.RecipeApi):
       step.presentation.status = self.m.step.FAILURE
 
       for failed_vm_test in failed_vm_tests:
-        properties = json_format.MessageToDict(failed_vm_test.output.properties)
-        title = '[FAILED] {}'.format(properties['name'])
+        title = '[FAILED] {}'.format(
+            self.m.naming.get_vm_test_title(failed_vm_test))
         url = self.m.buildbucket.build_url(build_id=failed_vm_test.id)
         step.presentation.links[title] = url
 
