@@ -98,7 +98,7 @@ def _apply_gerrit_changes(api):
     for patch_set in patch_sets:
       commit_id = api.git.fetch_ref(patch_set.git_fetch_url,
                                     patch_set.git_fetch_ref)
-      api.git.cherry_pick(commit_id)
+      api.git.cherry_pick(commit_id, infra_step=False)
 
 
 def _get_last_successful_build(api, builder):

@@ -335,7 +335,6 @@
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "cwd": "[CLEANUP]/recipes/src",
-    "infra_step": true,
     "name": "apply gerrit changes.git cherry-pick",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
