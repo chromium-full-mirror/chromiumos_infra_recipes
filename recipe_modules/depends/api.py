@@ -126,6 +126,9 @@ class DependsApi(recipe_api.RecipeApi):
         project = change['info']['project']
         branch = change['info']['branch']
         rev = change['info']['current_revision']
+        if project == 'chromium/src':
+          # TODO(crbug.com/972054): generalize this check
+          continue  # pragma: nocover
         path = self.m.cros_source.find_project_path(project, branch)
 
         # Ensure that rev exists in the git repo at that path. Fail otherwise.
