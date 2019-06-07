@@ -155,7 +155,20 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
     gs_bucket = build_payload.artifacts_gs_bucket
     gs_path = build_payload.artifacts_gs_path
-    gs_file_names = {'IMAGE_ZIP': ['image.zip']}.get(artifact_name)
+    # TODO(evanhernandez): Pass this dict through BuildPayload.
+    gs_file_names = {
+        'IMAGE_ZIP': ['image.zip'],
+        'AUTOTEST_FILES': [
+            'autotest_packages.tar',
+            'autotest_server_package.tar.bz2',
+            'control_files.tar',
+            'test_suites.tar.bz2',
+        ],
+        'TEST_UPDATE_PAYLOAD': [
+            '*.bin.json$'
+            '*.bin$',
+        ],
+    }.get(artifact_name)
     if gs_file_names is None:
       raise ValueError('artifact %s not found in payload' % artifact_name)
 

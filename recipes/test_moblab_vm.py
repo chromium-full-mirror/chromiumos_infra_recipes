@@ -1,0 +1,116 @@
+# -*- coding: utf-8 -*-
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Recipe for running Moblab VM tests."""
+
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Path
+from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
+from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
+from PB.chromite.api.test import MoblabVmTestRequest
+from PB.recipes.chromeos.test_moblab_vm import TestMoblabVmProperties
+
+DEPS = [
+    'recipe_engine/archive',
+    'recipe_engine/buildbucket',
+    'recipe_engine/context',
+    'recipe_engine/cq',
+    'recipe_engine/path',
+    'recipe_engine/properties',
+    'recipe_engine/step',
+    'cros_artifacts',
+    'cros_build_api',
+    'cros_sdk',
+    'cros_source',
+    'gerrit',
+]
+
+PROPERTIES = TestMoblabVmProperties
+
+def RunSteps(api, properties):
+  api.cros_source.ensure_synced_cache()
+  with api.cros_source.checkout_overlays_context():
+    # Ensure that the workspace aligns with the image that was built.
+    # Though this seems wasteful, it will catch bugs introduced to the build
+    # API and any scripts it depends on.
+    with api.context(cwd=api.cros_source.workspace_path):
+      api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
+      gerrit_changes = api.buildbucket.build.input.gerrit_changes
+      if gerrit_changes:
+        gerrit_changes = api.cq.ordered_gerrit_changes
+        with api.step.nest('cherry-pick gerrit changes'):
+          patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
+          api.cros_source.apply_gerrit_patch_sets(patch_sets)
+
+    api.cros_build_api.SdkService.Create(
+        CreateSdkRequest(
+            flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
+            chroot=api.cros_sdk.chroot), name='init sdk')
+
+    api.cros_build_api.SdkService.Update(
+        UpdateSdkRequest(
+            chroot=api.cros_sdk.chroot,
+            toolchain_targets=[BuildTarget(name='moblab-generic-vm')]),
+        name='update sdk')
+
+    with api.step.nest('prepare artifacts'):
+      artifact_paths = api.cros_artifacts.download_artifacts(
+          properties.build_payload,
+          [
+              BuilderConfig.Artifacts.IMAGE_ZIP,
+              BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD,
+              BuilderConfig.Artifacts.AUTOTEST_FILES,
+          ])
+
+      with api.step.nest('inflate image bundle'):
+        image_files = artifact_paths[BuilderConfig.Artifacts.IMAGE_ZIP]
+        assert len(image_files) == 1, (
+            'expected one image archive, got: %r' % image_files)
+        image_zip = image_files[0]
+        image_dir = api.path.mkdtemp(prefix='image-under-test-')
+        api.archive.extract('unzip image.zip', image_zip, image_dir)
+
+      with api.step.nest('inflate autotest bundles'):
+        autotest_dir = api.path.mkdtemp(prefix='autotest-')
+        autotest_bundles = artifact_paths[
+            BuilderConfig.Artifacts.AUTOTEST_FILES]
+        for autotest_bundle in autotest_bundles:
+          autotest_file_name = api.path.basename(autotest_bundle)
+          api.archive.extract(
+              'inflate %s' % autotest_file_name,
+              autotest_bundle, autotest_dir.join(autotest_file_name))
+
+      # Test update payloads are all json and bin files, so no inflation needed.
+      test_update_payloads_dir = artifact_paths[
+          BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD]
+
+    def as_payload(path):
+      return MoblabVmTestRequest.Payload(
+          path=Path(path=str(path), location=Path.OUTSIDE))
+    # TODO(evanhernandez): Read and present the test results.
+    api.cros_build_api.TestService.MoblabVmTest(
+        MoblabVmTestRequest(
+            chroot=api.cros_sdk.chroot,
+            image_payload=as_payload(image_dir),
+            cache_payloads=[
+                as_payload(autotest_dir),
+                as_payload(test_update_payloads_dir),
+            ]),
+        name='run moblab vm tests',
+    )
+
+def GenTests(api):
+  yield (api.test('basic') +
+         # TODO(evanhernandez): Create a good fake config for moblab vm tests.
+         api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                   builder='amd64-generic-cq') +
+         api.cq(full_run=True) +
+         api.properties(
+             name='moblab-vm-name',
+             build_payload={
+                 'artifacts_gs_bucket': 'gs://bucket',
+                 'artifacts_gs_path': 'path/to/artifacts',
+             }))

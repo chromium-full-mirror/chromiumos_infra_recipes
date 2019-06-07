@@ -130,6 +130,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['ChromiteUnitTest'] = '{}'
     responses['DebugInfoTest'] = '{}'
     responses['VmTest'] = '{}'
+    responses['MoblabVmTest'] = '{}'
     return responses
 
   @property
