@@ -20,6 +20,10 @@ def RunSteps(api):
   api.cros_prebuilts.upload_target_prebuilts(target,
                                              BuilderConfig.Id.POSTSUBMIT,
                                              'prebuilts_gs_bucket')
+  api.cros_prebuilts.upload_target_prebuilts(target,
+                                             BuilderConfig.Id.POSTSUBMIT,
+                                             'prebuilts_gs_bucket',
+                                             False)
   api.assertions.assertRaises(ValueError,
                               api.cros_prebuilts.upload_target_prebuilts,
                               target,
