@@ -1,14 +1,14 @@
 [
   {
     "cmd": [],
-    "name": "set bisect builder",
+    "name": "set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"wally-bisect\"@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set build compile failure",
+    "name": "set build_compile_failure_output",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@build_compile_failure_output@{\"failures\": [{\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"uno\\\", \\n  \\\"version\\\": \\\"1\\\"\\n}\"], \"rule\": \"emerge\"}, {\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"dos\\\", \\n  \\\"version\\\": \\\"2\\\"\\n}\"], \"rule\": \"emerge\"}]}@@@"
     ]

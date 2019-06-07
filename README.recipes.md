@@ -204,7 +204,7 @@ Args:
   name (str): The step name. Defaults to 'upload artifacts'.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
 
-[DEPS](/recipe_modules/cros_bisect/__init__.py#5): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_bisect/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for interacting with FindIt.
 
@@ -212,7 +212,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#68)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#67)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 

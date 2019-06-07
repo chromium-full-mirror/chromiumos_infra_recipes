@@ -4,6 +4,7 @@
 
 DEPS = [
     'recipe_engine/step',
+    'easy',
 ]
 
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (

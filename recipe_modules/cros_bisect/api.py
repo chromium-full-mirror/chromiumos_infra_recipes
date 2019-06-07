@@ -27,8 +27,8 @@ class CrosBisectApi(recipe_api.RecipeApi):
     Args:
       build_target_name (str): build target name to set the bisect builder for.
     """
-    res = self.m.step('set bisect builder', cmd=None)
-    res.presentation.properties['BISECT_BUILDER'] = build_target_name + '-bisect'
+    self.m.easy.set_property_step('BISECT_BUILDER',
+                                  build_target_name + '-bisect')
 
   def _create_failures_payload(self, failed_packages):
     """Creates and returns the failures payload used by FindIt.
@@ -62,8 +62,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
     if not failed_packages:
       return
     payload = self._create_failures_payload(failed_packages)
-    res = self.m.step('set build compile failure', cmd=None)
-    res.presentation.properties['build_compile_failure_output'] = payload
+    self.m.easy.set_property_step('build_compile_failure_output', payload)
 
   def get_packages(self):
     """Returns packages to build as specified by FindIt or empty list.
