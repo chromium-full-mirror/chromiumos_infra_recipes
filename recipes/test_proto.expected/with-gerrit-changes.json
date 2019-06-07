@@ -430,6 +430,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [

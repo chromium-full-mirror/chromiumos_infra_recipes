@@ -21,6 +21,7 @@ def RunSteps(api):
   build = api.buildbucket.build
   gerrit_changes = build.input.gerrit_changes
 
+  # TODO(crbug.com/972258): Stop doing full checkout.
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
@@ -30,9 +31,9 @@ def RunSteps(api):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-    projects = api.repo.project_infos(projects=['chromiumos/infra/proto'])
-    assert len(projects) == 1, 'expected one proto repo, got: %r' % projects
-    project = projects[0]
+      projects = api.repo.project_infos(projects=['chromiumos/infra/proto'])
+      assert len(projects) == 1, 'expected one proto repo, got: %r' % projects
+      project = projects[0]
 
     project_path = api.cros_source.workspace_path.join(project.path)
     with api.context(cwd=project_path):
