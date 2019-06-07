@@ -862,7 +862,8 @@
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"name\": \"vm-test\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -893,15 +894,12 @@
     "name": "run tests.collect tests.record passed tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\"]@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"vm-test\"]@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "results",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "results"
   },
   {
     "cmd": [],
@@ -937,9 +935,7 @@
     "name": "results.vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
-      "@@@STEP_LINK@[FAILED BUT IGNORED] vm-test@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@all vm tests passed@@@"
     ]
   },
   {

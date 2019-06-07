@@ -56,8 +56,9 @@ def RunSteps(api):
 
   api.failures.raise_failed_vm_tests([vm_success])
   api.failures.raise_failed_vm_tests([vm_failure])
-  # TODO(evanhernandez): Test raises exception behavior once implemented.
-  api.failures.raise_failed_vm_tests([vm_critical_failure])
+  api.assertions.assertRaises(
+      api.step.StepFailure, api.failures.raise_failed_vm_tests,
+      [vm_critical_failure])
 
   api.assertions.assertFalse(api.failures.is_build_failure(build_success))
   api.assertions.assertTrue(api.failures.is_build_failure(build_failure))

@@ -124,10 +124,11 @@ class FailuresApi(recipe_api.RecipeApi):
 
       for failed_vm_test in failed_vm_tests:
         properties = json_format.MessageToDict(failed_vm_test.output.properties)
-        title = '[FAILED BUT IGNORED] {}'.format(properties['name'])
+        title = '[FAILED] {}'.format(properties['name'])
         url = self.m.buildbucket.build_url(build_id=failed_vm_test.id)
         step.presentation.links[title] = url
-      # TODO(evanhernandez): Raise exception for these results.
+
+      raise self.m.step.StepFailure('{} vm tests failed'.format(fail_count))
 
   def is_build_failure(self, build):
     """Determine if the build failed.

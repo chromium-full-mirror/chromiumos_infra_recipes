@@ -88,7 +88,6 @@
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
-  * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Tast VM tests.
   * [test_proto](#recipes-test_proto) &mdash; Verifies the proto repository.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
 ## Recipe Modules
@@ -751,7 +750,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#132)(self, build):**
+&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#133)(self, build):**
 
 Determine if the build failed.
 
@@ -761,7 +760,7 @@ Args:
 Returns:
   bool: True if the build failed.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#165)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#166)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -771,7 +770,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#177)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#178)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -781,7 +780,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#189)(self, vm_test):**
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#190)(self, vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -791,7 +790,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#143)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#144)(self, hw_test):**
 
 Determine if the hardware test failed.
 
@@ -801,7 +800,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#154)(self, vm_test):**
+&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#155)(self, vm_test):**
 
 Determine if the VM test failed.
 
@@ -1838,7 +1837,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#20)(api):**
 
-&mdash; **def [vm\_build](/recipe_modules/failures/examples/full.py#99)(\*\*kwargs):**
+&mdash; **def [vm\_build](/recipe_modules/failures/examples/full.py#100)(\*\*kwargs):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1989,26 +1988,6 @@ on its own because it is agnostic of ChromeOS build targets.
 Verifies a repo manifest.
 
 &mdash; **def [RunSteps](/recipes/test_manifest.py#20)(api):**
-### *recipes* / [test\_moblab\_vm](/recipes/test_moblab_vm.py)
-
-[DEPS](/recipes/test_moblab_vm.py#35): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-Recipe for running Tast VM tests.
-
-Because the scripts that run VM tests live within the build API,
-this recipe does a lot of what build_target does. Namely, it syncs to the
-snapshot used to build the test image, it applies gerrit patches, it inits
-the SDK, etc.
-
-The steps specific to VM testing are:
-  1. Download the test image.
-  2. Convert the test image to a VM. This happens here instead of build_target
-     because most targets do not run VM tests.
-  3. Call the build API to run VM tests.
-
-For now, only supports TAST VM tests.
-
-&mdash; **def [RunSteps](/recipes/test_moblab_vm.py#58)(api, properties):**
 ### *recipes* / [test\_proto](/recipes/test_proto.py)
 
 [DEPS](/recipes/test_proto.py#8): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]

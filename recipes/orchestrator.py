@@ -318,7 +318,7 @@ def GenTests(api):
   def vm_test_build():
     output = build_pb2.Build.Output()
     output.properties.update({'name': 'vm-test'})
-    return build_pb2.Build(output=output)
+    return build_pb2.Build(output=output, status=common_pb2.SUCCESS)
 
   def build_target_property(build_target):
     """Generate a struct for the 'build_target' property.

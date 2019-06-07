@@ -89,7 +89,7 @@
     "name": "vm test results (3)",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
-      "@@@STEP_LINK@[FAILED BUT IGNORED] target.vm.suite@https://cr-buildbucket.appspot.com/build/606@@@",
+      "@@@STEP_LINK@[FAILED] target.vm.suite@https://cr-buildbucket.appspot.com/build/606@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
