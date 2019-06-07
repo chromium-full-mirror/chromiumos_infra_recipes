@@ -21,9 +21,7 @@ def RunSteps(api):
 
   download_paths_by_artifact = api.cros_artifacts.download_artifacts(
       build_payload, [image_zip])
-  image_zip_download_path = download_paths_by_artifact[image_zip]
-  api.assertions.assertTrue(
-      str(download_paths_by_artifact[image_zip]).endswith('image.zip'))
+  api.assertions.assertIn(image_zip, download_paths_by_artifact)
 
   api.assertions.assertRaises(
         ValueError, api.cros_artifacts.download_artifacts,

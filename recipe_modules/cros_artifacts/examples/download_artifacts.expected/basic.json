@@ -4,6 +4,13 @@
     "name": "download artifacts"
   },
   {
+    "cmd": [],
+    "name": "download artifacts.download IMAGE_ZIP",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -13,12 +20,12 @@
       "----",
       "cp",
       "gs://gs://bucket/path/image.zip",
-      "[CLEANUP]/downloaded-artifacts-_tmp_1/image.zip"
+      "[CLEANUP]/IMAGE_ZIP-_tmp_1/image.zip"
     ],
     "infra_step": true,
-    "name": "download artifacts.gsutil download IMAGE_ZIP",
+    "name": "download artifacts.download IMAGE_ZIP.gsutil download",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

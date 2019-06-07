@@ -185,7 +185,21 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#142)(self, build_payload, artifacts, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#142)(self, build_payload, artifact, name=None):**
+
+Download the given artfiact from the given build payload.
+
+Args:
+  build_payload (BuildPayload): Describes where the artifact is on GS.
+  artifact (ArtifactType): The artifact to download.
+
+Returns:
+  list[Path]: Paths to the files downloaded from GS.
+
+Raises:
+  ValueError: If the artifact is not found in the build payload.
+
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#172)(self, build_payload, artifacts, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -195,10 +209,10 @@ Args:
   name (str): The step name. Defaults to 'download artifacts'.
 
 Returns:
-  dict: Maps ArtifactType to Path where artifact was downloaded.
+  dict: Maps ArtifactType to list[Path] representing downloaded files.
 
 Raises:
-  ValueError: If the artifact not found in the build payload.
+  ValueError: If any artifact is not found in the build payload.
 
 &mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#95)(self, target, kind, gs_bucket, artifacts, name=None):**
 
