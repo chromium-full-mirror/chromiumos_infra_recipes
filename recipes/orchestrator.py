@@ -90,6 +90,9 @@ def RunSteps(api, properties):
     retry_count = len(
         api.cros_history.get_matching_builds(api.buildbucket.build,
                                              status=common_pb2.FAILURE))
+    with api.step.nest('record retry count') as step:
+      # TODO: Add a generic function to do this instead.
+      step.presentation.properties['cq_orch_retries'] = retry_count
     completed_builds = api.cros_history.get_passed_builds()
     passed_builders = set(build.builder.builder for build in completed_builds)
 

@@ -117,6 +117,13 @@
   },
   {
     "cmd": [],
+    "name": "record retry count",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@cq_orch_retries@0@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "get change build history",
     "~followup_annotations": [
       "@@@STEP_TEXT@found no completed builds@@@"
