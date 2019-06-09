@@ -96,11 +96,9 @@ def RunSteps(api, properties):
     completed_builds = api.cros_history.get_passed_builds()
     for i in range(len(completed_builds)):
       builder = completed_builds[i].builder.builder
-      if builder != 'test_vm':
-        # Very hacky, I know.
-        builder_config = api.cros_infra_config.get_builder_config(builder)
-        critical = builder_config.general.critical.value
-        completed_builds[i].critical = critical
+      builder_config = api.cros_infra_config.get_builder_config(builder)
+      critical = builder_config.general.critical.value
+      completed_builds[i].critical = critical
     passed_builders = set(build.builder.builder for build in completed_builds)
 
   orchestrator_builder_config = api.cros_infra_config.get_builder_config(
