@@ -94,11 +94,6 @@ def RunSteps(api, properties):
       # TODO: Add a generic function to do this instead.
       step.presentation.properties['cq_orch_retries'] = retry_count
     completed_builds = api.cros_history.get_passed_builds()
-    for i in range(len(completed_builds)):
-      builder = completed_builds[i].builder.builder
-      builder_config = api.cros_infra_config.get_builder_config(builder)
-      critical = builder_config.general.critical.value
-      completed_builds[i].critical = critical
     passed_builders = set(build.builder.builder for build in completed_builds)
 
   orchestrator_builder_config = api.cros_infra_config.get_builder_config(
@@ -366,10 +361,10 @@ def GenTests(api):
 
   yield (api.test('with_history') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
+         api.cq(full_run=True, gerrit_changes=gerrit_changes()) + #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
-             builds[:1], 'get change build history.buildbucket.search') +  #
+             [], 'get change build history.buildbucket.search') +  #
          api.buildbucket.simulated_search_results(
              [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
              'run tests.schedule tests.get change test history'
