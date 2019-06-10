@@ -150,6 +150,121 @@
   },
   {
     "cmd": [],
+    "name": "upload prebuilts.get binhosts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"private\": true@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@stdout@@@@",
+      "@@@STEP_LOG_END@stdout@@@",
+      "@@@STEP_LOG_LINE@response@{\"binhosts\": [{\"package_index\": \"PackageIndex\", \"uri\": \"gs://bucket1/some/path\"}, {\"package_index\": \"PackageIndex\", \"uri\": \"gs://bucket2/diff/path\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"private\": true\n}",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "chromite.api.BinhostService/Get"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://bucket1/some/path/PackageIndex",
+      "[CLEANUP]/binhosts_tmp_3/some/path/PackageIndex"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.get binhosts.gsutil download",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://bucket2/diff/path/PackageIndex",
+      "[CLEANUP]/binhosts_tmp_3/diff/path/PackageIndex"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.get binhosts.gsutil download (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "upload prebuilts.prepare binhost uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -164,6 +279,20 @@
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"target\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"packageIndexFiles\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/binhosts_tmp_3/some/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/binhosts_tmp_3/diff/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -181,8 +310,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"packageIndexFiles\": [\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_3/some/path/PackageIndex\", \n        \"location\": \"OUTSIDE\"\n      }\n    }, \n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_3/diff/path/PackageIndex\", \n        \"location\": \"OUTSIDE\"\n      }\n    }\n  ], \n  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.write input file",
@@ -194,9 +323,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "chromite.api.BinhostService/PrepareBinhostUploads"
     ],
     "env_suffixes": {
@@ -218,7 +347,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -240,7 +369,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/symlink.py",
       "--link-json",
-      "{\"[START_DIR]/uploads/dir/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_3/foo.tbz2\"]}"
+      "{\"[START_DIR]/uploads/dir/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_5/foo.tbz2\"]}"
     ],
     "infra_step": true,
     "name": "upload prebuilts.upload prebuilt blobs to GS.link files to upload",
@@ -261,7 +390,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/prebuilts_tmp_3",
+      "[CLEANUP]/prebuilts_tmp_5",
       "gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages"
     ],
     "infra_step": true,
@@ -330,7 +459,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"key\": \"POSTSUBMIT_BINHOST\", \n  \"private\": true, \n  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.write input file",
@@ -342,9 +471,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "chromite.api.BinhostService/SetBinhost"
     ],
     "env_suffixes": {
@@ -366,7 +495,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -608,6 +737,120 @@
   },
   {
     "cmd": [],
+    "name": "upload prebuilts (2).get binhosts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts (2).get binhosts.call chromite.api.BinhostService/Get",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@stdout@@@@",
+      "@@@STEP_LOG_END@stdout@@@",
+      "@@@STEP_LOG_LINE@response@{\"binhosts\": [{\"package_index\": \"PackageIndex\", \"uri\": \"gs://bucket1/some/path\"}, {\"package_index\": \"PackageIndex\", \"uri\": \"gs://bucket2/diff/path\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts (2).get binhosts.call chromite.api.BinhostService/Get.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "chromite.api.BinhostService/Get"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload prebuilts (2).get binhosts.call chromite.api.BinhostService/Get.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts (2).get binhosts.call chromite.api.BinhostService/Get.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://bucket1/some/path/PackageIndex",
+      "[CLEANUP]/binhosts_tmp_8/some/path/PackageIndex"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts (2).get binhosts.gsutil download",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://bucket2/diff/path/PackageIndex",
+      "[CLEANUP]/binhosts_tmp_8/diff/path/PackageIndex"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts (2).get binhosts.gsutil download (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "upload prebuilts (2).prepare binhost uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -622,6 +865,20 @@
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"target\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"packageIndexFiles\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/binhosts_tmp_8/some/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/binhosts_tmp_8/diff/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -639,8 +896,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+      "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"packageIndexFiles\": [\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_8/some/path/PackageIndex\", \n        \"location\": \"OUTSIDE\"\n      }\n    }, \n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_8/diff/path/PackageIndex\", \n        \"location\": \"OUTSIDE\"\n      }\n    }\n  ], \n  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts (2).prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.write input file",
@@ -652,9 +909,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "chromite.api.BinhostService/PrepareBinhostUploads"
     ],
     "env_suffixes": {
@@ -676,7 +933,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -698,7 +955,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/symlink.py",
       "--link-json",
-      "{\"[START_DIR]/uploads/dir/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_6/foo.tbz2\"]}"
+      "{\"[START_DIR]/uploads/dir/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_10/foo.tbz2\"]}"
     ],
     "infra_step": true,
     "name": "upload prebuilts (2).upload prebuilt blobs to GS.link files to upload",
@@ -719,7 +976,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/prebuilts_tmp_6",
+      "[CLEANUP]/prebuilts_tmp_10",
       "gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages"
     ],
     "infra_step": true,
@@ -785,7 +1042,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"target\"\n  }, \n  \"uri\": \"gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages\", \n  \"key\": \"POSTSUBMIT_BINHOST\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts (2).update binhost conf file.call chromite.api.BinhostService/SetBinhost.write input file",
@@ -797,9 +1054,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
       "chromite.api.BinhostService/SetBinhost"
     ],
     "env_suffixes": {
@@ -821,7 +1078,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,

@@ -56,6 +56,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'path': 'foo.tbz2'
         }])
     responses['SetBinhost'] = jsonify(output_file=self.path('BINHOST.conf'))
+    responses['Get'] = jsonify(binhosts = [
+        {'uri': 'gs://bucket1/some/path', 'package_index': 'PackageIndex'},
+        {'uri': 'gs://bucket2/diff/path', 'package_index': 'PackageIndex'},
+    ])
     responses['GetPrivatePrebuiltAclArgs'] = jsonify(args=[
         {'arg': 'arg1', 'value': 'value1'},
         {'arg': 'arg2', 'value': 'value2'},

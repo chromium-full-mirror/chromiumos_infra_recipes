@@ -11,7 +11,7 @@ from recipe_engine import recipe_api
 
 from PB.chromite.api import binhost
 from PB.chromiumos import builder_config
-
+from PB.chromiumos import common
 
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
   """A module for uploading package prebuilts."""
@@ -56,21 +56,73 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       err.message = '%s builders may not upload prebuilts' % name.lower()
       raise
 
-  def _prepare_binhost_uploads(self, target, uri):
+  def _parse_gs_uri(self, binhost):
+    """Parses google storage URIs into bucket and full path parts.
+
+    Parses the google storage URIs as provided in the binhost.uri field into
+    their respective bucket and full path parts.
+
+    Args:
+      uri (str): google storage URI to parse.
+
+    Returns:
+      tuple(str, str): google storage bucket and full path.
+    """
+    assert binhost.uri.startswith('gs://'), (
+        'binhosts URI %s does not appear to be a google storage path' % uri)
+    uri = binhost.uri[len('gs://'):]
+    parts = uri.split('/', 1)
+    assert len(parts) == 2, '%s would not split into bucket and path' % uri
+    return parts[0], os.path.join(parts[1], binhost.package_index)
+
+  def _get_binhosts(self, target, private):
+    """Download binhost files from google storage.
+
+    Download binhost files from google storage and returns PackageInfo files
+    specifying their location.
+
+    Args:
+      target (BuildTarget): Build target getting binhosts for.
+      private (bool): whether to include private binhosts.
+
+    Returns:
+      List[PackageInfo]: Package info files to deduplicate the prebuilt list.
+    """
+    with self.m.step.nest('get binhosts'):
+      request = binhost.BinhostGetRequest(build_target=target, private=private)
+      response = self.m.cros_build_api.BinhostService.Get(request,
+                                                          infra_step=True)
+      binhosts_root = self.m.path.mkdtemp(prefix='binhosts')
+      package_index_files = []
+      for b in response.binhosts:
+        gs_bucket, gs_source = self._parse_gs_uri(b)
+        dest = binhosts_root.join(gs_source)
+        self.m.gsutil.download(gs_bucket, gs_source, dest)
+        package_index_files.append(binhost.PackageIndex(
+          path=common.Path(path=str(dest), location=common.Path.OUTSIDE)))
+      return package_index_files
+
+  def _prepare_binhost_uploads(self, target, uri, package_index_files):
     """Determine which prebuilt archives should be uploaded to the binhost.
 
     Args:
       target (BuildTarget): Build target whose prebuilts will be uploaded.
       uri (str): URI where prebuilts will be uploaded.
+      package_index_files (List[PackageIndex]): package index files to
+          deduplicate the prebuilt list.
 
     Returns:
       tuple(Path, List[str]): Path to directory containing uploads and
           a list of uploadable string paths relative to that directory.
     """
     with self.m.step.nest('prepare binhost uploads'):
+      request = binhost.PrepareBinhostUploadsRequest(
+          build_target=target,
+          uri=uri,
+          package_index_files=package_index_files
+      )
       response = self.m.cros_build_api.BinhostService.PrepareBinhostUploads(
-          binhost.PrepareBinhostUploadsRequest(build_target=target, uri=uri),
-          infra_step=True)
+          request, infra_step=True)
       upload_root = self.m.path.abs_to_path(response.uploads_dir)
       upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths
@@ -182,7 +234,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
             infra_step=True, name='read gs acls').args
         assert len(acls) > 0, 'private prebuilts uploads must have ACLs'
       upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
+      package_index_files = self._get_binhosts(target, private)
       upload_root, upload_paths = self._prepare_binhost_uploads(
-          target, upload_uri)
+          target, upload_uri, package_index_files)
       self._upload(upload_root, upload_paths, upload_uri, acls)
       self._set_binhost(target, private, binhost_key, upload_uri)
