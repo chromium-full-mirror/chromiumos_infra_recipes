@@ -82,6 +82,33 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "arm-generic-cq",
+                    "branch": "master",
+                    "type": "CQ"
+                  },
+                  "general": {
+                    "critical": true
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE"
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "install_packages": "RUN"
+                  },
+                  "unit_tests": {
+                    "package_blacklist": [{
+                      "package_name": "chromite",
+                      "category": "chromeos-base",
+                      "version": ""
+                    }],
+                    "ebuilds_run_spec": "RUN"
+                  }
+                },
+                {
+                  "id": {
                     "name": "amd64-generic-bisect",
                     "branch": "master",
                     "type": "POSTSUBMIT"
@@ -154,6 +181,22 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "children": [
                       "amd64-generic-postsubmit",
                       "arm-generic-postsubmit"
+                    ]
+                  }
+                },
+                {
+                  "id": {
+                    "name": "cq-orchestrator",
+                    "branch": "master",
+                    "type": "CQ"
+                  },
+                  "general": {
+                    "critical": true
+                  },
+                  "orchestrator": {
+                    "children": [
+                      "amd64-generic-cq",
+                      "arm-generic-cq"
                     ]
                   }
                 },

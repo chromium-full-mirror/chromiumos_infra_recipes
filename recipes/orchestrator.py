@@ -20,6 +20,7 @@ DEPS = [
     'cros_source',
     'cros_test_plan',
     'cros_version',
+    'easy',
     'failures',
     'gerrit',
     'git',
@@ -62,11 +63,6 @@ def RunSteps(api, properties):
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
                             snapshot)
 
-  retry_count = 0
-  requests = []
-  completed_builds = []
-  passed_builders = set()
-
   if gerrit_changes and not api.gerrit.changes_are_submittable(gerrit_changes):
     raise api.step.StepFailure('failed to cherry-pick changes, '
                                'please rebase and retry')
@@ -87,27 +83,9 @@ def RunSteps(api, properties):
         else:
           step.presentation.step_text = 'found no inflight run'
 
-    retry_count = len(
-        api.cros_history.get_matching_builds(api.buildbucket.build,
-                                             status=common_pb2.FAILURE))
-    with api.step.nest('record retry count') as step:
-      # TODO: Add a generic function to do this instead.
-      step.presentation.properties['cq_orch_retries'] = retry_count
-    completed_builds = api.cros_history.get_passed_builds()
-    passed_builders = set(build.builder.builder for build in completed_builds)
 
-  orchestrator_builder_config = api.cros_infra_config.get_builder_config(
-      api.buildbucket.build.builder.builder)
-  for child in orchestrator_builder_config.orchestrator.children:
-    if child not in passed_builders:
-      child_builder_config = api.cros_infra_config.get_builder_config(child)
-      critical = child_builder_config.general.critical.value
-      if critical == common_pb2.YES or retry_count == 0:
-        # Applies to CQ only. Retry just the critical builds.
-        requests.append(
-            api.buildbucket.schedule_request(
-                gitiles_commit=snapshot, builder=child, critical=critical,
-                properties=api.cq.props_for_child_build))
+  completed_builds, requests = get_build_plan(api, properties.enable_history,
+                                              gerrit_changes, snapshot)
 
   if requests:
     # As of 2019-05-16, buildbucket.run uses an old-style collect command
@@ -225,6 +203,82 @@ def RunSteps(api, properties):
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success',
                             snapshot)
 
+
+def get_build_plan(api, enable_history, gerrit_changes, snapshot):
+  """Get a list of builds to be run and  a list of builds that have succeeded.
+
+  This is planned to be replaced by a Go binary.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    enable_history (bool): Enables history lookup in cq orchestrator.
+    gerrit_changes list(GerritChange): List of patches in the order that they
+      can be cherry-picked.
+    snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+
+  Returns:
+    A tuple of two lists: a list of build_pb2.Build objects of successful
+    builds with refreshed criticality and a list of ScheduleBuildRequest of
+    the builds that have to be scheduled.
+  """
+  completed_builds = []
+  passed_builders = set()
+  requests = []
+  retry_count = 0
+
+  orchestrator_builder_config = api.cros_infra_config.get_builder_config(
+      api.buildbucket.build.builder.builder)
+  if enable_history and gerrit_changes:
+    retry_count = len(
+        api.cros_history.get_matching_builds(api.buildbucket.build,
+                                             status=common_pb2.FAILURE))
+    api.easy.set_property_step('cq_orch_retries', retry_count)
+    completed_builds = get_completed_builds(
+        api, orchestrator_builder_config.orchestrator.children)
+    passed_builders = set(build.builder.builder for build in completed_builds)
+
+  for child in orchestrator_builder_config.orchestrator.children:
+    if child not in passed_builders:
+      child_builder_config = api.cros_infra_config.get_builder_config(child)
+      critical = child_builder_config.general.critical.value
+      if critical == common_pb2.YES or retry_count == 0:
+        # Applies to CQ only. Retry just the critical builds.
+        requests.append(
+            api.buildbucket.schedule_request(
+                gitiles_commit=snapshot, builder=child, critical=critical,
+                properties=api.cq.props_for_child_build))
+
+  return completed_builds, requests
+
+
+def get_completed_builds(api, cq_orch_children):
+  """Get the list of previously passed child builds with criticality refreshed.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    cq_orch_children list(str): List of child builders of cq-orchestrator.
+        e.g. [u'arkham-cq', u'reef-cq', ...]
+
+  Returns:
+    A list of build_pb2.Build objects corresponding to the
+    latest successful child builds with the same patches as the current
+    cq orchestrator with refreshed critical values.
+  """
+  completed_builds = []
+  passed_builds = api.cros_history.get_passed_builds()
+  for build in passed_builds:
+    # Filter out non-child builds like vm_test, dry run orchestrator or
+    # hw_tests in the future.
+    if build.builder.builder in cq_orch_children:
+      builder_config = api.cros_infra_config.get_builder_config(
+          build.builder.builder)
+      # Refresh the criticality of the builders.
+      build.critical = builder_config.general.critical.value
+      completed_builds.append(build)
+
+  return completed_builds
+
+
 def validate_refs(refs):
   """Assert the given refs start with refs/heads.
 
@@ -309,9 +363,8 @@ def GenTests(api):
 
   def cq_orchestrator_build_with_gerrit_change():
     """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(project='chromeos',
-                                             bucket='postsubmit',
-                                             builder='postsubmit-orchestrator')
+    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
+                                             builder='cq-orchestrator')
     build.input.gerrit_changes.extend(gerrit_changes())
     return api.buildbucket.build(build)
 
@@ -359,9 +412,18 @@ def GenTests(api):
          api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
          api.gerrit.simulated_changes_are_submittable(submittable=False))
 
-  yield (api.test('with_history') +  #
+  yield (api.test('builds_with_history') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True, gerrit_changes=gerrit_changes()) + #
+         api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
+         api.properties(enable_history=True) +  #
+         api.buildbucket.simulated_search_results(
+             builds, 'get change build history.buildbucket.search') +  #
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+
+  yield (api.test('tests_with_history') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
              [], 'get change build history.buildbucket.search') +  #

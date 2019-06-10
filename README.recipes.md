@@ -1920,15 +1920,47 @@ Test git_footers calls.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#15)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#43)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#44)(api, properties):**
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#252)(api, update_manifest_refs, name, commit):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#207)(api, enable_history, gerrit_changes, snapshot):**
+
+Get a list of builds to be run and  a list of builds that have succeeded.
+
+This is planned to be replaced by a Go binary.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  enable_history (bool): Enables history lookup in cq orchestrator.
+  gerrit_changes list(GerritChange): List of patches in the order that they
+    can be cherry-picked.
+  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+
+Returns:
+  A tuple of two lists: a list of build_pb2.Build objects of successful
+  builds with refreshed criticality and a list of ScheduleBuildRequest of
+  the builds that have to be scheduled.
+
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#254)(api, cq_orch_children):**
+
+Get the list of previously passed child builds with criticality refreshed.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  cq_orch_children list(str): List of child builders of cq-orchestrator.
+      e.g. [u'arkham-cq', u'reef-cq', ...]
+
+Returns:
+  A list of build_pb2.Build objects corresponding to the
+  latest successful child builds with the same patches as the current
+  cq orchestrator with refreshed critical values.
+
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#306)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1939,7 +1971,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#241)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#295)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -1947,7 +1979,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#228)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#282)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -1957,7 +1989,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#275)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#329)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 
