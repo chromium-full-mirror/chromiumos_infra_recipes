@@ -75,6 +75,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload prebuilts.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -86,16 +94,16 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload prebuilts.read chromeos_version.sh",
+    "name": "upload prebuilts.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.read snapshot number",
+    "name": "upload prebuilts.read chromeos version.read snapshot number",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -107,9 +115,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload prebuilts.read snapshot number.git fetch",
+    "name": "upload prebuilts.read chromeos version.read snapshot number.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -120,9 +128,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload prebuilts.read snapshot number.git rev-parse",
+    "name": "upload prebuilts.read chromeos version.read snapshot number.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -135,10 +143,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload prebuilts.read snapshot number.read git footers",
+    "name": "upload prebuilts.read chromeos version.read snapshot number.read git footers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

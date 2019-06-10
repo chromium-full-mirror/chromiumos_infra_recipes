@@ -83,6 +83,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload ebuild logs.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -94,16 +102,16 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload ebuild logs.read chromeos_version.sh",
+    "name": "upload ebuild logs.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload ebuild logs.read snapshot number",
+    "name": "upload ebuild logs.read chromeos version.read snapshot number",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -115,9 +123,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload ebuild logs.read snapshot number.git fetch",
+    "name": "upload ebuild logs.read chromeos version.read snapshot number.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -128,9 +136,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload ebuild logs.read snapshot number.git rev-parse",
+    "name": "upload ebuild logs.read chromeos version.read snapshot number.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -143,10 +151,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload ebuild logs.read snapshot number.read git footers",
+    "name": "upload ebuild logs.read chromeos version.read snapshot number.read git footers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -263,6 +270,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload firmware archive.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -274,16 +289,16 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload firmware archive.read chromeos_version.sh",
+    "name": "upload firmware archive.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload firmware archive.read snapshot number",
+    "name": "upload firmware archive.read chromeos version.read snapshot number",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -295,9 +310,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload firmware archive.read snapshot number.git fetch",
+    "name": "upload firmware archive.read chromeos version.read snapshot number.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -308,9 +323,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload firmware archive.read snapshot number.git rev-parse",
+    "name": "upload firmware archive.read chromeos version.read snapshot number.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -323,10 +338,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload firmware archive.read snapshot number.read git footers",
+    "name": "upload firmware archive.read chromeos version.read snapshot number.read git footers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -759,6 +773,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload test artifacts.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -770,16 +792,16 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "upload test artifacts.read chromeos_version.sh",
+    "name": "upload test artifacts.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload test artifacts.read snapshot number",
+    "name": "upload test artifacts.read chromeos version.read snapshot number",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -791,9 +813,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload test artifacts.read snapshot number.git fetch",
+    "name": "upload test artifacts.read chromeos version.read snapshot number.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -804,9 +826,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload test artifacts.read snapshot number.git rev-parse",
+    "name": "upload test artifacts.read chromeos version.read snapshot number.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -819,10 +841,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "upload test artifacts.read snapshot number.read git footers",
+    "name": "upload test artifacts.read chromeos version.read snapshot number.read git footers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

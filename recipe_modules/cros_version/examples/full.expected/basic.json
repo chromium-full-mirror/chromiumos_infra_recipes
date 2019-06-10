@@ -1,5 +1,12 @@
 [
   {
+    "cmd": [],
+    "name": "read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -11,11 +18,17 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "read chromeos_version.sh"
+    "name": "read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "read snapshot number"
+    "name": "read chromeos version.read snapshot number",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -26,9 +39,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "read snapshot number.git fetch",
+    "name": "read chromeos version.read snapshot number.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -39,9 +52,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "read snapshot number.git rev-parse",
+    "name": "read chromeos version.read snapshot number.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -54,10 +67,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "read snapshot number.read git footers",
+    "name": "read chromeos version.read snapshot number.read git footers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@version: R99-1234.56.0-101@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read chromeos version (2)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -72,7 +91,10 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "read chromeos_version.sh (2)"
+    "name": "read chromeos version (2).read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "name": "$result"
