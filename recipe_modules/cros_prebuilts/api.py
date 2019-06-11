@@ -56,17 +56,17 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       err.message = '%s builders may not upload prebuilts' % name.lower()
       raise
 
-  def _parse_gs_uri(self, binhost):
-    """Parses google storage URIs into bucket and full path parts.
+  def _parse_binhost(self, binhost):
+    """Parses binhost into bucket and full file path parts.
 
     Parses the google storage URIs as provided in the binhost.uri field into
-    their respective bucket and full path parts.
+    their respective bucket and full file path parts.
 
     Args:
-      uri (str): google storage URI to parse.
+      binhost (Binhost): binhost to parse.
 
     Returns:
-      tuple(str, str): google storage bucket and full path.
+      tuple(str, str): google storage bucket and full file path.
     """
     assert binhost.uri.startswith('gs://'), (
         'binhosts URI %s does not appear to be a google storage path' % uri)
@@ -95,7 +95,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       binhosts_root = self.m.path.mkdtemp(prefix='binhosts')
       package_index_files = []
       for b in response.binhosts:
-        gs_bucket, gs_source = self._parse_gs_uri(b)
+        gs_bucket, gs_source = self._parse_binhost(b)
         dest = binhosts_root.join(gs_source)
         self.m.gsutil.download(gs_bucket, gs_source, dest)
         package_index_files.append(binhost.PackageIndex(
