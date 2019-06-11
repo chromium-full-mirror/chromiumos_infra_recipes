@@ -126,8 +126,8 @@ class DupItApi(recipe_api.RecipeApi):
   def run(self):
     self._rsync_from_latest_gs_distfiles()
     self._rsync_from_public_gentoo_distfiles()
-    self._copy_new_files_to_all_gs_distfiles()
     self._rsync_to_latest_gs_distfiles()
+    self._copy_new_files_to_all_gs_distfiles()
 
   @property
   def rsync_mirror_address(self):

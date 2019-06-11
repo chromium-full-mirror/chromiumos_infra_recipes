@@ -50,15 +50,14 @@
       "GSUtil:parallel_composite_upload_threshold=50M",
       "-m",
       "----",
-      "cp",
+      "rsync",
       "-r",
-      "-n",
-      "-p",
-      "[CACHE]/gentoo_distfiles/distfiles/*",
-      "gs://stark-trek/the-ultimate-computer/distfiles/"
+      "-d",
+      "[CACHE]/gentoo_distfiles",
+      "gs://stark-trek/mini-cache/latest_distfiles/"
     ],
     "infra_step": true,
-    "name": "gsutil upload new distfiles to gs://stark-trek/the-ultimate-computer/distfiles/"
+    "name": "gsutil sync latest distfiles to gs://stark-trek/mini-cache/latest_distfiles/"
   },
   {
     "cmd": [
@@ -71,14 +70,15 @@
       "GSUtil:parallel_composite_upload_threshold=50M",
       "-m",
       "----",
-      "rsync",
+      "cp",
       "-r",
-      "-d",
-      "[CACHE]/gentoo_distfiles",
-      "gs://stark-trek/mini-cache/latest_distfiles/"
+      "-n",
+      "-p",
+      "[CACHE]/gentoo_distfiles/distfiles/*",
+      "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
     "infra_step": true,
-    "name": "gsutil sync latest distfiles to gs://stark-trek/mini-cache/latest_distfiles/"
+    "name": "gsutil upload new distfiles to gs://stark-trek/the-ultimate-computer/distfiles/"
   },
   {
     "name": "$result"
