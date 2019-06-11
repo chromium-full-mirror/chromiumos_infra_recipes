@@ -1344,7 +1344,7 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"\\nK\\n\\u0019\\n\\r/build/target\\u0012\\b\\n\\u0006target\\u001a\\u000e\\n\\u0003foo\\u0012\\u0004cat1\\u001a\\u00011\\u001a\\u000e\\n\\u0003bar\\u0012\\u0004cat1\\u001a\\u00012\\u001a\\u000e\\n\\u0003baz\\u0012\\u0004cat2\\u001a\\u00013\\u0012\\u0000\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CksKGQoNL2J1aWxkL3RhcmdldBIICgZ0YXJnZXQaDgoDZm9vEgRjYXQxGgExGg4KA2JhchIEY2F0\\nMRoBMhoOCgNiYXoSBGNhdDIaATMSAA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

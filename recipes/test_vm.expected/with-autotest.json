@@ -985,7 +985,7 @@
     ],
     "infra_step": true,
     "name": "build autotest packages.install packages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"\\nQ\\n\\u0019\\n\\r/build/target\\u0012\\b\\n\\u0006target\\u001a\\u001d\\n\\fautotest-all\\u0012\\rchromeos-base\\\"\\u0015\\n\\u0013[CACHE]/cros_chroot\\u0012\\u0000\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"ClEKGQoNL2J1aWxkL3RhcmdldBIICgZ0YXJnZXQaHQoMYXV0b3Rlc3QtYWxsEg1jaHJvbWVvcy1i\\nYXNlIhUKE1tDQUNIRV0vY3Jvc19jaHJvb3QSAA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

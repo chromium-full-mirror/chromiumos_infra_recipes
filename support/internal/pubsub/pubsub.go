@@ -9,7 +9,7 @@ import (
 
 // PublishMessage `data` to projects/`projectID`/topics/`topic-id`. Passes `opts` to the pubsub
 // client (e.g. WithTokenSource)
-func PublishMessage(projectID string, topicID string, data string, opts ...option.ClientOption) (string, error) {
+func PublishMessage(projectID string, topicID string, data []byte, opts ...option.ClientOption) (string, error) {
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, projectID, opts...)
 	if err != nil {
@@ -21,7 +21,7 @@ func PublishMessage(projectID string, topicID string, data string, opts ...optio
 		return "", err
 	}
 
-	result := topic.Publish(ctx, &pubsub.Message{Data: []byte(data)})
+	result := topic.Publish(ctx, &pubsub.Message{Data: data})
 
 	return result.Get(ctx)
 }

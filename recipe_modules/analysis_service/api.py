@@ -168,6 +168,10 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
                                     including_default_value_fields=True)
       ]
 
+      # Data is passed to the publish-message support binary via JSON. The
+      # serialized proto must be base64 encoded to prevent UnicodeDecodeErrors.
+      # It will be unencoded by the publish-message support binary before it
+      # is published.
       self.m.cloud_pubsub.publish_message(
           self._pubsub_project_id, self._pubsub_topic_id,
-          analysis_service_event.SerializeToString())
+          analysis_service_event.SerializeToString().encode('base64'))

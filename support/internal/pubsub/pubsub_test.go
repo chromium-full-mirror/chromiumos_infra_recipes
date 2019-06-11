@@ -45,7 +45,7 @@ func TestPublishMessage(t *testing.T) {
 	srv, conn, err := setupTestServer()
 	assert.NilError(t, err)
 
-	id, err := PublishMessage(testProject, testTopic, testData, option.WithGRPCConn(conn))
+	id, err := PublishMessage(testProject, testTopic, []byte(testData), option.WithGRPCConn(conn))
 	assert.NilError(t, err)
 
 	assert.Equal(t, len(srv.Messages()), 1)

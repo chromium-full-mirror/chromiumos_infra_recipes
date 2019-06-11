@@ -86,7 +86,7 @@
     ],
     "infra_step": true,
     "name": "publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"\\n\\n\\n\\b\\n\\u0006/a/b/c\\u0012\\r\\n\\u000b\\n\\tA package\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdl\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

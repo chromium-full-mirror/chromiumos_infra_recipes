@@ -17,7 +17,8 @@ class CloudPubsubApi(recipe_api.RecipeApi):
     Args:
       * project_id (str): The project name.
       * topic_id (str): The topic name.
-      * data (str): The data to put in the message.
+      * data (str): The data to put in the message. The input must be encodable
+        with utf8, as it will be sent to the publish-message binary via JSON.
     """
     with self.m.step.nest('publish message'), self.m.context(infra_steps=True):
       input = {

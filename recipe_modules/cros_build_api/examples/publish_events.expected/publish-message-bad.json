@@ -160,7 +160,7 @@
     ],
     "infra_step": true,
     "name": "call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"\\n\\u0012\\u001a\\u0010\\n\\u000ea_test_package\\u0012\\u0000\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"ChIaEAoOYV90ZXN0X3BhY2thZ2USAA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
