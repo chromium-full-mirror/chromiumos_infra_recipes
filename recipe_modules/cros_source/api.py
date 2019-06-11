@@ -11,6 +11,7 @@ import json
 from collections import namedtuple
 
 from recipe_engine import recipe_api
+from util import exponential_retry
 
 ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id'])
 
@@ -128,6 +129,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
       return new_commits
 
+  @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
   def sync_gitiles_snapshot(self, gitiles_commit):
     """Sync a checkout to the snapshot in |gitiles_commit|."""
     with self.m.step.nest('sync to snapshot'):
@@ -135,18 +137,10 @@ class CrosSourceApi(recipe_api.RecipeApi):
                                        gitiles_commit.project)
 
       step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file('<manifest></manifest>')
-      for retries in range(3):
-        try:
-          snapshot_xml = self.m.gitiles.download_file(
-              gitiles_url, 'snapshot.xml', branch=gitiles_commit.id,
-              step_test_data=step_test_data,
-              timeout=self.test_api.gitiles_timeout_seconds)
-          break
-        except recipe_api.StepFailure as ex:
-          if ex.had_timeout and retries < 2:
-            continue
-          else:
-            raise
+      snapshot_xml = self.m.gitiles.download_file(
+          gitiles_url, 'snapshot.xml', branch=gitiles_commit.id,
+          step_test_data=step_test_data,
+          timeout=self.test_api.gitiles_timeout_seconds)
 
       self.m.repo.sync_manifest(manifest_data=snapshot_xml, detach=True,
                                 optimized_fetch=True)
