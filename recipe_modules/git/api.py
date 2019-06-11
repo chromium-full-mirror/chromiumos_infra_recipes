@@ -6,10 +6,12 @@
 """API for working with git."""
 
 import contextlib
+import datetime
 import types
 from collections import namedtuple
 
 from recipe_engine import recipe_api
+from util import exponential_retry
 
 
 class GitApi(recipe_api.RecipeApi):
@@ -114,6 +116,7 @@ other_test.txt
     return [line[2:].strip() for line in step_data.stdout.strip().splitlines()]
 
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))
   def fetch(self, remote, refspecs=None):
     """Runs 'git fetch'.
 
