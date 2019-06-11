@@ -5,6 +5,7 @@
 
 from recipe_engine import recipe_api
 from google.protobuf import json_format as jsonpb
+from util import exponential_retry
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.builder_config import BuilderConfigs
@@ -20,6 +21,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Map from BuilderConfig's id.name to BuilderConfig, lazily loaded.
     self._name_to_builder_config = {}
 
+  @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
   def _get_name_to_builder_config(self):
     """Helper method that returns the name to BuilderConfig map.
 
@@ -30,18 +32,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # once for each builder.
       with self.m.step.nest('read build config'), self.m.context(
           infra_steps=True):
-        for retries in range(3):
-          try:
-            builder_configs_file = self.m.gitiles.download_file(
-                REPO_URL, "generated/builder_configs.cfg",
-                step_test_data=self.test_api.builder_configs_step_test_data,
-                timeout=self.test_api.gitiles_timeout_seconds)
-            break
-          except recipe_api.StepFailure as ex:
-            if ex.had_timeout and retries < 2:
-              continue
-            else:
-              raise
+        builder_configs_file = self.m.gitiles.download_file(
+            REPO_URL, "generated/builder_configs.cfg",
+            step_test_data=self.test_api.builder_configs_step_test_data,
+            timeout=self.test_api.gitiles_timeout_seconds)
       # Ignore unknown fields, as this repo may not be using the newest version
       # of the proto.
       builder_configs = jsonpb.Parse(builder_configs_file, BuilderConfigs(),
