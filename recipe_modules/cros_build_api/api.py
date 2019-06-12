@@ -11,6 +11,7 @@ import json
 from google.protobuf import descriptor_pool
 from google.protobuf import json_format
 from google.protobuf import reflection
+from google.protobuf import timestamp_pb2
 
 from recipe_engine import recipe_api
 
@@ -151,11 +152,19 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # needs to be on the PATH.
       chromite_bin_dir = self.m.cros_source.workspace_path.join('chromite/bin')
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
+
+        request_time = timestamp_pb2.Timestamp()
+        request_time.FromDatetime(self.m.time.utcnow())
+
         # For Build API retcode 2 indicates that the invocation failed in some
         # way but a consumable response has been produced.
         result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
                              infra_step=infra_step, timeout=timeout,
                              stdout=self.m.raw_io.output())
+
+        response_time = timestamp_pb2.Timestamp()
+        response_time.FromDatetime(self.m.time.utcnow())
+
         step.presentation.logs['stdout'] = [result.stdout]
 
       # If no test data is provided, see if we have our own.
@@ -176,7 +185,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # TODO(crbug.com/964444): Remove try once this is stable.
       try:
         if self.m.analysis_service.can_publish_event(input_proto, output_proto):
-          self.m.analysis_service.publish_event(input_proto, output_proto)
+          self.m.analysis_service.publish_event(input_proto, output_proto,
+                                                request_time, response_time)
       except Exception as e:
         step.presentation.logs['Failure reason'] = [repr(e)]
 

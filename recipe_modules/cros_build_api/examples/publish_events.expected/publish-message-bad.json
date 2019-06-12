@@ -79,9 +79,11 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"failedPackages\": []@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"packages\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
@@ -160,7 +162,7 @@
     ],
     "infra_step": true,
     "name": "call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"ChIaEAoOYV90ZXN0X3BhY2thZ2USAA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"ChIaEAoOYV90ZXN0X3BhY2thZ2USABoMCMGAxP0EEIDKte4BIgYIw4DE/QQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

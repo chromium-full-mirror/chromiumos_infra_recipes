@@ -8,6 +8,7 @@ DEPS = ['recipe_engine/assertions', 'analysis_service']
 from PB.chromite.api.sysroot import InstallPackagesRequest, InstallPackagesResponse
 
 from google.protobuf import json_format
+from google.protobuf import timestamp_pb2
 
 # Test JSON protos.
 INSTALL_PACKAGES_REQUEST = """
@@ -34,11 +35,18 @@ def RunSteps(api):
                                                InstallPackagesRequest())
   install_packages_response = json_format.Parse(INSTALL_PACKAGES_RESPONSE,
                                                 InstallPackagesResponse())
+
+  request_time = timestamp_pb2.Timestamp()
+  request_time.FromSeconds(100)
+  response_time = timestamp_pb2.Timestamp()
+  response_time.FromSeconds(200)
+
   api.assertions.assertTrue(
       api.analysis_service.can_publish_event(
           request=install_packages_request, response=install_packages_response))
-  api.analysis_service.publish_event(request=install_packages_request,
-                                     response=install_packages_response)
+  api.analysis_service.publish_event(
+      request=install_packages_request, response=install_packages_response,
+      request_time=request_time, response_time=response_time)
 
   # Pass in the request and response backwards, shouldn't work in this case
   # because the types are wrong.
@@ -46,9 +54,17 @@ def RunSteps(api):
       api.analysis_service.can_publish_event(request=install_packages_response,
                                              response=install_packages_request))
   # Try calling anyway, should raise an error.
-  api.assertions.assertRaises(ValueError, api.analysis_service.publish_event,
-                              request=install_packages_response,
-                              response=install_packages_request)
+  api.assertions.assertRaises(
+      ValueError, api.analysis_service.publish_event,
+      request=install_packages_response, response=install_packages_request,
+      request_time=request_time, response_time=response_time)
+
+  request_time.FromSeconds(300)
+  # If request_time is after response_time, the call should fail.
+  api.assertions.assertRaises(
+      ValueError, api.analysis_service.publish_event,
+      request=install_packages_request, response=install_packages_response,
+      request_time=request_time, response_time=response_time)
 
 
 def GenTests(api):

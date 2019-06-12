@@ -117,7 +117,7 @@ Args:
 Return:
   bool
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#139)(self, request, response):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#139)(self, request, response, request_time, response_time):**
 
 Publish request and response on Cloud Pub/Sub.
 
@@ -133,6 +133,10 @@ Args:
     log
   response (proto in AnalysisServiceEvent 'response' oneof): The response to
     log
+  request_time (google.protobuf.timestamp_pb2.Timestamp): The time the
+    request was sent by the caller.
+  response_time (google.protobuf.timestamp_pb2.Timestamp): The time the
+    response was received by the caller.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
 [DEPS](/recipe_modules/chrome/__init__.py#1): [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -171,7 +175,8 @@ Publish a message to Cloud Pub/Sub
 Args:
   * project_id (str): The project name.
   * topic_id (str): The topic name.
-  * data (str): The data to put in the message.
+  * data (str): The data to put in the message. The input must be encodable
+    with utf8, as it will be sent to the publish-message binary via JSON.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
 [DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -272,11 +277,11 @@ Args:
       failed packages.
 ### *recipe_modules* / [cros\_build\_api](/recipe_modules/cros_build_api)
 
-[DEPS](/recipe_modules/cros_build_api/__init__.py#6): [analysis\_service](#recipe_modules-analysis_service), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_build_api/__init__.py#6): [analysis\_service](#recipe_modules-analysis_service), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#88)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#89)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -293,7 +298,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#111)(self, endpoint, input_proto, output_type, test_output_data=None, name=None, infra_step=False, timeout=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#112)(self, endpoint, input_proto, output_type, test_output_data=None, name=None, infra_step=False, timeout=None):**
 
 Call the build API with the given input proto.
 
@@ -316,7 +321,7 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#105)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#106)(self):**
 
 Expose all client stubs defined in this module.
 ### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
@@ -1595,7 +1600,7 @@ Ensure the CIPD support package is installed.
 
 [DEPS](/recipe_modules/analysis_service/examples/full.py#6): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#32)(api):**
+&mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#33)(api):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
 [DEPS](/recipes/annealing.py#29): [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [portage](#recipe_modules-portage), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
