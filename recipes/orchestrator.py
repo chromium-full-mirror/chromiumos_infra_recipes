@@ -131,7 +131,8 @@ def RunSteps(api, properties):
 
       vm_tests = api.buildbucket.schedule([
           api.buildbucket.schedule_request(
-              gitiles_commit=snapshot, builder='test_vm',
+              gitiles_commit=snapshot,
+              builder=vm_test(unit.common.build_target),
               critical=test.common.critical.value,
               properties=with_props_for_child_build(
                   api,
@@ -150,7 +151,8 @@ def RunSteps(api, properties):
 
       vm_tests += api.buildbucket.schedule([
           api.buildbucket.schedule_request(
-              gitiles_commit=snapshot, builder='test_vm',
+              gitiles_commit=snapshot,
+              builder=vm_test(unit.common.build_target),
               critical=test.common.critical.value,
               properties=with_props_for_child_build(
                   api,
@@ -203,6 +205,11 @@ def RunSteps(api, properties):
   # and we can update the success manifest ref if it is specified.
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success',
                             snapshot)
+
+
+def vm_test(build_target):
+  """Returns the vm_test builder name for the given build_target."""
+  return build_target.name + '-vm_test'
 
 
 def get_build_plan(api, enable_history, gerrit_changes, snapshot):
