@@ -61,7 +61,6 @@
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
-  * [cros_test_platform](#recipes-cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
@@ -86,6 +85,7 @@
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
   * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Moblab VM tests.
+  * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_proto](#recipes-test_proto) &mdash; Verifies the proto repository.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
 ## Recipe Modules
@@ -1780,55 +1780,6 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#8): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#14)(api):**
-### *recipes* / [cros\_test\_platform](/recipes/cros_test_platform.py)
-
-[DEPS](/recipes/cros_test_platform.py#13): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-Recipe for the ChromeOS Test Frontend.
-
-TODO: Migrate to a recipes repo owned by the test team.
-
-&mdash; **def [RunSteps](/recipes/cros_test_platform.py#75)(api, properties):**
-
-&mdash; **def [enumerate\_tests](/recipes/cros_test_platform.py#34)(api, properties):**
-
-Resolve request into list of tests and their metadata.
-
-Args:
-  * api (object): See RunSteps documentation.
-  * properties (CrosTestPlatformRequest): The input request.
-
-Returns:
-  TODO(akeshet): A list of EnumeratedTest protos.
-
-&mdash; **def [select\_backend](/recipes/cros_test_platform.py#49)(api, enumerated_tests, migration_config):**
-
-Select which backend (cautotest, skylab) will handle test requests.
-
-This step will be deleted once the entire device fleet has been migrated from
-cautotest to skylab.
-
-Args:
-  * api (object): See RunSteps documentation.
-  * enumerated_tests (list[EnumeratedTest proto]): tests to run.
-  * migration_config (MigrationConfig proto): migration configuration.
-
-Raises: An exception if a backend cannot be selected for these requests (for
-      instance, if the set of tests are too heterogenous to be handled by
-      a single backend).
-
-Returns:
-  TODO(akeshet): Enum(autotest, skylab) indication of backend to use.
-
-&mdash; **def [validate\_request](/recipes/cros_test_platform.py#21)(api, properties):**
-
-Validate the CrosTestPlatformRequest.
-
-Args:
-  * api (object): See RunSteps documentation.
-  * properties (CrosTestPlatformRequest): The input request.
-
-Raises: An exception if there are invalid properties.
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
@@ -2047,6 +1998,55 @@ Verifies a repo manifest.
 Recipe for running Moblab VM tests.
 
 &mdash; **def [RunSteps](/recipes/test_moblab_vm.py#33)(api, properties):**
+### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
+
+[DEPS](/recipes/test_platform/cros_test_platform.py#13): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for the ChromeOS Test Frontend.
+
+TODO: Migrate to a recipes repo owned by the test team.
+
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#75)(api, properties):**
+
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#34)(api, properties):**
+
+Resolve request into list of tests and their metadata.
+
+Args:
+  * api (object): See RunSteps documentation.
+  * properties (CrosTestPlatformRequest): The input request.
+
+Returns:
+  TODO(akeshet): A list of EnumeratedTest protos.
+
+&mdash; **def [select\_backend](/recipes/test_platform/cros_test_platform.py#49)(api, enumerated_tests, migration_config):**
+
+Select which backend (cautotest, skylab) will handle test requests.
+
+This step will be deleted once the entire device fleet has been migrated from
+cautotest to skylab.
+
+Args:
+  * api (object): See RunSteps documentation.
+  * enumerated_tests (list[EnumeratedTest proto]): tests to run.
+  * migration_config (MigrationConfig proto): migration configuration.
+
+Raises: An exception if a backend cannot be selected for these requests (for
+      instance, if the set of tests are too heterogenous to be handled by
+      a single backend).
+
+Returns:
+  TODO(akeshet): Enum(autotest, skylab) indication of backend to use.
+
+&mdash; **def [validate\_request](/recipes/test_platform/cros_test_platform.py#21)(api, properties):**
+
+Validate the CrosTestPlatformRequest.
+
+Args:
+  * api (object): See RunSteps documentation.
+  * properties (CrosTestPlatformRequest): The input request.
+
+Raises: An exception if there are invalid properties.
 ### *recipes* / [test\_proto](/recipes/test_proto.py)
 
 [DEPS](/recipes/test_proto.py#8): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]

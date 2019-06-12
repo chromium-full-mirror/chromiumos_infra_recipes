@@ -8,7 +8,7 @@
 TODO: Migrate to a recipes repo owned by the test team.
 """
 
-from PB.recipes.chromeos.cros_test_platform import CrosTestPlatformRequest
+from PB.recipes.chromeos.test_platform.cros_test_platform import CrosTestPlatformRequest
 
 DEPS = [
     'recipe_engine/properties',
