@@ -358,14 +358,11 @@ def GenTests(api):
     build.input.gitiles_commit.Clear()
     return api.buildbucket.build(build)
 
-  def gerrit_changes():
-    return [common_pb2.GerritChange(change=1234)]
-
   def cq_orchestrator_build_with_gerrit_change():
     """Generate a test build proto with no gitiles commit project."""
     build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
                                              builder='cq-orchestrator')
-    build.input.gerrit_changes.extend(gerrit_changes())
+    build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return api.buildbucket.build(build)
 
   def vm_test_build():
@@ -409,12 +406,12 @@ def GenTests(api):
 
   yield (api.test('fails_if_changes_not_submittable') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
+         api.cq(full_run=True) +  #
          api.gerrit.simulated_changes_are_submittable(submittable=False))
 
   yield (api.test('builds_with_history') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
+         api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
              builds, 'get change build history.buildbucket.search') +  #
@@ -423,7 +420,7 @@ def GenTests(api):
 
   yield (api.test('tests_with_history') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
+         api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
              [], 'get change build history.buildbucket.search') +  #
@@ -440,7 +437,7 @@ def GenTests(api):
 
   yield (api.test('fails_if_inflight_orchs') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True, gerrit_changes=gerrit_changes()) + #
+         api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
          api.buildbucket.simulated_search_results(
@@ -449,7 +446,7 @@ def GenTests(api):
 
   yield (api.test('runs_if_no_inflight_orchs') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True, gerrit_changes=gerrit_changes()) + #
+         api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
          api.buildbucket.simulated_search_results(
@@ -460,7 +457,7 @@ def GenTests(api):
 
   yield (api.test('retry_only_critical_builds') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True, gerrit_changes=gerrit_changes()) +  #
+         api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
              builds, step_name='find matching builds.buildbucket.search') +
