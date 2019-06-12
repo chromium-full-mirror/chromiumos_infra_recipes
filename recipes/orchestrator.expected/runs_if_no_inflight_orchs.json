@@ -266,7 +266,7 @@
       "bb",
       "batch",
       "-host",
-      "cr-buildbucket.appspot.com"
+      "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run builds.schedule",
@@ -371,8 +371,8 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@chromeos.cq.amd64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_LINK@chromeos.cq.arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
+      "@@@STEP_LINK@chromeos.cq.amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@chromeos.cq.arm-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@"
     ]
   },
   {
@@ -387,7 +387,7 @@
       "bb",
       "collect",
       "-host",
-      "cr-buildbucket.appspot.com",
+      "beefy-dot-cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "8922054662172514000",
@@ -404,7 +404,7 @@
       "bb",
       "batch",
       "-host",
-      "cr-buildbucket.appspot.com"
+      "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run builds.collect.get",
@@ -452,7 +452,7 @@
       "bb",
       "batch",
       "-host",
-      "cr-buildbucket.appspot.com"
+      "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "get full build protos",
@@ -492,8 +492,8 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_LINK@8922054662172514001@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
+      "@@@STEP_LINK@8922054662172514000@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@8922054662172514001@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@"
     ]
   },
   {
@@ -771,7 +771,7 @@
       "bb",
       "batch",
       "-host",
-      "cr-buildbucket.appspot.com"
+      "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.get change test history.find matching builds.buildbucket.search",
@@ -893,7 +893,7 @@
       "bb",
       "batch",
       "-host",
-      "cr-buildbucket.appspot.com"
+      "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.schedule autotest vm tests",
@@ -966,7 +966,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514002@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+      "@@@STEP_LINK@8922054662172514002@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {
@@ -974,7 +974,7 @@
       "bb",
       "batch",
       "-host",
-      "cr-buildbucket.appspot.com"
+      "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.schedule tast vm tests",
@@ -1047,7 +1047,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514003@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+      "@@@STEP_LINK@8922054662172514003@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514003@@@"
     ]
   },
   {
@@ -1145,7 +1145,7 @@
       "bb",
       "collect",
       "-host",
-      "cr-buildbucket.appspot.com",
+      "beefy-dot-cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "8922054662172514002",
@@ -1162,7 +1162,7 @@
       "bb",
       "batch",
       "-host",
-      "cr-buildbucket.appspot.com"
+      "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect vm tests.get",
@@ -1201,7 +1201,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@0@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {

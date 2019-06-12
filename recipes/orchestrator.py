@@ -93,6 +93,7 @@ def RunSteps(api, properties):
     # We thus need to do a get_multi call to get the fully populated Builds.
     # TODO: revert https://crrev.com/c/1615374 once buildbucket.run's call
     # to collect is improved to return the full proto.
+    api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
     new_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4,
                                      step_name='run builds',
                                      url_title_fn=api.naming.get_build_title)
