@@ -31,6 +31,7 @@ def GenTests(api):
          api.step_data('ensure manifest cq-depend fulfilled (2).git log',
                        stdout=api.raw_io.output(
                            'deadbeef\x1ECq-Depend: chromium:12345,'
+                           'chromium:IAmNotAnInteger,'
                            'chrome-internal:67890\x00')) +  #
          api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
                        retcode=0))
@@ -39,6 +40,7 @@ def GenTests(api):
          api.step_data('ensure manifest cq-depend fulfilled (2).git log',
                        stdout=api.raw_io.output(
                            'deadbeef\x1ECq-Depend:chromium:12345,'
+                           'chromium:IAmNotAnInteger,'
                            'chrome-internal:67890\x00')) +  #
          api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
                        retcode=128))

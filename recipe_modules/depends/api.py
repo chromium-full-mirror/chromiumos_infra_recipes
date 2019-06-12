@@ -49,10 +49,16 @@ class DependsApi(recipe_api.RecipeApi):
     private_prefix = PRIVATE_HOST + ':'
     public_prefix = PUBLIC_HOST + ':'
     for dep in deps:
+      host = ""
+      change_num = ""
       if dep.startswith(public_prefix):
-        valid_deps.append(Dep(PUBLIC_HOST, dep[len(public_prefix):]))
+        host = PUBLIC_HOST
+        change_num = dep[len(public_prefix):]
       if dep.startswith(private_prefix):
-        valid_deps.append(Dep(PRIVATE_HOST, dep[len(private_prefix):]))
+        host = PRIVATE_HOST
+        change_num = dep[len(private_prefix):]
+      if host and change_num.isdigit():
+        valid_deps.append(Dep(host, change_num))
     return valid_deps
 
   def ensure_manifest_cq_depends_fulfilled(self, manifest_diffs):

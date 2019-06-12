@@ -709,7 +709,7 @@ APIs for checking that Cq-Depend has been fulfilled.
 
 A module for checking that Cq-Depend has been fulfilled.
 
-&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#58)(self, manifest_diffs):**
+&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#64)(self, manifest_diffs):**
 
 Checks that Cq-Depend deps between manifests are met.
 
