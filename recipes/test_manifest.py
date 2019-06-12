@@ -5,25 +5,32 @@
 
 """Verifies a repo manifest."""
 
+from PB.recipes.chromeos.test_manifest import TestManifestProperties
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/cq',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
+    'depot_tools/depot_tools',
     'cros_source',
     'gerrit',
     'repo',
 ]
 
+PROPERTIES = TestManifestProperties
 
-def RunSteps(api):
+
+def RunSteps(api, properties):
   build = api.buildbucket.build
   gerrit_changes = build.input.gerrit_changes
 
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path):
+
     if gerrit_changes:
       gerrit_changes = api.cq.ordered_gerrit_changes
       with api.step.nest('cherry-pick gerrit changes'):
@@ -40,11 +47,38 @@ def RunSteps(api):
         with api.step.nest('try sync %s' % project_info.name):
           api.repo.sync(manifest_name=manifest_path)
 
+        # Test `cros branch` tool for projects specified in config.
+        test_branch_projects = (
+            properties.test_branch_projects or ['chromeos/manifest-internal'])
+
+        if project_info.name in test_branch_projects:
+          with api.depot_tools.on_path():
+            api.step('test cros branch for %s' % project_info.name, [
+                'chromite/bin/cros', 'branch', '--root',
+                api.cros_source.workspace_path, 'create', '--release', '--file',
+                manifest_path, '--yes'
+            ])
+
+
 def GenTests(api):
   yield api.test('without-gerrit-changes')
 
   yield (api.test('with-manifest-changes') +  #
-         api.buildbucket.try_build(project='manifest') +  #
+         api.buildbucket.try_build(project='chromeos/manifest') +  #
          api.cq(full_run=True) +  #
          api.path.exists(api.path['start_dir'].join(
-             'chromiumos_workspace/src/manifest/default.xml')))
+             'chromiumos_workspace/src/chromeos/manifest/default.xml')))
+
+  yield (
+      api.test('with-manifest-internal-changes') +  #
+      api.buildbucket.try_build(project='chromeos/manifest-internal') +  #
+      api.cq(full_run=True) +  #
+      api.path.exists(api.path['start_dir'].join(
+          'chromiumos_workspace/src/chromeos/manifest-internal/default.xml')))
+
+  yield (api.test('with-manifest-internal-changes-explicit-config') +  #
+         api.buildbucket.try_build(project='manifest-internal') +  #
+         api.cq(full_run=True) +  #
+         api.path.exists(api.path['start_dir'].join(
+             'chromiumos_workspace/src/manifest-internal/default.xml')) +  #
+         api.properties(test_branch_projects=['manifest-internal']))

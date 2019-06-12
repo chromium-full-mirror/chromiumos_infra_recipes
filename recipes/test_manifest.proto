@@ -1,0 +1,17 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.test_manifest;
+
+import "chromiumos/common.proto";
+import "chromite/api/test.proto";
+import "testplans/generate_test_plan.proto";
+
+message TestManifestProperties {
+  // List of projects for which we want to test `cros branch` after
+  // manifest updates.
+  repeated string test_branch_projects = 1;
+}
