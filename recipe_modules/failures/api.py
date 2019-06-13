@@ -65,7 +65,12 @@ class FailuresApi(recipe_api.RecipeApi):
       for build in failed_builds:
         url = self.m.buildbucket.build_url(build_id=build.id)
         title = '[FAILED] {}'.format(self.m.naming.get_build_title(build))
-        step.presentation.links[title] = url
+
+        # Each failure gets a substep, which helps with reporting tools such
+        # as Sheriff-o-Matic.
+        with self.m.step.nest(title) as failure_step:
+          failure_step.presentation.status = self.m.step.FAILURE
+          failure_step.presentation.links['buildbucket build'] = url
 
       raise self.m.step.StepFailure('{} builds failed'.format(fail_count))
 
@@ -95,7 +100,13 @@ class FailuresApi(recipe_api.RecipeApi):
       for failed_hw_test in failed_hw_tests:
         title = '[FAILED] {}'.format(
             failed_hw_test.task.test.common.display_name)
-        step.presentation.links[title] = failed_hw_test.task.url
+
+        # Each failure gets a substep, which helps with reporting tools such
+        # as Sheriff-o-Matic.
+        with self.m.step.nest(title) as failure_step:
+          failure_step.presentation.status = self.m.step.FAILURE
+          failure_step.presentation.links[
+              'Swarming task'] = failed_hw_test.task.url
 
       raise self.m.step.StepFailure('{} hw tests failed'.format(fail_count))
 
@@ -126,7 +137,12 @@ class FailuresApi(recipe_api.RecipeApi):
         title = '[FAILED] {}'.format(
             self.m.naming.get_vm_test_title(failed_vm_test))
         url = self.m.buildbucket.build_url(build_id=failed_vm_test.id)
-        step.presentation.links[title] = url
+
+        # Each failure gets a substep, which helps with reporting tools such
+        # as Sheriff-o-Matic.
+        with self.m.step.nest(title) as failure_step:
+          failure_step.presentation.status = self.m.step.FAILURE
+          failure_step.presentation.links['buildbucket build'] = url
 
       raise self.m.step.StepFailure('{} vm tests failed'.format(fail_count))
 

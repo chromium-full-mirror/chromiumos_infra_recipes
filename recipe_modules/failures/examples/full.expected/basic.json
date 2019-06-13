@@ -39,11 +39,30 @@
     "cmd": [],
     "name": "build results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 builds failed, 0 succeeded@@@",
+      "@@@STEP_TEXT@2 builds failed, 0 succeeded@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@id: 303@@@",
+      "@@@STEP_LOG_LINE@buildbucket build dump@status: FAILURE@@@",
       "@@@STEP_LOG_LINE@buildbucket build dump@id: 303@@@",
       "@@@STEP_LOG_LINE@buildbucket build dump@status: FAILURE@@@",
       "@@@STEP_LOG_END@buildbucket build dump@@@",
-      "@@@STEP_LINK@[FAILED] ..@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (3).[FAILED] ..",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@buildbucket build@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (3).[FAILED] .. (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@buildbucket build@https://cr-buildbucket.appspot.com/build/303@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -65,8 +84,25 @@
     "cmd": [],
     "name": "hw test results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
-      "@@@STEP_LINK@[FAILED] target.hw.bvt-cq@https://google.com@@@",
+      "@@@STEP_TEXT@2 tests failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "hw test results (3).[FAILED] target.hw.bvt-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@Swarming task@https://google.com@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "hw test results (3).[FAILED] target.hw.bvt-cq (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@Swarming task@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -88,8 +124,25 @@
     "cmd": [],
     "name": "vm test results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 tests failed, 0 succeeded@@@",
-      "@@@STEP_LINK@[FAILED] target.vm.suite@https://cr-buildbucket.appspot.com/build/606@@@",
+      "@@@STEP_TEXT@2 tests failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "vm test results (3).[FAILED] target.vm.suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@buildbucket build@https://cr-buildbucket.appspot.com/build/606@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "vm test results (3).[FAILED] target.vm.suite (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@buildbucket build@https://cr-buildbucket.appspot.com/build/606@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

@@ -44,21 +44,27 @@ def RunSteps(api):
 
   api.failures.raise_failed_builds([build_success])
   api.failures.raise_failed_builds([build_failure])
-  api.assertions.assertRaises(
-      api.step.StepFailure, api.failures.raise_failed_builds,
-      [build_critical_failure])
+
+  # Pass in two failures, to check each gets a step.
+  api.assertions.assertRaises(api.step.StepFailure,
+                              api.failures.raise_failed_builds,
+                              [build_critical_failure, build_critical_failure])
 
   api.failures.raise_failed_hw_tests([skylab_success])
   api.failures.raise_failed_hw_tests([skylab_failure])
+
+  # Pass in two failures, to check each gets a step.
   api.assertions.assertRaises(
       api.step.StepFailure, api.failures.raise_failed_hw_tests,
-      [skylab_critical_failure])
+      [skylab_critical_failure, skylab_critical_failure])
 
   api.failures.raise_failed_vm_tests([vm_success])
   api.failures.raise_failed_vm_tests([vm_failure])
-  api.assertions.assertRaises(
-      api.step.StepFailure, api.failures.raise_failed_vm_tests,
-      [vm_critical_failure])
+
+  # Pass in two failures, to check each gets a step.
+  api.assertions.assertRaises(api.step.StepFailure,
+                              api.failures.raise_failed_vm_tests,
+                              [vm_critical_failure, vm_critical_failure])
 
   api.assertions.assertFalse(api.failures.is_build_failure(build_success))
   api.assertions.assertTrue(api.failures.is_build_failure(build_failure))
