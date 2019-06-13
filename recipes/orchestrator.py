@@ -45,8 +45,6 @@ def RunSteps(api, properties):
   validate_refs(properties.update_manifest_refs)
 
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
-  if gerrit_changes:
-    gerrit_changes = api.cq.ordered_gerrit_changes
 
   snapshot = api.buildbucket.gitiles_commit
   if not snapshot.project:
