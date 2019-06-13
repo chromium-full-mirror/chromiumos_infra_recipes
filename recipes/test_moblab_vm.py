@@ -18,6 +18,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/cq',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
@@ -30,6 +31,12 @@ DEPS = [
 
 PROPERTIES = TestMoblabVmProperties
 
+# Artifacts that will be stored in the moblab image cache.
+CACHE_ARTIFACTS = [
+    BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD,
+    BuilderConfig.Artifacts.AUTOTEST_FILES,
+]
+
 def RunSteps(api, properties):
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
@@ -40,7 +47,6 @@ def RunSteps(api, properties):
       api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
       gerrit_changes = api.buildbucket.build.input.gerrit_changes
       if gerrit_changes:
-        gerrit_changes = api.cq.ordered_gerrit_changes
         with api.step.nest('cherry-pick gerrit changes'):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
@@ -57,35 +63,27 @@ def RunSteps(api, properties):
         name='update sdk')
 
     with api.step.nest('prepare artifacts'):
-      artifact_paths = api.cros_artifacts.download_artifacts(
+      artifact_paths_by_artifact = api.cros_artifacts.download_artifacts(
           properties.build_payload,
-          [
-              BuilderConfig.Artifacts.IMAGE_ZIP,
-              BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD,
-              BuilderConfig.Artifacts.AUTOTEST_FILES,
-          ])
+          [BuilderConfig.Artifacts.IMAGE_ZIP] + CACHE_ARTIFACTS)
 
       with api.step.nest('inflate image bundle'):
-        image_files = artifact_paths[BuilderConfig.Artifacts.IMAGE_ZIP]
+        image_files = artifact_paths_by_artifact[
+            BuilderConfig.Artifacts.IMAGE_ZIP]
         assert len(image_files) == 1, (
             'expected one image archive, got: %r' % image_files)
         image_zip = image_files[0]
         image_dir = api.path.mkdtemp(prefix='image-under-test-')
         api.archive.extract('unzip image.zip', image_zip, image_dir)
 
-      with api.step.nest('inflate autotest bundles'):
-        autotest_dir = api.path.mkdtemp(prefix='autotest-')
-        autotest_bundles = artifact_paths[
-            BuilderConfig.Artifacts.AUTOTEST_FILES]
-        for autotest_bundle in autotest_bundles:
-          autotest_file_name = api.path.basename(autotest_bundle)
-          api.archive.extract(
-              'inflate %s' % autotest_file_name,
-              autotest_bundle, autotest_dir.join(autotest_file_name))
-
-      # Test update payloads are all json and bin files, so no inflation needed.
-      test_update_payloads_dir = artifact_paths[
-          BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD]
+      with api.step.nest('group artifacts for moblab image cache'):
+        moblab_cache_dir = api.path.mkdtemp(prefix='moblab-cache-artifacts-')
+        for artifact in CACHE_ARTIFACTS:
+          artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
+          artifact_paths = artifact_paths_by_artifact[artifact]
+          for artifact_path in artifact_paths:
+            api.file.copy('add %s to cache payload' % artifact_name,
+                          artifact_path, moblab_cache_dir)
 
     def as_payload(path):
       return MoblabVmTestRequest.Payload(
@@ -95,10 +93,7 @@ def RunSteps(api, properties):
         MoblabVmTestRequest(
             chroot=api.cros_sdk.chroot,
             image_payload=as_payload(image_dir),
-            cache_payloads=[
-                as_payload(autotest_dir),
-                as_payload(test_update_payloads_dir),
-            ]),
+            cache_payloads=[as_payload(moblab_cache_dir)]),
         name='run moblab vm tests',
     )
 

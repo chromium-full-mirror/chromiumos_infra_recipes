@@ -920,7 +920,7 @@
   },
   {
     "cmd": [],
-    "name": "prepare artifacts.inflate autotest bundles",
+    "name": "prepare artifacts.group artifacts for moblab image cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -929,92 +929,85 @@
     "cmd": [
       "python",
       "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_packages.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/autotest-_tmp_8/autotest_packages.tar\", \"safe_mode\": true}",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
-      "/path/to/tmp/json"
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/TEST_UPDATE_PAYLOAD-_tmp_5/*.bin.json$*.bin$",
+      "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
     ],
-    "name": "prepare artifacts.inflate autotest bundles.inflate autotest_packages.tar",
+    "infra_step": true,
+    "name": "prepare artifacts.group artifacts for moblab image cache.add TEST_UPDATE_PAYLOAD to cache payload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
       "python",
       "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_server_package.tar.bz2\", \"include_files\": [], \"output\": \"[CLEANUP]/autotest-_tmp_8/autotest_server_package.tar.bz2\", \"safe_mode\": true}",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
-      "/path/to/tmp/json"
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_packages.tar",
+      "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
     ],
-    "name": "prepare artifacts.inflate autotest bundles.inflate autotest_server_package.tar.bz2",
+    "infra_step": true,
+    "name": "prepare artifacts.group artifacts for moblab image cache.add AUTOTEST_FILES to cache payload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
       "python",
       "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/AUTOTEST_FILES-_tmp_6/control_files.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/autotest-_tmp_8/control_files.tar\", \"safe_mode\": true}",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
-      "/path/to/tmp/json"
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_server_package.tar.bz2",
+      "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
     ],
-    "name": "prepare artifacts.inflate autotest bundles.inflate control_files.tar",
+    "infra_step": true,
+    "name": "prepare artifacts.group artifacts for moblab image cache.add AUTOTEST_FILES to cache payload (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
       "python",
       "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/AUTOTEST_FILES-_tmp_6/test_suites.tar.bz2\", \"include_files\": [], \"output\": \"[CLEANUP]/autotest-_tmp_8/test_suites.tar.bz2\", \"safe_mode\": true}",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
-      "/path/to/tmp/json"
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/control_files.tar",
+      "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
     ],
-    "name": "prepare artifacts.inflate autotest bundles.inflate test_suites.tar.bz2",
+    "infra_step": true,
+    "name": "prepare artifacts.group artifacts for moblab image cache.add AUTOTEST_FILES to cache payload (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/test_suites.tar.bz2",
+      "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
+    ],
+    "infra_step": true,
+    "name": "prepare artifacts.group artifacts for moblab image cache.add AUTOTEST_FILES to cache payload (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1034,13 +1027,7 @@
       "@@@STEP_LOG_LINE@request@  \"cachePayloads\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/autotest-_tmp_8\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"path\": \"[Path([CLEANUP], 'TEST_UPDATE_PAYLOAD-_tmp_5', '*.bin.json$*.bin$')]\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/moblab-cache-artifacts-_tmp_8\", @@@",
       "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
@@ -1061,7 +1048,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"imagePayload\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/image-under-test-_tmp_7\", \n      \"location\": \"OUTSIDE\"\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"cachePayloads\": [\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/autotest-_tmp_8\", \n        \"location\": \"OUTSIDE\"\n      }\n    }, \n    {\n      \"path\": {\n        \"path\": \"[Path([CLEANUP], 'TEST_UPDATE_PAYLOAD-_tmp_5', '*.bin.json$*.bin$')]\", \n        \"location\": \"OUTSIDE\"\n      }\n    }\n  ]\n}",
+      "{\n  \"imagePayload\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/image-under-test-_tmp_7\", \n      \"location\": \"OUTSIDE\"\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"cachePayloads\": [\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/moblab-cache-artifacts-_tmp_8\", \n        \"location\": \"OUTSIDE\"\n      }\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "infra_step": true,
@@ -1126,13 +1113,7 @@
       "@@@STEP_LOG_LINE@published event@    \"cachePayloads\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
       "@@@STEP_LOG_LINE@published event@        \"path\": {@@@",
-      "@@@STEP_LOG_LINE@published event@          \"path\": \"[CLEANUP]/autotest-_tmp_8\", @@@",
-      "@@@STEP_LOG_LINE@published event@          \"location\": \"OUTSIDE\"@@@",
-      "@@@STEP_LOG_LINE@published event@        }@@@",
-      "@@@STEP_LOG_LINE@published event@      }, @@@",
-      "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": {@@@",
-      "@@@STEP_LOG_LINE@published event@          \"path\": \"[Path([CLEANUP], 'TEST_UPDATE_PAYLOAD-_tmp_5', '*.bin.json$*.bin$')]\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"path\": \"[CLEANUP]/moblab-cache-artifacts-_tmp_8\", @@@",
       "@@@STEP_LOG_LINE@published event@          \"location\": \"OUTSIDE\"@@@",
       "@@@STEP_LOG_LINE@published event@        }@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
@@ -1158,7 +1139,7 @@
     ],
     "infra_step": true,
     "name": "run moblab vm tests.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BMICrQEKFQoTW0NBQ0hFXS9jcm9zX2Nocm9vdBInCiUKIVtD\\nTEVBTlVQXS9pbWFnZS11bmRlci10ZXN0LV90bXBfNxACGh8KHQoZW0NMRUFOVVBdL2F1dG90ZXN0\\nLV90bXBfOBACGkoKSApEW1BhdGgoW0NMRUFOVVBdLCAnVEVTVF9VUERBVEVfUEFZTE9BRC1fdG1w\\nXzUnLCAnKi5iaW4uanNvbiQqLmJpbiQnKV0QAsoCAA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BMICbwoVChNbQ0FDSEVdL2Nyb3NfY2hyb290EicKJQohW0NM\\nRUFOVVBdL2ltYWdlLXVuZGVyLXRlc3QtX3RtcF83EAIaLQorCidbQ0xFQU5VUF0vbW9ibGFiLWNh\\nY2hlLWFydGlmYWN0cy1fdG1wXzgQAsoCAA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
