@@ -1,0 +1,22 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.test_platform.cros_test_postprocess;
+
+message TestResult {
+  // A Google Storage path to the test results. For example,
+  // "gs://chromeos-autotest-results/swarming-454a1ea44d1d2910".
+  string path = 1;
+}
+
+message CrosTestPostprocessRequest {
+  // A Google Storage path to the image archive. For example,
+  // "gs://chromeos-image-archive/arkham-release/R57-9202.10.11".
+  string image_archive_path = 1;
+
+  // TestResults to process.
+  repeated TestResult test_results = 2;
+}

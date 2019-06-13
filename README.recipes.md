@@ -86,6 +86,7 @@
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
   * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Moblab VM tests.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
+  * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
   * [test_proto](#recipes-test_proto) &mdash; Verifies the proto repository.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
 ## Recipe Modules
@@ -2051,6 +2052,11 @@ Args:
   * properties (CrosTestPlatformRequest): The input request.
 
 Raises: An exception if there are invalid properties.
+### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
+
+[DEPS](/recipes/test_platform/cros_test_postprocess.py#8): [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#15)(api, properties):**
 ### *recipes* / [test\_proto](/recipes/test_proto.py)
 
 [DEPS](/recipes/test_proto.py#8): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
