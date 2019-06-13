@@ -18,11 +18,12 @@ Dep = namedtuple('Dep', ['host', 'cl_number'])
 class DependsApi(recipe_api.RecipeApi):
   """A module for checking that Cq-Depend has been fulfilled."""
 
-  def _gather_deps(self, manifest_diffs):
+  def _gather_deps(self, manifest_diffs, dep_log):
     """Gathers all deps from all CLs between the given manifest diffs.
 
     Args:
       manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`.
+      dep_log (List[str]): output human-readable log for Milo.
 
     Returns:
       List[Dep]: A list of `Dep` named tuples.
@@ -58,7 +59,12 @@ class DependsApi(recipe_api.RecipeApi):
         host = PRIVATE_HOST
         change_num = dep[len(private_prefix):]
       if host and change_num.isdigit():
+        dep_log.append('%s:%s' % (host, change_num))
         valid_deps.append(Dep(host, change_num))
+      else:
+        dep_log.append('invalid dep: %s' % dep)
+    if len(valid_deps) == 0:
+      dep_log.append('No Cq-Depend found in any CLs')
     return valid_deps
 
   def ensure_manifest_cq_depends_fulfilled(self, manifest_diffs):
@@ -82,18 +88,14 @@ class DependsApi(recipe_api.RecipeApi):
         manifest_diff_log.append('%s upreved from %s to %s' %
                                  (diff.path, diff.from_rev, diff.to_rev))
 
-      # Gather all Cq-Depend entries in all change messages.
-      deps = self._gather_deps(manifest_diffs)
-
       dep_log = step.presentation.logs.setdefault('gather cq-depend', [])
+
+      # Gather all Cq-Depend entries in all change messages.
+      deps = self._gather_deps(manifest_diffs, dep_log)
 
       # Nothing needs to be checked if there are 0 deps.
       if len(deps) == 0:
-        dep_log.append('No Cq-Depend found in any CLs')
         return
-
-      for dep in deps:
-        dep_log.append('CL:%s on %s' % (dep.cl_number, dep.host))
 
       # Query Gerrit for each one of those deps to turn the CL number into a git
       # change ref.
