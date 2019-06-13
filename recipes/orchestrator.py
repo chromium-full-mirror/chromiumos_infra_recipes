@@ -121,7 +121,7 @@ def RunSteps(api, properties):
       vm_tests = api.buildbucket.schedule([
           api.buildbucket.schedule_request(
               gitiles_commit=snapshot,
-              builder=vm_test(unit.common.build_target),
+              builder=autotest_vm_test(unit.common.build_target),
               critical=test.common.critical.value,
               properties=with_props_for_child_build(
                   api,
@@ -141,7 +141,7 @@ def RunSteps(api, properties):
       vm_tests += api.buildbucket.schedule([
           api.buildbucket.schedule_request(
               gitiles_commit=snapshot,
-              builder=vm_test(unit.common.build_target),
+              builder=tast_vm_test(unit.common.build_target),
               critical=test.common.critical.value,
               properties=with_props_for_child_build(
                   api,
@@ -196,9 +196,14 @@ def RunSteps(api, properties):
                             snapshot)
 
 
-def vm_test(build_target):
-  """Returns the vm_test builder name for the given build_target."""
-  return build_target.name + '-vm_test'
+def autotest_vm_test(build_target):
+  """Returns the autotest builder name for the given build_target."""
+  return build_target.name + '-autotest-vm'
+
+
+def tast_vm_test(build_target):
+  """Returns the tast builder name for the given build_target."""
+  return build_target.name + '-tast-vm'
 
 
 def get_build_plan(api, enable_history, gerrit_changes, snapshot):

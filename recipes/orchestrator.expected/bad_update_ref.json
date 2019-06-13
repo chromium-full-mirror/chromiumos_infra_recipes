@@ -13,9 +13,9 @@
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
       "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 45, in RunSteps",
       "    validate_refs(properties.update_manifest_refs)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 288, in validate_refs",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 293, in validate_refs",
       "    validate_ref(refs.start, 'start')",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 300, in validate_ref",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 305, in validate_ref",
       "    raise ValueError('%s ref %s is missing refs/heads/' % (name, ref))",
       "ValueError: start ref foo is missing refs/heads/"
     ]
