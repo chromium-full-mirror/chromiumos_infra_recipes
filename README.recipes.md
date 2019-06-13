@@ -1916,7 +1916,7 @@ Raises:
 
 &mdash; **def [vm\_test](/recipes/orchestrator.py#210)(build_target):**
 
-Returns the vm_test name for the given build_target.
+Returns the vm_test builder name for the given build_target.
 
 &mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#337)(api, properties):**
 

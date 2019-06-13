@@ -59,8 +59,6 @@ def RunSteps(api, properties):
       api.buildbucket.build.builder.builder)
   gitiles_commit = api.buildbucket.gitiles_commit
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
-  if gerrit_changes:
-    gerrit_changes = api.cq.ordered_gerrit_changes
 
   api.cros_bisect.set_bisect_builder(build_target.name)
 
