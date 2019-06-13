@@ -85,19 +85,10 @@ def RunSteps(api, properties):
   completed_builds, requests = get_build_plan(api, properties.enable_history,
                                               gerrit_changes, snapshot)
 
-  if requests:
-    # As of 2019-05-16, buildbucket.run uses an old-style collect command
-    # that doesn't return all of the fields we need on the Build proto.
-    # We thus need to do a get_multi call to get the fully populated Builds.
-    # TODO: revert https://crrev.com/c/1615374 once buildbucket.run's call
-    # to collect is improved to return the full proto.
-    api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
-    new_builds = api.buildbucket.run(requests, timeout=60 * 60 * 4,
-                                     step_name='run builds',
-                                     url_title_fn=api.naming.get_build_title)
-    populated_builds = api.buildbucket.get_multi(
-        [b.id for b in new_builds], step_name='get full build protos')
-    completed_builds += populated_builds.values()
+  api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
+  completed_builds += api.buildbucket.run(
+      requests, timeout=60 * 60 * 4, step_name='run builds',
+      url_title_fn=api.naming.get_build_title)
 
   # If this is a dry run, check that the builds passed and quit.
   if api.cq.state == api.cq.DRY:
@@ -435,9 +426,7 @@ def GenTests(api):
              'run tests.schedule tests.get change test history'
              '.find matching builds.buildbucket.search') +  #
          api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect')
-         + api.buildbucket.simulated_get_multi(
-             builds, step_name='get full build protos') +
+             builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
@@ -508,8 +497,6 @@ def GenTests(api):
          postsubmit_orchestrator_build() +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +
-         api.buildbucket.simulated_get_multi(
-             builds, step_name='get full build protos') +
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
@@ -524,8 +511,6 @@ def GenTests(api):
   yield (api.test('non-critical_child_builder_fails') +  #
          postsubmit_orchestrator_build() +  #
          api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect')
-         + api.buildbucket.simulated_get_multi(
-             builds, step_name='get full build protos') +
+             builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests'))
