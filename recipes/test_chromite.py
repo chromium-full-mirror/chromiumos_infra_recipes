@@ -12,7 +12,6 @@ on its own because it is agnostic of ChromeOS build targets.
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/cq',
     'recipe_engine/step',
     'cros_build_api',
     'cros_sdk',
@@ -33,7 +32,6 @@ def RunSteps(api):
 
       gerrit_changes = api.buildbucket.build.input.gerrit_changes
       if gerrit_changes:
-        gerrit_changes = api.cq.ordered_gerrit_changes
         with api.step.nest('cherry-pick gerrit changes'):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
@@ -56,5 +54,4 @@ def GenTests(api):
 
   yield (api.test('one-gerrit-change') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='chromite-cq') +  #
-         api.cq(full_run=True))
+                                   builder='chromite-cq'))
