@@ -144,7 +144,8 @@ def RunSteps(api, properties):
               CreateImageRequest(
                   build_target=build_target, chroot=api.cros_sdk.chroot,
                   image_types=image_types,
-                  builder_path='%s/%s' % (build_config.id.name, version)),
+                  builder_path=api.cros_artifacts.artifacts_gs_path(
+                      build_target, build_config.id.type)),
               timeout=45 * 60)
           api.failures.raise_failed_packages(response.failed_packages)
 

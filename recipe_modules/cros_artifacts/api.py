@@ -31,27 +31,6 @@ ENDPOINTS_BY_ARTIFACT = {
 class CrosArtifactsApi(recipe_api.RecipeApi):
   """A module for bundling and uploading build artifacts."""
 
-  def __init__(self, **kwargs):
-    super(CrosArtifactsApi, self).__init__(**kwargs)
-
-  def _artifacts_gs_path(self, target, kind):
-    """Returns the GS path for artifacts of the given kind for the given target.
-
-    The resulting path will NOT include the GS bucket.
-
-    Args:
-      target (BuildTarget): The target whose artifacts will be uploaded.
-      kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
-          e.g. POSTSUBMIT. Used as a descriptor in the GS path.
-
-    Returns:
-      The GS path at which artifacts should be uploaded.
-    """
-    label = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
-    version = self.m.cros_version.read_workspace_version()
-    build_id = self.m.buildbucket.build.id
-    return '%s-%s/%s-%d' % (target.name, label, version, build_id)
-
   def _get_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
 
@@ -92,6 +71,24 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ]
       return artifact_name, artifact_files
 
+  def artifacts_gs_path(self, target, kind):
+    """Returns the GS path for artifacts of the given kind for the given target.
+
+    The resulting path will NOT include the GS bucket.
+
+    Args:
+      target (BuildTarget): The target whose artifacts will be uploaded.
+      kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
+          e.g. POSTSUBMIT. Used as a descriptor in the GS path.
+
+    Returns:
+      The GS path at which artifacts should be uploaded.
+    """
+    label = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
+    version = self.m.cros_version.read_workspace_version()
+    build_id = self.m.buildbucket.build.id
+    return '%s-%s/%s-%d' % (target.name, label, version, build_id)
+
   def upload_artifacts(self, target, kind, gs_bucket, artifacts, name=None):
     """Bundle and upload the given artifacts for the given build target.
 
@@ -118,7 +115,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         name, files = self._bundle_artifact(artifact, target, staging_root)
         files_by_artifact[name] = files
 
-      gs_path = self._artifacts_gs_path(target, kind)
+      gs_path = self.artifacts_gs_path(target, kind)
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
       for retries in range(3):
         try:
