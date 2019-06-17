@@ -287,12 +287,7 @@
     "cmd": [],
     "name": "build results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all builds succeeded@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@id: 8922054662172514000@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@status: SUCCESS@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@id: 8922054662172514001@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@status: SUCCESS@@@",
-      "@@@STEP_LOG_END@buildbucket build dump@@@"
+      "@@@STEP_TEXT@all builds succeeded@@@"
     ]
   },
   {

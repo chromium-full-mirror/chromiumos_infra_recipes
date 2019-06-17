@@ -7,9 +7,11 @@ DEPS = [
     'recipe_engine/assertions',
     'git',
     'naming',
+    'skylab',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.chromiumos.common import PackageInfo
 from PB.testplans.target_test_requirements_config import HwTestCfg
 
 def RunSteps(api):
@@ -26,6 +28,17 @@ Plagueis the Wise?
   ''')
   api.assertions.assertEqual(api.naming.get_commit_title(commit), 'title')
 
+  hw_test = api.skylab.test_api.hw_test(name='hw-test')
+  api.assertions.assertEqual(api.naming.get_hw_test_title(hw_test), 'hw-test')
+
+  skylab_task = api.skylab.test_api.skylab_task(test=hw_test)
+  api.assertions.assertEqual(api.naming.get_skylab_task_title(skylab_task),
+                             'hw-test')
+
+  skylab_result = api.skylab.test_api.skylab_result(task=skylab_task)
+  api.assertions.assertEqual(api.naming.get_skylab_result_title(skylab_result),
+                             'hw-test')
+
   properties = {'name': 'vm-test'}
 
   vm_test = build_pb2.Build()
@@ -35,6 +48,10 @@ Plagueis the Wise?
   vm_test = build_pb2.Build()
   vm_test.output.properties.update(properties)
   api.assertions.assertEqual(api.naming.get_vm_test_title(vm_test), 'vm-test')
+
+  package = PackageInfo(category='cat', package_name='name', version='123')
+  api.assertions.assertEqual(api.naming.get_package_title(package),
+                             'cat/name-123')
 
 def GenTests(api):
   yield api.test('basic')

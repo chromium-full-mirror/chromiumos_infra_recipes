@@ -1,0 +1,45 @@
+# -*- coding: utf-8 -*-
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""API for creating task URLs out of complex data structures."""
+
+from recipe_engine import recipe_api
+
+
+class UrlsApi(recipe_api.RecipeApi):
+  """A module for creating links to tasks."""
+
+  def get_build_url(self, build):
+    """Returns the URL to the given buildbucket build.
+
+    Args:
+      build (Build): The buildbucket build in question.
+
+    Returns:
+      str: URL pointing to the build milo page.
+    """
+    return self.m.buildbucket.build_url(build_id=build.id)
+
+  def get_skylab_task_url(self, skylab_task):
+    """Returns the URL to the given skylab task.
+
+    Args:
+      skylab_task (SkylabTask): The Skylab task in question.
+
+    Returns:
+      str: URL pointing to the skylab swarming task page.
+    """
+    return skylab_task.url
+
+  def get_skylab_result_url(self, skylab_result):
+    """Returns the URL to the given skylab result page.
+
+    Args:
+      skylab_task (SkylabResult): The Skylab result in question.
+
+    Returns:
+      str: URL pointing to the skylab swarming task page.
+    """
+    return self.get_skylab_task_url(skylab_result.task)

@@ -34,6 +34,7 @@
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [skylab](#recipe_modules-skylab)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
+  * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
 
 **[Recipes](#Recipes)**
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
@@ -92,6 +93,7 @@
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
   * [test_proto](#recipes-test_proto) &mdash; Verifies the proto repository.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
+  * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
 ## Recipe Modules
 
 ### *recipe_modules* / [analysis\_service](/recipe_modules/analysis_service)
@@ -827,7 +829,7 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
-[DEPS](/recipe_modules/failures/__init__.py#6): [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/__init__.py#6): [naming](#recipe_modules-naming), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for raising failures and presenting them in cute ways.
 
@@ -835,7 +837,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#149)(self, build):**
+&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#112)(self, build):**
 
 Determine if the build failed.
 
@@ -845,7 +847,7 @@ Args:
 Returns:
   bool: True if the build failed.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#182)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#145)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -855,7 +857,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#194)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#157)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -865,7 +867,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#206)(self, vm_test):**
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#169)(self, vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -875,7 +877,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#160)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#123)(self, hw_test):**
 
 Determine if the hardware test failed.
 
@@ -885,7 +887,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#171)(self, vm_test):**
+&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#134)(self, vm_test):**
 
 Determine if the VM test failed.
 
@@ -895,27 +897,27 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [raise\_failed\_builds](/recipe_modules/failures/api.py#41)(self, builds):**
+&mdash; **def [raise\_failed\_builds](/recipe_modules/failures/api.py#73)(self, builds):**
 
 Verify all builds completed successfully.
 
 Args:
-  * builds (list[build_pb2.Build]): List of completed builds.
+  builds (list[build_pb2.Build]): List of completed builds.
 
 Raises:
   CompositeBuildFailure containing all failed builds.
 
-&mdash; **def [raise\_failed\_hw\_tests](/recipe_modules/failures/api.py#77)(self, hw_tests):**
+&mdash; **def [raise\_failed\_hw\_tests](/recipe_modules/failures/api.py#86)(self, hw_tests):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
 Args:
-  * hw_tests (list[SkylabResult]): List of Skylab suite results.
+  hw_tests (list[SkylabResult]): List of Skylab suite results.
 
 Raises:
   recipe_api.StepFailure: If any tests failed.
 
-&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#18)(self, packages):**
+&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#48)(self, packages):**
 
 Display failed packages and raise a failure.
 
@@ -927,12 +929,12 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [raise\_failed\_vm\_tests](/recipe_modules/failures/api.py#113)(self, vm_tests):**
+&mdash; **def [raise\_failed\_vm\_tests](/recipe_modules/failures/api.py#99)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 
 Args:
-  * vm_tests (list[Build]): List of VM test buildbucket results.
+  vm_tests (list[Build]): List of VM test buildbucket results.
 
 Raises:
   recipe_api.StepFailure: If any tests failed.
@@ -1331,7 +1333,7 @@ Args:
 Returns:
   str: A string describing the build.
 
-&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#46)(self, commit):**
+&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#79)(self, commit):**
 
 Get a string to describe the commit.
 
@@ -1343,7 +1345,47 @@ Args:
 Returns:
   str: The commit title.
 
-&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#30)(self, vm_test):**
+&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#30)(self, hw_test):**
+
+Get a string to describe the HW test.
+
+Args:
+  hw_test (HwTest): The HW test in question.
+
+Returns:
+  str: The HW test title.
+
+&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#94)(self, package):**
+
+Get a string to describe the package.
+
+Args:
+  package (PackageInfo): The package in question.
+
+Returns:
+  str: The package title.
+
+&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#52)(self, skylab_result):**
+
+Get a string to describe the HW test.
+
+Args:
+  skylab_result (SkylabResult): The Skylab result in question.
+
+Returns:
+  str: The HW test title.
+
+&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#41)(self, skylab_task):**
+
+Get a string to describe the Skylab task.
+
+Args:
+  skylab_task (SkylabTask): The Skylab task in question.
+
+Returns:
+  str: The Skylab task title.
+
+&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#63)(self, vm_test):**
 
 Get a string to describe the VM test.
 
@@ -1646,6 +1688,45 @@ Returns:
 Ensure the CIPD support package is installed.
 
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
+### *recipe_modules* / [urls](/recipe_modules/urls)
+
+[DEPS](/recipe_modules/urls/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+API for creating task URLs out of complex data structures.
+
+#### **class [UrlsApi](/recipe_modules/urls/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for creating links to tasks.
+
+&mdash; **def [get\_build\_url](/recipe_modules/urls/api.py#14)(self, build):**
+
+Returns the URL to the given buildbucket build.
+
+Args:
+  build (Build): The buildbucket build in question.
+
+Returns:
+  str: URL pointing to the build milo page.
+
+&mdash; **def [get\_skylab\_result\_url](/recipe_modules/urls/api.py#36)(self, skylab_result):**
+
+Returns the URL to the given skylab result page.
+
+Args:
+  skylab_task (SkylabResult): The Skylab result in question.
+
+Returns:
+  str: URL pointing to the skylab swarming task page.
+
+&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#25)(self, skylab_task):**
+
+Returns the URL to the given skylab task.
+
+Args:
+  skylab_task (SkylabTask): The Skylab task in question.
+
+Returns:
+  str: URL pointing to the skylab swarming task page.
 ## Recipes
 
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
@@ -1904,9 +1985,9 @@ Test git_footers calls.
 &mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#11)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
-[DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#17)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2150,6 +2231,13 @@ The steps specific to VM testing are:
   4. Call the build API to run VM tests.
 
 &mdash; **def [RunSteps](/recipes/test_vm.py#56)(api, properties):**
+### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
+
+[DEPS](/recipe_modules/urls/examples/full.py#10): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+Basic tests for the urls recipe module.
+
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#17)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/764ec87e51cd63d517f05a38a1cc87ff562680e0/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/764ec87e51cd63d517f05a38a1cc87ff562680e0/recipes/README.recipes.md#recipe_modules-gclient

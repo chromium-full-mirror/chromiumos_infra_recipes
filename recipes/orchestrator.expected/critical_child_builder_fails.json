@@ -853,19 +853,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@1 builds failed, 1 succeeded@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@id: 8922054662172514000@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@builder {@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@  builder: \"amd64-generic-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@}@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@status: FAILURE@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@critical: YES@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@id: 8922054662172514001@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@builder {@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@  builder: \"arm-generic-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@}@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@status: SUCCESS@@@",
-      "@@@STEP_LOG_LINE@buildbucket build dump@critical: NO@@@",
-      "@@@STEP_LOG_END@buildbucket build dump@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -874,7 +861,7 @@
     "name": "results.build results.[FAILED] ..amd64-generic-postsubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@buildbucket build@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@task url@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -883,7 +870,7 @@
     "name": "results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all hw tests passed@@@"
+      "@@@STEP_TEXT@all hw tests succeeded@@@"
     ]
   },
   {
@@ -891,7 +878,7 @@
     "name": "results.vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all vm tests passed@@@"
+      "@@@STEP_TEXT@all vm tests succeeded@@@"
     ]
   },
   {
