@@ -1659,17 +1659,6 @@ Args:
 
 Returns:
   A string containing the commit message.
-
-&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#111)(api, manifest_diffs):**
-
-Find all Gerrit changes that landed since the last snapshot.
-
-Args:
-  * api (object): See RunSteps documentation.
-  * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
-
-Returns:
-  list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [portage](#recipe_modules-portage), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
