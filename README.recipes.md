@@ -40,6 +40,9 @@
 **[Recipes](#Recipes)**
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
+  * [branch_create](#recipes-branch_create) &mdash; Creates a branch using `cros branch create`.
+  * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
+  * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [chrome:examples/full](#recipes-chrome_examples_full)
@@ -1802,6 +1805,21 @@ Args:
 
 Returns:
   list[Commit]: The Gerrit-reviewed commits since the last snapshot.
+### *recipes* / [branch\_create](/recipes/branch_create.py)
+
+Creates a branch using `cros branch create`.
+
+&mdash; **def [RunSteps](/recipes/branch_create.py#15)(api, properties):**
+### *recipes* / [branch\_delete](/recipes/branch_delete.py)
+
+Deletes a branch using `cros branch delete`.
+
+&mdash; **def [RunSteps](/recipes/branch_delete.py#14)(api, properties):**
+### *recipes* / [branch\_rename](/recipes/branch_rename.py)
+
+Renames a branch using `cros branch rename`.
+
+&mdash; **def [RunSteps](/recipes/branch_rename.py#14)(api, properties):**
 ### *recipes* / [breakpad:examples/full](/recipe_modules/breakpad/examples/full.py)
 
 [DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

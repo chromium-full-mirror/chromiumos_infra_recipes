@@ -1,0 +1,26 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.branch_create;
+
+import "chromiumos/branch.proto";
+
+// Input properties for create branch recipe.
+message CreateBranchProperties {
+  // If not set, git push commands include --dry-run.
+  bool push = 1;
+
+  // If not set, any command that would overwrite an existing branch/version fails.
+  bool force = 2;
+
+  // URL of manifest to branch from.
+  // If the manifest at the URL has includes, the branch tool will erroneously
+  // fail.
+  string manifest_url = 3;
+
+  // Branch to be created.
+  chromiumos.Branch branch = 4;
+}
