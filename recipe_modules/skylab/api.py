@@ -26,7 +26,7 @@ class SkylabApi(recipe_api.RecipeApi):
   def initialize(self):
     self._client = None
 
-  def create_suite(self, test, payload, is_cq=False, name=None):
+  def create_suite(self, test, payload, name=None):
     """Schedule a HW test suite.
 
     Args:

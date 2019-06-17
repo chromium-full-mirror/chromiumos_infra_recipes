@@ -120,7 +120,7 @@ def RunSteps(api, properties):
               build_target = unit.common.build_target
               test_name_to_build_target[test_name] = build_target
               skylab_tasks.append(api.skylab.create_suite(
-                  test, unit.common.build_payload, gerrit_changes))
+                  test, unit.common.build_payload))
 
       requests = []
       for unit in test_plan.vm_test_units:

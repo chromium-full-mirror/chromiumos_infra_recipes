@@ -1637,7 +1637,7 @@ Args:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#29)(self, test, payload, is_cq=False, name=None):**
+&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#29)(self, test, payload, name=None):**
 
 Schedule a HW test suite.
 
