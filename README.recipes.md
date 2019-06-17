@@ -260,7 +260,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#68)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#72)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -280,7 +280,7 @@ should invoke if the build fails and bisection is required.
 Args:
   build_target_name (str): build target name to set the bisect builder for.
 
-&mdash; **def [set\_build\_compile\_failure](/recipe_modules/cros_bisect/api.py#52)(self, failed_packages):**
+&mdash; **def [set\_build\_compile\_failure](/recipe_modules/cros_bisect/api.py#56)(self, failed_packages):**
 
 Outputs failure of the failed packages for FindIt consumption.
 

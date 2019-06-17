@@ -46,8 +46,12 @@ class CrosBisectApi(recipe_api.RecipeApi):
           'rule': 'emerge',
           'output_targets': [jsonpb.MessageToJson(pkg)]
       })
-    # TODO: share the constant 'install packages' with build_target.py?
-    return {'failures': failures, 'failed_step': 'install packages'}
+    # TODO: share the constant 'install packages|installation results'
+    # with build_target.py?
+    return {
+        'failures': failures,
+        'failed_step': 'install packages|installation results',
+    }
 
   def set_build_compile_failure(self, failed_packages):
     """Outputs failure of the failed packages for FindIt consumption.
