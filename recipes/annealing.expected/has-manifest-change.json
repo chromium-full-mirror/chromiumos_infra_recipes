@@ -348,6 +348,74 @@
   },
   {
     "cmd": [],
+    "name": "record new gerrit changes"
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes.NAME",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@message@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%H%x1E%B%x00",
+      "FROM_REV...TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "record new gerrit changes.NAME.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Reviewed-on"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "record new gerrit changes.NAME.read git footers",
+    "stdin": "message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"gerritChanges\": [\n    {\n      \"project\": \"chromiumos/chromite\", \n      \"host\": \"chromium-review.googlesource.com\", \n      \"change\": \"1\"\n    }\n  ]\n}",
+      "[CLEANUP]/snapshot-gerrit-changes-_tmp_1/snapshot_gerrit_changes.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "record new gerrit changes.write gerrit changes json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes.output isolate id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@snapshot_gerrit_changes@null@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "publish snapshot"
   },
   {
