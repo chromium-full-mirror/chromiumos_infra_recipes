@@ -11,8 +11,6 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@stdout@@@@",
-      "@@@STEP_LOG_END@stdout@@@",
       "@@@STEP_LOG_LINE@response@{\"failed_packages\": []}@@@",
       "@@@STEP_LOG_END@response@@@",
       "@@@STEP_LOG_LINE@Failure reason@InfraFailure(\"Infra Failure: Step('call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message') (retcode: 1)\",)@@@",

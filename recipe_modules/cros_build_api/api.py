@@ -159,13 +159,10 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
         # For Build API retcode 2 indicates that the invocation failed in some
         # way but a consumable response has been produced.
         result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
-                             infra_step=infra_step, timeout=timeout,
-                             stdout=self.m.raw_io.output())
+                             infra_step=infra_step, timeout=timeout)
 
         response_time = timestamp_pb2.Timestamp()
         response_time.FromDatetime(self.m.time.utcnow())
-
-        step.presentation.logs['stdout'] = [result.stdout]
 
       # If no test data is provided, see if we have our own.
       if test_output_data is None:
