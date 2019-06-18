@@ -30,6 +30,12 @@ def RunSteps(api):
                         critical=common_pb2.NO)
   vm_critical_failure = vm_build(id=606, status=common_pb2.FAILURE)
 
+  moblab_vm_success = moblab_vm_build(id=707, status=common_pb2.SUCCESS)
+  moblab_vm_failure = moblab_vm_build(id=808, status=common_pb2.FAILURE,
+                                      critical=common_pb2.NO)
+  moblab_vm_critical_failure = moblab_vm_build(id=909,
+                                               status=common_pb2.FAILURE)
+
   skylab_success = api.skylab.test_api.skylab_result()
   skylab_failure = api.skylab.test_api.skylab_result(
       task=api.skylab.test_api.skylab_task(
@@ -42,30 +48,39 @@ def RunSteps(api):
                               api.failures.raise_failed_packages,
                               [PackageInfo(package_name='package')])
 
+  # Builds.
   api.failures.raise_failed_builds([build_success])
   api.failures.raise_failed_builds([build_failure])
 
-  # Pass in two failures, to check each gets a step.
   api.assertions.assertRaises(api.step.StepFailure,
                               api.failures.raise_failed_builds,
                               [build_critical_failure, build_critical_failure])
 
+  # HW tests.
   api.failures.raise_failed_hw_tests([skylab_success])
   api.failures.raise_failed_hw_tests([skylab_failure])
-
-  # Pass in two failures, to check each gets a step.
   api.assertions.assertRaises(
       api.step.StepFailure, api.failures.raise_failed_hw_tests,
       [skylab_critical_failure, skylab_critical_failure])
 
+  # VM tests.
   api.failures.raise_failed_vm_tests([vm_success])
   api.failures.raise_failed_vm_tests([vm_failure])
-
-  # Pass in two failures, to check each gets a step.
   api.assertions.assertRaises(api.step.StepFailure,
                               api.failures.raise_failed_vm_tests,
                               [vm_critical_failure, vm_critical_failure])
 
+  # Moblab VM tests
+  api.failures.raise_failed_moblab_vm_tests([moblab_vm_success])
+  api.failures.raise_failed_moblab_vm_tests([moblab_vm_failure])
+  # TODO(evanhernandez): Uncomment this once moblab failures are fatal.
+  # api.assertions.assertRaises(api.step.StepFailure,
+  #                             api.failures.raise_failed_moblab_vm_tests,
+  #                             [moblab_vm_critical_failure,
+  #                              moblab_vm_critical_failure])
+  api.failures.raise_failed_moblab_vm_tests([moblab_vm_critical_failure])
+
+  # Check boolean functions.
   api.assertions.assertFalse(api.failures.is_build_failure(build_success))
   api.assertions.assertTrue(api.failures.is_build_failure(build_failure))
   api.assertions.assertTrue(
@@ -102,6 +117,21 @@ def RunSteps(api):
   api.assertions.assertTrue(
       api.failures.is_critical_vm_test_failure(vm_critical_failure))
 
+  api.assertions.assertFalse(
+      api.failures.is_moblab_vm_test_failure(moblab_vm_success))
+  api.assertions.assertTrue(
+      api.failures.is_moblab_vm_test_failure(moblab_vm_failure))
+  api.assertions.assertTrue(
+      api.failures.is_moblab_vm_test_failure(moblab_vm_critical_failure))
+
+  api.assertions.assertFalse(
+      api.failures.is_critical_moblab_vm_test_failure(moblab_vm_success))
+  api.assertions.assertFalse(
+      api.failures.is_critical_moblab_vm_test_failure(moblab_vm_failure))
+  api.assertions.assertTrue(
+      api.failures.is_critical_moblab_vm_test_failure(
+          moblab_vm_critical_failure))
+
   with api.failures.ignore_exceptions():
     api.step('A failed step', ['ls'])
 
@@ -109,6 +139,12 @@ def RunSteps(api):
 def vm_build(**kwargs):
   build = build_pb2.Build(**kwargs)
   build.output.properties.update({'name': 'target.vm.suite'})
+  return build
+
+
+def moblab_vm_build(**kwargs):
+  build = build_pb2.Build(**kwargs)
+  build.output.properties.update({'name': 'target.moblab-vm.suite'})
   return build
 
 

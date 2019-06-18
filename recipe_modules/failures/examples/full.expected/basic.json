@@ -137,6 +137,37 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "moblab vm test results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all moblab vm tests succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "moblab vm test results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all moblab vm tests succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "moblab vm test results (3)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 moblab vm tests failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "moblab vm test results (3).[FAILED BUT IGNORED] target.moblab-vm.suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/909@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "cmd": [
       "ls"
     ],

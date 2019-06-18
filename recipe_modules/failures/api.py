@@ -126,6 +126,19 @@ class FailuresApi(recipe_api.RecipeApi):
                          self.m.naming.get_vm_test_title,
                          self.m.urls.get_build_url)
 
+  def raise_failed_moblab_vm_tests(self, moblab_vm_tests):
+    """Logs Moblab VM test status to UI, but does not rais on failed tests.
+
+    TODO(evanhernandez): Raise on failure, once tests are stable.
+
+    Args:
+      moblab_vm_tests (list[Build]): List of Moblab VM test buildbucket results.
+    """
+    self._raise_failures('moblab vm test', moblab_vm_tests,
+                         self.is_critical_moblab_vm_test_failure,
+                         self.m.naming.get_moblab_vm_test_title,
+                         self.m.urls.get_build_url, fatal=False)
+
   def is_build_failure(self, build):
     """Determine if the build failed.
 
@@ -158,6 +171,17 @@ class FailuresApi(recipe_api.RecipeApi):
       bool: True if the test failed.
     """
     return self.is_build_failure(vm_test)
+
+  def is_moblab_vm_test_failure(self, moblab_vm_test):
+    """Determine if the VM test failed.
+
+    Args:
+      moblab_vm_test (Build): The buildbucket build for the Moblab VM test.
+
+    Returns:
+      bool: True if the test failed.
+    """
+    return self.is_build_failure(moblab_vm_test)
 
   def is_critical_build_failure(self, build):
     """Determine in the build failed and was critical.
@@ -193,3 +217,14 @@ class FailuresApi(recipe_api.RecipeApi):
       bool: True if the test failed and was critical
     """
     return self.is_critical_build_failure(vm_test)
+
+  def is_critical_moblab_vm_test_failure(self, moblab_vm_test):
+    """Determine if the vm test failed and was critical.
+
+    Args:
+      moblab_vm_test (Build): The buildbucket build for the Moblab VM test.
+
+    Returns:
+      bool: True if the test failed and was critical
+    """
+    return self.is_critical_build_failure(moblab_vm_test)

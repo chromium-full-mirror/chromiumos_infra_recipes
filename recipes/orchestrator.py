@@ -33,6 +33,7 @@ from PB.chromite.api.test import VmTestRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
+from PB.recipes.chromeos.test_moblab_vm import TestMoblabVmProperties
 from PB.recipes.chromeos.test_vm import TestVmProperties
 
 from google.protobuf import json_format
@@ -175,6 +176,25 @@ def RunSteps(api, properties):
       vm_tests += api.buildbucket.schedule(
           requests, step_name='schedule tast vm tests')
 
+      requests = []
+      for unit in test_plan.moblab_vm_test_units:
+        for test in unit.moblab_vm_test_cfg.moblab_test:
+          test_name = test.common.display_name
+          build_target = unit.common.build_target
+          test_name_to_build_target[test_name] = build_target
+          requests.append(api.buildbucket.schedule_request(
+              gitiles_commit=snapshot,
+              builder='moblab-vm-test',
+              critical=test.common.critical.value,
+              properties=with_props_for_child_build(
+                  api, json_format.MessageToDict(TestMoblabVmProperties(
+                      name=test_name,
+                      build_payload=unit.common.build_payload,
+                  )))))
+
+      moblab_vm_tests = api.buildbucket.schedule(
+          requests, step_name='schedule moblab vm tests')
+
     with api.step.nest('collect tests'):
       hw_results = []
       if skylab_tasks:
@@ -184,6 +204,13 @@ def RunSteps(api, properties):
       if vm_tests:
         vm_results = api.buildbucket.collect_builds(
             [vt.id for vt in vm_tests], step_name='collect vm tests',
+            timeout=60 * 60 * 4).values()
+
+      moblab_vm_results = []
+      if moblab_vm_tests:
+        moblab_vm_results = api.buildbucket.collect_builds(
+            [mvt.id for mvt in moblab_vm_tests],
+            step_name='collect moblab vm tests',
             timeout=60 * 60 * 4).values()
 
       # Record test results.
@@ -197,6 +224,11 @@ def RunSteps(api, properties):
           for vm_result in vm_results
           if not api.failures.is_vm_test_failure(vm_result)
       ])
+      passed_tests.extend([
+          api.naming.get_moblab_vm_test_title(moblab_vm_result)
+          for moblab_vm_result in moblab_vm_results
+          if not api.failures.is_moblab_vm_test_failure(moblab_vm_result)
+      ])
       api.cros_history.set_passed_tests(passed_tests)
 
   # Verify builds/tests in a deferred context so that all failures appear.
@@ -205,6 +237,7 @@ def RunSteps(api, properties):
       api.failures.raise_failed_builds(completed_builds)
       api.failures.raise_failed_hw_tests(hw_results)
       api.failures.raise_failed_vm_tests(vm_results)
+      api.failures.raise_failed_moblab_vm_tests(moblab_vm_results)
 
   # Victory! If we've made it this far, the child builders were successful
   # and we can update the success manifest ref if it is specified.
@@ -384,9 +417,9 @@ def GenTests(api):
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return api.buildbucket.build(build)
 
-  def vm_test_build():
+  def vm_test_build(name):
     output = build_pb2.Build.Output()
-    output.properties.update({'name': 'vm-test'})
+    output.properties.update({'name': name})
     return build_pb2.Build(output=output, status=common_pb2.SUCCESS)
 
   def build_target_property(build_target):
@@ -405,12 +438,19 @@ def GenTests(api):
         })
 
   vm_tests = [
-      vm_test_build(),
+      vm_test_build('vm-test'),
+  ]
+
+  moblab_vm_tests = [
+      vm_test_build('moblab-vm-test'),
   ]
 
   yield (api.test('basic') + postsubmit_orchestrator_build() +
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   builds = [
       build_pb2.Build(
@@ -437,7 +477,10 @@ def GenTests(api):
              builds, 'get build history for changes.'
              'get change build history.buildbucket.search') +  #
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('tests_with_history') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
@@ -453,7 +496,10 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('fails_if_inflight_orchs') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
@@ -473,7 +519,10 @@ def GenTests(api):
              [], step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search') +
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('retry_only_critical_builds') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
@@ -483,7 +532,10 @@ def GenTests(api):
              builds, step_name='get build history for changes'
              '.find matching builds.buildbucket.search') +
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('updates_refs') +  #
          postsubmit_orchestrator_build() +  #
@@ -492,7 +544,10 @@ def GenTests(api):
              'success': 'refs/heads/bar'
          }) +
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('missing_gitiles_commit') +  #
          postsubmit_orchestrator_build_with_no_gitiles() +
@@ -501,7 +556,10 @@ def GenTests(api):
              'success': 'refs/heads/bar'
          }) +
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('bad_update_ref') +  #
          api.properties(update_manifest_refs={'start': 'foo'}) +  #
@@ -524,7 +582,10 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
@@ -539,4 +600,7 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests'))
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
