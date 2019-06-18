@@ -28,8 +28,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """Generate start time in seconds."""
     return self.m.time.time() - self._lookback_seconds
 
-  def get_passed_builds(self):
+  def get_passed_builds(self, tags=None):
     """Retrieve passed builds with the same patches as current build.
+
+    Args:
+      tags (list[common_pb2.StringPair]): Get builds with these tags.
 
     Returns:
       list([build_pb2.Build]): Passed builds with at most one build per builder.
@@ -43,8 +46,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       # We don't want to specify the builder, but, we should specify the bucket
       builder_shell = build_pb2.BuilderID(project=current_builder_id.project,
                                           bucket=current_builder_id.bucket)
-      for build in self._get_patch_history(patches, builder=builder_shell,
-                                           status=common_pb2.SUCCESS):
+      for build in self._get_patch_history(
+          patches, builder=builder_shell, status=common_pb2.SUCCESS, tags=tags):
         if build.builder.builder not in passed_builders:
           passed_builders.add(build.builder.builder)
           passed_builds.append(build)
@@ -118,7 +121,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
                                      start_build_id=start_build_id)
 
   def _get_patch_history(self, patches, builder=None, limit=None, status=None,
-                         start_build_id=None):
+                         start_build_id=None, tags=None):
     """Get all the passed builds with current patch-set from Buildbucket.
 
     Args:
@@ -127,6 +130,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       * limit (int): limit the list returned to this number.
       * status (common_pb2.Status): query for builds with this status.
       * start_build_id: query builds older than this ID.
+      * tags ([common_pb2.StringPair]): get builds with these tags only.
 
     Returns:
       list[Build] which meet the conditions ordered from latest to oldest.
@@ -141,7 +145,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
           start_time=timestamp_pb2.Timestamp(
               seconds=int(self.start_time_in_seconds)))
     build_predicate = rpc_pb2.BuildPredicate(
-        builder=builder, status=status, gerrit_changes=patches,
+        builder=builder, status=status, gerrit_changes=patches, tags=tags,
         create_time=create_time, build=build_range)
     return self.m.buildbucket.search(build_predicate, limit=limit,
                                      url_title_fn=self.m.naming.get_build_title)
