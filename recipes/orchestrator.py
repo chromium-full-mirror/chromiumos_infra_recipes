@@ -110,55 +110,66 @@ def RunSteps(api, properties):
       if properties.enable_history and gerrit_changes:
         passed_tests = api.cros_history.get_passed_tests()
 
+      test_name_to_build_target = {}
+
+      skylab_tasks = []
       with api.step.nest('schedule hardware tests'):
-        skylab_tasks = [
-            api.skylab.create_suite(test, unit.common.build_payload,
-                                    gerrit_changes)
-            for unit in test_plan.hw_test_units
-            for test in unit.hw_test_cfg.hw_test
-            if test.common.display_name not in passed_tests
-        ]
+        for unit in test_plan.hw_test_units:
+          for test in unit.hw_test_cfg.hw_test:
+            if test.common.display_name not in passed_tests:
+              test_name = test.common.display_name
+              build_target = unit.common.build_target
+              test_name_to_build_target[test_name] = build_target
+              skylab_tasks.append(api.skylab.create_suite(
+                  test, unit.common.build_payload, gerrit_changes))
 
-      vm_tests = api.buildbucket.schedule([
-          api.buildbucket.schedule_request(
-              gitiles_commit=snapshot,
-              builder=autotest_vm_test(unit.common.build_target),
-              critical=test.common.critical.value,
-              properties=with_props_for_child_build(
-                  api,
-                  json_format.MessageToDict(
-                      TestVmProperties(name=test.common.display_name,
-                                       build_target=unit.common.build_target,
-                                       test_harness=VmTestRequest.AUTOTEST,
-                                       build_payload=unit.common.build_payload,
-                                       expressions=[
-                                           'suite:' + test.test_suite
-                                       ]))))
-          for unit in test_plan.vm_test_units
-          for test in unit.vm_test_cfg.vm_test
-          if test.common.display_name not in passed_tests
-      ], step_name='schedule autotest vm tests')
+      requests = []
+      for unit in test_plan.vm_test_units:
+        for test in unit.vm_test_cfg.vm_test:
+          if test.common.display_name not in passed_tests:
+            test_name = test.common.display_name
+            build_target = unit.common.build_target
+            test_name_to_build_target[test_name] = build_target
+            requests.append(api.buildbucket.schedule_request(
+                gitiles_commit=snapshot,
+                builder=autotest_vm_test(build_target),
+                critical=test.common.critical.value,
+                properties=with_props_for_child_build(
+                    api, json_format.MessageToDict(TestVmProperties(
+                        name=test_name,
+                        build_target=build_target,
+                        test_harness=VmTestRequest.AUTOTEST,
+                        build_payload=unit.common.build_payload,
+                        expressions=[
+                            'suite:' + test.test_suite
+                        ])))))
 
-      vm_tests += api.buildbucket.schedule([
-          api.buildbucket.schedule_request(
-              gitiles_commit=snapshot,
-              builder=tast_vm_test(unit.common.build_target),
-              critical=test.common.critical.value,
-              properties=with_props_for_child_build(
-                  api,
-                  json_format.MessageToDict(
-                      TestVmProperties(
-                          name=test.common.display_name,
-                          build_target=unit.common.build_target,
-                          test_harness=VmTestRequest.TAST,
-                          build_payload=unit.common.build_payload, expressions=[
-                              t.test_expr
-                              for t in test.tast_test_expr
-                          ]))))
-          for unit in test_plan.tast_vm_test_units
-          for test in unit.tast_vm_test_cfg.tast_vm_test
-          if test.common.display_name not in passed_tests
-      ], step_name='schedule tast vm tests')
+      vm_tests = api.buildbucket.schedule(
+          requests, step_name='schedule autotest vm tests')
+
+      requests = []
+      for unit in test_plan.tast_vm_test_units:
+        for test in unit.tast_vm_test_cfg.tast_vm_test:
+          if test.common.display_name not in passed_tests:
+            test_name = test.common.display_name
+            build_target = unit.common.build_target
+            test_name_to_build_target[test_name] = build_target
+            requests.append(api.buildbucket.schedule_request(
+                gitiles_commit=snapshot,
+                builder=tast_vm_test(build_target),
+                critical=test.common.critical.value,
+                properties=with_props_for_child_build(
+                    api, json_format.MessageToDict(TestVmProperties(
+                        name=test_name,
+                        build_target=build_target,
+                        test_harness=VmTestRequest.TAST,
+                        build_payload=unit.common.build_payload, expressions=[
+                            t.test_expr
+                            for t in test.tast_test_expr
+                        ])))))
+
+      vm_tests += api.buildbucket.schedule(
+          requests, step_name='schedule tast vm tests')
 
     with api.step.nest('collect tests'):
       hw_results = []
