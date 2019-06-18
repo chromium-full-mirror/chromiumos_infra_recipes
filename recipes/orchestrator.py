@@ -243,13 +243,14 @@ def get_build_plan(api, enable_history, gerrit_changes, snapshot):
   orchestrator_builder_config = api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
   if enable_history and gerrit_changes:
-    retry_count = len(
-        api.cros_history.get_matching_builds(api.buildbucket.build,
-                                             status=common_pb2.FAILURE))
-    api.easy.set_property_step('cq_orch_retries', retry_count)
-    completed_builds = get_completed_builds(
-        api, orchestrator_builder_config.orchestrator.children)
-    passed_builders = set(build.builder.builder for build in completed_builds)
+    with api.step.nest('get build history for changes'):
+      retry_count = len(
+          api.cros_history.get_matching_builds(api.buildbucket.build,
+                                               status=common_pb2.FAILURE))
+      api.easy.set_property_step('orch_retries', retry_count)
+      completed_builds = get_completed_builds(
+          api, orchestrator_builder_config.orchestrator.children)
+      passed_builders = set(build.builder.builder for build in completed_builds)
 
   for child in orchestrator_builder_config.orchestrator.children:
     if child not in passed_builders:
@@ -429,7 +430,8 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
-             builds, 'get change build history.buildbucket.search') +  #
+             builds, 'get build history for changes.'
+             'get change build history.buildbucket.search') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests'))
 
@@ -438,7 +440,8 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
-             [], 'get change build history.buildbucket.search') +  #
+             [], 'get build history for changes.'
+             'get change build history.buildbucket.search') +  #
          api.buildbucket.simulated_search_results(
              [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
              'run tests.schedule tests.get change test history'
@@ -473,7 +476,8 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
-             builds, step_name='find matching builds.buildbucket.search') +
+             builds, step_name='get build history for changes'
+             '.find matching builds.buildbucket.search') +
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests'))
 

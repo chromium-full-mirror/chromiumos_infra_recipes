@@ -1927,7 +1927,7 @@ Returns:
   builds with refreshed criticality and a list of ScheduleBuildRequest of
   the builds that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#268)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#269)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1941,7 +1941,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#320)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#321)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -1956,7 +1956,7 @@ Args:
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#309)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#310)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -1964,7 +1964,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#296)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#297)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -1974,7 +1974,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#343)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#344)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 
