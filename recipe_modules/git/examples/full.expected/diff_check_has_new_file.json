@@ -50,6 +50,17 @@
   {
     "cmd": [
       "git",
+      "merge",
+      "branch",
+      "-m",
+      "yeet"
+    ],
+    "infra_step": true,
+    "name": "git merge"
+  },
+  {
+    "cmd": [
+      "git",
       "cherry-pick",
       "branch"
     ],

@@ -394,11 +394,13 @@
   {
     "cmd": [
       "git",
-      "cherry-pick",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+      "merge",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "-m",
+      "merge gerrit changes"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "name": "apply gerrit patch sets.git cherry-pick",
+    "name": "apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

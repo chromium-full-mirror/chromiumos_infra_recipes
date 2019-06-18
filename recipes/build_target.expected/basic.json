@@ -607,11 +607,13 @@
   {
     "cmd": [
       "git",
-      "cherry-pick",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+      "merge",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "-m",
+      "merge gerrit changes"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -676,11 +678,13 @@
   {
     "cmd": [
       "git",
-      "cherry-pick",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+      "merge",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "-m",
+      "merge gerrit changes"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick (2)",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

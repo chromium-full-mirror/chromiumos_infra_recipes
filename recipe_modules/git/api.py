@@ -159,14 +159,24 @@ other_test.txt
     args += [commit]
     self._step(args)
 
-  def cherry_pick(self, commit, infra_step=True):
+  def merge(self, ref, message, **kwargs):
+    """Runs `git merge`.
+
+    Args:
+      * ref (str): The ref to merge.
+      * message (str): The merge commit message.
+      * kwargs (dict): Passed to recipe_engine/step.
+    """
+    self._step(['merge', ref, '-m', message], **kwargs)
+
+  def cherry_pick(self, commit, **kwargs):
     """Runs 'git cherry-pick'.
 
     Args:
       * commit (str): The commit to cherry pick.
-      * infra_step (bool): Whether this is an infra step.
+      * kwargs (dict): Passed to recipe_engine/step.
     """
-    self._step(['cherry-pick', commit], infra_step=infra_step)
+    self._step(['cherry-pick', commit], **kwargs)
 
   def commit_files(self, files, message):
     """Runs 'git commit' with the given files.
