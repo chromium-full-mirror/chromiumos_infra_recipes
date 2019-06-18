@@ -23,7 +23,7 @@ def RunSteps(api):
   api.git.push('origin', 'HEAD:master', capture_stdout=True)
   api.git.push('origin', 'HEAD:master', capture_stdout=True)
   api.git.diff_check('some/file/path')
-  [commit] = api.git.log('START_REF', 'END_REF')
+  [commit] = api.git.log('START_REF', 'END_REF', limit=30)
   api.assertions.assertEqual(commit.rev, commit_id)
   api.assertions.assertEqual(commit.message, 'message')
   api.git.add('some/file/path')

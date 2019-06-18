@@ -1053,7 +1053,7 @@ Args:
   * commit (str): The commit to cherry pick.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#304)(self, repo_url, target_path=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#308)(self, repo_url, target_path=None):**
 
 Clones a Git repo into the current directory.
 
@@ -1070,7 +1070,7 @@ Args:
   * files (list[str|Path]): A list of file paths to commit.
   * message (str): The commit message.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#290)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#294)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -1144,7 +1144,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#260)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#264)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -1154,13 +1154,14 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#239)(self, from_rev, to_rev):**
+&mdash; **def [log](/recipe_modules/git/api.py#239)(self, from_rev, to_rev, limit=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
 Args:
   from_rev (str): From revision
   to_rev (str): To revision
+  limit (int): Maximum number of commits to log.
 
 Returns:
   List(Commit) A list of commit metas.
@@ -1186,7 +1187,7 @@ Args:
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#272)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#276)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 

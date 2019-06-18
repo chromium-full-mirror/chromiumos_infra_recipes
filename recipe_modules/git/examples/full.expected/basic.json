@@ -143,7 +143,8 @@
       "git",
       "log",
       "--pretty=%H%x1E%B%x00",
-      "START_REF...END_REF"
+      "START_REF...END_REF",
+      "-30"
     ],
     "infra_step": true,
     "name": "git log"

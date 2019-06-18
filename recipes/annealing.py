@@ -124,7 +124,7 @@ def record_gerrit_changes(api, manifest_diffs):
     for diff in manifest_diffs:
       with api.step.nest(diff.path) as step, api.context(
           cwd=api.cros_source.workspace_path.join(diff.path)):
-        commits = api.git.log(diff.from_rev, diff.to_rev)
+        commits = api.git.log(diff.from_rev, diff.to_rev, limit=30)
         for commit in commits:
           reviewed_on_footers = api.git_footers.from_message(commit.message,
                                                              key='Reviewed-on')

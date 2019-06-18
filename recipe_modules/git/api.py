@@ -236,21 +236,25 @@ other_test.txt
     finally:
       self.checkout(head)
 
-  def log(self, from_rev, to_rev):
+  def log(self, from_rev, to_rev, limit=None):
     """Returns all the `Commit` between `from_rev` and `to_rev`.
 
     Args:
       from_rev (str): From revision
       to_rev (str): To revision
+      limit (int): Maximum number of commits to log.
 
     Returns:
       List(Commit) A list of commit metas.
     """
+    cmd = ['log', '--pretty=%H%x1E%B%x00', '%s...%s' % (from_rev, to_rev)]
+    if limit is not None:
+      cmd.append('-%d' % limit)
     step_data = self._step(
-        ['log', '--pretty=%H%x1E%B%x00',
-         '%s...%s' % (from_rev, to_rev)], stdout=self.m.raw_io.output(),
+        cmd, stdout=self.m.raw_io.output(),
         test_stdout='%s\x1Emessage\x00' % self.test_api.test_commit_id)
     stdout = step_data.stdout.strip().rstrip('\x00')
+
     commits = []
     for record in stdout.split('\x00'):
       ref, message = record.split('\x1E')

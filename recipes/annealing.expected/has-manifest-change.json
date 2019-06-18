@@ -363,7 +363,8 @@
       "git",
       "log",
       "--pretty=%H%x1E%B%x00",
-      "FROM_REV...TO_REV"
+      "FROM_REV...TO_REV",
+      "-30"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/NAME",
     "infra_step": true,
