@@ -1925,14 +1925,18 @@ Creates a branch using `cros branch create`.
 &mdash; **def [RunSteps](/recipes/branch_create.py#23)(api, properties):**
 ### *recipes* / [branch\_delete](/recipes/branch_delete.py)
 
+[DEPS](/recipes/branch_delete.py#12): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
 Deletes a branch using `cros branch delete`.
 
-&mdash; **def [RunSteps](/recipes/branch_delete.py#14)(api, properties):**
+&mdash; **def [RunSteps](/recipes/branch_delete.py#23)(api, properties):**
 ### *recipes* / [branch\_rename](/recipes/branch_rename.py)
+
+[DEPS](/recipes/branch_rename.py#12): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 Renames a branch using `cros branch rename`.
 
-&mdash; **def [RunSteps](/recipes/branch_rename.py#14)(api, properties):**
+&mdash; **def [RunSteps](/recipes/branch_rename.py#22)(api, properties):**
 ### *recipes* / [breakpad:examples/full](/recipe_modules/breakpad/examples/full.py)
 
 [DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
