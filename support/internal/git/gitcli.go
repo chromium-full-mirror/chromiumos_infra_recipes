@@ -24,6 +24,8 @@ type runner interface {
 type realRunner struct{}
 
 func (c realRunner) run(ctx context.Context, dir string, stdoutBuf, stderrBuf *bytes.Buffer, name string, args ...string) error {
+	stdoutBuf.Reset()
+	stderrBuf.Reset()
 	cmd := exec.CommandContext(ctx, name, args...)
 	cmd.Stdout = stdoutBuf
 	cmd.Stderr = stderrBuf
@@ -67,6 +69,16 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 		ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "fetch", "--depth=2", url, revision.Ref); err != nil {
 		return errors.New(stderrBuf.String())
 	}
+	if err := runnerImpl.run(
+		ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "show", "-s", "--pretty=%p", "FETCH_HEAD"); err != nil {
+		return errors.New(stderrBuf.String())
+	}
+	parentCommits := strings.Split(strings.Trim(stdoutBuf.String(), "\n"), " ")
+	if len(parentCommits) > 1 {
+		log.Printf("Found multiple parent commits, indicating a merge commit. "+
+			"We are currently unable to validate this sort of situation. Aborting... %v", parentCommits)
+		return nil
+	}
 
 	log.Printf("creating patch of %s in %s", revision.Ref, repoDir)
 	// Use a big --unified value to make incorrect cherry-picks less likely.
@@ -79,9 +91,10 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	patchFile := strings.Trim(stdoutBuf.String(), "\n")
 	log.Printf("patching branch")
 	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "am", "--3way", "--ignore-whitespace", patchFile); err != nil {
+		errStr := stderrBuf.String()
 		// clean up the am state to reset the repo for the next patch.
 		runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "am", "--abort")
-		return errors.New(stderrBuf.String())
+		return errors.New(errStr)
 	}
 	return nil
 }
