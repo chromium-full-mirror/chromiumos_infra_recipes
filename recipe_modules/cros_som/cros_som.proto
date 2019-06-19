@@ -1,0 +1,13 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_som;
+
+message CrosSomProperties {
+  // URL for the ChromeOS Sheriff-o-Matic instance to use. E.g.
+  // 'https://sheriff-o-matic.appspot.com/chromeos'
+  string som_url = 1;
+}
