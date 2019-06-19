@@ -9,22 +9,18 @@ DEPS = [
     'cros_som',
 ]
 
-from PB.recipe_modules.chromeos.cros_som.cros_som import CrosSomProperties
-
-
 def RunSteps(api):
   annotation = api.cros_som.get_annotation(
-      'ensure manifest cq-depend fulfilled|git log (3)')
+      'hw test results (3)|[FAILED] target.hw.bvt-cq')
   api.assertions.assertIsNotNone(annotation)
-  api.assertions.assertEqual(annotation.bugs, ['974630'])
-  api.assertions.assertEqual(annotation.snooze_time_ms, 1560838289688)
+  api.assertions.assertEqual(annotation.bugs, ['1234'])
+  api.assertions.assertEqual(annotation.snooze_time_ms, 0)
 
   annotation = api.cros_som.get_annotation(
-      'create sysroot|call chromite.api.SysrootService/Create|call build API script'
-  )
+      'vm test results (3)|[FAILED] target.vm.suite')
   api.assertions.assertIsNotNone(annotation)
   api.assertions.assertIsNone(annotation.bugs)
-  api.assertions.assertEqual(annotation.snooze_time_ms, 0)
+  api.assertions.assertEqual(annotation.snooze_time_ms, 9999000000000)
 
   api.assertions.assertIsNone(api.cros_som.get_annotation('bad step'))
 
