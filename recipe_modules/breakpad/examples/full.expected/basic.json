@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "symbolicate dump"
+    "name": "symbolicate dump",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -75,7 +78,9 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.dmp files@./a/b/c.dmp@@@",
       "@@@STEP_LOG_LINE@.dmp files@./a/b/d.dmp@@@",
-      "@@@STEP_LOG_END@.dmp files@@@"
+      "@@@STEP_LOG_LINE@.dmp files@./a/b/corrupted.dmp@@@",
+      "@@@STEP_LOG_END@.dmp files@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -187,6 +192,29 @@
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/d.dmp.write .dmp.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/corrupted.dmp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@caught StepFailure@StepFailure(\"Step('symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/corrupted.dmp.minidump_stackwalk') (retcode: 1)\",)@@@",
+      "@@@STEP_LOG_END@caught StepFailure@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/breakpad/minidump_stackwalk",
+      "./a/b/corrupted.dmp",
+      "[CLEANUP]/extracted_symbols_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/test_result_tmp_3",
+    "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/corrupted.dmp.minidump_stackwalk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

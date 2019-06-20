@@ -29,13 +29,17 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.breakpad.find_dmp_files_test_data(
-             test_result=TestResult(path=TEST_RESULT_PATH),
-             filenames=['./a/b/c.dmp', './a/b/d.dmp']) +  #
-         api.breakpad.minidump_stackwalk_test_data(
-             test_result=TestResult(path=TEST_RESULT_PATH),
-             filename='./a/b/c.dmp') +  #
-         api.breakpad.minidump_stackwalk_test_data(
-             test_result=TestResult(path=TEST_RESULT_PATH),
-             filename='./a/b/d.dmp'))
+  yield (
+      api.test('basic') +  #
+      api.breakpad.find_dmp_files_test_data(
+          test_result=TestResult(path=TEST_RESULT_PATH),
+          filenames=['./a/b/c.dmp', './a/b/d.dmp', './a/b/corrupted.dmp']) +  #
+      api.breakpad.minidump_stackwalk_test_data(
+          test_result=TestResult(path=TEST_RESULT_PATH),
+          filename='./a/b/c.dmp') +  #
+      api.breakpad.minidump_stackwalk_test_data(
+          test_result=TestResult(path=TEST_RESULT_PATH),
+          filename='./a/b/d.dmp') +  #
+      api.breakpad.minidump_stackwalk_test_data(
+          test_result=TestResult(path=TEST_RESULT_PATH),
+          filename='./a/b/corrupted.dmp', retcode=1))

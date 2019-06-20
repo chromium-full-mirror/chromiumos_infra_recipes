@@ -15,8 +15,9 @@ class BreakpadTestApi(recipe_test_api.RecipeTestApi):
             test_result.path),
         stdout=self.m.raw_io.output_text('\n'.join(filenames)))
 
-  def minidump_stackwalk_test_data(self, test_result, filename):
+  def minidump_stackwalk_test_data(self, test_result, filename, retcode=None):
     return self.step_data(
         'symbolicate dump.symbolicate dumps from {}.symbolicate {}.minidump_stackwalk'
         .format(test_result.path, filename),
-        stdout=self.m.raw_io.output_text('TEST_MINIDUMP_STDOUT'))
+        stdout=self.m.raw_io.output_text('TEST_MINIDUMP_STDOUT'),
+        retcode=retcode)

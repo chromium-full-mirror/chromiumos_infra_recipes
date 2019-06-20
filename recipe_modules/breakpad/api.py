@@ -134,18 +134,25 @@ class BreakpadApi(recipe_api.RecipeApi):
 
             for dmp_file in dmp_files:
               with self.m.step.nest('symbolicate {}'.format(dmp_file)) as step:
-                # TODO(crbug.com/973172): Handle minidump_stackwalk failures.
-                stackwalk_output = self.m.easy.stdout_step(
-                    'minidump_stackwalk',
-                    [self._minidump_stackwalk_path, dmp_file, symbols_path])
+                # Failures on a single minidump_stackwalk call should not crash
+                # the entire recipe. Catch and log StepFailures.
+                try:
+                  stackwalk_output = self.m.easy.stdout_step(
+                      'minidump_stackwalk',
+                      [self._minidump_stackwalk_path, dmp_file, symbols_path])
 
-                step.presentation.logs['minidump_stackwalk output'] = [
-                    stackwalk_output
-                ]
+                  step.presentation.logs['minidump_stackwalk output'] = [
+                      stackwalk_output
+                  ]
 
-                stackwalk_output_path = self._write_stackwalk_output(
-                    dmp_file, stackwalk_output)
-                stackwalk_output_paths.append(stackwalk_output_path)
+                  stackwalk_output_path = self._write_stackwalk_output(
+                      dmp_file, stackwalk_output)
+                  stackwalk_output_paths.append(stackwalk_output_path)
+                except self.m.step.StepFailure as step_failure:
+                  step.presentation.logs['caught StepFailure'] = [
+                      repr(step_failure)
+                  ]
+
             # TODO(crbug.com/973172): Upload .dmp.txt files.
 
     return stackwalk_output_paths
