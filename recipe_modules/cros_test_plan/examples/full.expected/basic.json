@@ -202,7 +202,14 @@
     "infra_step": true,
     "name": "generate test plan.write input json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input.json@{@@@",
+      "@@@STEP_LOG_LINE@input.json@  \"manifestCommit\": \"1234abcd\", @@@",
+      "@@@STEP_LOG_LINE@input.json@  \"buildbucketProtos\": [@@@",
+      "@@@STEP_LOG_LINE@input.json@    {}@@@",
+      "@@@STEP_LOG_LINE@input.json@  ]@@@",
+      "@@@STEP_LOG_LINE@input.json@}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
     ]
   },
   {

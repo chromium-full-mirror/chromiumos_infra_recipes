@@ -68,7 +68,11 @@
       "[CLEANUP]/manifest_tmp_1"
     ],
     "infra_step": true,
-    "name": "write manifest"
+    "name": "write manifest",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@manifest_tmp_1@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@manifest_tmp_1@@@"
+    ]
   },
   {
     "cmd": [

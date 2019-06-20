@@ -76,7 +76,8 @@
     "infra_step": true,
     "name": "read test config.save config_name.cfg",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@config_name.cfg@@@"
     ]
   },
   {

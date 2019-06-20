@@ -296,7 +296,9 @@
     "infra_step": true,
     "name": "sync to snapshot.write manifest",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@manifest_tmp_1@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@manifest_tmp_1@@@"
     ]
   },
   {
@@ -469,7 +471,9 @@
     "infra_step": true,
     "name": "create project commits archive.metadata.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@metadata.json@{\"project_paths\": [\"src/chromium/src\"]}@@@",
+      "@@@STEP_LOG_END@metadata.json@@@"
     ]
   },
   {

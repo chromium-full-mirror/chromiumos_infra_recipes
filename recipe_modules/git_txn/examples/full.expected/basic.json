@@ -176,7 +176,9 @@
     "infra_step": true,
     "name": "git transaction (3).write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@path.txt@data@@@",
+      "@@@STEP_LOG_END@path.txt@@@"
     ]
   },
   {

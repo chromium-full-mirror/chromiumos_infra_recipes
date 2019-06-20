@@ -468,7 +468,19 @@
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.write input json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@input.json@{@@@",
+      "@@@STEP_LOG_LINE@input.json@  \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
+      "@@@STEP_LOG_LINE@input.json@  \"buildbucketProtos\": [@@@",
+      "@@@STEP_LOG_LINE@input.json@    {@@@",
+      "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"CNCtpKubruDoexISGhBhbWQ2NC1nZW5lcmljLWNxYAx6LwotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljqAEB\"@@@",
+      "@@@STEP_LOG_LINE@input.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input.json@    {@@@",
+      "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"CNGtpKubruDoexIQGg5hcm0tZ2VuZXJpYy1jcWAMei0KKwopCgxidWlsZF90YXJnZXQSGSoXChUKBG5hbWUSDRoLYXJtLWdlbmVyaWOoAQE=\"@@@",
+      "@@@STEP_LOG_LINE@input.json@    }@@@",
+      "@@@STEP_LOG_LINE@input.json@  ]@@@",
+      "@@@STEP_LOG_LINE@input.json@}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
     ]
   },
   {
