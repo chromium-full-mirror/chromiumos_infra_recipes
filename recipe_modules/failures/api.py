@@ -7,7 +7,7 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
-from google.protobuf import json_format
+import contextlib
 
 from recipe_engine import recipe_api
 
@@ -44,6 +44,23 @@ class FailuresApi(recipe_api.RecipeApi):
 
       if fatal:
         raise self.m.step.StepFailure('{} {}s failed'.format(fail_count, kind))
+
+  @contextlib.contextmanager
+  def ignore_exceptions(self):
+    """Catches exceptions and logs them instead.
+
+    Should only be used temporarily to prevent new features from crashing the
+    entire recipe. Remove once new feature is stable.
+
+    Requires `step.active_result` to be present when the exception is thrown
+    (i.e. at least one step has been run at the current nested context).
+    """
+    try:
+      yield
+    except Exception as e:
+      self.m.step.active_result.presentation.logs['caught exception'] = [
+          repr(e)
+      ]
 
   def raise_failed_packages(self, packages):
     """Display failed packages and raise a failure.

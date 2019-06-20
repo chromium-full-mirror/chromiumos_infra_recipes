@@ -137,6 +137,17 @@
     ]
   },
   {
+    "cmd": [
+      "ls"
+    ],
+    "name": "A failed step",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@StepFailure(\"Step('A failed step') (retcode: 1)\",)@@@",
+      "@@@STEP_LOG_END@caught exception@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

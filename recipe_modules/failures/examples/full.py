@@ -102,6 +102,9 @@ def RunSteps(api):
   api.assertions.assertTrue(
       api.failures.is_critical_vm_test_failure(vm_critical_failure))
 
+  with api.failures.ignore_exceptions():
+    api.step('A failed step', ['ls'])
+
 
 def vm_build(**kwargs):
   build = build_pb2.Build(**kwargs)
@@ -110,4 +113,4 @@ def vm_build(**kwargs):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic') + api.step_data('A failed step', retcode=1)
