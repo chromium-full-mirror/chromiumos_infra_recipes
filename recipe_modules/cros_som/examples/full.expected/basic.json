@@ -44,6 +44,13 @@
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:vm test results (3)|[FAILED] target.vm.suite (2)\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@      \"780\"@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|[FAILED] ..\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
       "@@@STEP_LOG_LINE@json.output[output]@]@@@",
       "@@@STEP_LOG_END@json.output[output]@@@"

@@ -30,6 +30,13 @@ class CrosSomTestApi(recipe_test_api.RecipeTestApi):
       "key":"chromeos.buildbucket:vm test results (3)|[FAILED] target.vm.suite (2)",
       "bugs":null,
       "snoozeTime": 0
+   },
+   {
+      "key":"chromeos.buildbucket:build results (4)|[FAILED] ..",
+      "bugs":[
+        "780"
+      ],
+      "snoozeTime": 0
    }
 ]
     """)

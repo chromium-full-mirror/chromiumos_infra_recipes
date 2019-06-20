@@ -15,32 +15,82 @@ from recipe_engine import recipe_api
 class FailuresApi(recipe_api.RecipeApi):
   """A module for presenting errors and raising StepFailures."""
 
+  def _get_silence_reason(self, step_name):
+    """Query SoM to see if the step was silenced.
+
+    Args:
+      step_name (str): A full step name, e.g.
+        "build results|[FAILED] chromeos.bucket.builder"
+
+    Return:
+      A str explaining the silence, or None if there is no silence on the step.
+    """
+    # TODO(crbug.com/903414): Remove ignore exceptions once calling SoM is
+    # stable.
+    with self.ignore_exceptions():
+      annotation = self.m.cros_som.get_annotation(step_name)
+
+      if not annotation:
+        return None
+
+      if self.m.time.ms_since_epoch() < annotation.snooze_time_ms:
+        return 'step failure is snoozed by Sheriff-o-Matic.'
+
+      if annotation.bugs:
+        return 'step failure has bugs linked by Sheriff-o-Matic.'
+
+      return None
+
   def _raise_failures(self, kind, runs, is_failure, get_title, get_url,
                       fatal=True):
     with self.m.step.nest('{} results'.format(kind)) as step:
-      failed_runs = filter(is_failure, runs)
+      fail_count = 0
+      silenced_count = 0
 
-      if not failed_runs:
-        step.presentation.step_text = 'all {}s succeeded'.format(kind)
+      for run in runs:
+        if is_failure(run):
+          title = '[{}] {}'.format('FAILED' if fatal else 'FAILED BUT IGNORED',
+                                   get_title(run))
+          url = get_url(run)
+
+          # Each failure gets a substep, which helps with reporting tools such
+          # as Sheriff-o-Matic.
+          with self.m.step.nest(title) as failure_step:
+            failure_step.presentation.status = self.m.step.FAILURE
+            failure_step.presentation.links['task url'] = url
+
+            silence_reason = self._get_silence_reason(
+                self.m.step.active_result.name)
+            if silence_reason:
+              silenced_count += 1
+
+              # Sheriff-o-Matic monitors failed steps, so we cannot modify the
+              # step name because it is silenced. For example, imagine the step
+              # "build results|[FAILED] chromeos.bucket.builder" is failing and
+              # silenced in SoM. If in the next run we change the step name to
+              # "build results|[FAILED BUT SILENCED] chromeos.bucket.builder",
+              # there will be a new (unsilenced) failure, and the old (silenced)
+              # failure will disappear from SoM.
+              failure_step.presentation.logs['silence reason'] = [
+                  silence_reason
+              ]
+            else:
+              fail_count += 1
+
+      if not fail_count:
+        step_text = 'all {}s succeeded'.format(kind)
+
+        if silenced_count:
+          step_text += ' ({} failures were silenced)'.format(silenced_count)
+
+        step.presentation.step_text = step_text
         return
 
-      fail_count = len(failed_runs)
-      success_count = len(runs) - fail_count
+      success_count = len(runs) - fail_count - silenced_count
 
       step.presentation.status = self.m.step.FAILURE
-      step.presentation.step_text = '{} {}s failed, {} succeeded'.format(
-          fail_count, kind, success_count)
-
-      for run in sorted(failed_runs, key=get_title):
-        title = '[{}] {}'.format('FAILED' if fatal else 'FAILED BUT IGNORED',
-                                 get_title(run))
-        url = get_url(run)
-
-        # Each failure gets a substep, which helps with reporting tools such
-        # as Sheriff-o-Matic.
-        with self.m.step.nest(title) as failure_step:
-          failure_step.presentation.status = self.m.step.FAILURE
-          failure_step.presentation.links['task url'] = url
+      step.presentation.step_text = '{} {}s failed, {} succeeded, {} silenced'.format(
+          fail_count, kind, success_count, silenced_count)
 
       if fatal:
         raise self.m.step.StepFailure('{} {}s failed'.format(fail_count, kind))

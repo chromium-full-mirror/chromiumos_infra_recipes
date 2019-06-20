@@ -56,6 +56,9 @@ def RunSteps(api):
                               api.failures.raise_failed_builds,
                               [build_critical_failure, build_critical_failure])
 
+  # This step is silenced by `cros_som`, so it does not raise.
+  api.failures.raise_failed_builds([build_critical_failure])
+
   # HW tests.
   api.failures.raise_failed_hw_tests([skylab_success])
   api.failures.raise_failed_hw_tests([skylab_failure])
