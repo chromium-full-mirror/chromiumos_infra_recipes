@@ -61,9 +61,10 @@ def RunSteps(api, properties):
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
                             snapshot)
 
-  if gerrit_changes and not api.gerrit.changes_are_submittable(gerrit_changes):
-    raise api.step.StepFailure('failed to cherry-pick changes, '
-                               'please rebase and retry')
+  # Failing on kernel merge commits (crbug.com/976144)
+  # if gerrit_changes and not api.gerrit.changes_are_submittable(gerrit_changes):
+  #   raise api.step.StepFailure('failed to cherry-pick changes, '
+  #                              'please rebase and retry')
   if properties.enable_history and gerrit_changes:
     if properties.assert_singleton:
       with api.step.nest('find inflight orchestrator') as step:
@@ -418,10 +419,11 @@ def GenTests(api):
           input=dict(properties=build_target_property('arm-generic'))),
   ]
 
-  yield (api.test('fails_if_changes_not_submittable') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True) +  #
-         api.gerrit.simulated_changes_are_submittable(submittable=False))
+  # Failing on kernel merge commits (crbug.com/976144)
+  # yield (api.test('fails_if_changes_not_submittable') +  #
+  #        cq_orchestrator_build_with_gerrit_change() +  #
+  #        api.cq(full_run=True) +  #
+  #        api.gerrit.simulated_changes_are_submittable(submittable=False))
 
   yield (api.test('builds_with_history') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
