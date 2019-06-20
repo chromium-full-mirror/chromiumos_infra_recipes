@@ -83,8 +83,12 @@ def RunSteps(api, properties):
           step.presentation.step_text = 'found no inflight run'
 
 
-  completed_builds, requests = get_build_plan(api, properties.enable_history,
-                                              gerrit_changes, snapshot)
+  orchestrator_children = api.cros_infra_config.get_builder_config(
+      api.buildbucket.build.builder.builder).orchestrator.children
+  completed_builds, requests = get_build_plan(
+      api, child_builders=orchestrator_children,
+      enable_history=properties.enable_history, gerrit_changes=gerrit_changes,
+      snapshot=snapshot)
 
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
   completed_builds += api.buildbucket.run(
@@ -218,13 +222,16 @@ def tast_vm_test(build_target):
   return build_target.name + '-tast-vm'
 
 
-def get_build_plan(api, enable_history, gerrit_changes, snapshot):
+def get_build_plan(api, child_builders, enable_history, gerrit_changes,
+                   snapshot):
   """Get a list of builds to be run and  a list of builds that have succeeded.
 
   This is planned to be replaced by a Go binary.
 
   Args:
     api (RecipeApi): See RunSteps documentation.
+    child_builders (list[string]): List of builder names of the child
+      builders.
     enable_history (bool): Enables history lookup in cq orchestrator.
     gerrit_changes list(GerritChange): List of patches in the order that they
       can be cherry-picked.
@@ -240,19 +247,16 @@ def get_build_plan(api, enable_history, gerrit_changes, snapshot):
   requests = []
   retry_count = 0
 
-  orchestrator_builder_config = api.cros_infra_config.get_builder_config(
-      api.buildbucket.build.builder.builder)
   if enable_history and gerrit_changes:
     with api.step.nest('get build history for changes'):
       retry_count = len(
           api.cros_history.get_matching_builds(api.buildbucket.build,
                                                status=common_pb2.FAILURE))
       api.easy.set_property_step('orch_retries', retry_count)
-      completed_builds = get_completed_builds(
-          api, orchestrator_builder_config.orchestrator.children)
+      completed_builds = get_completed_builds(api, child_builders)
       passed_builders = set(build.builder.builder for build in completed_builds)
 
-  for child in orchestrator_builder_config.orchestrator.children:
+  for child in child_builders:
     if child not in passed_builders:
       child_builder_config = api.cros_infra_config.get_builder_config(child)
       critical = child_builder_config.general.critical.value
