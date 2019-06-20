@@ -9,6 +9,7 @@
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
+  * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
@@ -53,6 +54,7 @@
   * [cros_artifacts:examples/gsutil_retry_fail](#recipes-cros_artifacts_examples_gsutil_retry_fail)
   * [cros_artifacts:examples/gsutil_retry_success](#recipes-cros_artifacts_examples_gsutil_retry_success)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
+  * [cros_branch:examples/full](#recipes-cros_branch_examples_full)
   * [cros_build_api:examples/bad_retcodes](#recipes-cros_build_api_examples_bad_retcodes)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
@@ -323,6 +325,63 @@ failed packages this method outputs nothing.
 Args:
   failed_packages (list[PackageInfo]): list of PackageInfo representing the
       failed packages.
+### *recipe_modules* / [cros\_branch](/recipe_modules/cros_branch)
+
+[DEPS](/recipe_modules/cros_branch/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API wrapping the cros branch tool.
+
+#### **class [CrosBranchApi](/recipe_modules/cros_branch/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for calling cros branch.
+
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_branch/api.py#15)(self, cmd, step_name=None, root=None, force=False, push=False, \*\*kwargs):**
+
+Call cros branch with the given args.
+
+Args:
+  cmd: Command to be run with cros branch
+  step_name (str): Message to use for step. Optional.
+  root (str): Root of checkout to be used with cros branch tool (with
+    --root). If not set, no root will be used.
+  force (bool): If True, cros branch will be run with --force.
+  push (bool): If True, cros branch will be run with --push.
+  kwargs: Keyword arguments for recipe_engine/step.
+
+&mdash; **def [create\_from\_file](/recipe_modules/cros_branch/api.py#46)(self, manifest_file, branch, manifest_src=None, \*\*kwargs):**
+
+Call `cros branch create`, branching from the file specified in
+  manifest_file.
+
+Args:
+  manifest_file (recipe_engine.config_types.Path): Path to manifest file.
+      This recipe assumes that it is at the top level of a ChromeOS
+      checkout.
+  branch (chromiumos.Branch): Branch to be created.
+  kwargs: Keyword arguments for recipe_engine/step.
+    Accepts the same keyword arguments as __call__.
+
+Returns:
+  TODO(jackneus): return branch name?
+
+&mdash; **def [delete](/recipe_modules/cros_branch/api.py#109)(self, branch, \*\*kwargs):**
+
+Call `cros branch delete` with the appropriate arguments.
+
+Args:
+  branch (chromiumos.Branch): Branch to be deleted.
+  kwargs: Keyword arguments for cros branch/recipe_engine/step.
+    Accepts the same keyword arguments as __call__.
+
+&mdash; **def [rename](/recipe_modules/cros_branch/api.py#84)(self, branch, new_branch_name, \*\*kwargs):**
+
+Call `cros branch rename` with the appropriate arguments.
+
+Args:
+  branch (chromiumos.Branch): Branch to be renamed.
+  new_branch_name (str): New branch name.
+  kwargs: Keyword arguments for cros branch/recipe_engine/step.
+    Accepts the same keyword arguments as __call__.
 ### *recipe_modules* / [cros\_build\_api](/recipe_modules/cros_build_api)
 
 [DEPS](/recipe_modules/cros_build_api/__init__.py#6): [analysis\_service](#recipe_modules-analysis_service), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -1930,6 +1989,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#24)(api, properties):**
+### *recipes* / [cros\_branch:examples/full](/recipe_modules/cros_branch/examples/full.py)
+
+[DEPS](/recipe_modules/cros_branch/examples/full.py#8): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_branch/examples/full.py#16)(api):**
 ### *recipes* / [cros\_build\_api:examples/bad\_retcodes](/recipe_modules/cros_build_api/examples/bad_retcodes.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/bad_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

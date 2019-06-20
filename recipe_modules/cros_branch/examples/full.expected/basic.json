@@ -1,0 +1,105 @@
+[
+  {
+    "cmd": [
+      "chromite/bin/cros",
+      "branch",
+      "create",
+      "--file",
+      "[CLEANUP]/manifests-_tmp_1/download.xml",
+      "--release"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml"
+  },
+  {
+    "cmd": [
+      "chromite/bin/cros",
+      "branch",
+      "--force",
+      "--push",
+      "create",
+      "--file",
+      "[CLEANUP]/manifests-_tmp_1/download.xml",
+      "--release"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create branch from http://chromium.org/manifest.xml"
+  },
+  {
+    "cmd": [
+      "chromite/bin/cros",
+      "branch",
+      "--root",
+      "~/chromiumos/",
+      "create",
+      "--file",
+      "[CLEANUP]/manifests-_tmp_1/download.xml",
+      "--release"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml (2)"
+  },
+  {
+    "cmd": [
+      "chromite/bin/cros",
+      "branch",
+      "create",
+      "--file",
+      "[CLEANUP]/manifests-_tmp_1/download.xml",
+      "--custom",
+      "mybranch",
+      "--descriptor",
+      "nami"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml (3)"
+  },
+  {
+    "cmd": [
+      "chromite/bin/cros",
+      "branch",
+      "rename",
+      "my_branch",
+      "branch_new_name"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "rename branch my_branch to branch_new_name"
+  },
+  {
+    "cmd": [
+      "chromite/bin/cros",
+      "branch",
+      "delete",
+      "my_branch"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "delete branch my_branch"
+  },
+  {
+    "name": "$result"
+  }
+]
