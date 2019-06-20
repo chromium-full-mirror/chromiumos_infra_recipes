@@ -40,8 +40,9 @@ PROJECT = 'chromeos'
 BUCKET = 'staging'
 
 DEFAULT_BUILDERS = ['staging-Annealing',
+                    'staging-amd64-generic-postsubmit',
                     'staging-chromite-postsubmit',
-                    'staging-amd64-generic-postsubmit']
+                    'staging-test-manifest']
 
 # URL for the ChromeOS CI recipes repo.
 RECIPE_REPO_URL = 'https://chromium.googlesource.com/chromiumos/infra/recipes'
