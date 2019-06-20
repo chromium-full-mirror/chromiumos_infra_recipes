@@ -442,8 +442,8 @@
   },
   {
     "cmd": [
-      "sh",
-      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite/config/config_skew_unittest --config_skew"
+      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite/config/config_skew_unittest",
+      "--config_skew"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "name": "check config drift"

@@ -34,10 +34,9 @@ def RunSteps(api):
 
     project_path = api.cros_source.workspace_path.join(project.path)
     with api.context(cwd=project_path):
-      api.step('check config drift', [
-          'sh',
-          project_path.join('config/config_skew_unittest --config_skew')
-      ])
+      api.step(
+          'check config drift',
+          [project_path.join('config/config_skew_unittest'), '--config_skew'])
 
 
 def GenTests(api):
