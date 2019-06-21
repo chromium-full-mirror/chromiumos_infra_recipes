@@ -163,6 +163,39 @@ class FailuresApi(recipe_api.RecipeApi):
                          self.m.naming.get_skylab_result_title,
                          self.m.urls.get_skylab_result_url)
 
+  def raise_failed_baseline_verified_hw_tests(self, hw_tests,
+                                              baseline_hw_tests=None):
+    """Logs hardware test status to UI, and raises on failed tests.
+
+    Args:
+      hw_tests (list[SkylabResult]): List of Skylab suite results.
+      baseline_hw_tests (list[SkylabResult]): List of Skylab suite
+        results from the baseline tests.
+
+    Raises:
+      recipe_api.StepFailure: If any tests failed.
+    """
+    ## TODO: Make this function more generic.
+    failed_baseline_test_names = set([
+        self.m.naming.get_skylab_result_title(test)
+        for test in baseline_hw_tests or []
+        if self.is_critical_hw_test_failure(test)
+    ])
+    filtered_hw_tests = [
+        test for test in hw_tests if self.m.naming.get_skylab_result_title(test)
+        not in failed_baseline_test_names
+    ]
+    self._raise_failures('hw test', filtered_hw_tests,
+                         self.is_critical_hw_test_failure,
+                         self.m.naming.get_skylab_result_title,
+                         self.m.urls.get_skylab_result_url)
+    if baseline_hw_tests:
+      self._raise_failures('baseline hw test', baseline_hw_tests,
+                           self.is_critical_hw_test_failure,
+                           self.m.naming.get_skylab_result_title,
+                           self.m.urls.get_skylab_result_url, fatal=False)
+
+
   def raise_failed_vm_tests(self, vm_tests):
     """Logs VM test status to UI, and raises on failed tests.
 
