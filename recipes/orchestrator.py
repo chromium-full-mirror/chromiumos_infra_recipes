@@ -114,85 +114,20 @@ def RunSteps(api, properties):
       if properties.enable_history and gerrit_changes:
         passed_tests = api.cros_history.get_passed_tests()
 
-      test_name_to_build_target = {}
+      test_to_build_target_map = {}
 
-      skylab_tasks = []
-      with api.step.nest('schedule hardware tests'):
-        for unit in test_plan.hw_test_units:
-          for test in unit.hw_test_cfg.hw_test:
-            if test.common.display_name not in passed_tests:
-              test_name = test.common.display_name
-              build_target = unit.common.build_target
-              test_name_to_build_target[test_name] = build_target
-              skylab_tasks.append(api.skylab.create_suite(
-                  test, unit.common.build_payload))
+      skylab_tasks = schedule_skylab_tests(api, test_plan, passed_tests,
+                                           test_to_build_target_map)
 
-      requests = []
-      for unit in test_plan.vm_test_units:
-        for test in unit.vm_test_cfg.vm_test:
-          if test.common.display_name not in passed_tests:
-            test_name = test.common.display_name
-            build_target = unit.common.build_target
-            test_name_to_build_target[test_name] = build_target
-            requests.append(api.buildbucket.schedule_request(
-                gitiles_commit=snapshot,
-                builder=autotest_vm_test(build_target),
-                critical=test.common.critical.value,
-                properties=with_props_for_child_build(
-                    api, json_format.MessageToDict(TestVmProperties(
-                        name=test_name,
-                        build_target=build_target,
-                        test_harness=VmTestRequest.AUTOTEST,
-                        build_payload=unit.common.build_payload,
-                        expressions=[
-                            'suite:' + test.test_suite
-                        ])))))
+      vm_tests = schedule_autotest_vm_tests(api, test_plan, passed_tests,
+                                            snapshot, test_to_build_target_map)
 
-      vm_tests = api.buildbucket.schedule(
-          requests, step_name='schedule autotest vm tests')
+      tast_vm_tests = schedule_tast_vm_tests(api, test_plan, passed_tests,
+                                             snapshot, test_to_build_target_map)
+      vm_tests += tast_vm_tests
 
-      requests = []
-      for unit in test_plan.tast_vm_test_units:
-        for test in unit.tast_vm_test_cfg.tast_vm_test:
-          if test.common.display_name not in passed_tests:
-            test_name = test.common.display_name
-            build_target = unit.common.build_target
-            test_name_to_build_target[test_name] = build_target
-            requests.append(api.buildbucket.schedule_request(
-                gitiles_commit=snapshot,
-                builder=tast_vm_test(build_target),
-                critical=test.common.critical.value,
-                properties=with_props_for_child_build(
-                    api, json_format.MessageToDict(TestVmProperties(
-                        name=test_name,
-                        build_target=build_target,
-                        test_harness=VmTestRequest.TAST,
-                        build_payload=unit.common.build_payload, expressions=[
-                            t.test_expr
-                            for t in test.tast_test_expr
-                        ])))))
-
-      vm_tests += api.buildbucket.schedule(
-          requests, step_name='schedule tast vm tests')
-
-      requests = []
-      for unit in test_plan.moblab_vm_test_units:
-        for test in unit.moblab_vm_test_cfg.moblab_test:
-          test_name = test.common.display_name
-          build_target = unit.common.build_target
-          test_name_to_build_target[test_name] = build_target
-          requests.append(api.buildbucket.schedule_request(
-              gitiles_commit=snapshot,
-              builder='moblab-vm-test',
-              critical=test.common.critical.value,
-              properties=with_props_for_child_build(
-                  api, json_format.MessageToDict(TestMoblabVmProperties(
-                      name=test_name,
-                      build_payload=unit.common.build_payload,
-                  )))))
-
-      moblab_vm_tests = api.buildbucket.schedule(
-          requests, step_name='schedule moblab vm tests')
+      moblab_vm_tests = schedule_moblab_vm_tests(
+          api, test_plan, passed_tests, snapshot, test_to_build_target_map)
 
     with api.step.nest('collect tests'):
       hw_results = []
@@ -252,6 +187,166 @@ def autotest_vm_test(build_target):
 def tast_vm_test(build_target):
   """Returns the tast builder name for the given build_target."""
   return build_target.name + '-tast-vm'
+
+
+def schedule_skylab_tests(api, test_plan, passed_tests, test_to_build_map=None):
+  """Schedule skylab tests from the test_plan.
+
+  Args:
+    api (RecipeApi): See RunSteps.
+    test_plan (GenerateTestPlanResponse): A plan for all tests to
+      be scheduled.
+    passed_tests (list[string]): A list of names for the tests that
+      have passed before.
+    test_to_build_map (dict{string->string}): Map of test names to
+      build_targets to be populated.
+
+  Returns:
+    list[SkylabTask] of the tests scheduled.
+  """
+  skylab_tasks = []
+  test_to_build_map = test_to_build_map or {}
+  with api.step.nest('schedule hardware tests'):
+    for unit in test_plan.hw_test_units:
+      for test in unit.hw_test_cfg.hw_test:
+        if test.common.display_name not in passed_tests:
+          test_name = test.common.display_name
+          build_target = unit.common.build_target
+          test_to_build_map[test_name] = build_target
+          skylab_tasks.append(
+              api.skylab.create_suite(test, unit.common.build_payload))
+
+  return skylab_tasks
+
+
+def schedule_autotest_vm_tests(api, test_plan, passed_tests, snapshot,
+                               test_to_build_map=None):
+  """Schedule Autotest VM Tests from the test_plan.
+
+  Args:
+    api (RecipeApi): See RunSteps.
+    test_plan (GenerateTestPlanResponse): A plan for all tests to
+      be scheduled.
+    passed_tests (list[string]): A list of names for the tests that
+      have passed before.
+    snapshot (GitilesCommit): Start ref to be supplied to the tests.
+    test_to_build_map (dict{string->string}): Map of test names to
+      build_targets to be populated.
+
+  Returns:
+    list[Build] objects of the VM tests scheduled.
+  """
+  requests = []
+  test_to_build_map = test_to_build_map or {}
+  for unit in test_plan.vm_test_units:
+    for test in unit.vm_test_cfg.vm_test:
+      if test.common.display_name not in passed_tests:
+        test_name = test.common.display_name
+        build_target = unit.common.build_target
+        test_to_build_map[test_name] = build_target
+        requests.append(
+            api.buildbucket.schedule_request(
+                gitiles_commit=snapshot, builder=autotest_vm_test(build_target),
+                critical=test.common.critical.value,
+                properties=with_props_for_child_build(
+                    api,
+                    json_format.MessageToDict(
+                        TestVmProperties(
+                            name=test_name, build_target=build_target,
+                            test_harness=VmTestRequest.AUTOTEST,
+                            build_payload=unit.common.build_payload,
+                            expressions=['suite:' + test.test_suite])))))
+
+  vm_tests = api.buildbucket.schedule(requests,
+                                      step_name='schedule autotest vm tests')
+  return vm_tests
+
+
+def schedule_tast_vm_tests(api, test_plan, passed_tests, snapshot,
+                           test_to_build_map=None):
+  """Schedule tast VM Tests from the test_plan.
+
+  Args:
+    api (RecipeApi): See RunSteps.
+    test_plan (GenerateTestPlanResponse): A plan for all tests to
+      be scheduled.
+    passed_tests (list[string]): A list of names for the tests that
+      have passed before.
+    snapshot (GitilesCommit): Start ref to be supplied to the tests.
+    test_to_build_map (dict{string->string}): Map of test names to
+      build_targets to be populated.
+
+  Returns:
+    list[Build] objects of the VM tests scheduled.
+  """
+  requests = []
+  test_to_build_map = test_to_build_map or {}
+  for unit in test_plan.tast_vm_test_units:
+    for test in unit.tast_vm_test_cfg.tast_vm_test:
+      if test.common.display_name not in passed_tests:
+        test_name = test.common.display_name
+        build_target = unit.common.build_target
+        test_to_build_map[test_name] = build_target
+        requests.append(
+            api.buildbucket.schedule_request(
+                gitiles_commit=snapshot, builder=tast_vm_test(build_target),
+                critical=test.common.critical.value,
+                properties=with_props_for_child_build(
+                    api,
+                    json_format.MessageToDict(
+                        TestVmProperties(
+                            name=test_name, build_target=build_target,
+                            test_harness=VmTestRequest.TAST,
+                            build_payload=unit.common.build_payload,
+                            expressions=[
+                                t.test_expr for t in test.tast_test_expr
+                            ])))))
+
+  vm_tests = api.buildbucket.schedule(requests,
+                                      step_name='schedule tast vm tests')
+  return vm_tests
+
+
+def schedule_moblab_vm_tests(api, test_plan, passed_tests, snapshot,
+                             test_to_build_map=None):
+  """Schedule Moblab VM Tests from the test_plan.
+
+  Args:
+    api (RecipeApi): See RunSteps.
+    test_plan (GenerateTestPlanResponse): A plan for all tests to
+      be scheduled.
+    passed_tests (list[string]): A list of names for the tests that
+      have passed before.
+    snapshot (GitilesCommit): Start ref to be supplied to the tests.
+    test_to_build_map (dict{string->string}): Map of test names to
+      build_targets to be populated.
+
+  Returns:
+    list[Build] objects of the VM tests scheduled.
+  """
+  requests = []
+  test_to_build_map = test_to_build_map or {}
+  for unit in test_plan.moblab_vm_test_units:
+    for test in unit.moblab_vm_test_cfg.moblab_test:
+      if test.common.display_name not in passed_tests:
+        test_name = test.common.display_name
+        build_target = unit.common.build_target
+        test_to_build_map[test_name] = build_target
+        requests.append(
+            api.buildbucket.schedule_request(
+                gitiles_commit=snapshot, builder='moblab-vm-test',
+                critical=test.common.critical.value,
+                properties=with_props_for_child_build(
+                    api,
+                    json_format.MessageToDict(
+                        TestMoblabVmProperties(
+                            name=test_name,
+                            build_payload=unit.common.build_payload,
+                        )))))
+
+  moblab_vm_tests = api.buildbucket.schedule(
+      requests, step_name='schedule moblab vm tests')
+  return moblab_vm_tests
 
 
 def get_build_plan(api, child_builders, enable_history, gerrit_changes,
