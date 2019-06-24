@@ -428,7 +428,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromeos/manifest-internal",
+      "manifest-internal",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
@@ -436,24 +436,24 @@
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/manifest-internal|src/chromeos/manifest-internal|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@manifest-internal|src/manifest-internal|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "try sync chromeos/manifest-internal"
+    "name": "try sync manifest-internal"
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--manifest-name",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal/default.xml"
+      "[START_DIR]/chromiumos_workspace/src/manifest-internal/default.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "try sync chromeos/manifest-internal.repo sync",
+    "name": "try sync manifest-internal.repo sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -467,7 +467,7 @@
       "create",
       "--release",
       "--file",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal/default.xml",
+      "[START_DIR]/chromiumos_workspace/src/manifest-internal/default.xml",
       "--yes"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -476,7 +476,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "test cros branch for chromeos/manifest-internal"
+    "name": "test cros branch for manifest-internal"
   },
   {
     "cmd": [],

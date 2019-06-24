@@ -48,10 +48,7 @@ def RunSteps(api, properties):
           api.repo.sync(manifest_name=manifest_path)
 
         # Test `cros branch` tool for projects specified in config.
-        test_branch_projects = (
-            properties.test_branch_projects or ['chromeos/manifest-internal'])
-
-        if project_info.name in test_branch_projects:
+        if project_info.name in properties.test_branch_projects:
           with api.depot_tools.on_path():
             api.step('test cros branch for %s' % project_info.name, [
                 'chromite/bin/cros', 'branch', '--root',
@@ -69,16 +66,15 @@ def GenTests(api):
          api.path.exists(api.path['start_dir'].join(
              'chromiumos_workspace/src/chromeos/manifest/default.xml')))
 
-  yield (
-      api.test('with-manifest-internal-changes') +  #
-      api.buildbucket.try_build(project='chromeos/manifest-internal') +  #
-      api.cq(full_run=True) +  #
-      api.path.exists(api.path['start_dir'].join(
-          'chromiumos_workspace/src/chromeos/manifest-internal/default.xml')))
-
-  yield (api.test('with-manifest-internal-changes-explicit-config') +  #
+  yield (api.test('with-manifest-internal-changes') +  #
          api.buildbucket.try_build(project='manifest-internal') +  #
          api.cq(full_run=True) +  #
          api.path.exists(api.path['start_dir'].join(
              'chromiumos_workspace/src/manifest-internal/default.xml')) +  #
          api.properties(test_branch_projects=['manifest-internal']))
+
+  yield (api.test('with-manifest-internal-changes-no-cros-branch') +  #
+         api.buildbucket.try_build(project='manifest-internal') +  #
+         api.cq(full_run=True) +  #
+         api.path.exists(api.path['start_dir'].join(
+             'chromiumos_workspace/src/manifest-internal/default.xml')))

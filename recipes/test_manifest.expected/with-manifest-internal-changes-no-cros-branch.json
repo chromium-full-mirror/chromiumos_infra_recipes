@@ -459,26 +459,6 @@
     ]
   },
   {
-    "cmd": [
-      "chromite/bin/cros",
-      "branch",
-      "--root",
-      "[START_DIR]/chromiumos_workspace",
-      "create",
-      "--release",
-      "--file",
-      "[START_DIR]/chromiumos_workspace/src/manifest-internal/default.xml",
-      "--yes"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_prefixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "test cros branch for manifest-internal"
-  },
-  {
     "cmd": [],
     "name": "clean up overlayfs mounts"
   },
