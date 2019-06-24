@@ -27,4 +27,8 @@ message OrchestratorProperties {
 
   // Specifies whether to enable exiting redundant builds.
   bool assert_singleton = 3;
+
+  // The threshold for the ratio of failed tests to total tests
+  // below which baseline verification gets triggered.
+  float baseline_verification_threshold = 4;
 }
