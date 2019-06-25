@@ -69,7 +69,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "install_packages": "RUN"
+                    "install_packages": "RUN",
+                    "apply_gerrit_changes": true
                   },
                   "unit_tests": {
                     "package_blacklist": [{
@@ -120,7 +121,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "install_packages": "RUN_EXIT"
+                    "install_packages": "RUN_EXIT",
+                    "apply_gerrit_changes": false
                   }
                 },
                 {
@@ -146,7 +148,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "install_packages": "RUN"
+                    "install_packages": "RUN",
+                    "apply_gerrit_changes": false
                   },
                   "unit_tests": {
                     "ebuilds_run_spec": "NO_RUN"
@@ -162,7 +165,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "install_packages": "RUN"
+                    "install_packages": "RUN",
+                    "apply_gerrit_changes": false
                   },
                   "unit_tests": {
                     "ebuilds_run_spec": "RUN_EXIT"

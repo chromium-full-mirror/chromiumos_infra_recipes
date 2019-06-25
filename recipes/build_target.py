@@ -8,7 +8,6 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -74,7 +73,7 @@ def RunSteps(api, properties):
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.sync_gitiles_snapshot(gitiles_commit)
 
-      if gerrit_changes:
+      if gerrit_changes and build_config.build.apply_gerrit_changes:
         with api.step.nest('cherry-pick gerrit changes'):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
@@ -191,7 +190,6 @@ def GenTests(api):
     return api.buildbucket.build(build)
 
   yield (api.test('basic') +  #
-         api.cq(full_run=True) +  #
          cq_build_with_gerrit_change() +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +
@@ -200,7 +198,6 @@ def GenTests(api):
          api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('with-findit-bisect') +  #
-         api.cq(full_run=True) +  #
          cq_build_with_gerrit_change() +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +
@@ -223,7 +220,6 @@ def GenTests(api):
 
   yield (
       api.test('with-gerrit-changes') +  #
-      api.cq(full_run=True) +  #
       api.cros_relevance.simulate_run_pointless_build_checker(
           name='pre-sync pointless build check') +
       api.cros_relevance.simulate_run_pointless_build_checker(
@@ -268,7 +264,6 @@ def GenTests(api):
          api.properties(build_target={'name': 'grunt'}))
 
   yield (api.test('pointless-build-first-check') +  #
-         api.cq(full_run=True) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check', build_is_pointless=True) +
          api.buildbucket.try_build(project='chromeos', bucket='cq',
@@ -276,7 +271,6 @@ def GenTests(api):
          api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('pointless-build-second-check') +  #
-         api.cq(full_run=True) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +
          api.cros_relevance.simulate_run_pointless_build_checker(
