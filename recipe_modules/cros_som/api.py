@@ -47,33 +47,31 @@ class CrosSomApi(recipe_api.RecipeApi):
     som_url = properties.som_url or 'https://sheriff-o-matic.appspot.com/chromeos'
     self._annotations_url = urljoin(som_url,
                                     '/api/v1/annotations/chromeos')
-    # A map from step name to `SomAnnotation`. Lazily loaded.
-    self._step_name_to_annotation = {}
+    # A map from 'key' to `SomAnnotation`. Lazily loaded.
+    self._key_to_annotation = {}
 
-  def _get_step_name_to_annotation(self):
-    """Return a map from step name to `SomAnnotation`, loading if needed."""
-    if not self._step_name_to_annotation:
+  def _get_key_to_annotation(self):
+    """Return a map from 'key' to `SomAnnotation`, loading if needed."""
+    if not self._key_to_annotation:
       token = self.m.service_account.default().get_access_token()
       response = self.m.url.get_json(
           self._annotations_url, transient_retry=3, log=True,
-          step_name='Get Sheriff-o-Matic annotations', headers={
+          step_name='get Sheriff-o-Matic annotations', headers={
               'Authorization': 'Bearer {}'.format(token)
           }, default_test_data=self.test_api.test_annotation_response)
       response.raise_on_error()
 
       for annotation in response.output:
-        key = annotation['key']
-        if not key.startswith(KEY_PREFIX):
-          raise self.m.step.InfraFailure('Got unexpected key: {}'.format(key))
+        self._key_to_annotation[annotation['key']] = SomAnnotation(annotation)
 
-        self._step_name_to_annotation[key[len(KEY_PREFIX):]] = SomAnnotation(
-            annotation)
-
-    return self._step_name_to_annotation
+    return self._key_to_annotation
 
   def get_annotation(self, step_name):
     """Return a `SomAnnotation` for `step_name`.
 
     None if there is no annotation for the step.
     """
-    return self._get_step_name_to_annotation().get(step_name)
+    # Annotations for steps have keys like:
+    # 'chromeos.buildbucket:results|hw test results|[FAILED] cave.hw.bvt-inline'
+    key = KEY_PREFIX + step_name
+    return self._get_key_to_annotation().get(key)

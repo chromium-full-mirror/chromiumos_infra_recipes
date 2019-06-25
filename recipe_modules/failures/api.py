@@ -39,6 +39,8 @@ class FailuresApi(recipe_api.RecipeApi):
       if annotation.bugs:
         return 'step failure has bugs linked by Sheriff-o-Matic.'
 
+      # TODO(crbug.com/903414): Handle grouped alerts.
+
       return None
 
   def _raise_failures(self, kind, runs, is_failure, get_title, get_url,

@@ -76,7 +76,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "build results (3).[FAILED] ...Get Sheriff-o-Matic annotations",
+    "name": "build results (3).[FAILED] ...get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",
@@ -103,6 +103,10 @@
       "@@@STEP_LOG_LINE@json.output[output]@    ], @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|[FAILED] ..\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"Hardware lab network outage\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"123\"@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
       "@@@STEP_LOG_LINE@json.output[output]@]@@@",
       "@@@STEP_LOG_END@json.output[output]@@@"

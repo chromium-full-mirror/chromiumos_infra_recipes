@@ -623,7 +623,7 @@ Returns:
 
 A module for interacting with the ChromeOS Sheriff-o-Matic.
 
-&mdash; **def [get\_annotation](/recipe_modules/cros_som/api.py#74)(self, step_name):**
+&mdash; **def [get\_annotation](/recipe_modules/cros_som/api.py#69)(self, step_name):**
 
 Return a `SomAnnotation` for `step_name`.
 
@@ -856,7 +856,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#98)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#100)(self):**
 
 Catches exceptions and logs them instead.
 
@@ -866,7 +866,7 @@ entire recipe. Remove once new feature is stable.
 Requires `step.active_result` to be present when the exception is thrown
 (i.e. at least one step has been run at the current nested context).
 
-&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#225)(self, build):**
+&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#227)(self, build):**
 
 Determine if the build failed.
 
@@ -876,7 +876,7 @@ Args:
 Returns:
   bool: True if the build failed.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#269)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#271)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -886,7 +886,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#281)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#283)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -896,7 +896,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#304)(self, moblab_vm_test):**
+&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#306)(self, moblab_vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -906,7 +906,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#293)(self, vm_test):**
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#295)(self, vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -916,7 +916,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#236)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#238)(self, hw_test):**
 
 Determine if the hardware test failed.
 
@@ -926,7 +926,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#258)(self, moblab_vm_test):**
+&mdash; **def [is\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#260)(self, moblab_vm_test):**
 
 Determine if the VM test failed.
 
@@ -936,7 +936,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#247)(self, vm_test):**
+&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#249)(self, vm_test):**
 
 Determine if the VM test failed.
 
@@ -946,7 +946,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [raise\_failed\_baseline\_verified\_hw\_tests](/recipe_modules/failures/api.py#166)(self, hw_tests, baseline_hw_tests=None):**
+&mdash; **def [raise\_failed\_baseline\_verified\_hw\_tests](/recipe_modules/failures/api.py#168)(self, hw_tests, baseline_hw_tests=None):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -958,7 +958,7 @@ Args:
 Raises:
   recipe_api.StepFailure: If any tests failed.
 
-&mdash; **def [raise\_failed\_builds](/recipe_modules/failures/api.py#140)(self, builds):**
+&mdash; **def [raise\_failed\_builds](/recipe_modules/failures/api.py#142)(self, builds):**
 
 Verify all builds completed successfully.
 
@@ -968,7 +968,7 @@ Args:
 Raises:
   CompositeBuildFailure containing all failed builds.
 
-&mdash; **def [raise\_failed\_hw\_tests](/recipe_modules/failures/api.py#153)(self, hw_tests):**
+&mdash; **def [raise\_failed\_hw\_tests](/recipe_modules/failures/api.py#155)(self, hw_tests):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -978,7 +978,7 @@ Args:
 Raises:
   recipe_api.StepFailure: If any tests failed.
 
-&mdash; **def [raise\_failed\_moblab\_vm\_tests](/recipe_modules/failures/api.py#212)(self, moblab_vm_tests):**
+&mdash; **def [raise\_failed\_moblab\_vm\_tests](/recipe_modules/failures/api.py#214)(self, moblab_vm_tests):**
 
 Logs Moblab VM test status to UI, but does not rais on failed tests.
 
@@ -987,7 +987,7 @@ TODO(evanhernandez): Raise on failure, once tests are stable.
 Args:
   moblab_vm_tests (list[Build]): List of Moblab VM test buildbucket results.
 
-&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#115)(self, packages):**
+&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#117)(self, packages):**
 
 Display failed packages and raise a failure.
 
@@ -999,7 +999,7 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [raise\_failed\_vm\_tests](/recipe_modules/failures/api.py#199)(self, vm_tests):**
+&mdash; **def [raise\_failed\_vm\_tests](/recipe_modules/failures/api.py#201)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 

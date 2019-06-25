@@ -37,28 +37,10 @@ class CrosSomTestApi(recipe_test_api.RecipeTestApi):
         "780"
       ],
       "snoozeTime": 0
+   },
+   {
+      "key":"123",
+      "group_id":"Hardware lab network outage"
    }
 ]
     """)
-
-  def get_malformed_key_step_data(self):
-    """Get step data for the case when a "key" field is invalid."""
-    return self.m.url.json(
-        'Get Sheriff-o-Matic annotations',
-        json.loads("""
-[
-   {
-      "Tree":"ahFzfnNoZXJpZmYtby1tYXRpY3ISCxIEVHJlZSIIY2hyb21lb3MM",
-      "KeyDigest":"1193804a7ba70acd455282bf518ee8136291f319",
-      "key":"invalid_prefix:create sysroot|call chromite.api.SysrootService/Create|call build API script",
-      "bugs":null,
-      "comments":null,
-      "snoozeTime":0,
-      "group_id":"b5da2ccf-ac62-446e-84bb-0b01b2a74317",
-      "ModificationTime":"2019-06-14T22:15:09.958855Z",
-      "bug_data":{
-
-      }
-   }
-]
-    """))

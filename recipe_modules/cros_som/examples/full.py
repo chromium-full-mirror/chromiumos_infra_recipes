@@ -28,6 +28,3 @@ def RunSteps(api):
 def GenTests(api):
 
   yield api.test('basic')
-
-  yield (api.test('malformed_key') +  #
-         api.cros_som.get_malformed_key_step_data())
