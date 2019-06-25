@@ -10,7 +10,7 @@ require (
 	github.com/julienschmidt/httprouter v1.2.0 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/luci/luci-go v0.0.0-20190517210314-69f540cd2055
-	github.com/maruel/subcommands v0.0.0-20181220013616-967e945be48b // indirect
+	github.com/maruel/subcommands v0.0.0-20181220013616-967e945be48b
 	github.com/maruel/ut v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.0.0 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
