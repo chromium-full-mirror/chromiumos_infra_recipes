@@ -78,8 +78,7 @@ def RunSteps(api, properties):
 
         # Then, record the diffs. We are specifically interested in what
         # gerrit changes have landed.
-        # gerrit_commits = record_gerrit_changes(api, manifest_diffs)
-        gerrit_commits = []
+        gerrit_commits = record_gerrit_changes(api, manifest_diffs)
 
       with api.step.nest('publish snapshot') as step:
         snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
@@ -109,53 +108,53 @@ def RunSteps(api, properties):
       api.portage.push_package_uprevs(dryrun=not properties.publish_uprevs)
 
 
-# def record_gerrit_changes(api, manifest_diffs):
-#   """Find all Gerrit changes that landed since the last snapshot.
+def record_gerrit_changes(api, manifest_diffs):
+  """Find all Gerrit changes that landed since the last snapshot.
 
-#   Args:
-#     * api (object): See RunSteps documentation.
-#     * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
+  Args:
+    * api (object): See RunSteps documentation.
+    * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
 
-#   Returns:
-#     list[Commit]: The Gerrit-reviewed commits since the last snapshot.
-#   """
-#   with api.step.nest('record new gerrit changes'):
-#     gerrit_changes = []
-#     gerrit_commits = []
-#     for diff in manifest_diffs:
-#       with api.step.nest(diff.path) as step, api.context(
-#           cwd=api.cros_source.workspace_path.join(diff.path)):
-#         commits = api.git.log(diff.from_rev, diff.to_rev, limit=30)
-#         for commit in commits:
-#           reviewed_on_footers = api.git_footers.from_message(commit.message,
-#                                                             key='Reviewed-on')
-#           if reviewed_on_footers:
-#             gerrit_change_url = reviewed_on_footers[0]
-#             gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
-#             gerrit_change.project = gerrit_change.project or diff.name
-#             gerrit_change_title = api.naming.get_commit_title(commit)
-#             step.presentation.links[gerrit_change_title] = gerrit_change_url
-#             gerrit_changes.append(gerrit_change)
-#             gerrit_commits.append(commit)
+  Returns:
+    list[Commit]: The Gerrit-reviewed commits since the last snapshot.
+  """
+  with api.step.nest('record new gerrit changes'):
+    gerrit_changes = []
+    gerrit_commits = []
+    for diff in manifest_diffs:
+      with api.step.nest(diff.path) as step, api.context(
+          cwd=api.cros_source.workspace_path.join(diff.path)):
+        commits = api.git.log(diff.from_rev, diff.to_rev, limit=30)
+        for commit in commits:
+          reviewed_on_footers = api.git_footers.from_message(commit.message,
+                                                             key='Reviewed-on')
+          if reviewed_on_footers:
+            gerrit_change_url = reviewed_on_footers[0]
+            gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+            gerrit_change.project = gerrit_change.project or diff.name
+            gerrit_change_title = api.naming.get_commit_title(commit)
+            step.presentation.links[gerrit_change_title] = gerrit_change_url
+            gerrit_changes.append(gerrit_change)
+            gerrit_commits.append(commit)
 
-#     output_dir = api.path.mkdtemp(prefix='snapshot-gerrit-changes-')
-#     output_file = output_dir.join('snapshot_gerrit_changes.json')
-#     output_proto = SnapshotGerritChanges(gerrit_changes=gerrit_changes)
-#     output_json = json_format.MessageToJson(output_proto)
-#     api.file.write_raw('write gerrit changes json', output_file, output_json)
+    output_dir = api.path.mkdtemp(prefix='snapshot-gerrit-changes-')
+    output_file = output_dir.join('snapshot_gerrit_changes.json')
+    output_proto = SnapshotGerritChanges(gerrit_changes=gerrit_changes)
+    output_json = json_format.MessageToJson(output_proto)
+    api.file.write_raw('write gerrit changes json', output_file, output_json)
 
-#     isolated = api.isolated.isolated(output_dir)
-#     isolated.add_file(output_file)
-#     # TODO(evanhernandez): Re-enable upload after isolated is fixed.
-#     isolated_hash = None
-#     # isolated_hash = isolated.archive('upload gerrit changes to isolate')
+    isolated = api.isolated.isolated(output_dir)
+    isolated.add_file(output_file)
+    # TODO(evanhernandez): Re-enable upload after isolated is fixed.
+    isolated_hash = None
+    # isolated_hash = isolated.archive('upload gerrit changes to isolate')
 
-#     api.easy.set_property_step('snapshot_gerrit_changes', isolated_hash,
-#                                step_name='output isolate id')
+    api.easy.set_property_step('snapshot_gerrit_changes', isolated_hash,
+                               step_name='output isolate id')
 
-#     # TODO(evanhernandez): Storing/returning these commits is a stain.
-#     # Stop this once the Milo blame list accepts Gerrit changes as input.
-#     return gerrit_commits
+    # TODO(evanhernandez): Storing/returning these commits is a stain.
+    # Stop this once the Milo blame list accepts Gerrit changes as input.
+    return gerrit_commits
 
 
 def make_gitiles_commit(api, repo_url, commit_id):
@@ -192,15 +191,13 @@ def make_message(api, manifest_ref, gerrit_commits):
     position = api.git_footers.position_num('HEAD') + 1
     lines = ['annealing manifest snapshot %d' % position]
 
-    # if gerrit_commits:
-    #   lines.append('************ Gerrit Changes ************')
-    #   lines.append('\n\n----------------------------------------\n\n'.join(
-    #       commit.message for commit in gerrit_commits))
-    #   lines.append('****************************************')
-    # else:
-    #   lines.append('********* No New Gerrit Changes *********')
-    lines.append('********* Not Recording Gerrit Changes Due to Parse Error '
-                 '*********')
+    if gerrit_commits:
+      lines.append('************ Gerrit Changes ************')
+      lines.append('\n\n----------------------------------------\n\n'.join(
+          commit.message for commit in gerrit_commits))
+      lines.append('****************************************')
+    else:
+      lines.append('********* No New Gerrit Changes *********')
 
     lines.append('Cr-Commit-Position: refs/heads/%s@{#%d}' % (manifest_ref,
                                                               position))
@@ -212,21 +209,6 @@ def GenTests(api):
   yield (api.test('basic') + #
          api.properties(AnnealingProperties(manifest_ref='snapshot')))
 
-  # yield (
-  #     api.test('has-manifest-change') +  #
-  #     api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
-  #     api.step_data(
-  #         'repo manifest', stdout=api.raw_io.output(
-  #           '<manifest><project name="NAME" revision="TO_REV" /></manifest>'))
-  #     +  #
-  #     api.step_data(
-  #         'diff remote and local manifest.git show', stdout=api.raw_io.output(
-  #           '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-  #         )) + #
-  #     api.git_footers.step_data(
-  #         'record new gerrit changes.NAME.read git footers',
-  #         api.gerrit.test_gerrit_change_url()))
-
   yield (
       api.test('has-manifest-change') +  #
       api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
@@ -237,21 +219,10 @@ def GenTests(api):
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )))
-
-  # yield (
-  #     api.test('no-gerrit-change') +  #
-  #     api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
-  #     api.step_data(
-  #         'repo manifest', stdout=api.raw_io.output(
-  #           '<manifest><project name="NAME" revision="TO_REV" /></manifest>'))
-  #     +  #
-  #     api.step_data(
-  #         'diff remote and local manifest.git show', stdout=api.raw_io.output(
-  #           '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-  #         )) + #
-  #     api.git_footers.step_data(
-  #         'record new gerrit changes.NAME.read git footers', ''))
+          )) + #
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers',
+          api.gerrit.test_gerrit_change_url()))
 
   yield (
       api.test('no-gerrit-change') +  #
@@ -263,7 +234,9 @@ def GenTests(api):
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )))
+          )) + #
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''))
 
   yield (api.test('missing required properties') +  #
          api.properties(AnnealingProperties()) + #

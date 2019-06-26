@@ -1901,11 +1901,11 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#55)(api, properties):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#161)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#160)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#171)(api, manifest_ref, gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#170)(api, manifest_ref, gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -1925,6 +1925,17 @@ Args:
 
 Returns:
   A string containing the commit message.
+
+&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#111)(api, manifest_diffs):**
+
+Find all Gerrit changes that landed since the last snapshot.
+
+Args:
+  * api (object): See RunSteps documentation.
+  * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
+
+Returns:
+  list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 ### *recipes* / [branch\_create](/recipes/branch_create.py)
 
 [DEPS](/recipes/branch_create.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/url][recipe_engine/recipe_modules/url]

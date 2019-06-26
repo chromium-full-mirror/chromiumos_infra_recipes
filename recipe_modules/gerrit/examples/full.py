@@ -105,6 +105,30 @@ def RunSteps(api):
   api.assertions.assertFalse(gerrit_change.project)
   api.assertions.assertFalse(gerrit_change.patchset)
 
+  # Parse URL as seen from coreboot full style.
+  gerrit_change_url = 'https://review.coreboot.org/c/em100/+/30938/3'
+  gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+  api.assertions.assertEqual(gerrit_change.host, 'review.coreboot.org')
+  api.assertions.assertEqual(gerrit_change.project, 'em100')
+  api.assertions.assertEqual(gerrit_change.change, 30938)
+  api.assertions.assertEqual(gerrit_change.patchset, 3)
+
+  # Parse URL as seen from coreboot full style sans the patchset.
+  gerrit_change_url = 'https://review.coreboot.org/c/em100/+/30938'
+  gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+  api.assertions.assertEqual(gerrit_change.host, 'review.coreboot.org')
+  api.assertions.assertEqual(gerrit_change.project, 'em100')
+  api.assertions.assertEqual(gerrit_change.change, 30938)
+  api.assertions.assertFalse(gerrit_change.patchset)
+
+  # Parse URL as seen from coreboot abbreviated style.
+  gerrit_change_url = 'https://review.coreboot.org/c/30938'
+  gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
+  api.assertions.assertEqual(gerrit_change.host, 'review.coreboot.org')
+  api.assertions.assertEqual(gerrit_change.change, 30938)
+  api.assertions.assertFalse(gerrit_change.project)
+  api.assertions.assertFalse(gerrit_change.patchset)
+
   # Parse URL from smart gerrit change.
   gerrit_change = common_pb2.GerritChange(
       host='chromium-review.googlesource.com',

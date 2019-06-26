@@ -186,7 +186,7 @@ class GerritApi(recipe_api.RecipeApi):
     gerrit_change_url = gerrit_change_url.rstrip('/')
 
     # First check if this is a verbose Gerrit URL.
-    match = re.match(r'(?:https://)?([^/]+)/c/([^+]+)/\+/(\d+)(/\d+)?',
+    match = re.match(r'(?:https://)?([^/]+)/c/(?:([^+]+)/\+/)?(\d+)(/\d+)?',
                      gerrit_change_url)
     if match:
       host, project, change, patchset = match.groups()
