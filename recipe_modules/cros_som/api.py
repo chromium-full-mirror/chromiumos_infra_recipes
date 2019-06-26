@@ -38,6 +38,11 @@ class SomAnnotation(object):
     """
     return self._annotation['bugs']
 
+  @property
+  def group_id(self):
+    """Returns the group ID , the empty string if it has no group."""
+    return self._annotation['group_id']
+
 
 class CrosSomApi(recipe_api.RecipeApi):
   """A module for interacting with the ChromeOS Sheriff-o-Matic."""
@@ -76,8 +81,10 @@ class CrosSomApi(recipe_api.RecipeApi):
     key = KEY_PREFIX + step_name
     return self._get_key_to_annotation().get(key)
 
-  def get_silence_reason(self, annotation):
-    """Return the reason an annotation is silenced, None if there is no silence.
+  def _base_get_silence_reason(self, annotation):
+    """Return the reason an annotation is silenced, None if there is no silece.
+
+    This method will not check if the annotation's group is silenced.
 
     Args:
       annotation (SomAnnotation): The annotation to analyze.
@@ -90,6 +97,31 @@ class CrosSomApi(recipe_api.RecipeApi):
     if annotation.bugs:
       return 'step failure has bugs linked by Sheriff-o-Matic.'
 
-    # TODO(crbug.com/903414): Handle grouped alerts.
+    return None
+
+  def get_silence_reason(self, annotation):
+    """Return the reason an annotation is silenced, None if there is no silence.
+
+    Note that if an annotation is in a group that is silenced, it will also be
+    considered silenced.
+
+    Args:
+      annotation (SomAnnotation): The annotation to analyze.
+
+    Returns: A str
+    """
+    # Check if the annotation itself is silenced.
+    silence_reason = self._base_get_silence_reason(annotation)
+    if silence_reason:
+      return silence_reason
+
+    # Check if the annotation is in a group that is silenced.
+    if annotation.group_id:
+      # The group id should be a key. Note that this key will not have
+      # `KEY_PREFIX`, so we don't call `get_annotation`.
+      assert annotation.group_id in self._get_key_to_annotation()
+      group_annotation = self._get_key_to_annotation()[annotation.group_id]
+
+      return self._base_get_silence_reason(group_annotation)
 
     return None

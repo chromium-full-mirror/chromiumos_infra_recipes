@@ -678,17 +678,17 @@ Returns:
 
 [DEPS](/recipe_modules/cros_som/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
 
-#### **class [CrosSomApi](/recipe_modules/cros_som/api.py#42)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSomApi](/recipe_modules/cros_som/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with the ChromeOS Sheriff-o-Matic.
 
-&mdash; **def [get\_annotation](/recipe_modules/cros_som/api.py#69)(self, step_name):**
+&mdash; **def [get\_annotation](/recipe_modules/cros_som/api.py#73)(self, step_name):**
 
 Return a `SomAnnotation` for `step_name`.
 
 None if there is no annotation for the step.
 
-&mdash; **def [get\_silence\_reason](/recipe_modules/cros_som/api.py#79)(self, annotation):**
+&mdash; **def [get\_silence\_reason](/recipe_modules/cros_som/api.py#92)(self, annotation):**
 
 Return the reason an annotation is silenced, None if there is no silence.
 

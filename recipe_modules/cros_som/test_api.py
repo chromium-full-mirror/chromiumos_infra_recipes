@@ -19,28 +19,42 @@ class CrosSomTestApi(recipe_test_api.RecipeTestApi):
       "bugs":[
         "1234"
       ],
-      "snoozeTime": 0
+      "snoozeTime": 0,
+      "group_id":""
    },
    {
       "key":"chromeos.buildbucket:snoozed step",
       "bugs":null,
-      "snoozeTime": 9999000000000
+      "snoozeTime": 9999000000000,
+      "group_id":""
    },
    {
       "key":"chromeos.buildbucket:step with no snoozes or linked bugs",
       "bugs":null,
-      "snoozeTime": 0
+      "snoozeTime": 0,
+      "group_id":""
    },
    {
       "key":"chromeos.buildbucket:build results (4)|[FAILED] ..",
       "bugs":[
         "780"
       ],
-      "snoozeTime": 0
+      "snoozeTime": 0,
+      "group_id":""
    },
    {
       "key":"123",
-      "group_id":"Hardware lab network outage"
+      "snoozeTime": 0,
+      "group_id":"Group with linked bugs",
+      "bugs":[
+        "999"
+      ]
+   },
+   {
+      "key":"chromeos.buildbucket:step in group with linked bugs",
+      "bugs":null,
+      "snoozeTime": 0,
+      "group_id":"123"
    }
 ]
     """)
