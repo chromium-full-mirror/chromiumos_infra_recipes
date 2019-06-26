@@ -10,17 +10,28 @@ DEPS = [
 ]
 
 def RunSteps(api):
-  annotation = api.cros_som.get_annotation(
-      'hw test results (3)|[FAILED] target.hw.bvt-cq')
+  annotation = api.cros_som.get_annotation('step with linked bugs')
   api.assertions.assertIsNotNone(annotation)
   api.assertions.assertEqual(annotation.bugs, ['1234'])
   api.assertions.assertEqual(annotation.snooze_time_ms, 0)
+  api.assertions.assertEqual(
+      api.cros_som.get_silence_reason(annotation),
+      'step failure has bugs linked by Sheriff-o-Matic.')
 
-  annotation = api.cros_som.get_annotation(
-      'vm test results (3)|[FAILED] target.vm.suite')
+  annotation = api.cros_som.get_annotation('snoozed step')
   api.assertions.assertIsNotNone(annotation)
   api.assertions.assertIsNone(annotation.bugs)
   api.assertions.assertEqual(annotation.snooze_time_ms, 9999000000000)
+  api.assertions.assertEqual(
+      api.cros_som.get_silence_reason(annotation),
+      'step failure is snoozed by Sheriff-o-Matic.')
+
+  annotation = api.cros_som.get_annotation(
+      'step with no snoozes or linked bugs')
+  api.assertions.assertIsNotNone(annotation)
+  api.assertions.assertIsNone(annotation.bugs)
+  api.assertions.assertEqual(annotation.snooze_time_ms, 0)
+  api.assertions.assertIsNone(api.cros_som.get_silence_reason(annotation))
 
   api.assertions.assertIsNone(api.cros_som.get_annotation('bad step'))
 

@@ -30,18 +30,10 @@ class FailuresApi(recipe_api.RecipeApi):
     with self.ignore_exceptions():
       annotation = self.m.cros_som.get_annotation(step_name)
 
-      if not annotation:
+      if annotation is None:
         return None
 
-      if self.m.time.ms_since_epoch() < annotation.snooze_time_ms:
-        return 'step failure is snoozed by Sheriff-o-Matic.'
-
-      if annotation.bugs:
-        return 'step failure has bugs linked by Sheriff-o-Matic.'
-
-      # TODO(crbug.com/903414): Handle grouped alerts.
-
-      return None
+      return self.m.cros_som.get_silence_reason(annotation)
 
   def _raise_failures(self, kind, runs, is_failure, get_title, get_url,
                       fatal=True):

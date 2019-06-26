@@ -75,3 +75,21 @@ class CrosSomApi(recipe_api.RecipeApi):
     # 'chromeos.buildbucket:results|hw test results|[FAILED] cave.hw.bvt-inline'
     key = KEY_PREFIX + step_name
     return self._get_key_to_annotation().get(key)
+
+  def get_silence_reason(self, annotation):
+    """Return the reason an annotation is silenced, None if there is no silence.
+
+    Args:
+      annotation (SomAnnotation): The annotation to analyze.
+
+    Returns: A str
+    """
+    if self.m.time.ms_since_epoch() < annotation.snooze_time_ms:
+      return 'step failure is snoozed by Sheriff-o-Matic.'
+
+    if annotation.bugs:
+      return 'step failure has bugs linked by Sheriff-o-Matic.'
+
+    # TODO(crbug.com/903414): Handle grouped alerts.
+
+    return None

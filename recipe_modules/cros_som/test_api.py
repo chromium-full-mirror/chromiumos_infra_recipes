@@ -15,19 +15,19 @@ class CrosSomTestApi(recipe_test_api.RecipeTestApi):
     return json.loads("""
 [
    {
-      "key":"chromeos.buildbucket:hw test results (3)|[FAILED] target.hw.bvt-cq",
+      "key":"chromeos.buildbucket:step with linked bugs",
       "bugs":[
         "1234"
       ],
       "snoozeTime": 0
    },
    {
-      "key":"chromeos.buildbucket:vm test results (3)|[FAILED] target.vm.suite",
+      "key":"chromeos.buildbucket:snoozed step",
       "bugs":null,
       "snoozeTime": 9999000000000
    },
    {
-      "key":"chromeos.buildbucket:vm test results (3)|[FAILED] target.vm.suite (2)",
+      "key":"chromeos.buildbucket:step with no snoozes or linked bugs",
       "bugs":null,
       "snoozeTime": 0
    },

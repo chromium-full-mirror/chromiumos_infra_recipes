@@ -84,17 +84,17 @@
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": [@@@",
       "@@@STEP_LOG_LINE@json.output[output]@      \"1234\"@@@",
       "@@@STEP_LOG_LINE@json.output[output]@    ], @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:hw test results (3)|[FAILED] target.hw.bvt-cq\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step with linked bugs\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:vm test results (3)|[FAILED] target.vm.suite\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:snoozed step\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:vm test results (3)|[FAILED] target.vm.suite (2)\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step with no snoozes or linked bugs\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
@@ -158,7 +158,7 @@
     "cmd": [],
     "name": "hw test results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 hw tests failed, 0 succeeded, 1 silenced@@@",
+      "@@@STEP_TEXT@2 hw tests failed, 0 succeeded, 0 silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -167,8 +167,6 @@
     "name": "hw test results (3).[FAILED] target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@silence reason@step failure has bugs linked by Sheriff-o-Matic.@@@",
-      "@@@STEP_LOG_END@silence reason@@@",
       "@@@STEP_LINK@task url@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
@@ -200,7 +198,7 @@
     "cmd": [],
     "name": "vm test results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 vm tests failed, 0 succeeded, 1 silenced@@@",
+      "@@@STEP_TEXT@2 vm tests failed, 0 succeeded, 0 silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -209,8 +207,6 @@
     "name": "vm test results (3).[FAILED] target.vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@silence reason@step failure is snoozed by Sheriff-o-Matic.@@@",
-      "@@@STEP_LOG_END@silence reason@@@",
       "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/606@@@",
       "@@@STEP_FAILURE@@@"
     ]
