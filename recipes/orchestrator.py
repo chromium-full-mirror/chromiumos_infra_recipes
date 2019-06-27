@@ -205,14 +205,14 @@ def schedule_skylab_tests(api, test_plan, passed_tests, test_to_build_map=None):
     list[SkylabTask] of the tests scheduled.
   """
   skylab_tasks = []
-  test_to_build_map = test_to_build_map or {}
+  test_to_build_map = {} if test_to_build_map is None else test_to_build_map
   with api.step.nest('schedule hardware tests'):
     for unit in test_plan.hw_test_units:
       for test in unit.hw_test_cfg.hw_test:
         if test.common.display_name not in passed_tests:
           test_name = test.common.display_name
           build_target = unit.common.build_target
-          test_to_build_map[test_name] = build_target
+          test_to_build_map[test_name] = build_target.name
           skylab_tasks.append(
               api.skylab.create_suite(test, unit.common.build_payload))
 
@@ -237,13 +237,13 @@ def schedule_autotest_vm_tests(api, test_plan, passed_tests, snapshot,
     list[Build] objects of the VM tests scheduled.
   """
   requests = []
-  test_to_build_map = test_to_build_map or {}
+  test_to_build_map = {} if test_to_build_map is None else test_to_build_map
   for unit in test_plan.vm_test_units:
     for test in unit.vm_test_cfg.vm_test:
       if test.common.display_name not in passed_tests:
         test_name = test.common.display_name
         build_target = unit.common.build_target
-        test_to_build_map[test_name] = build_target
+        test_to_build_map[test_name] = build_target.name
         requests.append(
             api.buildbucket.schedule_request(
                 gitiles_commit=snapshot, builder=autotest_vm_test(build_target),
@@ -280,13 +280,13 @@ def schedule_tast_vm_tests(api, test_plan, passed_tests, snapshot,
     list[Build] objects of the VM tests scheduled.
   """
   requests = []
-  test_to_build_map = test_to_build_map or {}
+  test_to_build_map = {} if test_to_build_map is None else test_to_build_map
   for unit in test_plan.tast_vm_test_units:
     for test in unit.tast_vm_test_cfg.tast_vm_test:
       if test.common.display_name not in passed_tests:
         test_name = test.common.display_name
         build_target = unit.common.build_target
-        test_to_build_map[test_name] = build_target
+        test_to_build_map[test_name] = build_target.name
         requests.append(
             api.buildbucket.schedule_request(
                 gitiles_commit=snapshot, builder=tast_vm_test(build_target),
@@ -325,13 +325,13 @@ def schedule_moblab_vm_tests(api, test_plan, passed_tests, snapshot,
     list[Build] objects of the VM tests scheduled.
   """
   requests = []
-  test_to_build_map = test_to_build_map or {}
+  test_to_build_map = {} if test_to_build_map is None else test_to_build_map
   for unit in test_plan.moblab_vm_test_units:
     for test in unit.moblab_vm_test_cfg.moblab_test:
       if test.common.display_name not in passed_tests:
         test_name = test.common.display_name
         build_target = unit.common.build_target
-        test_to_build_map[test_name] = build_target
+        test_to_build_map[test_name] = build_target.name
         requests.append(
             api.buildbucket.schedule_request(
                 gitiles_commit=snapshot, builder='moblab-vm-test',
