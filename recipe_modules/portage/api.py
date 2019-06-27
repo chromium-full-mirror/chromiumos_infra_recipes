@@ -13,18 +13,6 @@ from recipe_engine import recipe_api
 class PortageApi(recipe_api.RecipeApi):
   """A module for CrOS Portage steps."""
 
-  def regen_cache(self, repo_name, jobs=32):
-    """Regenerate the portage cache with 'egencache' in the chroot.
-
-    Must be run with cwd inside a chromiumos source root.
-
-    Args:
-      repo_name (str): Portage repo name, passed to 'egencache --repo'.
-      jobs (int): Parallel processes to run, passed to 'egencache --jobs'.
-    """
-    cmd = ['egencache', '--update', '--repo', repo_name, '--jobs', '%d' % jobs]
-    self.m.cros_sdk.run('portage regen cache %s' % repo_name, cmd)
-
   def uprev_packages(self, boards=None):
     """Uprevs portage packages for all boards, but makes no commits.
 

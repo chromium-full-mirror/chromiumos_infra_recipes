@@ -23,22 +23,6 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot",
-      "--",
-      "egencache",
-      "--update",
-      "--repo",
-      "my_overlay",
-      "--jobs",
-      "32"
-    ],
-    "name": "portage regen cache my_overlay"
-  },
-  {
-    "cmd": [
       "vpython",
       "chromite/scripts/cros_uprev",
       "--overlay-type",
