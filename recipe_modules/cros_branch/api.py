@@ -59,7 +59,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     Returns:
       TODO(jackneus): return branch name?
     """
-    cmd = ['create', '--file', manifest_file]
+    cmd = ['create', '--yes', '--file', manifest_file]
 
     # Branch unspecified.
     if not branch or branch.type == Branch.UNSPECIFIED:

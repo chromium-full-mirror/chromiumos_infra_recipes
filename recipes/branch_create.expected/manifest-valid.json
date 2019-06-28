@@ -1,17 +1,43 @@
 [
   {
+    "cmd": [],
+    "name": "fetch manifest"
+  },
+  {
     "cmd": [
-      "vpython",
+      "python",
       "-u",
-      "RECIPE_MODULE[recipe_engine::url]/resources/pycurl.py",
-      "--url",
-      "http://www.chromium.org/manifest.xml",
-      "--status-json",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
       "/path/to/tmp/json",
-      "--outfile",
+      "--url",
+      "https://chromium.googlesource.com/manifest/internal/+/refs/head/master/foo.xml",
+      "--format",
+      "text"
+    ],
+    "name": "fetch manifest.fetch refs/head/master:foo.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "foo",
       "[CLEANUP]/manifests-_tmp_1/downloaded.xml"
     ],
-    "name": "GET http://www.chromium.org/manifest.xml"
+    "infra_step": true,
+    "name": "fetch manifest.write manifest to file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@downloaded.xml@foo@@@",
+      "@@@STEP_LOG_END@downloaded.xml@@@"
+    ]
   },
   {
     "cmd": [],
@@ -257,6 +283,31 @@
     ]
   },
   {
+    "cmd": [
+      "chromite/bin/cros",
+      "branch",
+      "--root",
+      "[START_DIR]/chromiumos_workspace",
+      "--force",
+      "--push",
+      "create",
+      "--yes",
+      "--file",
+      "[CLEANUP]/manifests-_tmp_1/downloaded.xml",
+      "--custom",
+      "my_custom_branch",
+      "--descriptor",
+      "nami"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create branch"
+  },
+  {
     "cmd": [],
     "name": "clean up overlayfs mounts"
   },
@@ -285,30 +336,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
-      "    raw_result = recipe_obj.run_steps(api, engine)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
-      "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/branch_create.py\", line 48, in RunSteps",
-      "    force=properties.force)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
-      "    return func(*a, **kw)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_branch/api.py\", line 66, in create_from_file",
-      "    raise ValueError('Branch type is required.')",
-      "ValueError: Branch type is required."
-    ]
-  },
-  {
-    "failure": {
-      "humanReason": "Uncaught Exception: ValueError('Branch type is required.',)"
-    },
     "name": "$result"
   }
 ]

@@ -1,6 +1,13 @@
 [
   {
     "cmd": [],
+    "name": "fetch manifest",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "RECIPE CRASH (Uncaught exception)",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@",
@@ -11,14 +18,14 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/branch_create.py\", line 25, in RunSteps",
-      "    raise ValueError('manifest URL is required.')",
-      "ValueError: manifest URL is required."
+      "  File \"RECIPE_REPO[chromeos]/recipes/branch_create.py\", line 32, in RunSteps",
+      "    raise ValueError('manifest gitiles host is required.')",
+      "ValueError: manifest gitiles host is required."
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('manifest URL is required.',)"
+      "humanReason": "Uncaught Exception: ValueError('manifest gitiles host is required.',)"
     },
     "name": "$result"
   }

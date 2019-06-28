@@ -246,6 +246,8 @@
     "cmd": [
       "chromite/bin/cros",
       "branch",
+      "--root",
+      "[START_DIR]/chromiumos_workspace",
       "--force",
       "--push",
       "rename",

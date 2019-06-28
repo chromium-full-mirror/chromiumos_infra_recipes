@@ -10,9 +10,12 @@ from PB.recipes.chromeos.branch_create import CreateBranchProperties
 
 DEPS = [
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/step',
     'recipe_engine/url',
+    'depot_tools/gitiles',
     'cros_branch',
     'cros_source',
 ]
@@ -21,19 +24,28 @@ PROPERTIES = CreateBranchProperties
 
 
 def RunSteps(api, properties):
-  if not properties.manifest_url:
-    raise ValueError('manifest URL is required.')
+  with api.step.nest("fetch manifest"):
+    if not properties.manifest.filename:
+      raise ValueError('manifest filename is required.')
+    gitiles_commit = properties.manifest.gitiles_commit
+    if not gitiles_commit.host:
+      raise ValueError('manifest gitiles host is required.')
+    if not gitiles_commit.project:
+      raise ValueError('manifest gitiles project is required.')
+    if not gitiles_commit.id and not gitiles_commit.ref:
+      raise ValueError('manifest gitiles commit id or ref is required.')
 
-  # Validate the manifest URL. validate_url will throw a ValueError if the
-  # string cannot be interpreted as a URL.
-  api.url.validate_url(properties.manifest_url)
+    repo_url = api.gitiles.unparse_repo_url(gitiles_commit.host,
+                                            gitiles_commit.project)
+    repo_branch = gitiles_commit.id or gitiles_commit.ref
 
-  # If the URL is valid, try to download it. If the HTTP request fails,
-  # get_file will throw an HTTPError or an InfraHTTPError.
+    manifest = api.gitiles.download_file(repo_url, properties.manifest.filename,
+                                         repo_branch)
 
-  # Path to download the manifest to.
-  download_path = api.path.mkdtemp(prefix='manifests-').join('downloaded.xml')
-  api.url.get_file(properties.manifest_url, download_path)
+    # Path to download the manifest to.
+    download_path = api.path.mkdtemp(prefix='manifests-').join('downloaded.xml')
+    api.file.write_raw(
+        name='write manifest to file', dest=download_path, data=manifest)
 
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context(), api.context(
@@ -43,35 +55,47 @@ def RunSteps(api, properties):
     api.cros_branch.create_from_file(
         download_path,
         properties.branch,
-        step_name='create branch from manifest %s' % properties.manifest_url,
+        step_name='create branch',
         push=properties.push,
-        force=properties.force)
+        force=properties.force,
+        root=api.cros_source.workspace_path)
 
 
 def GenTests(api):
-  yield (api.test('url-missing') + api.expect_exception('ValueError'))
+  yield (api.test('manifest-filename-missing') + api.properties(manifest={}) +
+         api.expect_exception('ValueError'))
+  yield (api.test('manifest-gitiles-host-missing') + api.properties(
+      manifest={'filename': 'foo.xml'}) + api.expect_exception('ValueError'))
+  yield (api.test('manifest-gitiles-project-missing') + api.properties(
+      manifest={
+          'filename': 'foo.xml',
+          'gitiles_commit': {
+              'host': 'chromium.googlesource.com'
+          }
+      }) + api.expect_exception('ValueError'))
+  yield (api.test('manifest-gitiles-id-ref-missing') + api.properties(
+      manifest={
+          'filename': 'foo.xml',
+          'gitiles_commit': {
+              'host': 'chromium.googlesource.com',
+              'project': 'manifest/internal'
+          }
+      }) + api.expect_exception('ValueError'))
 
-  yield (api.test('url-valid') + api.properties(
-      manifest_url='http://www.chromium.org/manifest.xml',
+  yield (api.test('manifest-valid') + api.properties(
+      manifest={
+          'filename': 'foo.xml',
+          'gitiles_commit': {
+              'host': 'chromium.googlesource.com',
+              'project': 'manifest/internal',
+              'ref': 'refs/head/master'
+          }
+      },
       push=True,
       force=True,
       branch={
           'name': 'my_custom_branch',
           'descriptor': 'nami',
           'type': Branch.CUSTOM
-      }))
-
-  # We expect an HTTPError exception. That class doesn't have its name
-  # set properly so we give expect_exception an empty string.
-  yield (api.test('url-invalid') + api.url.error(
-      'GET http://www.chromium.org/bad.xml',
-      404) + api.properties(manifest_url='http://www.chromium.org/bad.xml') +
-         api.expect_exception(''))
-
-  yield (api.test('custom-no-name') + api.properties(
-      manifest_url='http://www.chromium.org/manifest.xml',
-      branch={'type': Branch.CUSTOM}) + api.expect_exception('ValueError'))
-
-  yield (api.test('branch-type-unspecified') +
-         api.properties(manifest_url='http://www.chromium.org/manifest.xml') +
-         api.expect_exception('ValueError'))
+      }) + api.step_data('fetch manifest.fetch refs/head/master:foo.xml',
+                         api.gitiles.make_encoded_file('foo')))

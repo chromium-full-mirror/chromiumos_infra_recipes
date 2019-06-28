@@ -27,7 +27,8 @@ def RunSteps(api, properties):
         properties.branch,
         properties.new_name,
         push=properties.push,
-        force=properties.force)
+        force=properties.force,
+        root=api.cros_source.workspace_path)
 
 
 def GenTests(api):

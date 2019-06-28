@@ -25,7 +25,10 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path):
     api.cros_branch.delete(
-        properties.branch, push=properties.push, force=properties.force)
+        properties.branch,
+        push=properties.push,
+        force=properties.force,
+        root=api.cros_source.workspace_path)
 
 
 def GenTests(api):

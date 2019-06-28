@@ -4,6 +4,7 @@
       "chromite/bin/cros",
       "branch",
       "create",
+      "--yes",
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release"
@@ -22,6 +23,7 @@
       "--force",
       "--push",
       "create",
+      "--yes",
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release"
@@ -40,6 +42,7 @@
       "--root",
       "~/chromiumos/",
       "create",
+      "--yes",
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release"
@@ -56,6 +59,7 @@
       "chromite/bin/cros",
       "branch",
       "create",
+      "--yes",
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--custom",

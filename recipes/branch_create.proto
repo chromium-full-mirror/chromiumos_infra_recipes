@@ -6,7 +6,15 @@ syntax = "proto3";
 
 package recipes.chromeos.branch_create;
 
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
 import "chromiumos/branch.proto";
+
+message BranchManifest {
+  // Gitiles commit to fetch.
+  buildbucket.v2.GitilesCommit gitiles_commit = 1;
+  // Name of manifest.
+  string filename = 2;
+}
 
 // Input properties for create branch recipe.
 message CreateBranchProperties {
@@ -16,10 +24,10 @@ message CreateBranchProperties {
   // If not set, any command that would overwrite an existing branch/version fails.
   bool force = 2;
 
-  // URL of manifest to branch from.
+  // Manifest to branch from.
   // If the manifest at the URL has includes, the branch tool will erroneously
   // fail.
-  string manifest_url = 3;
+  BranchManifest manifest = 3;
 
   // Branch to be created.
   chromiumos.Branch branch = 4;

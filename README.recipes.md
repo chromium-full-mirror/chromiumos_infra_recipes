@@ -1931,11 +1931,11 @@ Returns:
   list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 ### *recipes* / [branch\_create](/recipes/branch_create.py)
 
-[DEPS](/recipes/branch_create.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/url][recipe_engine/recipe_modules/url]
+[DEPS](/recipes/branch_create.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
 
 Creates a branch using `cros branch create`.
 
-&mdash; **def [RunSteps](/recipes/branch_create.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipes/branch_create.py#26)(api, properties):**
 ### *recipes* / [branch\_delete](/recipes/branch_delete.py)
 
 [DEPS](/recipes/branch_delete.py#12): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -1,0 +1,32 @@
+[
+  {
+    "cmd": [],
+    "name": "fetch manifest",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
+      "    recipe_result = self.global_symbols['RunSteps'](*args)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/branch_create.py\", line 34, in RunSteps",
+      "    raise ValueError('manifest gitiles project is required.')",
+      "ValueError: manifest gitiles project is required."
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: ValueError('manifest gitiles project is required.',)"
+    },
+    "name": "$result"
+  }
+]
