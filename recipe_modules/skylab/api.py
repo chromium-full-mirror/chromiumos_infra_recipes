@@ -21,7 +21,7 @@ class SkylabApi(recipe_api.RecipeApi):
     self._server = str(properties.skylab_server) or 'https://chromeos-swarming.appspot.com'
     self._version = str(properties.skylab_version) or 'prod'
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
-    self._skylab_timeout = str(properties.skylab_timeout) or '9h'
+    self._skylab_timeout = str(properties.skylab_timeout) or '7h'
 
   def initialize(self):
     self._client = None

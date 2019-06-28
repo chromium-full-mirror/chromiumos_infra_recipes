@@ -967,7 +967,7 @@
       "-task-output-stdout",
       "json",
       "-timeout",
-      "9h",
+      "7h",
       "bvt-inline-task-id",
       "bvt-cq-task-id"
     ],
@@ -1604,7 +1604,7 @@
       "-task-output-stdout",
       "json",
       "-timeout",
-      "9h",
+      "7h",
       "bvt-inline-task-id"
     ],
     "infra_step": true,

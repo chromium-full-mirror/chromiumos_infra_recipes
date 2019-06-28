@@ -42,7 +42,7 @@
       "-task-output-stdout",
       "json",
       "-timeout",
-      "9h",
+      "7h",
       "task-id"
     ],
     "infra_step": true,
