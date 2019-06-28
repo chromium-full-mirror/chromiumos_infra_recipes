@@ -8,6 +8,7 @@ from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.testplans.pointless_build import PointlessBuildCheckRequest
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
@@ -52,6 +53,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       )
       check_request.buildbucket_proto.serialized_proto = (
           build_pb2.Build.SerializeToString(build))
+      for gc in build.input.gerrit_changes:
+        new_gc = check_request.gerrit_changes.add()
+        new_gc.serialized_proto = (
+            bbcommon_pb2.GerritChange.SerializeToString(gc))
       cmd = [
           self._pointless_build_checker_path,
           'check-build',

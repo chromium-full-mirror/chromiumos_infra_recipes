@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.chromiumos.common import BuildTarget
 
 DEPS = [
@@ -14,7 +15,12 @@ DEPS = [
 
 def RunSteps(api):
   bt = BuildTarget(name='my_build_target')
-  api.cros_relevance.is_build_pointless(build_pb2.Build(), bt, dep_graph_check=False)
+  bi = build_pb2.Build.Input(
+      gerrit_changes=[
+          bbcommon_pb2.GerritChange(change=123),
+          bbcommon_pb2.GerritChange(change=456)])
+  api.cros_relevance.is_build_pointless(
+      build_pb2.Build(input=bi), bt, dep_graph_check=False)
   api.cros_relevance.is_build_pointless(build_pb2.Build(), bt)
 
 def GenTests(api):
