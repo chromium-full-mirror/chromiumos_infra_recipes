@@ -72,6 +72,28 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
             ],),)
 
   @property
+  def another_hw_test_unit(self):
+    return HwTestUnit(
+        common=self.test_unit_common(),
+        hw_test_cfg=HwTestCfg(
+            hw_test=[
+                HwTestCfg.HwTest(
+                    common=TestSuiteCommon(
+                        display_name='htarget.hw.bvt-inline'),
+                    suite='bvt-inline',
+                    skylab_board='target',
+                    timeout_sec=123,
+                    critical=True,
+                    minimum_duts=2,
+                    retry=True,
+                    max_retries=3,
+                    suite_min_duts=2,
+                    offload_failures_only=True,
+                ),
+            ],),
+    )
+
+  @property
   def moblab_vm_test_unit(self):
     return MoblabVmTestUnit(
         common=self.test_unit_common(),
@@ -121,7 +143,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   def generate_test_plan_response(self):
     return GenerateTestPlanResponse(
         gce_test_units=[self.gce_test_unit],
-        hw_test_units=[self.hw_test_unit],
+        hw_test_units=[self.hw_test_unit, self.another_hw_test_unit],
         moblab_vm_test_units=[self.moblab_vm_test_unit],
         tast_vm_test_units=[self.tast_vm_test_unit],
         vm_test_units=[self.vm_test_unit],

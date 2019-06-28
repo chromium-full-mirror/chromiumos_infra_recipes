@@ -140,6 +140,23 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "target-baseline",
+                    "branch": "master",
+                    "type": "CQ"
+                  },
+                  "general": {
+                    "critical": false
+                  },
+                  "build": {
+                    "install_packages": "RUN",
+                    "apply_gerrit_changes": false
+                  },
+                  "unit_tests": {
+                    "ebuilds_run_spec": "NO_RUN"
+                  }
+                },
+                {
+                  "id": {
                     "name": "grunt-postsubmit",
                     "branch": "master",
                     "type": "POSTSUBMIT"

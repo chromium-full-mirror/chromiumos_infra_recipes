@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/swarming',
     'recipe_engine/step',
     'cros_history',
     'cros_infra_config',
@@ -165,11 +166,53 @@ def RunSteps(api, properties):
       ])
       api.cros_history.set_passed_tests(passed_tests)
 
+  baseline_hw_results = []
+  failed_hw_results = [
+      hw_result.task.test.common.display_name
+      for hw_result in hw_results
+      if api.failures.is_hw_test_failure(hw_result)
+  ]
+  with api.failures.ignore_exceptions():
+    if gerrit_changes and needs_baseline_validation(
+        failed_hw_results, hw_results,
+        properties.baseline_verification_threshold):
+      # Start Baseline HW Verification process.
+      build_targets_to_verify = set([
+          test_to_build_target_map[test_name] for test_name in failed_hw_results
+      ])
+      baseline_builds_to_verify = [
+          build_target + '-baseline' for build_target in build_targets_to_verify
+      ]
+      _, build_requests = get_build_plan(
+          api, child_builders=baseline_builds_to_verify, enable_history=False,
+          gerrit_changes=gerrit_changes, snapshot=snapshot)
+      baseline_builds = api.buildbucket.run(
+          build_requests, timeout=60 * 60 * 4, step_name='run baseline builds',
+          url_title_fn=api.naming.get_build_title)
+      with api.step.nest('run baseline tests'):
+        with api.step.nest('schedule baseline tests'):
+          baseline_test_plan = api.cros_test_plan.generate(
+              baseline_builds, snapshot.id)
+          baseline_skylab_tasks = schedule_skylab_tests(api, baseline_test_plan,
+                                                        passed_tests)
+
+        with api.step.nest('collect baseline tests'):
+          baseline_hw_results = api.skylab.wait_suites(baseline_skylab_tasks)
+          # Add failures here to passed_tests.
+          passed_tests.extend([
+              hw_result.task.test.common.display_name
+              for hw_result in baseline_hw_results
+              if api.failures.is_hw_test_failure(hw_result)
+          ])
+
+  api.cros_history.set_passed_tests(passed_tests)
+
   # Verify builds/tests in a deferred context so that all failures appear.
   with api.step.nest('results'):
     with api.step.defer_results():
       api.failures.raise_failed_builds(completed_builds)
-      api.failures.raise_failed_hw_tests(hw_results)
+      api.failures.raise_failed_baseline_verified_hw_tests(
+          hw_results, baseline_hw_results)
       api.failures.raise_failed_vm_tests(vm_results)
       api.failures.raise_failed_moblab_vm_tests(moblab_vm_results)
 
@@ -438,6 +481,29 @@ def validate_refs(refs):
   validate_ref(refs.success, 'success')
 
 
+def needs_baseline_validation(failed_results, all_results, threshold):
+  """Check if we need baseline validation for this orchestrator.
+
+  Args:
+    failed_results (list[SkylabResults]): Results of failed tests.
+    all_results (list[SkylabResults]): Results of all tests.
+    threshold (float): upper threshold for baseline validation.
+
+  Returns:
+    A boolean indicating whether we need to initiate baseline
+    validation.
+  """
+  needs_validation = False
+  # If either all_results or failed_results is empty, there is no work
+  # to be done.
+  if failed_results:
+    failure_ratio = float(len(failed_results)) / len(all_results)
+    if failure_ratio <= threshold:
+      needs_validation = True
+
+  return needs_validation
+
+
 def validate_ref(ref, name):
   """Assert the given ref starts with refs/heads.
 
@@ -697,3 +763,53 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output(
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
+
+  skylab_results = [
+      api.swarming.task_result(id='bvt-cq-task-id', name='success_task',
+                               state=api.swarming.TaskState.COMPLETED),
+      api.swarming.task_result(id='bvt-inline-task-id', name='failed_task',
+                               state=api.swarming.TaskState.COMPLETED,
+                               failure=True)
+  ]
+  baseline_results_failure = [
+      api.swarming.task_result(id='bvt-inline-task-id', name='failed_task',
+                               state=api.swarming.TaskState.COMPLETED,
+                               failure=True)
+  ]
+  yield (api.test('pass_with_baseline_validation') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.properties(baseline_verification_threshold=1.0) +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests') +
+         api.override_step_data('run tests.collect tests.collect skylab tasks',
+                                api.swarming.collect(skylab_results)) +  #
+         api.override_step_data(
+             'run baseline tests.collect baseline tests'
+             '.collect skylab tasks',
+             api.swarming.collect(baseline_results_failure)))
+
+  baseline_results_success = [
+      api.swarming.task_result(id='bvt-inline-task-id', name='failed_task',
+                               state=api.swarming.TaskState.COMPLETED)
+  ]
+  yield (api.test('fail_with_baseline_validation') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.properties(baseline_verification_threshold=1.0) +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests') +
+         api.override_step_data('run tests.collect tests.collect skylab tasks',
+                                api.swarming.collect(skylab_results)) +  #
+         api.override_step_data(
+             'run baseline tests.collect baseline tests'
+             '.collect skylab tasks',
+             api.swarming.collect(baseline_results_success)))
