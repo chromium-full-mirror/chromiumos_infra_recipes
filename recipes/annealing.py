@@ -192,9 +192,14 @@ def make_message(api, manifest_ref, gerrit_commits):
     lines = ['annealing manifest snapshot %d' % position]
 
     if gerrit_commits:
-      lines.append('************ Gerrit Changes ************')
+      # Annealing is in a bad state because of crbug.com/980288. This means the
+      # generated commit message is too long, causing an exception. Temporarily
+      # take only the first 10 lines, so Annealing can get back to a good state.
+      #
+      # TODO(crbug.com/980288): Remove this workaround.
+      lines.append('************ Gerrit Changes (Only first 10) ************')
       lines.append('\n\n----------------------------------------\n\n'.join(
-          commit.message for commit in gerrit_commits))
+          commit.message for commit in gerrit_commits[:10]))
       lines.append('****************************************')
     else:
       lines.append('********* No New Gerrit Changes *********')

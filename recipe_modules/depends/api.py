@@ -152,7 +152,14 @@ class DependsApi(recipe_api.RecipeApi):
           dep_local_log.append('change %s in non-Chrome OS repo %s' %
                                (change.get('change_number'), project))
           continue
-        path = self.m.cros_source.find_project_path(project, branch)
+
+        # TODO(crbug.com/980288): Find a better way to handle the error where path isn't found.
+        try:
+          path = self.m.cros_source.find_project_path(project, branch)
+        except self.m.step.StepFailure as step_failure:
+          dep_local_log.append(
+              'Failed to find project path, with failure: %s' % step_failure)
+          continue
 
         # Ensure that rev exists in the git repo at that path. Fail otherwise.
         with self.m.context(cwd=self.m.cros_source.workspace_path.join(path)):
