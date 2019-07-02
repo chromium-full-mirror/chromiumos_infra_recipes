@@ -14,6 +14,12 @@ message AnnealingProperties {
 
   // Whether or not to publish uprevs.
   bool publish_uprevs = 2;
+
+  // If true, the snapshot commit message will not list Gerrit changes. This
+  // property should only be set temporarily to get Annealing back in a good
+  // state. For example, Annealing has not succeeded in a long time, so the
+  // message length exceeds Git limits.
+  bool disable_gerrit_commits_in_commit_message = 3;
 }
 
 // Annealing determines what Gerrit changes have landed since its last run,

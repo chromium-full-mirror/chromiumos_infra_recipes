@@ -84,7 +84,9 @@ def RunSteps(api, properties):
         snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
         api.git.fetch_ref(snapshot_repo_url, manifest_ref)
         api.git.checkout('FETCH_HEAD')
-        snapshot_commit_message = make_message(api, manifest_ref, gerrit_commits)
+        snapshot_commit_message = make_message(
+            api, manifest_ref, gerrit_commits,
+            properties.disable_gerrit_commits_in_commit_message)
         api.git_txn.update_ref_write_file(
             snapshot_repo_url, manifest_ref, snapshot_commit_message,
             api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
@@ -167,7 +169,7 @@ def make_gitiles_commit(api, repo_url, commit_id):
       id=commit_id,
   )
 
-def make_message(api, manifest_ref, gerrit_commits):
+def make_message(api, manifest_ref, gerrit_commits, disable_gerrit_commits):
   """Creates and returns the commit message with a Cr-Commit-Position.
 
   Creates and returns the commit message with a Cr-Commit-Position
@@ -183,6 +185,8 @@ def make_message(api, manifest_ref, gerrit_commits):
     * manifest_ref (str): The git reference to use in the commit message.
     * gerrit_commits (list[Commit]): List of Gerrit-pushed commits since the
         last snapshot.
+    * disable_gerrit_commits (bool): If true, gerrit_commits will not be written
+        in the message.
 
   Returns:
     A string containing the commit message.
@@ -191,15 +195,12 @@ def make_message(api, manifest_ref, gerrit_commits):
     position = api.git_footers.position_num('HEAD') + 1
     lines = ['annealing manifest snapshot %d' % position]
 
-    if gerrit_commits:
-      # Annealing is in a bad state because of crbug.com/980288. This means the
-      # generated commit message is too long, causing an exception. Temporarily
-      # take only the first 10 lines, so Annealing can get back to a good state.
-      #
-      # TODO(crbug.com/980288): Remove this workaround.
-      lines.append('************ Gerrit Changes (Only first 10) ************')
+    if disable_gerrit_commits:
+      lines.append('**** Writing Gerrit Changes Disabled ****')
+    elif gerrit_commits:
+      lines.append('************ Gerrit Changes ************')
       lines.append('\n\n----------------------------------------\n\n'.join(
-          commit.message for commit in gerrit_commits[:10]))
+          commit.message for commit in gerrit_commits))
       lines.append('****************************************')
     else:
       lines.append('********* No New Gerrit Changes *********')
@@ -242,6 +243,23 @@ def GenTests(api):
           )) + #
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''))
+
+  yield (
+      api.test('disable-commits-in-commit-message') +  #
+      api.properties(AnnealingProperties(
+          manifest_ref='snapshot',
+          disable_gerrit_commits_in_commit_message=True)) +  #
+      api.step_data(
+          'repo manifest', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="TO_REV" /></manifest>'))
+      +  #
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )) + #
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers',
+          api.gerrit.test_gerrit_change_url()))
 
   yield (api.test('missing required properties') +  #
          api.properties(AnnealingProperties()) + #

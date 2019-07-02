@@ -1,0 +1,704 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.ensure chroot directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure synced checkout"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "ensure synced checkout.ensure root path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CACHE]/chromiumos/.repo/manifests"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CACHE]/chromiumos/.repo/manifests.git"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests.git",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--reference",
+      "/preload/chromeos"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "ensure synced checkout.repo init",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "32",
+      "--no-tags",
+      "--optimized-fetch"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "ensure synced checkout.repo sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay master"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/upperdir"
+    ],
+    "infra_step": true,
+    "name": "mount overlay master.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/workdir"
+    ],
+    "infra_step": true,
+    "name": "mount overlay master.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_master"
+    ],
+    "infra_step": true,
+    "name": "mount overlay master.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=master",
+      "overlay",
+      "[START_DIR]/chromiumos_master"
+    ],
+    "infra_step": true,
+    "name": "mount overlay master.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay workspace"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/upperdir"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/workdir"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=workspace",
+      "overlay",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "repo manifest",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest><project name=\"NAME\" revision=\"TO_REV\" /></manifest>@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "diff remote and local manifest"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "show",
+      "FETCH_HEAD:snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git show",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure manifest cq-depend fulfilled",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@diff manifest@NAME upreved from FROM_REV to TO_REV@@@",
+      "@@@STEP_LOG_END@diff manifest@@@",
+      "@@@STEP_LOG_LINE@gather cq-depend@No Cq-Depend found in any CLs@@@",
+      "@@@STEP_LOG_END@gather cq-depend@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%H%x1E%B%x00",
+      "FROM_REV...TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "ensure manifest cq-depend fulfilled.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes"
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes.NAME",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@message@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%H%x1E%B%x00",
+      "FROM_REV...TO_REV",
+      "-30"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "record new gerrit changes.NAME.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Reviewed-on"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "record new gerrit changes.NAME.read git footers",
+    "stdin": "message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"gerritChanges\": [\n    {\n      \"project\": \"chromiumos/chromite\", \n      \"host\": \"chromium-review.googlesource.com\", \n      \"change\": \"1\"\n    }\n  ]\n}",
+      "[CLEANUP]/snapshot-gerrit-changes-_tmp_1/snapshot_gerrit_changes.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "record new gerrit changes.write gerrit changes json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@{@@@",
+      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@  \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@    {@@@",
+      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@      \"project\": \"chromiumos/chromite\", @@@",
+      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@      \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@      \"change\": \"1\"@@@",
+      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@    }@@@",
+      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@  ]@@@",
+      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@}@@@",
+      "@@@STEP_LOG_END@snapshot_gerrit_changes.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes.output isolate id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@snapshot_gerrit_changes@null@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish snapshot"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish snapshot.create snapshot commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "HEAD",
+      "--position-num"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.create snapshot commit message.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish snapshot.git transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "refs/heads/snapshot:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git transaction.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git transaction.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git transaction.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git transaction.try remove existing file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "<manifest><project name=\"NAME\" revision=\"TO_REV\" /></manifest>",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git transaction.write file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@snapshot.xml@<manifest><project name=\"NAME\" revision=\"TO_REV\" /></manifest>@@@",
+      "@@@STEP_LOG_END@snapshot.xml@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish snapshot.git transaction.diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git transaction.diff check.git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git transaction.diff check.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "publish snapshot.git rev-parse (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish snapshot.set_output_gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/master\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "chromite/bin/cros_mark_as_stable",
+      "commit",
+      "--all",
+      "--buildroot",
+      "[START_DIR]/chromiumos_workspace",
+      "--overlay-type",
+      "both"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "uprev packages.commit portage package uprevs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "chromite/bin/cros_mark_as_stable",
+      "push",
+      "--overlay-type",
+      "both",
+      "--dryrun"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "uprev packages.push portage package uprevs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up overlayfs mounts"
+  },
+  {
+    "cmd": [
+      "sudo",
+      "umount",
+      "[START_DIR]/chromiumos_master"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay master",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "umount",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
