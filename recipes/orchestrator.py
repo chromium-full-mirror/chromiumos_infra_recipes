@@ -197,13 +197,14 @@ def RunSteps(api, properties):
                                                         passed_tests)
 
         with api.step.nest('collect baseline tests'):
-          baseline_hw_results = api.skylab.wait_suites(baseline_skylab_tasks)
-          # Add failures here to passed_tests.
-          passed_tests.extend([
-              hw_result.task.test.common.display_name
-              for hw_result in baseline_hw_results
-              if api.failures.is_hw_test_failure(hw_result)
-          ])
+          if baseline_skylab_tasks:
+            baseline_hw_results = api.skylab.wait_suites(baseline_skylab_tasks)
+            # Add failures here to passed_tests.
+            passed_tests.extend([
+                hw_result.task.test.common.display_name
+                for hw_result in baseline_hw_results
+                if api.failures.is_hw_test_failure(hw_result)
+            ])
 
   api.cros_history.set_passed_tests(passed_tests)
 
