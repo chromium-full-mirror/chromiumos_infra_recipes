@@ -22,21 +22,73 @@
     ]
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--nouse-image",
-      "--chroot",
-      "[CACHE]/cros_chroot",
-      "--",
-      "portageq",
-      "best_visible",
-      ".",
-      "chromeos-base/chromeos-chrome"
-    ],
-    "name": "portageq best_visible chromeos-base/chromeos-chrome",
+    "cmd": [],
+    "name": "call chromite.api.PackageService/GetBestVisible",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos-base/chromeos-chrome-74.0.3726.0_rc-r1@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"package_info\": {\"category\": \"category\", \"version\": \"version\", \"package_name\": \"package\"}}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"atom\": \"chromeos-base/chromeos-chrome\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/GetBestVisible.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "chromite.api.PackageService/GetBestVisible"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/GetBestVisible.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/GetBestVisible.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -104,7 +156,7 @@
       "--with_tags",
       "--delete_unversioned_trees",
       "--revision",
-      "src@74.0.3726.0",
+      "src@version",
       "--output-json",
       "/path/to/tmp/json"
     ],

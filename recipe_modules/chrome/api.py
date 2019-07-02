@@ -5,6 +5,8 @@
 
 from recipe_engine import recipe_api
 
+from PB.chromite.api import packages
+
 
 class ChromeApi(recipe_api.RecipeApi):
 
@@ -28,8 +30,10 @@ class ChromeApi(recipe_api.RecipeApi):
     """
     # TODO(crbug.com/945606): Call sync_chrome in build_target recipe.
     # portageq must be run with cwd inside a chromiumos source root.
-    revision = self.m.portage.portageq_best_visible_version(
-        'chromeos-base/chromeos-chrome')
+    request = packages.GetBestVisibleRequest(
+        atom='chromeos-base/chromeos-chrome')
+    revision = self.m.cros_build_api.PackageService.GetBestVisible(
+        request, infra_step=True).package_info.version
 
     self.m.file.ensure_directory('ensure chrome cache', self.cache_path)
     self.m.file.ensure_directory('ensure chrome root', chrome_root)

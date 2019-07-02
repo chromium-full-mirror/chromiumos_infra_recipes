@@ -70,6 +70,10 @@ class DependencyService(Stub):
   """Stub for DependencyService."""
 
 
+class PackageService(Stub):
+  """Stub for PackageService."""
+
+
 class ImageService(Stub):
   """Stub for ImageService."""
 

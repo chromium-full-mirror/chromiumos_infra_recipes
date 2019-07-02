@@ -16,6 +16,7 @@ from PB.chromite.api import artifacts
 from PB.chromite.api import binhost
 from PB.chromite.api import depgraph
 from PB.chromite.api import image
+from PB.chromite.api import packages
 from PB.chromite.api import sdk
 from PB.chromite.api import sysroot
 from PB.chromite.api import test
@@ -66,6 +67,9 @@ def RunSteps(api):
       'ImageService': {
           'Create': image.CreateImageResult,
           'Test': image.TestImageResult,
+      },
+      'PackageService': {
+          'GetBestVisible': packages.GetBestVisibleResponse,
       },
       'SdkService': {
           'Create': sdk.CreateResponse,

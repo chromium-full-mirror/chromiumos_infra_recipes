@@ -87,7 +87,6 @@
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
-  * [portage:examples/portageq_parse_error](#recipes-portage_examples_portageq_parse_error)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [recipes_tester](#recipes-recipes_tester) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
@@ -175,18 +174,18 @@ Returns:
   A list[Path] of symbolicated files written.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
-[DEPS](/recipe_modules/chrome/__init__.py#1): [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/chrome/api.py#11)(self):**
+&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/chrome/api.py#13)(self):**
 
 The path to use for gclient caching.
 
 All git repos are cached here, and it is used for clones, instead of cloning
 directly from the remote.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#20)(self, chrome_root):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#22)(self, chrome_root):**
 
 Sync Chrome source code.
 
@@ -388,7 +387,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#89)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#93)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -405,7 +404,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#112)(self, endpoint, input_proto, output_type, test_output_data=None, name=None, infra_step=False, timeout=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#116)(self, endpoint, input_proto, output_type, test_output_data=None, name=None, infra_step=False, timeout=None):**
 
 Call the build API with the given input proto.
 
@@ -428,7 +427,7 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#106)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#110)(self):**
 
 Expose all client stubs defined in this module.
 ### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
@@ -1589,7 +1588,7 @@ Args:
   * mount_path (Path): Path to unmount the OverlayFS from.
 ### *recipe_modules* / [portage](/recipe_modules/portage)
 
-[DEPS](/recipe_modules/portage/__init__.py#1): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/portage/__init__.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for CrOS Portage.
 
@@ -1602,17 +1601,6 @@ A module for CrOS Portage steps.
 Uprevs portage packages for all boards.
 
 Must be run with cwd inside a chromiumos source root.
-
-&mdash; **def [portageq\_best\_visible\_version](/recipe_modules/portage/api.py#72)(self, atom):**
-
-Run portageq best_visible and parse out the version.
-
-Must be run with cwd inside a chromiumos source root.
-
-Args:
-  atom (str): An atom to pass to portageq, e.g. 'chromeos-chrome'
-
-Return: The atom version as a string, e.g. '74.0.3726.0'
 
 &mdash; **def [push\_package\_uprevs](/recipe_modules/portage/api.py#52)(self, dryrun=False):**
 
@@ -2024,7 +2012,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#26)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#27)(api):**
 ### *recipes* / [cros\_build\_api:examples/ok\_retcodes](/recipe_modules/cros_build_api/examples/ok_retcodes.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/ok_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2354,11 +2342,6 @@ Return:
 [DEPS](/recipe_modules/portage/examples/full.py#6): [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/portage/examples/full.py#14)(api):**
-### *recipes* / [portage:examples/portageq\_parse\_error](/recipe_modules/portage/examples/portageq_parse_error.py)
-
-[DEPS](/recipe_modules/portage/examples/portageq_parse_error.py#6): [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
-
-&mdash; **def [RunSteps](/recipe_modules/portage/examples/portageq_parse_error.py#13)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
