@@ -422,7 +422,6 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       retry_count = len(
           api.cros_history.get_matching_builds(api.buildbucket.build,
                                                status=common_pb2.FAILURE))
-      api.easy.set_property_step('orch_retries', retry_count)
       completed_builds = get_completed_builds(api, child_builders)
       passed_builders = set(build.builder.builder for build in completed_builds)
 

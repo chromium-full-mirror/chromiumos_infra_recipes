@@ -210,14 +210,6 @@
   },
   {
     "cmd": [],
-    "name": "get build history for changes.set orch_retries",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@orch_retries@0@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "get build history for changes.get change build history",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

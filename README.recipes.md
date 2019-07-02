@@ -2202,7 +2202,7 @@ Returns:
   builds with refreshed criticality and a list of ScheduleBuildRequest of
   the builds that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#443)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#442)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2216,7 +2216,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#518)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#517)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2227,7 +2227,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#484)(failed_results, all_results, threshold):**
+&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#483)(failed_results, all_results, threshold):**
 
 Check if we need baseline validation for this orchestrator.
 
@@ -2311,7 +2311,7 @@ Returns:
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#507)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#506)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2319,7 +2319,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#471)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#470)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -2329,7 +2329,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#541)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#540)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 
