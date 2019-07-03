@@ -101,7 +101,7 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_json",
-      "{\"buildbucketProto\": {\"serializedProto\": \"CNDsgNmu8bWSfBIgCghjaHJvbWVvcxICY3EaEGFtZDY0LWdlbmVyaWMtY3EiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AV6bhJiChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIRcmVmcy9oZWFkcy9tYXN0ZXIaAxjSCRoDGKUS\"}, \"gerritChanges\": [{\"serializedProto\": \"GNIJ\"}, {\"serializedProto\": \"GKUS\"}], \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
+      "{\"gerritChanges\": [{\"serializedProto\": \"GNIJ\"}, {\"serializedProto\": \"GKUS\"}], \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],
@@ -1329,7 +1329,7 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_json",
-      "{\"buildbucketProto\": {\"serializedProto\": \"CNDsgNmu8bWSfBIgCghjaHJvbWVvcxICY3EaEGFtZDY0LWdlbmVyaWMtY3EiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AV6bhJiChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIRcmVmcy9oZWFkcy9tYXN0ZXIaAxjSCRoDGKUS\"}, \"depGraph\": {\"packageDeps\": [{\"dependencySourcePaths\": [{\"path\": \"some/source/dir\"}]}]}, \"gerritChanges\": [{\"serializedProto\": \"GNIJ\"}, {\"serializedProto\": \"GKUS\"}], \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
+      "{\"depGraph\": {\"packageDeps\": [{\"dependencySourcePaths\": [{\"path\": \"some/source/dir\"}]}]}, \"gerritChanges\": [{\"serializedProto\": \"GNIJ\"}, {\"serializedProto\": \"GKUS\"}], \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],

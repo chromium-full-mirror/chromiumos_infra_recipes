@@ -51,8 +51,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         manifest_commit = build.input.gitiles_commit.id,
         dep_graph = dep_graph,
       )
-      check_request.buildbucket_proto.serialized_proto = (
-          build_pb2.Build.SerializeToString(build))
       for gc in build.input.gerrit_changes:
         new_gc = check_request.gerrit_changes.add()
         new_gc.serialized_proto = (

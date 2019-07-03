@@ -101,7 +101,7 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_json",
-      "{\"buildbucketProto\": {\"serializedProto\": \"CNDsgNmu8bWSfBIgCghjaHJvbWVvcxICY3EaEGFtZDY0LWdlbmVyaWMtY3EiHHVzZXI6Y29tbWl0LWJvdEBjaHJvbWl1bS5vcmcyBgi5wqLYBXo0GjIKIGNocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxjAxAcgB5oBGAoPY3FfZXhwZXJpbWVudGFsEgVmYWxzZQ==\"}, \"gerritChanges\": [{\"serializedProto\": \"CiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRIIY2hyb21lb3MYwMQHIAc=\"}]}",
+      "{\"gerritChanges\": [{\"serializedProto\": \"CiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRIIY2hyb21lb3MYwMQHIAc=\"}]}",
       "--output_json",
       "/path/to/tmp/json"
     ],
@@ -1224,7 +1224,7 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_json",
-      "{\"buildbucketProto\": {\"serializedProto\": \"CNDsgNmu8bWSfBIgCghjaHJvbWVvcxICY3EaEGFtZDY0LWdlbmVyaWMtY3EiHHVzZXI6Y29tbWl0LWJvdEBjaHJvbWl1bS5vcmcyBgi5wqLYBXo0GjIKIGNocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxjAxAcgB5oBGAoPY3FfZXhwZXJpbWVudGFsEgVmYWxzZQ==\"}, \"depGraph\": {\"packageDeps\": [{\"dependencySourcePaths\": [{\"path\": \"some/source/dir\"}]}]}, \"gerritChanges\": [{\"serializedProto\": \"CiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRIIY2hyb21lb3MYwMQHIAc=\"}]}",
+      "{\"depGraph\": {\"packageDeps\": [{\"dependencySourcePaths\": [{\"path\": \"some/source/dir\"}]}]}, \"gerritChanges\": [{\"serializedProto\": \"CiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRIIY2hyb21lb3MYwMQHIAc=\"}]}",
       "--output_json",
       "/path/to/tmp/json"
     ],
