@@ -16,6 +16,8 @@ from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+from PB.recipe_modules.chromeos.failures.failures import FailuresProperties
+
 
 def RunSteps(api):
   build_success = build_pb2.Build(id=101, status=common_pb2.SUCCESS)
@@ -153,3 +155,6 @@ def moblab_vm_build(**kwargs):
 
 def GenTests(api):
   yield api.test('basic') + api.step_data('A failed step', retcode=1)
+
+  yield api.test('disable_silences') + api.properties(
+      **{'$chromeos/failures': FailuresProperties(disable_silences=True)})

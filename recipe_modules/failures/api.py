@@ -15,6 +15,10 @@ from recipe_engine import recipe_api
 class FailuresApi(recipe_api.RecipeApi):
   """A module for presenting errors and raising StepFailures."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super(FailuresApi, self).__init__(*args, **kwargs)
+    self._disable_silences = properties.disable_silences
+
   def _get_silence_reason(self, step_name):
     """Query SoM to see if the step was silenced.
 
@@ -25,6 +29,9 @@ class FailuresApi(recipe_api.RecipeApi):
     Return:
       A str explaining the silence, or None if there is no silence on the step.
     """
+    if self._disable_silences:
+      return None
+
     # TODO(crbug.com/903414): Remove ignore exceptions once calling SoM is
     # stable.
     with self.ignore_exceptions():
