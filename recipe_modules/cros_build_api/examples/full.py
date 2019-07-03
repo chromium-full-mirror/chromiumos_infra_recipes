@@ -70,6 +70,7 @@ def RunSteps(api):
       },
       'PackageService': {
           'GetBestVisible': packages.GetBestVisibleResponse,
+          'Uprev': packages.UprevPackagesResponse,
       },
       'SdkService': {
           'Create': sdk.CreateResponse,

@@ -12,7 +12,6 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.portage.uprev_packages(boards=['a', 'b'])
   api.portage.commit_package_uprevs()
   api.portage.push_package_uprevs(dryrun=True)
 

@@ -30,8 +30,10 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import TEST
 from PB.chromiumos.common import PackageInfo
+from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
+from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sysroot import Profile
@@ -81,8 +83,12 @@ def RunSteps(api, properties):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-      # TODO(evanhernandez): Replace with build API call.
-      api.portage.uprev_packages(boards=[build_target.name])
+      with api.step.nest('uprev packages') as step:
+        request = UprevPackagesRequest(
+            chroot=api.cros_sdk.chroot,
+            build_targets=[BuildTarget(name=build_target.name)],
+            overlay_type=OVERLAYTYPE_BOTH)
+        response = api.cros_build_api.PackageService.Uprev(request)
 
       with api.step.nest('init sdk') as step:
         response = api.cros_build_api.SdkService.Create(

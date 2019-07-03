@@ -13,25 +13,6 @@ from recipe_engine import recipe_api
 class PortageApi(recipe_api.RecipeApi):
   """A module for CrOS Portage steps."""
 
-  def uprev_packages(self, boards=None):
-    """Uprevs portage packages for all boards, but makes no commits.
-
-    Must be run with cwd inside a chromiumos source root.
-
-    Args:
-      boards (list[str]): The list of boards to uprev.
-    """
-    cmd = [
-        'vpython',
-        'chromite/scripts/cros_uprev',
-        '--overlay-type', 'both',
-        '--chroot', self.m.cros_sdk.chroot.path,
-        '--all',
-    ]
-    if boards is not None:
-      cmd.extend(['--boards', ':'.join(boards)])
-    return self.m.step('uprev portage packages', cmd)
-
   def commit_package_uprevs(self):
     """Uprevs portage packages for all boards.
 

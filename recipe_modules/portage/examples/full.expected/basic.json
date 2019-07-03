@@ -1,41 +1,5 @@
 [
   {
-    "cmd": [],
-    "name": "configure chroot path"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.ensure chroot directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "chromite/scripts/cros_uprev",
-      "--overlay-type",
-      "both",
-      "--chroot",
-      "[CACHE]/cros_chroot",
-      "--all",
-      "--boards",
-      "a:b"
-    ],
-    "name": "uprev portage packages"
-  },
-  {
     "cmd": [
       "vpython",
       "chromite/bin/cros_mark_as_stable",

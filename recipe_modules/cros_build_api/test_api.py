@@ -108,6 +108,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'category': 'category',
             'version': 'version'
         })
+    responses['Uprev'] = jsonify(modified_ebuilds=[
+        {'path': 'ebuild1'},
+        {'path': 'ebuild2'},
+    ])
     return responses
 
   @property
