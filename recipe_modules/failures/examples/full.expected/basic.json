@@ -43,7 +43,7 @@
     "name": "build results (3).[FAILED] ..",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -131,7 +131,7 @@
     "name": "build results (3).[FAILED] .. (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -150,7 +150,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@silence reason@step failure has bugs linked by Sheriff-o-Matic.@@@",
       "@@@STEP_LOG_END@silence reason@@@",
-      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -181,7 +181,7 @@
     "name": "hw test results (3).[FAILED] target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://google.com@@@",
+      "@@@STEP_LINK@suite job details@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -190,7 +190,7 @@
     "name": "hw test results (3).[FAILED] target.hw.bvt-cq (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://google.com@@@",
+      "@@@STEP_LINK@suite job details@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -221,7 +221,7 @@
     "name": "vm test results (3).[FAILED] target.vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/606@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/606@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -230,7 +230,7 @@
     "name": "vm test results (3).[FAILED] target.vm.suite (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/606@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/606@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -261,7 +261,7 @@
     "name": "moblab vm test results (3).[FAILED BUT IGNORED] target.moblab-vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/909@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/909@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

@@ -43,7 +43,7 @@
     "name": "build results (3).[FAILED] ..",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -52,7 +52,7 @@
     "name": "build results (3).[FAILED] .. (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -69,7 +69,7 @@
     "name": "build results (4).[FAILED] ..",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

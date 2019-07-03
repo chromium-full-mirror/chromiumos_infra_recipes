@@ -209,7 +209,7 @@ def RunSteps(api, properties):
   api.cros_history.set_passed_tests(passed_tests)
 
   # Verify builds/tests in a deferred context so that all failures appear.
-  with api.step.nest('results'):
+  with api.step.nest('check test results'):
     with api.step.defer_results():
       api.failures.raise_failed_builds(completed_builds)
       api.failures.raise_failed_baseline_verified_hw_tests(

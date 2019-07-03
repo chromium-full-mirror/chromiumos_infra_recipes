@@ -1074,14 +1074,14 @@
   },
   {
     "cmd": [],
-    "name": "results",
+    "name": "check test results",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "results.build results",
+    "name": "check test results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@1 builds failed, 1 succeeded, 0 silenced@@@",
@@ -1090,10 +1090,10 @@
   },
   {
     "cmd": [],
-    "name": "results.build results.[FAILED] ..amd64-generic-postsubmit",
+    "name": "check test results.build results.[FAILED] ..amd64-generic-postsubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@task url@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -1105,7 +1105,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "results.build results.[FAILED] ..amd64-generic-postsubmit.get access token for default account",
+    "name": "check test results.build results.[FAILED] ..amd64-generic-postsubmit.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1126,7 +1126,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "results.build results.[FAILED] ..amd64-generic-postsubmit.get Sheriff-o-Matic annotations",
+    "name": "check test results.build results.[FAILED] ..amd64-generic-postsubmit.get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",
@@ -1178,7 +1178,7 @@
   },
   {
     "cmd": [],
-    "name": "results.hw test results",
+    "name": "check test results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all hw tests succeeded@@@"
@@ -1186,7 +1186,7 @@
   },
   {
     "cmd": [],
-    "name": "results.vm test results",
+    "name": "check test results.vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all vm tests succeeded@@@"
@@ -1194,7 +1194,7 @@
   },
   {
     "cmd": [],
-    "name": "results.moblab vm test results",
+    "name": "check test results.moblab vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all moblab vm tests succeeded@@@"

@@ -58,7 +58,7 @@ class FailuresApi(recipe_api.RecipeApi):
           # as Sheriff-o-Matic.
           with self.m.step.nest(title) as failure_step:
             failure_step.presentation.status = self.m.step.FAILURE
-            failure_step.presentation.links['task url'] = url
+            failure_step.presentation.links['suite job details'] = url
 
             silence_reason = self._get_silence_reason(
                 self.m.step.active_result.name)

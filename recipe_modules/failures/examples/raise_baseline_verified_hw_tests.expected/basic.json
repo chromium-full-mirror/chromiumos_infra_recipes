@@ -26,7 +26,7 @@
     "name": "hw test results (3).[FAILED] target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://google.com@@@",
+      "@@@STEP_LINK@suite job details@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -114,7 +114,7 @@
     "name": "hw test results (3).[FAILED] target.hw.bvt-cq (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://google.com@@@",
+      "@@@STEP_LINK@suite job details@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -138,7 +138,7 @@
     "name": "baseline hw test results.[FAILED BUT IGNORED] target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://google.com@@@",
+      "@@@STEP_LINK@suite job details@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -155,7 +155,7 @@
     "name": "hw test results (5).[FAILED] target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@task url@https://google.com@@@",
+      "@@@STEP_LINK@suite job details@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

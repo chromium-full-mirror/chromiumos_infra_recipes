@@ -1074,11 +1074,11 @@
   },
   {
     "cmd": [],
-    "name": "results"
+    "name": "check test results"
   },
   {
     "cmd": [],
-    "name": "results.build results",
+    "name": "check test results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all builds succeeded@@@"
@@ -1086,7 +1086,7 @@
   },
   {
     "cmd": [],
-    "name": "results.hw test results",
+    "name": "check test results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all hw tests succeeded@@@"
@@ -1094,7 +1094,7 @@
   },
   {
     "cmd": [],
-    "name": "results.vm test results",
+    "name": "check test results.vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all vm tests succeeded@@@"
@@ -1102,7 +1102,7 @@
   },
   {
     "cmd": [],
-    "name": "results.moblab vm test results",
+    "name": "check test results.moblab vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all moblab vm tests succeeded@@@"
