@@ -53,11 +53,11 @@ class CrosBisectApi(recipe_api.RecipeApi):
         'failed_step': 'install packages|installation results',
     }
 
-  def set_build_compile_failure(self, failed_packages):
-    """Outputs failure of the failed packages for FindIt consumption.
+  def set_compile_failures(self, failed_packages):
+    """Outputs the failed packages, if any, for FindIt consumption.
 
-    Outputs failure of the indicated packages for consumption by FindIt
-    under the output property "BuildCompileFailureOutput". If there are no
+    Outputs build failure of the indicated packages for consumption by FindIt
+    under the output property "compile_failures". If there are no
     failed packages this method outputs nothing.
 
     Args:
@@ -67,7 +67,39 @@ class CrosBisectApi(recipe_api.RecipeApi):
     if not failed_packages:
       return
     payload = self._create_failures_payload(failed_packages)
+    # TODO(dburger): stop setting under this old key when FindIt starts
+    # reading under new key "compile_failures".
     self.m.easy.set_property_step('build_compile_failure_output', payload)
+    self.m.easy.set_property_step('compile_failures', payload)
+
+  def set_test_failures(self, hw_results):
+    """Outputs the failed hardware tests, if any, for FindIt consumption.
+
+    Outputs hardware test failures from the results for consumption by FindIt
+    under the output property "test_failures". If there are no failed hardware
+    tests this method outputs nothing.
+
+    Args:
+      hw_results (list[SkylabResult]): list of SkylabResults from running
+          hardware tests
+    """
+    hw_failed_results = [
+        result for result in hw_results
+        if self.m.failures.is_critical_hw_test_failure(result)
+    ]
+    hw_test_failures = []
+    for result in hw_failed_results:
+      test = result.task.test
+      hw_test_failures.append({
+          # This must match the step name as known by sherrif-o-matic.
+          'failed_step': 'results|hw test results|' + test.common.display_name,
+          'test_spec': jsonpb.MessageToJson(test),
+      })
+    if hw_test_failures:
+      payload = {
+        'hw_test_failures': hw_test_failures
+      }
+      self.m.easy.set_property_step('test_failures', payload)
 
   def get_packages(self):
     """Returns packages to build as specified by FindIt or empty list.

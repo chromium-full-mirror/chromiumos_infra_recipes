@@ -16,6 +16,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/swarming',
     'recipe_engine/step',
+    'cros_bisect',
     'cros_history',
     'cros_infra_config',
     'cros_relevance',
@@ -230,6 +231,7 @@ def RunSteps(api, properties):
 
   # Verify builds/tests in a deferred context so that all failures appear.
   with api.step.nest('check test results'):
+    api.cros_bisect.set_test_failures(hw_results)
     failures.extend(
         api.failures.get_hw_test_failures(hw_results, baseline_hw_results))
     failures.extend(

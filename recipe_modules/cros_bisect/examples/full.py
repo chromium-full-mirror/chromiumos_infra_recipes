@@ -26,7 +26,7 @@ def RunSteps(api, properties):
   api.assertions.assertItemsEqual(api.cros_bisect.get_packages(),
                                   properties.expected_packages)
 
-  api.cros_bisect.set_build_compile_failure(properties.failed_packages)
+  api.cros_bisect.set_compile_failures(properties.failed_packages)
 
 def GenTests(api):
   yield api.test('basic')
