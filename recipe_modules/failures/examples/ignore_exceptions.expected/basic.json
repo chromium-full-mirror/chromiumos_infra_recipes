@@ -1,0 +1,16 @@
+[
+  {
+    "cmd": [
+      "ls"
+    ],
+    "name": "a failed step",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@StepFailure(\"Step('a failed step') (retcode: 1)\",)@@@",
+      "@@@STEP_LOG_END@caught exception@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

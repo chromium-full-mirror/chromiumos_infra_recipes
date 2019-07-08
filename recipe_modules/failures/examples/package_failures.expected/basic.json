@@ -1,0 +1,22 @@
+[
+  {
+    "cmd": [],
+    "name": "installation results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all packages installed successfully@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "installation results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed to install 1 packages@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@/package@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

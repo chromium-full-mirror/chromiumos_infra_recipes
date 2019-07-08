@@ -1,40 +1,43 @@
 [
   {
     "cmd": [],
-    "name": "installation results",
+    "name": "build results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all packages installed successfully@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "installation results (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install 1 packages@@@",
-      "@@@STEP_LOG_LINE@list of failed packages@/package@@@",
-      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results",
+    "name": "build results.[FAILED] ..",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all builds succeeded@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
     "name": "build results (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all builds succeeded@@@"
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (2).[FAILED] ..",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
     "name": "build results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@2 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -43,16 +46,7 @@
     "name": "build results (3).[FAILED] ..",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (3).[FAILED] .. (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -69,7 +63,7 @@
     "name": "build results (4).[FAILED] ..",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

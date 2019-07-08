@@ -76,8 +76,13 @@
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [easy:examples/full](#recipes-easy_examples_full)
-  * [failures:examples/full](#recipes-failures_examples_full)
-  * [failures:examples/raise_baseline_verified_hw_tests](#recipes-failures_examples_raise_baseline_verified_hw_tests)
+  * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
+  * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
+  * [failures:examples/ignore_exceptions](#recipes-failures_examples_ignore_exceptions)
+  * [failures:examples/moblab_vm_test_failures](#recipes-failures_examples_moblab_vm_test_failures)
+  * [failures:examples/package_failures](#recipes-failures_examples_package_failures)
+  * [failures:examples/silences](#recipes-failures_examples_silences)
+  * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
@@ -2100,20 +2105,45 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 [DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
-### *recipes* / [failures:examples/full](/recipe_modules/failures/examples/full.py)
+### *recipes* / [failures:examples/build\_failures](/recipe_modules/failures/examples/build_failures.py)
 
-[DEPS](/recipe_modules/failures/examples/full.py#6): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/failures/examples/build_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/build_failures.py#15)(api):**
+### *recipes* / [failures:examples/hw\_test\_failures](/recipe_modules/failures/examples/hw_test_failures.py)
 
-&mdash; **def [moblab\_vm\_build](/recipe_modules/failures/examples/full.py#150)(\*\*kwargs):**
+[DEPS](/recipe_modules/failures/examples/hw_test_failures.py#6): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [vm\_build](/recipe_modules/failures/examples/full.py#144)(\*\*kwargs):**
-### *recipes* / [failures:examples/raise\_baseline\_verified\_hw\_tests](/recipe_modules/failures/examples/raise_baseline_verified_hw_tests.py)
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/hw_test_failures.py#14)(api):**
+### *recipes* / [failures:examples/ignore\_exceptions](/recipe_modules/failures/examples/ignore_exceptions.py)
 
-[DEPS](/recipe_modules/failures/examples/raise_baseline_verified_hw_tests.py#6): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/examples/ignore_exceptions.py#6): [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/raise_baseline_verified_hw_tests.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/ignore_exceptions.py#11)(api):**
+### *recipes* / [failures:examples/moblab\_vm\_test\_failures](/recipe_modules/failures/examples/moblab_vm_test_failures.py)
+
+[DEPS](/recipe_modules/failures/examples/moblab_vm_test_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/moblab_vm_test_failures.py#20)(api):**
+
+&mdash; **def [moblab\_vm\_build](/recipe_modules/failures/examples/moblab_vm_test_failures.py#15)(\*\*kwargs):**
+### *recipes* / [failures:examples/package\_failures](/recipe_modules/failures/examples/package_failures.py)
+
+[DEPS](/recipe_modules/failures/examples/package_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/package_failures.py#14)(api):**
+### *recipes* / [failures:examples/silences](/recipe_modules/failures/examples/silences.py)
+
+[DEPS](/recipe_modules/failures/examples/silences.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/silences.py#17)(api):**
+### *recipes* / [failures:examples/vm\_test\_failures](/recipe_modules/failures/examples/vm_test_failures.py)
+
+[DEPS](/recipe_modules/failures/examples/vm_test_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/vm_test_failures.py#20)(api):**
+
+&mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#15)(\*\*kwargs):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

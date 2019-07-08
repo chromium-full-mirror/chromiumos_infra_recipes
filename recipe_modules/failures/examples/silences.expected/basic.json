@@ -1,49 +1,18 @@
 [
   {
     "cmd": [],
-    "name": "installation results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all packages installed successfully@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "installation results (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install 1 packages@@@",
-      "@@@STEP_LOG_LINE@list of failed packages@/package@@@",
-      "@@@STEP_LOG_END@list of failed packages@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "build results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (3)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@2 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results (3).[FAILED] ..",
+    "name": "build results.[FAILED] ..",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -55,7 +24,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "build results (3).[FAILED] ...get access token for default account",
+    "name": "build results.[FAILED] ...get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -76,7 +45,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "build results (3).[FAILED] ...get Sheriff-o-Matic annotations",
+    "name": "build results.[FAILED] ...get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",
@@ -124,10 +93,35 @@
   },
   {
     "cmd": [],
-    "name": "build results (3).[FAILED] .. (2)",
+    "name": "build results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (2).[FAILED] ..",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (3)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (3).[FAILED] ..",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -146,129 +140,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@silence reason@step failure is snoozed by Sheriff-o-Matic.@@@",
       "@@@STEP_LOG_END@silence reason@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "hw test results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all hw tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "hw test results (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all hw tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "hw test results (3)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@2 hw tests failed, 0 succeeded, 0 silenced@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "hw test results (3).[FAILED] target.hw.bvt-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://google.com@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "hw test results (3).[FAILED] target.hw.bvt-cq (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://google.com@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "vm test results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all vm tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "vm test results (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all vm tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "vm test results (3)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@2 vm tests failed, 0 succeeded, 0 silenced@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "vm test results (3).[FAILED] target.vm.suite",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/606@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "vm test results (3).[FAILED] target.vm.suite (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/606@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "moblab vm test results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all moblab vm tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "moblab vm test results (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all moblab vm tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "moblab vm test results (3)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@1 moblab vm tests failed, 0 succeeded, 0 silenced@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "moblab vm test results (3).[FAILED BUT IGNORED] target.moblab-vm.suite",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/909@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "ls"
-    ],
-    "name": "A failed step",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@caught exception@StepFailure(\"Step('A failed step') (retcode: 1)\",)@@@",
-      "@@@STEP_LOG_END@caught exception@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
