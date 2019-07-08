@@ -36,22 +36,18 @@ class CrosSomTestApi(recipe_test_api.RecipeTestApi):
    },
    {
       "key":"chromeos.buildbucket:build results (4)|[FAILED] ..",
-      "bugs":[
-        "780"
-      ],
-      "snoozeTime": 0,
+      "bugs":null,
+      "snoozeTime": 9999000000000,
       "group_id":""
    },
    {
       "key":"123",
-      "snoozeTime": 0,
-      "group_id":"Group with linked bugs",
-      "bugs":[
-        "999"
-      ]
+      "snoozeTime": 9999000000000,
+      "group_id":"Group with snooze",
+      "bugs":null
    },
    {
-      "key":"chromeos.buildbucket:step in group with linked bugs",
+      "key":"chromeos.buildbucket:step in group with snooze",
       "bugs":null,
       "snoozeTime": 0,
       "group_id":"123"

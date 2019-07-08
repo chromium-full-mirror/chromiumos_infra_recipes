@@ -94,9 +94,6 @@ class CrosSomApi(recipe_api.RecipeApi):
     if self.m.time.ms_since_epoch() < annotation.snooze_time_ms:
       return 'step failure is snoozed by Sheriff-o-Matic.'
 
-    if annotation.bugs:
-      return 'step failure has bugs linked by Sheriff-o-Matic.'
-
     return None
 
   def get_silence_reason(self, annotation):

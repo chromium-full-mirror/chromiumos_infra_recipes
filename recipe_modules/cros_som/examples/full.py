@@ -14,9 +14,7 @@ def RunSteps(api):
   api.assertions.assertIsNotNone(annotation)
   api.assertions.assertEqual(annotation.bugs, ['1234'])
   api.assertions.assertEqual(annotation.snooze_time_ms, 0)
-  api.assertions.assertEqual(
-      api.cros_som.get_silence_reason(annotation),
-      'step failure has bugs linked by Sheriff-o-Matic.')
+  api.assertions.assertIsNone(api.cros_som.get_silence_reason(annotation))
 
   annotation = api.cros_som.get_annotation('snoozed step')
   api.assertions.assertIsNotNone(annotation)
@@ -33,14 +31,14 @@ def RunSteps(api):
   api.assertions.assertEqual(annotation.snooze_time_ms, 0)
   api.assertions.assertIsNone(api.cros_som.get_silence_reason(annotation))
 
-  annotation = api.cros_som.get_annotation('step in group with linked bugs')
+  annotation = api.cros_som.get_annotation('step in group with snooze')
   api.assertions.assertIsNotNone(annotation)
   api.assertions.assertIsNone(annotation.bugs)
   api.assertions.assertEqual(annotation.snooze_time_ms, 0)
   api.assertions.assertEqual(annotation.group_id, "123")
   api.assertions.assertEqual(
       api.cros_som.get_silence_reason(annotation),
-      'step failure has bugs linked by Sheriff-o-Matic.')
+      'step failure is snoozed by Sheriff-o-Matic.')
 
   api.assertions.assertIsNone(api.cros_som.get_annotation('bad step'))
 

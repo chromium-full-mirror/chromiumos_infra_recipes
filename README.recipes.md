@@ -687,7 +687,7 @@ Return a `SomAnnotation` for `step_name`.
 
 None if there is no annotation for the step.
 
-&mdash; **def [get\_silence\_reason](/recipe_modules/cros_som/api.py#102)(self, annotation):**
+&mdash; **def [get\_silence\_reason](/recipe_modules/cros_som/api.py#99)(self, annotation):**
 
 Return the reason an annotation is silenced, None if there is no silence.
 
