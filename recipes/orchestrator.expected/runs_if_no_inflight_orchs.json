@@ -450,6 +450,18 @@
   },
   {
     "cmd": [],
+    "name": "check build results"
+  },
+  {
+    "cmd": [],
+    "name": "check build results.build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@all builds succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests"
   },
   {
@@ -1647,14 +1659,6 @@
   },
   {
     "cmd": [],
-    "name": "check test results.build results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "check test results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1667,14 +1671,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all vm tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check test results.moblab vm test results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all moblab vm tests succeeded@@@"
     ]
   },
   {

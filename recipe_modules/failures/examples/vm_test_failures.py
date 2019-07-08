@@ -18,11 +18,9 @@ def vm_build(**kwargs):
   return build
 
 def RunSteps(api):
-  vm_success = vm_build(id=404, status=common_pb2.SUCCESS)
-  vm_failure = vm_build(id=505,
-                        status=common_pb2.FAILURE,
-                        critical=common_pb2.NO)
-  vm_critical_failure = vm_build(id=606, status=common_pb2.FAILURE)
+  vm_success = vm_build(status=common_pb2.SUCCESS)
+  vm_failure = vm_build(status=common_pb2.FAILURE, critical=common_pb2.NO)
+  vm_critical_failure = vm_build(status=common_pb2.FAILURE)
 
   # Check boolean functions.
   api.assertions.assertFalse(api.failures.is_vm_test_failure(vm_success))
@@ -37,12 +35,12 @@ def RunSteps(api):
   api.assertions.assertTrue(
       api.failures.is_critical_vm_test_failure(vm_critical_failure))
 
-  # Raise on critical vm test failures.
-  api.failures.raise_failed_vm_tests([vm_success])
-  api.failures.raise_failed_vm_tests([vm_failure])
-  api.assertions.assertRaises(api.step.StepFailure,
-                              api.failures.raise_failed_vm_tests,
-                              [vm_critical_failure, vm_critical_failure])
+  # Return only critical vm test failures.
+  api.assertions.assertFalse(api.failures.get_vm_test_failures([vm_success]))
+  api.assertions.assertFalse(api.failures.get_vm_test_failures([vm_failure]))
+  api.assertions.assertEqual(
+      api.failures.get_vm_test_failures([vm_critical_failure]),
+      [api.failures.Failure('vm test', 'target.vm.suite', True)])
 
 def GenTests(api):
   yield api.test('basic')

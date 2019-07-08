@@ -35,7 +35,7 @@ class CrosSomTestApi(recipe_test_api.RecipeTestApi):
       "group_id":""
    },
    {
-      "key":"chromeos.buildbucket:build results (4)|[FAILED] ..",
+      "key":"chromeos.buildbucket:build results (4)|[FAILED] chromeos.bucket.builder",
       "bugs":null,
       "snoozeTime": 9999000000000,
       "group_id":""

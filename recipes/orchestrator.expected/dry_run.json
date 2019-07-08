@@ -285,8 +285,13 @@
   },
   {
     "cmd": [],
-    "name": "build results",
+    "name": "check build results"
+  },
+  {
+    "cmd": [],
+    "name": "check build results.build results",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all builds succeeded@@@"
     ]
   },

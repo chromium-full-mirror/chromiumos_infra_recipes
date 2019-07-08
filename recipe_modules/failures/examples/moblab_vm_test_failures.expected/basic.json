@@ -23,10 +23,10 @@
   },
   {
     "cmd": [],
-    "name": "moblab vm test results (3).[FAILED BUT IGNORED] target.moblab-vm.suite",
+    "name": "moblab vm test results (3).[FAILED] target.moblab-vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/909@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -38,7 +38,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "moblab vm test results (3).[FAILED BUT IGNORED] target.moblab-vm.suite.get access token for default account",
+    "name": "moblab vm test results (3).[FAILED] target.moblab-vm.suite.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -59,7 +59,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "moblab vm test results (3).[FAILED BUT IGNORED] target.moblab-vm.suite.get Sheriff-o-Matic annotations",
+    "name": "moblab vm test results (3).[FAILED] target.moblab-vm.suite.get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",
@@ -86,7 +86,7 @@
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|[FAILED] ..\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|[FAILED] chromeos.bucket.builder\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",

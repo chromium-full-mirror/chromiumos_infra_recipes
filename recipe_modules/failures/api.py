@@ -6,7 +6,9 @@
 """API for raising failures and presenting them in cute ways."""
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
 
+import collections
 import contextlib
 
 from recipe_engine import recipe_api
@@ -14,6 +16,15 @@ from recipe_engine import recipe_api
 
 class FailuresApi(recipe_api.RecipeApi):
   """A module for presenting errors and raising StepFailures."""
+
+  # A failure in recipe execution.
+  #
+  # Fields:
+  #   kind (str): Describes the kind of failure, e.g. 'build'
+  #   title (str): Full title of the failure.
+  #   fatal (bool): Whether or not the failure is fatal. Fatal failures cause
+  #       recipes to fail when the failure is aggregated.
+  Failure = collections.namedtuple('Failure', ['kind', 'title', 'fatal'])
 
   def __init__(self, properties, *args, **kwargs):
     super(FailuresApi, self).__init__(*args, **kwargs)
@@ -42,59 +53,58 @@ class FailuresApi(recipe_api.RecipeApi):
 
       return self.m.cros_som.get_silence_reason(annotation)
 
-  def _raise_failures(self, kind, runs, is_failure, get_title, get_url,
-                      fatal=True):
-    with self.m.step.nest('{} results'.format(kind)) as step:
-      fail_count = 0
+  def _get_failures(self, kind, runs, is_failure, get_title, get_url):
+    with self.m.step.nest('{} results'.format(kind)) as results_step:
+      failures = []
+      failed_runs = filter(is_failure, runs)
       silenced_count = 0
 
-      for run in runs:
-        if is_failure(run):
-          title = '[{}] {}'.format('FAILED' if fatal else 'FAILED BUT IGNORED',
-                                   get_title(run))
-          url = get_url(run)
+      for failed_run in failed_runs:
+        title = get_title(failed_run)
+        url = get_url(failed_run)
 
-          # Each failure gets a substep, which helps with reporting tools such
-          # as Sheriff-o-Matic.
-          with self.m.step.nest(title) as failure_step:
-            failure_step.presentation.status = self.m.step.FAILURE
-            failure_step.presentation.links['suite job details'] = url
+        # Each failure gets a substep, which helps with reporting tools such
+        # as Sheriff-o-Matic.
+        with self.m.step.nest('[FAILED] {}'.format(title)) as failure_step:
+          failure_step.presentation.status = self.m.step.FAILURE
+          failure_step.presentation.links['suite job details'] = url
+          fatal = True
 
-            silence_reason = self._get_silence_reason(
-                self.m.step.active_result.name)
-            if silence_reason:
-              silenced_count += 1
+          silence_reason = self._get_silence_reason(
+              self.m.step.active_result.name)
+          if silence_reason:
+            silenced_count += 1
+            fatal = False
 
-              # Sheriff-o-Matic monitors failed steps, so we cannot modify the
-              # step name because it is silenced. For example, imagine the step
-              # "build results|[FAILED] chromeos.bucket.builder" is failing and
-              # silenced in SoM. If in the next run we change the step name to
-              # "build results|[FAILED BUT SILENCED] chromeos.bucket.builder",
-              # there will be a new (unsilenced) failure, and the old (silenced)
-              # failure will disappear from SoM.
-              failure_step.presentation.logs['silence reason'] = [
-                  silence_reason
-              ]
-            else:
-              fail_count += 1
+            # Sheriff-o-Matic monitors failed steps, so we cannot modify the
+            # step name because it is silenced. For example, imagine the step
+            # "build results|[FAILED] chromeos.bucket.builder" is failing and
+            # silenced in SoM. If in the next run we change the step name to
+            # "build results|[FAILED BUT SILENCED] chromeos.bucket.builder",
+            # there will be a new (unsilenced) failure, and the old (silenced)
+            # failure will disappear from SoM.
+            failure_step.presentation.logs['silence reason'] = [
+                silence_reason
+            ]
+
+          failures.append(self.Failure(kind=kind, title=title, fatal=fatal))
+
+      success_count = len(runs) - len(failed_runs)
+      fail_count = len(failed_runs) - silenced_count
 
       if not fail_count:
+        status = self.m.step.SUCCESS
         step_text = 'all {}s succeeded'.format(kind)
-
         if silenced_count:
           step_text += ' ({} failures were silenced)'.format(silenced_count)
+      else:
+        status = self.m.step.FAILURE
+        step_text = '{} {}s failed, {} succeeded, {} silenced'.format(
+            fail_count, kind, success_count, silenced_count)
 
-        step.presentation.step_text = step_text
-        return
-
-      success_count = len(runs) - fail_count - silenced_count
-
-      step.presentation.status = self.m.step.FAILURE
-      step.presentation.step_text = '{} {}s failed, {} succeeded, {} silenced'.format(
-          fail_count, kind, success_count, silenced_count)
-
-      if fatal:
-        raise self.m.step.StepFailure('{} {}s failed'.format(fail_count, kind))
+      results_step.presentation.status = status
+      results_step.presentation.step_text = step_text
+      return failures
 
   @contextlib.contextmanager
   def ignore_exceptions(self):
@@ -124,7 +134,7 @@ class FailuresApi(recipe_api.RecipeApi):
     Raises:
       StepFailure: If failed_packages is not empty.
     """
-    # TODO(evanhernandez): Migrate this function to use _raise_failures for
+    # TODO(evanhernandez): Migrate this function to use _get_failures for
     # better SoM reporting.
     with self.m.step.nest('installation results') as step:
       if not packages:
@@ -138,20 +148,64 @@ class FailuresApi(recipe_api.RecipeApi):
           self.m.naming.get_package_title, packages)
       raise self.m.step.StepFailure(message)
 
-  def raise_failed_builds(self, builds):
+  def aggregate_failures(self, failures):
+    """Returns a recipe result based on the given failures.
+
+    Only fatal failures cause the whole recipe to fail.
+
+    Args:
+      failures (list[Failure]): All failures encountered during execution.
+
+    Returns:
+      RawResult: The recipe result, including a human-readable failure summary.
+    """
+    failures = [failure for failure in failures if failure.fatal]
+
+    # If there were no fatal failures, then the recipe succeeded and there is
+    # no need for a summary.
+    if not failures:
+      return result_pb2.RawResult(status=common_pb2.SUCCESS)
+
+    # Otherwise, we need to create a detailed failure summary.
+    failures_by_kind = collections.defaultdict(list)
+    for failure in failures:
+      failures_by_kind[failure.kind].append(failure)
+
+    # The summary markdown will look roughly as follows:
+    #
+    # 1 build failed
+    # - chromeos.cq.nami-cq
+    #
+    # 2 hw tests failed
+    # - hw.coral.bvt-cq
+    # - hw.coral.bvt-tast-cq
+    # ...
+    sections = []
+    for kind in sorted(failures_by_kind):
+      titles = sorted([failure.title for failure in failures_by_kind[kind]])
+      count = len(titles)
+      lines = ['{} {} failed'.format(count, kind + 's' if count > 1 else kind)]
+      lines.extend(['- {}'.format(title) for title in titles])
+      sections.append('\n'.join(lines))
+    summary_markdown = '\n\n'.join(sections)
+
+    return result_pb2.RawResult(status=common_pb2.FAILURE,
+                                summary_markdown=summary_markdown)
+
+  def get_build_failures(self, builds):
     """Verify all builds completed successfully.
 
     Args:
       builds (list[build_pb2.Build]): List of completed builds.
 
-    Raises:
-      CompositeBuildFailure containing all failed builds.
+    Returns:
+      list[Failure]: All failures discovered in the given runs.
     """
-    self._raise_failures('build', builds, self.is_critical_build_failure,
-                         self.m.naming.get_build_title,
-                         self.m.urls.get_build_url)
+    return self._get_failures('build', builds, self.is_critical_build_failure,
+                              self.m.naming.get_build_title,
+                              self.m.urls.get_build_url)
 
-  def raise_failed_hw_tests(self, hw_tests, baseline_hw_tests=None):
+  def get_hw_test_failures(self, hw_tests, baseline_hw_tests=None):
     """Logs hardware test status to UI, and raises on failed tests.
 
     Args:
@@ -159,10 +213,10 @@ class FailuresApi(recipe_api.RecipeApi):
       baseline_hw_tests (list[SkylabResult]): List of Skylab suite
         results from the baseline tests.
 
-    Raises:
-      recipe_api.StepFailure: If any tests failed.
+    Returns:
+      list[Failure]: All failures discovered in the given runs.
     """
-    ## TODO: Make this function more generic.
+    ## TODO(dhanyaganesh): Make this function more generic.
     failed_baseline_test_names = set([
         self.m.naming.get_skylab_result_title(test)
         for test in baseline_hw_tests or []
@@ -172,42 +226,45 @@ class FailuresApi(recipe_api.RecipeApi):
         test for test in hw_tests if self.m.naming.get_skylab_result_title(test)
         not in failed_baseline_test_names
     ]
-    self._raise_failures('hw test', filtered_hw_tests,
+    failures = self._get_failures('hw test', filtered_hw_tests,
+                                  self.is_critical_hw_test_failure,
+                                  self.m.naming.get_skylab_result_title,
+                                  self.m.urls.get_skylab_result_url)
+    if baseline_hw_tests:
+      # Present, but do not fail on, baseline hardware tests.
+      self._get_failures('baseline hw test', baseline_hw_tests,
                          self.is_critical_hw_test_failure,
                          self.m.naming.get_skylab_result_title,
                          self.m.urls.get_skylab_result_url)
-    if baseline_hw_tests:
-      self._raise_failures('baseline hw test', baseline_hw_tests,
-                           self.is_critical_hw_test_failure,
-                           self.m.naming.get_skylab_result_title,
-                           self.m.urls.get_skylab_result_url, fatal=False)
+    return failures
 
-
-  def raise_failed_vm_tests(self, vm_tests):
+  def get_vm_test_failures(self, vm_tests):
     """Logs VM test status to UI, and raises on failed tests.
 
     Args:
       vm_tests (list[Build]): List of VM test buildbucket results.
 
-    Raises:
-      recipe_api.StepFailure: If any tests failed.
+    Returns:
+      list[Failure]: All failures discovered in the given runs.
     """
-    self._raise_failures('vm test', vm_tests, self.is_critical_vm_test_failure,
-                         self.m.naming.get_vm_test_title,
-                         self.m.urls.get_build_url)
+    return self._get_failures('vm test', vm_tests,
+                              self.is_critical_vm_test_failure,
+                              self.m.naming.get_vm_test_title,
+                              self.m.urls.get_build_url)
 
-  def raise_failed_moblab_vm_tests(self, moblab_vm_tests):
+  def get_moblab_vm_test_failures(self, moblab_vm_tests):
     """Logs Moblab VM test status to UI, but does not rais on failed tests.
-
-    TODO(evanhernandez): Raise on failure, once tests are stable.
 
     Args:
       moblab_vm_tests (list[Build]): List of Moblab VM test buildbucket results.
+
+    Returns:
+      list[Failure]: All failures discovered in the given runs.
     """
-    self._raise_failures('moblab vm test', moblab_vm_tests,
-                         self.is_critical_moblab_vm_test_failure,
-                         self.m.naming.get_moblab_vm_test_title,
-                         self.m.urls.get_build_url, fatal=False)
+    return self._get_failures('moblab vm test', moblab_vm_tests,
+                              self.is_critical_moblab_vm_test_failure,
+                              self.m.naming.get_moblab_vm_test_title,
+                              self.m.urls.get_build_url)
 
   def is_build_failure(self, build):
     """Determine if the build failed.

@@ -18,11 +18,10 @@ def moblab_vm_build(**kwargs):
   return build
 
 def RunSteps(api):
-  moblab_vm_success = moblab_vm_build(id=707, status=common_pb2.SUCCESS)
-  moblab_vm_failure = moblab_vm_build(id=808, status=common_pb2.FAILURE,
+  moblab_vm_success = moblab_vm_build(status=common_pb2.SUCCESS)
+  moblab_vm_failure = moblab_vm_build(status=common_pb2.FAILURE,
                                       critical=common_pb2.NO)
-  moblab_vm_critical_failure = moblab_vm_build(id=909,
-                                               status=common_pb2.FAILURE)
+  moblab_vm_critical_failure = moblab_vm_build(status=common_pb2.FAILURE)
 
   # Check boolean functions.
   api.assertions.assertFalse(
@@ -40,16 +39,14 @@ def RunSteps(api):
       api.failures.is_critical_moblab_vm_test_failure(
           moblab_vm_critical_failure))
 
-  # Raise on critical Moblab VM test failures.
-  api.failures.raise_failed_moblab_vm_tests([moblab_vm_success])
-  api.failures.raise_failed_moblab_vm_tests([moblab_vm_failure])
-  # TODO(evanhernandez): Uncomment this once moblab failures are fatal.
-  # api.assertions.assertRaises(api.step.StepFailure,
-  #                             api.failures.raise_failed_moblab_vm_tests,
-  #                             [moblab_vm_critical_failure,
-  #                              moblab_vm_critical_failure])
-  api.failures.raise_failed_moblab_vm_tests([moblab_vm_critical_failure])
-
+  # Return only critical Moblab VM test failures.
+  api.assertions.assertFalse(
+      api.failures.get_moblab_vm_test_failures([moblab_vm_success]))
+  api.assertions.assertFalse(
+      api.failures.get_moblab_vm_test_failures([moblab_vm_failure]))
+  api.assertions.assertEqual(
+      api.failures.get_moblab_vm_test_failures([moblab_vm_critical_failure]),
+      [api.failures.Failure('moblab vm test', 'target.moblab-vm.suite', True)])
 
 def GenTests(api):
   yield api.test('basic')

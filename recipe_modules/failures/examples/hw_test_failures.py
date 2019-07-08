@@ -32,25 +32,26 @@ def RunSteps(api):
       api.failures.is_critical_hw_test_failure(skylab_critical_failure))
 
   # Do the obvious thing without baseline tests: raise critical failures only.
-  api.failures.raise_failed_hw_tests([skylab_success])
-  api.failures.raise_failed_hw_tests([skylab_failure])
-  api.assertions.assertRaises(
-      api.step.StepFailure,
-      api.failures.raise_failed_hw_tests,
-      [skylab_critical_failure, skylab_critical_failure])
+  api.assertions.assertFalse(
+      api.failures.get_hw_test_failures([skylab_success]))
+  api.assertions.assertFalse(
+      api.failures.get_hw_test_failures([skylab_failure]))
+  api.assertions.assertEqual(
+      api.failures.get_hw_test_failures([skylab_critical_failure]),
+      [api.failures.Failure('hw test', 'target.hw.bvt-cq', True)])
 
-  # Don't raise when critical failure also fails baseline.
-  api.failures.raise_failed_hw_tests(
-      [skylab_critical_failure],
-      baseline_hw_tests=[skylab_critical_failure])
+  # Return nothing when critical failure also fails baseline.
+  api.assertions.assertFalse(
+      api.failures.get_hw_test_failures(
+          [skylab_critical_failure],
+          baseline_hw_tests=[skylab_critical_failure]))
 
-  # Raise when critical failure does not fail baseline.
-  api.assertions.assertRaises(
-      api.step.StepFailure,
-      api.failures.raise_failed_hw_tests,
-      [skylab_critical_failure],
-      baseline_hw_tests=[skylab_success])
-
+  # Return fatal failure when critical failure does not fail baseline.
+  api.assertions.assertEqual(
+      api.failures.get_hw_test_failures(
+          [skylab_critical_failure],
+          baseline_hw_tests=[skylab_success]),
+      [api.failures.Failure('hw test', 'target.hw.bvt-cq', True)])
 
 def GenTests(api):
   yield api.test('basic')

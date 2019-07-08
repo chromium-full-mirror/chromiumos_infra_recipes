@@ -17,16 +17,16 @@
     "cmd": [],
     "name": "build results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@2 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results (3).[FAILED] ..",
+    "name": "build results (3).[FAILED] chromeos.bucket.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -38,7 +38,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "build results (3).[FAILED] ...get access token for default account",
+    "name": "build results (3).[FAILED] chromeos.bucket.builder.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -59,7 +59,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "build results (3).[FAILED] ...get Sheriff-o-Matic annotations",
+    "name": "build results (3).[FAILED] chromeos.bucket.builder.get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",
@@ -86,7 +86,7 @@
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|[FAILED] ..\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|[FAILED] chromeos.bucket.builder\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
@@ -103,15 +103,6 @@
       "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
       "@@@STEP_LOG_LINE@json.output[output]@]@@@",
       "@@@STEP_LOG_END@json.output[output]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (3).[FAILED] .. (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/303@@@",
-      "@@@STEP_FAILURE@@@"
     ]
   },
   {

@@ -96,10 +96,12 @@ def RunSteps(api, properties):
       requests, timeout=60 * 60 * 4, step_name='run builds',
       url_title_fn=api.naming.get_build_title)
 
+  with api.step.nest('check build results'):
+    failures = api.failures.get_build_failures(completed_builds)
+
   # If this is a dry run, check that the builds passed and quit.
   if api.cq.state == api.cq.DRY:
-    api.failures.raise_failed_builds(completed_builds)
-    return
+    return api.failures.aggregate_failures(failures)
 
   # Otherwise, we have to run tests.
   need_tests_builds = [
@@ -210,17 +212,17 @@ def RunSteps(api, properties):
 
   # Verify builds/tests in a deferred context so that all failures appear.
   with api.step.nest('check test results'):
-    with api.step.defer_results():
-      api.failures.raise_failed_builds(completed_builds)
-      api.failures.raise_failed_hw_tests(
-          hw_results, baseline_hw_tests=baseline_hw_results)
-      api.failures.raise_failed_vm_tests(vm_results)
-      api.failures.raise_failed_moblab_vm_tests(moblab_vm_results)
+    failures.extend(api.failures.get_hw_test_failures(
+        hw_results, baseline_hw_tests=baseline_hw_results))
+    failures.extend(api.failures.get_vm_test_failures(vm_results))
+    # TODO(evanhernandez): Include Moblab VM tests here once stable.
 
   # Victory! If we've made it this far, the child builders were successful
   # and we can update the success manifest ref if it is specified.
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success',
                             snapshot)
+
+  return api.failures.aggregate_failures(failures)
 
 
 def autotest_vm_test(build_target):
