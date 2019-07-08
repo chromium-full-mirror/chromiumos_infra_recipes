@@ -151,21 +151,7 @@ class FailuresApi(recipe_api.RecipeApi):
                          self.m.naming.get_build_title,
                          self.m.urls.get_build_url)
 
-  def raise_failed_hw_tests(self, hw_tests):
-    """Logs hardware test status to UI, and raises on failed tests.
-
-    Args:
-      hw_tests (list[SkylabResult]): List of Skylab suite results.
-
-    Raises:
-      recipe_api.StepFailure: If any tests failed.
-    """
-    self._raise_failures('hw test', hw_tests, self.is_critical_hw_test_failure,
-                         self.m.naming.get_skylab_result_title,
-                         self.m.urls.get_skylab_result_url)
-
-  def raise_failed_baseline_verified_hw_tests(self, hw_tests,
-                                              baseline_hw_tests=None):
+  def raise_failed_hw_tests(self, hw_tests, baseline_hw_tests=None):
     """Logs hardware test status to UI, and raises on failed tests.
 
     Args:

@@ -212,8 +212,8 @@ def RunSteps(api, properties):
   with api.step.nest('check test results'):
     with api.step.defer_results():
       api.failures.raise_failed_builds(completed_builds)
-      api.failures.raise_failed_baseline_verified_hw_tests(
-          hw_results, baseline_hw_results)
+      api.failures.raise_failed_hw_tests(
+          hw_results, baseline_hw_tests=baseline_hw_results)
       api.failures.raise_failed_vm_tests(vm_results)
       api.failures.raise_failed_moblab_vm_tests(moblab_vm_results)
 
