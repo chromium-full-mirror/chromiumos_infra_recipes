@@ -798,8 +798,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://gs://bucket/path/to/artifacts/image.zip",
-      "[CLEANUP]/IMAGE_ZIP-_tmp_4/image.zip"
+      "gs://gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/image_zip.txt",
+      "[CLEANUP]/IMAGE_ZIP-_tmp_4/image_zip.txt"
     ],
     "infra_step": true,
     "name": "prepare artifacts.download artifacts.download IMAGE_ZIP.gsutil download",
@@ -823,8 +823,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://gs://bucket/path/to/artifacts/*.bin.json$*.bin$",
-      "[CLEANUP]/TEST_UPDATE_PAYLOAD-_tmp_5/*.bin.json$*.bin$"
+      "gs://gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/test_update_payload.txt",
+      "[CLEANUP]/TEST_UPDATE_PAYLOAD-_tmp_5/test_update_payload.txt"
     ],
     "infra_step": true,
     "name": "prepare artifacts.download artifacts.download TEST_UPDATE_PAYLOAD.gsutil download",
@@ -848,65 +848,11 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://gs://bucket/path/to/artifacts/autotest_packages.tar",
-      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_packages.tar"
+      "gs://gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/autotest_files.txt",
+      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_files.txt"
     ],
     "infra_step": true,
     "name": "prepare artifacts.download artifacts.download AUTOTEST_FILES.gsutil download",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "gs://gs://bucket/path/to/artifacts/autotest_server_package.tar.bz2",
-      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_server_package.tar.bz2"
-    ],
-    "infra_step": true,
-    "name": "prepare artifacts.download artifacts.download AUTOTEST_FILES.gsutil download (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "gs://gs://bucket/path/to/artifacts/control_files.tar",
-      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/control_files.tar"
-    ],
-    "infra_step": true,
-    "name": "prepare artifacts.download artifacts.download AUTOTEST_FILES.gsutil download (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "gs://gs://bucket/path/to/artifacts/test_suites.tar.bz2",
-      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/test_suites.tar.bz2"
-    ],
-    "infra_step": true,
-    "name": "prepare artifacts.download artifacts.download AUTOTEST_FILES.gsutil download (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -924,7 +870,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/IMAGE_ZIP-_tmp_4/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/image-under-test-_tmp_7\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/IMAGE_ZIP-_tmp_4/image_zip.txt\", \"include_files\": [], \"output\": \"[CLEANUP]/image-under-test-_tmp_7\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -956,7 +902,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/TEST_UPDATE_PAYLOAD-_tmp_5/*.bin.json$*.bin$",
+      "[CLEANUP]/TEST_UPDATE_PAYLOAD-_tmp_5/test_update_payload.txt",
       "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
     ],
     "infra_step": true,
@@ -973,62 +919,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_packages.tar",
+      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_files.txt",
       "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
     ],
     "infra_step": true,
     "name": "prepare artifacts.group artifacts for moblab image cache.add AUTOTEST_FILES to cache payload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/autotest_server_package.tar.bz2",
-      "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
-    ],
-    "infra_step": true,
-    "name": "prepare artifacts.group artifacts for moblab image cache.add AUTOTEST_FILES to cache payload (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/control_files.tar",
-      "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
-    ],
-    "infra_step": true,
-    "name": "prepare artifacts.group artifacts for moblab image cache.add AUTOTEST_FILES to cache payload (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/AUTOTEST_FILES-_tmp_6/test_suites.tar.bz2",
-      "[CLEANUP]/moblab-cache-artifacts-_tmp_8"
-    ],
-    "infra_step": true,
-    "name": "prepare artifacts.group artifacts for moblab image cache.add AUTOTEST_FILES to cache payload (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

@@ -19,8 +19,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://gs://bucket/path/image.zip",
-      "[CLEANUP]/IMAGE_ZIP-_tmp_1/image.zip"
+      "gs://gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/image_zip.txt",
+      "[CLEANUP]/IMAGE_ZIP-_tmp_1/image_zip.txt"
     ],
     "infra_step": true,
     "name": "download artifacts.download IMAGE_ZIP.gsutil download",

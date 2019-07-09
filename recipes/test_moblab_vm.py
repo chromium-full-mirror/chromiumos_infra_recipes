@@ -26,6 +26,7 @@ DEPS = [
     'cros_build_api',
     'cros_sdk',
     'cros_source',
+    'cros_test_plan',
     'gerrit',
 ]
 
@@ -105,7 +106,4 @@ def GenTests(api):
          api.cq(full_run=True) +
          api.properties(
              name='moblab-vm-name',
-             build_payload={
-                 'artifacts_gs_bucket': 'gs://bucket',
-                 'artifacts_gs_path': 'path/to/artifacts',
-             }))
+             build_payload=api.cros_test_plan.test_unit_common().build_payload))

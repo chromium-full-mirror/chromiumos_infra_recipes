@@ -223,11 +223,11 @@ Args:
 
 API for uploading CrOS build artifacts to Google Storage.
 
-#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#74)(self, target, kind):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#76)(self, target, kind):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -241,7 +241,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#139)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#141)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -255,7 +255,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#182)(self, build_payload, artifacts, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#173)(self, build_payload, artifacts, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -270,7 +270,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#92)(self, target, kind, gs_bucket, artifacts, name=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#94)(self, target, kind, gs_bucket, artifacts, name=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -1966,7 +1966,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipes/config_drift.py#19)(api):**
 ### *recipes* / [cros\_artifacts:examples/download\_artifacts](/recipe_modules/cros_artifacts/examples/download_artifacts.py)
 
-[DEPS](/recipe_modules/cros_artifacts/examples/download_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_artifacts/examples/download_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/download_artifacts.py#16)(api):**
 ### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
@@ -2413,11 +2413,11 @@ Verifies a repo manifest.
 &mdash; **def [RunSteps](/recipes/test_manifest.py#26)(api, properties):**
 ### *recipes* / [test\_moblab\_vm](/recipes/test_moblab_vm.py)
 
-[DEPS](/recipes/test_moblab_vm.py#16): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_moblab_vm.py#16): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for running Moblab VM tests.
 
-&mdash; **def [RunSteps](/recipes/test_moblab_vm.py#40)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_moblab_vm.py#41)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
 [DEPS](/recipes/test_platform/cros_test_platform.py#13): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

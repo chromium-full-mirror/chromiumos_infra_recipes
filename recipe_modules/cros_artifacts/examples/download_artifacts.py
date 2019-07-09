@@ -6,18 +6,17 @@
 DEPS = [
     'recipe_engine/assertions',
     'cros_artifacts',
+    'cros_test_plan',
 ]
 
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.testplans.generate_test_plan import BuildPayload
 
-
 def RunSteps(api):
-  build_payload = BuildPayload(
-      artifacts_gs_bucket='gs://bucket',
-      artifacts_gs_path='path')
   image_zip = BuilderConfig.Artifacts.IMAGE_ZIP
+  build_payload = api.cros_test_plan.test_api.test_unit_common(
+      artifacts=[image_zip]).build_payload
 
   download_paths_by_artifact = api.cros_artifacts.download_artifacts(
       build_payload, [image_zip])

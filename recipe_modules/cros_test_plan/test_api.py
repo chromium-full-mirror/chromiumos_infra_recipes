@@ -5,6 +5,7 @@
 # that can be found in the LICENSE file.
 from recipe_engine import recipe_test_api
 
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.testplans.target_test_requirements_config import GceTestCfg
 from PB.testplans.target_test_requirements_config import HwTestCfg
@@ -25,16 +26,21 @@ from PB.testplans.generate_test_plan import VmTestUnit
 class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for cros_test_plan api."""
 
-  def test_unit_common(self, **kwargs):
-    values = dict(
+  def test_unit_common(self, artifacts=None):
+    common = TestUnitCommon(
         build_target=BuildTarget(name='target'),
         build_payload=BuildPayload(
             artifacts_gs_bucket='gs://chromeos-image-archive',
             artifacts_gs_path='target-cq/R12-3.4.5-6789',
         ),
     )
-    values.update(kwargs)
-    return TestUnitCommon(**values)
+    artifacts = artifacts or BuilderConfig.Artifacts.ArtifactTypes.values()
+    for artifact in artifacts:
+      artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
+      common.build_payload.files_by_artifact.update({
+          artifact_name: ['{}.txt'.format(artifact_name.lower())],
+      })
+    return common
 
   @property
   def gce_test_unit(self):
