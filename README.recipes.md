@@ -598,20 +598,43 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#21)(self):**
+&mdash; **def [are\_all\_image\_builders\_pointless](/recipe_modules/cros_relevance/api.py#25)(self, gerrit_changes, gitiles_commit, name=None):**
 
-Initializes the module.
+Determines if all image builders can be terminated early.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#25)(self, build, build_target, dep_graph_check=True, name=None):**
-
-Determines if the build can be terminated early.
+Image builders are those that run the build_target recipe, producing an
+IMAGE_ZIP Chrome OS artifact.
 
 Args:
-  build (build_pb2.Build): The child builder to check.
+  gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+      applied for the build, if any.
+  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal snapshot
+      Gitiles commit.
   build_target (chromiumos.BuildTarget): The BuildTarget being built.
   dep_graph_check (bool): Whether to invoke GetBuildDependencyGraph as part
       of the pointless build check. If True, the chromiumos workspace must
       have been checked out in advance.
+  name (str): The step name.
+
+Returns:
+  bool: Whether the normal, image builders can be terminated early.
+
+&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#21)(self):**
+
+Initializes the module.
+
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#49)(self, gerrit_changes, gitiles_commit, build_target, name=None):**
+
+Determines if build(s) can be terminated early.
+
+If build_target is set, then the chromiumos workspace must have been
+checked out prior to calling this method. This is a requirement for
+BuildDependencyGraph checks.
+
+Args:
+  gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+      applied for the build, if any.
+  build_target (chromiumos.BuildTarget): The BuildTarget being built.
   name (str): The step name.
 
 Returns:

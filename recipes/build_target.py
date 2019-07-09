@@ -62,8 +62,11 @@ def RunSteps(api, properties):
   api.cros_bisect.set_bisect_builder(build_target.name)
 
   # Do a preliminary pointless build check prior to setup_board.
+  # Leave build_target empty to avoid trying a BuildDependency check at this
+  # point.
+  # TODO(https://crbug.com/971464): move this check to the orchestrator.
   if api.cros_relevance.is_build_pointless(
-      api.buildbucket.build, build_target, dep_graph_check=False,
+      gerrit_changes, gitiles_commit, build_target=None,
       name='pre-sync pointless build check'):
     return
 
@@ -109,7 +112,9 @@ def RunSteps(api, properties):
         sysroot = create_sysroot_response.sysroot
 
       if api.cros_relevance.is_build_pointless(
-          api.buildbucket.build, build_target,
+          gerrit_changes,
+          gitiles_commit,
+          build_target=build_target,
           name='post-sync pointless build check'):
         return
 

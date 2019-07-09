@@ -22,12 +22,18 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """Initializes the module."""
     self._pointless_build_checker_path = None
 
-  def is_build_pointless(self, build, build_target, dep_graph_check=True,
-                         name=None):
-    """Determines if the build can be terminated early.
+  def are_all_image_builders_pointless(
+      self, gerrit_changes, gitiles_commit, name=None):
+    """Determines if all image builders can be terminated early.
+
+    Image builders are those that run the build_target recipe, producing an
+    IMAGE_ZIP Chrome OS artifact.
 
     Args:
-      build (build_pb2.Build): The child builder to check.
+      gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+          applied for the build, if any.
+      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal snapshot
+          Gitiles commit.
       build_target (chromiumos.BuildTarget): The BuildTarget being built.
       dep_graph_check (bool): Whether to invoke GetBuildDependencyGraph as part
           of the pointless build check. If True, the chromiumos workspace must
@@ -35,11 +41,31 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       name (str): The step name.
 
     Returns:
+      bool: Whether the normal, image builders can be terminated early.
+    """
+    return self.is_build_pointless(gerrit_changes, gitiles_commit,
+                                   build_target=None, name=name)
+
+  def is_build_pointless(
+      self, gerrit_changes, gitiles_commit, build_target, name=None):
+    """Determines if build(s) can be terminated early.
+
+    If build_target is set, then the chromiumos workspace must have been
+    checked out prior to calling this method. This is a requirement for
+    BuildDependencyGraph checks.
+
+    Args:
+      gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+          applied for the build, if any.
+      build_target (chromiumos.BuildTarget): The BuildTarget being built.
+      name (str): The step name.
+
+    Returns:
       bool: Whether the build can be terminated early.
     """
     with self.m.step.nest(name or 'pointless build check') as step_result:
       dep_graph = None
-      if dep_graph_check:
+      if build_target:
         resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
             GetBuildDependencyGraphRequest(
                 build_target=build_target,
@@ -48,10 +74,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
       self._ensure_pointless_build_checker()
       check_request = PointlessBuildCheckRequest(
-        manifest_commit = build.input.gitiles_commit.id,
+        manifest_commit = gitiles_commit.id,
         dep_graph = dep_graph,
       )
-      for gc in build.input.gerrit_changes:
+      for gc in gerrit_changes:
         new_gc = check_request.gerrit_changes.add()
         new_gc.serialized_proto = (
             bbcommon_pb2.GerritChange.SerializeToString(gc))
@@ -70,11 +96,11 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       step_result.presentation.logs['relevance_output'] = [str(result)]
       if result.build_is_pointless.value:
         step_result.presentation.step_text = (
-            'build is unnecessary, exiting')
+            'build is irrelevant')
         step_result.presentation.properties['pointless_build'] = True
       else:
         step_result.presentation.step_text = (
-            'build is necessary, continuing')
+            'build is relevant')
       return result.build_is_pointless.value
 
   def _ensure_pointless_build_checker(self):

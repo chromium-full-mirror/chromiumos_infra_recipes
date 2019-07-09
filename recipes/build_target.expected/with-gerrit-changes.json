@@ -55,7 +55,7 @@
     "cmd": [],
     "name": "pre-sync pointless build check",
     "~followup_annotations": [
-      "@@@STEP_TEXT@build is necessary, continuing@@@",
+      "@@@STEP_TEXT@build is relevant@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
@@ -1085,7 +1085,7 @@
     "cmd": [],
     "name": "post-sync pointless build check",
     "~followup_annotations": [
-      "@@@STEP_TEXT@build is necessary, continuing@@@",
+      "@@@STEP_TEXT@build is relevant@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
       "@@@STEP_LOG_END@relevance_output@@@"

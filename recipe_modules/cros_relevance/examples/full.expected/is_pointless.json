@@ -25,7 +25,7 @@
     "cmd": [],
     "name": "pointless build check",
     "~followup_annotations": [
-      "@@@STEP_TEXT@build is unnecessary, exiting@@@",
+      "@@@STEP_TEXT@build is irrelevant@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
@@ -91,7 +91,7 @@
     "cmd": [],
     "name": "pointless build check (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@build is unnecessary, exiting@@@",
+      "@@@STEP_TEXT@build is irrelevant@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
@@ -280,7 +280,7 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_json",
-      "{\"depGraph\": {\"packageDeps\": [{\"dependencySourcePaths\": [{\"path\": \"some/source/dir\"}]}]}}",
+      "{\"depGraph\": {\"packageDeps\": [{\"dependencySourcePaths\": [{\"path\": \"some/source/dir\"}]}]}, \"gerritChanges\": [{\"serializedProto\": \"GHs=\"}, {\"serializedProto\": \"GMgD\"}]}",
       "--output_json",
       "/path/to/tmp/json"
     ],

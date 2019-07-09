@@ -15,13 +15,12 @@ DEPS = [
 
 def RunSteps(api):
   bt = BuildTarget(name='my_build_target')
-  bi = build_pb2.Build.Input(
-      gerrit_changes=[
-          bbcommon_pb2.GerritChange(change=123),
-          bbcommon_pb2.GerritChange(change=456)])
+  gc = [bbcommon_pb2.GerritChange(change=123),
+        bbcommon_pb2.GerritChange(change=456)]
+  api.cros_relevance.are_all_image_builders_pointless(
+      gc, bbcommon_pb2.GitilesCommit())
   api.cros_relevance.is_build_pointless(
-      build_pb2.Build(input=bi), bt, dep_graph_check=False)
-  api.cros_relevance.is_build_pointless(build_pb2.Build(), bt)
+      gc, bbcommon_pb2.GitilesCommit(), build_target=bt)
 
 def GenTests(api):
   builder = 'builder'
