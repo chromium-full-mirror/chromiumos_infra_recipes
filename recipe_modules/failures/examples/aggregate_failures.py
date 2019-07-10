@@ -11,32 +11,42 @@ DEPS = [
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+
 def RunSteps(api):
   failures = []
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
 
-  failures = [api.failures.Failure(kind='kind', title='title', fatal=False)]
+  failures = [
+      api.failures.Failure(kind='kind', title='title', url='url', fatal=False),
+  ]
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
 
   failures = [
-      api.failures.Failure(kind='build', title='build-a', fatal=True),
-      api.failures.Failure(kind='build', title='build-b', fatal=True),
-      api.failures.Failure(kind='test', title='test-a', fatal=True),
-      api.failures.Failure(kind='test', title='test-b', fatal=False),
+      api.failures.Failure(kind='build', title='build-a', url='build-a.com',
+                           fatal=True),
+      api.failures.Failure(kind='build', title='build-b', url='build-b.com',
+                           fatal=True),
+      api.failures.Failure(kind='test', title='test-a', url='test-a.com',
+                           fatal=True),
+      api.failures.Failure(kind='test', title='test-b', url='test-b.com',
+                           fatal=False),
   ]
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.FAILURE)
   api.assertions.assertEqual(
-      result.summary_markdown,
-      '''\
+      result.summary_markdown, '''\
 2 builds failed
-- build-a
-- build-b
+
+- [build-a](build-a.com)
+
+- [build-b](build-b.com)
 
 1 test failed
-- test-a''')
+
+- [test-a](test-a.com)''')
+
 
 def GenTests(api):
   yield api.test('basic')

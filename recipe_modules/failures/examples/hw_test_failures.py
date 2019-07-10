@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/step',
     'failures',
     'skylab',
+    'urls',
 ]
 
 
@@ -17,6 +18,7 @@ def RunSteps(api):
       task=api.skylab.test_api.skylab_task(
           test=api.skylab.test_api.hw_test(critical=False)), success=False)
   skylab_critical_failure = api.skylab.test_api.skylab_result(success=False)
+  skylab_critical_url = api.urls.get_skylab_result_url(skylab_critical_failure)
 
   # Check boolean functions first.
   api.assertions.assertFalse(api.failures.is_hw_test_failure(skylab_success))
@@ -37,8 +39,10 @@ def RunSteps(api):
   api.assertions.assertFalse(
       api.failures.get_hw_test_failures([skylab_failure]))
   api.assertions.assertEqual(
-      api.failures.get_hw_test_failures([skylab_critical_failure]),
-      [api.failures.Failure('hw test', 'target.hw.bvt-cq', True)])
+      api.failures.get_hw_test_failures([skylab_critical_failure]), [
+          api.failures.Failure('hw test', 'target.hw.bvt-cq',
+                               skylab_critical_url, True)
+      ])
 
   # Return nothing when critical failure also fails baseline.
   api.assertions.assertFalse(
@@ -49,9 +53,11 @@ def RunSteps(api):
   # Return fatal failure when critical failure does not fail baseline.
   api.assertions.assertEqual(
       api.failures.get_hw_test_failures(
-          [skylab_critical_failure],
-          baseline_hw_tests=[skylab_success]),
-      [api.failures.Failure('hw test', 'target.hw.bvt-cq', True)])
+          [skylab_critical_failure], baseline_hw_tests=[skylab_success]), [
+              api.failures.Failure('hw test', 'target.hw.bvt-cq',
+                                   skylab_critical_url, True)
+          ])
+
 
 def GenTests(api):
   yield api.test('basic')

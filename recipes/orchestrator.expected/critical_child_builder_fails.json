@@ -1429,7 +1429,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 build failed\n- ..amd64-generic-postsubmit"
+      "humanReason": "1 build failed\n\n- [..amd64-generic-postsubmit](https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000)"
     },
     "name": "$result"
   }

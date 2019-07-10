@@ -7,15 +7,18 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
     'failures',
+    'urls',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+
 def vm_build(**kwargs):
   build = build_pb2.Build(**kwargs)
   build.output.properties.update({'name': 'target.vm.suite'})
   return build
+
 
 def RunSteps(api):
   vm_success = vm_build(status=common_pb2.SUCCESS)
@@ -39,8 +42,12 @@ def RunSteps(api):
   api.assertions.assertFalse(api.failures.get_vm_test_failures([vm_success]))
   api.assertions.assertFalse(api.failures.get_vm_test_failures([vm_failure]))
   api.assertions.assertEqual(
-      api.failures.get_vm_test_failures([vm_critical_failure]),
-      [api.failures.Failure('vm test', 'target.vm.suite', True)])
+      api.failures.get_vm_test_failures([vm_critical_failure]), [
+          api.failures.Failure('vm test', 'target.vm.suite',
+                               api.urls.get_build_url(vm_critical_failure),
+                               True)
+      ])
+
 
 def GenTests(api):
   yield api.test('basic')

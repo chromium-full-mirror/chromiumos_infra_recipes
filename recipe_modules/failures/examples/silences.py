@@ -14,26 +14,25 @@ DEPS = [
     'failures',
 ]
 
+
 def assert_fatality(api, build, fatal):
   failures = api.failures.get_build_failures([build])
   api.assertions.assertEqual(len(failures), 1)
   failure = failures[0]
   api.assertions.assertEqual(failure.fatal, fatal)
 
+
 def RunSteps(api):
   # TODO(evanhernandez): Make this not depend on cros_som's test_api.
   build_critical_failure = build_pb2.Build(
-      builder=build_pb2.BuilderID(
-          project='chromeos',
-          bucket='bucket',
-          builder='builder'),
-      status=common_pb2.FAILURE)
+      builder=build_pb2.BuilderID(project='chromeos', bucket='bucket',
+                                  builder='builder'), status=common_pb2.FAILURE)
   for _ in range(3):
     assert_fatality(api, build_critical_failure, True)
 
   # The fourth time should not raise unless disable_silences is true.
-  assert_fatality(api, build_critical_failure,
-                  api.failures._disable_silences)
+  assert_fatality(api, build_critical_failure, api.failures._disable_silences)
+
 
 def GenTests(api):
   yield api.test('basic')

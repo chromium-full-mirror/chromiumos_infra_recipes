@@ -11,11 +11,13 @@ DEPS = [
 
 from PB.chromiumos.common import PackageInfo
 
+
 def RunSteps(api):
   api.failures.raise_failed_packages([])
   api.assertions.assertRaises(api.step.StepFailure,
                               api.failures.raise_failed_packages,
                               [PackageInfo(package_name='package')])
+
 
 def GenTests(api):
   yield api.test('basic')

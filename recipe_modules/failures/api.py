@@ -10,6 +10,7 @@ from PB.recipe_engine import result as result_pb2
 
 import collections
 import contextlib
+import operator
 
 from recipe_engine import recipe_api
 
@@ -22,9 +23,10 @@ class FailuresApi(recipe_api.RecipeApi):
   # Fields:
   #   kind (str): Describes the kind of failure, e.g. 'build'
   #   title (str): Full title of the failure.
+  #   url (str): URL for the failed task.
   #   fatal (bool): Whether or not the failure is fatal. Fatal failures cause
   #       recipes to fail when the failure is aggregated.
-  Failure = collections.namedtuple('Failure', ['kind', 'title', 'fatal'])
+  Failure = collections.namedtuple('Failure', ['kind', 'title', 'url', 'fatal'])
 
   def __init__(self, properties, *args, **kwargs):
     super(FailuresApi, self).__init__(*args, **kwargs)
@@ -83,11 +85,10 @@ class FailuresApi(recipe_api.RecipeApi):
             # "build results|[FAILED BUT SILENCED] chromeos.bucket.builder",
             # there will be a new (unsilenced) failure, and the old (silenced)
             # failure will disappear from SoM.
-            failure_step.presentation.logs['silence reason'] = [
-                silence_reason
-            ]
+            failure_step.presentation.logs['silence reason'] = [silence_reason]
 
-          failures.append(self.Failure(kind=kind, title=title, fatal=fatal))
+          failures.append(
+              self.Failure(kind=kind, title=title, url=url, fatal=fatal))
 
       success_count = len(runs) - len(failed_runs)
       fail_count = len(failed_runs) - silenced_count
@@ -173,7 +174,7 @@ class FailuresApi(recipe_api.RecipeApi):
 
     # The summary markdown will look roughly as follows:
     #
-    # 1 build failed
+    # 1 build failed:
     # - chromeos.cq.nami-cq
     #
     # 2 hw tests failed
@@ -182,13 +183,15 @@ class FailuresApi(recipe_api.RecipeApi):
     # ...
     sections = []
     for kind in sorted(failures_by_kind):
-      titles = sorted([failure.title for failure in failures_by_kind[kind]])
-      count = len(titles)
+      failure_group = sorted(failures_by_kind[kind],
+                             key=operator.attrgetter('title'))
+      count = len(failure_group)
       lines = ['{} {} failed'.format(count, kind + 's' if count > 1 else kind)]
-      lines.extend(['- {}'.format(title) for title in titles])
-      sections.append('\n'.join(lines))
-    summary_markdown = '\n\n'.join(sections)
+      for failure in failure_group:
+        lines.append('- [{}]({})'.format(failure.title, failure.url))
+      sections.append('\n\n'.join(lines))
 
+    summary_markdown = '\n\n'.join(sections)
     return result_pb2.RawResult(status=common_pb2.FAILURE,
                                 summary_markdown=summary_markdown)
 
@@ -247,10 +250,9 @@ class FailuresApi(recipe_api.RecipeApi):
     Returns:
       list[Failure]: All failures discovered in the given runs.
     """
-    return self._get_failures('vm test', vm_tests,
-                              self.is_critical_vm_test_failure,
-                              self.m.naming.get_vm_test_title,
-                              self.m.urls.get_build_url)
+    return self._get_failures(
+        'vm test', vm_tests, self.is_critical_vm_test_failure,
+        self.m.naming.get_vm_test_title, self.m.urls.get_build_url)
 
   def get_moblab_vm_test_failures(self, moblab_vm_tests):
     """Logs Moblab VM test status to UI, but does not rais on failed tests.
