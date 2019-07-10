@@ -20,6 +20,12 @@ message AnnealingProperties {
   // state. For example, Annealing has not succeeded in a long time, so the
   // message length exceeds Git limits.
   bool disable_gerrit_commits_in_commit_message = 3;
+
+  // If true, annealing will trigger all child builds before exiting.
+  bool enable_snapshot_builds = 4;
+
+  // List of child builders to schedule.
+  repeated string child_builders = 5;
 }
 
 // Annealing determines what Gerrit changes have landed since its last run,
