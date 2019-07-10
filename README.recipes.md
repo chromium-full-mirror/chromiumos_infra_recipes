@@ -955,7 +955,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#153)(self, failures):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#152)(self, failures):**
 
 Returns a recipe result based on the given failures.
 
@@ -967,7 +967,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#199)(self, builds):**
+&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#198)(self, builds):**
 
 Verify all builds completed successfully.
 
@@ -977,7 +977,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#212)(self, hw_tests, baseline_hw_tests=None):**
+&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#211)(self, hw_tests, baseline_hw_tests=None):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -989,7 +989,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#259)(self, moblab_vm_tests):**
+&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#257)(self, moblab_vm_tests):**
 
 Logs Moblab VM test status to UI, but does not rais on failed tests.
 
@@ -999,7 +999,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#245)(self, vm_tests):**
+&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#244)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -1009,7 +1009,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#111)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#110)(self):**
 
 Catches exceptions and logs them instead.
 
@@ -1019,7 +1019,7 @@ entire recipe. Remove once new feature is stable.
 Requires `step.active_result` to be present when the exception is thrown
 (i.e. at least one step has been run at the current nested context).
 
-&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#273)(self, build):**
+&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#271)(self, build):**
 
 Determine if the build failed.
 
@@ -1029,7 +1029,7 @@ Args:
 Returns:
   bool: True if the build failed.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#317)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#315)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -1039,7 +1039,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#329)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#327)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1049,7 +1049,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#352)(self, moblab_vm_test):**
+&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#350)(self, moblab_vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1059,7 +1059,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#341)(self, vm_test):**
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#339)(self, vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1069,7 +1069,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#284)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#282)(self, hw_test):**
 
 Determine if the hardware test failed.
 
@@ -1079,7 +1079,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#306)(self, moblab_vm_test):**
+&mdash; **def [is\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#304)(self, moblab_vm_test):**
 
 Determine if the VM test failed.
 
@@ -1089,7 +1089,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#295)(self, vm_test):**
+&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#293)(self, vm_test):**
 
 Determine if the VM test failed.
 
@@ -1099,7 +1099,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#128)(self, packages):**
+&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#127)(self, packages):**
 
 Display failed packages and raise a failure.
 
@@ -2146,14 +2146,14 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 
 [DEPS](/recipe_modules/failures/examples/aggregate_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_failures.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_failures.py#15)(api):**
 ### *recipes* / [failures:examples/build\_failures](/recipe_modules/failures/examples/build_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/build_failures.py#6): [failures](#recipe_modules-failures), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/build_failures.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/build_failures.py#23)(api):**
 
-&mdash; **def [build](/recipe_modules/failures/examples/build_failures.py#16)(\*\*kwargs):**
+&mdash; **def [build](/recipe_modules/failures/examples/build_failures.py#17)(\*\*kwargs):**
 ### *recipes* / [failures:examples/hw\_test\_failures](/recipe_modules/failures/examples/hw_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/hw_test_failures.py#6): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2163,33 +2163,33 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 
 [DEPS](/recipe_modules/failures/examples/ignore_exceptions.py#6): [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/ignore_exceptions.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/ignore_exceptions.py#12)(api):**
 ### *recipes* / [failures:examples/moblab\_vm\_test\_failures](/recipe_modules/failures/examples/moblab_vm_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/moblab_vm_test_failures.py#6): [failures](#recipe_modules-failures), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/moblab_vm_test_failures.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/moblab_vm_test_failures.py#23)(api):**
 
-&mdash; **def [moblab\_vm\_build](/recipe_modules/failures/examples/moblab_vm_test_failures.py#16)(\*\*kwargs):**
+&mdash; **def [moblab\_vm\_build](/recipe_modules/failures/examples/moblab_vm_test_failures.py#17)(\*\*kwargs):**
 ### *recipes* / [failures:examples/package\_failures](/recipe_modules/failures/examples/package_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/package_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/package_failures.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/package_failures.py#15)(api):**
 ### *recipes* / [failures:examples/silences](/recipe_modules/failures/examples/silences.py)
 
 [DEPS](/recipe_modules/failures/examples/silences.py#10): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/silences.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/silences.py#25)(api):**
 
-&mdash; **def [assert\_fatality](/recipe_modules/failures/examples/silences.py#17)(api, build, fatal):**
+&mdash; **def [assert\_fatality](/recipe_modules/failures/examples/silences.py#18)(api, build, fatal):**
 ### *recipes* / [failures:examples/vm\_test\_failures](/recipe_modules/failures/examples/vm_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/vm_test_failures.py#6): [failures](#recipe_modules-failures), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/vm_test_failures.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/vm_test_failures.py#23)(api):**
 
-&mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#16)(\*\*kwargs):**
+&mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2226,19 +2226,19 @@ Test git_footers calls.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#17)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/orchestrator.py#11): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#46)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#48)(api, properties):**
 
-&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#228)(build_target):**
+&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#230)(build_target):**
 
 Returns the autotest builder name for the given build_target.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#398)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#400)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Get a list of builds to be run and  a list of builds that have succeeded.
 
@@ -2258,7 +2258,7 @@ Returns:
   builds with refreshed criticality and a list of ScheduleBuildRequest of
   the builds that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#445)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#473)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2272,7 +2272,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#520)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#548)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2283,7 +2283,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#486)(failed_results, all_results, threshold):**
+&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#514)(failed_results, all_results, threshold):**
 
 Check if we need baseline validation for this orchestrator.
 
@@ -2296,7 +2296,7 @@ Returns:
   A boolean indicating whether we need to initiate baseline
   validation.
 
-&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#268)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#270)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Autotest VM Tests from the test_plan.
 
@@ -2313,7 +2313,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#356)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#358)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Moblab VM Tests from the test_plan.
 
@@ -2330,7 +2330,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#238)(api, test_plan, passed_tests, test_to_build_map=None):**
+&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#240)(api, test_plan, passed_tests, test_to_build_map=None):**
 
 Schedule skylab tests from the test_plan.
 
@@ -2346,7 +2346,7 @@ Args:
 Returns:
   list[SkylabTask] of the tests scheduled.
 
-&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#311)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#313)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule tast VM Tests from the test_plan.
 
@@ -2363,11 +2363,11 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#233)(build_target):**
+&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#235)(build_target):**
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#509)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#537)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2375,7 +2375,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#473)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#501)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -2385,7 +2385,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#543)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#571)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 

@@ -63,7 +63,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": true
                   },
                   "artifacts": {
-                    "prebuilts": "NONE"
+                    "prebuilts": "NONE",
+                    "artifact_types": ["IMAGE_ZIP"]
                   },
                   "chrome": {
                     "internal": true
@@ -88,7 +89,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "type": "CQ"
                   },
                   "general": {
-                    "critical": true
+                    "critical": false
                   },
                   "artifacts": {
                     "prebuilts": "NONE"

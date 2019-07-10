@@ -18,6 +18,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_history',
     'cros_infra_config',
+    'cros_relevance',
     'cros_source',
     'cros_test_plan',
     'cros_version',
@@ -31,6 +32,7 @@ DEPS = [
 ]
 
 from PB.chromite.api.test import VmTestRequest
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
@@ -420,6 +422,13 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
   requests = []
   retry_count = 0
 
+  image_builders_pointless = False
+  if gerrit_changes:
+    image_builders_pointless = (
+        api.cros_relevance.are_all_image_builders_pointless(
+            gerrit_changes, snapshot,
+            name='orchestrator pointless build check'))
+
   if enable_history and gerrit_changes:
     with api.step.nest('get build history for changes'):
       retry_count = len(
@@ -428,16 +437,35 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       completed_builds = get_completed_builds(api, child_builders)
       passed_builders = set(build.builder.builder for build in completed_builds)
 
-  for child in child_builders:
-    if child not in passed_builders:
+  with api.step.nest('filter builds') as step:
+    filter_log = []
+    for child in child_builders:
+      # No need to retry previously-passed builds.
+      if child in passed_builders:
+        filter_log.append('{} already passed'.format(child))
+        continue
       child_builder_config = api.cros_infra_config.get_builder_config(child)
+
+      # Don't do child builds that are unaffected by the gerrit_changes. The
+      # IMAGE_ZIP check makes this check only apply to those builders that
+      # produce Chrome OS builds, without affecting special builders like the
+      # chromite unit test ones.
+      image_zip = BuilderConfig.Artifacts.IMAGE_ZIP
+      if image_builders_pointless and (image_zip in
+          child_builder_config.artifacts.artifact_types):
+        filter_log.append('{} build is irrelevant for changes'.format(child))
+        continue
+
+      # Don't retry non-critical builds.
       critical = child_builder_config.general.critical.value
-      if critical == common_pb2.YES or retry_count == 0:
-        # Applies to CQ only. Retry just the critical builds.
-        requests.append(
-            api.buildbucket.schedule_request(
-                gitiles_commit=snapshot, builder=child, critical=critical,
-                properties=api.cq.props_for_child_build))
+      if not critical and retry_count != 0:
+        filter_log.append('{} is non-critical and already ran'.format(child))
+        continue
+      requests.append(
+          api.buildbucket.schedule_request(
+              gitiles_commit=snapshot, builder=child, critical=critical,
+              properties=api.cq.props_for_child_build))
+    step.presentation.logs['filter log'] = filter_log
 
   return completed_builds, requests
 
@@ -634,9 +662,24 @@ def GenTests(api):
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check') +  #
          api.buildbucket.simulated_search_results(
              builds, 'get build history for changes.'
              'get change build history.buildbucket.search') +  #
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
+
+  yield (api.test('pointless_builds') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.cq(full_run=True) +  #
+         api.properties(enable_history=True) +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check',
+             build_is_pointless=True) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -654,6 +697,8 @@ def GenTests(api):
              [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
              'run tests.schedule tests.get change test history'
              '.find matching builds.buildbucket.search') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_collect_output(
@@ -676,22 +721,11 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check') +  #
          api.buildbucket.simulated_search_results(
              [], step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search') +
-         api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
-
-  yield (api.test('retry_only_critical_builds') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True) +  #
-         api.properties(enable_history=True) +  #
-         api.buildbucket.simulated_search_results(
-             builds, step_name='get build history for changes'
-             '.find matching builds.buildbucket.search') +
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -728,7 +762,37 @@ def GenTests(api):
 
   yield (api.test('dry_run') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check') +  #
          api.cq(dry_run=True))
+
+  builds = [
+      build_pb2.Build(
+          id=8922054662172514000, builder={'builder': 'amd64-generic-cq'},
+          status=common_pb2.FAILURE,
+          critical=common_pb2.NO,
+          input=dict(properties=build_target_property('amd64-generic'))),
+      build_pb2.Build(
+          id=8922054662172514001, builder={'builder': 'arm-generic-cq'},
+          status=common_pb2.FAILURE,
+          critical=common_pb2.NO,
+          input=dict(properties=build_target_property('arm-generic'))),
+  ]
+
+  yield (api.test('retry_only_critical_builds') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.cq(full_run=True) +  #
+         api.properties(enable_history=True) +  #
+         api.buildbucket.simulated_search_results(
+             builds, step_name='get build history for changes'
+             '.find matching builds.buildbucket.search') +
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check') +  #
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
@@ -781,6 +845,10 @@ def GenTests(api):
   yield (api.test('pass_with_baseline_validation') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
          api.properties(baseline_verification_threshold=1.0) +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check (2)') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_collect_output(
@@ -802,6 +870,10 @@ def GenTests(api):
   yield (api.test('fail_with_baseline_validation') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
          api.properties(baseline_verification_threshold=1.0) +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check (2)') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_collect_output(
