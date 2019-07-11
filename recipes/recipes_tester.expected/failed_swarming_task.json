@@ -609,8 +609,9 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@Swarming task output: A swarming task@hello world!@@@",
-      "@@@STEP_LOG_END@Swarming task output: A swarming task@@@"
+      "@@@STEP_LOG_LINE@task stdout&#x2f;stderr: A swarming task@hello world!@@@",
+      "@@@STEP_LOG_END@task stdout&#x2f;stderr: A swarming task@@@",
+      "@@@STEP_LINK@task isolated outputs: A swarming task@https://isolateserver.appspot.com/browse?namespace=default-gzip&hash=abc123@@@"
     ]
   },
   {
