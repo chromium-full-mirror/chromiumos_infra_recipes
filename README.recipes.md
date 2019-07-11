@@ -2272,7 +2272,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#548)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#547)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2283,13 +2283,13 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#514)(failed_results, all_results, threshold):**
+&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#514)(failed_results, test_plan, threshold):**
 
 Check if we need baseline validation for this orchestrator.
 
 Args:
   failed_results (list[SkylabResults]): Results of failed tests.
-  all_results (list[SkylabResults]): Results of all tests.
+  test_plan (GenerateTestPlanResponse): test_plan of the orchestrator.
   threshold (float): upper threshold for baseline validation.
 
 Returns:
@@ -2367,7 +2367,7 @@ Returns:
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#537)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#536)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2385,7 +2385,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#571)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#570)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 

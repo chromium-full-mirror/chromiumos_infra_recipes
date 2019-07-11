@@ -178,7 +178,7 @@ def RunSteps(api, properties):
   ]
   with api.failures.ignore_exceptions():
     if gerrit_changes and needs_baseline_validation(
-        failed_hw_results, hw_results,
+        failed_hw_results, test_plan,
         properties.baseline_verification_threshold):
       # Start Baseline HW Verification process.
       build_targets_to_verify = set([
@@ -511,27 +511,26 @@ def validate_refs(refs):
   validate_ref(refs.success, 'success')
 
 
-def needs_baseline_validation(failed_results, all_results, threshold):
+def needs_baseline_validation(failed_results, test_plan, threshold):
   """Check if we need baseline validation for this orchestrator.
 
   Args:
     failed_results (list[SkylabResults]): Results of failed tests.
-    all_results (list[SkylabResults]): Results of all tests.
+    test_plan (GenerateTestPlanResponse): test_plan of the orchestrator.
     threshold (float): upper threshold for baseline validation.
 
   Returns:
     A boolean indicating whether we need to initiate baseline
     validation.
   """
-  needs_validation = False
-  # If either all_results or failed_results is empty, there is no work
-  # to be done.
+  hw_test_count = sum(
+      [len(unit.hw_test_cfg.hw_test) for unit in test_plan.hw_test_units])
   if failed_results:
-    failure_ratio = float(len(failed_results)) / len(all_results)
+    failure_ratio = float(len(failed_results)) / hw_test_count
     if failure_ratio <= threshold:
-      needs_validation = True
+      return True
 
-  return needs_validation
+  return False
 
 
 def validate_ref(ref, name):
