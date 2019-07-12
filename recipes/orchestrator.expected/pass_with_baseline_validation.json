@@ -1349,10 +1349,10 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@task stdout&#x2f;stderr: failed_task@hello world!@@@",
-      "@@@STEP_LOG_END@task stdout&#x2f;stderr: failed_task@@@",
-      "@@@STEP_LOG_LINE@task stdout&#x2f;stderr: success_task@hello world!@@@",
-      "@@@STEP_LOG_END@task stdout&#x2f;stderr: success_task@@@",
+      "@@@STEP_LOG_LINE@task stdout+stderr: failed_task@hello world!@@@",
+      "@@@STEP_LOG_END@task stdout+stderr: failed_task@@@",
+      "@@@STEP_LOG_LINE@task stdout+stderr: success_task@hello world!@@@",
+      "@@@STEP_LOG_END@task stdout+stderr: success_task@@@",
       "@@@STEP_LINK@task isolated outputs: failed_task@https://isolateserver.appspot.com/browse?namespace=default-gzip&hash=abc123@@@",
       "@@@STEP_LINK@task isolated outputs: success_task@https://isolateserver.appspot.com/browse?namespace=default-gzip&hash=abc123@@@"
     ]
@@ -2267,8 +2267,8 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@task stdout&#x2f;stderr: failed_task@hello world!@@@",
-      "@@@STEP_LOG_END@task stdout&#x2f;stderr: failed_task@@@",
+      "@@@STEP_LOG_LINE@task stdout+stderr: failed_task@hello world!@@@",
+      "@@@STEP_LOG_END@task stdout+stderr: failed_task@@@",
       "@@@STEP_LINK@task isolated outputs: failed_task@https://isolateserver.appspot.com/browse?namespace=default-gzip&hash=abc123@@@"
     ]
   },
