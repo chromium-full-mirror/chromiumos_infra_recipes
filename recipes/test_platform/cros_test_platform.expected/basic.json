@@ -1,0 +1,118 @@
+[
+  {
+    "cmd": [],
+    "name": "enumerate tests"
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary enumerate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary enumerate.ensure cros_test_platform",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/cros_test_platform",
+      "-ensure-file",
+      "chromiumos/infra/cros_test_platform/${platform} latest",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "enumerate tests.call binary enumerate.ensure cros_test_platform.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cros_test_platform/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
+      "enumerate",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "name": "enumerate tests.call binary enumerate.cros_test_platform enumerate",
+    "stdin": "{\n  \"testPlan\": {}, \n  \"metadata\": {}\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "traffic split"
+  },
+  {
+    "cmd": [],
+    "name": "traffic split.call binary scheduler-traffic-split",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
+      "scheduler-traffic-split",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "name": "traffic split.call binary scheduler-traffic-split.cros_test_platform scheduler-traffic-split",
+    "stdin": "{\n  \"request\": {}\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execute"
+  },
+  {
+    "cmd": [],
+    "name": "execute.call binary skylab-execute",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
+      "skylab-execute",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "name": "execute.call binary skylab-execute.cros_test_platform skylab-execute",
+    "stdin": "{\n  \"requestParams\": {}, \n  \"config\": {}, \n  \"enumeration\": {}\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

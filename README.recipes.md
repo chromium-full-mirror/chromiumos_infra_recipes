@@ -20,6 +20,7 @@
   * [cros_som](#recipe_modules-cros_som)
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_test_plan](#recipe_modules-cros_test_plan)
+  * [cros_test_platform](#recipe_modules-cros_test_platform)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [depends](#recipe_modules-depends) &mdash; APIs for checking that Cq-Depend has been fulfilled.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
@@ -72,6 +73,7 @@
   * [cros_som:examples/full](#recipes-cros_som_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
+  * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
@@ -844,6 +846,51 @@ Returns:
   GenerateTestPlanResponse of test plan.
 
 &mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#20)(self):**
+### *recipe_modules* / [cros\_test\_platform](/recipe_modules/cros_test_platform)
+
+[DEPS](/recipe_modules/cros_test_platform/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for issuing cros_test_platform commands
+
+&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#95)(self, request):**
+
+Execute work via `autotest-execute` subcommand.
+
+Args:
+  request: a ExecuteRequest.
+
+Returns: ExecuteResponse.
+
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#62)(self, request):**
+
+Enumerate test cases via `enumerate` subcommand.
+
+Args:
+  request: a EnumerationRequest.
+
+Returns: EnumerationResponse.
+
+&mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#20)(self):**
+
+&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#73)(self, request):**
+
+Determine scheduler via `scheduler-traffic-split` subcommand.
+
+Args:
+  request: a SchedulerTrafficSplitRequest.
+
+Returns: SchedulerTrafficSplitResponse.
+
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#84)(self, request):**
+
+Execute work via `skylab-execute` subcommand.
+
+Args:
+  request: a ExecuteRequest.
+
+Returns: ExecuteResponse.
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2120,6 +2167,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#8): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#14)(api):**
+### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
+
+[DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#18)(api):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
@@ -2468,15 +2520,15 @@ Recipe for running Moblab VM tests.
 &mdash; **def [RunSteps](/recipes/test_moblab_vm.py#41)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#13): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#19): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#75)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#64)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#34)(api, properties):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#29)(api, properties):**
 
 Resolve request into list of tests and their metadata.
 
@@ -2484,37 +2536,15 @@ Args:
   * api (object): See RunSteps documentation.
   * properties (CrosTestPlatformRequest): The input request.
 
-Returns:
-  TODO(akeshet): A list of EnumeratedTest protos.
+Returns: EnumerationResponse.
 
-&mdash; **def [select\_backend](/recipes/test_platform/cros_test_platform.py#49)(api, enumerated_tests, migration_config):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#53)(api, properties, enumeration, traffic_split):**
 
-Select which backend (cautotest, skylab) will handle test requests.
+Execute request in the correct backend.
 
-This step will be deleted once the entire device fleet has been migrated from
-cautotest to skylab.
+&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#45)(api, properties):**
 
-Args:
-  * api (object): See RunSteps documentation.
-  * enumerated_tests (list[EnumeratedTest proto]): tests to run.
-  * migration_config (MigrationConfig proto): migration configuration.
-
-Raises: An exception if a backend cannot be selected for these requests (for
-      instance, if the set of tests are too heterogenous to be handled by
-      a single backend).
-
-Returns:
-  TODO(akeshet): Enum(autotest, skylab) indication of backend to use.
-
-&mdash; **def [validate\_request](/recipes/test_platform/cros_test_platform.py#21)(api, properties):**
-
-Validate the CrosTestPlatformRequest.
-
-Args:
-  * api (object): See RunSteps documentation.
-  * properties (CrosTestPlatformRequest): The input request.
-
-Raises: An exception if there are invalid properties.
+Determine which backend will execute the request.
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#8): [breakpad](#recipe_modules-breakpad), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

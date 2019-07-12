@@ -8,28 +8,23 @@
 TODO: Migrate to a recipes repo owned by the test team.
 """
 
-from PB.recipes.chromeos.test_platform.cros_test_platform import CrosTestPlatformRequest
+from PB.recipes.chromeos.test_platform.cros_test_platform import \
+  CrosTestPlatformRequest
+from PB.test_platform.steps.enumeration import EnumerationRequest
+from PB.test_platform.steps.scheduler_traffic_split import \
+  SchedulerTrafficSplitRequest
+from PB.test_platform.steps.execution import ExecuteRequest
+
 
 DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'cros_test_platform'
 ]
 
 PROPERTIES = CrosTestPlatformRequest
 
-def validate_request(api, properties):
-  """Validate the CrosTestPlatformRequest.
-
-  Args:
-    * api (object): See RunSteps documentation.
-    * properties (CrosTestPlatformRequest): The input request.
-
-  Raises: An exception if there are invalid properties.
-  """
-  with api.step.nest('validate request'):
-    if not properties.params.board:
-      raise ValueError("params.board must be specified")
 
 def enumerate_tests(api, properties):
   """Resolve request into list of tests and their metadata.
@@ -38,77 +33,39 @@ def enumerate_tests(api, properties):
     * api (object): See RunSteps documentation.
     * properties (CrosTestPlatformRequest): The input request.
 
-  Returns:
-    TODO(akeshet): A list of EnumeratedTest protos.
+  Returns: EnumerationResponse.
   """
   with api.step.nest('enumerate tests'):
-    return []
+    enum_request = EnumerationRequest()
+    enum_request.metadata.CopyFrom(properties.request.params.metadata)
+    enum_request.test_plan.CopyFrom(properties.request.test_plan)
+    return api.cros_test_platform.enumerate(enum_request)
 
-# TODO(akeshet): Move to a separate recipe_module that wraps the
-# backend_selector binary, once that exists.
-def select_backend(api, enumerated_tests, migration_config):
-  """Select which backend (cautotest, skylab) will handle test requests.
 
-  This step will be deleted once the entire device fleet has been migrated from
-  cautotest to skylab.
+def split(api, properties):
+  """Determine which backend will execute the request."""
+  with api.step.nest('traffic split'):
+    split_req = SchedulerTrafficSplitRequest()
+    split_req.request.CopyFrom(properties.request)
+    return api.cros_test_platform.scheduler_traffic_split(split_req)
 
-  Args:
-    * api (object): See RunSteps documentation.
-    * enumerated_tests (list[EnumeratedTest proto]): tests to run.
-    * migration_config (MigrationConfig proto): migration configuration.
 
-  Raises: An exception if a backend cannot be selected for these requests (for
-        instance, if the set of tests are too heterogenous to be handled by
-        a single backend).
+def execute(api, properties, enumeration, traffic_split):
+  """Execute request in the correct backend."""
+  with api.step.nest('execute'):
+    exec_req = ExecuteRequest()
+    exec_req.request_params.CopyFrom(properties.request.params)
+    exec_req.enumeration.CopyFrom(enumeration)
+    exec_req.config.CopyFrom(properties.config)
+    # TODO(akeshet): Respect traffic splitter; don't just blindly use skylab.
+    return api.cros_test_platform.skylab_execute(exec_req)
 
-  Returns:
-    TODO(akeshet): Enum(autotest, skylab) indication of backend to use.
-  """
-  with api.step.nest('select backend'):
-    # TODO(akeshet): Replace with real backend selector script.
-    return api.step(
-        'backend selector',
-        ['echo', 'skylab'],
-        stdout=api.raw_io.output()
-    ).stdout
 
 def RunSteps(api, properties):
-  validate_request(api, properties)
-  enumerated_tests = enumerate_tests(api, properties)
-  # TODO(akeshet): Populate migration_config from recipe configuration.
-  migration_config = None
-  backend = select_backend(api, properties, migration_config)
-  if backend == 'autotest':
-    raise NotImplementedError('autotest backend')
-  elif backend == 'skylab':
-    raise NotImplementedError('skylab backend')
-  else:
-    raise ValueError('invalid backend %s' % backend)
+  enumeration = enumerate_tests(api, properties)
+  traffic_split = split(api, properties)
+  execute(api, properties, enumeration, traffic_split)
 
 
 def GenTests(api):
-  yield (api.test('basic skylab') + #
-         api.properties(
-            CrosTestPlatformRequest(params={'board': 'test_board'})) + #
-         api.step_data('select backend.backend selector',
-                       stdout=api.raw_io.output('skylab')) + #
-         api.expect_exception('NotImplementedError'))
-
-  yield (api.test('basic autotest') + #
-         api.properties(
-            CrosTestPlatformRequest(params={'board': 'test_board'})) + #
-         api.step_data('select backend.backend selector',
-                       stdout=api.raw_io.output('autotest')) + #
-         api.expect_exception('NotImplementedError'))
-
-  yield (api.test('invalid backend') + #
-         api.properties(
-            CrosTestPlatformRequest(params={'board': 'test_board'})) + #
-         api.step_data('select backend.backend selector',
-                       stdout=api.raw_io.output('foobar')) + #
-         api.expect_exception('ValueError'))
-
-  yield (api.test('board_param_missing') + #
-         api.properties(
-            CrosTestPlatformRequest(params={'board': ''})) + #
-         api.expect_exception('ValueError'))
+  yield (api.test('basic'))

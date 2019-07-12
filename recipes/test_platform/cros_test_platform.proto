@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipes.chromeos.test_platform.cros_test_platform;
 
 import "test_platform/request.proto";
+import "test_platform/config/config.proto";
 
 message CrosTestPlatformRequest {
   message RequestParams {
@@ -16,4 +17,5 @@ message CrosTestPlatformRequest {
   RequestParams params = 1 [deprecated = true];
 
   .test_platform.Request request = 2;
+  .test_platform.config.Config config = 3;
 }
