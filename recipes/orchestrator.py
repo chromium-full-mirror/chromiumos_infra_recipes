@@ -179,7 +179,8 @@ def RunSteps(api, properties):
   with api.failures.ignore_exceptions():
     if gerrit_changes and needs_baseline_validation(
         failed_hw_results, test_plan,
-        properties.baseline_verification_threshold):
+        properties.baseline_validation_percent,
+        properties.baseline_validation_count):
       # Start Baseline HW Verification process.
       build_targets_to_verify = set([
           test_to_build_target_map[test_name] for test_name in failed_hw_results
@@ -511,13 +512,16 @@ def validate_refs(refs):
   validate_ref(refs.success, 'success')
 
 
-def needs_baseline_validation(failed_results, test_plan, threshold):
+def needs_baseline_validation(failed_results, test_plan, percent_threshold,
+                              count_threshold):
   """Check if we need baseline validation for this orchestrator.
 
   Args:
     failed_results (list[SkylabResults]): Results of failed tests.
     test_plan (GenerateTestPlanResponse): test_plan of the orchestrator.
-    threshold (float): upper threshold for baseline validation.
+    percent_threshold (float): upper threshold for baseline validation.
+    count_threshold (int): upper threshold of # of tests
+      for baseline validation.
 
   Returns:
     A boolean indicating whether we need to initiate baseline
@@ -527,7 +531,8 @@ def needs_baseline_validation(failed_results, test_plan, threshold):
       [len(unit.hw_test_cfg.hw_test) for unit in test_plan.hw_test_units])
   if failed_results:
     failure_ratio = float(len(failed_results)) / hw_test_count
-    if failure_ratio <= threshold:
+    if (failure_ratio <= float(percent_threshold)/100 or
+        len(failed_results) <= count_threshold):
       return True
 
   return False
@@ -841,9 +846,26 @@ def GenTests(api):
                                state=api.swarming.TaskState.COMPLETED,
                                failure=True)
   ]
+
+  yield (api.test('does_not_run_baseline_validation') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.properties(baseline_validation_percent=0) +  #
+         api.properties(baseline_validation_limit=0) +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='orchestrator pointless build check') +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests') +
+         api.override_step_data('run tests.collect tests.collect skylab tasks',
+                                api.swarming.collect(skylab_results)))
+
   yield (api.test('pass_with_baseline_validation') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.properties(baseline_verification_threshold=1.0) +  #
+         api.properties(baseline_validation_percent=100) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='orchestrator pointless build check') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
@@ -868,7 +890,7 @@ def GenTests(api):
   ]
   yield (api.test('fail_with_baseline_validation') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.properties(baseline_verification_threshold=1.0) +  #
+         api.properties(baseline_validation_percent=100) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='orchestrator pointless build check') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
