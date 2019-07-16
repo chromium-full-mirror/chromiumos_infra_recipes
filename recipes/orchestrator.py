@@ -188,10 +188,10 @@ def RunSteps(api, properties):
       baseline_builds_to_verify = [
           build_target + '-baseline' for build_target in build_targets_to_verify
       ]
-      _, build_requests = get_build_plan(
+      baseline_builds, build_requests = get_build_plan(
           api, child_builders=baseline_builds_to_verify, enable_history=True,
           gerrit_changes=gerrit_changes, snapshot=snapshot)
-      baseline_builds = api.buildbucket.run(
+      baseline_builds += api.buildbucket.run(
           build_requests, timeout=60 * 60 * 4, step_name='run baseline builds',
           url_title_fn=api.naming.get_build_title)
       with api.step.nest('run baseline tests'):
