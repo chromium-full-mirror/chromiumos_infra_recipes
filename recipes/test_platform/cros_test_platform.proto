@@ -9,13 +9,17 @@ package recipes.chromeos.test_platform.cros_test_platform;
 import "test_platform/request.proto";
 import "test_platform/config/config.proto";
 
-message CrosTestPlatformRequest {
-  message RequestParams {
-    string board = 1;
-  }
+message CrosTestPlatformProperties {
+  reserved 1;
 
-  RequestParams params = 1 [deprecated = true];
-
+  // request describes a request to the cros_test_platform recipe, as
+  // described by a caller.
   .test_platform.Request request = 2;
+
+  // config describes configuration information for the cros_test_platform
+  // recipe.
+  //
+  // This property should not be specified by callers, but instead set by builder
+  // properties.
   .test_platform.config.Config config = 3;
 }

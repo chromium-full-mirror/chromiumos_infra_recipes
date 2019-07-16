@@ -2545,7 +2545,7 @@ Resolve request into list of tests and their metadata.
 
 Args:
   * api (object): See RunSteps documentation.
-  * properties (CrosTestPlatformRequest): The input request.
+  * properties (CrosTestPlatformProperties): The input request.
 
 Returns: EnumerationResponse.
 

@@ -9,7 +9,7 @@ TODO: Migrate to a recipes repo owned by the test team.
 """
 
 from PB.recipes.chromeos.test_platform.cros_test_platform import \
-  CrosTestPlatformRequest
+  CrosTestPlatformProperties
 from PB.test_platform.steps.enumeration import EnumerationRequest
 from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitRequest
@@ -23,7 +23,7 @@ DEPS = [
     'cros_test_platform'
 ]
 
-PROPERTIES = CrosTestPlatformRequest
+PROPERTIES = CrosTestPlatformProperties
 
 
 def enumerate_tests(api, properties):
@@ -31,7 +31,7 @@ def enumerate_tests(api, properties):
 
   Args:
     * api (object): See RunSteps documentation.
-    * properties (CrosTestPlatformRequest): The input request.
+    * properties (CrosTestPlatformProperties): The input request.
 
   Returns: EnumerationResponse.
   """
