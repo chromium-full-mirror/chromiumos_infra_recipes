@@ -2554,11 +2554,11 @@ Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#17)(api):**
 
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/71f0da3e9392be24fbfac48a3238ee73a9ba3349/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/71f0da3e9392be24fbfac48a3238ee73a9ba3349/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/71f0da3e9392be24fbfac48a3238ee73a9ba3349/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/71f0da3e9392be24fbfac48a3238ee73a9ba3349/recipes/README.recipes.md#recipe_modules-gsutil
-[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/71f0da3e9392be24fbfac48a3238ee73a9ba3349/recipes/README.recipes.md#recipe_modules-tryserver
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/70eba7d2d1982af6b2f14aae64f03742508b8d08/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/70eba7d2d1982af6b2f14aae64f03742508b8d08/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/70eba7d2d1982af6b2f14aae64f03742508b8d08/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/70eba7d2d1982af6b2f14aae64f03742508b8d08/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/70eba7d2d1982af6b2f14aae64f03742508b8d08/recipes/README.recipes.md#recipe_modules-tryserver
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9f38694b68d88bf0bbc102aa614f42f21f13b71c/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9f38694b68d88bf0bbc102aa614f42f21f13b71c/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9f38694b68d88bf0bbc102aa614f42f21f13b71c/README.recipes.md#recipe_modules-buildbucket
