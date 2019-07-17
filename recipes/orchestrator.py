@@ -168,22 +168,26 @@ def RunSteps(api, properties):
           for moblab_vm_result in moblab_vm_results
           if not api.failures.is_moblab_vm_test_failure(moblab_vm_result)
       ])
-      api.cros_history.set_passed_tests(passed_tests)
 
   baseline_hw_results = []
-  failed_hw_results = [
+  baseline_vm_results = []
+  failed_test_names = ([
       hw_result.task.test.common.display_name
       for hw_result in hw_results
       if api.failures.is_hw_test_failure(hw_result)
-  ]
+  ] + [
+      api.naming.get_vm_test_title(vm_result)
+      for vm_result in vm_results
+      if api.failures.is_vm_test_failure(vm_result)
+  ])
+
   with api.failures.ignore_exceptions():
     if gerrit_changes and needs_baseline_validation(
-        failed_hw_results, test_plan,
-        properties.baseline_validation_percent,
+        failed_test_names, test_plan, properties.baseline_validation_percent,
         properties.baseline_validation_count):
       # Start Baseline HW Verification process.
       build_targets_to_verify = set([
-          test_to_build_target_map[test_name] for test_name in failed_hw_results
+          test_to_build_target_map[test_name] for test_name in failed_test_names
       ])
       baseline_builds_to_verify = [
           build_target + '-baseline' for build_target in build_targets_to_verify
@@ -200,6 +204,10 @@ def RunSteps(api, properties):
               baseline_builds, snapshot.id)
           baseline_skylab_tasks = schedule_skylab_tests(api, baseline_test_plan,
                                                         passed_tests)
+          baseline_vm_tests = schedule_autotest_vm_tests(
+              api, baseline_test_plan, passed_tests, snapshot)
+          baseline_vm_tests += schedule_tast_vm_tests(api, baseline_test_plan,
+                                                      passed_tests, snapshot)
 
         with api.step.nest('collect baseline tests'):
           if baseline_skylab_tasks:
@@ -210,15 +218,27 @@ def RunSteps(api, properties):
                 for hw_result in baseline_hw_results
                 if api.failures.is_hw_test_failure(hw_result)
             ])
+          if baseline_vm_tests:
+            baseline_vm_results = api.buildbucket.collect_builds(
+                [vt.id for vt in baseline_vm_tests],
+                step_name='collect vm tests', timeout=60 * 60 * 4).values()
+            # Add failures here to passed_tests.
+            passed_tests.extend([
+                api.naming.get_vm_test_title(vm_result)
+                for vm_result in baseline_vm_results
+                if api.failures.is_vm_test_failure(vm_result)
+            ])
 
   api.cros_history.set_passed_tests(passed_tests)
 
   # Verify builds/tests in a deferred context so that all failures appear.
   with api.step.nest('check test results'):
-    failures.extend(api.failures.get_hw_test_failures(
-        hw_results, baseline_hw_tests=baseline_hw_results))
-    failures.extend(api.failures.get_vm_test_failures(vm_results))
+    failures.extend(
+        api.failures.get_hw_test_failures(hw_results, baseline_hw_results))
+    failures.extend(
+        api.failures.get_vm_test_failures(vm_results, baseline_vm_results))
     # TODO(evanhernandez): Include Moblab VM tests here once stable.
+    # Also, add Moblab to baseline validation pipeline.
 
   # Victory! If we've made it this far, the child builders were successful
   # and we can update the success manifest ref if it is specified.
@@ -527,10 +547,14 @@ def needs_baseline_validation(failed_results, test_plan, percent_threshold,
     A boolean indicating whether we need to initiate baseline
     validation.
   """
-  hw_test_count = sum(
-      [len(unit.hw_test_cfg.hw_test) for unit in test_plan.hw_test_units])
+  test_count = sum(
+      [len(unit.hw_test_cfg.hw_test) for unit in test_plan.hw_test_units] +
+      [len(unit.vm_test_cfg.vm_test) for unit in test_plan.vm_test_units] + [
+          len(unit.tast_vm_test_cfg.tast_vm_test)
+          for unit in test_plan.tast_vm_test_units
+      ])
   if failed_results:
-    failure_ratio = float(len(failed_results)) / hw_test_count
+    failure_ratio = float(len(failed_results)) / test_count
     if (failure_ratio <= float(percent_threshold)/100 or
         len(failed_results) <= count_threshold):
       return True

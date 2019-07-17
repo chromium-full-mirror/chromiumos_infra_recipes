@@ -1336,14 +1336,6 @@
   },
   {
     "cmd": [],
-    "name": "run tests.collect tests.set passed_tests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-inline\", \"htarget.hw.bvt-cq\", \"vm-test\", \"moblab-vm-test\"]@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set passed_tests",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-inline\", \"htarget.hw.bvt-cq\", \"vm-test\", \"moblab-vm-test\"]@@@"
