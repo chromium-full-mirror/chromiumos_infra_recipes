@@ -74,7 +74,7 @@ def RunSteps(api, properties):
         assert len(image_files) == 1, (
             'expected one image archive, got: %r' % image_files)
         image_zip = image_files[0]
-        image_dir = api.path.mkdtemp(prefix='image-under-test-')
+        image_dir = api.path.mkdtemp(prefix='image-under-test-').join('image')
         api.archive.extract('unzip image.zip', image_zip, image_dir)
 
       with api.step.nest('group artifacts for moblab image cache'):
