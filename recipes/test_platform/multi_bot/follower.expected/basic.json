@@ -1,0 +1,54 @@
+[
+  {
+    "cmd": [],
+    "name": "prejob step"
+  },
+  {
+    "cmd": [
+      "echo",
+      "prejob task"
+    ],
+    "name": "prejob step.execute prejob",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "echo",
+      "create subscription"
+    ],
+    "name": "prejob step.prejob coordination",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ipc.send"
+    ],
+    "name": "send info step"
+  },
+  {
+    "cmd": [
+      "ipc.receive"
+    ],
+    "name": "wait to start step"
+  },
+  {
+    "cmd": [
+      "ipc.receive"
+    ],
+    "name": "wait to finish step"
+  },
+  {
+    "cmd": [
+      "echo",
+      "cleanup tasks"
+    ],
+    "name": "cleanup step"
+  },
+  {
+    "name": "$result"
+  }
+]

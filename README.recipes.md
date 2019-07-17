@@ -150,6 +150,8 @@
   * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Moblab VM tests.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
+  * [test_platform/multi_bot/follower](#recipes-test_platform_multi_bot_follower)
+  * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader)
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
@@ -3300,6 +3302,16 @@ Returns: (test_platform.Request, bool (skylab)) tuple.
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#10): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#45)(api, properties):**
+### *recipes* / [test\_platform/multi\_bot/follower](/recipes/test_platform/multi_bot/follower.py)
+
+[DEPS](/recipes/test_platform/multi_bot/follower.py#10): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipes/test_platform/multi_bot/follower.py#19)(api, properties):**
+### *recipes* / [test\_platform/multi\_bot/leader](/recipes/test_platform/multi_bot/leader.py)
+
+[DEPS](/recipes/test_platform/multi_bot/leader.py#10): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipes/test_platform/multi_bot/leader.py#19)(api, properties):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
 [DEPS](/recipes/test_platform/test_runner.py#10): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
