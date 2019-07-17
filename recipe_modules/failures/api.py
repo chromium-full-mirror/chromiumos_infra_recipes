@@ -107,6 +107,31 @@ class FailuresApi(recipe_api.RecipeApi):
       results_step.presentation.step_text = step_text
       return failures
 
+  def _get_baseline_validated_failures(self, kind, runs, baseline_runs,
+                                       is_failure, get_title, get_url):
+    """Wraps _get_failures() to enable baseline filtering.
+
+    Args:
+      kind(str): A text description of runs.
+      runs(list[SkylabResult|Build]): List of results.
+      baseline_runs(list[SkylabResult|Build]): List of results
+        from baseline runs.
+      is_failure(func): A func(run->bool) returns the status of the run.
+      get_title(func): A func(run->str) returns the name of the run.
+      get_url(func): A func(run->str) returns the url of the run.
+    """
+    failed_baseline_run_names = set(
+        [get_title(run) for run in baseline_runs if is_failure(run)])
+    filtered_runs = [
+        run for run in runs if get_title(run) not in failed_baseline_run_names
+    ]
+    failures = self._get_failures(kind, filtered_runs, is_failure, get_title,
+                                  get_url)
+    if baseline_runs:
+      self._get_failures('baseline ' + kind, baseline_runs, is_failure,
+                         get_title, get_url)
+    return failures
+
   @contextlib.contextmanager
   def ignore_exceptions(self):
     """Catches exceptions and logs them instead.
@@ -217,56 +242,48 @@ class FailuresApi(recipe_api.RecipeApi):
         results from the baseline tests.
 
     Returns:
-      list[Failure]: All failures discovered in the given runs.
+      list[Failure]: All failures discovered in the given runs filtered
+      by baseline failures.
     """
-    ## TODO(dhanyaganesh): Make this function more generic.
-    failed_baseline_test_names = set([
-        self.m.naming.get_skylab_result_title(test)
-        for test in baseline_hw_tests or []
-        if self.is_critical_hw_test_failure(test)
-    ])
-    filtered_hw_tests = [
-        test for test in hw_tests if self.m.naming.get_skylab_result_title(test)
-        not in failed_baseline_test_names
-    ]
-    failures = self._get_failures('hw test', filtered_hw_tests,
-                                  self.is_critical_hw_test_failure,
-                                  self.m.naming.get_skylab_result_title,
-                                  self.m.urls.get_skylab_result_url)
-    if baseline_hw_tests:
-      # Present, but do not fail on, baseline hardware tests.
-      self._get_failures('baseline hw test', baseline_hw_tests,
-                         self.is_critical_hw_test_failure,
-                         self.m.naming.get_skylab_result_title,
-                         self.m.urls.get_skylab_result_url)
-    return failures
+    return self._get_baseline_validated_failures(
+        'hw test', hw_tests, baseline_hw_tests or [],
+        self.is_critical_hw_test_failure, self.m.naming.get_skylab_result_title,
+        self.m.urls.get_skylab_result_url)
 
-  def get_vm_test_failures(self, vm_tests):
+  def get_vm_test_failures(self, vm_tests, baseline_vm_tests=None):
     """Logs VM test status to UI, and raises on failed tests.
 
     Args:
       vm_tests (list[Build]): List of VM test buildbucket results.
+      baseline_vm_tests (list[Build]): List of VM test buildbucket results
+        from the baseline tests.
 
     Returns:
-      list[Failure]: All failures discovered in the given runs.
+      list[Failure]: All failures discovered in the given runs filtered
+      by baseline failures.
     """
-    return self._get_failures(
-        'vm test', vm_tests, self.is_critical_vm_test_failure,
-        self.m.naming.get_vm_test_title, self.m.urls.get_build_url)
+    return self._get_baseline_validated_failures(
+        'vm test', vm_tests, baseline_vm_tests or [],
+        self.is_critical_vm_test_failure, self.m.naming.get_vm_test_title,
+        self.m.urls.get_build_url)
 
-  def get_moblab_vm_test_failures(self, moblab_vm_tests):
+  def get_moblab_vm_test_failures(self, moblab_vm_tests,
+                                  baseline_moblab_vm_tests=None):
     """Logs Moblab VM test status to UI, but does not rais on failed tests.
 
     Args:
       moblab_vm_tests (list[Build]): List of Moblab VM test buildbucket results.
+      baseline_moblab_vm_tests (list[Build]): List of Moblab VM test
+        buildbucket results from the baseline tests.
 
     Returns:
-      list[Failure]: All failures discovered in the given runs.
+      list[Failure]: All failures discovered in the given runs filtered
+      by baseline failures.
     """
-    return self._get_failures('moblab vm test', moblab_vm_tests,
-                              self.is_critical_moblab_vm_test_failure,
-                              self.m.naming.get_moblab_vm_test_title,
-                              self.m.urls.get_build_url)
+    return self._get_baseline_validated_failures(
+        'moblab vm test', moblab_vm_tests, baseline_moblab_vm_tests or [],
+        self.is_critical_moblab_vm_test_failure,
+        self.m.naming.get_moblab_vm_test_title, self.m.urls.get_build_url)
 
   def is_build_failure(self, build):
     """Determine if the build failed.
