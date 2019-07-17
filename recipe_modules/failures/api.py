@@ -138,16 +138,12 @@ class FailuresApi(recipe_api.RecipeApi):
 
     Should only be used temporarily to prevent new features from crashing the
     entire recipe. Remove once new feature is stable.
-
-    Requires `step.active_result` to be present when the exception is thrown
-    (i.e. at least one step has been run at the current nested context).
     """
     try:
       yield
     except Exception as e:
-      self.m.step.active_result.presentation.logs['caught exception'] = [
-          repr(e)
-      ]
+      step = self.m.step('ignored exception', cmd=None)
+      step.presentation.logs['caught exception'] = [repr(e)]
 
   def raise_failed_packages(self, packages):
     """Display failed packages and raise a failure.
