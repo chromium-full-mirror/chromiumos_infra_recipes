@@ -8,26 +8,10 @@
   },
   {
     "cmd": [],
-    "name": "vm test results (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all vm tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "vm test results (3)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@1 vm tests failed, 0 succeeded, 0 silenced@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "vm test results (3).[FAILED] target.vm.suite",
+    "name": "vm test results.target.vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
@@ -38,7 +22,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "vm test results (3).[FAILED] target.vm.suite.get access token for default account",
+    "name": "vm test results.target.vm.suite.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -59,7 +43,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "vm test results (3).[FAILED] target.vm.suite.get Sheriff-o-Matic annotations",
+    "name": "vm test results.target.vm.suite.get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",
@@ -86,7 +70,13 @@
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|[FAILED] chromeos.bucket.builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|chromeos.bucket.builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (5)|chromeos.bucket.builder\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
@@ -103,6 +93,38 @@
       "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
       "@@@STEP_LOG_LINE@json.output[output]@]@@@",
       "@@@STEP_LOG_END@json.output[output]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "vm test results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all vm tests succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "vm test results (2).target.vm.suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "vm test results (3)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 vm tests failed, 0 succeeded, 0 failures silenced@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "vm test results (3).target.vm.suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

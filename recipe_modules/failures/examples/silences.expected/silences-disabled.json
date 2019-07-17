@@ -3,13 +3,13 @@
     "cmd": [],
     "name": "build results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 failures silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results.[FAILED] chromeos.bucket.builder",
+    "name": "build results.chromeos.bucket.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
@@ -20,13 +20,13 @@
     "cmd": [],
     "name": "build results (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 failures silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results (2).[FAILED] chromeos.bucket.builder",
+    "name": "build results (2).chromeos.bucket.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
@@ -37,13 +37,13 @@
     "cmd": [],
     "name": "build results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 failures silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results (3).[FAILED] chromeos.bucket.builder",
+    "name": "build results (3).chromeos.bucket.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
@@ -54,17 +54,32 @@
     "cmd": [],
     "name": "build results (4)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 failures silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results (4).[FAILED] chromeos.bucket.builder",
+    "name": "build results (4).chromeos.bucket.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (5)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all builds succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (5).chromeos.bucket.builder",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {

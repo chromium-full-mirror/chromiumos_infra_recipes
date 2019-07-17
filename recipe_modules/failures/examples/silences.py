@@ -33,6 +33,12 @@ def RunSteps(api):
   # The fourth time should not raise unless disable_silences is true.
   assert_fatality(api, build_critical_failure, api.failures._disable_silences)
 
+  # The fifth time is a success, but still silenced. This line just exercises
+  # the code path that increments the silence counter.
+  build_success = build_pb2.Build(
+      builder=build_pb2.BuilderID(project='chromeos', bucket='bucket',
+                                  builder='builder'), status=common_pb2.SUCCESS)
+  api.failures.get_build_failures([build_success])
 
 def GenTests(api):
   yield api.test('basic')

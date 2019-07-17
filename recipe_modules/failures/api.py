@@ -55,53 +55,61 @@ class FailuresApi(recipe_api.RecipeApi):
 
       return self.m.cros_som.get_silence_reason(annotation)
 
+  def _present_run(self, title, url, status):
+    with self.m.step.nest(title) as step:
+      step.presentation.status = status
+      step.presentation.links['suite job details'] = url
+
+      silence_reason = self._get_silence_reason(self.m.step.active_result.name)
+      if silence_reason:
+        # Sheriff-o-Matic monitors failed steps, so we cannot modify the
+        # step name because it is silenced. For example, imagine the step
+        # "build results|[FAILED] chromeos.bucket.builder" is failing and
+        # silenced in SoM. If in the next run we change the step name to
+        # "build results|[FAILED BUT SILENCED] chromeos.bucket.builder",
+        # there will be a new (unsilenced) failure, and the old (silenced)
+        # failure will disappear from SoM.
+        step.presentation.logs['silence reason'] = [silence_reason]
+
+      return silence_reason is not None
+
   def _get_failures(self, kind, runs, is_failure, get_title, get_url):
     with self.m.step.nest('{} results'.format(kind)) as results_step:
       failures = []
       failed_runs = filter(is_failure, runs)
-      silenced_count = 0
+      silenced_failure_count = 0
 
-      for failed_run in failed_runs:
+      for failed_run in sorted(failed_runs, key=get_title):
         title = get_title(failed_run)
         url = get_url(failed_run)
 
-        # Each failure gets a substep, which helps with reporting tools such
-        # as Sheriff-o-Matic.
-        with self.m.step.nest('[FAILED] {}'.format(title)) as failure_step:
-          failure_step.presentation.status = self.m.step.FAILURE
-          failure_step.presentation.links['suite job details'] = url
-          fatal = True
+        silenced = self._present_run(title, url, self.m.step.FAILURE)
+        if silenced:
+          silenced_failure_count += 1
 
-          silence_reason = self._get_silence_reason(
-              self.m.step.active_result.name)
-          if silence_reason:
-            silenced_count += 1
-            fatal = False
+        failures.append(
+            self.Failure(kind=kind, title=title, url=url, fatal=not silenced))
 
-            # Sheriff-o-Matic monitors failed steps, so we cannot modify the
-            # step name because it is silenced. For example, imagine the step
-            # "build results|[FAILED] chromeos.bucket.builder" is failing and
-            # silenced in SoM. If in the next run we change the step name to
-            # "build results|[FAILED BUT SILENCED] chromeos.bucket.builder",
-            # there will be a new (unsilenced) failure, and the old (silenced)
-            # failure will disappear from SoM.
-            failure_step.presentation.logs['silence reason'] = [silence_reason]
+      success_runs = [run for run in runs if not is_failure(run)]
+      for success_run in sorted(success_runs, key=get_title):
+        title = get_title(success_run)
+        url = get_url(success_run)
 
-          failures.append(
-              self.Failure(kind=kind, title=title, url=url, fatal=fatal))
+        self._present_run(title, url, self.m.step.SUCCESS)
 
-      success_count = len(runs) - len(failed_runs)
-      fail_count = len(failed_runs) - silenced_count
+      success_count = len(success_runs)
+      fail_count = len(failed_runs) - silenced_failure_count
 
       if not fail_count:
         status = self.m.step.SUCCESS
         step_text = 'all {}s succeeded'.format(kind)
-        if silenced_count:
-          step_text += ' ({} failures were silenced)'.format(silenced_count)
+        if silenced_failure_count:
+          step_text += ' ({} failures were silenced)'.format(
+              silenced_failure_count)
       else:
         status = self.m.step.FAILURE
-        step_text = '{} {}s failed, {} succeeded, {} silenced'.format(
-            fail_count, kind, success_count, silenced_count)
+        step_text = '{} {}s failed, {} succeeded, {} failures silenced'.format(
+            fail_count, kind, success_count, silenced_failure_count)
 
       results_step.presentation.status = status
       results_step.presentation.step_text = step_text

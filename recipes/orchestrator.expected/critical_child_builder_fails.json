@@ -241,13 +241,13 @@
     "name": "check build results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@1 builds failed, 1 succeeded, 0 silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 1 succeeded, 0 failures silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "check build results.build results.[FAILED] ..amd64-generic-postsubmit",
+    "name": "check build results.build results...amd64-generic-postsubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
@@ -262,7 +262,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "check build results.build results.[FAILED] ..amd64-generic-postsubmit.get access token for default account",
+    "name": "check build results.build results...amd64-generic-postsubmit.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -283,7 +283,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "check build results.build results.[FAILED] ..amd64-generic-postsubmit.get Sheriff-o-Matic annotations",
+    "name": "check build results.build results...amd64-generic-postsubmit.get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",
@@ -310,7 +310,13 @@
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|[FAILED] chromeos.bucket.builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|chromeos.bucket.builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (5)|chromeos.bucket.builder\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
@@ -327,6 +333,14 @@
       "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
       "@@@STEP_LOG_LINE@json.output[output]@]@@@",
       "@@@STEP_LOG_END@json.output[output]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check build results.build results...arm-generic-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@"
     ]
   },
   {
@@ -1443,10 +1457,34 @@
   },
   {
     "cmd": [],
+    "name": "check test results.hw test results.htarget.hw.bvt-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite job details@https://swarming.com/bvt-cq@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check test results.hw test results.htarget.hw.bvt-inline",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite job details@https://swarming.com/bvt-inline@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check test results.vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all vm tests succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check test results.vm test results.vm-test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {
