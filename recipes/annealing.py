@@ -113,7 +113,7 @@ def RunSteps(api, properties):
       with api.step.nest('schedule child builds'):
         requests = [
             api.buildbucket.schedule_request(gitiles_commit=snapshot_commit,
-                                             builder=child)
+                                             builder=child, bucket='postsubmit')
             for child in properties.child_builders
         ]
         api.buildbucket.schedule(requests)
