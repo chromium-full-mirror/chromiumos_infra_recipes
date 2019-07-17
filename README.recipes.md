@@ -610,12 +610,8 @@ IMAGE_ZIP Chrome OS artifact.
 Args:
   gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
       applied for the build, if any.
-  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal snapshot
-      Gitiles commit.
-  build_target (chromiumos.BuildTarget): The BuildTarget being built.
-  dep_graph_check (bool): Whether to invoke GetBuildDependencyGraph as part
-      of the pointless build check. If True, the chromiumos workspace must
-      have been checked out in advance.
+  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+      snapshot Gitiles commit.
   name (str): The step name.
 
 Returns:
@@ -625,7 +621,7 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#49)(self, gerrit_changes, gitiles_commit, build_target, name=None):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#45)(self, gerrit_changes, gitiles_commit, build_target, name=None):**
 
 Determines if build(s) can be terminated early.
 
@@ -636,6 +632,8 @@ BuildDependencyGraph checks.
 Args:
   gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
       applied for the build, if any.
+  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+      snapshot Gitiles commit.
   build_target (chromiumos.BuildTarget): The BuildTarget being built.
   name (str): The step name.
 

@@ -32,12 +32,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Args:
       gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
           applied for the build, if any.
-      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal snapshot
-          Gitiles commit.
-      build_target (chromiumos.BuildTarget): The BuildTarget being built.
-      dep_graph_check (bool): Whether to invoke GetBuildDependencyGraph as part
-          of the pointless build check. If True, the chromiumos workspace must
-          have been checked out in advance.
+      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+          snapshot Gitiles commit.
       name (str): The step name.
 
     Returns:
@@ -57,6 +53,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Args:
       gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
           applied for the build, if any.
+      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+          snapshot Gitiles commit.
       build_target (chromiumos.BuildTarget): The BuildTarget being built.
       name (str): The step name.
 
