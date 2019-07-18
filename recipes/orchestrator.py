@@ -221,7 +221,8 @@ def RunSteps(api, properties):
           if baseline_vm_tests:
             baseline_vm_results = api.buildbucket.collect_builds(
                 [vt.id for vt in baseline_vm_tests],
-                step_name='collect vm tests', timeout=60 * 60 * 4).values()
+                step_name='collect baseline vm tests',
+                timeout=60 * 60 * 4).values()
             # Add failures here to passed_tests.
             passed_tests.extend([
                 api.naming.get_vm_test_title(vm_result)
@@ -899,8 +900,10 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests') +
+             [], step_name='run baseline tests.collect baseline tests.collect'
+             ' baseline vm tests') + api.buildbucket.simulated_collect_output(
+                 moblab_vm_tests,
+                 step_name='run tests.collect tests.collect moblab vm tests') +
          api.override_step_data('run tests.collect tests.collect skylab tasks',
                                 api.swarming.collect(skylab_results)) +  #
          api.override_step_data(
@@ -924,8 +927,10 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests') +
+             [], step_name='run baseline tests.collect baseline tests.collect'
+             ' baseline vm tests') + api.buildbucket.simulated_collect_output(
+                 moblab_vm_tests,
+                 step_name='run tests.collect tests.collect moblab vm tests') +
          api.override_step_data('run tests.collect tests.collect skylab tasks',
                                 api.swarming.collect(skylab_results)) +  #
          api.override_step_data(
