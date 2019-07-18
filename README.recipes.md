@@ -64,6 +64,7 @@
   * [cros_history:examples/get_matching_builds](#recipes-cros_history_examples_get_matching_builds)
   * [cros_history:examples/get_passed_builds](#recipes-cros_history_examples_get_passed_builds)
   * [cros_history:examples/get_passed_tests](#recipes-cros_history_examples_get_passed_tests)
+  * [cros_history:examples/get_snapshot_builds](#recipes-cros_history_examples_get_snapshot_builds)
   * [cros_history:examples/set_passed_tests](#recipes-cros_history_examples_set_passed_tests)
   * [cros_infra_config:examples/full](#recipes-cros_infra_config_examples_full)
   * [cros_infra_config:examples/no_builder_config](#recipes-cros_infra_config_examples_no_builder_config)
@@ -477,11 +478,11 @@ Args:
 
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#104)(self, build, status=None, start_build_id=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#141)(self, build, status=None, start_build_id=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -493,7 +494,7 @@ Args:
 Returns:
   list[Build] which meet the conditions ordered from latest to oldest.
 
-&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#31)(self, tags=None):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#32)(self, tags=None):**
 
 Retrieve passed builds with the same patches as current build.
 
@@ -503,14 +504,26 @@ Args:
 Returns:
   list([build_pb2.Build]): Passed builds with at most one build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#66)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#67)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#91)(self, tests):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#105)(self, snapshot, builder_list):**
+
+Get *-snapshot builds with the given snapshot.
+
+Args:
+  snapshot (GitilesCommit): Snapshot to search on.
+  builder_list (set[str]): List of builder names to filter by.
+
+Returns:
+  list[Build] *-snapshot builds with the same snapshot filtered
+  by the builder_list.
+
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#92)(self, tests):**
 
 Record the tests that passed in the current run.
 
@@ -520,7 +533,7 @@ have passed and which have not.
 Args:
   tests (sequence[str]): (Unique) names of the tests that passed.
 
-&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#26)(self):**
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#27)(self):**
 
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
@@ -2115,6 +2128,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_history/examples/get_passed_tests.py#11): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_passed_tests.py#18)(api):**
+### *recipes* / [cros\_history:examples/get\_snapshot\_builds](/recipe_modules/cros_history/examples/get_snapshot_builds.py)
+
+[DEPS](/recipe_modules/cros_history/examples/get_snapshot_builds.py#10): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_snapshot_builds.py#17)(api):**
 ### *recipes* / [cros\_history:examples/set\_passed\_tests](/recipe_modules/cros_history/examples/set_passed_tests.py)
 
 [DEPS](/recipe_modules/cros_history/examples/set_passed_tests.py#9): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

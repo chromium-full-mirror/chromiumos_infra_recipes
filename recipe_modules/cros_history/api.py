@@ -14,6 +14,7 @@ from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
 PASSED_TESTS_KEY = 'passed_tests'
+SNAPSHOT_BUCKET = 'postsubmit'
 
 
 class CrosHistoryApi(recipe_api.RecipeApi):
@@ -101,6 +102,42 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       raise ValueError('test names must be unique, found: %r' % tests)
     self.m.easy.set_property_step(PASSED_TESTS_KEY, tests)
 
+  def get_snapshot_builds(self, snapshot, builder_list):
+    """Get *-snapshot builds with the given snapshot.
+
+    Args:
+      snapshot (GitilesCommit): Snapshot to search on.
+      builder_list (set[str]): List of builder names to filter by.
+
+    Returns:
+      list[Build] *-snapshot builds with the same snapshot filtered
+      by the builder_list.
+    """
+    with self.m.step.nest('get snapshot builds') as step:
+      project = self.m.buildbucket.build.builder.project
+      builder_shell = build_pb2.BuilderID(project=project,
+                                          bucket=SNAPSHOT_BUCKET)
+      # We cannot use snapshot directly because the set of fields
+      # ('host', 'id', 'project', 'ref') is unsupported by buildbucket.
+      # Limiting to ('host', 'id', 'project').
+      search_snapshot = common_pb2.GitilesCommit(
+          host=snapshot.host, project=snapshot.project, id=snapshot.id)
+
+      all_snapshot_builds = self._get_patch_history(snapshot=search_snapshot,
+                                                    builder=builder_shell,
+                                                    status=common_pb2.SUCCESS)
+      snapshot_builds = [
+          build for build in all_snapshot_builds
+          if build.builder.builder in builder_list
+      ]
+      step.presentation.step_text = 'found %d snapshot builds' % len(
+          snapshot_builds)
+      for build in snapshot_builds:
+        title = self.m.naming.get_build_title(build)
+        url = self.m.buildbucket.build_url(build_id=build.id)
+        step.presentation.links[title] = url
+      return snapshot_builds
+
   def get_matching_builds(self, build, status=None, start_build_id=None):
     """Get builds with the matching builder and gerrit_changes.
 
@@ -120,17 +157,19 @@ class CrosHistoryApi(recipe_api.RecipeApi):
                                      builder=build.builder, status=status,
                                      start_build_id=start_build_id)
 
-  def _get_patch_history(self, patches, builder=None, limit=None, status=None,
-                         start_build_id=None, tags=None):
+  def _get_patch_history(self, patches=None, snapshot=None, builder=None,
+                         limit=None, status=None, start_build_id=None,
+                         tags=None):
     """Get all the passed builds with current patch-set from Buildbucket.
 
     Args:
-      * patches list([GerritChange]): patches to search for.
-      * builder (BuilderID): query for only this builder.
-      * limit (int): limit the list returned to this number.
-      * status (common_pb2.Status): query for builds with this status.
-      * start_build_id: query builds older than this ID.
-      * tags ([common_pb2.StringPair]): get builds with these tags only.
+      patches list([GerritChange]): patches to search on.
+      snapshot (GitilesCommit): snapshot to search on.
+      builder (BuilderID): query for only this builder.
+      limit (int): limit the list returned to this number.
+      status (common_pb2.Status): query for builds with this status.
+      start_build_id: query builds older than this ID.
+      tags ([common_pb2.StringPair]): get builds with these tags only.
 
     Returns:
       list[Build] which meet the conditions ordered from latest to oldest.
@@ -145,7 +184,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
           start_time=timestamp_pb2.Timestamp(
               seconds=int(self.start_time_in_seconds)))
     build_predicate = rpc_pb2.BuildPredicate(
-        builder=builder, status=status, gerrit_changes=patches, tags=tags,
-        create_time=create_time, build=build_range)
+        builder=builder, status=status, gerrit_changes=patches,
+        output_gitiles_commit=snapshot, tags=tags, create_time=create_time,
+        build=build_range)
     return self.m.buildbucket.search(build_predicate, limit=limit,
                                      url_title_fn=self.m.naming.get_build_title)
