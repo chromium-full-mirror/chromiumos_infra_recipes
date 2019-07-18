@@ -16,15 +16,18 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 """
 
+import collections
 import urlparse
 
+from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
+from PB.chromite.api.packages import UprevPackagesRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.annealing import AnnealingProperties
 from PB.recipes.chromeos.annealing import SnapshotGerritChanges
 
 from google.protobuf import json_format
 
-from recipe_engine.recipe_api import Property
+from recipe_engine import util
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -36,6 +39,8 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'cros_build_api',
+    'cros_sdk',
     'cros_source',
     'depends',
     'easy',
@@ -106,8 +111,31 @@ def RunSteps(api, properties):
     # in the NEXT snapshot. We choose the least wasteful option.
     with api.step.nest('uprev packages'), api.context(
         cwd=api.cros_source.workspace_path):
-      api.portage.commit_package_uprevs()
-      api.portage.push_package_uprevs(dryrun=not properties.publish_uprevs)
+      request = UprevPackagesRequest(chroot=api.cros_sdk.chroot,
+                                     overlay_type=OVERLAYTYPE_BOTH)
+      response = api.cros_build_api.PackageService.Uprev(request)
+
+      ebuilds_by_repository = collections.defaultdict(list)
+      for ebuild in response.modified_ebuilds:
+        with api.context(
+              cwd=api.path.abs_to_path(api.path.dirname(ebuild.path))):
+          repository = api.git.repository_root()
+          ebuilds_by_repository[repository].append(ebuild.path)
+
+      with api.step.nest('commit uprevs'):
+        for repository, ebuilds in ebuilds_by_repository.iteritems():
+          with api.context(cwd=api.path.abs_to_path(repository)):
+            api.git.commit_files(ebuilds, 'Marking set of ebuilds as stable')
+
+      with api.step.nest('push uprevs'):
+        push = util.exponential_retry(retries=3)(api.git.push)
+        for repository, ebuilds in ebuilds_by_repository.iteritems():
+          with api.context(cwd=api.path.abs_to_path(repository)):
+            projects = api.repo.project_infos(projects=ebuilds)
+            assert len(projects) == 1, 'expected 1 project, got: %r' % projects
+            project = projects[0]
+            push(project.remote, 'HEAD:' + project.branch,
+                 dry_run=not properties.publish_uprevs)
 
     if properties.child_builders:
       with api.step.nest('schedule child builds'):

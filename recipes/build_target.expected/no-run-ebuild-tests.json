@@ -438,7 +438,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"modified_ebuilds\": [{\"path\": \"ebuild1\"}, {\"path\": \"ebuild2\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

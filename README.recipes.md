@@ -1249,7 +1249,7 @@ Returns:
   str: The Gerrit URL.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
-[DEPS](/recipe_modules/git/__init__.py#1): [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git/__init__.py#1): [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with git.
 
@@ -1257,7 +1257,7 @@ API for working with git.
 
 A module for interacting with git.
 
-&mdash; **def [add](/recipe_modules/git/api.py#49)(self, path):**
+&mdash; **def [add](/recipe_modules/git/api.py#61)(self, path):**
 
 Add/stage a path.
 
@@ -1267,7 +1267,7 @@ and not modified, which you can use `diff_check` to check for.
 Args:
   * path (str|Path): The file path to stage.
 
-&mdash; **def [checkout](/recipe_modules/git/api.py#149)(self, commit, force=False):**
+&mdash; **def [checkout](/recipe_modules/git/api.py#161)(self, commit, force=False):**
 
 Runs 'git checkout'.
 
@@ -1275,7 +1275,7 @@ Args:
   * commit (str): The commit (technically "tree-like") to checkout.
   * force (bool): If True, throw away local changes (--force).
 
-&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#172)(self, commit, \*\*kwargs):**
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#184)(self, commit, \*\*kwargs):**
 
 Runs 'git cherry-pick'.
 
@@ -1283,7 +1283,7 @@ Args:
   * commit (str): The commit to cherry pick.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#308)(self, repo_url, target_path=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#323)(self, repo_url, target_path=None):**
 
 Clones a Git repo into the current directory.
 
@@ -1292,7 +1292,7 @@ Args:
   * target_path (Path): Path in which to clone the repo, or None to specify
       current directory.
 
-&mdash; **def [commit\_files](/recipe_modules/git/api.py#181)(self, files, message):**
+&mdash; **def [commit\_files](/recipe_modules/git/api.py#193)(self, files, message):**
 
 Runs 'git commit' with the given files.
 
@@ -1300,7 +1300,7 @@ Args:
   * files (list[str|Path]): A list of file paths to commit.
   * message (str): The commit message.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#294)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#309)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -1312,7 +1312,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#209)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#224)(self):**
 
 Returns the currently checked out branch name.
 
@@ -1320,7 +1320,7 @@ Returns:
   str: The branch name pointed to by HEAD.
   None: If HEAD is detached.
 
-&mdash; **def [diff\_check](/recipe_modules/git/api.py#60)(self, path):**
+&mdash; **def [diff\_check](/recipe_modules/git/api.py#72)(self, path):**
 
 Check if the given file changed from HEAD.
 
@@ -1332,7 +1332,7 @@ Returns:
       otherwise.
   
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [fetch](/recipe_modules/git/api.py#119)(self, remote, refspecs=None):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [fetch](/recipe_modules/git/api.py#131)(self, remote, refspecs=None):**
 
 Runs 'git fetch'.
 
@@ -1340,7 +1340,7 @@ Args:
   * remote (str): The remote repository to fetch from.
   * refspecs (list[str]): The refspecs to fetch.
 
-&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#132)(self, remote, ref):**
+&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#144)(self, remote, ref):**
 
 Fetch a single remote ref with 'git fetch'.
 
@@ -1351,7 +1351,7 @@ Args:
 Returns:
   str: The commit ID of the fetched ref.
 
-&mdash; **def [get\_diff\_files](/recipe_modules/git/api.py#86)(self, from_rev, to_rev):**
+&mdash; **def [get\_diff\_files](/recipe_modules/git/api.py#98)(self, from_rev, to_rev):**
 
 Runs 'git diff' to find files changed between <from_rev> and <to_rev>.
 
@@ -1362,19 +1362,19 @@ Args:
 Returns:
   A list[str] of changed files.
 
-&mdash; **def [get\_working\_dir\_diff\_files](/recipe_modules/git/api.py#105)(self):**
+&mdash; **def [get\_working\_dir\_diff\_files](/recipe_modules/git/api.py#117)(self):**
 
 Finds all changed files (including untracked).
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#223)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#238)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#229)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#244)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#264)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#279)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -1384,7 +1384,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#239)(self, from_rev, to_rev, limit=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#254)(self, from_rev, to_rev, limit=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -1396,7 +1396,7 @@ Args:
 Returns:
   List(Commit) A list of commit metas.
 
-&mdash; **def [merge](/recipe_modules/git/api.py#162)(self, ref, message, \*\*kwargs):**
+&mdash; **def [merge](/recipe_modules/git/api.py#174)(self, ref, message, \*\*kwargs):**
 
 Runs `git merge`.
 
@@ -1405,19 +1405,27 @@ Args:
   * message (str): The merge commit message.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [push](/recipe_modules/git/api.py#190)(self, remote, refspec, capture_stdout=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#202)(self, remote, refspec, dry_run=False, capture_stdout=False):**
 
 Runs 'git push'.
 
 Args:
   remote (str): The remote repository to push to.
   refspec (str): The refspec to push.
+  dry_run (bool): If true, set --dry-run on git command.
   capture_stdout (bool): If True, return stdout in step data.
 
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#276)(self, rev, path, test_contents=None):**
+&mdash; **def [repository\_root](/recipe_modules/git/api.py#49)(self):**
+
+Return the git repository root for the current directory.
+
+Returns:
+  str: The path to the git repository.
+
+&mdash; **def [show\_file](/recipe_modules/git/api.py#291)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -1965,7 +1973,7 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#36)(api):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#29): [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [portage](#recipe_modules-portage), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [portage](#recipe_modules-portage), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -1979,13 +1987,13 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#55)(api, properties):**
+&mdash; **def [RunSteps](/recipes/annealing.py#60)(api, properties):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#171)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#199)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#181)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#209)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -2008,7 +2016,7 @@ Args:
 Returns:
   A string containing the commit message.
 
-&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#122)(api, manifest_diffs):**
+&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#150)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 

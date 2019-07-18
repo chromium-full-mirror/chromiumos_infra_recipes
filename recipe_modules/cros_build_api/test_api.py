@@ -109,8 +109,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'version': 'version'
         })
     responses['Uprev'] = jsonify(modified_ebuilds=[
-        {'path': 'ebuild1'},
-        {'path': 'ebuild2'},
+        {'path': self.path('chromiumos/src/overlay/foo.ebuild')},
     ])
     return responses
 

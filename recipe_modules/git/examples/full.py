@@ -20,8 +20,7 @@ def RunSteps(api):
   api.git.merge('branch', 'yeet')
   api.git.cherry_pick('branch')
   api.git.commit_files(['README.md'], 'Updated README\n\nMuch better now.')
-  api.git.push('origin', 'HEAD:master', capture_stdout=True)
-  api.git.push('origin', 'HEAD:master', capture_stdout=True)
+  api.git.push('origin', 'HEAD:master', dry_run=True, capture_stdout=True)
   api.git.diff_check('some/file/path')
   [commit] = api.git.log('START_REF', 'END_REF', limit=30)
   api.assertions.assertEqual(commit.rev, commit_id)
@@ -39,6 +38,8 @@ def RunSteps(api):
 
   with api.git.head_context():
     pass
+
+  api.git.repository_root()
 
 
 def GenTests(api):

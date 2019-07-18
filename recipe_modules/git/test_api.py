@@ -9,3 +9,6 @@ class GitTestApi(recipe_test_api.RecipeTestApi):
 
   test_commit_id = 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
 
+  @property
+  def test_repository_root(self):
+    return self.m.path['start_dir'].join('git_repository')

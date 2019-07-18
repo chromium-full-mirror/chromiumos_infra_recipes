@@ -83,26 +83,13 @@
     "cmd": [
       "git",
       "push",
+      "--dry-run",
       "--porcelain",
       "origin",
       "HEAD:master"
     ],
     "infra_step": true,
     "name": "git push",
-    "~followup_annotations": [
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "--porcelain",
-      "origin",
-      "HEAD:master"
-    ],
-    "infra_step": true,
-    "name": "git push (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -212,6 +199,15 @@
     ],
     "infra_step": true,
     "name": "git checkout (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (2)"
   },
   {
     "name": "$result"

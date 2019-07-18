@@ -46,6 +46,18 @@ class GitApi(recipe_api.RecipeApi):
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, ['git'] + args, **kwargs)
 
+  def repository_root(self):
+    """Return the git repository root for the current directory.
+
+    Returns:
+      str: The path to the git repository.
+    """
+    return self._step(
+        ['rev-parse', '--show-toplevel'],
+        stdout=self.m.raw_io.output(),
+        test_stdout=str(self.test_api.test_repository_root),
+    ).stdout
+
   def add(self, path):
     """Add/stage a path.
 
@@ -187,18 +199,21 @@ other_test.txt
     """
     self._step(['commit', '--message', message, '--'] + files)
 
-  def push(self, remote, refspec, capture_stdout=False):
+  def push(self, remote, refspec, dry_run=False, capture_stdout=False):
     """Runs 'git push'.
 
     Args:
       remote (str): The remote repository to push to.
       refspec (str): The refspec to push.
+      dry_run (bool): If true, set --dry-run on git command.
       capture_stdout (bool): If True, return stdout in step data.
 
     Returns:
       StepData: See 'step.__call__'.
     """
     args = ['push']
+    if dry_run:
+      args += ['--dry-run']
     stdout = None
     if capture_stdout:
       args += ['--porcelain']
