@@ -189,15 +189,11 @@ def RunSteps(api, properties):
       build_targets_to_verify = set([
           test_to_build_target_map[test_name] for test_name in failed_test_names
       ])
-      baseline_builds_to_verify = [
-          build_target + '-baseline' for build_target in build_targets_to_verify
+      baseline_builders_to_verify = [
+          build_target + '-snapshot' for build_target in build_targets_to_verify
       ]
-      baseline_builds, build_requests = get_build_plan(
-          api, child_builders=baseline_builds_to_verify, enable_history=True,
-          gerrit_changes=gerrit_changes, snapshot=snapshot)
-      baseline_builds += api.buildbucket.run(
-          build_requests, timeout=60 * 60 * 4, step_name='run baseline builds',
-          url_title_fn=api.naming.get_build_title)
+      baseline_builds = api.cros_history.get_snapshot_builds(
+          snapshot, baseline_builders_to_verify)
       with api.step.nest('run baseline tests'):
         with api.step.nest('schedule baseline tests'):
           baseline_test_plan = api.cros_test_plan.generate(
@@ -893,8 +889,6 @@ def GenTests(api):
          api.properties(baseline_validation_percent=100) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='orchestrator pointless build check') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check (2)') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_collect_output(
@@ -920,8 +914,6 @@ def GenTests(api):
          api.properties(baseline_validation_percent=100) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='orchestrator pointless build check') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check (2)') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_collect_output(
