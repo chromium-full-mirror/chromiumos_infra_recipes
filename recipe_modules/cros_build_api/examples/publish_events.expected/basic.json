@@ -82,12 +82,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"0\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"failedPackages\": []@@@",
-      "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"0\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"packages\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
@@ -97,7 +94,11 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ], @@@",
       "@@@STEP_LOG_LINE@published event@    \"useFlags\": []@@@",
-      "@@@STEP_LOG_LINE@published event@  }@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"failedPackages\": []@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
