@@ -1,18 +1,18 @@
 [
   {
     "cmd": [],
-    "name": "enumerate tests"
+    "name": "traffic split"
   },
   {
     "cmd": [],
-    "name": "enumerate tests.call binary enumerate",
+    "name": "traffic split.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "enumerate tests.call binary enumerate.ensure cros_test_platform",
+    "name": "traffic split.call binary.ensure cros_test_platform",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -29,7 +29,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "enumerate tests.call binary enumerate.ensure cros_test_platform.ensure_installed",
+    "name": "traffic split.call binary.ensure cros_test_platform.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -48,25 +48,25 @@
   {
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "enumerate",
+      "scheduler-traffic-split",
       "-input_json",
       "/dev/stdin",
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "enumerate tests.call binary enumerate.cros_test_platform enumerate",
-    "stdin": "{\n  \"testPlan\": {}, \n  \"metadata\": {}\n}",
+    "name": "traffic split.call binary.scheduler-traffic-split",
+    "stdin": "{\n  \"request\": {\n    \"params\": {\n      \"hardwareAttributes\": {\n        \"model\": \"foo-model\"\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\"\n      }\n    }, \n    \"testPlan\": {\n      \"suite\": [\n        {\n          \"name\": \"foo-suite\"\n        }\n      ]\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "traffic split"
+    "name": "enumerate tests"
   },
   {
     "cmd": [],
-    "name": "traffic split.call binary scheduler-traffic-split",
+    "name": "enumerate tests.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -74,14 +74,14 @@
   {
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "scheduler-traffic-split",
+      "enumerate",
       "-input_json",
       "/dev/stdin",
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "traffic split.call binary scheduler-traffic-split.cros_test_platform scheduler-traffic-split",
-    "stdin": "{\n  \"request\": {}\n}",
+    "name": "enumerate tests.call binary.enumerate",
+    "stdin": "{\n  \"testPlan\": {\n    \"suite\": [\n      {\n        \"name\": \"foo-suite\"\n      }\n    ]\n  }, \n  \"metadata\": {\n    \"testMetadataUrl\": \"foo-metadata-url\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -92,7 +92,7 @@
   },
   {
     "cmd": [],
-    "name": "execute.call binary skylab-execute",
+    "name": "execute.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -106,8 +106,8 @@
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "execute.call binary skylab-execute.cros_test_platform skylab-execute",
-    "stdin": "{\n  \"requestParams\": {}, \n  \"config\": {}, \n  \"enumeration\": {}\n}",
+    "name": "execute.call binary.skylab-execute",
+    "stdin": "{\n  \"requestParams\": {\n    \"hardwareAttributes\": {\n      \"model\": \"foo-model\"\n    }, \n    \"metadata\": {\n      \"testMetadataUrl\": \"foo-metadata-url\"\n    }\n  }, \n  \"config\": {\n    \"skylabWorker\": {\n      \"luciProject\": \"foo luci project\"\n    }\n  }, \n  \"enumeration\": {\n    \"autotestTests\": [\n      {\n        \"name\": \"foo-test\"\n      }\n    ]\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

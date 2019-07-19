@@ -1,20 +1,20 @@
 [
   {
     "cmd": [],
-    "name": "call binary",
+    "name": "traffic split"
+  },
+  {
+    "cmd": [],
+    "name": "traffic split.call binary",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (2)"
-  },
-  {
-    "cmd": [],
-    "name": "call binary (2).ensure cros_test_platform",
+    "name": "traffic split.call binary.ensure cros_test_platform",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -29,9 +29,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "call binary (2).ensure cros_test_platform.ensure_installed",
+    "name": "traffic split.call binary.ensure cros_test_platform.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -48,80 +48,54 @@
   {
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "enumerate",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout"
-    ],
-    "name": "call binary (2).enumerate",
-    "stdin": "{}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "call binary (3)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "call binary (4)"
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
       "scheduler-traffic-split",
       "-input_json",
       "/dev/stdin",
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "call binary (4).scheduler-traffic-split",
-    "stdin": "{}",
+    "name": "traffic split.call binary.scheduler-traffic-split",
+    "stdin": "{\n  \"request\": {\n    \"params\": {\n      \"hardwareAttributes\": {\n        \"model\": \"foo-model\"\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\"\n      }\n    }, \n    \"testPlan\": {\n      \"suite\": [\n        {\n          \"name\": \"foo-suite\"\n        }\n      ]\n    }\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests"
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "call binary (5)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "call binary (6)"
-  },
-  {
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "skylab-execute",
+      "enumerate",
       "-input_json",
       "/dev/stdin",
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "call binary (6).skylab-execute",
-    "stdin": "{}",
+    "name": "enumerate tests.call binary.enumerate",
+    "stdin": "{\n  \"testPlan\": {\n    \"suite\": [\n      {\n        \"name\": \"foo-suite\"\n      }\n    ]\n  }, \n  \"metadata\": {\n    \"testMetadataUrl\": \"foo-metadata-url\"\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execute"
+  },
+  {
+    "cmd": [],
+    "name": "execute.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "call binary (7)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "call binary (8)"
   },
   {
     "cmd": [
@@ -132,10 +106,10 @@
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "call binary (8).autotest-execute",
-    "stdin": "{}",
+    "name": "execute.call binary.autotest-execute",
+    "stdin": "{\n  \"requestParams\": {\n    \"hardwareAttributes\": {\n      \"model\": \"foo-model\"\n    }, \n    \"metadata\": {\n      \"testMetadataUrl\": \"foo-metadata-url\"\n    }\n  }, \n  \"config\": {\n    \"skylabWorker\": {\n      \"luciProject\": \"foo luci project\"\n    }\n  }, \n  \"enumeration\": {\n    \"autotestTests\": [\n      {\n        \"name\": \"foo-test\"\n      }\n    ]\n  }\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

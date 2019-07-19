@@ -36,7 +36,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     Returns:
       Response, of type response_type.
     """
-    with self.m.step.nest('call binary ' + subcommand):
+    with self.m.step.nest('call binary'):
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
       self._ensure_cros_test_platform()
@@ -51,7 +51,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
         '/dev/stdout',
       ]
       output_json = self.m.easy.stdout_step(
-          'cros_test_platform ' + subcommand,
+          subcommand,
           cmd,
           stdin=self.m.raw_io.input_text(json_format.MessageToJson(request)),
           test_stdout="{}")
