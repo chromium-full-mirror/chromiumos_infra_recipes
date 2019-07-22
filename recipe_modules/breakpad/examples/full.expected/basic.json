@@ -222,6 +222,27 @@
     ]
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/test_result_tmp_3/swarming-1234",
+      "gs://chromeos-autotest-results/swarming-1234"
+    ],
+    "cwd": "[CLEANUP]/test_result_tmp_3",
+    "infra_step": true,
+    "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.gsutil upload symbolicated files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

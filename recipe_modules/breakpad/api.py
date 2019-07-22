@@ -153,6 +153,17 @@ class BreakpadApi(recipe_api.RecipeApi):
                       repr(step_failure)
                   ]
 
-            # TODO(crbug.com/973172): Upload .dmp.txt files.
+            # `test_result_local_path` will not contain the final path component
+            # of the remote test result path , e.g. "swarming-1234". This final
+            # path component needs to be appeneded to the local path for the
+            # rsync command so the directory structure lines up, e.g.
+            # "rsync [local tmp dir]/test_result/swarming-1234
+            #  gs://chromeos-autotest-results/swarming-1234"
+            test_result_basename = os.path.basename(test_result.path)
+            self.m.gsutil([
+                'rsync', '-r',
+                test_result_local_path.join(test_result_basename),
+                test_result.path
+            ], name='upload symbolicated files', multithreaded=True)
 
     return stackwalk_output_paths
