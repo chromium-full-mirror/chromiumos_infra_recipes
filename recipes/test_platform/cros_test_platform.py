@@ -14,9 +14,12 @@ from PB.test_platform.steps.enumeration import \
   EnumerationRequest, EnumerationResponse
 from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitRequest, SchedulerTrafficSplitResponse
-from PB.test_platform.steps.execution import ExecuteRequest
+from PB.test_platform.steps.execution import ExecuteRequest, ExecuteResponse
 from PB.test_platform.request import Request
+from PB.test_platform.taskstate import TaskState
 from PB.test_platform.config.config import Config
+
+import json
 
 from google.protobuf import json_format
 
@@ -103,7 +106,15 @@ def RunSteps(api, properties):
 
   enumeration = enumerate_tests(api, request)
 
-  execute(api, request, enumeration, properties.config, skylab)
+  resp = execute(api, request, enumeration, properties.config, skylab)
+
+  with api.step.nest('summarize') as step:
+    # The `response` field of CrosTestPlatformProperties is a message of
+    # type ExecuteResponse. However, the recipe-supported mechanism for setting
+    # output properties supports only json-encodable python structures, not
+    # protos, so roundtrip the actual ExecuteResponse proto through json.
+    step.properties['response'] = json.loads(json_format.MessageToJson(resp))
+
 
 
 def GenTests(api):
@@ -158,6 +169,9 @@ def GenTests(api):
   e2e_split_response_skylab = SchedulerTrafficSplitResponse(
     skylab_request=e2e_request
   )
+  e2e_execute_response = ExecuteResponse(
+    state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED', verdict='VERDICT_PASSED')
+  )
   # Note: using raw JSON here to avoid needing to import the chromite
   # protos.
   e2e_enumeration_response = """
@@ -170,10 +184,13 @@ def GenTests(api):
     api.properties(CrosTestPlatformProperties(request=e2e_request,
                                               config=e2e_config)) + #
     api.step_data('traffic split.call binary.scheduler-traffic-split',
-                  stdout=api.raw_io.output(json_format.MessageToJson(
-                  e2e_split_response_skylab))) + #
+                  stdout=api.raw_io.output(
+                    json_format.MessageToJson(e2e_split_response_skylab))) + #
     api.step_data('enumerate tests.call binary.enumerate',
-                  stdout=api.raw_io.output(e2e_enumeration_response))
+                  stdout=api.raw_io.output(e2e_enumeration_response)) + #
+    api.step_data('execute.call binary.skylab-execute',
+                  stdout=api.raw_io.output(
+                    json_format.MessageToJson(e2e_execute_response)))
   )
 
   # An end-to-end run with traffic splitting to autotest.
@@ -185,8 +202,11 @@ def GenTests(api):
     api.properties(CrosTestPlatformProperties(request=e2e_request,
                                               config=e2e_config)) + #
     api.step_data('traffic split.call binary.scheduler-traffic-split',
-                  stdout=api.raw_io.output(json_format.MessageToJson(
-                  e2e_split_response_autotest))) + #
+                  stdout=api.raw_io.output(
+                    json_format.MessageToJson(e2e_split_response_autotest))) + #
     api.step_data('enumerate tests.call binary.enumerate',
-                  stdout=api.raw_io.output(e2e_enumeration_response))
+                  stdout=api.raw_io.output(e2e_enumeration_response)) + #
+    api.step_data('execute.call binary.autotest-execute',
+                  stdout=api.raw_io.output(
+                    json_format.MessageToJson(e2e_execute_response)))
   )

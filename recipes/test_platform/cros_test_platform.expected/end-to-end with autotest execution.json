@@ -113,6 +113,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "summarize",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

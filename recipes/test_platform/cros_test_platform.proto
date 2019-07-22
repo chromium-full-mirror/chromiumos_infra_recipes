@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipes.chromeos.test_platform.cros_test_platform;
 
 import "test_platform/request.proto";
+import "test_platform/steps/execution.proto";
 import "test_platform/config/config.proto";
 
 message CrosTestPlatformProperties {
@@ -22,4 +23,8 @@ message CrosTestPlatformProperties {
   // This property should not be specified by callers, but instead set by builder
   // properties.
   .test_platform.config.Config config = 3;
+
+  // response describes the response from a cros_test_platform recipe; this
+  // is set by the recipe execution, not by the caller.
+  .test_platform.steps.ExecuteResponse response = 4;
 }
