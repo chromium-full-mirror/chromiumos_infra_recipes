@@ -25,7 +25,7 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path):
     api.cros_branch.delete(
-        properties.branch,
+        properties.branch_info,
         push=properties.push,
         force=properties.force,
         root=api.cros_source.workspace_path)
@@ -36,7 +36,7 @@ def GenTests(api):
       manifest_url='http://www.chromium.org/manifest.xml',
       push=True,
       force=True,
-      branch={'name': 'my_branch'}))
+      branch_info={'name': 'my_branch'}))
 
   yield (api.test('missing-branch-name') +
          api.properties(manifest_url='http://www.chromium.org/manifest.xml') +

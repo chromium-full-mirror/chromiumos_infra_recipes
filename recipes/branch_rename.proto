@@ -17,7 +17,7 @@ message RenameBranchProperties {
   bool force = 2;
 
   // Branch to be renamed.
-  chromiumos.Branch branch = 3;
+  chromiumos.Branch branch_info = 3;
 
   // New branch name.
   string new_name = 4;

@@ -54,7 +54,7 @@ def RunSteps(api, properties):
     # Run `cros branch create`.
     api.cros_branch.create_from_file(
         download_path,
-        properties.branch,
+        properties.branch_info,
         step_name='create branch',
         push=properties.push,
         force=properties.force,
@@ -93,7 +93,7 @@ def GenTests(api):
       },
       push=True,
       force=True,
-      branch={
+      branch_info={
           'name': 'my_custom_branch',
           'descriptor': 'nami',
           'type': Branch.CUSTOM

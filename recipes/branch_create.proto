@@ -30,5 +30,5 @@ message CreateBranchProperties {
   BranchManifest manifest = 3;
 
   // Branch to be created.
-  chromiumos.Branch branch = 4;
+  chromiumos.Branch branch_info = 4;
 }

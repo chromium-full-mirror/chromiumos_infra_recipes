@@ -24,7 +24,7 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path):
     api.cros_branch.rename(
-        properties.branch,
+        properties.branch_info,
         properties.new_name,
         push=properties.push,
         force=properties.force,
@@ -36,7 +36,7 @@ def GenTests(api):
       manifest_url='http://www.chromium.org/manifest.xml',
       push=True,
       force=True,
-      branch={'name': 'my_branch'},
+      branch_info={'name': 'my_branch'},
       new_name='renamed_branch'))
 
   yield (api.test('missing-branch-name') + api.properties(
@@ -45,4 +45,4 @@ def GenTests(api):
 
   yield (api.test('missing-new-branch-name') + api.properties(
       manifest_url='http://www.chromium.org/manifest.xml',
-      branch={'name': 'my_branch'}) + api.expect_exception('ValueError'))
+      branch_info={'name': 'my_branch'}) + api.expect_exception('ValueError'))
