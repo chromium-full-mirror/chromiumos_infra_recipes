@@ -14,3 +14,7 @@ recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
 # Backup @google.com accounts
 evanhernandez@google.com
 jclinton@google.com
+
+# Changes to subdirectories or modules cause machine-generated updates to
+# README.md, so exclude it from OWNERS enforcement.
+per-file README.md=*
