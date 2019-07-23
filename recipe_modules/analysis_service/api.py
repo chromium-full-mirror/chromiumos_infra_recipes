@@ -136,7 +136,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
         'request', request) and self._get_field_name_by_matching_type(
             'response', response)
 
-  def publish_event(self, request, response, request_time, response_time):
+  def publish_event(self, request, response, request_time, response_time,
+                    step_data):
     """Publish request and response on Cloud Pub/Sub.
 
     Wraps request and response in a AnalysisServiceEvent. 'can_publish_event'
@@ -155,6 +156,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
         request was sent by the caller.
       response_time (google.protobuf.timestamp_pb2.Timestamp): The time the
         response was received by the caller.
+      step_data (recipe_engine.StepData): Data from the step that sent the request.
     """
     with self.m.step.nest('publish event') as step:
       if not self.can_publish_event(request, response):
@@ -162,6 +164,10 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
             'Must check can_publish_event before calling publish_event.')
 
       analysis_service_event = AnalysisServiceEvent()
+
+      analysis_service_event.build_id = self.m.buildbucket.build.id
+      analysis_service_event.step_name = step_data.name
+
       self._set_oneof_by_matching_type(analysis_service_event,
                                        oneof_name='request', message=request)
       self._set_oneof_by_matching_type(analysis_service_event,

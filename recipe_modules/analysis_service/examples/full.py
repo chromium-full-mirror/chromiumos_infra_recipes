@@ -3,7 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-DEPS = ['recipe_engine/assertions', 'analysis_service']
+DEPS = [
+    'recipe_engine/assertions', 'recipe_engine/buildbucket',
+    'recipe_engine/step', 'analysis_service'
+]
 
 from PB.chromite.api.sysroot import InstallPackagesRequest, InstallPackagesResponse
 
@@ -31,6 +34,8 @@ INSTALL_PACKAGES_RESPONSE = """
 
 
 def RunSteps(api):
+  test_step_data = api.step('A test step', cmd=['echo', 'hello world'])
+
   install_packages_request = json_format.Parse(INSTALL_PACKAGES_REQUEST,
                                                InstallPackagesRequest())
   install_packages_response = json_format.Parse(INSTALL_PACKAGES_RESPONSE,
@@ -46,7 +51,8 @@ def RunSteps(api):
           request=install_packages_request, response=install_packages_response))
   api.analysis_service.publish_event(
       request=install_packages_request, response=install_packages_response,
-      request_time=request_time, response_time=response_time)
+      request_time=request_time, response_time=response_time,
+      step_data=test_step_data)
 
   # Pass in the request and response backwards, shouldn't work in this case
   # because the types are wrong.
@@ -57,15 +63,17 @@ def RunSteps(api):
   api.assertions.assertRaises(
       ValueError, api.analysis_service.publish_event,
       request=install_packages_response, response=install_packages_request,
-      request_time=request_time, response_time=response_time)
+      request_time=request_time, response_time=response_time,
+      step_data=test_step_data)
 
   request_time.FromSeconds(300)
   # If request_time is after response_time, the call should fail.
   api.assertions.assertRaises(
       ValueError, api.analysis_service.publish_event,
       request=install_packages_request, response=install_packages_response,
-      request_time=request_time, response_time=response_time)
+      request_time=request_time, response_time=response_time,
+      step_data=test_step_data)
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic') + api.buildbucket.ci_build()

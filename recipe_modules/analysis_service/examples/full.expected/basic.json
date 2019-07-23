@@ -1,12 +1,19 @@
 [
   {
+    "cmd": [
+      "echo",
+      "hello world"
+    ],
+    "name": "A test step"
+  },
+  {
     "cmd": [],
     "name": "publish event",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"1970-01-01T00:01:40Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"0\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"A test step\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"packages\": [], @@@",
       "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
@@ -90,7 +97,7 @@
     ],
     "infra_step": true,
     "name": "publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAgtBIHRlc3Qg\\nc3RlcA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

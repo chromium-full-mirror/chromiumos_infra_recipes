@@ -186,8 +186,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # TODO(crbug.com/964444): Remove try once this is stable.
       try:
         if self.m.analysis_service.can_publish_event(input_proto, output_proto):
-          self.m.analysis_service.publish_event(input_proto, output_proto,
-                                                request_time, response_time)
+          self.m.analysis_service.publish_event(
+              input_proto, output_proto, request_time, response_time, result)
       except Exception as e:
         step.presentation.logs['Failure reason'] = [repr(e)]
 

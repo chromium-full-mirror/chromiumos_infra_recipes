@@ -199,7 +199,7 @@
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"0\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"pointless build check (2)|call chromite.api.DependencyService/GetBuildDependencyGraph|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
@@ -268,7 +268,7 @@
     ],
     "infra_step": true,
     "name": "pointless build check (2).call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BJIBEwoRCg9teV9idWlsZF90YXJnZXSaARcKFRITGhEKD3Nv\\nbWUvc291cmNlL2Rpcg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BJIBEwoRCg9teV9idWlsZF90YXJnZXSaARcKFRITGhEKD3Nv\\nbWUvc291cmNlL2RpctoCa3BvaW50bGVzcyBidWlsZCBjaGVjayAoMil8Y2FsbCBjaHJvbWl0ZS5h\\ncGkuRGVwZW5kZW5jeVNlcnZpY2UvR2V0QnVpbGREZXBlbmRlbmN5R3JhcGh8Y2FsbCBidWlsZCBB\\nUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
