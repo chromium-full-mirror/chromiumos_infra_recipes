@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "traffic split"
+    "name": "traffic split",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@selected backend: skylab@@@"
+    ]
   },
   {
     "cmd": [],
@@ -62,7 +65,11 @@
   },
   {
     "cmd": [],
-    "name": "enumerate tests"
+    "name": "enumerate tests",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@autotest tests@foo-test@@@",
+      "@@@STEP_LOG_END@autotest tests@@@"
+    ]
   },
   {
     "cmd": [],
@@ -116,7 +123,25 @@
     "cmd": [],
     "name": "summarize",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize.passed tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@(log)   foo-passed@logs://bar/baz@@@",
+      "@@@STEP_LINK@(task)  foo-passed@foo://bar/baz@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize.failed tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@(log)   foo-failed@logs://bar/baz@@@",
+      "@@@STEP_LINK@(task)  foo-failed@foo://bar/baz@@@"
     ]
   },
   {

@@ -42,12 +42,29 @@ def enumerate_tests(api, request):
 
   Returns: EnumerationResponse.
   """
-  with api.step.nest('enumerate tests'):
+  with api.step.nest('enumerate tests') as step:
     enum_request = EnumerationRequest(
       metadata=request.params.metadata,
       test_plan=request.test_plan,
     )
-    return api.cros_test_platform.enumerate(enum_request)
+    response = api.cros_test_platform.enumerate(enum_request)
+    log_lines = [_enumerate_log(x) for x in response.autotest_tests]
+    step.presentation.logs['autotest tests'] = log_lines
+    return response
+
+
+def _enumerate_log(autotest_test):
+  """Returns a 1-line string logging representation of an enumerated test.
+
+  Args:
+    * api: chromite.api.AutotestTest instance.
+
+  Returns:
+    * string logging representation.
+  """
+  # Note: At some point, consider adding other fields to this log, such as
+  # the test's declared dependencies, as defined by the AutotestTest proto.
+  return autotest_test.name
 
 
 def split(api, request):
@@ -59,7 +76,7 @@ def split(api, request):
 
   Returns: (test_platform.Request, bool (skylab)) tuple.
   """
-  with api.step.nest('traffic split'):
+  with api.step.nest('traffic split') as step:
     split_req = SchedulerTrafficSplitRequest(request=request)
     split_resp = api.cros_test_platform.scheduler_traffic_split(split_req)
 
@@ -74,6 +91,9 @@ def split(api, request):
     if not (has_autotest or has_skylab):
       raise ValueError('Traffic split contains no traffic for either autotest '
                        'or skylab.')
+
+    env_name = 'skylab' if has_skylab else 'autotest'
+    step.presentation.step_summary_text = 'selected backend: ' + env_name
 
     request = skylab_request if has_skylab else autotest_request
     return request, has_skylab
@@ -114,6 +134,32 @@ def RunSteps(api, properties):
     # output properties supports only json-encodable python structures, not
     # protos, so roundtrip the actual ExecuteResponse proto through json.
     step.properties['response'] = json.loads(json_format.MessageToJson(resp))
+
+    with api.step.nest('passed tests') as step:
+      passed_tests = [x for x in resp.task_results
+                      if x.state.verdict == TaskState.VERDICT_PASSED]
+      _emit_links(step.links, passed_tests)
+    with api.step.nest('failed tests') as step:
+      failed_tests = [x for x in resp.task_results
+                      if x.state.verdict == TaskState.VERDICT_FAILED]
+      _emit_links(step.links, failed_tests)
+    # TODO(akeshet): Handle task links for verdictless tasks (including
+    # incomplete tasks and completed tasks which provide no verdict).
+
+
+def _emit_links(links, tasks):
+  """Emit presentation links related to a task.
+
+  Args:
+    * links: a step.presentation.links instance.
+    * tasks: a list of TaskResult instances.
+  """
+  # TODO(akeshet): Correctly handle link emission in the case of multiple
+  # task results with the same name. This will involve a proto change that
+  # includes attempt number in the result.
+  for t in tasks:
+    links['(log)   ' + t.name] = t.log_url
+    links['(task)  ' + t.name] = t.task_url
 
 
 
@@ -170,7 +216,22 @@ def GenTests(api):
     skylab_request=e2e_request
   )
   e2e_execute_response = ExecuteResponse(
-    state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED', verdict='VERDICT_PASSED')
+    state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                    verdict='VERDICT_PASSED'),
+    task_results=[
+      ExecuteResponse.TaskResult(
+        task_url='foo://bar/baz',
+        log_url='logs://bar/baz',
+        name='foo-passed',
+        state=TaskState(verdict="VERDICT_PASSED"),
+      ),
+      ExecuteResponse.TaskResult(
+        task_url='foo://bar/baz',
+        log_url='logs://bar/baz',
+        name='foo-failed',
+        state=TaskState(verdict="VERDICT_FAILED"),
+      ),
+    ],
   )
   # Note: using raw JSON here to avoid needing to import the chromite
   # protos.
