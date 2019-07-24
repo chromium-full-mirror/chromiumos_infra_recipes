@@ -67,17 +67,21 @@ def _enumerate_log(autotest_test):
   return autotest_test.name
 
 
-def split(api, request):
+def split(api, request, config):
   """Determine which backend will execute the request.
 
   Args:
     * api (object): See RunSteps documentation.
     * request: test_platform.Request instance.
+    * config: test_platform.Config instance.
 
   Returns: (test_platform.Request, bool (skylab)) tuple.
   """
   with api.step.nest('traffic split') as step:
-    split_req = SchedulerTrafficSplitRequest(request=request)
+    split_req = SchedulerTrafficSplitRequest(
+      request=request,
+      config=config.scheduler_migration,
+    )
     split_resp = api.cros_test_platform.scheduler_traffic_split(split_req)
 
     autotest_request = split_resp.autotest_request
@@ -122,7 +126,7 @@ def execute(api, request, enumeration, config, use_skylab):
 
 
 def RunSteps(api, properties):
-  request, skylab = split(api, properties.request)
+  request, skylab = split(api, properties.request, properties.config)
 
   enumeration = enumerate_tests(api, request)
 
@@ -210,7 +214,10 @@ def GenTests(api):
   e2e_config = Config(
     skylab_worker=Config.SkylabWorker(
       luci_project='foo luci project'
-    )
+    ),
+    scheduler_migration=Config.SchedulerMigration(
+      gitiles_host='foo gitiles host'
+    ),
   )
   e2e_split_response_skylab = SchedulerTrafficSplitResponse(
     skylab_request=e2e_request
