@@ -226,10 +226,29 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Update file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "git transaction (3).write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update file@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "git",
       "commit",
-      "--message",
-      "Update file",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1",
       "--",
       "file/path.txt"
     ],

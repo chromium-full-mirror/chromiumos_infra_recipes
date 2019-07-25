@@ -197,7 +197,12 @@ other_test.txt
       * files (list[str|Path]): A list of file paths to commit.
       * message (str): The commit message.
     """
-    self._step(['commit', '--message', message, '--'] + files)
+    # Single argument can't exceed 128kiB (crbug/987630), write to temp
+    # and pass the argument as a file
+    commit_msg_path = self.m.path.mkstemp(prefix='commit_msg')
+    str_message = message.encode('utf-8')
+    self.m.file.write_text('write commit message', commit_msg_path, str_message)
+    self._step(['commit', '--file', str(commit_msg_path), '--'] + files)
 
   def push(self, remote, refspec, dry_run=False, capture_stdout=False):
     """Runs 'git push'.

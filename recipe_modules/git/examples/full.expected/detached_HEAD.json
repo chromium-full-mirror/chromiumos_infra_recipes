@@ -69,10 +69,30 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Updated README\n\nMuch better now.",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "write commit message",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Updated README@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Much better now.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "git",
       "commit",
-      "--message",
-      "Updated README\n\nMuch better now.",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1",
       "--",
       "README.md"
     ],
