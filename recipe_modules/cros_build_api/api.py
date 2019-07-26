@@ -164,6 +164,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
         # way but a consumable response has been produced.
         result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
                              infra_step=infra_step, timeout=timeout)
+        if result.exc_result.retcode != 0:
+          result.presentation.status = self.m.step.FAILURE
 
         response_time = timestamp_pb2.Timestamp()
         response_time.FromDatetime(self.m.time.utcnow())

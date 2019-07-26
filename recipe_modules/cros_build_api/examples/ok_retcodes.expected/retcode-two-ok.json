@@ -10,7 +10,8 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"artifacts\": [{\"path\": \"[START_DIR]/tmp/artifact.tar.gz\"}]}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_END@response@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -52,7 +53,8 @@
     },
     "name": "call chromite.api.ArtifactsService/BundleFirmware.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
