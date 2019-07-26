@@ -6,7 +6,6 @@ DEPS = [
     'recipe_engine/step',
     'easy',
     'failures',
-    'naming',
 ]
 
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (

@@ -296,7 +296,7 @@ Args:
   name (str): The step name. Defaults to 'upload artifacts'.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
 
-[DEPS](/recipe_modules/cros_bisect/__init__.py#5): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_bisect/__init__.py#5): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for interacting with FindIt.
 
