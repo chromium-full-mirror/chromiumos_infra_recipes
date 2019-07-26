@@ -114,7 +114,7 @@
       "/dev/stdout"
     ],
     "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"requestParams\": {\n    \"hardwareAttributes\": {\n      \"model\": \"foo-model\"\n    }, \n    \"metadata\": {\n      \"testMetadataUrl\": \"foo-metadata-url\"\n    }\n  }, \n  \"config\": {\n    \"skylabWorker\": {\n      \"luciProject\": \"foo luci project\"\n    }, \n    \"schedulerMigration\": {\n      \"gitilesHost\": \"foo gitiles host\"\n    }\n  }, \n  \"enumeration\": {\n    \"autotestTests\": [\n      {\n        \"name\": \"foo-test\"\n      }\n    ]\n  }\n}",
+    "stdin": "{\n  \"requestParams\": {\n    \"hardwareAttributes\": {\n      \"model\": \"foo-model\"\n    }, \n    \"metadata\": {\n      \"testMetadataUrl\": \"foo-metadata-url\"\n    }\n  }, \n  \"config\": {\n    \"skylabWorker\": {\n      \"luciProject\": \"foo luci project\"\n    }, \n    \"schedulerMigration\": {\n      \"gitilesHost\": \"foo gitiles host\"\n    }\n  }, \n  \"enumeration\": {\n    \"autotestInvocations\": [\n      {\n        \"test\": {\n          \"name\": \"foo-test\"\n        }\n      }\n    ]\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

@@ -48,23 +48,23 @@ def enumerate_tests(api, request):
       test_plan=request.test_plan,
     )
     response = api.cros_test_platform.enumerate(enum_request)
-    log_lines = [_enumerate_log(x) for x in response.autotest_tests]
+    log_lines = [_enumerate_log(x) for x in response.autotest_invocations]
     step.presentation.logs['autotest tests'] = log_lines
     return response
 
 
-def _enumerate_log(autotest_test):
+def _enumerate_log(autotest_invocation):
   """Returns a 1-line string logging representation of an enumerated test.
 
   Args:
-    * api: chromite.api.AutotestTest instance.
+    * autotest_invocation: AutotestInvocation instance.
 
   Returns:
     * string logging representation.
   """
   # Note: At some point, consider adding other fields to this log, such as
   # the test's declared dependencies, as defined by the AutotestTest proto.
-  return autotest_test.name
+  return autotest_invocation.test.name
 
 
 def split(api, request, config):
@@ -244,7 +244,7 @@ def GenTests(api):
   # protos.
   e2e_enumeration_response = """
   {
-    "autotest_tests": [{"name": "foo-test"}]
+    "autotest_invocations": [{"test": {"name": "foo-test"}}]
   }
     """
   yield (
