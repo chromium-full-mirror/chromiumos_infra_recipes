@@ -35,6 +35,14 @@ class BreakpadApi(recipe_api.RecipeApi):
 
         self.m.cipd.ensure(self._breakpad_root, ensure_file)
 
+  def _download_and_log_gs_url(self, url, dest, args=None, **kwargs):
+    """Call gsutil.download_url and log a link to the GS path.
+
+    Args: See args to gsutil.download_url
+    """
+    step = self.m.gsutil.download_url(url, dest, args, **kwargs)
+    step.presentation.links[url] = self.m.urls.get_gs_path_url(url)
+
   def _download_and_extract_symbols(self, image_archive_path):
     """Download and extract symbols from `image_archive_path`.
 
@@ -46,7 +54,7 @@ class BreakpadApi(recipe_api.RecipeApi):
     """
     debug_breakpad_local_path = self.m.path.mkdtemp(
         prefix='image_archive').join(SYMBOLS_FILE_NAME)
-    self.m.gsutil.download_url(
+    self._download_and_log_gs_url(
         os.path.join(image_archive_path, SYMBOLS_FILE_NAME),
         debug_breakpad_local_path)
 
@@ -119,10 +127,10 @@ class BreakpadApi(recipe_api.RecipeApi):
       for test_result in test_results:
         with self.m.step.nest('symbolicate dumps from {}'.format(
             test_result.path)) as step:
-          # TODO(crbug.com/973172): Add link to GS path.
           test_result_local_path = self.m.path.mkdtemp(prefix='test_result')
-          self.m.gsutil.download_url(test_result.path, test_result_local_path,
-                                     args=['-r'], multithreaded=True)
+          self._download_and_log_gs_url(test_result.path,
+                                        test_result_local_path, args=['-r'],
+                                        multithreaded=True)
 
           with self.m.context(cwd=test_result_local_path):
             # Get all '.dmp' files in the test results dir. Note that the

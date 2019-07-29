@@ -4,6 +4,7 @@
 
 DEPS = [
     'easy',
+    'urls',
     'depot_tools/gsutil',
     'recipe_engine/cipd',
     'recipe_engine/context',

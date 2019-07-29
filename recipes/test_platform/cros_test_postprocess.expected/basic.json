@@ -52,7 +52,8 @@
     "infra_step": true,
     "name": "symbolicate dump.gsutil download_url",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gs://chromeos-image-archive/test-board-release/R10-11.0.0/debug_breakpad.tar.xz@https://storage.cloud.google.com/chromeos-image-archive/test-board-release/R10-11.0.0/debug_breakpad.tar.xz@@@"
     ]
   },
   {
@@ -95,7 +96,8 @@
     "infra_step": true,
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.gsutil download_url",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gs://chromeos-autotest-results/swarming-1234@https://storage.cloud.google.com/chromeos-autotest-results/swarming-1234@@@"
     ]
   },
   {
