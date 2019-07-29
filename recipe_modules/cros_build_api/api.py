@@ -180,15 +180,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       json_format.Parse(output_json, output_proto)
 
       # Publish Build API responses on Cloud Pub/Sub if they are registered.
-      #
-      # Catch exceptions, as this functionality is just being tested out right
-      # now.
-      # TODO(crbug.com/964444): Remove try once this is stable.
-      try:
-        if self.m.analysis_service.can_publish_event(input_proto, output_proto):
-          self.m.analysis_service.publish_event(
-              input_proto, output_proto, request_time, response_time, result)
-      except Exception as e:
-        step.presentation.logs['Failure reason'] = [repr(e)]
+      if self.m.analysis_service.can_publish_event(input_proto, output_proto):
+        self.m.analysis_service.publish_event(
+            input_proto, output_proto, request_time, response_time, result)
 
       return output_proto

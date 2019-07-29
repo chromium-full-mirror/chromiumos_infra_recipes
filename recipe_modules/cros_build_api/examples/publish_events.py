@@ -22,9 +22,3 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic')
-
-  # Have the actual publish-message binary return 1, to generate an exception.
-  yield (api.test('publish-message-bad') +  #
-         api.step_data(
-             'call chromite.api.SysrootService/InstallPackages'
-             '.publish event.publish message.publish-message', retcode=1))

@@ -5,12 +5,16 @@
 
 """APIs for using Cloud Pub/Sub"""
 
+import datetime
+
 from recipe_engine import recipe_api
+from util import exponential_retry
 
 
 class CloudPubsubApi(recipe_api.RecipeApi):
   """A module for Cloud Pub/Sub"""
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))
   def publish_message(self, project_id, topic_id, data):
     """Publish a message to Cloud Pub/Sub
 

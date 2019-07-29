@@ -210,11 +210,11 @@ Args:
 
 APIs for using Cloud Pub/Sub
 
-#### **class [CloudPubsubApi](/recipe_modules/cloud_pubsub/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CloudPubsubApi](/recipe_modules/cloud_pubsub/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Cloud Pub/Sub
 
-&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#14)(self, project_id, topic_id, data):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#16)(self, project_id, topic_id, data):**
 
 Publish a message to Cloud Pub/Sub
 
