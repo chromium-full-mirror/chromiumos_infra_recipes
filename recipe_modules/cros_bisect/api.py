@@ -94,6 +94,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
           # This must match the step name as known by sherrif-o-matic.
           'failed_step': 'results|hw test results|' + test.common.display_name,
           'test_spec': jsonpb.MessageToJson(test),
+          'suite': test.suite,
       })
     if hw_test_failures:
       payload = {

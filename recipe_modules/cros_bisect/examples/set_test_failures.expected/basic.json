@@ -3,14 +3,14 @@
     "cmd": [],
     "name": "set test_failures",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@test_failures@{\"hw_test_failures\": [{\"failed_step\": \"results|hw test results|target.hw.bvt-cq\", \"test_spec\": \"{\\n  \\\"suite\\\": \\\"bvt-cq\\\", \\n  \\\"common\\\": {\\n    \\\"critical\\\": true, \\n    \\\"displayName\\\": \\\"target.hw.bvt-cq\\\"\\n  }, \\n  \\\"skylabBoard\\\": \\\"target\\\"\\n}\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@test_failures@{\"hw_test_failures\": [{\"failed_step\": \"results|hw test results|target.hw.bvt-cq\", \"suite\": \"bvt-cq\", \"test_spec\": \"{\\n  \\\"suite\\\": \\\"bvt-cq\\\", \\n  \\\"common\\\": {\\n    \\\"critical\\\": true, \\n    \\\"displayName\\\": \\\"target.hw.bvt-cq\\\"\\n  }, \\n  \\\"skylabBoard\\\": \\\"target\\\"\\n}\"}]}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "set test_failures (2)",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@test_failures@{\"hw_test_failures\": [{\"failed_step\": \"results|hw test results|target.hw.bvt-cq\", \"test_spec\": \"{\\n  \\\"suite\\\": \\\"bvt-cq\\\", \\n  \\\"common\\\": {\\n    \\\"critical\\\": true, \\n    \\\"displayName\\\": \\\"target.hw.bvt-cq\\\"\\n  }, \\n  \\\"skylabBoard\\\": \\\"target\\\"\\n}\"}, {\"failed_step\": \"results|hw test results|target.hw.bvt-cq\", \"test_spec\": \"{\\n  \\\"suite\\\": \\\"bvt-cq\\\", \\n  \\\"common\\\": {\\n    \\\"critical\\\": true, \\n    \\\"displayName\\\": \\\"target.hw.bvt-cq\\\"\\n  }, \\n  \\\"skylabBoard\\\": \\\"target\\\"\\n}\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@test_failures@{\"hw_test_failures\": [{\"failed_step\": \"results|hw test results|target.hw.bvt-cq\", \"suite\": \"bvt-cq\", \"test_spec\": \"{\\n  \\\"suite\\\": \\\"bvt-cq\\\", \\n  \\\"common\\\": {\\n    \\\"critical\\\": true, \\n    \\\"displayName\\\": \\\"target.hw.bvt-cq\\\"\\n  }, \\n  \\\"skylabBoard\\\": \\\"target\\\"\\n}\"}, {\"failed_step\": \"results|hw test results|target.hw.bvt-cq\", \"suite\": \"bvt-cq\", \"test_spec\": \"{\\n  \\\"suite\\\": \\\"bvt-cq\\\", \\n  \\\"common\\\": {\\n    \\\"critical\\\": true, \\n    \\\"displayName\\\": \\\"target.hw.bvt-cq\\\"\\n  }, \\n  \\\"skylabBoard\\\": \\\"target\\\"\\n}\"}]}@@@"
     ]
   },
   {
