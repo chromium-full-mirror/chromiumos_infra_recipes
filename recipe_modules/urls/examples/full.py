@@ -27,5 +27,11 @@ def RunSteps(api):
   api.assertions.assertEqual(api.urls.get_skylab_result_url(skylab_result),
                              'skylab.whatever')
 
+  api.assertions.assertEqual(
+      api.urls.get_gs_path_url('gs://bucket/a/b/c'),
+      'https://storage.cloud.google.com/bucket/a/b/c')
+  api.assertions.assertRaises(ValueError, api.urls.get_gs_path_url, 'a/b/c')
+
+
 def GenTests(api):
   yield api.test('basic')

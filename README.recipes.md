@@ -1945,6 +1945,17 @@ Args:
 Returns:
   str: URL pointing to the build milo page.
 
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#47)(self, gs_path):**
+
+Returns the URL to the given GS path.
+
+Args:
+  gs_path (str): A string of the format "gs://<bucket>/<object>"
+
+Returns:
+  str: URL pointing to the Cloud Storage Browser page for the
+    object.
+
 &mdash; **def [get\_skylab\_result\_url](/recipe_modules/urls/api.py#36)(self, skylab_result):**
 
 Returns the URL to the given skylab result page.

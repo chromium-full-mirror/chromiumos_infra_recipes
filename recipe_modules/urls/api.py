@@ -43,3 +43,19 @@ class UrlsApi(recipe_api.RecipeApi):
       str: URL pointing to the skylab swarming task page.
     """
     return self.get_skylab_task_url(skylab_result.task)
+
+  def get_gs_path_url(self, gs_path):
+    """Returns the Cloud Storage Browser URL to the given GS path.
+
+    Args:
+      gs_path (str): A string of the format "gs://<bucket>/<object>"
+
+    Returns:
+      str: URL pointing to the Cloud Storage Browser page for the
+        object.
+    """
+
+    if not gs_path.startswith('gs://'):
+      raise ValueError('gs_path argument must start with "gs://"')
+
+    return 'https://storage.cloud.google.com/' + gs_path.lstrip('gs://')
