@@ -1875,7 +1875,7 @@ Args:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#29)(self, test, payload, name=None):**
+&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#29)(self, test, payload, name=None, bb=False):**
 
 Schedule a HW test suite.
 
@@ -1883,23 +1883,29 @@ Args:
   test (HwTest): A hardware test config.
   payload (BuildPayload): The build payload for the target under test.
   name (str): The step name. Defaults to 'schedule <test title>'
+  bb (boolean): Whether to use buildbucket-backed cros_test_platform.
+                Note: this flag is temporary, and will exist only during
+                cros_test_platform migration.
 
 Returns:
   SkylabTask: The swarming task ID.
 
 &mdash; **def [initialize](/recipe_modules/skylab/api.py#26)(self):**
 
-&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#69)(self, tasks):**
+&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#73)(self, tasks, bb=False):**
 
 Wait for all Skylab suites to finish executing and return the results.
 
 Args:
   tasks (list[SkylabTask]): The Skylab tasks to wait on.
+  bb (boolean): Whether to use buildbucket-backed cros_test_platform.
+                Note: this flag is temporary, and will exist only during
+                cros_test_platform migration.
 
 Returns:
   list[SkylabResult]: The results for each suite.
 
-&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#93)(self, tasks):**
+&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#100)(self, tasks, bb=False):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -1907,6 +1913,9 @@ Uses skylab wait-tasks internally.
 
 Args:
   tasks (list[SkylabTask]): The Skylab tasks to wait on.
+  bb (boolean): Whether to use buildbucket-backed cros_test_platform.
+                Note: this flag is temporary, and will exist only during
+                cros_test_platform migration.
 
 Returns:
   list[SkylabResult]: The results for each suite.

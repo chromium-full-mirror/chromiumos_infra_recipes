@@ -52,6 +52,7 @@
     "cmd": [
       "[START_DIR]/cipd/skylab/skylab",
       "wait-tasks",
+      "-bb=False",
       "-timeout-mins",
       "420",
       "ID"
