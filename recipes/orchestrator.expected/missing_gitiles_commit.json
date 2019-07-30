@@ -1377,7 +1377,7 @@
     "name": "run tests.collect tests.ignored exception",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@caught exception@KeyError('ID',)@@@",
+      "@@@STEP_LOG_LINE@caught exception@KeyError(u'ID',)@@@",
       "@@@STEP_LOG_END@caught exception@@@"
     ]
   },

@@ -3,12 +3,16 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
+
 from collections import namedtuple
+from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
 import structs
 
+from PB.test_platform.skylab_tool.result import WaitTasksResult
 
 class SkylabApi(recipe_api.RecipeApi):
   """Module for issuing commands to Skylab"""
@@ -122,19 +126,22 @@ class SkylabApi(recipe_api.RecipeApi):
       output_json = self.m.easy.stdout_json_step(
           'skylab wait-tasks', cmd, infra_step=True,
           test_stdout=self.test_api.wait_tasks_json_output())
+
+      # Convert parsed-json python dictionary into proto.
+      wait_results = WaitTasksResult()
+      json_format.Parse(json.dumps(output_json), wait_results)
+
       results = []
-      # TODO(akeshet): Convert output_json into a skylab_tool.Result proto, for
-      # better validation and to avoid all these json dict lookups.
-      for task_json in output_json['results']:
-        task_result = task_json['task-result']
-        task_id = task_result['task-request-id']
+      for wait_result in wait_results.results:
+        task_result = wait_result.result
+        task_id = task_result.task_request_id
         task_name = tasks_by_id[task_id].test.common.display_name
-        task_url = task_result['task-run-url']
+        task_url = task_result.task_run_url
         step.presentation.links[task_name] = task_url
         # TODO(dhanyaganesh): output seems to be unused.
         results.append(
             self.SkylabResult(task=tasks_by_id[task_id],
-                              success=task_result['success'], output=None))
+                              success=task_result.success, output=None))
 
       step.presentation.logs['return value'] = [str(x) for x in results]
       return results

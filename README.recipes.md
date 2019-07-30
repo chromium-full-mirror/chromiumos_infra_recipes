@@ -1871,11 +1871,11 @@ Args:
 
 [DEPS](/recipe_modules/skylab/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#29)(self, test, payload, name=None, bb=False):**
+&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#33)(self, test, payload, name=None, bb=False):**
 
 Schedule a HW test suite.
 
@@ -1890,9 +1890,9 @@ Args:
 Returns:
   SkylabTask: The swarming task ID.
 
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#26)(self):**
+&mdash; **def [initialize](/recipe_modules/skylab/api.py#30)(self):**
 
-&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#73)(self, tasks, bb=False):**
+&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#77)(self, tasks, bb=False):**
 
 Wait for all Skylab suites to finish executing and return the results.
 
@@ -1905,7 +1905,7 @@ Args:
 Returns:
   list[SkylabResult]: The results for each suite.
 
-&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#100)(self, tasks, bb=False):**
+&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#104)(self, tasks, bb=False):**
 
 Wait for all Skylab suites to finish and return the results.
 
