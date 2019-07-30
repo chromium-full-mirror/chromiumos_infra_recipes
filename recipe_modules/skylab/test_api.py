@@ -1,6 +1,8 @@
-# Copyright 2019 The ChromiumOS Authors. All rights reserved.
-# Use of this source code is governed under the Apache License, Version 2.0
-# that can be found in the LICENSE file.
+# -*- coding: utf-8 -*-
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 import structs
 
 from recipe_engine import recipe_test_api
@@ -19,19 +21,23 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
     }
 
   def wait_tasks_json_output(self):
-    return [{
-        "task-result": {
-            "name": "a test",
-            "state": "",
-            "failure": False,
-            "success": True,
-            "task-request-id": "ID",
-            "task-run-url": "http://example.com",
-            "task-logs-url": "http://example.log"
-        },
-        "stdout": "",
-        "child-results": None
-    }]
+    # TODO(akeshet): Use a skylab_tool.Result proto here, instead of
+    # handcrafted dict.
+    return {'results':
+        [{
+            "task-result": {
+                "name": "a test",
+                "state": "",
+                "failure": False,
+                "success": True,
+                "task-request-id": "ID",
+                "task-run-url": "http://example.com",
+                "task-logs-url": "http://example.log"
+            },
+            "stdout": "",
+            "child-results": None
+        }]
+    }
 
   def hw_test(self, name=None, suite=None, board=None, critical=True):
     return HwTestCfg.HwTest(

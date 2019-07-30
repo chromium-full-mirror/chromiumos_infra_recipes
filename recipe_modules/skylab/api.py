@@ -123,7 +123,9 @@ class SkylabApi(recipe_api.RecipeApi):
           'skylab wait-tasks', cmd, infra_step=True,
           test_stdout=self.test_api.wait_tasks_json_output())
       results = []
-      for task_json in output_json or []:
+      # TODO(akeshet): Convert output_json into a skylab_tool.Result proto, for
+      # better validation and to avoid all these json dict lookups.
+      for task_json in output_json['results']:
         task_result = task_json['task-result']
         task_id = task_result['task-request-id']
         task_name = tasks_by_id[task_id].test.common.display_name
