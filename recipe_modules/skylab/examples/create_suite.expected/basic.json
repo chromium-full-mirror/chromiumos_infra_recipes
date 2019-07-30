@@ -50,7 +50,7 @@
       "-board",
       "target",
       "-timeout-mins",
-      "480",
+      "420",
       "-qs-account",
       "pcq",
       "-task-name",

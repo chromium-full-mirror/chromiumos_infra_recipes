@@ -51,7 +51,7 @@ class SkylabApi(recipe_api.RecipeApi):
           '-board',
           test.skylab_board,
           '-timeout-mins',
-          8 * 60, # 8 hours to account for skylab capacity under strain.
+          7 * 60,  # 7 hours to account for skylab capacity under strain.
           '-qs-account',
           self._qs_account,
           '-task-name',
@@ -89,6 +89,42 @@ class SkylabApi(recipe_api.RecipeApi):
         self.SkylabResult(task=tasks_by_id[result.id], success=result.success,
                           output=result.output) for result in results
     ]
+
+  def wait_tasks(self, tasks):
+    """Wait for all Skylab suites to finish and return the results.
+
+    Uses skylab wait-tasks internally.
+
+    Args:
+      tasks (list[SkylabTask]): The Skylab tasks to wait on.
+
+    Returns:
+      list[SkylabResult]: The results for each suite.
+    """
+    self._ensure_skylab()
+    tasks_by_id = {task.id: task for task in tasks}
+
+    with self.m.step.nest('collect skylab tasks using skylab cmd') as step:
+      task_ids = [task.id for task in tasks]
+      cmd = [self._client, 'wait-tasks', '-timeout-mins', 7 * 60]
+      cmd += task_ids
+      output_json = self.m.easy.stdout_json_step(
+          'skylab wait-tasks', cmd, infra_step=True,
+          test_stdout=self.test_api.wait_tasks_json_output())
+      results = []
+      for task_json in output_json or []:
+        task_result = task_json['task-result']
+        task_id = task_result['task-request-id']
+        task_name = tasks_by_id[task_id].test.common.display_name
+        task_url = task_result['task-run-url']
+        step.presentation.links[task_name] = task_url
+        # TODO(dhanyaganesh): output seems to be unused.
+        results.append(
+            self.SkylabResult(task=tasks_by_id[task_id],
+                              success=task_result['success'], output=None))
+
+      step.presentation.logs['return value'] = [str(x) for x in results]
+      return results
 
   def _ensure_skylab(self):
     """Ensure the Skylab CLI is installed."""

@@ -18,6 +18,21 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         'task_url': 'https://swarming.com/%s' % label,
     }
 
+  def wait_tasks_json_output(self):
+    return [{
+        "task-result": {
+            "name": "a test",
+            "state": "",
+            "failure": False,
+            "success": True,
+            "task-request-id": "ID",
+            "task-run-url": "http://example.com",
+            "task-logs-url": "http://example.log"
+        },
+        "stdout": "",
+        "child-results": None
+    }]
+
   def hw_test(self, name=None, suite=None, board=None, critical=True):
     return HwTestCfg.HwTest(
         common=TestSuiteCommon(

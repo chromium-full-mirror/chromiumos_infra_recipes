@@ -138,6 +138,10 @@ def RunSteps(api, properties):
     with api.step.nest('collect tests'):
       hw_results = []
       if skylab_tasks:
+        with api.failures.ignore_exceptions():
+          # Collect tests with skylab wait-tasks command and discard the
+          # results till the command is stable.
+          api.skylab.wait_tasks(skylab_tasks)
         hw_results = api.skylab.wait_suites(skylab_tasks)
 
       vm_results = []
