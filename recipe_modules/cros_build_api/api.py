@@ -179,7 +179,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
                                          test_data=test_output_data)
       step.presentation.logs['response'] = [output_json]
       output_proto = reflection.MakeClass(output_type)()
-      json_format.Parse(output_json, output_proto)
+      json_format.Parse(output_json, output_proto, ignore_unknown_fields=True)
 
       # Publish Build API responses on Cloud Pub/Sub if they are registered.
       if self.m.analysis_service.can_publish_event(input_proto, output_proto):

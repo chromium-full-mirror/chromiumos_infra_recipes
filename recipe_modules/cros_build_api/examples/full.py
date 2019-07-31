@@ -33,6 +33,15 @@ def RunSteps(api):
       test_output_data='{"result": "good"}')
   api.assertions.assertEqual(output_proto.result, 'good')
 
+  # Check ignores unknown fields.
+  unknown_field = "ye_unknown_field"
+  api.assertions.assertTrue(
+      unknown_field not in
+      [f.name for f in build_api_test.TestResultMessage.DESCRIPTOR.fields])
+  output_proto = api.cros_build_api(
+      'chromite.api.TestApiService/InputOutputMethod', input_proto, output_type,
+      test_output_data='{"result": "good", "%s": "foobar"}' % unknown_field)
+
   # Check stubs work.
   input_proto = artifacts.BundleRequest(build_target=BuildTarget(name='target'))
   output_proto = api.cros_build_api.ArtifactsService.BundleFirmware(input_proto)
