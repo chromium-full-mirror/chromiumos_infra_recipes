@@ -70,6 +70,101 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/GetBestVisible.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"0\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.PackageService/GetBestVisible|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getBestVisibleResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"packageInfo\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"category\": \"category\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"packageName\": \"package\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"version\": \"version\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getBestVisibleRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/GetBestVisible.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/GetBestVisible.publish event.publish message.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/GetBestVisible.publish event.publish message.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/GetBestVisible.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCRWNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldEJlc3RWaXNpYmxlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdPICHwodY2hyb21lb3MtYmFzZS9j\\naHJvbWVvcy1jaHJvbWX6Ah4KHAoHcGFja2FnZRIIY2F0ZWdvcnkaB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",

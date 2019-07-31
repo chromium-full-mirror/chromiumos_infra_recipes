@@ -718,6 +718,111 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"uprevPackagesRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"cacheDir\": \"\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }, @@@",
+      "@@@STEP_LOG_LINE@published event@    \"overlayType\": \"OVERLAYTYPE_BOTH\", @@@",
+      "@@@STEP_LOG_LINE@published event@    \"outputDir\": \"\", @@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTargets\": []@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"0\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"uprev packages|call chromite.api.PackageService/Uprev|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"uprevPackagesResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"modifiedEbuilds\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ]@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCS3VwcmV2IHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBp\\nLlBhY2thZ2VTZXJ2aWNlL1VwcmV2fGNhbGwgYnVpbGQgQVBJIHNjcmlwdOICGQoVChNbQ0FDSEVd\\nL2Nyb3NfY2hyb290GAHqAjEKLwotW1NUQVJUX0RJUl0vY2hyb21pdW1vcy9zcmMvb3ZlcmxheS9m\\nb28uZWJ1aWxk\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "rev-parse",
