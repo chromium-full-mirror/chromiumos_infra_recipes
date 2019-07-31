@@ -2381,7 +2381,7 @@ Returns:
   builds with refreshed criticality and a list of ScheduleBuildRequest of
   the builds that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#497)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#503)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2395,7 +2395,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#579)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#585)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2406,7 +2406,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#538)(failed_results, test_plan, percent_threshold, count_threshold):**
+&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#544)(failed_results, test_plan, percent_threshold, count_threshold):**
 
 Check if we need baseline validation for this orchestrator.
 
@@ -2492,7 +2492,7 @@ Returns:
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#568)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#574)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2500,7 +2500,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#525)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#531)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -2510,7 +2510,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#602)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#608)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 

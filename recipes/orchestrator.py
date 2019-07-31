@@ -485,10 +485,16 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       if not critical and retry_count != 0:
         filter_log.append('{} is non-critical and already ran'.format(child))
         continue
+
+      tags = [{
+          'key': 'parent_buildbucket_id',
+          'value': str(api.buildbucket.build.id)
+      }]
+
       requests.append(
           api.buildbucket.schedule_request(
               gitiles_commit=snapshot, builder=child, critical=critical,
-              properties=api.cq.props_for_child_build))
+              properties=api.cq.props_for_child_build, tags=tags))
     step.presentation.logs['filter log'] = filter_log
 
   return completed_builds, requests
