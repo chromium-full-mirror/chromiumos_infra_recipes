@@ -74,33 +74,6 @@ class SkylabApi(recipe_api.RecipeApi):
       step.presentation.links['swarming task'] = task_url
       return self.SkylabTask(id=task_id, url=task_url, test=test)
 
-  def wait_suites(self, tasks, bb=False):
-    """Wait for all Skylab suites to finish executing and return the results.
-
-    Args:
-      tasks (list[SkylabTask]): The Skylab tasks to wait on.
-      bb (boolean): Whether to use buildbucket-backed cros_test_platform.
-                    Note: this flag is temporary, and will exist only during
-                    cros_test_platform migration.
-
-    Returns:
-      list[SkylabResult]: The results for each suite.
-    """
-    assert tasks, 'must supply at least one SkylabTask to wait_suites'
-
-    tasks_by_id = {task.id: task for task in tasks}
-
-    # TODO(evanhernandez): This should call skylab wait-suite, not swarming.
-    with self.m.swarming.with_server(self._server):
-      results = self.m.swarming.collect('collect skylab tasks',
-                                        tasks_by_id.keys(),
-                                        timeout=self._skylab_timeout)
-
-    return [
-        self.SkylabResult(task=tasks_by_id[result.id], success=result.success,
-                          output=result.output) for result in results
-    ]
-
   def wait_tasks(self, tasks, bb=False):
     """Wait for all Skylab suites to finish and return the results.
 
@@ -118,10 +91,14 @@ class SkylabApi(recipe_api.RecipeApi):
     self._ensure_skylab()
     tasks_by_id = {task.id: task for task in tasks}
 
-    with self.m.step.nest('collect skylab tasks using skylab cmd') as step:
+    with self.m.step.nest('collect skylab tasks') as step:
       task_ids = [task.id for task in tasks]
-      cmd = [self._client, 'wait-tasks', '-bb=' + repr(bb),
-             '-timeout-mins', 7 * 60]
+      # TODO(crbug.com/989623) once wait-tasks supports partial results
+      # drop the extra 10 min wait.
+      cmd = [
+          self._client, 'wait-tasks', '-bb=' + repr(bb), '-timeout-mins',
+          7 * 60 + 10
+      ]
       cmd += task_ids
       output_json = self.m.easy.stdout_json_step(
           'skylab wait-tasks', cmd, infra_step=True,

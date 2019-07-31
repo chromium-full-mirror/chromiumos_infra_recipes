@@ -80,6 +80,7 @@
   * [depends:examples/full](#recipes-depends_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [easy:examples/full](#recipes-easy_examples_full)
+  * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
   * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
@@ -101,7 +102,6 @@
   * [recipes_tester](#recipes-recipes_tester) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
   * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
-  * [skylab:examples/wait_suites](#recipes-skylab_examples_wait_suites)
   * [skylab:examples/wait_tasks](#recipes-skylab_examples_wait_tasks)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
@@ -1869,7 +1869,7 @@ Args:
   * kwargs: Keyword arguments to pass to 'repo.sync'.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
-[DEPS](/recipe_modules/skylab/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/skylab/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 #### **class [SkylabApi](/recipe_modules/skylab/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -1892,20 +1892,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/skylab/api.py#30)(self):**
 
-&mdash; **def [wait\_suites](/recipe_modules/skylab/api.py#77)(self, tasks, bb=False):**
-
-Wait for all Skylab suites to finish executing and return the results.
-
-Args:
-  tasks (list[SkylabTask]): The Skylab tasks to wait on.
-  bb (boolean): Whether to use buildbucket-backed cros_test_platform.
-                Note: this flag is temporary, and will exist only during
-                cros_test_platform migration.
-
-Returns:
-  list[SkylabResult]: The results for each suite.
-
-&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#104)(self, tasks, bb=False):**
+&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#77)(self, tasks, bb=False):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -2265,6 +2252,11 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 [DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
+### *recipes* / [easy:examples/stdout\_json\_step](/recipe_modules/easy/examples/stdout_json_step.py)
+
+[DEPS](/recipe_modules/easy/examples/stdout_json_step.py#6): [easy](#recipe_modules-easy)
+
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_json_step.py#11)(api):**
 ### *recipes* / [failures:examples/aggregate\_failures](/recipe_modules/failures/examples/aggregate_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/aggregate_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2357,11 +2349,11 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#49)(api, properties):**
 
-&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#254)(build_target):**
+&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#250)(build_target):**
 
 Returns the autotest builder name for the given build_target.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#424)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#420)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Get a list of builds to be run and  a list of builds that have succeeded.
 
@@ -2381,7 +2373,7 @@ Returns:
   builds with refreshed criticality and a list of ScheduleBuildRequest of
   the builds that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#503)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#499)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2395,7 +2387,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#585)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#581)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2406,7 +2398,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#544)(failed_results, test_plan, percent_threshold, count_threshold):**
+&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#540)(failed_results, test_plan, percent_threshold, count_threshold):**
 
 Check if we need baseline validation for this orchestrator.
 
@@ -2421,7 +2413,7 @@ Returns:
   A boolean indicating whether we need to initiate baseline
   validation.
 
-&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#294)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#290)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Autotest VM Tests from the test_plan.
 
@@ -2438,7 +2430,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#382)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#378)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Moblab VM Tests from the test_plan.
 
@@ -2455,7 +2447,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#264)(api, test_plan, passed_tests, test_to_build_map=None):**
+&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#260)(api, test_plan, passed_tests, test_to_build_map=None):**
 
 Schedule skylab tests from the test_plan.
 
@@ -2471,7 +2463,7 @@ Args:
 Returns:
   list[SkylabTask] of the tests scheduled.
 
-&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#337)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#333)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule tast VM Tests from the test_plan.
 
@@ -2488,11 +2480,11 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#259)(build_target):**
+&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#255)(build_target):**
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#574)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#570)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2500,7 +2492,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#531)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#527)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -2510,7 +2502,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#608)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#604)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 
@@ -2555,16 +2547,11 @@ Tests a recipe CL by running ChromeOS builders.
 [DEPS](/recipe_modules/skylab/examples/create_suite.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_suite.py#14)(api):**
-### *recipes* / [skylab:examples/wait\_suites](/recipe_modules/skylab/examples/wait_suites.py)
-
-[DEPS](/recipe_modules/skylab/examples/wait_suites.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
-
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_suites.py#13)(api):**
 ### *recipes* / [skylab:examples/wait\_tasks](/recipe_modules/skylab/examples/wait_tasks.py)
 
-[DEPS](/recipe_modules/skylab/examples/wait_tasks.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/skylab/examples/wait_tasks.py#6): [easy](#recipe_modules-easy), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_tasks.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_tasks.py#13)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]

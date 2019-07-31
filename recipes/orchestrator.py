@@ -138,11 +138,7 @@ def RunSteps(api, properties):
     with api.step.nest('collect tests'):
       hw_results = []
       if skylab_tasks:
-        with api.failures.ignore_exceptions():
-          # Collect tests with skylab wait-tasks command and discard the
-          # results till the command is stable.
-          api.skylab.wait_tasks(skylab_tasks)
-        hw_results = api.skylab.wait_suites(skylab_tasks)
+        hw_results = api.skylab.wait_tasks(skylab_tasks)
 
       vm_results = []
       if vm_tests:
@@ -212,7 +208,7 @@ def RunSteps(api, properties):
 
         with api.step.nest('collect baseline tests'):
           if baseline_skylab_tasks:
-            baseline_hw_results = api.skylab.wait_suites(baseline_skylab_tasks)
+            baseline_hw_results = api.skylab.wait_tasks(baseline_skylab_tasks)
             # Add failures here to passed_tests.
             passed_tests.extend([
                 hw_result.task.test.common.display_name
@@ -672,7 +668,19 @@ def GenTests(api):
       vm_test_build('moblab-vm-test'),
   ]
 
+  hw_tests = {
+      'results': [
+          api.skylab.wait_task_result(id='bvt-cq-task-id', name='hw test1',
+                                      success=True),
+          api.skylab.wait_task_result(id='bvt-inline-task-id', name='hw test2',
+                                      success=True),
+      ]
+  }
+
   yield (api.test('basic') + postsubmit_orchestrator_build() +
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -690,6 +698,7 @@ def GenTests(api):
           input=dict(properties=build_target_property('arm-generic'))),
   ]
 
+
   yield (api.test('fails_if_changes_not_submittable') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True) +  #
@@ -704,6 +713,9 @@ def GenTests(api):
          api.buildbucket.simulated_search_results(
              builds, 'get build history for changes.'
              'get change build history.buildbucket.search') +  #
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -717,6 +729,9 @@ def GenTests(api):
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='orchestrator pointless build check',
              build_is_pointless=True) +  #
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -738,6 +753,9 @@ def GenTests(api):
              name='orchestrator pointless build check') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -763,6 +781,9 @@ def GenTests(api):
          api.buildbucket.simulated_search_results(
              [], step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search') +
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -774,7 +795,9 @@ def GenTests(api):
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }) +
+         }) + api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -786,7 +809,9 @@ def GenTests(api):
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }) +
+         }) + api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -825,6 +850,9 @@ def GenTests(api):
              '.find matching builds.buildbucket.search') +
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='orchestrator pointless build check') +  #
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
@@ -839,15 +867,18 @@ def GenTests(api):
                       builder={'builder': 'arm-generic-postsubmit'},
                       status=common_pb2.SUCCESS, critical=common_pb2.NO),
   ]
-  yield (api.test('critical_child_builder_fails') +  #
-         postsubmit_orchestrator_build() +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +
-         api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield (
+      api.test('critical_child_builder_fails') +  #
+      postsubmit_orchestrator_build() +  #
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect') + api.easy.simulate_json_step(
+              'run tests.collect tests.'
+              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests, step_name='run tests.collect tests.collect vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
@@ -861,24 +892,29 @@ def GenTests(api):
          postsubmit_orchestrator_build() +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
 
-  skylab_results = [
-      api.swarming.task_result(id='bvt-cq-task-id', name='success_task',
-                               state=api.swarming.TaskState.COMPLETED),
-      api.swarming.task_result(id='bvt-inline-task-id', name='failed_task',
-                               state=api.swarming.TaskState.COMPLETED,
-                               failure=True)
-  ]
-  baseline_results_failure = [
-      api.swarming.task_result(id='bvt-inline-task-id', name='failed_task',
-                               state=api.swarming.TaskState.COMPLETED,
-                               failure=True)
-  ]
+  hw_tests = {
+      'results': [
+          api.skylab.wait_task_result(id='bvt-cq-task-id', name='hw test1',
+                                      success=True),
+          api.skylab.wait_task_result(id='bvt-inline-task-id', name='hw test2',
+                                      success=False),
+      ]
+  }
+  baseline_results_failure = {
+      'results': [
+          api.skylab.wait_task_result(id='bvt-inline-task-id', name='hw test2',
+                                      success=False),
+      ]
+  }
 
   yield (api.test('does_not_run_baseline_validation') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
@@ -888,56 +924,61 @@ def GenTests(api):
              name='orchestrator pointless build check') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
              vm_tests, step_name='run tests.collect tests.collect vm tests') +
          api.buildbucket.simulated_collect_output(
              moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests') +
-         api.override_step_data('run tests.collect tests.collect skylab tasks',
-                                api.swarming.collect(skylab_results)))
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
-  yield (api.test('pass_with_baseline_validation') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.properties(baseline_validation_percent=100) +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check') +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run baseline tests.collect baseline tests.collect'
-             ' baseline vm tests') + api.buildbucket.simulated_collect_output(
-                 moblab_vm_tests,
-                 step_name='run tests.collect tests.collect moblab vm tests') +
-         api.override_step_data('run tests.collect tests.collect skylab tasks',
-                                api.swarming.collect(skylab_results)) +  #
-         api.override_step_data(
-             'run baseline tests.collect baseline tests'
-             '.collect skylab tasks',
-             api.swarming.collect(baseline_results_failure)))
+  yield (
+      api.test('pass_with_baseline_validation') +  #
+      cq_orchestrator_build_with_gerrit_change() +  #
+      api.properties(baseline_validation_percent=100) +  #
+      api.cros_relevance.simulate_run_pointless_build_checker(
+          name='orchestrator pointless build check') +  #
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect') +  #
+      api.easy.simulate_json_step(
+          'run tests.collect tests.'
+          'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests, step_name='run tests.collect tests.collect vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run baseline tests.collect baseline tests.collect'
+          ' baseline vm tests') + api.buildbucket.simulated_collect_output(
+              moblab_vm_tests,
+              step_name='run tests.collect tests.collect moblab vm tests') +
+      api.easy.simulate_json_step(
+          'run baseline tests.collect baseline tests.'
+          'collect skylab tasks.skylab wait-tasks', baseline_results_failure))
 
-  baseline_results_success = [
-      api.swarming.task_result(id='bvt-inline-task-id', name='failed_task',
-                               state=api.swarming.TaskState.COMPLETED)
-  ]
-  yield (api.test('fail_with_baseline_validation') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.properties(baseline_validation_percent=100) +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check') +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run baseline tests.collect baseline tests.collect'
-             ' baseline vm tests') + api.buildbucket.simulated_collect_output(
-                 moblab_vm_tests,
-                 step_name='run tests.collect tests.collect moblab vm tests') +
-         api.override_step_data('run tests.collect tests.collect skylab tasks',
-                                api.swarming.collect(skylab_results)) +  #
-         api.override_step_data(
-             'run baseline tests.collect baseline tests'
-             '.collect skylab tasks',
-             api.swarming.collect(baseline_results_success)))
+  baseline_results_success = {
+      'results': [
+          api.skylab.wait_task_result(id='bvt-inline-task-id', name='hw test2',
+                                      success=True),
+      ]
+  }
+  yield (
+      api.test('fail_with_baseline_validation') +  #
+      cq_orchestrator_build_with_gerrit_change() +  #
+      api.properties(baseline_validation_percent=100) +  #
+      api.cros_relevance.simulate_run_pointless_build_checker(
+          name='orchestrator pointless build check') +  #
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect') +  #
+      api.easy.simulate_json_step(
+          'run tests.collect tests.'
+          'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests, step_name='run tests.collect tests.collect vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run baseline tests.collect baseline tests.collect'
+          ' baseline vm tests') + api.buildbucket.simulated_collect_output(
+              moblab_vm_tests,
+              step_name='run tests.collect tests.collect moblab vm tests') +
+      api.easy.simulate_json_step(
+          'run baseline tests.collect baseline tests.'
+          'collect skylab tasks.skylab wait-tasks', baseline_results_success))

@@ -33,7 +33,7 @@
   },
   {
     "cmd": [],
-    "name": "collect skylab tasks using skylab cmd",
+    "name": "collect skylab tasks",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id='ID', url='https://google.com', test=suite: \"bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
@@ -54,11 +54,11 @@
       "wait-tasks",
       "-bb=False",
       "-timeout-mins",
-      "420",
+      "430",
       "ID"
     ],
     "infra_step": true,
-    "name": "collect skylab tasks using skylab cmd.skylab wait-tasks",
+    "name": "collect skylab tasks.skylab wait-tasks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

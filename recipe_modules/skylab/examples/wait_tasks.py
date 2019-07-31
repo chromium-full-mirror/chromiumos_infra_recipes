@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'easy',
     'skylab',
 ]
 
@@ -20,4 +21,6 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic') +  #
+         api.easy.simulate_json_step('collect skylab tasks.skylab wait-tasks',
+                                     api.skylab.wait_tasks_json_output()))

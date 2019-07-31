@@ -39,6 +39,21 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         }]
     }
 
+  def wait_task_result(self, id, name, success=True):
+    return {
+        "task-result": {
+            "name": name,
+            "state": "",
+            "failure": not success,
+            "success": success,
+            "task-request-id": id,
+            "task-run-url": "http://example.com",
+            "task-logs-url": "http://example.log"
+        },
+        "stdout": "",
+        "child-results": None
+    }  # pragma: no cover
+
   def hw_test(self, name=None, suite=None, board=None, critical=True):
     return HwTestCfg.HwTest(
         common=TestSuiteCommon(
@@ -60,4 +75,4 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         task=task or self.skylab_task(),
         success=success,
         output=output or 'Successfully ran all tests!',
-    )
+    )  # pragma: no cover
