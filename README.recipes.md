@@ -81,6 +81,7 @@
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [easy:examples/full](#recipes-easy_examples_full)
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step)
+  * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
   * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
@@ -969,11 +970,11 @@ Args:
 
 APIs for easy steps.
 
-#### **class [EasyApi](/recipe_modules/easy/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [EasyApi](/recipe_modules/easy/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for easy steps.
 
-&mdash; **def [set\_property\_step](/recipe_modules/easy/api.py#14)(self, property_name, value, step_name=None):**
+&mdash; **def [set\_property\_step](/recipe_modules/easy/api.py#15)(self, property_name, value, step_name=None):**
 
 An empty step to set a property in output.properties.
 
@@ -983,7 +984,7 @@ Args:
     int, float, list, or dict.
   step_name (str): The name of the step.
 
-&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#80)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#81)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data deserialized from JSON.
 
@@ -997,7 +998,21 @@ Args:
 Returns:
   dict|list: JSON-deserialized stdout data.
 
-&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#56)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#105)(self, name, cmd, message_type, test_output=None, \*\*kwargs):**
+
+Runs an easy.step and returns stdout jsonpb-deserialized proto data.
+
+* name (str): The name of the step.
+* cmd (list[str]): The command to run.
+* message_type: A type (and also constructor) of proto message, indicating
+  the type of proto to be returned.
+* test_output (message_type): Data to return in tests.
+* kwargs: Keyword arguments to pass to the 'step' call.
+
+Returns:
+  message_type: JSON-pb deserialized proto message.
+
+&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#57)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data.
 
@@ -1011,7 +1026,7 @@ Args:
 Returns:
   str: Raw stdout data.
 
-&mdash; **def [step](/recipe_modules/easy/api.py#28)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
+&mdash; **def [step](/recipe_modules/easy/api.py#29)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
 
 Convenience features on top of the normal 'step' call.
 
@@ -2260,12 +2275,17 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 
 [DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#14)(api):**
 ### *recipes* / [easy:examples/stdout\_json\_step](/recipe_modules/easy/examples/stdout_json_step.py)
 
 [DEPS](/recipe_modules/easy/examples/stdout_json_step.py#6): [easy](#recipe_modules-easy)
 
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_json_step.py#11)(api):**
+### *recipes* / [easy:examples/stdout\_jsonpb\_step](/recipe_modules/easy/examples/stdout_jsonpb_step.py)
+
+[DEPS](/recipe_modules/easy/examples/stdout_jsonpb_step.py#6): [easy](#recipe_modules-easy)
+
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#12)(api):**
 ### *recipes* / [failures:examples/aggregate\_failures](/recipe_modules/failures/examples/aggregate_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/aggregate_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

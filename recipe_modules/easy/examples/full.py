@@ -9,6 +9,7 @@ DEPS = [
     'easy',
 ]
 
+from google.protobuf.wrappers_pb2 import Int32Value
 
 def RunSteps(api):
   api.easy.step('passthru', ['cat'], ok_ret=(0, 1))
@@ -16,6 +17,11 @@ def RunSteps(api):
   stdout = api.easy.stdout_step('raw', ['gzip'], stdin_data='uncompressed',
                                    test_stdout=lambda: 'compressed')
   assert stdout == 'compressed'
+
+  proto_out = api.easy.stdout_jsonpb_step('jsonpb', ['foo'], Int32Value,
+      test_output=Int32Value(value=1))
+  assert isinstance(proto_out, Int32Value)
+  assert proto_out.value == 1
 
   json_stdout = api.easy.stdout_json_step('json', ['jq'], stdin_json={'a': 1},
                                    test_stdout={'b': 2})

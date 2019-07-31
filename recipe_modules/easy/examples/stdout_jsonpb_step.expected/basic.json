@@ -1,0 +1,11 @@
+[
+  {
+    "cmd": [
+      "foo"
+    ],
+    "name": "foo"
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -6,6 +6,7 @@
 """APIs for easy steps."""
 
 from recipe_engine import recipe_api
+from google.protobuf import json_format
 
 
 class EasyApi(recipe_api.RecipeApi):
@@ -100,6 +101,31 @@ class EasyApi(recipe_api.RecipeApi):
     step_data = self.step(name, cmd, stdout=self.m.json.output(),
                           step_test_data=step_test_data, **kwargs)
     return step_data.stdout
+
+  def stdout_jsonpb_step(self, name, cmd, message_type, test_output=None,
+                         **kwargs):
+    """Runs an easy.step and returns stdout jsonpb-deserialized proto data.
+
+    * name (str): The name of the step.
+    * cmd (list[str]): The command to run.
+    * message_type: A type (and also constructor) of proto message, indicating
+      the type of proto to be returned.
+    * test_output (message_type): Data to return in tests.
+    * kwargs: Keyword arguments to pass to the 'step' call.
+
+    Returns:
+      message_type: JSON-pb deserialized proto message.
+    """
+    assert isinstance(message_type, type), 'message_type must be a type'
+
+    test_output_str = None
+    if test_output is not None:
+      test_output_str = json_format.MessageToJson(test_output)
+
+    output = message_type()
+    step_data = self.stdout_step(
+        name, cmd, test_stdout=test_output_str, **kwargs)
+    return json_format.Parse(step_data, output)
 
 
 def maybe_lazy_test_data(test_data):
