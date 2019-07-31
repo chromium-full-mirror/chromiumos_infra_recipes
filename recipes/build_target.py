@@ -208,7 +208,7 @@ def GenTests(api):
              name='post-sync pointless build check') +
          api.properties(build_target={'name': 'amd64-generic'}))
 
-  yield (api.test('with-findit-bisect') +  #
+  yield (api.test('with-findit-bisect-old-props') +  #
          cq_build_with_gerrit_change() +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='pre-sync pointless build check') +
@@ -227,6 +227,27 @@ def GenTests(api):
                              api.cros_bisect.serialized_package_info(
                                  'baz', 'cat2', '3'),
                          ])
+                 }))
+
+  yield (api.test('with-findit-bisect') +  #
+         cq_build_with_gerrit_change() +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='pre-sync pointless build check') +
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='post-sync pointless build check') + api.properties(
+                 **{
+                     'build_target': {
+                         'name': 'amd64-generic'
+                     },
+                     '$chromeos/cros_bisect':
+                         CrosBisectProperties(compile={'targets': [
+                             api.cros_bisect.serialized_package_info(
+                                 'foo', 'cat1', '1'),
+                             api.cros_bisect.serialized_package_info(
+                                 'bar', 'cat1', '2'),
+                             api.cros_bisect.serialized_package_info(
+                                 'baz', 'cat2', '3'),
+                         ]})
                  }))
 
   yield (

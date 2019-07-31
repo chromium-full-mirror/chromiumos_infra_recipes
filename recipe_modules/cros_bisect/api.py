@@ -17,6 +17,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(CrosBisectApi, self).__init__(*args, **kwargs)
     self._targets = properties.targets
+    self._compile = properties.compile
 
   def set_bisect_builder(self, build_target_name):
     """Sets the BISECT_BUILDER output property.
@@ -111,4 +112,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
     Returns:
       list[PackageInfo]: list of packages to build as specified by FindIt
     """
-    return [jsonpb.Parse(t, PackageInfo()) for t in self._targets]
+    packages = [jsonpb.Parse(t, PackageInfo()) for t in self._targets]
+    if packages:
+      return packages
+    return [jsonpb.Parse(t, PackageInfo()) for t in self._compile.targets]
