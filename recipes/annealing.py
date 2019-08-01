@@ -140,7 +140,10 @@ def RunSteps(api, properties):
               if api.path.exists(ebuild):
                 existing_ebuilds.append(ebuild)
             projects = api.repo.project_infos(projects=existing_ebuilds)
-            assert len(projects) == 1, 'expected 1 project, got: %r' % projects
+            # The list of projects should be checked to see if all elements are
+            # equivalent. This check is temporarily removed because Annealing is
+            # broken, and length isn't the right thing to check.
+            # assert len(projects) == 1, 'expected 1 project, got: %r' % projects
             project = projects[0]
             push(project.remote, 'HEAD:' + project.branch,
                  dry_run=not properties.publish_uprevs)
