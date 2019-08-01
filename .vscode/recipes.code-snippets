@@ -1,0 +1,17 @@
+{
+	// This is intended to make it easy to quickly drop the code needed to
+	// start a debug server in a file and then run `recipes.py test run
+	// --filter=module.name` to run a test with the debugger attached. Be
+	// sure to set a breakpoint or the debugger will attach and then just
+	// keep running.
+	"Bootstrap remote debug at point": {
+		"scope": "python",
+		"prefix": "ptvsd",
+		"body": [
+			"import ptvsd",
+			"ptvsd.enable_attach(address=('127.0.0.1', 5678), redirect_output=True)",
+			"ptvsd.wait_for_attach()",
+		],
+		"description": "Insert PTVSD at cursor position so that when executing, remote debug starts there"
+	}
+}

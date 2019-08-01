@@ -1,0 +1,21 @@
+{
+        // Because you can only invoke recipes through ./recipes.py, remote
+        // attach is the only way to debug recipes. Port number matches default
+        // in `recipes.code-snippets`.
+        "version": "0.2.0",
+        "configurations": [
+                {
+                        "name": "Python: Remote Attach",
+                        "type": "python",
+                        "request": "attach",
+                        "port": 5678,
+                        "host": "localhost",
+                        "pathMappings": [
+                                {
+                                        "localRoot": "${workspaceFolder}",
+                                        "remoteRoot": "."
+                                }
+                        ]
+                },
+        ]
+}
