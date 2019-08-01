@@ -2099,7 +2099,7 @@
     "cmd": [
       "[START_DIR]/cipd/skylab/skylab",
       "create-suite",
-      "-bb=False",
+      "-bb=True",
       "-json",
       "-pool",
       "DUT_POOL_QUOTA",
@@ -2373,7 +2373,7 @@
     "cmd": [
       "[START_DIR]/cipd/skylab/skylab",
       "wait-tasks",
-      "-bb=False",
+      "-bb=True",
       "-timeout-mins",
       "430",
       "bvt-inline-task-id"

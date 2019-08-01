@@ -200,7 +200,7 @@ def RunSteps(api, properties):
           baseline_test_plan = api.cros_test_plan.generate(
               baseline_builds, snapshot.id)
           baseline_skylab_tasks = schedule_skylab_tests(api, baseline_test_plan,
-                                                        passed_tests)
+                                                        passed_tests, bb=True)
           baseline_vm_tests = schedule_autotest_vm_tests(
               api, baseline_test_plan, passed_tests, snapshot)
           baseline_vm_tests += schedule_tast_vm_tests(api, baseline_test_plan,
@@ -208,7 +208,8 @@ def RunSteps(api, properties):
 
         with api.step.nest('collect baseline tests'):
           if baseline_skylab_tasks:
-            baseline_hw_results = api.skylab.wait_tasks(baseline_skylab_tasks)
+            baseline_hw_results = api.skylab.wait_tasks(baseline_skylab_tasks,
+                                                        bb=True)
             # Add failures here to passed_tests.
             passed_tests.extend([
                 hw_result.task.test.common.display_name
@@ -246,7 +247,6 @@ def RunSteps(api, properties):
 
   return api.failures.aggregate_failures(failures)
 
-
 def autotest_vm_test(build_target):
   """Returns the autotest builder name for the given build_target."""
   return build_target.name + '-autotest-vm'
@@ -257,7 +257,8 @@ def tast_vm_test(build_target):
   return build_target.name + '-tast-vm'
 
 
-def schedule_skylab_tests(api, test_plan, passed_tests, test_to_build_map=None):
+def schedule_skylab_tests(api, test_plan, passed_tests, test_to_build_map=None,
+                          bb=False):
   """Schedule skylab tests from the test_plan.
 
   Args:
@@ -268,6 +269,9 @@ def schedule_skylab_tests(api, test_plan, passed_tests, test_to_build_map=None):
       have passed before.
     test_to_build_map (dict{string->string}): Map of test names to
       build_targets to be populated.
+      bb(boolean): Whether to use buildbucket-backed cros_test_platform.
+                    Note: this flag is temporary, and will exist only during
+                    cros_test_platform migration.
 
   Returns:
     list[SkylabTask] of the tests scheduled.
@@ -282,7 +286,7 @@ def schedule_skylab_tests(api, test_plan, passed_tests, test_to_build_map=None):
           build_target = unit.common.build_target
           test_to_build_map[test_name] = build_target.name
           skylab_tasks.append(
-              api.skylab.create_suite(test, unit.common.build_payload))
+              api.skylab.create_suite(test, unit.common.build_payload, bb=bb))
 
   return skylab_tasks
 
