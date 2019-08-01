@@ -13,9 +13,21 @@ message CrosBisectProperties {
 
   // Properties sent for compile failure bisection.
   message CompileFailures {
+    // List of targets that failed needing to be run during bisection.
+    // These are JSON encoded PackageInfo objects.
     repeated string targets = 1;
   }
   CompileFailures compile = 2;
 
-  // TODO(dburger): message TestFailures
+  // Properties sent for compile failure bisection.
+  message TestFailures {
+    // Encodes information for rerunning a test failure.
+    message TestFailure {
+      // JSON encoded test configuration proto.
+      string test_spec = 1;
+    }
+
+    repeated TestFailure hw_test_failures = 1;
+  }
+  TestFailures test = 3;
 }
