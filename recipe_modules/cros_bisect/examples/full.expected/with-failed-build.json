@@ -15,13 +15,6 @@
   },
   {
     "cmd": [],
-    "name": "set build_compile_failure_output",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_compile_failure_output@{\"failed_step\": \"install packages|installation results\", \"failures\": [{\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"uno\\\", \\n  \\\"version\\\": \\\"1\\\"\\n}\"], \"rule\": \"emerge\"}, {\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"dos\\\", \\n  \\\"version\\\": \\\"2\\\"\\n}\"], \"rule\": \"emerge\"}]}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set compile_failures",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@compile_failures@{\"failed_step\": \"install packages|installation results\", \"failures\": [{\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"uno\\\", \\n  \\\"version\\\": \\\"1\\\"\\n}\"], \"rule\": \"emerge\"}, {\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"dos\\\", \\n  \\\"version\\\": \\\"2\\\"\\n}\"], \"rule\": \"emerge\"}]}@@@"

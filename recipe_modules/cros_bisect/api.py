@@ -81,9 +81,6 @@ class CrosBisectApi(recipe_api.RecipeApi):
     if not failed_packages:
       return
     payload = self._create_failures_payload(failed_packages)
-    # TODO(dburger): stop setting under this old key when FindIt starts
-    # reading under new key "compile_failures".
-    self.m.easy.set_property_step('build_compile_failure_output', payload)
     self.m.easy.set_property_step('compile_failures', payload)
 
   def set_test_failures(self, hw_results):

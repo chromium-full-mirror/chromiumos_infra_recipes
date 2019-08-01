@@ -308,7 +308,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#124)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#121)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -348,7 +348,7 @@ Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the postsubmit-orchestrator encounters hardware test
 failures.
 
-&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#89)(self, hw_results):**
+&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#86)(self, hw_results):**
 
 Outputs the failed hardware tests, if any, for FindIt consumption.
 
