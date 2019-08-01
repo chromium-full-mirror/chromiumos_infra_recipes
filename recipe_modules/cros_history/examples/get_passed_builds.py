@@ -42,20 +42,21 @@ def GenTests(api):
   yield (
       api.test('passed_builds_with_history') +
       api.buildbucket.simulated_search_results([
-          build_pb2.Build(id=123, builder=build_pb2.BuilderID(builder='betty')),
-          build_pb2.Build(id=231, builder=build_pb2.BuilderID(builder='reef')),
-          build_pb2.Build(
-              id=312, builder=build_pb2.BuilderID(builder='cq-orchestrator')),
+          build_pb2.Build(id=123, builder=build_pb2.BuilderID(builder='betty'),
+                          status=common_pb2.SUCCESS),
+          build_pb2.Build(id=231, builder=build_pb2.BuilderID(builder='reef'),
+                          status=common_pb2.SUCCESS),
+          build_pb2.Build(id=312, builder=build_pb2.BuilderID(
+              builder='cq-orch'), status=common_pb2.SUCCESS),
       ], 'get change build history.buildbucket.search') + api.buildbucket.build(
-          build_pb2.Build(
-              builder=build_pb2.BuilderID(builder='cq-orchestrator'))) +
+          build_pb2.Build(builder=build_pb2.BuilderID(builder='cq-orch'))) +
       api.properties(
           GetPassedBuildsProperties(
               input_build_patches=[common_pb2.GerritChange(change=2341)])) +
       api.properties(
           GetPassedBuildsProperties(output_builds=[
               build_pb2.Build(id=123, builder=build_pb2.BuilderID(
-                  builder='betty')),
+                  builder='betty'), status=common_pb2.SUCCESS),
               build_pb2.Build(id=231, builder=build_pb2.BuilderID(
-                  builder='reef'))
+                  builder='reef'), status=common_pb2.SUCCESS)
           ])))

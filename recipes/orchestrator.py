@@ -74,10 +74,10 @@ def RunSteps(api, properties):
     if properties.assert_singleton:
       with api.step.nest('find inflight orchestrator') as step:
         older_running_builds = api.cros_history.get_matching_builds(
-            api.buildbucket.build, status=common_pb2.STARTED,
+            api.buildbucket.build, statuses=[common_pb2.STARTED],
             start_build_id=api.buildbucket.build.id)
         if len(older_running_builds) > 1:
-          # Current build is redundant. Exit with failure.
+          # Current build is redundant (Yourself + Another). Exit with failure.
           step.presentation.step_text = 'found inflight run(s)'
           for build in older_running_builds:
             title = api.naming.get_build_title(build)
@@ -195,7 +195,7 @@ def RunSteps(api, properties):
           build_target + '-snapshot' for build_target in build_targets_to_verify
       ]
       baseline_builds = api.cros_history.get_snapshot_builds(
-          snapshot, baseline_builders_to_verify)
+          snapshot, baseline_builders_to_verify, [common_pb2.SUCCESS])
       with api.step.nest('run baseline tests'):
         with api.step.nest('schedule baseline tests'):
           baseline_test_plan = api.cros_test_plan.generate(
@@ -458,7 +458,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
     with api.step.nest('get build history for changes'):
       retry_count = len(
           api.cros_history.get_matching_builds(api.buildbucket.build,
-                                               status=common_pb2.FAILURE))
+                                               statuses=[common_pb2.FAILURE]))
       completed_builds = get_completed_builds(api, child_builders)
       passed_builders = set(build.builder.builder for build in completed_builds)
 
@@ -699,8 +699,11 @@ def GenTests(api):
           input=dict(properties=build_target_property('amd64-generic'))),
       build_pb2.Build(
           id=8922054662172514001, builder={'builder': 'arm-generic-cq'},
-          status=common_pb2.SUCCESS,
+          status=common_pb2.STARTED,
           input=dict(properties=build_target_property('arm-generic'))),
+      build_pb2.Build(id=8922054662172514002, builder={'builder': 'atlas-cq'},
+                      status=common_pb2.STARTED,
+                      input=dict(properties=build_target_property('atlas-cq'))),
   ]
 
 

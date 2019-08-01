@@ -15,7 +15,7 @@
     ],
     "infra_step": true,
     "name": "get change build history.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"status\": \"SUCCESS\"}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -36,8 +36,7 @@
       "@@@STEP_LOG_LINE@request@          \"builder\": {}, @@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-09T12:53:21Z\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",

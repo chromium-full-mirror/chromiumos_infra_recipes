@@ -505,13 +505,13 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#141)(self, build, status=None, start_build_id=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#145)(self, build, statuses=None, start_build_id=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
 Args:
   build (build_pb2.Build): build to match for.
-  status (common_pb2.Status): query for builds with this status.
+  statuses ([common_pb2.Status]): query for builds with these statuses.
   start_build_id (int): query builds older than this ID.
 
 Returns:
@@ -527,26 +527,27 @@ Args:
 Returns:
   list([build_pb2.Build]): Passed builds with at most one build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#67)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#68)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#105)(self, snapshot, builder_list):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#106)(self, snapshot, builder_list, statuses):**
 
 Get *-snapshot builds with the given snapshot.
 
 Args:
   snapshot (GitilesCommit): Snapshot to search on.
   builder_list (set[str]): List of builder names to filter by.
+  statuses ([common_pb2.Status]): The statuses of snapshots to return
 
 Returns:
   list[Build] *-snapshot builds with the same snapshot filtered
   by the builder_list.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#92)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#93)(self, tests):**
 
 Record the tests that passed in the current run.
 

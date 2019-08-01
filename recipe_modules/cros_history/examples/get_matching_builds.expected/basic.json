@@ -12,7 +12,7 @@
     ],
     "infra_step": true,
     "name": "find matching builds.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"build\": {\"startBuildId\": \"83\"}, \"builder\": {\"bucket\": \"cq\", \"builder\": \"bojack-cq\", \"project\": \"chromeos\"}, \"status\": \"STARTED\"}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"build\": {\"startBuildId\": \"83\"}, \"builder\": {\"bucket\": \"cq\", \"builder\": \"bojack-cq\", \"project\": \"chromeos\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -41,8 +41,7 @@
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"cq\", @@@",
       "@@@STEP_LOG_LINE@request@            \"builder\": \"bojack-cq\", @@@",
       "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"status\": \"STARTED\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",

@@ -47,8 +47,9 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       # We don't want to specify the builder, but, we should specify the bucket
       builder_shell = build_pb2.BuilderID(project=current_builder_id.project,
                                           bucket=current_builder_id.bucket)
-      for build in self._get_patch_history(
-          patches, builder=builder_shell, status=common_pb2.SUCCESS, tags=tags):
+      for build in self._get_patch_history(patches, builder=builder_shell,
+                                           statuses=[common_pb2.SUCCESS],
+                                           tags=tags):
         if build.builder.builder not in passed_builders:
           passed_builders.add(build.builder.builder)
           passed_builds.append(build)
@@ -102,12 +103,13 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       raise ValueError('test names must be unique, found: %r' % tests)
     self.m.easy.set_property_step(PASSED_TESTS_KEY, tests)
 
-  def get_snapshot_builds(self, snapshot, builder_list):
+  def get_snapshot_builds(self, snapshot, builder_list, statuses):
     """Get *-snapshot builds with the given snapshot.
 
     Args:
       snapshot (GitilesCommit): Snapshot to search on.
       builder_list (set[str]): List of builder names to filter by.
+      statuses ([common_pb2.Status]): The statuses of snapshots to return
 
     Returns:
       list[Build] *-snapshot builds with the same snapshot filtered
@@ -123,9 +125,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       search_snapshot = common_pb2.GitilesCommit(
           host=snapshot.host, project=snapshot.project, id=snapshot.id)
 
-      all_snapshot_builds = self._get_patch_history(snapshot=search_snapshot,
-                                                    builder=builder_shell,
-                                                    status=common_pb2.SUCCESS)
+      all_snapshot_builds = \
+          self._get_patch_history(snapshot=search_snapshot,
+                                  builder=builder_shell,
+                                  statuses=statuses)
+
       snapshot_builds = [
           build for build in all_snapshot_builds
           if build.builder.builder in builder_list
@@ -138,12 +142,12 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         step.presentation.links[title] = url
       return snapshot_builds
 
-  def get_matching_builds(self, build, status=None, start_build_id=None):
+  def get_matching_builds(self, build, statuses=None, start_build_id=None):
     """Get builds with the matching builder and gerrit_changes.
 
     Args:
       build (build_pb2.Build): build to match for.
-      status (common_pb2.Status): query for builds with this status.
+      statuses ([common_pb2.Status]): query for builds with these statuses.
       start_build_id (int): query builds older than this ID.
 
     Returns:
@@ -154,11 +158,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       # self.m.cq.ordered_gerrit_changes, because the buildbucket search
       # relies on that ordering of changes.
       return self._get_patch_history(patches=build.input.gerrit_changes,
-                                     builder=build.builder, status=status,
+                                     builder=build.builder, statuses=statuses,
                                      start_build_id=start_build_id)
 
   def _get_patch_history(self, patches=None, snapshot=None, builder=None,
-                         limit=None, status=None, start_build_id=None,
+                         limit=None, statuses=None, start_build_id=None,
                          tags=None):
     """Get all the passed builds with current patch-set from Buildbucket.
 
@@ -167,7 +171,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       snapshot (GitilesCommit): snapshot to search on.
       builder (BuilderID): query for only this builder.
       limit (int): limit the list returned to this number.
-      status (common_pb2.Status): query for builds with this status.
+      statuses ([common_pb2.Status]): query for builds with these statuses.
       start_build_id: query builds older than this ID.
       tags ([common_pb2.StringPair]): get builds with these tags only.
 
@@ -183,9 +187,16 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       create_time = common_pb2.TimeRange(
           start_time=timestamp_pb2.Timestamp(
               seconds=int(self.start_time_in_seconds)))
+
     build_predicate = rpc_pb2.BuildPredicate(
-        builder=builder, status=status, gerrit_changes=patches,
-        output_gitiles_commit=snapshot, tags=tags, create_time=create_time,
-        build=build_range)
-    return self.m.buildbucket.search(build_predicate, limit=limit,
-                                     url_title_fn=self.m.naming.get_build_title)
+        builder=builder, gerrit_changes=patches, output_gitiles_commit=snapshot,
+        tags=tags, create_time=create_time, build=build_range)
+
+    builds = self.m.buildbucket.search(
+        build_predicate, limit=limit,
+        url_title_fn=self.m.naming.get_build_title)
+
+    if statuses:
+      return [build for build in builds if build.status in statuses]
+    else:
+      return builds

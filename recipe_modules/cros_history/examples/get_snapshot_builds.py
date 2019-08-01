@@ -18,7 +18,8 @@ def RunSteps(api):
   expected = ['eve-snapshot', 'bob-snapshot']
   snapshot = common_pb2.GitilesCommit()
   result = api.cros_history.get_snapshot_builds(
-      snapshot, ['eve-snapshot', 'winky-snapshot', 'bob-snapshot'])
+      snapshot, ['eve-snapshot', 'winky-snapshot', 'bob-snapshot'],
+      common_pb2.STATUS_UNSPECIFIED)
   result_builders = [build.builder.builder for build in result]
   api.assertions.assertEqual(result_builders, expected)
 

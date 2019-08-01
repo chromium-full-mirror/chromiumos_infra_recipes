@@ -20,7 +20,7 @@ def RunSteps(api):
   example_build = build_pb2.Build(id=1234, builder=fake_builder,
                                   status=common_pb2.STARTED)
   previous_builds = api.cros_history.get_matching_builds(
-      example_build, status=common_pb2.STARTED, start_build_id=0123)
+      example_build, statuses=[common_pb2.STARTED], start_build_id=0123)
 
 
 def GenTests(api):
