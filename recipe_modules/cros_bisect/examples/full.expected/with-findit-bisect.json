@@ -7,6 +7,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set BISECT_BUILDER (2)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"bisecting-orchestrator\"@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

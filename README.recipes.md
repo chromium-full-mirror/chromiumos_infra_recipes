@@ -305,7 +305,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#106)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#117)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -315,9 +315,9 @@ empty list if this run was not invoked as a bisection build.
 Returns:
   list[PackageInfo]: list of packages to build as specified by FindIt
 
-&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#22)(self, build_target_name):**
+&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#25)(self, build_target_name):**
 
-Sets the BISECT_BUILDER output property.
+Sets the BISECT_BUILDER output property for the build target recipe.
 
 Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the build fails and bisection is required.
@@ -325,7 +325,7 @@ should invoke if the build fails and bisection is required.
 Args:
   build_target_name (str): build target name to set the bisect builder for.
 
-&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#57)(self, failed_packages):**
+&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#68)(self, failed_packages):**
 
 Outputs the failed packages, if any, for FindIt consumption.
 
@@ -337,7 +337,15 @@ Args:
   failed_packages (list[PackageInfo]): list of PackageInfo representing the
       failed packages.
 
-&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#76)(self, hw_results):**
+&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#36)(self):**
+
+Sets the BISECT_BUILDER output property for the orchestrator.
+
+Sets the BISECT_BUILDER output property to the name of the builder FindIt
+should invoke if the postsubmit-orchestrator encounters hardware test
+failures.
+
+&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#87)(self, hw_results):**
 
 Outputs the failed hardware tests, if any, for FindIt consumption.
 
@@ -2349,11 +2357,11 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#49)(api, properties):**
 
-&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#250)(build_target):**
+&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#251)(build_target):**
 
 Returns the autotest builder name for the given build_target.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#424)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#425)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Get a list of builds to be run and  a list of builds that have succeeded.
 
@@ -2373,7 +2381,7 @@ Returns:
   builds with refreshed criticality and a list of ScheduleBuildRequest of
   the builds that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#503)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#504)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2387,7 +2395,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#585)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#586)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2398,7 +2406,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#544)(failed_results, test_plan, percent_threshold, count_threshold):**
+&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#545)(failed_results, test_plan, percent_threshold, count_threshold):**
 
 Check if we need baseline validation for this orchestrator.
 
@@ -2413,7 +2421,7 @@ Returns:
   A boolean indicating whether we need to initiate baseline
   validation.
 
-&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#294)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#295)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Autotest VM Tests from the test_plan.
 
@@ -2430,7 +2438,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#382)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#383)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Moblab VM Tests from the test_plan.
 
@@ -2447,7 +2455,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#260)(api, test_plan, passed_tests, test_to_build_map=None, bb=False):**
+&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#261)(api, test_plan, passed_tests, test_to_build_map=None, bb=False):**
 
 Schedule skylab tests from the test_plan.
 
@@ -2466,7 +2474,7 @@ Args:
 Returns:
   list[SkylabTask] of the tests scheduled.
 
-&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#337)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#338)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule tast VM Tests from the test_plan.
 
@@ -2483,11 +2491,11 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#255)(build_target):**
+&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#256)(build_target):**
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#574)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#575)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2495,7 +2503,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#531)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#532)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -2505,7 +2513,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#608)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#609)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 

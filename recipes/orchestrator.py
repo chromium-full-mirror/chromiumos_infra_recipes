@@ -48,6 +48,7 @@ PROPERTIES = OrchestratorProperties
 
 def RunSteps(api, properties):
   validate_refs(properties.update_manifest_refs)
+  api.cros_bisect.set_orchestrator_bisect_builder()
 
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
 

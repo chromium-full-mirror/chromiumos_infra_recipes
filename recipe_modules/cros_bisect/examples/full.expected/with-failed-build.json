@@ -8,6 +8,13 @@
   },
   {
     "cmd": [],
+    "name": "set BISECT_BUILDER (2)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"bisecting-orchestrator\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set build_compile_failure_output",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@build_compile_failure_output@{\"failed_step\": \"install packages|installation results\", \"failures\": [{\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"uno\\\", \\n  \\\"version\\\": \\\"1\\\"\\n}\"], \"rule\": \"emerge\"}, {\"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"dos\\\", \\n  \\\"version\\\": \\\"2\\\"\\n}\"], \"rule\": \"emerge\"}]}@@@"

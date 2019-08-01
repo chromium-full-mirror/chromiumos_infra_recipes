@@ -23,6 +23,7 @@ PROPERTIES = TestInputProperties
 
 def RunSteps(api, properties):
   api.cros_bisect.set_bisect_builder('wally')
+  api.cros_bisect.set_orchestrator_bisect_builder()
   api.assertions.assertItemsEqual(api.cros_bisect.get_packages(),
                                   properties.expected_packages)
 

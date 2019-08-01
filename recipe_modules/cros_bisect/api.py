@@ -19,8 +19,11 @@ class CrosBisectApi(recipe_api.RecipeApi):
     self._targets = properties.targets
     self._compile = properties.compile
 
+  def _set_bisect_builder(self, builder):
+    self.m.easy.set_property_step('BISECT_BUILDER', builder)
+
   def set_bisect_builder(self, build_target_name):
-    """Sets the BISECT_BUILDER output property.
+    """Sets the BISECT_BUILDER output property for the build target recipe.
 
     Sets the BISECT_BUILDER output property to the name of the builder FindIt
     should invoke if the build fails and bisection is required.
@@ -28,8 +31,16 @@ class CrosBisectApi(recipe_api.RecipeApi):
     Args:
       build_target_name (str): build target name to set the bisect builder for.
     """
-    self.m.easy.set_property_step('BISECT_BUILDER',
-                                  build_target_name + '-bisect')
+    self._set_bisect_builder(build_target_name + '-bisect')
+
+  def set_orchestrator_bisect_builder(self):
+    """Sets the BISECT_BUILDER output property for the orchestrator.
+
+    Sets the BISECT_BUILDER output property to the name of the builder FindIt
+    should invoke if the postsubmit-orchestrator encounters hardware test
+    failures.
+    """
+    self._set_bisect_builder('bisecting-orchestrator')
 
   def _create_failures_payload(self, failed_packages):
     """Creates and returns the failures payload used by FindIt.
