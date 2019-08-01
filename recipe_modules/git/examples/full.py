@@ -25,7 +25,7 @@ def RunSteps(api):
   [commit] = api.git.log('START_REF', 'END_REF', limit=30)
   api.assertions.assertEqual(commit.rev, commit_id)
   api.assertions.assertEqual(commit.message, 'message')
-  api.git.add('some/file/path')
+  api.git.add(['some/file/path', 'some/other/path'])
   api.git.is_reachable('deadbeef')
   api.git.show_file('deadbeef', 'some/path')
   api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')

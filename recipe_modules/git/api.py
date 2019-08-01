@@ -58,16 +58,16 @@ class GitApi(recipe_api.RecipeApi):
         test_stdout=str(self.test_api.test_repository_root),
     ).stdout.strip()
 
-  def add(self, path):
-    """Add/stage a path.
+  def add(self, paths):
+    """Add/stage paths.
 
-    Stages `path` for commit. Note that this will fail if the file is tracked
+    Stages `paths` for commit. Note that this will fail if a file is tracked
     and not modified, which you can use `diff_check` to check for.
 
     Args:
-      * path (str|Path): The file path to stage.
+      * paths list[str|Path]: The file paths to stage.
     """
-    self._step(['add', path])
+    self._step(['add'] + paths)
 
   def diff_check(self, path):
     """Check if the given file changed from HEAD.

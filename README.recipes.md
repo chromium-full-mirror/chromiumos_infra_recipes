@@ -1266,15 +1266,15 @@ API for working with git.
 
 A module for interacting with git.
 
-&mdash; **def [add](/recipe_modules/git/api.py#61)(self, path):**
+&mdash; **def [add](/recipe_modules/git/api.py#61)(self, paths):**
 
-Add/stage a path.
+Add/stage paths.
 
-Stages `path` for commit. Note that this will fail if the file is tracked
+Stages `paths` for commit. Note that this will fail if a file is tracked
 and not modified, which you can use `diff_check` to check for.
 
 Args:
-  * path (str|Path): The file path to stage.
+  * paths list[str|Path]: The file paths to stage.
 
 &mdash; **def [checkout](/recipe_modules/git/api.py#161)(self, commit, force=False):**
 
@@ -2017,11 +2017,11 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#60)(api, properties):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#199)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#200)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#209)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#210)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -2044,7 +2044,7 @@ Args:
 Returns:
   A string containing the commit message.
 
-&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#150)(api, manifest_diffs):**
+&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#151)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 

@@ -835,6 +835,19 @@
   },
   {
     "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
+    ],
+    "cwd": "[START_DIR]/git_repository",
+    "infra_step": true,
+    "name": "uprev packages.commit uprevs.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "python",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
