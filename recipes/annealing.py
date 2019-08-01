@@ -132,7 +132,14 @@ def RunSteps(api, properties):
         push = util.exponential_retry(retries=3)(api.git.push)
         for repository, ebuilds in ebuilds_by_repository.iteritems():
           with api.context(cwd=api.path.abs_to_path(repository)):
-            projects = api.repo.project_infos(projects=ebuilds)
+            # Filter to ebuilds that exist. In particular, we need to exclude
+            # the version of the ebuild from prior to the uprev.
+            existing_ebuilds = []
+            for ebuild in ebuilds:
+              api.path.mock_add_paths(ebuild)
+              if api.path.exists(ebuild):
+                existing_ebuilds.append(ebuild)
+            projects = api.repo.project_infos(projects=existing_ebuilds)
             assert len(projects) == 1, 'expected 1 project, got: %r' % projects
             project = projects[0]
             push(project.remote, 'HEAD:' + project.branch,
