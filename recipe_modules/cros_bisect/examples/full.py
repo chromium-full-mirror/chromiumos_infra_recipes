@@ -34,11 +34,12 @@ def GenTests(api):
 
   yield (api.test('with-findit-bisect') +  #
          api.properties(
-             **{'$chromeos/cros_bisect': CrosBisectProperties(targets=[
-                 api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
-                 api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
-                 api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
-             ])}
+             **{'$chromeos/cros_bisect':
+                CrosBisectProperties(compile={'targets': [
+                    api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
+                    api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
+                    api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
+                ]})}
          ) + #
          api.properties(TestInputProperties(expected_packages=[
                PackageInfo(package_name='foo', category='cat1', version='1'),

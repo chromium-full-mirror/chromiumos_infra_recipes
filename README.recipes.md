@@ -308,7 +308,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#121)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#120)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -318,7 +318,7 @@ empty list if this run was not invoked as a bisection build.
 Returns:
   list[PackageInfo]: list of packages to build as specified by FindIt
 
-&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#27)(self, build_target_name):**
+&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#26)(self, build_target_name):**
 
 Sets the BISECT_BUILDER output property for the build target recipe.
 
@@ -328,7 +328,7 @@ should invoke if the build fails and bisection is required.
 Args:
   build_target_name (str): build target name to set the bisect builder for.
 
-&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#70)(self, failed_packages):**
+&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#69)(self, failed_packages):**
 
 Outputs the failed packages, if any, for FindIt consumption.
 
@@ -340,7 +340,7 @@ Args:
   failed_packages (list[PackageInfo]): list of PackageInfo representing the
       failed packages.
 
-&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#38)(self):**
+&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#37)(self):**
 
 Sets the BISECT_BUILDER output property for the orchestrator.
 
@@ -348,7 +348,7 @@ Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the postsubmit-orchestrator encounters hardware test
 failures.
 
-&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#86)(self, hw_results):**
+&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#85)(self, hw_results):**
 
 Outputs the failed hardware tests, if any, for FindIt consumption.
 

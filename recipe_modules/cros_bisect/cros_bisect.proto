@@ -7,10 +7,6 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_bisect;
 
 message CrosBisectProperties {
-  // List of targets that failed needing to be run during bisection.
-  // These are JSON encoded PackageInfo objects.
-  repeated string targets = 1;
-
   // Properties sent for compile failure bisection.
   message CompileFailures {
     // List of targets that failed needing to be run during bisection.
