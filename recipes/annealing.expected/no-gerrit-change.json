@@ -912,7 +912,7 @@
       "push",
       "--dry-run",
       "cros",
-      "HEAD:refs/heads/master"
+      "HEAD:refs/for/refs/heads/master%submit"
     ],
     "cwd": "[START_DIR]/git_repository",
     "infra_step": true,
