@@ -201,7 +201,7 @@ def RunSteps(api, properties):
           baseline_test_plan = api.cros_test_plan.generate(
               baseline_builds, snapshot.id)
           baseline_skylab_tasks = schedule_skylab_tests(api, baseline_test_plan,
-                                                        passed_tests, bb=True)
+                                                        passed_tests)
           baseline_vm_tests = schedule_autotest_vm_tests(
               api, baseline_test_plan, passed_tests, snapshot)
           baseline_vm_tests += schedule_tast_vm_tests(api, baseline_test_plan,
@@ -209,8 +209,7 @@ def RunSteps(api, properties):
 
         with api.step.nest('collect baseline tests'):
           if baseline_skylab_tasks:
-            baseline_hw_results = api.skylab.wait_tasks(baseline_skylab_tasks,
-                                                        bb=True)
+            baseline_hw_results = api.skylab.wait_tasks(baseline_skylab_tasks)
             # Add failures here to passed_tests.
             passed_tests.extend([
                 hw_result.task.test.common.display_name
