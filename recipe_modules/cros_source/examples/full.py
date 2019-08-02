@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/step',
     'depot_tools/gitiles',
     'cros_source',
+    'git',
     'gerrit',
 ]
 
@@ -27,6 +28,11 @@ def RunSteps(api):
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
 
+  # Monkey-pack merge to return a StepFailure to test cherry-pick path
+  def merge_fail(_a, _b, infra_step=False):
+    raise api.step.StepFailure('mock; infra_step: {}'.format(infra_step))
+
+  api.git.merge = merge_fail
   commits = api.cros_source.apply_gerrit_patch_sets(
       [api.gerrit.test_api.test_patch_set()])
 

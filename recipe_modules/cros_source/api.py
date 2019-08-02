@@ -122,8 +122,17 @@ class CrosSourceApi(recipe_api.RecipeApi):
         with self.m.context(cwd=self.workspace_path.join(project_path)):
           commit_id = self.m.git.fetch_ref(patch_set.git_fetch_url,
                                            patch_set.git_fetch_ref)
-          # This line will fail if the change cannot be cherry-picked.
-          self.m.git.merge(commit_id, 'merge gerrit changes', infra_step=False)
+          try:
+            self.m.git.merge(commit_id, 'merge gerrit changes',
+                             infra_step=False)
+          except self.m.step.StepFailure:
+            self.m.git.merge_abort()
+            presentation = self.m.step.active_result.presentation
+            presentation.status = self.m.step.SUCCESS
+            presentation.step_text = (
+                'merge gerrit changes (failed & forgiven)')
+            self.m.git.cherry_pick(commit_id, infra_step=False)
+
           new_commit_id = self.m.git.head_commit()
           new_commits.append(ProjectCommit(project_path, new_commit_id))
 

@@ -190,6 +190,10 @@ other_test.txt
     """
     self._step(['cherry-pick', commit], **kwargs)
 
+  def merge_abort(self):
+    """Runs 'git merge --abort'."""
+    self._step(['merge', '--abort'])
+
   def commit_files(self, files, message):
     """Runs 'git commit' with the given files.
 

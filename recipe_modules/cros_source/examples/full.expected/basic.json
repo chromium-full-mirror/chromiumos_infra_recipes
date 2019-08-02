@@ -397,12 +397,24 @@
     "cmd": [
       "git",
       "merge",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-      "-m",
-      "merge gerrit changes"
+      "--abort"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "infra_step": true,
     "name": "apply gerrit patch sets.git merge",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@merge gerrit changes (failed & forgiven)@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "cherry-pick",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "name": "apply gerrit patch sets.git cherry-pick",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

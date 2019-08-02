@@ -61,6 +61,15 @@
   {
     "cmd": [
       "git",
+      "merge",
+      "--abort"
+    ],
+    "infra_step": true,
+    "name": "git merge (2)"
+  },
+  {
+    "cmd": [
+      "git",
       "cherry-pick",
       "branch"
     ],

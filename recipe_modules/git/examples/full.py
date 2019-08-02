@@ -18,6 +18,7 @@ def RunSteps(api):
       api.git.fetch_ref('remote', 'refs/heads/branch'), commit_id)
   api.git.checkout('master', force=True)
   api.git.merge('branch', 'yeet')
+  api.git.merge_abort()
   api.git.cherry_pick('branch')
   api.git.commit_files(['README.md'], 'Updated README\n\nMuch better now.')
   api.git.push('origin', 'HEAD:master', dry_run=True, capture_stdout=True)
