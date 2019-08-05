@@ -7,14 +7,12 @@ from recipe_engine import recipe_test_api
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
-from PB.testplans.target_test_requirements_config import GceTestCfg
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import MoblabVmTestCfg
 from PB.testplans.target_test_requirements_config import TastVmTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.target_test_requirements_config import VmTestCfg
 from PB.testplans.generate_test_plan import BuildPayload
-from PB.testplans.generate_test_plan import GceTestUnit
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import MoblabVmTestUnit
@@ -41,21 +39,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
           artifact_name: ['{}.txt'.format(artifact_name.lower())],
       })
     return common
-
-  @property
-  def gce_test_unit(self):
-    return GceTestUnit(
-        common=self.test_unit_common(),
-        gce_test_cfg=GceTestCfg(
-            gce_test=[
-                GceTestCfg.GceTest(
-                    common=TestSuiteCommon(display_name='gtarget.gce.gtest'),
-                    test_type='gce',
-                    test_suite='gce-test-suite',
-                    timeout_sec=123,
-                    use_ctest=True,
-                ),
-            ],),)
 
   @property
   def hw_test_unit(self):
@@ -148,7 +131,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   @property
   def generate_test_plan_response(self):
     return GenerateTestPlanResponse(
-        gce_test_units=[self.gce_test_unit],
         hw_test_units=[self.hw_test_unit, self.another_hw_test_unit],
         moblab_vm_test_units=[self.moblab_vm_test_unit],
         tast_vm_test_units=[self.tast_vm_test_unit],
