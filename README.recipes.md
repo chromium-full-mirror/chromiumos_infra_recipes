@@ -506,7 +506,7 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#145)(self, build, statuses=None, start_build_id=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#142)(self, build, statuses=None, start_build_id=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -535,14 +535,15 @@ Find all tests that have passed with the given patches.
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#106)(self, snapshot, builder_list, statuses):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#106)(self, snapshot, builder_list, statuses, patches=None):**
 
 Get *-snapshot builds with the given snapshot.
 
 Args:
   snapshot (GitilesCommit): Snapshot to search on.
   builder_list (set[str]): List of builder names to filter by.
-  statuses ([common_pb2.Status]): The statuses of snapshots to return
+  statuses ([common_pb2.Status]): The statuses of snapshots to return.
+  patches ([GerritChange]): Patches applied to snapshot to search on.
 
 Returns:
   list[Build] *-snapshot builds with the same snapshot filtered
@@ -2374,21 +2375,37 @@ Test git_footers calls.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#17)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/orchestrator.py#12): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#49)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#52)(api, properties):**
 
-&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#250)(build_target):**
+&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#251)(build_target):**
 
 Returns the autotest builder name for the given build_target.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#423)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#424)(api, child_builders, enable_history, snapshot, gerrit_changes):**
 
-Get a list of builds to be run and  a list of builds that have succeeded.
+Find the builds you need, filter those already started, run, and collect.
+
+Most of the heavy lifting is done in get_build_plan.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  child_builders (list(string)): A list of builders.
+  enable_history (bool): Enables history lookup in cq orchestrator.
+  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+  gerrit_changes list(GerritChange): List of patches in the order that they
+    can be cherry-picked.
+
+Returns: A list of build_pb2.Build objects with build results.
+
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#493)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+
+Return a three-tuple of builds, completed, existing, and needed.
 
 This is planned to be replaced by a Go binary.
 
@@ -2402,11 +2419,12 @@ Args:
   snapshot (GitilesCommit): Start ref to be supplied to the child builds.
 
 Returns:
-  A tuple of two lists: a list of build_pb2.Build objects of successful
-  builds with refreshed criticality and a list of ScheduleBuildRequest of
-  the builds that have to be scheduled.
+  A tuple of three lists:
+    A list of Build objects of successful builds with refreshed criticality.
+    A list of identical builds we don't need to schedule and can join.
+    A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#502)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#591)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2420,7 +2438,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#584)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#673)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2431,7 +2449,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#543)(failed_results, test_plan, percent_threshold, count_threshold):**
+&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#632)(failed_results, test_plan, percent_threshold, count_threshold):**
 
 Check if we need baseline validation for this orchestrator.
 
@@ -2446,7 +2464,20 @@ Returns:
   A boolean indicating whether we need to initiate baseline
   validation.
 
-&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#293)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#456)(builds):**
+
+Takes a list of builds and dedups, choosing a best build, dropping others.
+
+See build_orderer for the sort order. This is most useful if you have
+multiple, identical, builds and you want to choose a single one from each
+builder type to carry forward.
+
+Args:
+  builds ([build_pb2.Build]): Builds to dedupe and sort.
+
+Returns: A list of build_pb2.Build objects, deduped and prioritized.
+
+&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#294)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Autotest VM Tests from the test_plan.
 
@@ -2463,7 +2494,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#381)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#382)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Moblab VM Tests from the test_plan.
 
@@ -2480,7 +2511,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#260)(api, test_plan, passed_tests, test_to_build_map=None, bb=False):**
+&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#261)(api, test_plan, passed_tests, test_to_build_map=None, bb=False):**
 
 Schedule skylab tests from the test_plan.
 
@@ -2499,7 +2530,7 @@ Args:
 Returns:
   list[SkylabTask] of the tests scheduled.
 
-&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#336)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#337)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule tast VM Tests from the test_plan.
 
@@ -2516,11 +2547,11 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#255)(build_target):**
+&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#256)(build_target):**
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#573)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#662)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2528,7 +2559,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#530)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#619)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -2538,7 +2569,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#607)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#696)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 

@@ -102,8 +102,8 @@
     "name": "find inflight orchestrator",
     "~followup_annotations": [
       "@@@STEP_TEXT@found inflight run(s)@@@",
-      "@@@STEP_LINK@..arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
-      "@@@STEP_LINK@..atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
+      "@@@STEP_LINK@..arm-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@",
+      "@@@STEP_LINK@..atlas-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -119,7 +119,7 @@
       "bb",
       "batch",
       "-host",
-      "cr-buildbucket.appspot.com"
+      "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "find inflight orchestrator.find matching builds.buildbucket.search",
@@ -167,7 +167,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"input\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"build_target\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                  \"name\": \"atlas-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"name\": \"atlas\"@@@",
       "@@@STEP_LOG_LINE@json.output@                }@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            }, @@@",
@@ -205,9 +205,9 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..amd64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_LINK@..arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
-      "@@@STEP_LINK@..atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+      "@@@STEP_LINK@..amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@..arm-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@",
+      "@@@STEP_LINK@..atlas-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {

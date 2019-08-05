@@ -103,13 +103,14 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       raise ValueError('test names must be unique, found: %r' % tests)
     self.m.easy.set_property_step(PASSED_TESTS_KEY, tests)
 
-  def get_snapshot_builds(self, snapshot, builder_list, statuses):
+  def get_snapshot_builds(self, snapshot, builder_list, statuses, patches=None):
     """Get *-snapshot builds with the given snapshot.
 
     Args:
       snapshot (GitilesCommit): Snapshot to search on.
       builder_list (set[str]): List of builder names to filter by.
-      statuses ([common_pb2.Status]): The statuses of snapshots to return
+      statuses ([common_pb2.Status]): The statuses of snapshots to return.
+      patches ([GerritChange]): Patches applied to snapshot to search on.
 
     Returns:
       list[Build] *-snapshot builds with the same snapshot filtered
@@ -119,14 +120,10 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       project = self.m.buildbucket.build.builder.project
       builder_shell = build_pb2.BuilderID(project=project,
                                           bucket=SNAPSHOT_BUCKET)
-      # We cannot use snapshot directly because the set of fields
-      # ('host', 'id', 'project', 'ref') is unsupported by buildbucket.
-      # Limiting to ('host', 'id', 'project').
-      search_snapshot = common_pb2.GitilesCommit(
-          host=snapshot.host, project=snapshot.project, id=snapshot.id)
 
       all_snapshot_builds = \
-          self._get_patch_history(snapshot=search_snapshot,
+          self._get_patch_history(patches=patches,
+                                  snapshot=snapshot,
                                   builder=builder_shell,
                                   statuses=statuses)
 

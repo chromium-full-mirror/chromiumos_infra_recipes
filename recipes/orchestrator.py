@@ -8,6 +8,7 @@
 All builders run against the same source tree.
 """
 
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -43,10 +44,14 @@ from PB.recipes.chromeos.test_vm import TestVmProperties
 from google.protobuf import json_format
 from google.protobuf import struct_pb2
 
+from collections import defaultdict
+
 PROPERTIES = OrchestratorProperties
 
 
 def RunSteps(api, properties):
+  api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
+
   validate_refs(properties.update_manifest_refs)
   api.cros_bisect.set_orchestrator_bisect_builder()
 
@@ -87,19 +92,15 @@ def RunSteps(api, properties):
         else:
           step.presentation.step_text = 'found no inflight run'
 
-
   orchestrator_children = api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder).orchestrator.children
-  completed_builds, requests = get_build_plan(
-      api, child_builders=orchestrator_children,
-      enable_history=properties.enable_history, gerrit_changes=gerrit_changes,
-      snapshot=snapshot)
 
-  api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
-  completed_builds += api.buildbucket.run(
-      requests, timeout=60 * 60 * 4, step_name='run builds',
-      url_title_fn=api.naming.get_build_title)
+  with api.step.nest('run builds'):
+    completed_builds = filter_schedule_wait_builds(api, orchestrator_children,
+                                                   properties.enable_history,
+                                                   snapshot, gerrit_changes)
 
+  # From here all builds should have been collected: move to checking results.
   with api.step.nest('check build results'):
     failures = api.failures.get_build_failures(completed_builds)
 
@@ -420,9 +421,78 @@ def schedule_moblab_vm_tests(api, test_plan, passed_tests, snapshot,
   return moblab_vm_tests
 
 
+def filter_schedule_wait_builds(api, child_builders, enable_history, snapshot,
+                                gerrit_changes):
+  """Find the builds you need, filter those already started, run, and collect.
+
+  Most of the heavy lifting is done in get_build_plan.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    child_builders (list(string)): A list of builders.
+    enable_history (bool): Enables history lookup in cq orchestrator.
+    snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+    gerrit_changes list(GerritChange): List of patches in the order that they
+      can be cherry-picked.
+
+  Returns: A list of build_pb2.Build objects with build results.
+  """
+  completed_builds, existing_builds, new_build_requests = get_build_plan(
+      api, child_builders=child_builders, enable_history=enable_history,
+      gerrit_changes=gerrit_changes, snapshot=snapshot)
+
+  # request new builds and add to total existing.
+  existing_builds += api.buildbucket.schedule(
+      new_build_requests, url_title_fn=lambda x: "schedule builds")
+
+  # collect all existing builds, add to completed builds
+  completed_builds += api.buildbucket.collect_builds(
+      [b.id for b in existing_builds], timeout=60 * 60 * 4, step_name='collect',
+      url_title_fn=api.naming.get_build_title).values()
+
+  return completed_builds
+
+
+def prioritize_builds(builds):
+  """Takes a list of builds and dedups, choosing a best build, dropping others.
+
+  See build_orderer for the sort order. This is most useful if you have
+  multiple, identical, builds and you want to choose a single one from each
+  builder type to carry forward.
+
+  Args:
+    builds ([build_pb2.Build]): Builds to dedupe and sort.
+
+  Returns: A list of build_pb2.Build objects, deduped and prioritized.
+  """
+
+  def build_orderer(b1, b2):
+    if b1.status == common_pb2.SUCCESS and b2.status != common_pb2.SUCCESS:
+      return -1
+    elif b2.status == common_pb2.SUCCESS and b1.status != common_pb2.SUCCESS:
+      return 1
+    else:
+      # otherwise get the earliest created, which will be reasonable for
+      # running builds and scheduled builds if scheduling is fair.
+      return b1.create_time.seconds - b2.create_time.seconds
+
+  # add all of them to dict: build_name -> build proto
+  build_map = defaultdict(list)
+  for build in builds:
+    build_map[build.builder.builder].append(build)
+
+  best_builds_list = []
+  for _, build_list in build_map.items():
+    best_build = sorted(build_list, cmp=build_orderer)[0]  # [0] most preferable
+    best_builds_list.append(best_build)
+
+  # return reduced list
+  return best_builds_list
+
+
 def get_build_plan(api, child_builders, enable_history, gerrit_changes,
                    snapshot):
-  """Get a list of builds to be run and  a list of builds that have succeeded.
+  """Return a three-tuple of builds, completed, existing, and needed.
 
   This is planned to be replaced by a Go binary.
 
@@ -436,13 +506,14 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
     snapshot (GitilesCommit): Start ref to be supplied to the child builds.
 
   Returns:
-    A tuple of two lists: a list of build_pb2.Build objects of successful
-    builds with refreshed criticality and a list of ScheduleBuildRequest of
-    the builds that have to be scheduled.
+    A tuple of three lists:
+      A list of Build objects of successful builds with refreshed criticality.
+      A list of identical builds we don't need to schedule and can join.
+      A list of ScheduleBuildRequests that have to be scheduled.
   """
-  completed_builds = []
+  filter_log = []
+  completed_builds, existing_builds, new_build_requests = [], [], []
   passed_builders = set()
-  requests = []
   retry_count = 0
 
   image_builders_pointless = False
@@ -460,13 +531,31 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       completed_builds = get_completed_builds(api, child_builders)
       passed_builders = set(build.builder.builder for build in completed_builds)
 
+  existing_builds = api.cros_history.get_snapshot_builds(
+      snapshot, child_builders,
+      [common_pb2.SUCCESS, common_pb2.SCHEDULED, common_pb2.STARTED],
+      patches=gerrit_changes)
+
+  # Find number of builds, make set of builders, prioritize and log.
+  initial_found_builds = len(existing_builds)
+  existing_build_names = set(build.builder.builder for build in existing_builds)
+  existing_builds = prioritize_builds(existing_builds)
+  filter_log.append(
+      'from {} -> {} joinable after dedup and prioritization'.format(
+          len(existing_builds), initial_found_builds))
+
   with api.step.nest('filter builds') as step:
-    filter_log = []
+
     for child in child_builders:
       # No need to retry previously-passed builds.
       if child in passed_builders:
         filter_log.append('{} already passed'.format(child))
         continue
+      # We've already found an existing build, we'll just wait on it later.
+      elif child in existing_build_names:
+        filter_log.append('{} build exists, will join on it'.format(child))
+        continue
+
       child_builder_config = api.cros_infra_config.get_builder_config(child)
 
       # Don't do child builds that are unaffected by the gerrit_changes. The
@@ -490,13 +579,13 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
           'value': str(api.buildbucket.build.id)
       }]
 
-      requests.append(
+      new_build_requests.append(
           api.buildbucket.schedule_request(
               gitiles_commit=snapshot, builder=child, critical=critical,
               properties=api.cq.props_for_child_build, tags=tags))
     step.presentation.logs['filter log'] = filter_log
 
-  return completed_builds, requests
+  return completed_builds, existing_builds, new_build_requests
 
 
 def get_completed_builds(api, cq_orch_children):
@@ -680,16 +769,6 @@ def GenTests(api):
       ]
   }
 
-  yield (api.test('basic') + postsubmit_orchestrator_build() +
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
-
   builds = [
       build_pb2.Build(
           id=8922054662172514000, builder={'builder': 'amd64-generic-cq'},
@@ -701,9 +780,34 @@ def GenTests(api):
           input=dict(properties=build_target_property('arm-generic'))),
       build_pb2.Build(id=8922054662172514002, builder={'builder': 'atlas-cq'},
                       status=common_pb2.STARTED,
-                      input=dict(properties=build_target_property('atlas-cq'))),
+                      input=dict(properties=build_target_property('atlas'))),
   ]
 
+  # we have three here to properly exercise "prioritize_builds"
+  existing_annealing_builds = [
+      build_pb2.Build(
+          id=8922054662172514002, builder={'builder': 'amd64-generic-cq'},
+          status=common_pb2.STARTED,
+          input=dict(properties=build_target_property('amd64-generic'))),
+      build_pb2.Build(
+          id=8922054662172514003, builder={'builder': 'amd64-generic-cq'},
+          status=common_pb2.SUCCESS,
+          input=dict(properties=build_target_property('amd64-generic'))),
+      build_pb2.Build(
+          id=8922054662172514004, builder={'builder': 'amd64-generic-cq'},
+          status=common_pb2.SCHEDULED,
+          input=dict(properties=build_target_property('amd64-generic')))
+  ]
+
+  yield (api.test('basic') + postsubmit_orchestrator_build() +
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('fails_if_changes_not_submittable') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
@@ -715,9 +819,9 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check') +  #
+             name='run builds.orchestrator pointless build check') +  #
          api.buildbucket.simulated_search_results(
-             builds, 'get build history for changes.'
+             builds, 'run builds.get build history for changes.'
              'get change build history.buildbucket.search') +  #
          api.easy.simulate_json_step(
              'run tests.collect tests.'
@@ -733,8 +837,28 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check',
+             name='run builds.orchestrator pointless build check',
              build_is_pointless=True) +  #
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
+
+  yield (api.test('joinable_existing_annealing_builds') +  #
+         cq_orchestrator_build_with_gerrit_change() +  #
+         api.cq(full_run=True) +  #
+         api.properties(enable_history=True) +  #
+         api.buildbucket.simulated_search_results(
+             existing_annealing_builds, 'run builds.get snapshot builds'
+             '.buildbucket.search') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='run builds.orchestrator pointless build check') +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
          api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
@@ -749,14 +873,14 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
-             [], 'get build history for changes.'
+             [], 'run builds.get build history for changes.'
              'get change build history.buildbucket.search') +  #
          api.buildbucket.simulated_search_results(
              [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])],
              'run tests.schedule tests.get change test history'
              '.find matching builds.buildbucket.search') +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check') +  #
+             name='run builds.orchestrator pointless build check') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.easy.simulate_json_step(
@@ -783,7 +907,7 @@ def GenTests(api):
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check') +  #
+             name='run builds.orchestrator pointless build check') +  #
          api.buildbucket.simulated_search_results(
              [], step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search') +
@@ -831,7 +955,7 @@ def GenTests(api):
   yield (api.test('dry_run') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check') +  #
+             name='run builds.orchestrator pointless build check') +  #
          api.cq(dry_run=True))
 
   builds = [
@@ -852,10 +976,10 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
-             builds, step_name='get build history for changes'
+             builds, step_name='run builds.get build history for changes'
              '.find matching builds.buildbucket.search') +
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check') +  #
+             name='run builds.orchestrator pointless build check') +  #
          api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
@@ -927,7 +1051,7 @@ def GenTests(api):
          api.properties(baseline_validation_percent=0) +  #
          api.properties(baseline_validation_limit=0) +  #
          api.cros_relevance.simulate_run_pointless_build_checker(
-             name='orchestrator pointless build check') +  #
+             name='run builds.orchestrator pointless build check') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.easy.simulate_json_step(
@@ -944,7 +1068,7 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change() +  #
       api.properties(baseline_validation_percent=100) +  #
       api.cros_relevance.simulate_run_pointless_build_checker(
-          name='orchestrator pointless build check') +  #
+          name='run builds.orchestrator pointless build check') +  #
       api.buildbucket.simulated_collect_output(
           builds, step_name='run builds.collect') +  #
       api.easy.simulate_json_step(
@@ -972,7 +1096,7 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change() +  #
       api.properties(baseline_validation_percent=100) +  #
       api.cros_relevance.simulate_run_pointless_build_checker(
-          name='orchestrator pointless build check') +  #
+          name='run builds.orchestrator pointless build check') +  #
       api.buildbucket.simulated_collect_output(
           builds, step_name='run builds.collect') +  #
       api.easy.simulate_json_step(
