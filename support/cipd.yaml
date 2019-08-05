@@ -9,4 +9,3 @@ data:
   - file: repo-manifest-diff-projects/repo-manifest-diff-projects
   - file: repo-log-trace/repo-log-trace
   - file: publish-message/publish-message
-  - file: assert-singleton/assert-singleton
