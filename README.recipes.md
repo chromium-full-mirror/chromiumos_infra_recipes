@@ -90,6 +90,7 @@
   * [failures:examples/package_failures](#recipes-failures_examples_package_failures)
   * [failures:examples/silences](#recipes-failures_examples_silences)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
+  * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
@@ -2339,6 +2340,17 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/vm_test_failures.py#23)(api):**
 
 &mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
+### *recipes* / [generator](/recipes/generator.py)
+
+Recipe for the PUpr generator.
+
+PUpr is a general uprev pipeline that listens for package releases (via LUCI
+Scheduler gitiles triggers), generates ebuild uprev CLs for those releases,
+and tags the appropriate reviewers. Think of it as the CrOS autoroller.
+
+See go/pupr and go/pupr-generator for rationale and design decisions.
+
+&mdash; **def [RunSteps](/recipes/generator.py#22)(api, properties):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

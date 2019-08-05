@@ -1,0 +1,45 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.generator;
+
+import "chromiumos/common.proto";
+
+message GeneratorProperties {
+  // The package to generate CLs for.
+  chromiumos.PackageInfo package_info = 1;
+
+  // A reviewer must be a chromium.org user or a g3oncall rotation.
+  message Reviewer {
+    oneof identifier {
+      // The name of the oncall rotation, e.g. chromeos-sheriffs-west
+      string g3oncall_rotation = 1;
+
+      // The chromium.org username WITHOUT the @chromium.org extension.
+      string chromium_user = 2;
+    }
+  }
+  repeated Reviewer reviewers = 2;
+
+  // Describes when to mark a CL as CQ+2. Defaults to NO_ACTIVE_CLS.
+  enum SendToCqPolicy {
+    // Policy was not specified
+    UNSPECIFIED = 0;
+
+    // Only mark CLs as CQ+2 if no existing CLs are found.
+    NO_ACTIVE_CLS = 1;
+
+    // Always mark CLs as CQ+2.
+    ALWAYS = 2;
+
+    // Never mark CLs as CQ+2.
+    NEVER = 3;
+  }
+  SendToCqPolicy send_to_cq_policy = 3;
+
+  // Tag to add to all generated CLs. Defaults to qualified package name.
+  string tag = 4;
+}
