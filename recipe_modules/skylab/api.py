@@ -30,12 +30,12 @@ class SkylabApi(recipe_api.RecipeApi):
   def initialize(self):
     self._client = None
 
-  def create_suite(self, test, payload, name=None, bb=False):
+  def create_suite(self, test, unit, name=None, bb=False):
     """Schedule a HW test suite.
 
     Args:
       test (HwTest): A hardware test config.
-      payload (BuildPayload): The build payload for the target under test.
+      unit (HwTestUnit): The unit the test was defined in.
       name (str): The step name. Defaults to 'schedule <test title>'
       bb (boolean): Whether to use buildbucket-backed cros_test_platform.
                     Note: this flag is temporary, and will exist only during
@@ -55,7 +55,7 @@ class SkylabApi(recipe_api.RecipeApi):
           '-pool',
           'DUT_POOL_QUOTA',
           '-image',
-          payload.artifacts_gs_path,
+          unit.common.build_payload.artifacts_gs_path,
           '-board',
           test.skylab_board,
           '-timeout-mins',
@@ -72,7 +72,7 @@ class SkylabApi(recipe_api.RecipeApi):
       task_id = task_json['task_id']
       task_url = task_json['task_url']
       step.presentation.links['swarming task'] = task_url
-      return self.SkylabTask(id=task_id, url=task_url, test=test)
+      return self.SkylabTask(id=task_id, url=task_url, test=test, unit=unit)
 
   def wait_tasks(self, tasks, bb=False):
     """Wait for all Skylab suites to finish and return the results.

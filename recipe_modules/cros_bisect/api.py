@@ -8,6 +8,8 @@
 from google.protobuf import json_format as jsonpb
 
 from PB.chromiumos.common import PackageInfo
+from PB.testplans.generate_test_plan import HwTestUnit
+from PB.testplans.target_test_requirements_config import HwTestCfg
 
 from recipe_engine import recipe_api
 
@@ -101,11 +103,16 @@ class CrosBisectApi(recipe_api.RecipeApi):
     ]
     hw_test_failures = []
     for result in hw_failed_results:
+      # These are split out into separate units as each test failure must
+      # travel with the suite that failed for FindIt (for grouping), and FindIt
+      # does not introspect the test_spec value.
       test = result.task.test
+      hw_test_cfg = HwTestCfg(hw_test=[test])
+      unit = HwTestUnit(common=result.task.unit.common, hw_test_cfg=hw_test_cfg)
       hw_test_failures.append({
           # This must match the step name as known by sherrif-o-matic.
           'failed_step': 'results|hw test results|' + test.common.display_name,
-          'test_spec': jsonpb.MessageToJson(test),
+          'test_spec': jsonpb.MessageToJson(unit),
           'suite': test.suite,
       })
     if hw_test_failures:

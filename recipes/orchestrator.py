@@ -285,8 +285,7 @@ def schedule_skylab_tests(api, test_plan, passed_tests, test_to_build_map=None,
           test_name = test.common.display_name
           build_target = unit.common.build_target
           test_to_build_map[test_name] = build_target.name
-          skylab_tasks.append(
-              api.skylab.create_suite(test, unit.common.build_payload, bb=bb))
+          skylab_tasks.append(api.skylab.create_suite(test, unit, bb=bb))
 
   return skylab_tasks
 

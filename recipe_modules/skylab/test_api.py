@@ -7,6 +7,10 @@ import structs
 
 from recipe_engine import recipe_test_api
 
+from PB.chromiumos.common import BuildTarget
+from PB.testplans.generate_test_plan import BuildPayload
+from PB.testplans.generate_test_plan import HwTestUnit
+from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 
@@ -54,6 +58,21 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         "child-results": None
     }  # pragma: no cover
 
+  def hw_test_unit(self, common=None, hw_tests=None):
+    if common is None:
+      common = TestUnitCommon(
+          build_target=BuildTarget(name='build_target_name'),
+          build_payload=BuildPayload(
+              artifacts_gs_bucket='gsbucket',
+              artifacts_gs_path='gspath',
+          ),
+      )
+    if hw_tests is None:
+      hw_test_cfg = HwTestCfg(hw_test=[self.hw_test()]) # pragma: no cover
+    else:
+      hw_test_cfg = HwTestCfg(hw_test=hw_tests)
+    return HwTestUnit(common=common, hw_test_cfg=hw_test_cfg)
+
   def hw_test(self, name=None, suite=None, board=None, critical=True):
     return HwTestCfg.HwTest(
         common=TestSuiteCommon(
@@ -64,11 +83,19 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         skylab_board=board or 'target',
     )
 
-  def skylab_task(self, id=None, url=None, test=None):
+  def skylab_task(self, id=None, url=None, test=None, unit=None):
+    if test is None and unit is None:
+      unit = self.hw_test_unit() # pragma: no cover
+      test = unit.hw_test_cfg.hw_test[0] # pragma: no cover
+    elif test is None:
+      test = unit.hw_test_cfg.hw_test[0] # pragma: no cover
+    else:
+      unit = self.hw_test_unit(hw_tests=[test])
     return structs.SkylabTask(
         id=id or 'task-id',
         url=url or 'https://google.com',
-        test=test or self.hw_test())
+        test=test,
+        unit=unit)
 
   def skylab_result(self, task=None, success=True, output=None):
     return structs.SkylabResult(
