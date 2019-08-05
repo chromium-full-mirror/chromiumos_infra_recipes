@@ -161,23 +161,33 @@ class CrosHistoryApi(recipe_api.RecipeApi):
                                      builder=build.builder, statuses=statuses,
                                      start_build_id=start_build_id)
 
+  @staticmethod
+  def _buildset_tag_from_snapshot(snapshot):
+    """Map a snapshot (GitilesCommit) into a buildset tag string value."""
+    return "/".join(
+        ['commit/gitiles', snapshot.host, snapshot.project, '+', snapshot.id])
+
   def _get_patch_history(self, patches=None, snapshot=None, builder=None,
-                         limit=None, statuses=None, start_build_id=None,
+                         limit=1000, statuses=None, start_build_id=None,
                          tags=None):
-    """Get all the passed builds with current patch-set from Buildbucket.
+    """Get all the builds with specified parameters from Buildbucket.
 
     Args:
       patches list([GerritChange]): patches to search on.
-      snapshot (GitilesCommit): snapshot to search on.
+      snapshot (GitilesCommit): snapshot to search on. This
+        will set a buildset tag and search on it.
       builder (BuilderID): query for only this builder.
-      limit (int): limit the list returned to this number.
+      limit (int): limit the list returned to this number, default 1000.
       statuses ([common_pb2.Status]): query for builds with these statuses.
       start_build_id: query builds older than this ID.
-      tags ([common_pb2.StringPair]): get builds with these tags only.
+      tags ([common_pb2.StringPair]): get builds with these tags only. If
+        'snapshot' is specified then it will insert 'buildset' tag for SHA1.
 
     Returns:
       list[Build] which meet the conditions ordered from latest to oldest.
     """
+    tags = [] if not tags else tags
+
     # BuildRange and TimeRange are mutually exclusive.
     if start_build_id:
       build_range = rpc_pb2.BuildRange(start_build_id=start_build_id)
@@ -188,13 +198,26 @@ class CrosHistoryApi(recipe_api.RecipeApi):
           start_time=timestamp_pb2.Timestamp(
               seconds=int(self.start_time_in_seconds)))
 
+    if snapshot is not None:
+      # we can't use the snapshot directly because output_gitiles_commit
+      # is not currently implemented, TODO(crbug/990539)
+      buildset_tag = common_pb2.StringPair(
+          key='buildset',
+          value=CrosHistoryApi._buildset_tag_from_snapshot(snapshot))
+      tags.append(buildset_tag)
+
     build_predicate = rpc_pb2.BuildPredicate(
-        builder=builder, gerrit_changes=patches, output_gitiles_commit=snapshot,
-        tags=tags, create_time=create_time, build=build_range)
+        builder=builder, gerrit_changes=patches, tags=tags,
+        create_time=create_time, build=build_range)
 
     builds = self.m.buildbucket.search(
         build_predicate, limit=limit,
         url_title_fn=self.m.naming.get_build_title)
+
+    # We'd prefer to stop rather than return truncated results.
+    if len(builds) == limit:
+      raise RuntimeError("Number of buildbucket search results exceeds limit {}"
+                         .format(limit))  # pragma: no cover
 
     if statuses:
       return [build for build in builds if build.status in statuses]
