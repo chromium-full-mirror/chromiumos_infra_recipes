@@ -23,6 +23,7 @@ message G3OncallRotation {
 }
 
 // A reviewer must be a chromium.org user or a g3oncall rotation.
+// TODO(evanhernandez): Support OWNERS resolution?
 message Reviewer {
   oneof identifier {
     // The rotation in which to look for reviewers. The "name" field
@@ -36,19 +37,19 @@ message Reviewer {
   }
 }
 
-// Describes when to mark a CL as CQ+2. Defaults to NO_ACTIVE_CLS.
+// Describes how to send a CL to CQ (i.e., dry run, .
 enum SendToCqPolicy {
   // Policy was not specified
   UNSPECIFIED = 0;
 
-  // Only mark CLs as CQ+2 if no existing CLs are found.
-  NO_ACTIVE_CLS = 1;
+  // Leave the CL be, add no tags.
+  DO_NOTHING = 1;
 
-  // Always mark CLs as CQ+2.
-  ALWAYS = 2;
+  // Send the CL through a CQ dry run, but not the real deal.
+  DRY_RUN = 2;
 
-  // Never mark CLs as CQ+2.
-  NEVER = 3;
+  // Send the CL through the full CQ.
+  FULL_RUN = 3;
 }
 
 message GeneratorProperties {
@@ -58,9 +59,12 @@ message GeneratorProperties {
   // The reviewer(s) to tag on generated CLs.
   repeated Reviewer reviewers = 2;
 
-  // Policy to follow for sending generated CLs to CQ.
-  SendToCqPolicy send_to_cq_policy = 3;
-
   // Tag to add to all generated CLs. Defaults to qualified package name.
-  string tag = 4;
+  string tag = 5;
+
+  // Policy to follow when no related CLs exist. Defaults to DO_NOTHING.
+  SendToCqPolicy no_existing_cls_policy = 3;
+
+  // Policy to follow when related CLs exist. Defaults to DO_NOTHING.
+  SendToCqPolicy exsting_cls_policy = 4;
 }
