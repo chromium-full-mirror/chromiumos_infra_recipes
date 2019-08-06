@@ -18,6 +18,8 @@ import urlparse
 from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.recipes.chromeos.generator import GeneratorProperties
+from PB.recipes.chromeos.generator import G3OncallRotation
+from PB.recipes.chromeos.generator import Reviewer
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (
     triggers as triggers_pb2)
 
@@ -35,6 +37,7 @@ DEPS = [
     'cros_source',
     'git',
     'naming',
+    'oncall',
 ]
 
 PROPERTIES = GeneratorProperties
@@ -46,14 +49,24 @@ def RunSteps(api, properties):
   with api.step.nest('validate properties') as step:
     if not properties.HasField('package_info'):
       raise ValueError('must set package_info')
+
+    if not properties.reviewers:
+      raise ValueError('need at least one reviewer')
+
+    for reviewer in properties.reviewers:
+      if reviewer.WhichOneof('identifier') is None:
+        raise ValueError('must set reviewer idenifier')
+
     step.presentation.step_text = 'all properties good'
 
   with api.step.nest('validate triggers') as step:
     if not triggers:
       raise ValueError('found no scheduler triggers')
+
     for trigger in triggers:
       if not trigger.HasField('gitiles'):
         raise ValueError('found non-gitiles trigger: %r', trigger)
+
     step.presentation.step_text = 'all {} triggers good'.format(len(triggers))
     step.presentation.logs['list of triggers'] = map(json_format.MessageToJson,
                                                      triggers)
@@ -94,14 +107,40 @@ def RunSteps(api, properties):
           # TODO(evanhernandez): Include version in commit message.
           api.git.commit('automatic uprev for {}'.format(cpv))
 
+  reviewer_users = set()
+  with api.step.nest('resolve reviewers'):
+    for reviewer in properties.reviewers:
+      # If it's just a chromium user, easy peasy.
+      if reviewer.HasField('chromium_user'):
+        reviewer_users.add(reviewer.chromium_user)
+        continue
+
+      # Otherwise we must resolve an oncall rotation.
+      rotation = reviewer.g3oncall_rotation
+      oncall = api.oncall.status(rotation.name)
+      if rotation.position in (G3OncallRotation.PRIMARY,
+                               G3OncallRotation.PRIMARY_AND_SECONDARY,
+                               G3OncallRotation.UNSPECIFIED):
+        reviewer_users.add(oncall.primary)
+      if rotation.position in (G3OncallRotation.SECONDARY,
+                               G3OncallRotation.PRIMARY_AND_SECONDARY):
+        reviewer_users.add(oncall.secondary)
+
 
 def GenTests(api):
+  package = PackageInfo(category='chromeos-base', package_name='chromite')
   properties = json_format.MessageToDict(
       GeneratorProperties(
-          package_info=PackageInfo(
-              category='chromeos-base',
-              package_name='chromite',
-          ),
+          package_info=package,
+          reviewers=[
+              Reviewer(chromium_user='evanhernandez'),
+              Reviewer(
+                  g3oncall_rotation=G3OncallRotation(
+                      name='chromeos-ci-eng',
+                      position=G3OncallRotation.PRIMARY_AND_SECONDARY,
+                  ),
+              ),
+          ],
       ),
   )
   gitiles_triggers = [
@@ -115,7 +154,21 @@ def GenTests(api):
       ),
   ]
 
+  yield (api.test('with-uprev') +
+         api.properties(**properties) +
+         api.scheduler(triggers=gitiles_triggers) +
+         api.oncall.status(
+             'resolve reviewers.resolve chromeos-ci-eng rotation status'))
+
   yield api.test('no-package-info') + api.expect_exception('ValueError')
+
+  yield (api.test('no-reviewers') +
+         api.properties(package_info=package) +
+         api.expect_exception('ValueError'))
+
+  yield (api.test('blank-reviewer') +
+         api.properties(package_info=package, reviewers=[{}]) +
+         api.expect_exception('ValueError'))
 
   yield (api.test('no-triggers') +
          api.properties(**properties) +
@@ -136,7 +189,3 @@ def GenTests(api):
              'try uprev chromeos-base/chromite.uprev versioned package'
              '.read output file',
              api.file.read_raw(content='{}')))
-
-  yield (api.test('with-uprev') +
-         api.properties(**properties) +
-         api.scheduler(triggers=gitiles_triggers))

@@ -483,6 +483,57 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "resolve reviewers"
+  },
+  {
+    "cmd": [],
+    "name": "resolve reviewers.resolve chromeos-ci-eng rotation status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::url]/resources/pycurl.py",
+      "--url",
+      "https://oncall.corp.google.com/chromeos-ci-eng/json",
+      "--status-json",
+      "/path/to/tmp/json",
+      "--outfile",
+      "/path/to/tmp/json"
+    ],
+    "name": "resolve reviewers.resolve chromeos-ci-eng rotation status.fetch rotation status json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@[@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"next\": [@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@      \"bar\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@      1@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"person\": \"foo\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"position\": 1, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"rotation\": \"chromeos-ci-eng\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"until\": 2@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"next\": [@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@      \"baz\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@      3@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"person\": \"bar\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"position\": 2, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"rotation\": \"chromeos-ci-eng\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"until\": 3@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@]@@@",
+      "@@@STEP_LOG_END@json.output[output]@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
