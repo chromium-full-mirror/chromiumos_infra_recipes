@@ -126,7 +126,7 @@ def RunSteps(api, properties):
         for repository, ebuilds in ebuilds_by_repository.iteritems():
           with api.context(cwd=api.path.abs_to_path(repository)):
             api.git.add(ebuilds)
-            api.git.commit_files(ebuilds, 'Marking set of ebuilds as stable')
+            api.git.commit('Marking set of ebuilds as stable', files=ebuilds)
 
       with api.step.nest('push uprevs'):
         push = util.exponential_retry(retries=3)(api.git.push)

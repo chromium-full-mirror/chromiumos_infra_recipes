@@ -118,5 +118,5 @@ class GitTxnApi(recipe_api.RecipeApi):
       if not self.m.git.diff_check(dest):
         return False
       self.m.git.add([dest])
-      self.m.git.commit_files([dest], message)
+      self.m.git.commit(message, files=[dest])
     return self.update_ref(remote, ref, update_callback, **kwargs)

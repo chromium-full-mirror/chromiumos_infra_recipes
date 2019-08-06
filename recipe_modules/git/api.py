@@ -194,19 +194,24 @@ other_test.txt
     """Runs 'git merge --abort'."""
     self._step(['merge', '--abort'])
 
-  def commit_files(self, files, message):
+  def commit(self, message, files=None):
     """Runs 'git commit' with the given files.
 
     Args:
-      * files (list[str|Path]): A list of file paths to commit.
       * message (str): The commit message.
+      * files (list[str|Path]): A list of file paths to commit.
     """
     # Single argument can't exceed 128kiB (crbug/987630), write to temp
     # and pass the argument as a file
     commit_msg_path = self.m.path.mkstemp(prefix='commit_msg')
     str_message = message.encode('utf-8')
     self.m.file.write_text('write commit message', commit_msg_path, str_message)
-    self._step(['commit', '--file', str(commit_msg_path), '--'] + files)
+
+    cmd = ['commit', '--file', str(commit_msg_path)]
+    if files is not None:
+      cmd.append('--')
+      cmd.extend(files)
+    self._step(cmd)
 
   def push(self, remote, refspec, dry_run=False, capture_stdout=False):
     """Runs 'git push'.
