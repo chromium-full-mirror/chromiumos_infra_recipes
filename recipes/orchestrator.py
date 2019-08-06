@@ -92,11 +92,10 @@ def RunSteps(api, properties):
         else:
           step.presentation.step_text = 'found no inflight run'
 
-  orchestrator_children = api.cros_infra_config.get_builder_config(
-      api.buildbucket.build.builder.builder).orchestrator.children
+  child_builders = get_child_builders(api)
 
   with api.step.nest('run builds'):
-    completed_builds = filter_schedule_wait_builds(api, orchestrator_children,
+    completed_builds = filter_schedule_wait_builds(api, child_builders,
                                                    properties.enable_history,
                                                    snapshot, gerrit_changes)
 
@@ -115,7 +114,7 @@ def RunSteps(api, properties):
 
   with api.step.nest('run tests'):
     with api.step.nest('schedule tests'):
-      test_plan = api.cros_test_plan.generate(need_tests_builds, snapshot.id)
+      test_plan = get_test_plan(api, need_tests_builds, snapshot)
 
       # We will not run tests that have already passed for this patch set.
       passed_tests = []
@@ -247,6 +246,32 @@ def RunSteps(api, properties):
                             snapshot)
 
   return api.failures.aggregate_failures(failures)
+
+def get_child_builders(api):
+  """Returns the child builders that should be run for this invocation.
+
+  Args:
+    api (RecipeApi): See RunSteps.
+
+  Returns:
+    list[string] of child builder names to run
+  """
+  # TODO(dburger): alternatively pull child builders from FindIt
+  # bisect invocation properties.
+  return api.cros_infra_config.get_builder_config(
+      api.buildbucket.build.builder.builder).orchestrator.children
+
+def get_test_plan(api, builds, snapshot):
+  """Returns the test plan that should be executed for this invocation.
+
+  Args:
+    api (RecipeApi): See RunSteps.
+    builds (list[build_pb2.Build]): builds to test.
+    snapshot (GitilesCommit): Start ref of the child builds.
+  """
+  # TODO(dburger): alternatively pull test plan from FindIt
+  # bisect invocation properties.
+  return api.cros_test_plan.generate(builds, snapshot.id)
 
 def autotest_vm_test(build_target):
   """Returns the autotest builder name for the given build_target."""
