@@ -12,6 +12,7 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 See go/pupr and go/pupr-generator for rationale and design decisions.
 """
 
+import collections
 import urlparse
 
 from PB.chromiumos.common import PackageInfo
@@ -25,12 +26,14 @@ from google.protobuf import json_format
 
 DEPS = [
     'recipe_engine/file',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/scheduler',
     'recipe_engine/step',
     'cros_build_api',
     'cros_sdk',
     'cros_source',
+    'git',
     'naming',
 ]
 
@@ -78,6 +81,18 @@ def RunSteps(api, properties):
       if not response.modified_ebuilds:
         step.presentation.step_text = 'no new versions for {}'.format(cpv)
         return
+
+    with api.step.nest('commit uprev'):
+      ebuilds_by_repository = collections.defaultdict(list)
+      for ebuild in response.modified_ebuilds:
+        ebuilds_by_repository[api.git.repository_root()].append(ebuild.path)
+
+      for repository, ebuilds in ebuilds_by_repository.iteritems():
+        with api.step.nest(
+            'commit files in {}'.format(api.path.basename(repository))):
+          api.git.add(ebuilds)
+          # TODO(evanhernandez): Include version in commit message.
+          api.git.commit('automatic uprev for {}'.format(cpv))
 
 
 def GenTests(api):

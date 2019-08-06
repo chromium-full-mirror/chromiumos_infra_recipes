@@ -389,6 +389,73 @@
   },
   {
     "cmd": [],
+    "name": "commit uprev"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "infra_step": true,
+    "name": "commit uprev.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "commit uprev.commit files in git_repository",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
+    ],
+    "infra_step": true,
+    "name": "commit uprev.commit files in git_repository.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "automatic uprev for chromeos-base/chromite",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "commit uprev.commit files in git_repository.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@automatic uprev for chromeos-base/chromite@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "commit uprev.commit files in git_repository.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {
