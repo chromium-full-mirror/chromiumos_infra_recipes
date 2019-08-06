@@ -2343,6 +2343,8 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
 ### *recipes* / [generator](/recipes/generator.py)
 
+[DEPS](/recipes/generator.py#26): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [naming](#recipe_modules-naming), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
 Recipe for the PUpr generator.
 
 PUpr is a general uprev pipeline that listens for package releases (via LUCI
@@ -2351,7 +2353,7 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipes/generator.py#39)(api, properties):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2787,6 +2789,7 @@ Basic tests for the urls recipe module.
 [recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/001b2e2cd58a5ecd31f1ae49bf6227fe0706d59c/README.recipes.md#recipe_modules-python
 [recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/001b2e2cd58a5ecd31f1ae49bf6227fe0706d59c/README.recipes.md#recipe_modules-raw_io
 [recipe_engine/recipe_modules/runtime]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/001b2e2cd58a5ecd31f1ae49bf6227fe0706d59c/README.recipes.md#recipe_modules-runtime
+[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/001b2e2cd58a5ecd31f1ae49bf6227fe0706d59c/README.recipes.md#recipe_modules-scheduler
 [recipe_engine/recipe_modules/service_account]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/001b2e2cd58a5ecd31f1ae49bf6227fe0706d59c/README.recipes.md#recipe_modules-service_account
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/001b2e2cd58a5ecd31f1ae49bf6227fe0706d59c/README.recipes.md#recipe_modules-step
 [recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/001b2e2cd58a5ecd31f1ae49bf6227fe0706d59c/README.recipes.md#recipe_modules-swarming
