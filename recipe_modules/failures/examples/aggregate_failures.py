@@ -47,6 +47,13 @@ def RunSteps(api):
 
 - [test-a](test-a.com)''')
 
+  failures = [
+      api.failures.Failure(kind='build', title='build-a', url='build-a.com',
+                           fatal=True),
+  ] * 50
+  result = api.failures.aggregate_failures(failures)
+  api.assertions.assertEqual(result.status, common_pb2.FAILURE)
+  api.assertions.assertIn('40 others', result.summary_markdown)
 
 def GenTests(api):
   yield api.test('basic')

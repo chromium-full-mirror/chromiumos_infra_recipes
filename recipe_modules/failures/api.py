@@ -216,8 +216,15 @@ class FailuresApi(recipe_api.RecipeApi):
                              key=operator.attrgetter('title'))
       count = len(failure_group)
       lines = ['{} {} failed'.format(count, kind + 's' if count > 1 else kind)]
-      for failure in failure_group:
+
+      # Truncate the list of failures per section to keep the summary under
+      # Buildbucket's 4000 byte limit on the summary_markdown field.
+      truncate_max = 10
+      failures_to_print = failure_group[0 : truncate_max]
+      for failure in failures_to_print:
         lines.append('- [{}]({})'.format(failure.title, failure.url))
+      if count > truncate_max:
+        lines.append('...and {} others'.format(count-truncate_max))
       sections.append('\n\n'.join(lines))
 
     summary_markdown = '\n\n'.join(sections)
