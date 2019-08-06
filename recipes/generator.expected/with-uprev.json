@@ -397,6 +397,7 @@
       "rev-parse",
       "--show-toplevel"
     ],
+    "cwd": "[START_DIR]/chromiumos/src/overlay",
     "infra_step": true,
     "name": "commit uprev.git rev-parse",
     "~followup_annotations": [
@@ -405,7 +406,7 @@
   },
   {
     "cmd": [],
-    "name": "commit uprev.commit files in git_repository",
+    "name": "commit uprev.commit in git_repository",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -416,8 +417,9 @@
       "add",
       "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
     ],
+    "cwd": "[START_DIR]/git_repository",
     "infra_step": true,
-    "name": "commit uprev.commit files in git_repository.git add",
+    "name": "commit uprev.commit in git_repository.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -433,8 +435,9 @@
       "automatic uprev for chromeos-base/chromite",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
+    "cwd": "[START_DIR]/git_repository",
     "infra_step": true,
-    "name": "commit uprev.commit files in git_repository.write commit message",
+    "name": "commit uprev.commit in git_repository.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@automatic uprev for chromeos-base/chromite@@@",
@@ -448,8 +451,9 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
+    "cwd": "[START_DIR]/git_repository",
     "infra_step": true,
-    "name": "commit uprev.commit files in git_repository.git commit",
+    "name": "commit uprev.commit in git_repository.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

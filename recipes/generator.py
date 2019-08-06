@@ -27,6 +27,7 @@ from google.protobuf import json_format
 
 
 DEPS = [
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -98,13 +99,15 @@ def RunSteps(api, properties):
     with api.step.nest('commit uprev'):
       ebuilds_by_repository = collections.defaultdict(list)
       for ebuild in response.modified_ebuilds:
-        ebuilds_by_repository[api.git.repository_root()].append(ebuild.path)
+        path = ebuild.path
+        with api.context(cwd=api.path.abs_to_path(api.path.dirname(path))):
+          ebuilds_by_repository[api.git.repository_root()].append(path)
 
       for repository, ebuilds in ebuilds_by_repository.iteritems():
-        with api.step.nest(
-            'commit files in {}'.format(api.path.basename(repository))):
+        name = api.path.basename(repository)
+        root = api.path.abs_to_path(repository)
+        with api.step.nest('commit in {}'.format(name)), api.context(cwd=root):
           api.git.add(ebuilds)
-          # TODO(evanhernandez): Include version in commit message.
           api.git.commit('automatic uprev for {}'.format(cpv))
 
   reviewer_users = set()
