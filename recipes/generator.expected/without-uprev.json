@@ -289,7 +289,10 @@
   },
   {
     "cmd": [],
-    "name": "try uprev chromeos-base/chromite"
+    "name": "try uprev chromeos-base/chromite",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no new versions for chromeos-base/chromite@@@"
+    ]
   },
   {
     "cmd": [],
@@ -313,7 +316,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

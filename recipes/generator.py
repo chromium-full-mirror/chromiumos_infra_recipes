@@ -24,6 +24,7 @@ from google.protobuf import json_format
 
 
 DEPS = [
+    'recipe_engine/file',
     'recipe_engine/properties',
     'recipe_engine/scheduler',
     'recipe_engine/step',
@@ -38,6 +39,11 @@ PROPERTIES = GeneratorProperties
 
 def RunSteps(api, properties):
   triggers = api.scheduler.triggers
+
+  with api.step.nest('validate properties') as step:
+    if not properties.HasField('package_info'):
+      raise ValueError('must set package_info')
+    step.presentation.step_text = 'all properties good'
 
   with api.step.nest('validate triggers') as step:
     if not triggers:
@@ -54,7 +60,7 @@ def RunSteps(api, properties):
 
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
-    with api.step.nest('try uprev {}'.format(cpv)):
+    with api.step.nest('try uprev {}'.format(cpv)) as step:
       request = UprevVersionedPackageRequest(
           chroot=api.cros_sdk.chroot,
           package_info=package,
@@ -68,6 +74,10 @@ def RunSteps(api, properties):
       )
       response = api.cros_build_api.PackageService.UprevVersionedPackage(
           request, name='uprev versioned package')
+
+      if not response.modified_ebuilds:
+        step.presentation.step_text = 'no new versions for {}'.format(cpv)
+        return
 
 
 def GenTests(api):
@@ -90,6 +100,8 @@ def GenTests(api):
       ),
   ]
 
+  yield api.test('no-package-info') + api.expect_exception('ValueError')
+
   yield (api.test('no-triggers') +
          api.properties(**properties) +
          api.scheduler(triggers=[]) +
@@ -101,6 +113,14 @@ def GenTests(api):
              triggers_pb2.Trigger(id='456', webui=triggers_pb2.WebUITrigger()),
          ]) +
          api.expect_exception('ValueError'))
+
+  yield (api.test('without-uprev') +
+         api.properties(**properties) +
+         api.scheduler(triggers=gitiles_triggers) +
+         api.step_data(
+             'try uprev chromeos-base/chromite.uprev versioned package'
+             '.read output file',
+             api.file.read_raw(content='{}')))
 
   yield (api.test('with-uprev') +
          api.properties(**properties) +
