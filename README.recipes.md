@@ -103,6 +103,7 @@
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [recipes_tester](#recipes-recipes_tester) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
+  * [signing](#recipes-signing) &mdash; Recipe for signing ChromeOS images.
   * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
   * [skylab:examples/wait_tasks](#recipes-skylab_examples_wait_tasks)
   * [support:examples/full](#recipes-support_examples_full)
@@ -2621,6 +2622,13 @@ Tests a recipe CL by running ChromeOS builders.
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
+### *recipes* / [signing](/recipes/signing.py)
+
+[DEPS](/recipes/signing.py#8): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for signing ChromeOS images.
+
+&mdash; **def [RunSteps](/recipes/signing.py#14)(api):**
 ### *recipes* / [skylab:examples/create\_suite](/recipe_modules/skylab/examples/create_suite.py)
 
 [DEPS](/recipe_modules/skylab/examples/create_suite.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

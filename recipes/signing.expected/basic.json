@@ -1,0 +1,12 @@
+[
+  {
+    "cmd": [],
+    "name": "noop for now step",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@noop signer@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
