@@ -50,13 +50,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                     common=TestSuiteCommon(display_name='htarget.hw.bvt-cq'),
                     suite='bvt-cq',
                     skylab_board='target',
-                    timeout_sec=123,
-                    critical=True,
-                    minimum_duts=2,
-                    retry=True,
-                    max_retries=3,
-                    suite_min_duts=2,
-                    offload_failures_only=True,
                 ),
             ],),)
 
@@ -71,13 +64,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                         display_name='htarget.hw.bvt-inline'),
                     suite='bvt-inline',
                     skylab_board='target',
-                    timeout_sec=123,
-                    critical=True,
-                    minimum_duts=2,
-                    retry=True,
-                    max_retries=3,
-                    suite_min_duts=2,
-                    offload_failures_only=True,
                 ),
             ],),
     )
@@ -91,7 +77,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                 MoblabVmTestCfg.MoblabTest(
                     common=TestSuiteCommon(display_name='mtarget.moblab.vm'),
                     test_type='moblab-vm',
-                    timeout_sec=123,
                 ),
             ],),)
 
@@ -107,7 +92,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                     tast_test_expr=[
                         TastVmTestCfg.TastTestExpr(test_expr='exampe.Pass'),
                     ],
-                    timeout_sec=123,
                 ),
             ],),)
 
@@ -119,12 +103,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
             vm_test=[
                 VmTestCfg.VmTest(
                     common=TestSuiteCommon(display_name='vtarget.vm.auto'),
-                    test_type='vm_suite',
                     test_suite='autotest-suite',
-                    timeout_sec=123,
-                    retry=True,
-                    max_retries=3,
-                    use_ctest=True,
                 ),
             ],),)
 
