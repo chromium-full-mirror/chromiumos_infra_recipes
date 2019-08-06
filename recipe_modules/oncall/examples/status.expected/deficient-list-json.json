@@ -1,0 +1,59 @@
+[
+  {
+    "cmd": [],
+    "name": "status",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::url]/resources/pycurl.py",
+      "--url",
+      "https://oncall.corp.google.com/chromeos-ci-eng/json",
+      "--status-json",
+      "/path/to/tmp/json",
+      "--outfile",
+      "/path/to/tmp/json"
+    ],
+    "name": "status.fetch rotation status json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@[@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"person\": \"foo\"@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@]@@@",
+      "@@@STEP_LOG_END@json.output[output]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
+      "    recipe_result = self.global_symbols['RunSteps'](*args)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/oncall/examples/status.py\", line 20, in RunSteps",
+      "    status = api.oncall.status(rotation, step_name=properties.step_name)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
+      "    return func(*a, **kw)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/oncall/api.py\", line 49, in status",
+      "    'expected exactly 2 elements in json list, got {}'.format(status))",
+      "ValueError: expected exactly 2 elements in json list, got [OrderedDict([('person', 'foo')])]"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: ValueError(\"expected exactly 2 elements in json list, got [OrderedDict([('person', 'foo')])]\",)"
+    },
+    "name": "$result"
+  }
+]
