@@ -570,7 +570,9 @@
       "--json_file",
       "/path/to/tmp/json",
       "-p",
-      "topic=chromeos-base/chromite"
+      "topic=chromeos-base/chromite",
+      "-p",
+      "status=open"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -620,7 +622,9 @@
       "--json_file",
       "/path/to/tmp/json",
       "-p",
-      "topic=chromeos-base/chromite"
+      "topic=chromeos-base/chromite",
+      "-p",
+      "status=open"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"

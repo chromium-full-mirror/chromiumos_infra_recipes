@@ -154,7 +154,8 @@ def RunSteps(api, properties):
     for host in ('chromium', 'chrome-internal'):
       with api.step.nest('find cls from {} host'.format(host)):
         host_url = 'https://{}-review.googlesource.com'.format(host)
-        found = api.gerrit.get_changes(host_url, [('topic', topic)])
+        found = api.gerrit.get_changes(
+            host_url, [('topic', topic), ('status', 'open')])
 
         for change in found:
           number = change['_number']
