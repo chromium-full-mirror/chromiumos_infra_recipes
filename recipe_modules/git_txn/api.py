@@ -53,20 +53,12 @@ class GitTxnApi(recipe_api.RecipeApi):
     """
     if not ref.startswith('refs/'):
       ref = 'refs/heads/%s' % ref
-    last_commit = None
     for i in range(retries):
       message = 'git transaction'
       if i > 0:
-        message += ' retry %d of %d' % (attempt, retries - 1)
-      attempt = i + 1
+        message += ' retry %d of %d' % (i, retries - 1)
       with self.m.step.nest(message) as step:
-        fetched_commit = self.m.git.fetch_ref(remote, ref)
-
-        # After the first attempt, make sure the fetched revision changes each
-        # time; otherwise the push is failing for some other reason.
-        if fetched_commit == last_commit:
-          raise Error('push rejected but remote ref was not updated')
-        last_commit = fetched_commit
+        self.m.git.fetch_ref(remote, ref)
 
         self.m.git.checkout('FETCH_HEAD', force=True)
 

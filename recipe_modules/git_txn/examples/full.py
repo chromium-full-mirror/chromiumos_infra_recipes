@@ -49,14 +49,6 @@ def GenTests(api):
       stdout='!	HEAD:refs/fake	[remote failed]',
   )
 
-  yield api.test('rejected_no_update') + attempt_git_step(
-      api,
-      1,
-      'push',
-      retcode=1,
-      stdout='!	HEAD:refs/fake	[remote rejected]',
-  )
-
   yield api.test('retry_too_many_times') + attempt_git_step(
       api,
       1,
