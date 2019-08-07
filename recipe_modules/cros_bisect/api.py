@@ -107,7 +107,8 @@ class CrosBisectApi(recipe_api.RecipeApi):
       unit = HwTestUnit(common=result.task.unit.common, hw_test_cfg=hw_test_cfg)
       hw_test_failures.append({
           # This must match the step name as known by sherrif-o-matic.
-          'failed_step': 'results|hw test results|' + test.common.display_name,
+          'failed_step': 'check test results|hw test results|'
+          + test.common.display_name,
           'test_spec': jsonpb.MessageToJson(unit),
           'suite': test.suite,
       })
