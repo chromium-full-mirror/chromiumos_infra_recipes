@@ -60,11 +60,11 @@ message GeneratorProperties {
   repeated Reviewer reviewers = 2;
 
   // Tag to add to all generated CLs. Defaults to qualified package name.
-  string tag = 5;
+  string topic = 5;
 
   // Policy to follow when no related CLs exist. Defaults to DO_NOTHING.
   SendToCqPolicy no_existing_cls_policy = 3;
 
   // Policy to follow when related CLs exist. Defaults to DO_NOTHING.
-  SendToCqPolicy exsting_cls_policy = 4;
+  SendToCqPolicy existing_cls_policy = 4;
 }
