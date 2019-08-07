@@ -698,9 +698,8 @@
       "--bypass-hooks",
       "--force",
       "--send-mail",
-      "--use-commit-queue",
       "--message-file",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is FULL_RUN.\n\nTherefore, marking CL as CQ+2."
+      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is DO_NOTHING.\n\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the existing CL(s)."
     ],
     "name": "update cl labels.git_cl upload",
     "~followup_annotations": [

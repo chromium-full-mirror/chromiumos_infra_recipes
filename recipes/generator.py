@@ -23,6 +23,7 @@ from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import GeneratorProperties
 from PB.recipes.chromeos.generator import G3OncallRotation
 from PB.recipes.chromeos.generator import Reviewer
+from PB.recipes.chromeos.generator import SendToCqPolicy
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (
     triggers as triggers_pb2)
 
@@ -150,7 +151,7 @@ def RunSteps(api, properties):
 
   topic = properties.topic or cpv
   with api.step.nest('find existing uprev CLs') as step:
-    existing_changes = []
+    existing_change_urls = set()
     for host in ('chromium', 'chrome-internal'):
       with api.step.nest('find cls from {} host'.format(host)):
         host_url = 'https://{}-review.googlesource.com'.format(host)
@@ -161,15 +162,9 @@ def RunSteps(api, properties):
           number = change['_number']
           date = change['created']
           title = 'found {} (created {})'.format(number, date)
-          link = '{}/{}'.format(host_url, number)
-          step.presentation.links[title] = link
-
-        existing_changes.extend(found)
-
-  existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
-  no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
-  send_to_cq_policy = (existing_cls_policy
-                       if existing_changes else no_existing_cls_policy)
+          change_url = '{}/{}'.format(host_url, number)
+          step.presentation.links[title] = change_url
+          existing_change_urls.add(change_url)
 
   with api.step.nest('generate CLs') as step:
     repositories = map(api.path.abs_to_path, ebuilds_by_repository.keys())
@@ -181,11 +176,6 @@ def RunSteps(api, properties):
             '--send-mail',
             '--topic', topic,
         ]
-
-        if send_to_cq_policy == DRY_RUN:
-          args.append('--cq-dry-run')
-        elif send_to_cq_policy == FULL_RUN:
-          args.append('--use-commit-queue')
 
         args.append('--reviewers')
         args.extend('{}@chromium.org'.format(ru) for ru in reviewer_users)
@@ -215,8 +205,39 @@ def RunSteps(api, properties):
                           ;  ``::.    :::::::
         ''', args)
 
-  # TODO(evanhernandez): Cq-Depend related changes.
+  existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
+  no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
+  send_to_cq_policy = (existing_cls_policy
+                       if existing_change_urls else no_existing_cls_policy)
+
   # TODO(evanhernandez): Bypass CR+2.
+  # TODO(evanhernandez): Cq-Depend CLs.
+  with api.step.nest('update cl labels'):
+    for repository in repositories:
+      args = ['--bypass-hooks', '--force', '--send-mail']
+      upload_message_lines = [
+          'Found {} open CL(s) for Gerrit topic {}:'.format(
+              len(existing_change_urls), topic),
+      ]
+      upload_message_lines.append('\n'.join(existing_change_urls))
+      upload_message_lines.append(
+          'Send-to-cq policy for this case is {}.'.format(
+              SendToCqPolicy.Name(send_to_cq_policy)))
+
+      if send_to_cq_policy == DRY_RUN:
+        args.append('--cq-dry-run')
+        upload_message_lines.append('Therefore, marking CL as CQ+1.')
+      elif send_to_cq_policy == FULL_RUN:
+        args.append('--use-commit-queue')
+        upload_message_lines.append('Therefore, marking CL as CQ+2.')
+      else:
+        upload_message_lines.append(
+            'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
+            'Reviewers may also want to abandon the existing CL(s).')
+
+      upload_message = '\n\n'.join(upload_message_lines)
+      api.git_cl.upload(upload_message, args)
+
 
 def GenTests(api):
   package = PackageInfo(category='chromeos-base', package_name='chromite')
@@ -244,6 +265,12 @@ def GenTests(api):
           ),
       ),
   ]
+
+  yield (api.test('with-uprev-do-nothing-policy') +
+         api.properties(existing_cls_policy=DO_NOTHING, **properties) +
+         api.scheduler(triggers=gitiles_triggers) +
+         api.oncall.status(
+             'resolve reviewers.resolve chromeos-ci-eng rotation status'))
 
   yield (api.test('with-uprev-dry-run-policy') +
          api.properties(existing_cls_policy=DRY_RUN, **properties) +

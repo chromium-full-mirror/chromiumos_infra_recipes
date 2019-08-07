@@ -669,7 +669,6 @@
       "--send-mail",
       "--topic",
       "chromeos-base/chromite",
-      "--cq-dry-run",
       "--reviewers",
       "bar@chromium.org",
       "foo@chromium.org",
@@ -684,6 +683,26 @@
       ]
     },
     "name": "generate CLs.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update cl labels"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--send-mail",
+      "--cq-dry-run",
+      "--message-file",
+      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is DRY_RUN.\n\nTherefore, marking CL as CQ+1."
+    ],
+    "name": "update cl labels.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
