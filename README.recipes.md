@@ -1927,7 +1927,7 @@ Args:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#33)(self, test, unit, name=None, bb=False):**
+&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#36)(self, test, unit, name=None, bb=False):**
 
 Schedule a HW test suite.
 
@@ -1942,9 +1942,9 @@ Args:
 Returns:
   SkylabTask: The swarming task ID.
 
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#30)(self):**
+&mdash; **def [initialize](/recipe_modules/skylab/api.py#33)(self):**
 
-&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#77)(self, tasks, bb=False):**
+&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#80)(self, tasks, bb=False):**
 
 Wait for all Skylab suites to finish and return the results.
 
