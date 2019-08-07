@@ -224,7 +224,7 @@ class FailuresApi(recipe_api.RecipeApi):
       for failure in failures_to_print:
         lines.append('- [{}]({})'.format(failure.title, failure.url))
       if count > truncate_max:
-        lines.append('...and {} others'.format(count-truncate_max))
+        lines.append('- ...and {} others'.format(count-truncate_max))
       sections.append('\n\n'.join(lines))
 
     summary_markdown = '\n\n'.join(sections)
