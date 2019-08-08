@@ -11,6 +11,7 @@
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
+  * [cros_cq_depends](#recipe_modules-cros_cq_depends) &mdash; APIs for interacting with Cq-Depends.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
   * [cros_infra_config](#recipe_modules-cros_infra_config)
@@ -22,7 +23,6 @@
   * [cros_test_plan](#recipe_modules-cros_test_plan)
   * [cros_test_platform](#recipe_modules-cros_test_platform)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
-  * [depends](#recipe_modules-depends) &mdash; APIs for checking that Cq-Depend has been fulfilled.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
@@ -62,6 +62,7 @@
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
   * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events)
+  * [cros_cq_depends:examples/full](#recipes-cros_cq_depends_examples_full)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_history:examples/get_matching_builds](#recipes-cros_history_examples_get_matching_builds)
   * [cros_history:examples/get_passed_builds](#recipes-cros_history_examples_get_passed_builds)
@@ -78,7 +79,6 @@
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
-  * [depends:examples/full](#recipes-depends_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [easy:examples/full](#recipes-easy_examples_full)
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step)
@@ -466,6 +466,25 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#110)(self):**
 
 Expose all client stubs defined in this module.
+### *recipe_modules* / [cros\_cq\_depends](/recipe_modules/cros_cq_depends)
+
+[DEPS](/recipe_modules/cros_cq_depends/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+APIs for interacting with Cq-Depends.
+
+#### **class [CrosCqDependsApi](/recipe_modules/cros_cq_depends/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for checking that Cq-Depend has been fulfilled.
+
+&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/api.py#70)(self, manifest_diffs):**
+
+Checks that Cq-Depend deps between manifests are met.
+
+Checks that all Cq-Depend in all CLs in the given manifest diffs are met.
+
+Args:
+  manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
+      namedtuples.
 ### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
 
 [DEPS](/recipe_modules/cros_dupit/__init__.py#1): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -964,25 +983,6 @@ Returns: a Version read from the workspace.
 
 Raises:
   ValueError: if the version file had unexpected formatting.
-### *recipe_modules* / [depends](/recipe_modules/depends)
-
-[DEPS](/recipe_modules/depends/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-APIs for checking that Cq-Depend has been fulfilled.
-
-#### **class [DependsApi](/recipe_modules/depends/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for checking that Cq-Depend has been fulfilled.
-
-&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/depends/api.py#70)(self, manifest_diffs):**
-
-Checks that Cq-Depend deps between manifests are met.
-
-Checks that all Cq-Depend in all CLs in the given manifest diffs are met.
-
-Args:
-  manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
-      namedtuples.
 ### *recipe_modules* / [easy](/recipe_modules/easy)
 
 [DEPS](/recipe_modules/easy/__init__.py#1): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2060,7 +2060,7 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#36)(api):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [portage](#recipe_modules-portage), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [portage](#recipe_modules-portage), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -2222,6 +2222,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_build_api/examples/publish_events.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/publish_events.py#14)(api):**
+### *recipes* / [cros\_cq\_depends:examples/full](/recipe_modules/cros_cq_depends/examples/full.py)
+
+[DEPS](/recipe_modules/cros_cq_depends/examples/full.py#6): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/full.py#18)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
@@ -2302,11 +2307,6 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#13)(api):**
-### *recipes* / [depends:examples/full](/recipe_modules/depends/examples/full.py)
-
-[DEPS](/recipe_modules/depends/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [depends](#recipe_modules-depends), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
-
-&mdash; **def [RunSteps](/recipe_modules/depends/examples/full.py#18)(api):**
 ### *recipes* / [dupit](/recipes/dupit.py)
 
 [DEPS](/recipes/dupit.py#8): [cros\_dupit](#recipe_modules-cros_dupit)

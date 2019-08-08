@@ -40,9 +40,9 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_build_api',
+    'cros_cq_depends',
     'cros_sdk',
     'cros_source',
-    'depends',
     'easy',
     'gerrit',
     'git',
@@ -79,7 +79,7 @@ def RunSteps(api, properties):
           return
 
         # Otherwise we need to ensure all of those diffs have fulfilled deps.
-        api.depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
+        api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
         # Then, record the diffs. We are specifically interested in what
         # gerrit changes have landed.

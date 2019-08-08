@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""APIs for checking that Cq-Depend has been fulfilled."""
+"""APIs for interacting with Cq-Depends."""
 import re
 from collections import namedtuple
 
@@ -15,7 +15,7 @@ PUBLIC_HOST = 'chromium'
 Dep = namedtuple('Dep', ['host', 'cl_number'])
 
 
-class DependsApi(recipe_api.RecipeApi):
+class CrosCqDependsApi(recipe_api.RecipeApi):
   """A module for checking that Cq-Depend has been fulfilled."""
 
   def _gather_deps(self, manifest_diffs, dep_log):
