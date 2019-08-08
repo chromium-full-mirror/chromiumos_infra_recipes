@@ -39,11 +39,11 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/oncall/examples/status.py\", line 20, in RunSteps",
-      "    status = api.oncall.status(rotation, step_name=properties.step_name)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/g3oncall/examples/status.py\", line 20, in RunSteps",
+      "    status = api.g3oncall.status(rotation, step_name=properties.step_name)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
       "    return func(*a, **kw)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/oncall/api.py\", line 46, in status",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/g3oncall/api.py\", line 46, in status",
       "    raise ValueError('expected json list, got {}'.format(type(status)))",
       "ValueError: expected json list, got <class 'collections.OrderedDict'>"
     ]

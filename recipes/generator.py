@@ -44,9 +44,9 @@ DEPS = [
     'cros_build_api',
     'cros_sdk',
     'cros_source',
+    'g3oncall',
     'git',
     'naming',
-    'oncall',
 ]
 
 PROPERTIES = GeneratorProperties
@@ -136,7 +136,7 @@ def RunSteps(api, properties):
 
       # Otherwise we must resolve an oncall rotation.
       rotation = reviewer.g3oncall_rotation
-      oncall = api.oncall.status(rotation.name)
+      oncall = api.g3oncall.status(rotation.name)
       if rotation.position in (G3OncallRotation.PRIMARY,
                                G3OncallRotation.PRIMARY_AND_SECONDARY,
                                G3OncallRotation.UNSPECIFIED):
@@ -269,19 +269,19 @@ def GenTests(api):
   yield (api.test('with-uprev-do-nothing-policy') +
          api.properties(existing_cls_policy=DO_NOTHING, **properties) +
          api.scheduler(triggers=gitiles_triggers) +
-         api.oncall.status(
+         api.g3oncall.status(
              'resolve reviewers.resolve chromeos-ci-eng rotation status'))
 
   yield (api.test('with-uprev-dry-run-policy') +
          api.properties(existing_cls_policy=DRY_RUN, **properties) +
          api.scheduler(triggers=gitiles_triggers) +
-         api.oncall.status(
+         api.g3oncall.status(
              'resolve reviewers.resolve chromeos-ci-eng rotation status'))
 
   yield (api.test('with-uprev-full-run-policy') +
          api.properties(existing_cls_policy=FULL_RUN, **properties) +
          api.scheduler(triggers=gitiles_triggers) +
-         api.oncall.status(
+         api.g3oncall.status(
              'resolve reviewers.resolve chromeos-ci-eng rotation status'))
 
   yield api.test('no-package-info') + api.expect_exception('ValueError')

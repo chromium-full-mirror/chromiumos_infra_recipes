@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.oncall.examples;
+package recipe_modules.chromeos.g3oncall.examples;
 
 message StatusProperties {
   string step_name = 1;

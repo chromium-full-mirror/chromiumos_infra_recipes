@@ -25,13 +25,13 @@
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
+  * [g3oncall](#recipe_modules-g3oncall) &mdash; API for interacting with g3oncall.
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) &mdash; APIs for dealing with Gitiles.
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
-  * [oncall](#recipe_modules-oncall) &mdash; API for interacting with g3oncall.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
@@ -91,6 +91,7 @@
   * [failures:examples/package_failures](#recipes-failures_examples_package_failures)
   * [failures:examples/silences](#recipes-failures_examples_silences)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
+  * [g3oncall:examples/status](#recipes-g3oncall_examples_status)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
@@ -98,7 +99,6 @@
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
   * [naming:examples/full](#recipes-naming_examples_full)
-  * [oncall:examples/status](#recipes-oncall_examples_status)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
@@ -1241,6 +1241,26 @@ Args:
 
 Raises:
   StepFailure: If failed_packages is not empty.
+### *recipe_modules* / [g3oncall](/recipe_modules/g3oncall)
+
+[DEPS](/recipe_modules/g3oncall/__init__.py#1): [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
+
+API for interacting with g3oncall.
+
+#### **class [G3OncallApi](/recipe_modules/g3oncall/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for support tool steps.
+
+&mdash; **def [status](/recipe_modules/g3oncall/api.py#26)(self, rotation, step_name=None):**
+
+Get the status for a given oncall rotation.
+
+Args:
+  rotation (str): The name of the rotation.
+  step_name (str): Optional step name.
+
+Returns:
+  RotationStatus: The current status for the rotation.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1720,26 +1740,6 @@ Args:
 
 Returns:
   str: A string describing the VM test.
-### *recipe_modules* / [oncall](/recipe_modules/oncall)
-
-[DEPS](/recipe_modules/oncall/__init__.py#1): [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
-
-API for interacting with g3oncall.
-
-#### **class [OncallApi](/recipe_modules/oncall/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for support tool steps.
-
-&mdash; **def [status](/recipe_modules/oncall/api.py#26)(self, rotation, step_name=None):**
-
-Get the status for a given oncall rotation.
-
-Args:
-  rotation (str): The name of the rotation.
-  step_name (str): Optional step name.
-
-Returns:
-  RotationStatus: The current status for the rotation.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2392,9 +2392,14 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/vm_test_failures.py#23)(api):**
 
 &mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
+### *recipes* / [g3oncall:examples/status](/recipe_modules/g3oncall/examples/status.py)
+
+[DEPS](/recipe_modules/g3oncall/examples/status.py#8): [g3oncall](#recipe_modules-g3oncall), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/g3oncall/examples/status.py#18)(api, properties):**
 ### *recipes* / [generator](/recipes/generator.py)
 
-[DEPS](/recipes/generator.py#33): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [oncall](#recipe_modules-oncall), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [depot\_tools/git\_cl][depot_tools/recipe_modules/git_cl], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/generator.py#33): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [g3oncall](#recipe_modules-g3oncall), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [depot\_tools/git\_cl][depot_tools/recipe_modules/git_cl], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the PUpr generator.
 
@@ -2439,11 +2444,6 @@ Test git_footers calls.
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#17)(api):**
-### *recipes* / [oncall:examples/status](/recipe_modules/oncall/examples/status.py)
-
-[DEPS](/recipe_modules/oncall/examples/status.py#8): [oncall](#recipe_modules-oncall), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-&mdash; **def [RunSteps](/recipe_modules/oncall/examples/status.py#18)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#12): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

@@ -12,7 +12,7 @@ from recipe_engine import recipe_api
 USERNAME_KEY = 'person'
 
 
-class OncallApi(recipe_api.RecipeApi):
+class G3OncallApi(recipe_api.RecipeApi):
   """A module for support tool steps."""
 
   # Describes a g3oncall rotation

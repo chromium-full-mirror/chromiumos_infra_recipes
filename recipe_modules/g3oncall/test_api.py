@@ -6,7 +6,7 @@
 from recipe_engine import recipe_test_api
 
 
-class OncallTestApi(recipe_test_api.RecipeTestApi):
+class G3OncallTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for test_plan api."""
 
   def status(self, step_name, rotation=None, primary=None, secondary=None,
