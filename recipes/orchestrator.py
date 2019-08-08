@@ -194,9 +194,8 @@ def RunSteps(api, properties):
       baseline_builds = []
       for build in completed_builds:
         # Assuming that completed_builds have build_targets.
-        # TODO(dhanyaganesh): Move this to a function.
-        build_target = build.input.properties['build_target']['name']
-        if build_target in build_targets_to_verify:
+        build_target = api.cros_history.get_build_target(build)
+        if build_target and build_target in build_targets_to_verify:
           baseline_builds += api.cros_history.get_snapshot_builds(
               build.input.gitiles_commit, [build_target + '-snapshot'],
               [common_pb2.SUCCESS])
@@ -484,7 +483,7 @@ def filter_schedule_wait_builds(api, child_builders, enable_history, snapshot,
   return completed_builds
 
 
-def prioritize_builds(builds):
+def prioritize_builds(api, builds):
   """Takes a list of builds and dedups, choosing a best build, dropping others.
 
   See build_orderer for the sort order. This is most useful if you have
@@ -505,12 +504,14 @@ def prioritize_builds(builds):
     else:
       # otherwise get the earliest created, which will be reasonable for
       # running builds and scheduled builds if scheduling is fair.
-      return b1.create_time.seconds - b2.create_time.seconds
+      return int(b1.create_time.seconds - b2.create_time.seconds)
 
-  # add all of them to dict: build_name -> build proto
+  # add all of them to dict: build_target -> build proto
   build_map = defaultdict(list)
-  for build in builds:
-    build_map[build.builder.builder].append(build)
+  for b in builds:
+    bt = api.cros_history.get_build_target(b)
+    if bt:
+      build_map[bt].append(b)
 
   best_builds_list = []
   for _, build_list in build_map.items():
@@ -544,7 +545,6 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
   """
   filter_log = []
   completed_builds, existing_builds, new_build_requests = [], [], []
-  passed_builders = set()
   retry_count = 0
 
   image_builders_pointless = False
@@ -560,7 +560,6 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
           api.cros_history.get_matching_builds(api.buildbucket.build,
                                                statuses=[common_pb2.FAILURE]))
       completed_builds = get_completed_builds(api, child_builders)
-      passed_builders = set(build.builder.builder for build in completed_builds)
 
   existing_builds = api.cros_history.get_snapshot_builds(
       snapshot, child_builders,
@@ -569,22 +568,31 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
 
   # Find number of builds, make set of builders, prioritize and log.
   initial_found_builds = len(existing_builds)
-  existing_build_names = set(build.builder.builder for build in existing_builds)
-  existing_builds = prioritize_builds(existing_builds)
+  existing_builds = prioritize_builds(api, existing_builds)
   filter_log.append(
       'from {} -> {} joinable after dedup and prioritization'.format(
-          len(existing_builds), initial_found_builds))
+          initial_found_builds, len(existing_builds)))
+
+  completed_build_targets = \
+      api.cros_history.build_target_set(completed_builds)
+  existing_build_targets = \
+      api.cros_history.build_target_set(existing_builds)
 
   with api.step.nest('filter builds') as step:
-
     for child in child_builders:
+
+      # now we have a list of build names such as ['buddy-postsubmit', ...]
+      # whereas existing_builds and completed_builds might be postfixed
+      # with -snapshot. Use this to filter out.
+      # TODO(crbug/991996): Refactor: use something other than string manip.
+      child_target = child[:child.rfind('-')]  # i.e. wizpig-snapshot -> wizpig
       # No need to retry previously-passed builds.
-      if child in passed_builders:
-        filter_log.append('{} already passed'.format(child))
+      if child_target in completed_build_targets:
+        filter_log.append('{} already passed'.format(child_target))
         continue
       # We've already found an existing build, we'll just wait on it later.
-      elif child in existing_build_names:
-        filter_log.append('{} build exists, will join on it'.format(child))
+      elif child_target in existing_build_targets:
+        filter_log.append('{} exists, will join on it'.format(child_target))
         continue
 
       child_builder_config = api.cros_infra_config.get_builder_config(child)
@@ -768,20 +776,16 @@ def GenTests(api):
     output.properties.update({'name': name})
     return build_pb2.Build(output=output, status=common_pb2.SUCCESS)
 
-  def build_target_property(build_target):
-    """Generate a struct for the 'build_target' property.
+  def input_proto(snapshot, build_target):
+    """Generate an instance of Build.Input.
 
     Args:
+      * snapshot(GitilesCommit): The snapshot of the build.
       * build_target (str): The name of the build target.
     """
-    return struct_pb2.Struct(
-        fields={
-            'build_target':
-                struct_pb2.Value(
-                    struct_value=struct_pb2.Struct(fields={
-                        'name': struct_pb2.Value(string_value=build_target)
-                    }))
-        })
+    return build_pb2.Build.Input(
+        properties=api.cros_history.build_target_property(build_target),
+        gitiles_commit=snapshot)
 
   vm_tests = [
       vm_test_build('vm-test'),
@@ -801,33 +805,32 @@ def GenTests(api):
   }
 
   builds = [
-      build_pb2.Build(
-          id=8922054662172514000, builder={'builder': 'amd64-generic-cq'},
-          status=common_pb2.SUCCESS,
-          input=dict(properties=build_target_property('amd64-generic'))),
-      build_pb2.Build(
-          id=8922054662172514001, builder={'builder': 'arm-generic-cq'},
-          status=common_pb2.STARTED,
-          input=dict(properties=build_target_property('arm-generic'))),
+      build_pb2.Build(id=8922054662172514000, builder={
+          'builder': 'amd64-generic-cq'
+      }, status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514001, builder={
+          'builder': 'arm-generic-cq'
+      }, status=common_pb2.STARTED, input=input_proto(None, 'arm-generic')),
       build_pb2.Build(id=8922054662172514002, builder={'builder': 'atlas-cq'},
-                      status=common_pb2.STARTED,
-                      input=dict(properties=build_target_property('atlas'))),
+                      status=common_pb2.STARTED, input=input_proto(
+                          None, 'atlas')),
   ]
 
   # we have three here to properly exercise "prioritize_builds"
   existing_annealing_builds = [
-      build_pb2.Build(
-          id=8922054662172514002, builder={'builder': 'amd64-generic-cq'},
-          status=common_pb2.STARTED,
-          input=dict(properties=build_target_property('amd64-generic'))),
-      build_pb2.Build(
-          id=8922054662172514003, builder={'builder': 'amd64-generic-cq'},
-          status=common_pb2.SUCCESS,
-          input=dict(properties=build_target_property('amd64-generic'))),
-      build_pb2.Build(
-          id=8922054662172514004, builder={'builder': 'amd64-generic-cq'},
-          status=common_pb2.SCHEDULED,
-          input=dict(properties=build_target_property('amd64-generic')))
+      build_pb2.Build(id=8922054662172514002, builder={
+          'builder': 'amd64-generic-cq'
+      }, status=common_pb2.STARTED, input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514003, builder={
+          'builder': 'amd64-generic-cq'
+      }, status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514005, builder={
+          'builder': 'amd64-generic-cq'
+      }, status=common_pb2.SUCCESS,
+                      input=dict(properties=struct_pb2.Struct())),  # no bt
+      build_pb2.Build(id=8922054662172514004, builder={
+          'builder': 'amd64-generic-cq'
+      }, status=common_pb2.SCHEDULED, input=input_proto(None, 'amd64-generic')),
   ]
 
   yield (api.test('basic') + postsubmit_orchestrator_build() +
@@ -990,12 +993,14 @@ def GenTests(api):
          api.cq(dry_run=True))
 
   builds = [
-      build_pb2.Build(id=8922054662172514000,
-                      builder={'builder': 'amd64-generic-postsubmit'},
-                      status=common_pb2.FAILURE, critical=common_pb2.YES),
-      build_pb2.Build(id=8922054662172514001,
-                      builder={'builder': 'arm-generic-postsubmit'},
-                      status=common_pb2.SUCCESS, critical=common_pb2.NO),
+      build_pb2.Build(id=8922054662172514000, builder={
+          'builder': 'amd64-generic-postsubmit'
+      }, status=common_pb2.FAILURE, critical=common_pb2.NO, input=input_proto(
+          None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514001, builder={
+          'builder': 'arm-generic-postsubmit'
+      }, status=common_pb2.SUCCESS, critical=common_pb2.NO, input=input_proto(
+          None, 'arm-generic')),
   ]
 
   yield (api.test('retry_only_critical_builds') +  #
@@ -1057,16 +1062,6 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output(
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
-
-  def input_proto(snapshot, build_target):
-    """Generate an instance of Build.Input.
-
-    Args:
-      * snapshot(GitilesCommit): The snapshot of the build.
-      * build_target (str): The name of the build target.
-    """
-    return build_pb2.Build.Input(
-        properties=build_target_property(build_target), gitiles_commit=snapshot)
 
   builds = [
       build_pb2.Build(

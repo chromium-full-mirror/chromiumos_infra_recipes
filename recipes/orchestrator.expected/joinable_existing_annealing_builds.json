@@ -299,8 +299,8 @@
     "name": "run builds.get snapshot builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found 3 snapshot builds@@@",
-      "@@@STEP_LINK@..amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_TEXT@found 4 snapshot builds@@@",
+      "@@@STEP_LINK@..amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514005@@@"
     ]
   },
   {
@@ -345,6 +345,16 @@
       "@@@STEP_LOG_LINE@json.output@                  \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@json.output@                }@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            }, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }, @@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"amd64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"8922054662172514005\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"properties\": {}@@@",
       "@@@STEP_LOG_LINE@json.output@            }, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }, @@@",
@@ -399,7 +409,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LINK@..amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514005@@@"
     ]
   },
   {
@@ -407,8 +417,8 @@
     "name": "run builds.filter builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@filter log@from 1 -> 3 joinable after dedup and prioritization@@@",
-      "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build exists, will join on it@@@",
+      "@@@STEP_LOG_LINE@filter log@from 4 -> 1 joinable after dedup and prioritization@@@",
+      "@@@STEP_LOG_LINE@filter log@amd64-generic exists, will join on it@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },
