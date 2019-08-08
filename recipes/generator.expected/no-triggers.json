@@ -47,7 +47,7 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/generator.py\", line 71, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/generator.py\", line 74, in RunSteps",
       "    raise ValueError('found no scheduler triggers')",
       "ValueError: found no scheduler triggers"
     ]

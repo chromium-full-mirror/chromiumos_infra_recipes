@@ -30,24 +30,27 @@ from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (
 from google.protobuf import json_format
 
 
-DEPS = [
-    'depot_tools/depot_tools',
-    'depot_tools/gerrit',
-    'depot_tools/git_cl',
-    'recipe_engine/buildbucket',
-    'recipe_engine/context',
-    'recipe_engine/file',
-    'recipe_engine/path',
-    'recipe_engine/properties',
-    'recipe_engine/scheduler',
-    'recipe_engine/step',
-    'cros_build_api',
-    'cros_sdk',
-    'cros_source',
-    'g3oncall',
-    'git',
-    'naming',
-]
+DEPS = {
+    'depot_tools': 'depot_tools/depot_tools',
+    'gerrit': 'depot_tools/gerrit',
+    'git_cl': 'depot_tools/git_cl',
+    'buildbucket': 'recipe_engine/buildbucket',
+    'context': 'recipe_engine/context',
+    'file': 'recipe_engine/file',
+    'path': 'recipe_engine/path',
+    'properties': 'recipe_engine/properties',
+    'raw_io': 'recipe_engine/raw_io',
+    'scheduler': 'recipe_engine/scheduler',
+    'step': 'recipe_engine/step',
+    'cros_build_api': 'cros_build_api',
+    'cros_cq_depends': 'cros_cq_depends',
+    'cros_gerrit': 'gerrit',
+    'cros_sdk': 'cros_sdk',
+    'cros_source': 'cros_source',
+    'g3oncall': 'g3oncall',
+    'git': 'git',
+    'naming': 'naming',
+}
 
 PROPERTIES = GeneratorProperties
 
@@ -205,14 +208,41 @@ def RunSteps(api, properties):
                           ;  ``::.    :::::::
         ''', args)
 
+  if len(repositories) > 1:
+    with api.step.nest('cq-depend generated CLs'):
+      change_urls = []
+      for repository in repositories:
+        with api.context(cwd=repository), api.depot_tools.on_path():
+          change_url = api.git_cl(
+              'status', ['--field', 'url', '--fast'],
+              stdout=api.raw_io.output(),
+              # TODO(evanhernandez): Yuck. Let's put a module around this...
+              step_test_data=lambda:
+                 api.raw_io.test_api.stream_output(
+                     api.cros_gerrit.test_api.test_gerrit_change_url()),
+          ).stdout.strip()
+          change_urls.append(change_url)
+
+      changes = map(api.cros_gerrit.parse_gerrit_change, change_urls)
+      cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
+
+      for repository, change_url, cq_depend in zip(repositories,
+                                                   change_urls,
+                                                   cq_depends):
+        with api.context(cwd=repository), api.depot_tools.on_path():
+          description = api.git_cl.get_description(patch_url=change_url,
+                                                   codereview='gerrit')
+          description = '{}\n{}'.format(description, cq_depend)
+          api.git_cl.set_description(description, patch_url=change_url,
+                                     codereview='gerrit')
+
   existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
   no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
   send_to_cq_policy = (existing_cls_policy
                        if existing_change_urls else no_existing_cls_policy)
 
   # TODO(evanhernandez): Bypass CR+2.
-  # TODO(evanhernandez): Cq-Depend CLs.
-  with api.step.nest('update cl labels'):
+  with api.step.nest('update CL labels'):
     for repository in repositories:
       args = ['--bypass-hooks', '--force', '--send-mail']
       upload_message_lines = [

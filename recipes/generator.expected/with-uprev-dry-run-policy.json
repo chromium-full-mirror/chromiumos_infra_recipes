@@ -803,7 +803,129 @@
   },
   {
     "cmd": [],
-    "name": "update cl labels"
+    "name": "cq-depend generated CLs"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cq-depend generated CLs.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cq-depend generated CLs.git_cl status (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-d",
+      "--gerrit",
+      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cq-depend generated CLs.git_cl description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-n",
+      "-",
+      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1",
+      "--gerrit"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cq-depend generated CLs.git_cl set description",
+    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-d",
+      "--gerrit",
+      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cq-depend generated CLs.git_cl description (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-n",
+      "-",
+      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1",
+      "--gerrit"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cq-depend generated CLs.git_cl set description (2)",
+    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'git_cl description (2)'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels"
   },
   {
     "cmd": [
@@ -816,7 +938,7 @@
       "--message-file",
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is DRY_RUN.\n\nTherefore, marking CL as CQ+1."
     ],
-    "name": "update cl labels.git_cl upload",
+    "name": "update CL labels.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -832,7 +954,7 @@
       "--message-file",
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is DRY_RUN.\n\nTherefore, marking CL as CQ+1."
     ],
-    "name": "update cl labels.git_cl upload (2)",
+    "name": "update CL labels.git_cl upload (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
