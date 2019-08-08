@@ -178,3 +178,43 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
 
       # All deps satisfied
       step.presentation.step_text = 'all cq-depends fulfilled'
+
+  def get_cq_depend_reference(self, gerrit_change):
+    """Return the Cq-Depend reference string for the given change.
+
+    Args:
+      gerrit_change (GerritChange): The change of interest.
+
+    Returns:
+      str: The reference string for the change, e.g. chromium:12345
+    """
+    match = re.match(r'(?:https://)?([^./]+)(:?-review.googlesource.com)',
+                     gerrit_change.host)
+    assert match, 'cannot parse short host of {}'.format(gerrit_change.host)
+    return '{}:{}'.format(match.group(1), gerrit_change.change)
+
+  def get_cq_depend(self, gerrit_changes):
+    """Get Cq-Depend string for the given list of Gerrit changes.
+
+    Args:
+      gerrit_changes (list[GerritChange]): The changes on which to depend.
+
+    Return:
+      str: The full Cq-Depend string.
+    """
+    depends = map(self.get_cq_depend_reference, gerrit_changes)
+    return 'Cq-Depend: {}'.format(','.join(depends))
+
+  def get_mutual_cq_depend(self, gerrit_changes):
+    """Mutually Cq-Depend all given Gerrit changes.
+
+    Args:
+      gerrit_changes (list[GerritChange]): Changes to mutually CQ-depend.
+
+    Return:
+      list[str]: Cq-Depend strings in same order as changes.
+    """
+    return [
+        self.get_cq_depend([gc for gc in gerrit_changes if gc != target])
+        for target in gerrit_changes
+    ]
