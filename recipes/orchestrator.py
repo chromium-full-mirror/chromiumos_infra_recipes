@@ -191,11 +191,16 @@ def RunSteps(api, properties):
       build_targets_to_verify = set([
           test_to_build_target_map[test_name] for test_name in failed_test_names
       ])
-      baseline_builders_to_verify = [
-          build_target + '-snapshot' for build_target in build_targets_to_verify
-      ]
-      baseline_builds = api.cros_history.get_snapshot_builds(
-          snapshot, baseline_builders_to_verify, [common_pb2.SUCCESS])
+      baseline_builds = []
+      for build in completed_builds:
+        # Assuming that completed_builds have build_targets.
+        # TODO(dhanyaganesh): Move this to a function.
+        build_target = build.input.properties['build_target']['name']
+        if build_target in build_targets_to_verify:
+          baseline_builds += api.cros_history.get_snapshot_builds(
+              build.input.gitiles_commit, [build_target + '-snapshot'],
+              [common_pb2.SUCCESS])
+
       with api.step.nest('run baseline tests'):
         with api.step.nest('schedule baseline tests'):
           baseline_test_plan = api.cros_test_plan.generate(
@@ -985,16 +990,12 @@ def GenTests(api):
          api.cq(dry_run=True))
 
   builds = [
-      build_pb2.Build(
-          id=8922054662172514000, builder={'builder': 'amd64-generic-cq'},
-          status=common_pb2.FAILURE,
-          critical=common_pb2.NO,
-          input=dict(properties=build_target_property('amd64-generic'))),
-      build_pb2.Build(
-          id=8922054662172514001, builder={'builder': 'arm-generic-cq'},
-          status=common_pb2.FAILURE,
-          critical=common_pb2.NO,
-          input=dict(properties=build_target_property('arm-generic'))),
+      build_pb2.Build(id=8922054662172514000,
+                      builder={'builder': 'amd64-generic-postsubmit'},
+                      status=common_pb2.FAILURE, critical=common_pb2.YES),
+      build_pb2.Build(id=8922054662172514001,
+                      builder={'builder': 'arm-generic-postsubmit'},
+                      status=common_pb2.SUCCESS, critical=common_pb2.NO),
   ]
 
   yield (api.test('retry_only_critical_builds') +  #
@@ -1057,6 +1058,30 @@ def GenTests(api):
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
 
+  def input_proto(snapshot, build_target):
+    """Generate an instance of Build.Input.
+
+    Args:
+      * snapshot(GitilesCommit): The snapshot of the build.
+      * build_target (str): The name of the build target.
+    """
+    return build_pb2.Build.Input(
+        properties=build_target_property(build_target), gitiles_commit=snapshot)
+
+  builds = [
+      build_pb2.Build(
+          id=8922054662172514000,
+          builder={'builder': 'amd64-generic-postsubmit'},  #
+          status=common_pb2.SUCCESS,
+          critical=common_pb2.YES,
+          input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(
+          id=8922054662172514001,
+          builder={'builder': 'arm-generic-postsubmit'},  #
+          status=common_pb2.FAILURE,
+          critical=common_pb2.NO,
+          input=input_proto(common_pb2.GitilesCommit(), 'target')),
+  ]
   hw_tests = {
       'results': [
           api.skylab.wait_task_result(id='bvt-cq-task-id', name='hw test1',
