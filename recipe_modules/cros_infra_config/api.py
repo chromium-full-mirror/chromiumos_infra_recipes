@@ -22,6 +22,19 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._name_to_builder_config = {}
 
   @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
+  def _fetch_builder_configs(self):
+    """Helper method to fetch the builder configs file.
+
+    Downloads the builder configs file and returns it. This helper function
+    allows the retry to target the gitiles download specifically.
+    """
+    # Step nesting needs to happen here or it shows up many times in Milo,
+    # once for each builder.
+    return self.m.gitiles.download_file(
+        REPO_URL, "generated/builder_configs.cfg",
+        step_test_data=self.test_api.builder_configs_step_test_data,
+        timeout=self.test_api.gitiles_timeout_seconds)
+
   def _get_name_to_builder_config(self):
     """Helper method that returns the name to BuilderConfig map.
 
@@ -32,10 +45,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # once for each builder.
       with self.m.step.nest('read build config'), self.m.context(
           infra_steps=True):
-        builder_configs_file = self.m.gitiles.download_file(
-            REPO_URL, "generated/builder_configs.cfg",
-            step_test_data=self.test_api.builder_configs_step_test_data,
-            timeout=self.test_api.gitiles_timeout_seconds)
+        builder_configs_file = self._fetch_builder_configs()
       # Ignore unknown fields, as this repo may not be using the newest version
       # of the proto.
       builder_configs = jsonpb.Parse(builder_configs_file, BuilderConfigs(),

@@ -660,7 +660,7 @@ Generate start time in seconds.
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#48)(self, builder_name):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#58)(self, builder_name):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -682,7 +682,7 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#74)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#84)(self, config_name):**
 
 Gets Path of most recent test config.
 
@@ -696,9 +696,9 @@ Returns:
 
 Init the InfraConfigApi module.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#98)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#108)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#95)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#105)(self, run_spec):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
