@@ -43,21 +43,17 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       cmd = [
         self._cmd,
         subcommand,
-        # TODO(akeshet): recipes_engine/json module, write JSON to/from
-        # tempfile rather than stdin/stdout.
         '-input_json',
         '/dev/stdin',
         '-output_json',
         '/dev/stdout',
       ]
-      output_json = self.m.easy.stdout_step(
+      return self.m.easy.stdout_jsonpb_step(
           subcommand,
           cmd,
+          response_type,
           stdin=self.m.raw_io.input_text(json_format.MessageToJson(request)),
-          test_stdout="{}")
-      resp = response_type()
-      json_format.Parse(output_json, resp)
-      return resp
+          test_output=response_type())
 
   def enumerate(self, request):
     """Enumerate test cases via `enumerate` subcommand.
