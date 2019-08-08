@@ -19,6 +19,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(CrosBisectApi, self).__init__(*args, **kwargs)
     self._compile = properties.compile
+    self._test = properties.test
 
   def _set_bisect_builder(self, builder):
     self.m.easy.set_property_step('BISECT_BUILDER', builder)
@@ -128,3 +129,19 @@ class CrosBisectApi(recipe_api.RecipeApi):
       list[PackageInfo]: list of packages to build as specified by FindIt
     """
     return [jsonpb.Parse(t, PackageInfo()) for t in self._compile.targets]
+
+  def get_test_child_builders(self):
+    """Returns the child builders as specified by FindIt or empty list.
+
+    Returns the child builders that need to run as specified by a FindIt
+    invocation or an empty list if this run was not invoked as a bisection
+    build.
+
+    Returns:
+      list[str]: sorted list of child builders to run
+    """
+    child_builders = set()
+    for failure in self._test.hw_test_failures:
+      hw_test_unit = jsonpb.Parse(failure.test_spec, HwTestUnit())
+      child_builders.add(hw_test_unit.common.build_target.name + '-snapshot')
+    return sorted(child_builders)

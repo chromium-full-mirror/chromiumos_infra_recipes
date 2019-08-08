@@ -29,6 +29,9 @@ def RunSteps(api, properties):
 
   api.cros_bisect.set_compile_failures(properties.failed_packages)
 
+  api.assertions.assertEqual(api.cros_bisect.get_test_child_builders(),
+                             properties.expected_test_child_builders)
+
 def GenTests(api):
   yield api.test('basic')
 
@@ -52,5 +55,27 @@ def GenTests(api):
          api.properties(TestInputProperties(failed_packages=[
                PackageInfo(package_name='uno', category='pkg', version='1'),
                PackageInfo(package_name='dos', category='pkg', version='2'),
+           ],
+         )))
+
+  hw_test_unit1 = api.cros_bisect.serialized_hw_test_unit('foo')
+  hw_test_unit2 = api.cros_bisect.serialized_hw_test_unit('bar')
+  hw_test_unit3 = api.cros_bisect.serialized_hw_test_unit('bar')
+
+  yield (api.test('with-test-child-builders') +  #
+         api.properties(
+             **{'$chromeos/cros_bisect':
+                CrosBisectProperties(test={'hw_test_failures': [
+                    CrosBisectProperties.TestFailures.TestFailure(
+                        test_spec=hw_test_unit1),
+                    CrosBisectProperties.TestFailures.TestFailure(
+                        test_spec=hw_test_unit2),
+                    CrosBisectProperties.TestFailures.TestFailure(
+                        test_spec=hw_test_unit3),
+                ]})}
+         ) + #
+         api.properties(TestInputProperties(expected_test_child_builders=[
+             'bar-snapshot',
+             'foo-snapshot',
            ],
          )))

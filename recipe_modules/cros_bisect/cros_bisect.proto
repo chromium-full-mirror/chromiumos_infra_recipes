@@ -23,6 +23,7 @@ message CrosBisectProperties {
       string test_spec = 1;
     }
 
+    // Hardware TestFailures serialize HwTestUnit protos in test_spec
     repeated TestFailure hw_test_failures = 1;
   }
   TestFailures test = 3;

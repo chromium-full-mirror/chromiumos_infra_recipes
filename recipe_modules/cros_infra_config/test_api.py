@@ -84,6 +84,43 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "amd64-generic-snapshot",
+                    "branch": "master",
+                    "type": "POSTSUBMIT"
+                  },
+                  "general": {
+                    "critical": false
+                  },
+                  "artifacts": {
+                    "prebuilts": "PUBLIC",
+                    "artifact_types": [
+                      "IMAGE_ZIP",
+                      "AUTOTEST_FILES",
+                      "TAST_FILES",
+                      "PINNED_GUEST_IMAGES",
+                      "EBUILD_LOGS",
+                      "TEST_UPDATE_PAYLOAD"
+                    ],
+                    "prebuiltsGsBucket": "chromeos-prebuilt",
+                    "artifactsGsBucket": "chromeos-image-archive"
+                  },
+                  "chrome": {
+                    "internal": false
+                  },
+                  "build": {
+                    "install_packages": "RUN",
+                    "compile_tool_chain": false,
+                    "apply_gerrit_changes": true
+                  },
+                  "unit_tests": {
+                    "package_blacklist": [
+                    ],
+                    "ebuilds_run_spec": "RUN",
+                    "emptySysroot": false
+                  }
+                },
+                {
+                  "id": {
                     "name": "arm-generic-cq",
                     "branch": "master",
                     "type": "CQ"

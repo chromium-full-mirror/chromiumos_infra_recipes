@@ -40,6 +40,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 from PB.recipes.chromeos.test_moblab_vm import TestMoblabVmProperties
 from PB.recipes.chromeos.test_vm import TestVmProperties
+from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
+    CrosBisectProperties)
 
 from google.protobuf import json_format
 from google.protobuf import struct_pb2
@@ -261,8 +263,9 @@ def get_child_builders(api):
   Returns:
     list[string] of child builder names to run
   """
-  # TODO(dburger): alternatively pull child builders from FindIt
-  # bisect invocation properties.
+  child_builders = api.cros_bisect.get_test_child_builders()
+  if child_builders:
+    return child_builders
   return api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder).orchestrator.children
 
@@ -1158,3 +1161,22 @@ def GenTests(api):
       api.easy.simulate_json_step(
           'run baseline tests.collect baseline tests.'
           'collect skylab tasks.skylab wait-tasks', baseline_results_success))
+
+  yield (api.test('with_test_bisection_invocation') + #
+      postsubmit_orchestrator_build() + #
+      api.properties(**{
+          '$chromeos/cros_bisect': CrosBisectProperties(test={
+              'hw_test_failures': [
+                  {'test_spec':
+                   api.cros_bisect.serialized_hw_test_unit('amd64-generic')},
+              ],
+          })
+      }) +  #
+      api.easy.simulate_json_step(
+          'run tests.collect tests.'
+          'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests, step_name='run tests.collect tests.collect vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))

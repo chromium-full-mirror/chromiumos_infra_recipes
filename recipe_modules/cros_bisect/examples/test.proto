@@ -11,4 +11,5 @@ import "chromiumos/common.proto";
 message TestInputProperties {
   repeated .chromiumos.PackageInfo expected_packages = 1;
   repeated .chromiumos.PackageInfo failed_packages = 2;
+  repeated string expected_test_child_builders = 3;
 }
