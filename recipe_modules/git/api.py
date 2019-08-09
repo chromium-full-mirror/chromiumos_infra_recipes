@@ -55,7 +55,7 @@ class GitApi(recipe_api.RecipeApi):
     return self._step(
         ['rev-parse', '--show-toplevel'],
         stdout=self.m.raw_io.output(),
-        test_stdout=str(self.test_api.test_repository_root),
+        test_stdout=str(self.m.context.cwd),
     ).stdout.strip()
 
   def add(self, paths):
