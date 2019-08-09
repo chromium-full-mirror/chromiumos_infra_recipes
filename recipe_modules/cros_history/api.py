@@ -103,7 +103,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       raise ValueError('test names must be unique, found: %r' % tests)
     self.m.easy.set_property_step(PASSED_TESTS_KEY, tests)
 
-  def get_snapshot_builds(self, snapshot, builder_list, statuses, patches=None):
+  def get_snapshot_builds(self, snapshot, builder_list=None, statuses=None,
+                          patches=None):
     """Get *-snapshot builds with the given snapshot.
 
     Args:
@@ -121,16 +122,17 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       builder_shell = build_pb2.BuilderID(project=project,
                                           bucket=SNAPSHOT_BUCKET)
 
-      all_snapshot_builds = \
+      snapshot_builds = \
           self._get_patch_history(patches=patches,
                                   snapshot=snapshot,
                                   builder=builder_shell,
                                   statuses=statuses)
 
-      snapshot_builds = [
-          build for build in all_snapshot_builds
-          if build.builder.builder in builder_list
-      ]
+      if builder_list:
+        snapshot_builds = [
+            build for build in snapshot_builds
+            if build.builder.builder in builder_list
+        ]
       step.presentation.step_text = 'found %d snapshot builds' % len(
           snapshot_builds)
       for build in snapshot_builds:

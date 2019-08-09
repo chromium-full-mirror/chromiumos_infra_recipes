@@ -542,11 +542,11 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
   Returns:
     A tuple of three lists:
       A list of Build objects of successful builds with refreshed criticality.
-      A list of identical builds we don't need to schedule and can join.
+      A list of -snapshot builds we don't need to schedule and can join.
       A list of ScheduleBuildRequests that have to be scheduled.
   """
   filter_log = []
-  completed_builds, existing_builds, new_build_requests = [], [], []
+  completed_builds, snapshot_builds, new_build_requests = [], [], []
   retry_count = 0
 
   image_builders_pointless = False
@@ -563,27 +563,27 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
                                                statuses=[common_pb2.FAILURE]))
       completed_builds = get_completed_builds(api, child_builders)
 
-  existing_builds = api.cros_history.get_snapshot_builds(
-      snapshot, child_builders,
+  snapshot_builds = api.cros_history.get_snapshot_builds(
+      snapshot, [],
       [common_pb2.SUCCESS, common_pb2.SCHEDULED, common_pb2.STARTED],
       patches=gerrit_changes)
 
   # Find number of builds, make set of builders, prioritize and log.
-  initial_found_builds = len(existing_builds)
-  existing_builds = prioritize_builds(api, existing_builds)
+  initial_found_builds = len(snapshot_builds)
+  snapshot_builds = prioritize_builds(api, snapshot_builds)
   filter_log.append(
       'from {} -> {} joinable after dedup and prioritization'.format(
-          initial_found_builds, len(existing_builds)))
+          initial_found_builds, len(snapshot_builds)))
 
   completed_builders = [build.builder.builder for build in completed_builds]
   existing_build_targets = \
-      api.cros_history.build_target_set(existing_builds)
+      api.cros_history.build_target_set(snapshot_builds)
 
   with api.step.nest('filter builds') as step:
     for child in child_builders:
 
       # now we have a list of build names such as ['buddy-postsubmit', ...]
-      # whereas existing_builds and completed_builds might be postfixed
+      # whereas snapshot_builds and completed_builds might be postfixed
       # with -snapshot. Use this to filter out.
       # TODO(crbug/991996): Refactor: use something other than string manip.
       child_target = child[:child.rfind('-')]  # i.e. wizpig-snapshot -> wizpig
@@ -625,7 +625,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
               properties=api.cq.props_for_child_build, tags=tags))
     step.presentation.logs['filter log'] = filter_log
 
-  return completed_builds, existing_builds, new_build_requests
+  return completed_builds, snapshot_builds, new_build_requests
 
 
 def get_completed_builds(api, cq_orch_children):
