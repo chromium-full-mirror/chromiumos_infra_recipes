@@ -11,6 +11,20 @@
   },
   {
     "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "infra_step": true,
+    "name": "clear git locks"
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
@@ -28,6 +42,20 @@
     ],
     "infra_step": true,
     "name": "repo init (2)"
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "infra_step": true,
+    "name": "clear git locks (2)"
   },
   {
     "cmd": [
@@ -242,6 +270,24 @@
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CLEANUP]/ensure",
+    "infra_step": true,
+    "name": "ensure synced checkout.clear git locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

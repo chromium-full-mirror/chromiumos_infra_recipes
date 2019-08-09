@@ -93,9 +93,18 @@ class RepoApi(recipe_api.RecipeApi):
     if repo_url is not None:
       cmd += ['--repo-url', repo_url]
     self._step(cmd)
+    self.clearGitLocks()
 
     if self.m.context.cwd:
       self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))
+
+  def clearGitLocks(self):
+    """Removes any git locks found in the entire repo checkout."""
+
+    cmd = [
+        'find', '.repo/', '-type', 'f', '-name', '*.lock', '-print', '-delete'
+    ]
+    self.m.step('clear git locks', cmd, infra_step=True)
 
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,
