@@ -12,6 +12,8 @@ from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
+from PB.testplans.target_test_requirements_config import HwTestCfg
+from PB.testplans.target_test_requirements_config import TestSuiteCommon
 
 class CrosBisectTestApi(recipe_test_api.RecipeTestApi):
 
@@ -31,14 +33,41 @@ class CrosBisectTestApi(recipe_test_api.RecipeTestApi):
     pi = PackageInfo(package_name=package, category=category, version=version)
     return jsonpb.MessageToJson(pi)
 
-  def serialized_hw_test_unit(self, build_target_name):
+  def _hw_test_config(self, build_target_name):
+    hw_test = HwTestCfg.HwTest(
+        common=TestSuiteCommon(
+            display_name='kip.hw.bvt-cq',
+            critical={'value': True}),
+        suite='bvt-cq',
+        skylab_board=build_target_name
+    )
+    return HwTestCfg(hw_test=[hw_test])
+
+  def hw_test_unit(self, build_target_name, hw_test_cfg=None):
+    """Helper to create a HwTestUnit.
+
+    Args:
+      build_target_name (str): the build target name.
+      hw_test_cfg (HwTestCfg): hardware test configuration to add, if any. If
+          not provided a default is cooked up.
+    Returns:
+      HwTestUnit: created HwTestUnit.
+    """
+    hw_test_cfg = hw_test_cfg or self._hw_test_config(build_target_name)
+    return HwTestUnit(
+        common=TestUnitCommon(build_target=BuildTarget(name=build_target_name)),
+        hw_test_cfg=hw_test_cfg,
+    )
+
+  def serialized_hw_test_unit(self, build_target_name, hw_test_cfg=None):
     """Returns the JSON serialized version of a HwTestUnit.
 
     Args:
       build_target_name (str): the build target name.
+      hw_test_cfg (HwTestCfg): hardware test configuration to add, if any. If
+          not provided a default is cooked up.
     Returns:
       str: JSON serialized version of created HwTestUnit
     """
-    tu = HwTestUnit(
-        common=TestUnitCommon(build_target=BuildTarget(name=build_target_name)))
-    return jsonpb.MessageToJson(tu)
+    hw_test_unit = self.hw_test_unit(build_target_name, hw_test_cfg)
+    return jsonpb.MessageToJson(hw_test_unit)

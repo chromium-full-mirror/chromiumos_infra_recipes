@@ -57,12 +57,14 @@
   * [cros_artifacts:examples/gsutil_retry_success](#recipes-cros_artifacts_examples_gsutil_retry_success)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_bisect:examples/set_test_failures](#recipes-cros_bisect_examples_set_test_failures)
+  * [cros_bisect:examples/test_plan_processing](#recipes-cros_bisect_examples_test_plan_processing)
   * [cros_branch:examples/full](#recipes-cros_branch_examples_full)
   * [cros_build_api:examples/bad_retcodes](#recipes-cros_build_api_examples_bad_retcodes)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
   * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events)
-  * [cros_cq_depends:examples/full](#recipes-cros_cq_depends_examples_full)
+  * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings)
+  * [cros_cq_depends:examples/ensure_manifest_cq_depends_fulfilled](#recipes-cros_cq_depends_examples_ensure_manifest_cq_depends_fulfilled)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_history:examples/get_matching_builds](#recipes-cros_history_examples_get_matching_builds)
   * [cros_history:examples/get_passed_builds](#recipes-cros_history_examples_get_passed_builds)
@@ -305,11 +307,11 @@ Args:
 
 API for interacting with FindIt.
 
-#### **class [CrosBisectApi](/recipe_modules/cros_bisect/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBisectApi](/recipe_modules/cros_bisect/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#122)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#125)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -319,7 +321,7 @@ empty list if this run was not invoked as a bisection build.
 Returns:
   list[PackageInfo]: list of packages to build as specified by FindIt
 
-&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#133)(self):**
+&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#136)(self):**
 
 Returns the child builders as specified by FindIt or empty list.
 
@@ -328,9 +330,19 @@ invocation or an empty list if this run was not invoked as a bisection
 build.
 
 Returns:
-  list[str]: sorted list of child builders to run
+  list[str]: sorted list of child builders to run.
 
-&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#27)(self, build_target_name):**
+&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#152)(self):**
+
+Returns the test plan as specified by FindIt or None.
+
+Returns the test plan that needs to run as specified by a FindIt
+invocation or None if this run was not invoked as a bisection build.
+
+Returns:
+  GenerateTestPlanResponse or None.
+
+&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#30)(self, build_target_name):**
 
 Sets the BISECT_BUILDER output property for the build target recipe.
 
@@ -340,7 +352,7 @@ should invoke if the build fails and bisection is required.
 Args:
   build_target_name (str): build target name to set the bisect builder for.
 
-&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#70)(self, failed_packages):**
+&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#73)(self, failed_packages):**
 
 Outputs the failed packages, if any, for FindIt consumption.
 
@@ -352,7 +364,7 @@ Args:
   failed_packages (list[PackageInfo]): list of PackageInfo representing the
       failed packages.
 
-&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#38)(self):**
+&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#41)(self):**
 
 Sets the BISECT_BUILDER output property for the orchestrator.
 
@@ -360,7 +372,7 @@ Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the postsubmit-orchestrator encounters hardware test
 failures.
 
-&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#86)(self, hw_results):**
+&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#89)(self, hw_results):**
 
 Outputs the failed hardware tests, if any, for FindIt consumption.
 
@@ -496,6 +508,36 @@ Checks that all Cq-Depend in all CLs in the given manifest diffs are met.
 Args:
   manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
       namedtuples.
+
+&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#196)(self, gerrit_changes):**
+
+Get Cq-Depend string for the given list of Gerrit changes.
+
+Args:
+  gerrit_changes (list[GerritChange]): The changes on which to depend.
+
+Return:
+  str: The full Cq-Depend string.
+
+&mdash; **def [get\_cq\_depend\_reference](/recipe_modules/cros_cq_depends/api.py#182)(self, gerrit_change):**
+
+Return the Cq-Depend reference string for the given change.
+
+Args:
+  gerrit_change (GerritChange): The change of interest.
+
+Returns:
+  str: The reference string for the change, e.g. chromium:12345
+
+&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#208)(self, gerrit_changes):**
+
+Mutually Cq-Depend all given Gerrit changes.
+
+Args:
+  gerrit_changes (list[GerritChange]): Changes to mutually CQ-depend.
+
+Return:
+  list[str]: Cq-Depend strings in same order as changes.
 ### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
 
 [DEPS](/recipe_modules/cros_dupit/__init__.py#1): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2212,6 +2254,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_bisect/examples/set_test_failures.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/set_test_failures.py#12)(api):**
+### *recipes* / [cros\_bisect:examples/test\_plan\_processing](/recipe_modules/cros_bisect/examples/test_plan_processing.py)
+
+[DEPS](/recipe_modules/cros_bisect/examples/test_plan_processing.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/test_plan_processing.py#23)(api):**
 ### *recipes* / [cros\_branch:examples/full](/recipe_modules/cros_branch/examples/full.py)
 
 [DEPS](/recipe_modules/cros_branch/examples/full.py#8): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2237,11 +2284,16 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_build_api/examples/publish_events.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/publish_events.py#14)(api):**
-### *recipes* / [cros\_cq\_depends:examples/full](/recipe_modules/cros_cq_depends/examples/full.py)
+### *recipes* / [cros\_cq\_depends:examples/cq\_depend\_strings](/recipe_modules/cros_cq_depends/examples/cq_depend_strings.py)
 
-[DEPS](/recipe_modules/cros_cq_depends/examples/full.py#6): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
+[DEPS](/recipe_modules/cros_cq_depends/examples/cq_depend_strings.py#8): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/cq_depend_strings.py#14)(api):**
+### *recipes* / [cros\_cq\_depends:examples/ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py)
+
+[DEPS](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#6): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#18)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
@@ -2454,11 +2506,11 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, properties):**
 
-&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#283)(build_target):**
+&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#284)(build_target):**
 
 Returns the autotest builder name for the given build_target.
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#456)(api, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#457)(api, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -2474,7 +2526,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#527)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#528)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -2505,7 +2557,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#631)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#632)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2528,7 +2580,7 @@ Args:
   builds (list[build_pb2.Build]): builds to test.
   snapshot (GitilesCommit): Start ref of the child builds.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#713)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#714)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2539,7 +2591,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#672)(failed_results, test_plan, percent_threshold, count_threshold):**
+&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#673)(failed_results, test_plan, percent_threshold, count_threshold):**
 
 Check if we need baseline validation for this orchestrator.
 
@@ -2554,7 +2606,7 @@ Returns:
   A boolean indicating whether we need to initiate baseline
   validation.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#488)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#489)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -2567,7 +2619,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#326)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#327)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Autotest VM Tests from the test_plan.
 
@@ -2584,7 +2636,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#414)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#415)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Moblab VM Tests from the test_plan.
 
@@ -2601,7 +2653,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#293)(api, test_plan, passed_tests, test_to_build_map=None, bb=False):**
+&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#294)(api, test_plan, passed_tests, test_to_build_map=None, bb=False):**
 
 Schedule skylab tests from the test_plan.
 
@@ -2620,7 +2672,7 @@ Args:
 Returns:
   list[SkylabTask] of the tests scheduled.
 
-&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#369)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#370)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule tast VM Tests from the test_plan.
 
@@ -2637,11 +2689,11 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#288)(build_target):**
+&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#289)(build_target):**
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#702)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#703)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2649,7 +2701,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#659)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#660)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -2659,7 +2711,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#736)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#737)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 

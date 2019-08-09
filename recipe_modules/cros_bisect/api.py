@@ -5,9 +5,12 @@
 
 """API for interacting with FindIt."""
 
+import collections
+
 from google.protobuf import json_format as jsonpb
 
 from PB.chromiumos.common import PackageInfo
+from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.target_test_requirements_config import HwTestCfg
 
@@ -138,10 +141,44 @@ class CrosBisectApi(recipe_api.RecipeApi):
     build.
 
     Returns:
-      list[str]: sorted list of child builders to run
+      list[str]: sorted list of child builders to run.
     """
     child_builders = set()
     for failure in self._test.hw_test_failures:
       hw_test_unit = jsonpb.Parse(failure.test_spec, HwTestUnit())
       child_builders.add(hw_test_unit.common.build_target.name + '-snapshot')
     return sorted(child_builders)
+
+  def get_test_plan(self):
+    """Returns the test plan as specified by FindIt or None.
+
+    Returns the test plan that needs to run as specified by a FindIt
+    invocation or None if this run was not invoked as a bisection build.
+
+    Returns:
+      GenerateTestPlanResponse or None.
+    """
+    # These were split out into separate units so that each test failure could
+    # travel with the suite that failed for FindIt (for grouping). Here we put
+    # them back together again for the response.
+    hw_test_units = collections.defaultdict(list)
+    for failure in self._test.hw_test_failures:
+      hw_test_unit = jsonpb.Parse(failure.test_spec, HwTestUnit())
+      # Protocol messages aren't hashable, so we use a json serialized
+      # conversion for the key while grouping.
+      key = jsonpb.MessageToJson(hw_test_unit.common)
+      hw_test_units[key].append(hw_test_unit)
+    if not hw_test_units:
+      return None # pragma: no cover
+    response = GenerateTestPlanResponse()
+    for _, units in hw_test_units.iteritems():
+      # TODO: Need to adjust test_unit_common.build_payload for this
+      # specific bisection invocation.
+      test_unit_common = units[0].common
+      hw_test_unit = HwTestUnit(common=test_unit_common)
+      hw_test_cfg = HwTestCfg()
+      for unit in units:
+        hw_test_cfg.hw_test.extend(unit.hw_test_cfg.hw_test)
+      hw_test_unit.hw_test_cfg.CopyFrom(hw_test_cfg)
+      response.hw_test_units.extend([hw_test_unit])
+    return response

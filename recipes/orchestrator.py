@@ -276,8 +276,9 @@ def get_test_plan(api, builds, snapshot):
     builds (list[build_pb2.Build]): builds to test.
     snapshot (GitilesCommit): Start ref of the child builds.
   """
-  # TODO(dburger): alternatively pull test plan from FindIt
-  # bisect invocation properties.
+  test_plan = api.cros_bisect.get_test_plan()
+  if test_plan:
+    return test_plan
   return api.cros_test_plan.generate(builds, snapshot.id)
 
 def autotest_vm_test(build_target):
@@ -1160,21 +1161,24 @@ def GenTests(api):
           'run baseline tests.collect baseline tests.'
           'collect skylab tasks.skylab wait-tasks', baseline_results_success))
 
+  hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
+  task_id = hw_test_unit.hw_test_cfg.hw_test[0].suite + '-task-id'
+  hw_tests = {
+      'results': [
+          api.skylab.wait_task_result(id=task_id, name='hw test1',
+                                      success=True),
+      ]
+  }
+
   yield (api.test('with_test_bisection_invocation') + #
       postsubmit_orchestrator_build() + #
       api.properties(**{
           '$chromeos/cros_bisect': CrosBisectProperties(test={
               'hw_test_failures': [
-                  {'test_spec':
-                   api.cros_bisect.serialized_hw_test_unit('amd64-generic')},
+                  {'test_spec': json_format.MessageToJson(hw_test_unit)},
               ],
           })
-      }) +  #
+      }) + #
       api.easy.simulate_json_step(
           'run tests.collect tests.'
-          'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
-      api.buildbucket.simulated_collect_output(
-          vm_tests, step_name='run tests.collect tests.collect vm tests') +
-      api.buildbucket.simulated_collect_output(
-          moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
+          'collect skylab tasks.skylab wait-tasks', hw_tests))
