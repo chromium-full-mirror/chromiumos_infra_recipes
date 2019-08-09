@@ -806,6 +806,13 @@
     "name": "cq-depend generated CLs"
   },
   {
+    "cmd": [],
+    "name": "cq-depend generated CLs.read [START_DIR]/chromiumos/src gerrit URL",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
@@ -819,7 +826,14 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "cq-depend generated CLs.git_cl status",
+    "name": "cq-depend generated CLs.read [START_DIR]/chromiumos/src gerrit URL.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq-depend generated CLs.read [START_DIR]/chromiumos/src gerrit URL (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -838,7 +852,14 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "cq-depend generated CLs.git_cl status (2)",
+    "name": "cq-depend generated CLs.read [START_DIR]/chromiumos/src gerrit URL (2).git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/private-overlay CL",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -857,9 +878,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "cq-depend generated CLs.git_cl description",
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/private-overlay CL.git_cl description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -877,8 +898,15 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "cq-depend generated CLs.git_cl set description",
-    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/private-overlay CL.git_cl set description",
+    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/private-overlay CL', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -897,9 +925,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "cq-depend generated CLs.git_cl description (2)",
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.git_cl description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -917,10 +945,10 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "cq-depend generated CLs.git_cl set description (2)",
-    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'git_cl description (2)'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.git_cl set description",
+    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -928,17 +956,8 @@
     "name": "update CL labels"
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--send-mail",
-      "--cq-dry-run",
-      "--message-file",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is DRY_RUN.\n\nTherefore, marking CL as CQ+1."
-    ],
-    "name": "update CL labels.git_cl upload",
+    "cmd": [],
+    "name": "update CL labels.[START_DIR]/chromiumos/src",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -954,9 +973,44 @@
       "--message-file",
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is DRY_RUN.\n\nTherefore, marking CL as CQ+1."
     ],
-    "name": "update CL labels.git_cl upload (2)",
+    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "update CL labels.[START_DIR]/chromiumos/src.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.[START_DIR]/chromiumos/src (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--send-mail",
+      "--cq-dry-run",
+      "--message-file",
+      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is DRY_RUN.\n\nTherefore, marking CL as CQ+1."
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "update CL labels.[START_DIR]/chromiumos/src (2).git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

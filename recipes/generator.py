@@ -50,6 +50,7 @@ DEPS = {
     'g3oncall': 'g3oncall',
     'git': 'git',
     'naming': 'naming',
+    'repo': 'repo',
 }
 
 PROPERTIES = GeneratorProperties
@@ -212,7 +213,9 @@ def RunSteps(api, properties):
     with api.step.nest('cq-depend generated CLs'):
       change_urls = []
       for repository in repositories:
-        with api.context(cwd=repository), api.depot_tools.on_path():
+        step_name = 'read {} gerrit URL'.format(api.path.dirname(repository))
+        with api.step.nest(step_name), api.context(
+            cwd=repository), api.depot_tools.on_path():
           change_url = api.git_cl(
               'status', ['--field', 'url', '--fast'],
               stdout=api.raw_io.output(),
@@ -229,7 +232,9 @@ def RunSteps(api, properties):
       for repository, change_url, cq_depend in zip(repositories,
                                                    change_urls,
                                                    cq_depends):
-        with api.context(cwd=repository), api.depot_tools.on_path():
+        step_name = 'set cq-depend for {} CL'.format(repository)
+        with api.step.nest(step_name), api.context(
+            cwd=repository), api.depot_tools.on_path():
           description = api.git_cl.get_description(patch_url=change_url,
                                                    codereview='gerrit')
           description = '{}\n{}'.format(description, cq_depend)
@@ -241,7 +246,6 @@ def RunSteps(api, properties):
   send_to_cq_policy = (existing_cls_policy
                        if existing_change_urls else no_existing_cls_policy)
 
-  # TODO(evanhernandez): Bypass CR+2.
   with api.step.nest('update CL labels'):
     for repository in repositories:
       args = ['--bypass-hooks', '--force', '--send-mail']
@@ -266,7 +270,20 @@ def RunSteps(api, properties):
             'Reviewers may also want to abandon the existing CL(s).')
 
       upload_message = '\n\n'.join(upload_message_lines)
-      api.git_cl.upload(upload_message, args)
+      with api.step.nest(api.path.dirname(repository)), api.context(
+          cwd=repository), api.depot_tools.on_path():
+        # Must set CR+2 to send to CQ. We do this via Gerrit magic.
+        if send_to_cq_policy == FULL_RUN:
+          with api.step.nest('mark CL with code-review +2'):
+            project_infos = api.repo.project_infos(projects=[repository])
+            assert project_infos, 'need project info for {}'.format(repository)
+            project_info = project_infos[0]
+            api.git.push(
+                project_info.remote,
+                'HEAD:refs/for/{}%l=Code-Review+2'.format(project_info.branch))
+
+        # Then, do the thing.
+        api.git_cl.upload(upload_message, args)
 
 
 def GenTests(api):
