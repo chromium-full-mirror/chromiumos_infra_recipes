@@ -575,8 +575,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       'from {} -> {} joinable after dedup and prioritization'.format(
           initial_found_builds, len(existing_builds)))
 
-  completed_build_targets = \
-      api.cros_history.build_target_set(completed_builds)
+  completed_builders = [build.builder.builder for build in completed_builds]
   existing_build_targets = \
       api.cros_history.build_target_set(existing_builds)
 
@@ -589,7 +588,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       # TODO(crbug/991996): Refactor: use something other than string manip.
       child_target = child[:child.rfind('-')]  # i.e. wizpig-snapshot -> wizpig
       # No need to retry previously-passed builds.
-      if child_target in completed_build_targets:
+      if child in completed_builders:
         filter_log.append('{} already passed'.format(child_target))
         continue
       # We've already found an existing build, we'll just wait on it later.
