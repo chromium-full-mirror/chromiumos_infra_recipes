@@ -2454,11 +2454,11 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, properties):**
 
-&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#284)(build_target):**
+&mdash; **def [autotest\_vm\_test](/recipes/orchestrator.py#283)(build_target):**
 
 Returns the autotest builder name for the given build_target.
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#457)(api, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#456)(api, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -2474,7 +2474,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#528)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#527)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -2495,7 +2495,7 @@ Returns:
     A list of identical builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#257)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#256)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -2505,7 +2505,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#633)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#632)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2519,7 +2519,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_test\_plan](/recipes/orchestrator.py#272)(api, builds, snapshot):**
+&mdash; **def [get\_test\_plan](/recipes/orchestrator.py#271)(api, builds, snapshot):**
 
 Returns the test plan that should be executed for this invocation.
 
@@ -2528,7 +2528,7 @@ Args:
   builds (list[build_pb2.Build]): builds to test.
   snapshot (GitilesCommit): Start ref of the child builds.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#715)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#714)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2539,7 +2539,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#674)(failed_results, test_plan, percent_threshold, count_threshold):**
+&mdash; **def [needs\_baseline\_validation](/recipes/orchestrator.py#673)(failed_results, test_plan, percent_threshold, count_threshold):**
 
 Check if we need baseline validation for this orchestrator.
 
@@ -2554,7 +2554,7 @@ Returns:
   A boolean indicating whether we need to initiate baseline
   validation.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#489)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#488)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -2567,7 +2567,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#327)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_autotest\_vm\_tests](/recipes/orchestrator.py#326)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Autotest VM Tests from the test_plan.
 
@@ -2584,7 +2584,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#415)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_moblab\_vm\_tests](/recipes/orchestrator.py#414)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule Moblab VM Tests from the test_plan.
 
@@ -2601,7 +2601,7 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#294)(api, test_plan, passed_tests, test_to_build_map=None, bb=False):**
+&mdash; **def [schedule\_skylab\_tests](/recipes/orchestrator.py#293)(api, test_plan, passed_tests, test_to_build_map=None, bb=False):**
 
 Schedule skylab tests from the test_plan.
 
@@ -2620,7 +2620,7 @@ Args:
 Returns:
   list[SkylabTask] of the tests scheduled.
 
-&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#370)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
+&mdash; **def [schedule\_tast\_vm\_tests](/recipes/orchestrator.py#369)(api, test_plan, passed_tests, snapshot, test_to_build_map=None):**
 
 Schedule tast VM Tests from the test_plan.
 
@@ -2637,11 +2637,11 @@ Args:
 Returns:
   list[Build] objects of the VM tests scheduled.
 
-&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#289)(build_target):**
+&mdash; **def [tast\_vm\_test](/recipes/orchestrator.py#288)(build_target):**
 
 Returns the tast builder name for the given build_target.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#704)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#703)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2649,7 +2649,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#661)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#660)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -2659,7 +2659,7 @@ Args:
 Raises:
   AssertionError: If any invalid ref is found.
 
-&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#738)(api, properties):**
+&mdash; **def [with\_props\_for\_child\_build](/recipes/orchestrator.py#737)(api, properties):**
 
 Merge 'properties' and 'api.cq.props_for_child_build'.
 

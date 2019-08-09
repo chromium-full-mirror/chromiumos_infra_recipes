@@ -81,8 +81,7 @@ def RunSteps(api, properties):
     if properties.assert_singleton:
       with api.step.nest('find inflight orchestrator') as step:
         older_running_builds = api.cros_history.get_matching_builds(
-            api.buildbucket.build, statuses=[common_pb2.STARTED],
-            start_build_id=api.buildbucket.build.id)
+            api.buildbucket.build, statuses=[common_pb2.STARTED])
         if len(older_running_builds) > 1:
           # Current build is redundant (Yourself + Another). Exit with failure.
           step.presentation.step_text = 'found inflight run(s)'
