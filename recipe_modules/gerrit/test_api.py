@@ -63,6 +63,13 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
   def test_gerrit_change_url(self):
     return 'https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1'
 
+  def test_gerrit_change_description(self):
+    return '''\
+a quick description
+
+Change-Id: deadbeef
+    '''
+
   def test_changes_are_submittable(self, errors=[]):
     """Test output for changes_are_submitted.
 
@@ -86,3 +93,15 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
       output['errors'].append('some cherry pick error')
     return self.step_data('check for merge conflicts.git-test-submit',
                           stdout=self.m.json.output(output))
+
+  def simulated_create_change(self, step_name, gerrit_change_url):
+    """Simulates creation of a Gerrit change.
+
+    Args:
+      step_name (str): Step name to set step_data for.
+      gerrit_change_url (GerritChange): Fake upload URL for the change..
+
+    Returns:
+      StepData: Resulting step data.
+    """
+    return self.m.git_cl.output(step_name + '.git_cl status', gerrit_change_url)

@@ -1,0 +1,45 @@
+[
+  {
+    "cmd": [],
+    "name": "comment on CL 123",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@comment text@my comment@@@",
+      "@@@STEP_LOG_END@comment text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/project/+/123@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "comment on CL 123.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project|src/project|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/master%m=my%20comment"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "infra_step": true,
+    "name": "comment on CL 123.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

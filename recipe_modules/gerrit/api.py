@@ -6,7 +6,9 @@
 """APIs for managing Gerrit changes."""
 
 import collections
+import functools
 import re
+import urllib
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
@@ -275,3 +277,203 @@ class GerritApi(recipe_api.RecipeApi):
         return False
 
     return True
+
+  def create_change(self, project, message, reviewers=None, topic=None):
+    """Create a Gerrit change for the most recent commits in the given project.
+
+    Assumes one or more local commits exists in the project.
+
+    Args:
+      project (str|Path): Any path within the project of interest.
+      message (str): Initial upload message to post on the CL.
+          NOT the same as CL description, which comes from commit message.
+      reviewers (list[str]): List of reviewer emails. If specified, gerrit will
+          email the reviewers.
+      topic (str): Topic to set for the CL.
+
+    Returns:
+      GerritChange: The newly created change.
+    """
+    with self.m.step.nest('create gerrit change for %s' % project) as step:
+      with self.m.context(cwd=self.m.cros_source.workspace_path):
+        project_info = self.m.repo.project_info([project])
+
+      upload_args = [
+          '--bypass-hooks',
+          '--force',
+      ]
+
+      if reviewers is not None:
+        upload_args.append('--send-mail')
+        upload_args.append('--reviewers')
+        upload_args.extend(reviewers)
+
+      if topic is not None:
+        upload_args.append('--topic')
+        upload_args.append(topic)
+
+      with self.m.context(
+          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+        self.m.git_cl.upload(message, upload_args=upload_args)
+        gerrit_change_url = self.m.git_cl.status(
+            field='url', fast=True,
+            step_test_data=functools.partial(
+                self.m.raw_io.test_api.stream_output,
+                self.test_api.test_gerrit_change_url()))
+        step.presentation.links['link to change'] = gerrit_change_url
+        return self.parse_gerrit_change(gerrit_change_url)
+
+  def set_change_labels(self, gerrit_change, labels):
+    """Set the given labels for the given Gerrit change.
+
+    Args:
+      gerrit_change (GerritChange): The change of interest.
+      labels (dict): Mapping from label name (str) to value (int).
+
+    Returns:
+      str: The new label ref (primarily for testing).
+    """
+    with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as step:
+      full_labels = sorted(['%s+%d' % lv for lv in labels.iteritems()])
+      step.presentation.step_text = ','.join(full_labels)
+      step.presentation.links['link to change'] = self.parse_gerrit_change_url(
+          gerrit_change)
+
+      with self.m.context(cwd=self.m.cros_source.workspace_path):
+        project_info = self.m.repo.project_info([gerrit_change.project])
+
+      branch = project_info.branch.split('/')[-1]
+      ref = 'refs/for/%s%%%s' % (
+          branch, ','.join(['l=%s' % label for label in full_labels]))
+      refspec = 'HEAD:%s' % ref
+      with self.m.context(
+          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+        self.m.git.push(project_info.remote, refspec)
+
+      return ref
+
+  def add_change_comment(self, gerrit_change, comment):
+    """Add a comment to the given Gerrit change.
+
+    Args:
+      gerrit_change (GerritChange): The change to post to.
+      comment (str): The comment to post.
+
+    Returns:
+      str: The new message ref (primarily for testing).
+    """
+    with self.m.step.nest('comment on CL %d' % gerrit_change.change) as step:
+      step.presentation.logs['comment text'] = [comment]
+      step.presentation.links['link to change'] = self.parse_gerrit_change_url(
+          gerrit_change)
+
+      with self.m.context(cwd=self.m.cros_source.workspace_path):
+        project_info = self.m.repo.project_info([gerrit_change.project])
+
+      # Refspec cannot contain spaces, so swap space characters with +
+      comment = urllib.quote(comment)
+      branch = project_info.branch.split('/')[-1]
+      ref = 'refs/for/%s%%m=%s' % (branch, comment)
+      refspec = 'HEAD:%s' % ref
+      with self.m.context(
+          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+        self.m.git.push(project_info.remote, refspec)
+      return ref
+
+  def get_change_description(self, gerrit_change):
+    """Get the description of the given Gerrit change.
+
+    Args:
+      gerrit_change (GerritChange): The change of interest.
+
+    Returns:
+      str: The change description.
+    """
+    with self.m.step.nest(
+        'get CL %d description' % gerrit_change.change) as step:
+      gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
+      step.presentation.links['link to change'] = gerrit_change_url
+
+      with self.m.context(cwd=self.m.cros_source.workspace_path):
+        project_info = self.m.repo.project_info([gerrit_change.project])
+
+      with self.m.context(
+          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+        # Use `git cl` because depot_tools/gerrit does not support
+        # getting description for the latest patch. That is, you must
+        # always supply the patch number, and many of our applications
+        # do not know it.
+        description = self.m.git_cl.get_description(
+            patch_url=gerrit_change_url, codereview='gerrit',
+            step_test_data=functools.partial(
+                self.m.raw_io.test_api.stream_output,
+                self.test_api.test_gerrit_change_description()))
+
+      step.presentation.logs['description text'] = [description.stdout]
+      return description
+
+  def set_change_description(self, gerrit_change, description):
+    """Set the description of the given Gerrit change.
+
+    Args:
+      gerrit_change (GerritChange): The change of interest.
+      description (str): The new description, in full. Be sure this still
+          includes the Change-Id and other essential metadata.
+    """
+    with self.m.step.nest(
+        'set CL %d description' % gerrit_change.change) as step:
+      gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
+      step.presentation.links['link to change'] = gerrit_change_url
+      step.presentation.logs['description text'] = [description]
+
+      with self.m.context(cwd=self.m.cros_source.workspace_path):
+        project_info = self.m.repo.project_info([gerrit_change.project])
+
+      with self.m.context(
+          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+        self.m.git_cl.set_description(description, patch_url=gerrit_change_url,
+                                      codereview='gerrit')
+
+  def abandon_change(self, gerrit_change, message=None):
+    """Abandon the given change.
+
+    Args:
+      gerrit_change (GerritChange): The change to abandon.
+      message (str): Optional message to post to change.
+    """
+    with self.m.step.nest('abandon CL %d' % gerrit_change.change) as step:
+      step.presentation.links['link to change'] = self.parse_gerrit_change_url(
+          gerrit_change)
+
+      self.m.depot_tools_gerrit.abandon_change(
+          gerrit_change.host, gerrit_change.change, message=message)
+
+  def query_changes(self, host, query_params):
+    """Query gerrit for the given changes.
+
+    Args:
+      host (str): The Gerrit host to query.
+      query_params (list[(str, str)]): Query parameters as list of (key, value) tuples
+          to form a query as documented here:
+          https://gerrit-review.googlesource.com/Documentation/user-search.html#search-operators
+
+    Returns:
+      list[GerritChange]: Changes that match the query.
+    """
+    with self.m.step.nest('query %s' % host) as step:
+      results = self.m.depot_tools_gerrit.get_changes(host, query_params)
+      prefix = 'https://'
+      changes = [
+          GerritChange(
+              host=host[len(prefix):] if host.startswith(prefix) else host,
+              project=result['project'],
+              change=int(result['_number']),
+          )
+          for result in results
+      ]
+
+      for change in changes:
+        change_url = self.parse_gerrit_change_url(change)
+        step.presentation.links['found CL %d' % change.change] = change_url
+
+      return changes

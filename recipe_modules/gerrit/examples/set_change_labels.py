@@ -11,20 +11,18 @@ DEPS = [
 ]
 
 def RunSteps(api):
-  # TODO(evanhernandez): Need to normalize how we handle test data.
-  change = GerritChange(
+  gerrit_change = GerritChange(
       host='chromium-review.googlesource.com',
-      change=91827,
-      patchset=1,
+      project='project',
+      change=123,
   )
-
-  api.gerrit.changes_are_submittable([change])
-  api.gerrit.changes_are_submittable(
-      [change],
-      test_output_data=api.gerrit.test_api.test_changes_are_submittable(
-          errors=['could not cherry pick']))
-  api.gerrit.test_api.simulated_changes_are_submittable(submittable=False)
-
+  labels = {
+      'Code-Review': 2,
+      'Verified': 1,
+  }
+  ref = api.gerrit.set_change_labels(gerrit_change, labels)
+  api.assertions.assertEqual(
+      ref, 'refs/for/master%l=Code-Review+2,l=Verified+1')
 
 def GenTests(api):
   yield api.test('basic')
