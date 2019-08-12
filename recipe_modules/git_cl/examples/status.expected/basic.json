@@ -1,0 +1,20 @@
+[
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "git cl status"
+  },
+  {
+    "name": "$result"
+  }
+]

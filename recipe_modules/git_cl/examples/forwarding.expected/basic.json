@@ -1,0 +1,19 @@
+[
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--message-file",
+      "foo"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "git_cl upload"
+  },
+  {
+    "name": "$result"
+  }
+]

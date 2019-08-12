@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/assertions',
+    'git_cl',
+]
+
+
+def RunSteps(api):
+  output = api.git_cl.status(field='url', fast=True, step_name='git cl status')
+  api.assertions.assertEqual(output, 'foo')
+
+def GenTests(api):
+  yield (api.test('basic') +
+         api.git_cl.output('git cl status', 'foo'))

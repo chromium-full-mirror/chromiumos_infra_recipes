@@ -29,6 +29,7 @@
   * [g3oncall](#recipe_modules-g3oncall) &mdash; API for interacting with g3oncall.
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
+  * [git_cl](#recipe_modules-git_cl) &mdash; API for working with git cl.
   * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) &mdash; APIs for dealing with Gitiles.
@@ -99,6 +100,8 @@
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [git:examples/full](#recipes-git_examples_full)
+  * [git_cl:examples/forwarding](#recipes-git_cl_examples_forwarding)
+  * [git_cl:examples/status](#recipes-git_cl_examples_status)
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
@@ -1590,6 +1593,27 @@ Args:
 Returns:
   str: The contents of the file.
   None: The file does not exist at the given revision.
+### *recipe_modules* / [git\_cl](/recipe_modules/git_cl)
+
+[DEPS](/recipe_modules/git_cl/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/git\_cl][depot_tools/recipe_modules/git_cl], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+API for working with git cl.
+
+#### **class [GitClApi](/recipe_modules/git_cl/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for interacting with git cl.
+
+&mdash; **def [status](/recipe_modules/git_cl/api.py#32)(self, field=None, fast=False, \*\*kwargs):**
+
+Run `git cl status` with given arguments.
+
+Args:
+  field: Set --field to this value.
+  fast: Set --fast.
+  kwargs: Passed to recipe_engine/step.
+
+Returns:
+  str: The command output.
 ### *recipe_modules* / [git\_footers](/recipe_modules/git_footers)
 
 [DEPS](/recipe_modules/git_footers/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -2510,6 +2534,16 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 [DEPS](/recipe_modules/git/examples/full.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#13)(api):**
+### *recipes* / [git\_cl:examples/forwarding](/recipe_modules/git_cl/examples/forwarding.py)
+
+[DEPS](/recipe_modules/git_cl/examples/forwarding.py#6): [git\_cl](#recipe_modules-git_cl)
+
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/forwarding.py#11)(api):**
+### *recipes* / [git\_cl:examples/status](/recipe_modules/git_cl/examples/status.py)
+
+[DEPS](/recipe_modules/git_cl/examples/status.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/status.py#12)(api):**
 ### *recipes* / [git\_footers:examples/full](/recipe_modules/git_footers/examples/full.py)
 
 [DEPS](/recipe_modules/git_footers/examples/full.py#8): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
