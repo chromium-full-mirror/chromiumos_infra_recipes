@@ -1,0 +1,14 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.gerrit.examples;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message ParseGerritChangeProperties {
+  string gerrit_change_url = 1;
+  buildbucket.v2.GerritChange expected = 2;
+}

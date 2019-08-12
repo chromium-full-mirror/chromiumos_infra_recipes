@@ -99,7 +99,11 @@
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
   * [g3oncall:examples/status](#recipes-g3oncall_examples_status)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
+  * [gerrit:examples/changes_are_submittable](#recipes-gerrit_examples_changes_are_submittable)
+  * [gerrit:examples/fetch_patch_sets](#recipes-gerrit_examples_fetch_patch_sets)
   * [gerrit:examples/full](#recipes-gerrit_examples_full)
+  * [gerrit:examples/parse_gerrit_change](#recipes-gerrit_examples_parse_gerrit_change)
+  * [gerrit:examples/parse_gerrit_change_url](#recipes-gerrit_examples_parse_gerrit_change_url)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_cl:examples/forwarding](#recipes-git_cl_examples_forwarding)
   * [git_cl:examples/status](#recipes-git_cl_examples_status)
@@ -2580,11 +2584,31 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [RunSteps](/recipes/generator.py#58)(api, properties):**
+### *recipes* / [gerrit:examples/changes\_are\_submittable](/recipe_modules/gerrit/examples/changes_are_submittable.py)
+
+[DEPS](/recipe_modules/gerrit/examples/changes_are_submittable.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/changes_are_submittable.py#14)(api):**
+### *recipes* / [gerrit:examples/fetch\_patch\_sets](/recipe_modules/gerrit/examples/fetch_patch_sets.py)
+
+[DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#14)(api):**
 ### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
 
 [DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#16)(api):**
+### *recipes* / [gerrit:examples/parse\_gerrit\_change](/recipe_modules/gerrit/examples/parse_gerrit_change.py)
+
+[DEPS](/recipe_modules/gerrit/examples/parse_gerrit_change.py#11): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_gerrit_change.py#19)(api, properties):**
+### *recipes* / [gerrit:examples/parse\_gerrit\_change\_url](/recipe_modules/gerrit/examples/parse_gerrit_change_url.py)
+
+[DEPS](/recipe_modules/gerrit/examples/parse_gerrit_change_url.py#11): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_gerrit_change_url.py#19)(api, properties):**
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
 [DEPS](/recipe_modules/git/examples/full.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
