@@ -29,6 +29,9 @@ def RunSteps(api):
   infos = api.repo.project_infos()
   assert len(infos) == 3 and infos[0].path == 'src/a'
 
+  info = api.repo.project_info(projects=['foo', 'foo'])
+  assert info.name == 'foo'
+
   assert api.repo.manifest_snapshot() == "<manifest></manifest>"
 
   snapshot_a = api.path['start_dir'].join('snapshot_a.xml')

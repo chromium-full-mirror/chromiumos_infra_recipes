@@ -190,6 +190,19 @@ class RepoApi(recipe_api.RecipeApi):
       infos.append(ProjectInfo(name, path, remote, branch))
     return infos
 
+  def project_info(self, projects):
+    """Use 'repo forall' to gather project information for one project.
+
+    Args:
+      project (str|Path): Project name or path to return info for.
+
+    Returns:
+      ProjectInfo: The request project info.
+    """
+    project_infos = self.project_infos(projects=projects)
+    assert len(set(project_infos)) == 1, 'expected one project'
+    return project_infos[0]
+
   def manifest_snapshot(self):
     """Uses repo to create a manifest snapshot and returns it as a string.
 
