@@ -8,7 +8,6 @@
 All builders run against the same source tree.
 """
 
-
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -22,7 +21,7 @@ DEPS = [
     'cros_infra_config',
     'cros_relevance',
     'cros_source',
-    'cros_test_plan',
+    'cros_test_proctor',
     'cros_version',
     'easy',
     'failures',
@@ -66,8 +65,7 @@ def RunSteps(api, properties):
           'chrome-internal', 'chromeos/manifest-internal', 'snapshot')
       snapshot = common_pb2.GitilesCommit(
           host='chrome-internal.googlesource.com',
-          project='chromeos/manifest-internal',
-          ref='refs/heads/snapshot',
+          project='chromeos/manifest-internal', ref='refs/heads/snapshot',
           id=snapshot_sha1)
 
   # Point start ref to the input snapshot if specified.
@@ -113,138 +111,11 @@ def RunSteps(api, properties):
       b for b in completed_builds if not api.failures.is_build_failure(b)
   ]
 
-  with api.step.nest('run tests'):
-    with api.step.nest('schedule tests'):
-      test_plan = get_test_plan(api, need_tests_builds, snapshot)
-
-      # We will not run tests that have already passed for this patch set.
-      passed_tests = []
-      if properties.enable_history and gerrit_changes:
-        passed_tests = api.cros_history.get_passed_tests()
-
-      test_to_build_target_map = {}
-
-      skylab_tasks = schedule_skylab_tests(api, test_plan, passed_tests,
-                                           test_to_build_target_map)
-
-      vm_tests = schedule_autotest_vm_tests(api, test_plan, passed_tests,
-                                            snapshot, test_to_build_target_map)
-
-      tast_vm_tests = schedule_tast_vm_tests(api, test_plan, passed_tests,
-                                             snapshot, test_to_build_target_map)
-      vm_tests += tast_vm_tests
-
-      moblab_vm_tests = schedule_moblab_vm_tests(
-          api, test_plan, passed_tests, snapshot, test_to_build_target_map)
-
-    with api.step.nest('collect tests'):
-      hw_results = []
-      if skylab_tasks:
-        hw_results = api.skylab.wait_tasks(skylab_tasks)
-
-      vm_results = []
-      if vm_tests:
-        vm_results = api.buildbucket.collect_builds(
-            [vt.id for vt in vm_tests], step_name='collect vm tests',
-            timeout=60 * 60 * 4).values()
-
-      moblab_vm_results = []
-      if moblab_vm_tests:
-        moblab_vm_results = api.buildbucket.collect_builds(
-            [mvt.id for mvt in moblab_vm_tests],
-            step_name='collect moblab vm tests',
-            timeout=60 * 60 * 4).values()
-
-      # Record test results.
-      passed_tests = [
-          hw_result.task.test.common.display_name
-          for hw_result in hw_results
-          if not api.failures.is_hw_test_failure(hw_result)
-      ]
-      passed_tests.extend([
-          api.naming.get_vm_test_title(vm_result)
-          for vm_result in vm_results
-          if not api.failures.is_vm_test_failure(vm_result)
-      ])
-      passed_tests.extend([
-          api.naming.get_moblab_vm_test_title(moblab_vm_result)
-          for moblab_vm_result in moblab_vm_results
-          if not api.failures.is_moblab_vm_test_failure(moblab_vm_result)
-      ])
-
-  baseline_hw_results = []
-  baseline_vm_results = []
-  failed_test_names = ([
-      hw_result.task.test.common.display_name
-      for hw_result in hw_results
-      if api.failures.is_hw_test_failure(hw_result)
-  ] + [
-      api.naming.get_vm_test_title(vm_result)
-      for vm_result in vm_results
-      if api.failures.is_vm_test_failure(vm_result)
-  ])
-
-  with api.failures.ignore_exceptions():
-    if gerrit_changes and needs_baseline_validation(
-        failed_test_names, test_plan, properties.baseline_validation_percent,
-        properties.baseline_validation_count):
-      # Start Baseline HW Verification process.
-      build_targets_to_verify = set([
-          test_to_build_target_map[test_name] for test_name in failed_test_names
-      ])
-      baseline_builds = []
-      for build in completed_builds:
-        # Assuming that completed_builds have build_targets.
-        build_target = api.cros_history.get_build_target(build)
-        if build_target and build_target in build_targets_to_verify:
-          baseline_builds += api.cros_history.get_snapshot_builds(
-              build.input.gitiles_commit, [build_target + '-snapshot'],
-              [common_pb2.SUCCESS])
-
-      with api.step.nest('run baseline tests'):
-        with api.step.nest('schedule baseline tests'):
-          baseline_test_plan = api.cros_test_plan.generate(
-              baseline_builds, snapshot.id)
-          baseline_skylab_tasks = schedule_skylab_tests(api, baseline_test_plan,
-                                                        passed_tests, bb=True)
-          baseline_vm_tests = schedule_autotest_vm_tests(
-              api, baseline_test_plan, passed_tests, snapshot)
-          baseline_vm_tests += schedule_tast_vm_tests(api, baseline_test_plan,
-                                                      passed_tests, snapshot)
-
-        with api.step.nest('collect baseline tests'):
-          if baseline_skylab_tasks:
-            baseline_hw_results = api.skylab.wait_tasks(baseline_skylab_tasks,
-                                                        bb=True)
-            # Add failures here to passed_tests.
-            passed_tests.extend([
-                hw_result.task.test.common.display_name
-                for hw_result in baseline_hw_results
-                if api.failures.is_hw_test_failure(hw_result)
-            ])
-          if baseline_vm_tests:
-            baseline_vm_results = api.buildbucket.collect_builds(
-                [vt.id for vt in baseline_vm_tests],
-                step_name='collect baseline vm tests',
-                timeout=60 * 60 * 4).values()
-            # Add failures here to passed_tests.
-            passed_tests.extend([
-                api.naming.get_vm_test_title(vm_result)
-                for vm_result in baseline_vm_results
-                if api.failures.is_vm_test_failure(vm_result)
-            ])
-
-  api.cros_history.set_passed_tests(passed_tests)
-
-  # Verify builds/tests in a deferred context so that all failures appear.
-  with api.step.nest('check test results'):
-    api.cros_bisect.set_test_failures(hw_results)
-    failures.extend(
-        api.failures.get_hw_test_failures(hw_results, baseline_hw_results))
-    failures.extend(
-        api.failures.get_vm_test_failures(vm_results, baseline_vm_results))
-    # TODO(evanhernandez): Include Moblab VM tests here once stable.
-    # Also, add Moblab to baseline validation pipeline.
+  test_failures = api.cros_test_proctor.run_proctor(
+      need_tests_builds, completed_builds, snapshot, gerrit_changes,
+      properties.enable_history, properties.baseline_validation_percent,
+      properties.baseline_validation_count)
+  failures.extend(test_failures)
 
   # Victory! If we've made it this far, the child builders were successful
   # and we can update the success manifest ref if it is specified.
@@ -252,6 +123,7 @@ def RunSteps(api, properties):
                             snapshot)
 
   return api.failures.aggregate_failures(failures)
+
 
 def get_child_builders(api):
   """Returns the child builders that should be run for this invocation.
@@ -267,194 +139,6 @@ def get_child_builders(api):
     return child_builders
   return api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder).orchestrator.children
-
-def get_test_plan(api, builds, snapshot):
-  """Returns the test plan that should be executed for this invocation.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    builds (list[build_pb2.Build]): builds to test.
-    snapshot (GitilesCommit): Start ref of the child builds.
-  """
-  test_plan = api.cros_bisect.get_test_plan()
-  if test_plan:
-    return test_plan
-  return api.cros_test_plan.generate(builds, snapshot.id)
-
-def autotest_vm_test(build_target):
-  """Returns the autotest builder name for the given build_target."""
-  return build_target.name + '-autotest-vm'
-
-
-def tast_vm_test(build_target):
-  """Returns the tast builder name for the given build_target."""
-  return build_target.name + '-tast-vm'
-
-
-def schedule_skylab_tests(api, test_plan, passed_tests, test_to_build_map=None,
-                          bb=False):
-  """Schedule skylab tests from the test_plan.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    test_plan (GenerateTestPlanResponse): A plan for all tests to
-      be scheduled.
-    passed_tests (list[string]): A list of names for the tests that
-      have passed before.
-    test_to_build_map (dict{string->string}): Map of test names to
-      build_targets to be populated.
-      bb(boolean): Whether to use buildbucket-backed cros_test_platform.
-                    Note: this flag is temporary, and will exist only during
-                    cros_test_platform migration.
-
-  Returns:
-    list[SkylabTask] of the tests scheduled.
-  """
-  skylab_tasks = []
-  test_to_build_map = {} if test_to_build_map is None else test_to_build_map
-  with api.step.nest('schedule hardware tests'):
-    for unit in test_plan.hw_test_units:
-      for test in unit.hw_test_cfg.hw_test:
-        if test.common.display_name not in passed_tests:
-          test_name = test.common.display_name
-          build_target = unit.common.build_target
-          test_to_build_map[test_name] = build_target.name
-          skylab_tasks.append(api.skylab.create_suite(test, unit, bb=bb))
-
-  return skylab_tasks
-
-
-def schedule_autotest_vm_tests(api, test_plan, passed_tests, snapshot,
-                               test_to_build_map=None):
-  """Schedule Autotest VM Tests from the test_plan.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    test_plan (GenerateTestPlanResponse): A plan for all tests to
-      be scheduled.
-    passed_tests (list[string]): A list of names for the tests that
-      have passed before.
-    snapshot (GitilesCommit): Start ref to be supplied to the tests.
-    test_to_build_map (dict{string->string}): Map of test names to
-      build_targets to be populated.
-
-  Returns:
-    list[Build] objects of the VM tests scheduled.
-  """
-  requests = []
-  test_to_build_map = {} if test_to_build_map is None else test_to_build_map
-  for unit in test_plan.vm_test_units:
-    for test in unit.vm_test_cfg.vm_test:
-      if test.common.display_name not in passed_tests:
-        test_name = test.common.display_name
-        build_target = unit.common.build_target
-        test_to_build_map[test_name] = build_target.name
-        requests.append(
-            api.buildbucket.schedule_request(
-                gitiles_commit=snapshot, builder=autotest_vm_test(build_target),
-                critical=test.common.critical.value,
-                properties=with_props_for_child_build(
-                    api,
-                    json_format.MessageToDict(
-                        TestVmProperties(
-                            name=test_name, build_target=build_target,
-                            test_harness=VmTestRequest.AUTOTEST,
-                            build_payload=unit.common.build_payload,
-                            expressions=['suite:' + test.test_suite])))))
-
-  vm_tests = api.buildbucket.schedule(requests,
-                                      step_name='schedule autotest vm tests',
-                                      url_title_fn=api.naming.get_build_title)
-  return vm_tests
-
-
-def schedule_tast_vm_tests(api, test_plan, passed_tests, snapshot,
-                           test_to_build_map=None):
-  """Schedule tast VM Tests from the test_plan.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    test_plan (GenerateTestPlanResponse): A plan for all tests to
-      be scheduled.
-    passed_tests (list[string]): A list of names for the tests that
-      have passed before.
-    snapshot (GitilesCommit): Start ref to be supplied to the tests.
-    test_to_build_map (dict{string->string}): Map of test names to
-      build_targets to be populated.
-
-  Returns:
-    list[Build] objects of the VM tests scheduled.
-  """
-  requests = []
-  test_to_build_map = {} if test_to_build_map is None else test_to_build_map
-  for unit in test_plan.tast_vm_test_units:
-    for test in unit.tast_vm_test_cfg.tast_vm_test:
-      if test.common.display_name not in passed_tests:
-        test_name = test.common.display_name
-        build_target = unit.common.build_target
-        test_to_build_map[test_name] = build_target.name
-        requests.append(
-            api.buildbucket.schedule_request(
-                gitiles_commit=snapshot, builder=tast_vm_test(build_target),
-                critical=test.common.critical.value,
-                properties=with_props_for_child_build(
-                    api,
-                    json_format.MessageToDict(
-                        TestVmProperties(
-                            name=test_name, build_target=build_target,
-                            test_harness=VmTestRequest.TAST,
-                            build_payload=unit.common.build_payload,
-                            expressions=[
-                                t.test_expr for t in test.tast_test_expr
-                            ])))))
-
-  vm_tests = api.buildbucket.schedule(requests,
-                                      step_name='schedule tast vm tests',
-                                      url_title_fn=api.naming.get_build_title)
-  return vm_tests
-
-
-def schedule_moblab_vm_tests(api, test_plan, passed_tests, snapshot,
-                             test_to_build_map=None):
-  """Schedule Moblab VM Tests from the test_plan.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    test_plan (GenerateTestPlanResponse): A plan for all tests to
-      be scheduled.
-    passed_tests (list[string]): A list of names for the tests that
-      have passed before.
-    snapshot (GitilesCommit): Start ref to be supplied to the tests.
-    test_to_build_map (dict{string->string}): Map of test names to
-      build_targets to be populated.
-
-  Returns:
-    list[Build] objects of the VM tests scheduled.
-  """
-  requests = []
-  test_to_build_map = {} if test_to_build_map is None else test_to_build_map
-  for unit in test_plan.moblab_vm_test_units:
-    for test in unit.moblab_vm_test_cfg.moblab_test:
-      if test.common.display_name not in passed_tests:
-        test_name = test.common.display_name
-        build_target = unit.common.build_target
-        test_to_build_map[test_name] = build_target.name
-        requests.append(
-            api.buildbucket.schedule_request(
-                gitiles_commit=snapshot, builder='moblab-vm-test',
-                critical=test.common.critical.value,
-                properties=with_props_for_child_build(
-                    api,
-                    json_format.MessageToDict(
-                        TestMoblabVmProperties(
-                            name=test_name,
-                            build_payload=unit.common.build_payload,
-                        )))))
-
-  moblab_vm_tests = api.buildbucket.schedule(
-      requests, step_name='schedule moblab vm tests',
-      url_title_fn=api.naming.get_build_title)
-  return moblab_vm_tests
 
 
 def filter_schedule_wait_builds(api, child_builders, enable_history, snapshot,
@@ -607,8 +291,8 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       # produce Chrome OS builds, without affecting special builders like the
       # chromite unit test ones.
       image_zip = BuilderConfig.Artifacts.IMAGE_ZIP
-      if image_builders_pointless and (image_zip in
-          child_builder_config.artifacts.artifact_types):
+      if image_builders_pointless and (
+          image_zip in child_builder_config.artifacts.artifact_types):
         filter_log.append('{} build is irrelevant for changes'.format(child))
         continue
 
@@ -673,36 +357,6 @@ def validate_refs(refs):
   validate_ref(refs.success, 'success')
 
 
-def needs_baseline_validation(failed_results, test_plan, percent_threshold,
-                              count_threshold):
-  """Check if we need baseline validation for this orchestrator.
-
-  Args:
-    failed_results (list[SkylabResults]): Results of failed tests.
-    test_plan (GenerateTestPlanResponse): test_plan of the orchestrator.
-    percent_threshold (float): upper threshold for baseline validation.
-    count_threshold (int): upper threshold of # of tests
-      for baseline validation.
-
-  Returns:
-    A boolean indicating whether we need to initiate baseline
-    validation.
-  """
-  test_count = sum(
-      [len(unit.hw_test_cfg.hw_test) for unit in test_plan.hw_test_units] +
-      [len(unit.vm_test_cfg.vm_test) for unit in test_plan.vm_test_units] + [
-          len(unit.tast_vm_test_cfg.tast_vm_test)
-          for unit in test_plan.tast_vm_test_units
-      ])
-  if failed_results:
-    failure_ratio = float(len(failed_results)) / test_count
-    if (failure_ratio <= float(percent_threshold)/100 or
-        len(failed_results) <= count_threshold):
-      return True
-
-  return False
-
-
 def validate_ref(ref, name):
   """Assert the given ref starts with refs/heads.
 
@@ -735,23 +389,6 @@ def maybe_update_manifest_ref(api, update_manifest_refs, name, commit):
         api.git.fetch_ref(git_repo, commit.id)
         refspec = '%s:%s' % (commit.id, ref)
         api.git.push(git_repo, refspec)
-
-
-def with_props_for_child_build(api, properties):
-  """Merge 'properties' and 'api.cq.props_for_child_build'.
-
-  Should be used to insert 'props_for_child_build' into properties being passed
-  to a Buildbucket request.
-
-  Args:
-    api (RecipeApi): See RunSteps documentation.
-    properties (dict): A dictionary of properties.
-
-  Return:
-    The merged dict.
-  """
-  properties.update(api.cq.props_for_child_build)
-  return properties
 
 
 def GenTests(api):
@@ -1173,15 +810,19 @@ def GenTests(api):
       ]
   }
 
-  yield (api.test('with_test_bisection_invocation') + #
-      postsubmit_orchestrator_build() + #
-      api.properties(**{
-          '$chromeos/cros_bisect': CrosBisectProperties(test={
-              'hw_test_failures': [
-                  {'test_spec': json_format.MessageToJson(hw_test_unit)},
-              ],
-          })
-      }) + #
-      api.easy.simulate_json_step(
-          'run tests.collect tests.'
-          'collect skylab tasks.skylab wait-tasks', hw_tests))
+  yield (api.test('with_test_bisection_invocation') +  #
+         postsubmit_orchestrator_build() +  #
+         api.properties(
+             **{
+                 '$chromeos/cros_bisect':
+                     CrosBisectProperties(
+                         test={
+                             'hw_test_failures': [{
+                                 'test_spec':
+                                     json_format.MessageToJson(hw_test_unit)
+                             },],
+                         })
+             }) +  #
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests))
