@@ -363,7 +363,8 @@ def schedule_autotest_vm_tests(api, test_plan, passed_tests, snapshot,
                             expressions=['suite:' + test.test_suite])))))
 
   vm_tests = api.buildbucket.schedule(requests,
-                                      step_name='schedule autotest vm tests')
+                                      step_name='schedule autotest vm tests',
+                                      url_title_fn=api.naming.get_build_title)
   return vm_tests
 
 
@@ -408,7 +409,8 @@ def schedule_tast_vm_tests(api, test_plan, passed_tests, snapshot,
                             ])))))
 
   vm_tests = api.buildbucket.schedule(requests,
-                                      step_name='schedule tast vm tests')
+                                      step_name='schedule tast vm tests',
+                                      url_title_fn=api.naming.get_build_title)
   return vm_tests
 
 
@@ -450,7 +452,8 @@ def schedule_moblab_vm_tests(api, test_plan, passed_tests, snapshot,
                         )))))
 
   moblab_vm_tests = api.buildbucket.schedule(
-      requests, step_name='schedule moblab vm tests')
+      requests, step_name='schedule moblab vm tests',
+      url_title_fn=api.naming.get_build_title)
   return moblab_vm_tests
 
 

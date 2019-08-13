@@ -1182,7 +1182,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514002@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+      "@@@STEP_LINK@chromeos.cq.target-autotest-vm@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {
@@ -1289,7 +1289,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514003@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+      "@@@STEP_LINK@chromeos.cq.target-tast-vm@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514003@@@"
     ]
   },
   {
@@ -1389,7 +1389,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514004@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LINK@chromeos.cq.moblab-vm-test@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514004@@@"
     ]
   },
   {
