@@ -5,6 +5,7 @@ DEPS = [
     'cros_bisect',
     'cros_history',
     'cros_test_plan',
+    'gerrit',
     'failures',
     'naming',
     'skylab',

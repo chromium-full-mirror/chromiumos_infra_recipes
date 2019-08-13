@@ -1026,7 +1026,7 @@ Args:
 Returns: ExecuteResponse.
 ### *recipe_modules* / [cros\_test\_proctor](/recipe_modules/cros_test_proctor)
 
-[DEPS](/recipe_modules/cros_test_proctor/__init__.py#1): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_proctor/__init__.py#1): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -1377,6 +1377,18 @@ Args:
 
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
+
+&mdash; **def [has\_chromite\_changes](/recipe_modules/gerrit/api.py#260)(self, gerrit_changes):**
+
+Checks if the input changes modify chromite only.
+
+This is a hack to try experimental features without affecting users.
+
+Args:
+  gerrit_changes (list(common_pb2.GerritChange)): the changes to check
+
+Returns:
+  bool indicating whether the changes are to chromite only.
 
 &mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#172)(self, gerrit_change_url):**
 

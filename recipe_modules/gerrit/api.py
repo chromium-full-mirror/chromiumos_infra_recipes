@@ -256,3 +256,22 @@ class GerritApi(recipe_api.RecipeApi):
         return False
       step.presentation.step_text = 'confirmed no merge conflicts'
       return True
+
+  def has_chromite_changes(self, gerrit_changes):
+    """Checks if the input changes modify chromite only.
+
+    This is a hack to try experimental features without affecting users.
+
+    Args:
+      gerrit_changes (list(common_pb2.GerritChange)): the changes to check
+
+    Returns:
+      bool indicating whether the changes are to chromite only.
+    """
+    if not gerrit_changes:
+      return False
+    for change in gerrit_changes:
+      if change.project != 'chromiumos/chromite':
+        return False
+
+    return True

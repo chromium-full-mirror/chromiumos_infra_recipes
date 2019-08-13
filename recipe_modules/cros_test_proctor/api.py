@@ -58,8 +58,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         test_to_build_target_map = {}
 
-        skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests,
-                                                   test_to_build_target_map)
+        skylab_tasks = self._schedule_skylab_tests(
+            test_plan, passed_tests, test_to_build_target_map,
+            bb=self.m.gerrit.has_chromite_changes(gerrit_changes))
 
         vm_tests = self._schedule_autotest_vm_tests(
             test_plan, passed_tests, snapshot, test_to_build_target_map)
@@ -74,7 +75,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       with self.m.step.nest('collect tests'):
         hw_results = []
         if skylab_tasks:
-          hw_results = self.m.skylab.wait_tasks(skylab_tasks)
+          hw_results = self.m.skylab.wait_tasks(
+              skylab_tasks,
+              bb=self.m.gerrit.has_chromite_changes(gerrit_changes))
         vm_results = []
         if vm_tests:
           vm_results = self.m.buildbucket.collect_builds(
