@@ -9,7 +9,7 @@
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release"
     ],
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -28,7 +28,7 @@
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release"
     ],
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -47,7 +47,7 @@
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release"
     ],
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -67,7 +67,7 @@
       "--descriptor",
       "nami"
     ],
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -82,7 +82,7 @@
       "my_branch",
       "branch_new_name"
     ],
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -96,7 +96,7 @@
       "delete",
       "my_branch"
     ],
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]

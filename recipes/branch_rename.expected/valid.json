@@ -273,7 +273,7 @@
       "renamed_branch"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]

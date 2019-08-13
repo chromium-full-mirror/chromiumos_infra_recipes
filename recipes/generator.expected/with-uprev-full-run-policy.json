@@ -764,7 +764,7 @@
       "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n        "
     ],
     "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -791,7 +791,7 @@
       "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n        "
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -821,7 +821,7 @@
       "--fast"
     ],
     "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -847,7 +847,7 @@
       "--fast"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -873,7 +873,7 @@
       "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1"
     ],
     "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -893,7 +893,7 @@
       "--gerrit"
     ],
     "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -920,7 +920,7 @@
       "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -940,7 +940,7 @@
       "--gerrit"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -978,7 +978,7 @@
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
     "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -999,7 +999,7 @@
       "HEAD:refs/for/refs/heads/master%l=Code-Review+2"
     ],
     "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1022,7 +1022,7 @@
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is FULL_RUN.\n\nTherefore, marking CL as CQ+2."
     ],
     "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1055,7 +1055,7 @@
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1076,7 +1076,7 @@
       "HEAD:refs/for/refs/heads/master%l=Code-Review+2"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1099,7 +1099,7 @@
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is FULL_RUN.\n\nTherefore, marking CL as CQ+2."
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
