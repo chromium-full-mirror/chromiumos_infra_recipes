@@ -314,21 +314,19 @@ def GenTests(api):
       ]
   }
 
-  yield (api.test('with_test_bisection_invocation') +  #
-         api.properties(
-             need_tests_builds_serialized=serialize_builds(
-                 [postsubmit_orchestrator_build()])) +  #
-         api.properties(
-             **{
-                 '$chromeos/cros_bisect':
-                     CrosBisectProperties(
-                         test={
-                             'hw_test_failures': [{
-                                 'test_spec':
-                                     json_format.MessageToJson(hw_test_unit)
-                             },],
-                         })
-             }) +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests))
+  builds = [api.buildbucket.ci_build_message(status='SUCCESS')]
+  api.cros_bisect.add_output_props(builds[0], 'amd64-generic')
+
+  yield (api.test('with_test_bisection_invocation') + #
+      api.properties(
+          need_tests_builds_serialized=serialize_builds(builds)) +  #
+      api.properties(**{
+          '$chromeos/cros_bisect': CrosBisectProperties(test={
+              'hw_test_failures': [
+                  {'test_spec': json_format.MessageToJson(hw_test_unit)},
+              ],
+          })
+      }) + #
+      api.easy.simulate_json_step(
+          'run tests.collect tests.'
+          'collect skylab tasks.skylab wait-tasks', hw_tests))

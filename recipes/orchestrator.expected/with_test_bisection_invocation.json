@@ -219,7 +219,37 @@
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chromium.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"project\": \"project\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/heads/master\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"files_by_artifact\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"IMAGE_ZIP\": \"imager.zip\", @@@",
+      "@@@STEP_LOG_LINE@json.output@                \"TAST_FILES\": \"taster.zip\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              }, @@@",
+      "@@@STEP_LOG_LINE@json.output@              \"gs_bucket\": \"bucket\", @@@",
+      "@@@STEP_LOG_LINE@json.output@              \"gs_path\": \"path\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"build_target\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -237,7 +267,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+      "@@@STEP_LINK@project.ci.builder@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {
@@ -254,10 +284,10 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results...",
+    "name": "check build results.build results.project.ci.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+      "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {
@@ -268,7 +298,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "check build results.build results....get access token for default account",
+    "name": "check build results.build results.project.ci.builder.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -289,7 +319,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "check build results.build results....get Sheriff-o-Matic annotations",
+    "name": "check build results.build results.project.ci.builder.get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",
@@ -411,7 +441,7 @@
       "-pool",
       "DUT_POOL_QUOTA",
       "-image",
-      "",
+      "path",
       "-board",
       "amd64-generic",
       "-timeout-mins",
@@ -456,6 +486,24 @@
       "@@@STEP_LOG_LINE@return value@, unit=common {@@@",
       "@@@STEP_LOG_LINE@return value@  build_target {@@@",
       "@@@STEP_LOG_LINE@return value@    name: \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@  build_payload {@@@",
+      "@@@STEP_LOG_LINE@return value@    artifacts_gs_bucket: \"bucket\"@@@",
+      "@@@STEP_LOG_LINE@return value@    artifacts_gs_path: \"path\"@@@",
+      "@@@STEP_LOG_LINE@return value@    files_by_artifact {@@@",
+      "@@@STEP_LOG_LINE@return value@      fields {@@@",
+      "@@@STEP_LOG_LINE@return value@        key: \"IMAGE_ZIP\"@@@",
+      "@@@STEP_LOG_LINE@return value@        value {@@@",
+      "@@@STEP_LOG_LINE@return value@          string_value: \"imager.zip\"@@@",
+      "@@@STEP_LOG_LINE@return value@        }@@@",
+      "@@@STEP_LOG_LINE@return value@      }@@@",
+      "@@@STEP_LOG_LINE@return value@      fields {@@@",
+      "@@@STEP_LOG_LINE@return value@        key: \"TAST_FILES\"@@@",
+      "@@@STEP_LOG_LINE@return value@        value {@@@",
+      "@@@STEP_LOG_LINE@return value@          string_value: \"taster.zip\"@@@",
+      "@@@STEP_LOG_LINE@return value@        }@@@",
+      "@@@STEP_LOG_LINE@return value@      }@@@",
+      "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@hw_test_cfg {@@@",

@@ -189,7 +189,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       builds (list[build_pb2.Build]): builds to test.
       snapshot (GitilesCommit): Start ref of the child builds.
     """
-    test_plan = self.m.cros_bisect.get_test_plan()
+    test_plan = self.m.cros_bisect.get_test_plan(builds)
     if test_plan:
       return test_plan
     return self.m.cros_test_plan.generate(builds, snapshot.id)

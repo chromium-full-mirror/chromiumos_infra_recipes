@@ -8,8 +8,10 @@
 import collections
 
 from google.protobuf import json_format as jsonpb
+from google.protobuf import struct_pb2
 
 from PB.chromiumos.common import PackageInfo
+from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.target_test_requirements_config import HwTestCfg
@@ -149,11 +151,17 @@ class CrosBisectApi(recipe_api.RecipeApi):
       child_builders.add(hw_test_unit.common.build_target.name + '-snapshot')
     return sorted(child_builders)
 
-  def get_test_plan(self):
+  def get_test_plan(self, builds):
     """Returns the test plan as specified by FindIt or None.
 
     Returns the test plan that needs to run as specified by a FindIt
     invocation or None if this run was not invoked as a bisection build.
+
+    Args:
+      builds (list[build_pb2.Build]): list of completed builds. While FindIt
+          has returned the test plan to run the TestUnitCommon.BuildPayloads
+          in that plan need to be updated for this bisection invocation. The
+          information to do that update is retrieved from these builds.
 
     Returns:
       GenerateTestPlanResponse or None.
@@ -168,13 +176,37 @@ class CrosBisectApi(recipe_api.RecipeApi):
       # conversion for the key while grouping.
       key = jsonpb.MessageToJson(hw_test_unit.common)
       hw_test_units[key].append(hw_test_unit)
-    if not hw_test_units:
-      return None # pragma: no cover
+    if not hw_test_units: # pragma: no cover
+      return None
+
+    build_payloads = {}
+    for build in builds:
+      try:
+        build_target_name = build.output.properties['build_target']['name']
+        artifacts = build.output.properties['artifacts']
+        build_payload = BuildPayload(
+            artifacts_gs_bucket = artifacts['gs_bucket'],
+            artifacts_gs_path = artifacts['gs_path'],
+            files_by_artifact = artifacts['files_by_artifact'],
+        )
+        build_payloads[build_target_name] = build_payload
+      except ValueError: # pragma: no cover
+        # Here we just pass if we weren't able to map to a BuildPayload. Below
+        # a ValueError will be raised if we cannot find the BuildPayload needed
+        # for a build target.
+        pass
+
     response = GenerateTestPlanResponse()
     for _, units in hw_test_units.iteritems():
-      # TODO: Need to adjust test_unit_common.build_payload for this
-      # specific bisection invocation.
+      # This is the TestUnitCommon from the failed invocation. Here we update
+      # the BuildPayload for the builds we are bisecting on.
       test_unit_common = units[0].common
+      build_target_name = test_unit_common.build_target.name
+      build_payload = build_payloads.get(build_target_name, None)
+      if not build_payload: # pragma: no cover
+        raise ValueError('Unable to resolve a BuildPayload for {}.'.format(
+            build_target_name))
+      test_unit_common.build_payload.CopyFrom(build_payload)
       hw_test_unit = HwTestUnit(common=test_unit_common)
       hw_test_cfg = HwTestCfg()
       for unit in units:

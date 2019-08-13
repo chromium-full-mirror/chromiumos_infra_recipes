@@ -71,3 +71,31 @@ class CrosBisectTestApi(recipe_test_api.RecipeTestApi):
     """
     hw_test_unit = self.hw_test_unit(build_target_name, hw_test_cfg)
     return jsonpb.MessageToJson(hw_test_unit)
+
+  def add_output_props(self, build, build_target_name,
+                       gs_bucket='bucket', gs_path='path',
+                       files_by_artifact=None):
+    """Adds output properties expected for constructing a test plan.
+
+    Adds the output properties to `build` expected to be present in order
+    to construct a test plan from a bisection invocation.
+
+    Args:
+      build (build_pb2.Build): build to add the output properties to.
+      build_target_name (str): the build target name.
+      gs_bucket (str): artifacts google storage bucket.
+      gs_path (str): artifacts google storage path.
+      files_by_artifact (dict): files by artifact mapping.
+    """
+    build.output.properties['build_target'] = {
+        'name': build_target_name,
+    }
+    files_by_artifact = files_by_artifact or {
+        'IMAGE_ZIP': 'imager.zip',
+        'TAST_FILES': 'taster.zip',
+    }
+    build.output.properties['artifacts'] = {
+        'gs_bucket': gs_bucket,
+        'gs_path': gs_path,
+        'files_by_artifact': files_by_artifact,
+    }

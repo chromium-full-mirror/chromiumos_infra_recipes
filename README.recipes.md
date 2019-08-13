@@ -313,11 +313,11 @@ Args:
 
 API for interacting with FindIt.
 
-#### **class [CrosBisectApi](/recipe_modules/cros_bisect/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBisectApi](/recipe_modules/cros_bisect/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#125)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#127)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -327,7 +327,7 @@ empty list if this run was not invoked as a bisection build.
 Returns:
   list[PackageInfo]: list of packages to build as specified by FindIt
 
-&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#136)(self):**
+&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#138)(self):**
 
 Returns the child builders as specified by FindIt or empty list.
 
@@ -338,17 +338,23 @@ build.
 Returns:
   list[str]: sorted list of child builders to run.
 
-&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#152)(self):**
+&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#154)(self, builds):**
 
 Returns the test plan as specified by FindIt or None.
 
 Returns the test plan that needs to run as specified by a FindIt
 invocation or None if this run was not invoked as a bisection build.
 
+Args:
+  builds (list[build_pb2.Build]): list of completed builds. While FindIt
+      has returned the test plan to run the TestUnitCommon.BuildPayloads
+      in that plan need to be updated for this bisection invocation. The
+      information to do that update is retrieved from these builds.
+
 Returns:
   GenerateTestPlanResponse or None.
 
-&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#30)(self, build_target_name):**
+&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#32)(self, build_target_name):**
 
 Sets the BISECT_BUILDER output property for the build target recipe.
 
@@ -358,7 +364,7 @@ should invoke if the build fails and bisection is required.
 Args:
   build_target_name (str): build target name to set the bisect builder for.
 
-&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#73)(self, failed_packages):**
+&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#75)(self, failed_packages):**
 
 Outputs the failed packages, if any, for FindIt consumption.
 
@@ -370,7 +376,7 @@ Args:
   failed_packages (list[PackageInfo]): list of PackageInfo representing the
       failed packages.
 
-&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#41)(self):**
+&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#43)(self):**
 
 Sets the BISECT_BUILDER output property for the orchestrator.
 
@@ -378,7 +384,7 @@ Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the postsubmit-orchestrator encounters hardware test
 failures.
 
-&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#89)(self, hw_results):**
+&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#91)(self, hw_results):**
 
 Outputs the failed hardware tests, if any, for FindIt consumption.
 
@@ -2338,7 +2344,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 [DEPS](/recipe_modules/cros_bisect/examples/test_plan_processing.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/test_plan_processing.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/test_plan_processing.py#26)(api):**
 ### *recipes* / [cros\_branch:examples/full](/recipe_modules/cros_branch/examples/full.py)
 
 [DEPS](/recipe_modules/cros_branch/examples/full.py#8): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
