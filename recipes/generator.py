@@ -30,28 +30,25 @@ from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (
 from google.protobuf import json_format
 
 
-DEPS = {
-    'depot_tools': 'depot_tools/depot_tools',
-    'gerrit': 'depot_tools/gerrit',
-    'git_cl': 'depot_tools/git_cl',
-    'buildbucket': 'recipe_engine/buildbucket',
-    'context': 'recipe_engine/context',
-    'file': 'recipe_engine/file',
-    'path': 'recipe_engine/path',
-    'properties': 'recipe_engine/properties',
-    'raw_io': 'recipe_engine/raw_io',
-    'scheduler': 'recipe_engine/scheduler',
-    'step': 'recipe_engine/step',
-    'cros_build_api': 'cros_build_api',
-    'cros_cq_depends': 'cros_cq_depends',
-    'cros_gerrit': 'gerrit',
-    'cros_sdk': 'cros_sdk',
-    'cros_source': 'cros_source',
-    'g3oncall': 'g3oncall',
-    'git': 'git',
-    'naming': 'naming',
-    'repo': 'repo',
-}
+DEPS = [
+    'recipe_engine/buildbucket',
+    'recipe_engine/context',
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/properties',
+    'recipe_engine/scheduler',
+    'recipe_engine/step',
+    'cros_build_api',
+    'cros_cq_depends',
+    'gerrit',
+    'cros_sdk',
+    'cros_source',
+    'g3oncall',
+    'git',
+    'git_cl',
+    'naming',
+    'repo',
+]
 
 PROPERTIES = GeneratorProperties
 
@@ -155,36 +152,19 @@ def RunSteps(api, properties):
 
   topic = properties.topic or cpv
   with api.step.nest('find existing uprev CLs') as step:
-    existing_change_urls = set()
+    existing_changes = []
     for host in ('chromium', 'chrome-internal'):
       with api.step.nest('find cls from {} host'.format(host)):
         host_url = 'https://{}-review.googlesource.com'.format(host)
-        found = api.gerrit.get_changes(
-            host_url, [('topic', topic), ('status', 'open')])
-
-        for change in found:
-          number = change['_number']
-          date = change['created']
-          title = 'found {} (created {})'.format(number, date)
-          change_url = '{}/{}'.format(host_url, number)
-          step.presentation.links[title] = change_url
-          existing_change_urls.add(change_url)
+        existing_changes.extend(
+            api.gerrit.query_changes(
+                host_url, [('topic', topic), ('status', 'open')]))
 
   with api.step.nest('generate CLs') as step:
     repositories = map(api.path.abs_to_path, ebuilds_by_repository.keys())
-    for repository in repositories:
-      with api.context(cwd=repository), api.depot_tools.on_path():
-        args = [
-            '--bypass-hooks',
-            '--force',
-            '--send-mail',
-            '--topic', topic,
-        ]
-
-        args.append('--reviewers')
-        args.extend('{}@chromium.org'.format(ru) for ru in reviewer_users)
-
-        api.git_cl.upload('''
+    changes = [
+        api.gerrit.create_change(
+            repository, '''
                      ,
                 ,.  | \
                |: \ ; :\
@@ -207,62 +187,47 @@ def RunSteps(api, properties):
                          ) `--'       ,..::::
       -pupr-             ; `.        ,:::::::
                           ;  ``::.    :::::::
-        ''', args)
+            ''',
+            reviewers=['{}@chromium.org'.format(ru) for ru in reviewer_users],
+            topic=topic)
+        for repository in repositories
+    ]
 
-  if len(repositories) > 1:
+  if len(changes) > 1:
     with api.step.nest('cq-depend generated CLs'):
-      change_urls = []
-      for repository in repositories:
-        step_name = 'read {} gerrit URL'.format(api.path.dirname(repository))
-        with api.step.nest(step_name), api.context(
-            cwd=repository), api.depot_tools.on_path():
-          change_url = api.git_cl(
-              'status', ['--field', 'url', '--fast'],
-              stdout=api.raw_io.output(),
-              # TODO(evanhernandez): Yuck. Let's put a module around this...
-              step_test_data=lambda:
-                 api.raw_io.test_api.stream_output(
-                     api.cros_gerrit.test_api.test_gerrit_change_url()),
-          ).stdout.strip()
-          change_urls.append(change_url)
-
-      changes = map(api.cros_gerrit.parse_gerrit_change, change_urls)
       cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
-
-      for repository, change_url, cq_depend in zip(repositories,
-                                                   change_urls,
-                                                   cq_depends):
-        step_name = 'set cq-depend for {} CL'.format(repository)
-        with api.step.nest(step_name), api.context(
-            cwd=repository), api.depot_tools.on_path():
-          description = api.git_cl.get_description(patch_url=change_url,
-                                                   codereview='gerrit')
+      for change, cq_depend in zip(changes, cq_depends):
+        with api.step.nest('set cq-depend for {} CL'.format(repository)):
+          description = api.gerrit.get_change_description(change)
           description = '{}\n{}'.format(description, cq_depend)
-          api.git_cl.set_description(description, patch_url=change_url,
-                                     codereview='gerrit')
+          api.gerrit.set_change_description(change, description)
 
   existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
   no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
   send_to_cq_policy = (existing_cls_policy
-                       if existing_change_urls else no_existing_cls_policy)
+                       if existing_changes else no_existing_cls_policy)
 
   with api.step.nest('update CL labels'):
-    for repository in repositories:
-      args = ['--bypass-hooks', '--force', '--send-mail']
+    for change in changes:
+      # TODO(evanhernandez): Probably cannot assume this is present.
+      labels = {'Verified': 1}
+
       upload_message_lines = [
           'Found {} open CL(s) for Gerrit topic {}:'.format(
-              len(existing_change_urls), topic),
+              len(existing_changes), topic),
       ]
-      upload_message_lines.append('\n'.join(existing_change_urls))
+      upload_message_lines.append(
+          '\n'.join(map(api.gerrit.parse_gerrit_change_url, existing_changes)))
       upload_message_lines.append(
           'Send-to-cq policy for this case is {}.'.format(
               SendToCqPolicy.Name(send_to_cq_policy)))
 
       if send_to_cq_policy == DRY_RUN:
-        args.append('--cq-dry-run')
+        labels['Commit-Queue'] = 1
         upload_message_lines.append('Therefore, marking CL as CQ+1.')
       elif send_to_cq_policy == FULL_RUN:
-        args.append('--use-commit-queue')
+        labels['Code-Review'] = 2
+        labels['Commit-Queue'] = 2
         upload_message_lines.append('Therefore, marking CL as CQ+2.')
       else:
         upload_message_lines.append(
@@ -270,20 +235,8 @@ def RunSteps(api, properties):
             'Reviewers may also want to abandon the existing CL(s).')
 
       upload_message = '\n\n'.join(upload_message_lines)
-      with api.step.nest(api.path.dirname(repository)), api.context(
-          cwd=repository), api.depot_tools.on_path():
-        # Must set CR+2 to send to CQ. We do this via Gerrit magic.
-        if send_to_cq_policy == FULL_RUN:
-          with api.step.nest('mark CL with code-review +2'):
-            project_infos = api.repo.project_infos(projects=[repository])
-            assert project_infos, 'need project info for {}'.format(repository)
-            project_info = project_infos[0]
-            api.git.push(
-                project_info.remote,
-                'HEAD:refs/for/{}%l=Code-Review+2'.format(project_info.branch))
-
-        # Then, do the thing.
-        api.git_cl.upload(upload_message, args)
+      api.gerrit.add_change_comment(change, upload_message)
+      api.gerrit.set_change_labels(change, labels)
 
 
 def GenTests(api):

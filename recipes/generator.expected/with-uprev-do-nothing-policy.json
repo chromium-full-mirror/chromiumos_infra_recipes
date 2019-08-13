@@ -634,16 +634,21 @@
   },
   {
     "cmd": [],
-    "name": "find existing uprev CLs",
-    "~followup_annotations": [
-      "@@@STEP_LINK@found 91827 (created 2017-01-30 13:11:20.000000000)@https://chrome-internal-review.googlesource.com/91827@@@"
-    ]
+    "name": "find existing uprev CLs"
   },
   {
     "cmd": [],
     "name": "find existing uprev CLs.find cls from chromium host",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find existing uprev CLs.find cls from chromium host.query https://chromium-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@found CL 91827@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
   },
   {
@@ -665,9 +670,9 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
-    "name": "find existing uprev CLs.find cls from chromium host.gerrit changes",
+    "name": "find existing uprev CLs.find cls from chromium host.query https://chromium-review.googlesource.com.gerrit changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\", @@@",
@@ -699,6 +704,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "find existing uprev CLs.find cls from chrome-internal host.query https://chrome-internal-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@found CL 91827@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -717,9 +730,9 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
-    "name": "find existing uprev CLs.find cls from chrome-internal host.gerrit changes",
+    "name": "find existing uprev CLs.find cls from chrome-internal host.query https://chrome-internal-review.googlesource.com.gerrit changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\", @@@",
@@ -748,30 +761,28 @@
     "name": "generate CLs"
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--send-mail",
-      "--topic",
-      "chromeos-base/chromite",
-      "--reviewers",
-      "bar@chromium.org",
-      "foo@chromium.org",
-      "evanhernandez@chromium.org",
-      "--message-file",
-      "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n        "
-    ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "generate CLs.git_cl upload",
+    "cmd": [],
+    "name": "generate CLs.create gerrit change for [START_DIR]/chromiumos/src/private-overlay",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos/src/private-overlay",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "generate CLs.create gerrit change for [START_DIR]/chromiumos/src/private-overlay.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/private-overlay|src/[START_DIR]/chromiumos/src/private-overlay|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -781,128 +792,119 @@
       "--bypass-hooks",
       "--force",
       "--send-mail",
-      "--topic",
-      "chromeos-base/chromite",
       "--reviewers",
       "bar@chromium.org",
       "foo@chromium.org",
       "evanhernandez@chromium.org",
+      "--topic",
+      "chromeos-base/chromite",
       "--message-file",
-      "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n        "
+      "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n            "
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "generate CLs.git_cl upload (2)",
+    "name": "generate CLs.create gerrit change for [START_DIR]/chromiumos/src/private-overlay.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "generate CLs.create gerrit change for [START_DIR]/chromiumos/src/private-overlay.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate CLs.create gerrit change for [START_DIR]/chromiumos/src/overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos/src/overlay",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "generate CLs.create gerrit change for [START_DIR]/chromiumos/src/overlay.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/overlay|src/[START_DIR]/chromiumos/src/overlay|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--send-mail",
+      "--reviewers",
+      "bar@chromium.org",
+      "foo@chromium.org",
+      "evanhernandez@chromium.org",
+      "--topic",
+      "chromeos-base/chromite",
+      "--message-file",
+      "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n            "
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "generate CLs.create gerrit change for [START_DIR]/chromiumos/src/overlay.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "generate CLs.create gerrit change for [START_DIR]/chromiumos/src/overlay.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
     "name": "cq-depend generated CLs"
-  },
-  {
-    "cmd": [],
-    "name": "cq-depend generated CLs.read [START_DIR]/chromiumos/src gerrit URL",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "cq-depend generated CLs.read [START_DIR]/chromiumos/src gerrit URL.git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "cq-depend generated CLs.read [START_DIR]/chromiumos/src gerrit URL (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "cq-depend generated CLs.read [START_DIR]/chromiumos/src gerrit URL (2).git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/private-overlay CL",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "description",
-      "-d",
-      "--gerrit",
-      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1"
-    ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/private-overlay CL.git_cl description",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "description",
-      "-n",
-      "-",
-      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1",
-      "--gerrit"
-    ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/private-overlay CL.git_cl set description",
-    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/private-overlay CL', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
   },
   {
     "cmd": [],
@@ -912,6 +914,36 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.get CL 1 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.get CL 1 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "description",
@@ -919,15 +951,43 @@
       "--gerrit",
       "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.git_cl description",
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.get CL 1 description.git_cl description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.set CL 1 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@description text@StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)@@@",
+      "@@@STEP_LOG_LINE@description text@Cq-Depend: @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.set CL 1 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -939,16 +999,121 @@
       "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1",
       "--gerrit"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.git_cl set description",
-    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.set CL 1 description.git_cl set description",
+    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).get CL 1 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).get CL 1 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-d",
+      "--gerrit",
+      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).get CL 1 description.git_cl description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).set CL 1 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@description text@StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2)', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)@@@",
+      "@@@STEP_LOG_LINE@description text@Cq-Depend: @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).set CL 1 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-n",
+      "-",
+      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1",
+      "--gerrit"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).set CL 1 description.git_cl set description",
+    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2)', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -957,56 +1122,176 @@
   },
   {
     "cmd": [],
-    "name": "update CL labels.[START_DIR]/chromiumos/src",
+    "name": "update CL labels.comment on CL 1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DO_NOTHING.@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the existing CL(s).@@@",
+      "@@@STEP_LOG_END@comment text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--send-mail",
-      "--message-file",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is DO_NOTHING.\n\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the existing CL(s)."
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "update CL labels.[START_DIR]/chromiumos/src.git_cl upload",
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "update CL labels.comment on CL 1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/master%m=Found%202%20open%20CL%28s%29%20for%20Gerrit%20topic%20chromeos-base/chromite%3A%0A%0Ahttps%3A//chromium-review.googlesource.com/c/chromium/src/%2B/91827%0Ahttps%3A//chrome-internal-review.googlesource.com/c/chromium/src/%2B/91827%0A%0ASend-to-cq%20policy%20for%20this%20case%20is%20DO_NOTHING.%0A%0ATherefore%2C%20will%20NOT%20mark%20CL%20as%20CQ%2B1/CQ%2B2.%20Reviewers%20must%20do%20so.%20Reviewers%20may%20also%20want%20to%20abandon%20the%20existing%20CL%28s%29."
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "infra_step": true,
+    "name": "update CL labels.comment on CL 1.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update CL labels.[START_DIR]/chromiumos/src (2)",
+    "name": "update CL labels.set labels on CL 1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Verified+1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--send-mail",
-      "--message-file",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chrome-internal-review.googlesource.com/91827\nhttps://chromium-review.googlesource.com/91827\n\nSend-to-cq policy for this case is DO_NOTHING.\n\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the existing CL(s)."
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "update CL labels.[START_DIR]/chromiumos/src (2).git_cl upload",
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/master%l=Verified+1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.comment on CL 1 (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DO_NOTHING.@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the existing CL(s).@@@",
+      "@@@STEP_LOG_END@comment text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "update CL labels.comment on CL 1 (2).repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/master%m=Found%202%20open%20CL%28s%29%20for%20Gerrit%20topic%20chromeos-base/chromite%3A%0A%0Ahttps%3A//chromium-review.googlesource.com/c/chromium/src/%2B/91827%0Ahttps%3A//chrome-internal-review.googlesource.com/c/chromium/src/%2B/91827%0A%0ASend-to-cq%20policy%20for%20this%20case%20is%20DO_NOTHING.%0A%0ATherefore%2C%20will%20NOT%20mark%20CL%20as%20CQ%2B1/CQ%2B2.%20Reviewers%20must%20do%20so.%20Reviewers%20may%20also%20want%20to%20abandon%20the%20existing%20CL%28s%29."
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "infra_step": true,
+    "name": "update CL labels.comment on CL 1 (2).git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.set labels on CL 1 (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Verified+1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1 (2).repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/master%l=Verified+1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1 (2).git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
