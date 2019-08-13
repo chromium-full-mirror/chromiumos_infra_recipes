@@ -1,0 +1,20 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.test_platform.test_runner;
+
+import "test_platform/skylab_test_runner/request.proto";
+import "test_platform/skylab_test_runner/result.proto";
+
+message TestRunnerProperties {
+  // request describes the input into the test_runner recipe; is set by the
+  // caller.
+  .test_platform.skylab_test_runner.Request request = 1;
+
+  // results describes the output of a test_runner recipe; is set by the recipe
+  // execution, not the caller.
+  .test_platform.skylab_test_runner.Result result = 2;
+}

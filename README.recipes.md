@@ -121,6 +121,7 @@
   * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Moblab VM tests.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
+  * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
 ## Recipe Modules
@@ -2799,6 +2800,23 @@ Returns: (test_platform.Request, bool (skylab)) tuple.
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#8): [breakpad](#recipe_modules-breakpad), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#18)(api, properties):**
+### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
+
+[DEPS](/recipes/test_platform/test_runner.py#10): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for the ChromeOS Skylab Test Runner.
+
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#30)(api, properties):**
+
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#17)(api, properties):**
+
+Validate the CrosTfeProperties.
+
+Args:
+  * api (object): See RunSteps documentation.
+  * properties (TestRunnerProperties): The input request.
+
+Raises: An exception if there are invalid properties.
 ### *recipes* / [test\_vm](/recipes/test_vm.py)
 
 [DEPS](/recipes/test_vm.py#34): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
