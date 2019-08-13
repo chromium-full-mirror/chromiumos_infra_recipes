@@ -104,7 +104,7 @@ class SkylabApi(recipe_api.RecipeApi):
       ]
       cmd += task_ids
       output_json = self.m.easy.stdout_json_step(
-          'skylab wait-tasks', cmd, infra_step=True,
+          'skylab wait-tasks', cmd, infra_step=True, ignore_exceptions=True,
           test_stdout=self.test_api.wait_tasks_json_output())
 
       # Convert parsed-json python dictionary into proto.

@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/json',
     'easy',
     'skylab',
 ]
@@ -24,3 +25,9 @@ def GenTests(api):
   yield (api.test('basic') +  #
          api.easy.simulate_json_step('collect skylab tasks.skylab wait-tasks',
                                      api.skylab.wait_tasks_json_output()))
+
+  yield (api.test('bad_output') +  #
+         api.step_data('collect skylab tasks.skylab wait-tasks',
+                       api.json.output({
+                           'bad': 'json'
+                       }), retcode=100))

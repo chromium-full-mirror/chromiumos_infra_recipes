@@ -1,0 +1,108 @@
+[
+  {
+    "cmd": [],
+    "name": "ensure skylab"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/skylab",
+      "-ensure-file",
+      "chromiumos/infra/skylab/${platform} latest",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "ensure skylab.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/skylab/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect skylab tasks",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id='ID', url='https://google.com', test=suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
+      "@@@STEP_LOG_LINE@return value@common {@@@",
+      "@@@STEP_LOG_LINE@return value@  display_name: \"target.hw.bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@  critical {@@@",
+      "@@@STEP_LOG_LINE@return value@    value: true@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@, unit=common {@@@",
+      "@@@STEP_LOG_LINE@return value@  build_target {@@@",
+      "@@@STEP_LOG_LINE@return value@    name: \"build_target_name\"@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@  build_payload {@@@",
+      "@@@STEP_LOG_LINE@return value@    artifacts_gs_bucket: \"gsbucket\"@@@",
+      "@@@STEP_LOG_LINE@return value@    artifacts_gs_path: \"gspath\"@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@hw_test_cfg {@@@",
+      "@@@STEP_LOG_LINE@return value@  hw_test {@@@",
+      "@@@STEP_LOG_LINE@return value@    suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@    skylab_board: \"target\"@@@",
+      "@@@STEP_LOG_LINE@return value@    common {@@@",
+      "@@@STEP_LOG_LINE@return value@      display_name: \"target.hw.bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@      critical {@@@",
+      "@@@STEP_LOG_LINE@return value@        value: true@@@",
+      "@@@STEP_LOG_LINE@return value@      }@@@",
+      "@@@STEP_LOG_LINE@return value@    }@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@), success=True, output=None)@@@",
+      "@@@STEP_LOG_END@return value@@@",
+      "@@@STEP_LINK@target.hw.bvt-cq@http://example.com@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "wait-tasks",
+      "-bb=False",
+      "-timeout-mins",
+      "430",
+      "ID"
+    ],
+    "infra_step": true,
+    "name": "collect skylab tasks.skylab wait-tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"results\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"child-results\": null, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"stdout\": \"\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task-result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"failure\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"a test\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"state\": \"\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"success\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"task-logs-url\": \"http://example.log\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"ID\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"task-run-url\": \"http://example.com\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

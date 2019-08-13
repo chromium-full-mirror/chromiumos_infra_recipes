@@ -1089,7 +1089,7 @@ Args:
     int, float, list, or dict.
   step_name (str): The name of the step.
 
-&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#81)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#81)(self, name, cmd, step_test_data=None, test_stdout=None, ignore_exceptions=False, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data deserialized from JSON.
 
@@ -1103,7 +1103,7 @@ Args:
 Returns:
   dict|list: JSON-deserialized stdout data.
 
-&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#105)(self, name, cmd, message_type, test_output=None, \*\*kwargs):**
+&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#109)(self, name, cmd, message_type, test_output=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 
@@ -2687,9 +2687,9 @@ Recipe for signing ChromeOS images.
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_suite.py#14)(api):**
 ### *recipes* / [skylab:examples/wait\_tasks](/recipe_modules/skylab/examples/wait_tasks.py)
 
-[DEPS](/recipe_modules/skylab/examples/wait_tasks.py#6): [easy](#recipe_modules-easy), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/skylab/examples/wait_tasks.py#6): [easy](#recipe_modules-easy), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_tasks.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_tasks.py#14)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]

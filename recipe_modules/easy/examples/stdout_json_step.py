@@ -9,7 +9,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  json_stdout = api.easy.stdout_json_step('json', ['ls'])
+  json_stdout = api.easy.stdout_json_step('json', ['ls'],
+                                          ignore_exceptions=True)
   assert json_stdout == {'b': 2}
 
 

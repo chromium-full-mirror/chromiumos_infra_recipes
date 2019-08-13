@@ -79,7 +79,7 @@ class EasyApi(recipe_api.RecipeApi):
     return step_data.stdout
 
   def stdout_json_step(self, name, cmd, step_test_data=None, test_stdout=None,
-                       **kwargs):
+                       ignore_exceptions=False, **kwargs):
     """Runs an easy.step and returns stdout data deserialized from JSON.
 
     Args:
@@ -98,8 +98,12 @@ class EasyApi(recipe_api.RecipeApi):
       test_stdout = maybe_lazy_test_data(test_stdout)
       step_test_data = (
           lambda: self.m.json.test_api.output_stream(test_stdout()))
+    ok_ret = {0}
+    if ignore_exceptions:
+      ok_ret = 'any'
     step_data = self.step(name, cmd, stdout=self.m.json.output(),
-                          step_test_data=step_test_data, **kwargs)
+                          step_test_data=step_test_data, ok_ret=ok_ret,
+                          **kwargs)
     return step_data.stdout
 
   def stdout_jsonpb_step(self, name, cmd, message_type, test_output=None,
