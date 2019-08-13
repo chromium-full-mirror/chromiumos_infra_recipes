@@ -39,6 +39,7 @@
   * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [skylab](#recipe_modules-skylab)
+  * [skylab_local_state](#recipe_modules-skylab_local_state)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
 
@@ -115,6 +116,7 @@
   * [signing](#recipes-signing) &mdash; Recipe for signing ChromeOS images.
   * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
   * [skylab:examples/wait_tasks](#recipes-skylab_examples_wait_tasks)
+  * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
@@ -2116,6 +2118,31 @@ Args:
 
 Returns:
   list[SkylabResult]: The results for each suite.
+### *recipe_modules* / [skylab\_local\_state](/recipe_modules/skylab_local_state)
+
+[DEPS](/recipe_modules/skylab_local_state/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [SkylabLocalStateCommand](/recipe_modules/skylab_local_state/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for issuing skylab_local_state commands
+
+&mdash; **def [initialize](/recipe_modules/skylab_local_state/api.py#17)(self):**
+
+&mdash; **def [load](/recipe_modules/skylab_local_state/api.py#21)(self, request):**
+
+Create a host info file via `load` command.
+
+Args:
+  request: a LoadRequest.
+
+Returns: LoadResponse.
+
+&mdash; **def [save](/recipe_modules/skylab_local_state/api.py#48)(self, request):**
+
+Update the DUT state file via `save` command.
+
+Args:
+  request: a SaveRequest.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2753,6 +2780,11 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/skylab/examples/wait_tasks.py#6): [easy](#recipe_modules-easy), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_tasks.py#14)(api):**
+### *recipes* / [skylab\_local\_state:examples/full](/recipe_modules/skylab_local_state/examples/full.py)
+
+[DEPS](/recipe_modules/skylab_local_state/examples/full.py#6): [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/skylab_local_state/examples/full.py#14)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
