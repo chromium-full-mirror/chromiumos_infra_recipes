@@ -17,6 +17,7 @@ import urlparse
 
 from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.packages import UprevVersionedPackageRequest
+from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import DO_NOTHING
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
@@ -229,14 +230,19 @@ def RunSteps(api, properties):
         labels['Code-Review'] = 2
         labels['Commit-Queue'] = 2
         upload_message_lines.append('Therefore, marking CL as CQ+2.')
+      elif send_to_cq_policy == ABANDON:
+        upload_message_lines.append('Therefore, abandoning this CL.')
       else:
         upload_message_lines.append(
             'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
             'Reviewers may also want to abandon the existing CL(s).')
 
       upload_message = '\n\n'.join(upload_message_lines)
-      api.gerrit.add_change_comment(change, upload_message)
-      api.gerrit.set_change_labels(change, labels)
+      if send_to_cq_policy == ABANDON:
+        api.gerrit.abandon_change(change, message=upload_message)
+      else:
+        api.gerrit.add_change_comment(change, upload_message)
+        api.gerrit.set_change_labels(change, labels)
 
 
 def GenTests(api):
@@ -280,6 +286,12 @@ def GenTests(api):
 
   yield (api.test('with-uprev-full-run-policy') +
          api.properties(existing_cls_policy=FULL_RUN, **properties) +
+         api.scheduler(triggers=gitiles_triggers) +
+         api.g3oncall.status(
+             'resolve reviewers.resolve chromeos-ci-eng rotation status'))
+
+  yield (api.test('with-uprev-abandon-policy') +
+         api.properties(existing_cls_policy=ABANDON, **properties) +
          api.scheduler(triggers=gitiles_triggers) +
          api.g3oncall.status(
              'resolve reviewers.resolve chromeos-ci-eng rotation status'))

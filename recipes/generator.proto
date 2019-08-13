@@ -50,6 +50,9 @@ enum SendToCqPolicy {
 
   // Send the CL through the full CQ.
   FULL_RUN = 3;
+
+  // Abandon the CL.
+  ABANDON = 4;
 }
 
 message GeneratorProperties {
