@@ -46,7 +46,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/my-tool/my-tool"
+      "[START_DIR]/cros-recipes-support/cipd-bin/my-tool"
     ],
     "infra_step": true,
     "name": "my-tool",

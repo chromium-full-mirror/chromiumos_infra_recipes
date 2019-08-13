@@ -396,7 +396,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -644,7 +644,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "init sdk.publish event.publish message.publish-message",
@@ -780,7 +780,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "update sdk.publish event.publish message.publish-message",
@@ -973,7 +973,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "build autotest packages.create sysroot.publish event.publish message.publish-message",
@@ -1111,7 +1111,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "build autotest packages.install toolchain.publish event.publish message.publish-message",
@@ -1277,7 +1277,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "build autotest packages.install packages.publish event.publish message.publish-message",
@@ -1460,7 +1460,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "run autotest vm tests.publish event.publish message.publish-message",

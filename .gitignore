@@ -3,3 +3,5 @@
 /.recipe_deps/
 /bundle/
 */branch-util/branch-util
+support/cipd-bin
+

@@ -562,7 +562,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -709,7 +709,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -893,7 +893,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1044,7 +1044,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1187,7 +1187,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1394,7 +1394,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1539,7 +1539,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1857,7 +1857,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2012,7 +2012,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2161,7 +2161,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2403,7 +2403,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2620,7 +2620,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2838,7 +2838,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -3047,7 +3047,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,

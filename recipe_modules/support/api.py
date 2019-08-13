@@ -50,7 +50,7 @@ class SupportApi(recipe_api.RecipeApi):
       Data passed as output from the tool (deserialized from JSON).
     """
     self.ensure_package_installed()
-    tool_path = self._support_root.join(tool, tool)
+    tool_path = self._support_root.join('cipd-bin', tool)
     return self.m.easy.stdout_json_step(
         tool, [tool_path], stdin_json=input_data, test_stdout=test_output_data,
         infra_step=infra_step)

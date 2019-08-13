@@ -93,7 +93,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "publish event.publish message.publish-message",

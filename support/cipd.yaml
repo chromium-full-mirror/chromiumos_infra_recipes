@@ -2,10 +2,4 @@ package: chromiumos/infra/recipes/support
 description: Support tools for chromiumos recipes.
 install_mode: copy
 data:
-  - file: gerrit-fetch-changes/gerrit-fetch-changes
-  - file: gerrit-get-mergeable/gerrit-get-mergeable
-  - file: git-test-submit/git-test-submit
-  - file: gitiles-fetch-ref/gitiles-fetch-ref
-  - file: repo-manifest-diff-projects/repo-manifest-diff-projects
-  - file: repo-log-trace/repo-log-trace
-  - file: publish-message/publish-message
+  - dir: cipd-bin

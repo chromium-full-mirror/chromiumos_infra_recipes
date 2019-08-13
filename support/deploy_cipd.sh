@@ -2,9 +2,11 @@
 
 cd "$(dirname "$0")"
 
-for go_tool in gerrit-fetch-changes gerrit-get-mergeable repo-manifest-diff-projects repo-log-trace gitiles-fetch-ref publish-message git-test-submit
-do
-  (cd "${go_tool}" && go build)
-done
+# Build all of the binaries and install them to cipd-bin/
+GOBIN=$(pwd)/cipd-bin
+go install ./...
+echo "Build the following"
+ls -l cipd-bin/
 
+# Bundle everything up as a CIPD package.
 cipd create -pkg-def=cipd.yaml -ref latest -json-output deploy_cipd.json

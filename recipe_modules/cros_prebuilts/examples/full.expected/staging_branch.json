@@ -167,7 +167,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload prebuilts.read gs acls.publish event.publish message.publish-message",
@@ -379,7 +379,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get.publish event.publish message.publish-message",
@@ -591,7 +591,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.publish event.publish message.publish-message",
@@ -793,7 +793,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
@@ -1161,7 +1161,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload prebuilts (2).get binhosts.call chromite.api.BinhostService/Get.publish event.publish message.publish-message",
@@ -1373,7 +1373,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload prebuilts (2).prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.publish event.publish message.publish-message",
@@ -1571,7 +1571,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload prebuilts (2).update binhost conf file.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",

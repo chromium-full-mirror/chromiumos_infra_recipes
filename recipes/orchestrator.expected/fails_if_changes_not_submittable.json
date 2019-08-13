@@ -87,7 +87,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/git-test-submit/git-test-submit"
+      "[START_DIR]/cros-recipes-support/cipd-bin/git-test-submit"
     ],
     "infra_step": true,
     "name": "check for merge conflicts.git-test-submit",

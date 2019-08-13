@@ -172,7 +172,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload ebuild logs.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.publish event.publish message.publish-message",
@@ -413,7 +413,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload firmware archive.bundle FIRMWARE for upload.call chromite.api.ArtifactsService/BundleFirmware.publish event.publish message.publish-message",
@@ -654,7 +654,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload test artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message.publish-message",
@@ -787,7 +787,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload test artifacts.bundle AUTOTEST_FILES for upload.call chromite.api.ArtifactsService/BundleAutotestFiles.publish event.publish message.publish-message",
@@ -920,7 +920,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload test artifacts.bundle TAST_FILES for upload.call chromite.api.ArtifactsService/BundleTastFiles.publish event.publish message.publish-message",
@@ -1053,7 +1053,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload test artifacts.bundle PINNED_GUEST_IMAGES for upload.call chromite.api.ArtifactsService/BundlePinnedGuestImages.publish event.publish message.publish-message",
@@ -1186,7 +1186,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/publish-message/publish-message"
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
     "name": "upload test artifacts.bundle TEST_UPDATE_PAYLOAD for upload.call chromite.api.ArtifactsService/BundleTestUpdatePayloads.publish event.publish message.publish-message",

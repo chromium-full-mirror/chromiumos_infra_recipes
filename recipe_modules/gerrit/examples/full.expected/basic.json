@@ -46,7 +46,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
     "infra_step": true,
     "name": "gerrit-fetch-changes",
@@ -102,7 +102,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/git-test-submit/git-test-submit"
+      "[START_DIR]/cros-recipes-support/cipd-bin/git-test-submit"
     ],
     "infra_step": true,
     "name": "check for merge conflicts.git-test-submit",
@@ -127,7 +127,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/git-test-submit/git-test-submit"
+      "[START_DIR]/cros-recipes-support/cipd-bin/git-test-submit"
     ],
     "infra_step": true,
     "name": "check for merge conflicts (2).git-test-submit",
@@ -144,7 +144,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/gerrit-fetch-changes/gerrit-fetch-changes"
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
     "infra_step": true,
     "name": "gerrit-fetch-changes (2)",
