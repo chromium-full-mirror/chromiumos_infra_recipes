@@ -1750,6 +1750,7 @@
       "@@@STEP_LOG_LINE@published event@    \"useFlags\": []@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"events\": [], @@@",
       "@@@STEP_LOG_LINE@published event@    \"failedPackages\": []@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:41Z\"@@@",
