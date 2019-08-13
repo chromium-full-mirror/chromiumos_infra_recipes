@@ -27,6 +27,7 @@ ENDPOINTS_BY_ARTIFACT = {
     BuilderConfig.Artifacts.PINNED_GUEST_IMAGES: 'BundlePinnedGuestImages',
     BuilderConfig.Artifacts.FIRMWARE: 'BundleFirmware',
     BuilderConfig.Artifacts.EBUILD_LOGS: 'BundleEbuildLogs',
+    BuilderConfig.Artifacts.CHROMEOS_CONFIG: 'BundleChromeOSConfig',
 }
 
 

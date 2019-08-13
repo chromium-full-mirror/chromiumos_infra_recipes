@@ -238,11 +238,11 @@ Args:
 
 API for uploading CrOS build artifacts to Google Storage.
 
-#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#76)(self, target, kind):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#77)(self, target, kind):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -256,7 +256,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#141)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#142)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -270,7 +270,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#173)(self, build_payload, artifacts, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#174)(self, build_payload, artifacts, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -285,7 +285,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#94)(self, target, kind, gs_bucket, artifacts, name=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#95)(self, target, kind, gs_bucket, artifacts, name=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
