@@ -45,6 +45,7 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
           # Split on white space or commas and add the dep
           for dep_line in dep_lines:
             deps += re.split(r'[\s,]+', dep_line)
+            dep_log.append('{} has dep_line {}'.format(commit.rev, dep_line))
     # Turn the deps into (host, cl) tuples
     valid_deps = []
     private_prefix = PRIVATE_HOST + ':'
@@ -151,6 +152,11 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
         if project not in project_names:
           dep_local_log.append('change %s in non-Chrome OS repo %s' %
                                (change.get('change_number'), project))
+          continue
+
+        # Temporary hack to unbreak Annealing.
+        if change.get('change_number') == 1588324:  # pragma: nocover
+          dep_local_log.append('skipping blacklisted dep')
           continue
 
         # TODO(crbug.com/980288): Find a better way to handle the error where path isn't found.

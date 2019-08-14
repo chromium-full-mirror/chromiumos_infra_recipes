@@ -273,6 +273,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@diff manifest@PATH upreved from FROM_REV to TO_REV@@@",
       "@@@STEP_LOG_END@diff manifest@@@",
+      "@@@STEP_LOG_LINE@gather cq-depend@deadbeef has dep_line chromium:12345,chromium:IAmNotAnInteger,chrome-internal:67890@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@chromium:12345@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@invalid dep: chromium:IAmNotAnInteger@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@chrome-internal:67890@@@",
