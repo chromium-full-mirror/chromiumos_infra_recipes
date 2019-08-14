@@ -91,8 +91,8 @@ class CrosBisectTestApi(recipe_test_api.RecipeTestApi):
         'name': build_target_name,
     }
     files_by_artifact = files_by_artifact or {
-        'IMAGE_ZIP': 'imager.zip',
-        'TAST_FILES': 'taster.zip',
+        'IMAGE_ZIP': ['image.zip'],
+        'TAST_FILES': ['tast1.zip', 'tast2.zip'],
     }
     build.output.properties['artifacts'] = {
         'gs_bucket': gs_bucket,

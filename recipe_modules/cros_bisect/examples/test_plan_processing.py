@@ -45,9 +45,9 @@ def RunSteps(api):
       gs_bucket='bucket2',
       gs_path='path2',
       files_by_artifact={
-          'IMAGE_ZIP': 'zeimage.zip',
-          'TAST_FILES': 'zetast.zip',
-          'AUTOTEST_FILES': 'zeautotest.zip',
+          'IMAGE_ZIP': ['zeimage.zip'],
+          'TAST_FILES': ['zetast.zip'],
+          'AUTOTEST_FILES': ['a1.zip', 'a2.zip'],
       })
 
   # This verifies that:
@@ -63,21 +63,20 @@ def RunSteps(api):
       build_payload = hw_test_unit.common.build_payload
       api.assertions.assertEqual(build_payload.artifacts_gs_bucket, 'bucket1')
       api.assertions.assertEqual(build_payload.artifacts_gs_path, 'path1')
-      expected = struct_pb2.Struct(fields={
-          'IMAGE_ZIP': struct_pb2.Value(string_value='imager.zip'),
-          'TAST_FILES': struct_pb2.Value(string_value='taster.zip'),
-      })
+      expected = struct_pb2.Struct()
+      expected.get_or_create_list('IMAGE_ZIP').append('image.zip')
+      expected.get_or_create_list('TAST_FILES').extend(
+          ['tast1.zip', 'tast2.zip'])
       api.assertions.assertEqual(build_payload.files_by_artifact, expected)
     elif hw_test_unit.common.build_target.name == 'bar':
       api.assertions.assertEqual(len(hw_test_unit.hw_test_cfg.hw_test), 2)
       build_payload = hw_test_unit.common.build_payload
       api.assertions.assertEqual(build_payload.artifacts_gs_bucket, 'bucket2')
       api.assertions.assertEqual(build_payload.artifacts_gs_path, 'path2')
-      expected = struct_pb2.Struct(fields={
-          'IMAGE_ZIP': struct_pb2.Value(string_value='zeimage.zip'),
-          'TAST_FILES': struct_pb2.Value(string_value='zetast.zip'),
-          'AUTOTEST_FILES': struct_pb2.Value(string_value='zeautotest.zip'),
-      })
+      expected = struct_pb2.Struct()
+      expected.get_or_create_list('IMAGE_ZIP').append('zeimage.zip')
+      expected.get_or_create_list('TAST_FILES').append('zetast.zip')
+      expected.get_or_create_list('AUTOTEST_FILES').extend(['a1.zip', 'a2.zip'])
       api.assertions.assertEqual(build_payload.files_by_artifact, expected)
     else: # pragma: no cover
       api.assertions.fail('Expected to find build_target name foo or bar.')
