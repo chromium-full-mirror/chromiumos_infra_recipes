@@ -1141,7 +1141,7 @@
       "--json_file",
       "/path/to/tmp/json",
       "--message",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\n\nSend-to-cq policy for this case is ABANDON.\n\nTherefore, abandoning this CL."
+      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is ABANDON.\nTherefore, abandoning the CL"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -1194,7 +1194,7 @@
       "--json_file",
       "/path/to/tmp/json",
       "--message",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\n\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\n\nSend-to-cq policy for this case is ABANDON.\n\nTherefore, abandoning this CL."
+      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is ABANDON.\nTherefore, abandoning the CL"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"

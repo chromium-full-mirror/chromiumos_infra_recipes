@@ -53,6 +53,7 @@ DEPS = [
 
 PROPERTIES = GeneratorProperties
 
+
 def RunSteps(api, properties):
   with api.step.nest('validate properties') as step:
     if not properties.HasField('package_info'):
@@ -210,38 +211,43 @@ def RunSteps(api, properties):
 
   with api.step.nest('update CL labels'):
     for change in changes:
-      # TODO(evanhernandez): Probably cannot assume this is present.
-      labels = {api.gerrit.Label.VERIFIED: 1}
-
-      upload_message_lines = [
+      # First post explanatory message.
+      message_lines = [
           'Found {} open CL(s) for Gerrit topic {}:'.format(
               len(existing_changes), topic),
-      ]
-      upload_message_lines.append(
-          '\n'.join(map(api.gerrit.parse_gerrit_change_url, existing_changes)))
-      upload_message_lines.append(
+          '\n'.join(map(api.gerrit.parse_gerrit_change_url, existing_changes)),
           'Send-to-cq policy for this case is {}.'.format(
-              SendToCqPolicy.Name(send_to_cq_policy)))
+              SendToCqPolicy.Name(send_to_cq_policy))
+      ]
 
-      if send_to_cq_policy == DRY_RUN:
-        labels[api.gerrit.Label.COMMIT_QUEUE] = 1
-        upload_message_lines.append('Therefore, marking CL as CQ+1.')
-      elif send_to_cq_policy == FULL_RUN:
-        labels[api.gerrit.Label.CODE_REVIEW] = 2
-        labels[api.gerrit.Label.COMMIT_QUEUE] = 2
-        upload_message_lines.append('Therefore, marking CL as CQ+2.')
-      elif send_to_cq_policy == ABANDON:
-        upload_message_lines.append('Therefore, abandoning this CL.')
-      else:
-        upload_message_lines.append(
-            'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
-            'Reviewers may also want to abandon the existing CL(s).')
+      message_lines.append({
+          DRY_RUN: 'Therefore, marking CL as CQ+1',
+          FULL_RUN: 'Therefore, marking CL as CQ+2',
+          ABANDON: 'Therefore, abandoning the CL',
+      }.get(
+          send_to_cq_policy,
+          'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
+          'Reviewers may also want to abandon the existing CL(s).',
+      ))
 
-      upload_message = '\n\n'.join(upload_message_lines)
+      message = '\n'.join(message_lines)
       if send_to_cq_policy == ABANDON:
-        api.gerrit.abandon_change(change, message=upload_message)
+        api.gerrit.abandon_change(change, message=message)
       else:
-        api.gerrit.add_change_comment(change, upload_message)
+        api.gerrit.add_change_comment(change, message)
+
+      # Then set labels.
+      labels = {
+          DRY_RUN: {
+              api.gerrit.Label.COMMIT_QUEUE: 1,
+          },
+          FULL_RUN: {
+              api.gerrit.Label.BOT_COMMIT: 1,
+              api.gerrit.Label.COMMIT_QUEUE: 2,
+          }
+      }.get(send_to_cq_policy)
+
+      if labels is not None:
         api.gerrit.set_change_labels(change, labels)
 
 

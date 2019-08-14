@@ -1126,13 +1126,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:@@@",
-      "@@@STEP_LOG_LINE@comment text@@@@",
       "@@@STEP_LOG_LINE@comment text@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
       "@@@STEP_LOG_LINE@comment text@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_LINE@comment text@@@@",
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is FULL_RUN.@@@",
-      "@@@STEP_LOG_LINE@comment text@@@@",
-      "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+2.@@@",
+      "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+2@@@",
       "@@@STEP_LOG_END@comment text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
@@ -1159,7 +1156,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%m=Found%202%20open%20CL%28s%29%20for%20Gerrit%20topic%20chromeos-base/chromite%3A%0A%0Ahttps%3A//chromium-review.googlesource.com/c/chromium/src/%2B/91827%0Ahttps%3A//chrome-internal-review.googlesource.com/c/chromium/src/%2B/91827%0A%0ASend-to-cq%20policy%20for%20this%20case%20is%20FULL_RUN.%0A%0ATherefore%2C%20marking%20CL%20as%20CQ%2B2."
+      "HEAD:refs/for/master%m=Found%202%20open%20CL%28s%29%20for%20Gerrit%20topic%20chromeos-base/chromite%3A%0Ahttps%3A//chromium-review.googlesource.com/c/chromium/src/%2B/91827%0Ahttps%3A//chrome-internal-review.googlesource.com/c/chromium/src/%2B/91827%0ASend-to-cq%20policy%20for%20this%20case%20is%20FULL_RUN.%0ATherefore%2C%20marking%20CL%20as%20CQ%2B2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
@@ -1173,7 +1170,7 @@
     "name": "update CL labels.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Code-Review+2,Commit-Queue+2,Verified+1@@@",
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
@@ -1199,7 +1196,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%l=Code-Review+2,l=Commit-Queue+2,l=Verified+1"
+      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
@@ -1214,13 +1211,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:@@@",
-      "@@@STEP_LOG_LINE@comment text@@@@",
       "@@@STEP_LOG_LINE@comment text@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
       "@@@STEP_LOG_LINE@comment text@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_LINE@comment text@@@@",
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is FULL_RUN.@@@",
-      "@@@STEP_LOG_LINE@comment text@@@@",
-      "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+2.@@@",
+      "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+2@@@",
       "@@@STEP_LOG_END@comment text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
@@ -1247,7 +1241,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%m=Found%202%20open%20CL%28s%29%20for%20Gerrit%20topic%20chromeos-base/chromite%3A%0A%0Ahttps%3A//chromium-review.googlesource.com/c/chromium/src/%2B/91827%0Ahttps%3A//chrome-internal-review.googlesource.com/c/chromium/src/%2B/91827%0A%0ASend-to-cq%20policy%20for%20this%20case%20is%20FULL_RUN.%0A%0ATherefore%2C%20marking%20CL%20as%20CQ%2B2."
+      "HEAD:refs/for/master%m=Found%202%20open%20CL%28s%29%20for%20Gerrit%20topic%20chromeos-base/chromite%3A%0Ahttps%3A//chromium-review.googlesource.com/c/chromium/src/%2B/91827%0Ahttps%3A//chrome-internal-review.googlesource.com/c/chromium/src/%2B/91827%0ASend-to-cq%20policy%20for%20this%20case%20is%20FULL_RUN.%0ATherefore%2C%20marking%20CL%20as%20CQ%2B2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
@@ -1261,7 +1255,7 @@
     "name": "update CL labels.set labels on CL 1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Code-Review+2,Commit-Queue+2,Verified+1@@@",
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
@@ -1287,7 +1281,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%l=Code-Review+2,l=Commit-Queue+2,l=Verified+1"
+      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
