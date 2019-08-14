@@ -1,4 +1,5 @@
 # Chrome OS CI team
+# Most of your recipes CLs should go to this group.
 andrewlamb@chromium.org
 dburger@chromium.org
 dhanyaganesh@chromium.org
@@ -7,6 +8,10 @@ jackneus@google.com
 jclinton@chromium.org
 mikenichols@chromium.org
 seanabraham@chromium.org
+
+# Chrome OS test platform team
+# Test-related CLs should go to this group.
+akeshet@chromium.org
 
 # Service accounts
 recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
