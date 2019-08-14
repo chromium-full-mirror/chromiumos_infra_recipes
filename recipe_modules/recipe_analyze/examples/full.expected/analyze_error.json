@@ -11,7 +11,9 @@
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"error\": \"Analyze failed\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@input.json@{\"files\": [\"a/b/test.txt\", \"a/foo.txt\"], \"recipes\": [\"recipeA\"]}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
     ]
   },
   {

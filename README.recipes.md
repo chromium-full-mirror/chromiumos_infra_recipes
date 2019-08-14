@@ -1929,11 +1929,11 @@ Args:
 
 API for calling 'recipes.py analyze'
 
-#### **class [RecipeAnalyzeApi](/recipe_modules/recipe_analyze/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RecipeAnalyzeApi](/recipe_modules/recipe_analyze/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for calling 'recipes.py analyze'
 
-&mdash; **def [is\_recipe\_affected](/recipe_modules/recipe_analyze/api.py#17)(self, affected_files, recipe):**
+&mdash; **def [is\_recipe\_affected](/recipe_modules/recipe_analyze/api.py#19)(self, affected_files, recipe):**
 
 Return True iff changes in <affected_files> affect <recipe>.
 

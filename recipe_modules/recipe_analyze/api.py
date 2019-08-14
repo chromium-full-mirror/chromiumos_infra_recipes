@@ -10,6 +10,8 @@ from recipe_engine import recipe_api
 from google.protobuf import json_format as jsonpb
 from PB.recipe_engine import analyze as analyze_pb
 
+import json
+
 
 class RecipeAnalyzeApi(recipe_api.RecipeApi):
   """A module for calling 'recipes.py analyze'"""
@@ -29,21 +31,24 @@ class RecipeAnalyzeApi(recipe_api.RecipeApi):
     Return:
       Bool
     """
+    analyze_input = {
+        'files': affected_files,
+        'recipes': [recipe],
+    }
     step_data = self.m.step(
         'recipe analyze',
         [
             './recipes.py',
             'analyze',
-            self.m.json.input({
-                'files': affected_files,
-                'recipes': [recipe],
-            }),
+            self.m.json.input(analyze_input),
             self.m.json.output()
         ],
         step_test_data=lambda: self.m.json.test_api.output(
             {'recipes': ['recipeA', 'recipeB']}
         )
     )
+
+    step_data.presentation.logs['input.json'] = [json.dumps(analyze_input)]
 
     output_pb = jsonpb.ParseDict(
         step_data.json.output,

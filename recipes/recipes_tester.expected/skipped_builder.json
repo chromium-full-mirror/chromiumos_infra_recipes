@@ -495,7 +495,9 @@
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"recipes\": []@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@input.json@{\"files\": [\"a/b/text.txt\", \"other_test.txt\"], \"recipes\": [\"test_chromite\"]}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
     ]
   },
   {

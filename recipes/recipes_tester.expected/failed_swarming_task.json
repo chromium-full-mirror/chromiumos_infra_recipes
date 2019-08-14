@@ -491,7 +491,9 @@
       "@@@STEP_LOG_LINE@json.output@    \"annealing\"@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@input.json@{\"files\": [\"a/b/text.txt\", \"other_test.txt\"], \"recipes\": [\"annealing\"]}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
     ]
   },
   {
