@@ -106,7 +106,6 @@
   * [gerrit:examples/changes_are_submittable](#recipes-gerrit_examples_changes_are_submittable)
   * [gerrit:examples/create_change](#recipes-gerrit_examples_create_change)
   * [gerrit:examples/fetch_patch_sets](#recipes-gerrit_examples_fetch_patch_sets)
-  * [gerrit:examples/full](#recipes-gerrit_examples_full)
   * [gerrit:examples/get_change_description](#recipes-gerrit_examples_get_change_description)
   * [gerrit:examples/has_chromite_changes](#recipes-gerrit_examples_has_chromite_changes)
   * [gerrit:examples/parse_gerrit_change](#recipes-gerrit_examples_parse_gerrit_change)
@@ -2721,11 +2720,6 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 [DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#14)(api):**
-### *recipes* / [gerrit:examples/full](/recipe_modules/gerrit/examples/full.py)
-
-[DEPS](/recipe_modules/gerrit/examples/full.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
-
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/full.py#14)(api):**
 ### *recipes* / [gerrit:examples/get\_change\_description](/recipe_modules/gerrit/examples/get_change_description.py)
 
 [DEPS](/recipe_modules/gerrit/examples/get_change_description.py#8): [gerrit](#recipe_modules-gerrit)
