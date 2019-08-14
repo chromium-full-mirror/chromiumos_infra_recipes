@@ -35,7 +35,7 @@
       "--gerrit"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
-    "env_prefixes": {
+    "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
