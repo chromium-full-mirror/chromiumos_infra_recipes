@@ -4,6 +4,7 @@
 
 **[Recipe Modules](#Recipe-Modules)**
   * [analysis_service](#recipe_modules-analysis_service)
+  * [autotest_status_parser](#recipe_modules-autotest_status_parser)
   * [breakpad](#recipe_modules-breakpad)
   * [chrome](#recipe_modules-chrome)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
@@ -46,6 +47,7 @@
 **[Recipes](#Recipes)**
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
+  * [autotest_status_parser:examples/full](#recipes-autotest_status_parser_examples_full)
   * [branch_create](#recipes-branch_create) &mdash; Creates a branch using `cros branch create`.
   * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
@@ -180,6 +182,24 @@ Args:
   response_time (google.protobuf.timestamp_pb2.Timestamp): The time the
     response was received by the caller.
   step_data (recipe_engine.StepData): Data from the step that sent the request.
+### *recipe_modules* / [autotest\_status\_parser](/recipe_modules/autotest_status_parser)
+
+[DEPS](/recipe_modules/autotest_status_parser/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [AutotestStatusParserCommand](/recipe_modules/autotest_status_parser/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for issuing autotest_status_parser commands.
+
+&mdash; **def [initialize](/recipe_modules/autotest_status_parser/api.py#16)(self):**
+
+&mdash; **def [parse](/recipe_modules/autotest_status_parser/api.py#19)(self, results_dir):**
+
+Extract test results from an results directory.
+
+Args:
+  results_dir: a string pointing to a directory containing test results.
+
+Returns: Result.
 ### *recipe_modules* / [breakpad](/recipe_modules/breakpad)
 
 [DEPS](/recipe_modules/breakpad/__init__.py#5): [easy](#recipe_modules-easy), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2287,6 +2307,11 @@ Args:
 
 Returns:
   list[Commit]: The Gerrit-reviewed commits since the last snapshot.
+### *recipes* / [autotest\_status\_parser:examples/full](/recipe_modules/autotest_status_parser/examples/full.py)
+
+[DEPS](/recipe_modules/autotest_status_parser/examples/full.py#6): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/autotest_status_parser/examples/full.py#14)(api):**
 ### *recipes* / [branch\_create](/recipes/branch_create.py)
 
 [DEPS](/recipes/branch_create.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
