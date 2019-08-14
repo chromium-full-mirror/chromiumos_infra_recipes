@@ -8,7 +8,13 @@
   },
   {
     "cmd": [],
-    "name": "call binary (2)"
+    "name": "call binary (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
   },
   {
     "cmd": [],
@@ -69,7 +75,13 @@
   },
   {
     "cmd": [],
-    "name": "call binary (4)"
+    "name": "call binary (4)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
   },
   {
     "cmd": [
@@ -95,7 +107,13 @@
   },
   {
     "cmd": [],
-    "name": "call binary (6)"
+    "name": "call binary (6)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
   },
   {
     "cmd": [
@@ -121,7 +139,13 @@
   },
   {
     "cmd": [],
-    "name": "call binary (8)"
+    "name": "call binary (8)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
   },
   {
     "cmd": [

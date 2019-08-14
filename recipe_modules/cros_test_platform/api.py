@@ -36,7 +36,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     Returns:
       Response, of type response_type.
     """
-    with self.m.step.nest('call binary'):
+    with self.m.step.nest('call binary') as s:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
       self._ensure_cros_test_platform()
@@ -48,12 +48,15 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
         '-output_json',
         '/dev/stdout',
       ]
-      return self.m.easy.stdout_jsonpb_step(
+      s.presentation.logs['request'] = [json_format.MessageToJson(request)]
+      response = self.m.easy.stdout_jsonpb_step(
           subcommand,
           cmd,
           response_type,
           stdin=self.m.raw_io.input_text(json_format.MessageToJson(request)),
           test_output=response_type())
+      s.presentation.logs['response'] = [json_format.MessageToJson(response)]
+      return response
 
   def enumerate(self, request):
     """Enumerate test cases via `enumerate` subcommand.

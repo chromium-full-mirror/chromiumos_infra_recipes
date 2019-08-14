@@ -995,7 +995,7 @@ Returns:
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#91)(self, request):**
+&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#94)(self, request):**
 
 Execute work via `autotest-execute` subcommand.
 
@@ -1004,7 +1004,7 @@ Args:
 
 Returns: ExecuteResponse.
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#58)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#61)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -1015,7 +1015,7 @@ Returns: EnumerationResponse.
 
 &mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#20)(self):**
 
-&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#69)(self, request):**
+&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#72)(self, request):**
 
 Determine scheduler via `scheduler-traffic-split` subcommand.
 
@@ -1024,7 +1024,7 @@ Args:
 
 Returns: SchedulerTrafficSplitResponse.
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#80)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#83)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 
