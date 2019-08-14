@@ -211,7 +211,7 @@ def RunSteps(api, properties):
   with api.step.nest('update CL labels'):
     for change in changes:
       # TODO(evanhernandez): Probably cannot assume this is present.
-      labels = {'Verified': 1}
+      labels = {api.gerrit.Label.VERIFIED: 1}
 
       upload_message_lines = [
           'Found {} open CL(s) for Gerrit topic {}:'.format(
@@ -224,11 +224,11 @@ def RunSteps(api, properties):
               SendToCqPolicy.Name(send_to_cq_policy)))
 
       if send_to_cq_policy == DRY_RUN:
-        labels['Commit-Queue'] = 1
+        labels[api.gerrit.Label.COMMIT_QUEUE] = 1
         upload_message_lines.append('Therefore, marking CL as CQ+1.')
       elif send_to_cq_policy == FULL_RUN:
-        labels['Code-Review'] = 2
-        labels['Commit-Queue'] = 2
+        labels[api.gerrit.Label.CODE_REVIEW] = 2
+        labels[api.gerrit.Label.COMMIT_QUEUE] = 2
         upload_message_lines.append('Therefore, marking CL as CQ+2.')
       elif send_to_cq_policy == ABANDON:
         upload_message_lines.append('Therefore, abandoning this CL.')

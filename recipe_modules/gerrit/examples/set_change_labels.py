@@ -17,8 +17,8 @@ def RunSteps(api):
       change=123,
   )
   labels = {
-      'Code-Review': 2,
-      'Verified': 1,
+      api.gerrit.Label.CODE_REVIEW: 2,
+      api.gerrit.Label.VERIFIED: 1,
   }
   ref = api.gerrit.set_change_labels(gerrit_change, labels)
   api.assertions.assertEqual(

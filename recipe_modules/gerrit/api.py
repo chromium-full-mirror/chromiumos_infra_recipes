@@ -6,6 +6,7 @@
 """APIs for managing Gerrit changes."""
 
 import collections
+import enum
 import functools
 import re
 import urllib
@@ -103,8 +104,36 @@ class PatchSet(object):
     return self._rev_info.get('files')
 
 
+class Label(enum.Enum):
+  """Describes some valid Gerrit labels. Not necessarily exhaustive."""
+
+  # Whether or not the change can skip submit approvals.
+  BOT_COMMIT = 1;
+
+  # Whether or not a change has been reviewed.
+  CODE_REVIEW = 2;
+
+  # Describes how the change should be tested and/or whether it should
+  # be submitted when finished.
+  COMMIT_QUEUE = 3;
+
+  # Whether or not the CL has been manually tested.
+  VERIFIED = 4;
+
+  @property
+  def key(self):
+    # FOO_BAR must be Foo-Bar when set via Gerrit.
+    return '-'.join([
+        word[0].upper() + word[1:].lower()
+        for word in self.name.split('_') if word.strip()
+    ])
+
+
 class GerritApi(recipe_api.RecipeApi):
   """A module for Gerrit helpers."""
+
+  PatchSet = PatchSet
+  Label = Label
 
   def __init__(self, *args, **kwargs):
     """Initialize GerritApi."""
@@ -328,13 +357,14 @@ class GerritApi(recipe_api.RecipeApi):
 
     Args:
       gerrit_change (GerritChange): The change of interest.
-      labels (dict): Mapping from label name (str) to value (int).
+      labels (dict): Mapping from label (Label) to value (int).
 
     Returns:
       str: The new label ref (primarily for testing).
     """
     with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as step:
-      full_labels = sorted(['%s+%d' % lv for lv in labels.iteritems()])
+      full_labels = sorted([
+          '%s+%d' % (label.key, value) for label, value in labels.iteritems()])
       step.presentation.step_text = ','.join(full_labels)
       step.presentation.links['link to change'] = self.parse_gerrit_change_url(
           gerrit_change)
