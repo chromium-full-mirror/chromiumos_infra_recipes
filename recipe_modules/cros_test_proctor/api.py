@@ -59,7 +59,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         test_to_build_target_map = {}
 
         skylab_tasks = self._schedule_skylab_tests(
-            test_plan, passed_tests, test_to_build_target_map, bb=False)
+            test_plan, passed_tests, test_to_build_target_map,
+            bb=self.m.gerrit.has_chromite_changes(gerrit_changes))
 
         vm_tests = self._schedule_autotest_vm_tests(
             test_plan, passed_tests, snapshot, test_to_build_target_map)
@@ -74,7 +75,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       with self.m.step.nest('collect tests'):
         hw_results = []
         if skylab_tasks:
-          hw_results = self.m.skylab.wait_tasks(skylab_tasks, bb=False)
+          hw_results = self.m.skylab.wait_tasks(
+              skylab_tasks,
+              bb=self.m.gerrit.has_chromite_changes(gerrit_changes))
         vm_results = []
         if vm_tests:
           vm_results = self.m.buildbucket.collect_builds(
@@ -137,7 +140,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             baseline_test_plan = self.m.cros_test_plan.generate(
                 baseline_builds, snapshot.id)
             baseline_skylab_tasks = self._schedule_skylab_tests(
-                baseline_test_plan, passed_tests, bb=False)
+                baseline_test_plan, passed_tests, bb=True)
             baseline_vm_tests = self._schedule_autotest_vm_tests(
                 baseline_test_plan, passed_tests, snapshot)
             baseline_vm_tests += self._schedule_tast_vm_tests(
@@ -145,7 +148,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           with self.m.step.nest('collect baseline tests'):
             if baseline_skylab_tasks:
               baseline_hw_results = self.m.skylab.wait_tasks(
-                  baseline_skylab_tasks, bb=False)
+                  baseline_skylab_tasks, bb=True)
               # Add failures here to passed_tests.
               passed_tests.extend([
                   hw_result.task.test.common.display_name
