@@ -34,9 +34,9 @@ def RunSteps(api):
   api.assertions.assertEqual(output_proto.result, 'good')
 
   # Check ignores unknown fields.
-  unknown_field = "ye_unknown_field"
-  api.assertions.assertTrue(
-      unknown_field not in
+  unknown_field = 'ye_unknown_field'
+  api.assertions.assertNotIn(
+      unknown_field,
       [f.name for f in build_api_test.TestResultMessage.DESCRIPTOR.fields])
   output_proto = api.cros_build_api(
       'chromite.api.TestApiService/InputOutputMethod', input_proto, output_type,
