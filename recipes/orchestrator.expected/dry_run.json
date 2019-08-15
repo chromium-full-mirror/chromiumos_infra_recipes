@@ -396,6 +396,7 @@
     ],
     "infra_step": true,
     "name": "run builds.collect.wait",
+    "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

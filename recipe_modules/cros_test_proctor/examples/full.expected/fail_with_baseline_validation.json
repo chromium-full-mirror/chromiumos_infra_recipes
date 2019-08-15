@@ -1224,6 +1224,7 @@
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect vm tests.wait",
+    "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1294,6 +1295,7 @@
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect moblab vm tests.wait",
+    "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2144,6 +2146,7 @@
     ],
     "infra_step": true,
     "name": "run baseline tests.collect baseline tests.collect baseline vm tests.wait",
+    "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
