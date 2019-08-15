@@ -101,10 +101,15 @@ class RepoApi(recipe_api.RecipeApi):
   def clearGitLocks(self):
     """Removes any git locks found in the entire repo checkout."""
 
-    cmd = [
+    repo_cmd = [
         'find', '.repo/', '-type', 'f', '-name', '*.lock', '-print', '-delete'
     ]
-    self.m.step('clear git locks', cmd, infra_step=True)
+    self.m.step('clear repo locks', repo_cmd, infra_step=True)
+    git_cmd = [
+        'forall', '-c', 'find', '.git/', '-type', 'f', '-name', '*.lock',
+        '-print', '-delete'
+    ]
+    self._step(git_cmd, 'clear git locks')
 
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,

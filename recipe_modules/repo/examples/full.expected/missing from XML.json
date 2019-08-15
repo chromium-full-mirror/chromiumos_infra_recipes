@@ -21,6 +21,23 @@
       "-delete"
     ],
     "infra_step": true,
+    "name": "clear repo locks"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-c",
+      "find",
+      ".git/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "infra_step": true,
     "name": "clear git locks"
   },
   {
@@ -47,6 +64,23 @@
     "cmd": [
       "find",
       ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "infra_step": true,
+    "name": "clear repo locks (2)"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-c",
+      "find",
+      ".git/",
       "-type",
       "f",
       "-name",
@@ -295,6 +329,27 @@
     "cmd": [
       "find",
       ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CLEANUP]/ensure",
+    "infra_step": true,
+    "name": "ensure synced checkout.clear repo locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-c",
+      "find",
+      ".git/",
       "-type",
       "f",
       "-name",
