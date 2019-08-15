@@ -169,20 +169,19 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       return None
 
   @classmethod
-  def build_target_set(cls, builds):
-    """Take a list of builds and return a set of build_target names.
+  def build_target_dict(cls, builds):
+    """Take a list of builds and return a map of build_target names to build.
 
     This function will omit any builds that don't define input build targets.
 
     Args:
       builds (build_pb2.Build): builds to extract build_target.name set from.
 
-    Returns: a set(str) of build_target names.
+    Returns: a dict(str, build_pb2.Build) of build_target names.
     """
-    build_target_set = set()
-    for b in builds:
-      build_target_set.add(cls.get_build_target(b))
-    return set(filter(None, build_target_set))
+    build_targets = {cls.get_build_target(b):b for b in builds}
+    build_targets.pop(None, None)
+    return build_targets
 
   @staticmethod
   def _buildset_tag_from_snapshot(snapshot):

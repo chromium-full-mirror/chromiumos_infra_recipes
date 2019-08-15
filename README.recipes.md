@@ -626,16 +626,16 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@classmethod**<br>&mdash; **def [build\_target\_set](/recipe_modules/cros_history/api.py#171)(cls, builds):**
+&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#171)(cls, builds):**
 
-Take a list of builds and return a set of build_target names.
+Take a list of builds and return a map of build_target names to build.
 
 This function will omit any builds that don't define input build targets.
 
 Args:
   builds (build_pb2.Build): builds to extract build_target.name set from.
 
-Returns: a set(str) of build_target names.
+Returns: a dict(str, build_pb2.Build) of build_target names.
 
 &emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#163)(cls, build):**
 
@@ -2851,7 +2851,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#319)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#322)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2865,7 +2865,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#371)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#374)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2889,7 +2889,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#360)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#363)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2897,7 +2897,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#347)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#350)(refs):**
 
 Assert the given refs start with refs/heads.
 

@@ -264,8 +264,10 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
           initial_found_builds, len(snapshot_builds)))
 
   completed_builders = [build.builder.builder for build in completed_builds]
-  existing_build_targets = \
-      api.cros_history.build_target_set(snapshot_builds)
+  snapshot_build_targets = \
+      api.cros_history.build_target_dict(snapshot_builds)
+
+  filtered_snapshot_builds = []
 
   with api.step.nest('filter builds') as step:
     for child in child_builders:
@@ -280,7 +282,8 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
         filter_log.append('{} already passed'.format(child_target))
         continue
       # We've already found an existing build, we'll just wait on it later.
-      elif child_target in existing_build_targets:
+      elif child_target in snapshot_build_targets:
+        filtered_snapshot_builds.append(snapshot_build_targets[child_target])
         filter_log.append('{} exists, will join on it'.format(child_target))
         continue
 
@@ -313,7 +316,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
               properties=api.cq.props_for_child_build, tags=tags))
     step.presentation.logs['filter log'] = filter_log
 
-  return completed_builds, snapshot_builds, new_build_requests
+  return completed_builds, filtered_snapshot_builds, new_build_requests
 
 
 def get_completed_builds(api, cq_orch_children):
