@@ -43,7 +43,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     bundle_endpoints = [
         'BundleImageZip', 'BundleTestUpdatePayloads', 'BundleAutotestFiles',
         'BundleTastFiles', 'BundlePinnedGuestImages', 'BundleFirmware',
-        'BundleEbuildLogs',
+        'BundleEbuildLogs', 'BundleChromeOSConfig', 'ExportCpeReport',
     ]
     return {endpoint: bundle_response for endpoint in bundle_endpoints}
 

@@ -61,7 +61,8 @@ def RunSteps(api):
           endpoint: artifacts.BundleResponse for endpoint in [
               'BundleImageZip', 'BundleTestUpdatePayloads',
               'BundleAutotestFiles', 'BundleTastFiles',
-              'BundlePinnedGuestImages', 'BundleFirmware', 'BundleEbuildLogs'
+              'BundlePinnedGuestImages', 'BundleFirmware', 'BundleEbuildLogs',
+              'BundleChromeOSConfig', 'ExportCpeReport',
           ]
       },
       'BinhostService': {
