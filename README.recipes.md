@@ -126,6 +126,8 @@
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [recipes_tester](#recipes-recipes_tester) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [repo:examples/full](#recipes-repo_examples_full)
+  * [sign_image](#recipes-sign_image) &mdash; Recipe for signing ChromeOS images.
+  * [sign_paygen](#recipes-sign_paygen) &mdash; Recipe for signing ChromeOS payloads (AU deltas etc).
   * [signing](#recipes-signing) &mdash; Recipe for signing ChromeOS images.
   * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
   * [skylab:examples/wait_tasks](#recipes-skylab_examples_wait_tasks)
@@ -2935,6 +2937,20 @@ Tests a recipe CL by running ChromeOS builders.
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
+### *recipes* / [sign\_image](/recipes/sign_image.py)
+
+[DEPS](/recipes/sign_image.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for signing ChromeOS images.
+
+&mdash; **def [RunSteps](/recipes/sign_image.py#13)(api):**
+### *recipes* / [sign\_paygen](/recipes/sign_paygen.py)
+
+[DEPS](/recipes/sign_paygen.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for signing ChromeOS payloads (AU deltas etc).
+
+&mdash; **def [RunSteps](/recipes/sign_paygen.py#13)(api):**
 ### *recipes* / [signing](/recipes/signing.py)
 
 [DEPS](/recipes/signing.py#8): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
