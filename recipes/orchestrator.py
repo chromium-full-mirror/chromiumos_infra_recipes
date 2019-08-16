@@ -235,7 +235,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
   """
   filter_log = []
   completed_builds, snapshot_builds, new_build_requests = [], [], []
-  retry_count = 0
+  is_retry = False
 
   image_builders_pointless = False
   if gerrit_changes:
@@ -246,9 +246,8 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
 
   if enable_history and gerrit_changes:
     with api.step.nest('get build history for changes'):
-      retry_count = len(
-          api.cros_history.get_matching_builds(api.buildbucket.build,
-                                               statuses=[common_pb2.FAILURE]))
+      is_retry = len(
+          api.cros_history.get_matching_builds(api.buildbucket.build)) > 0
       completed_builds = get_completed_builds(api, child_builders)
 
   snapshot_builds = api.cros_history.get_snapshot_builds(
@@ -301,7 +300,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
 
       # Don't retry non-critical builds.
       critical = child_builder_config.general.critical.value
-      if not critical and retry_count != 0:
+      if not critical and is_retry:
         filter_log.append('{} is non-critical and already ran'.format(child))
         continue
 
