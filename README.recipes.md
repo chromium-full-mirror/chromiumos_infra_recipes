@@ -132,6 +132,7 @@
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
+  * [test_config](#recipes-test_config) &mdash; Compares Parallel CQ and Legacy cbuildbot configs.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
   * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Moblab VM tests.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
@@ -2970,6 +2971,13 @@ Though this recipe appears to be almost a subset of build_target, it lives
 on its own because it is agnostic of ChromeOS build targets.
 
 &mdash; **def [RunSteps](/recipes/test_chromite.py#27)(api):**
+### *recipes* / [test\_config](/recipes/test_config.py)
+
+[DEPS](/recipes/test_config.py#8): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Compares Parallel CQ and Legacy cbuildbot configs.
+
+&mdash; **def [RunSteps](/recipes/test_config.py#19)(api):**
 ### *recipes* / [test\_manifest](/recipes/test_manifest.py)
 
 [DEPS](/recipes/test_manifest.py#10): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
