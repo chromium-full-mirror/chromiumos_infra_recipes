@@ -89,17 +89,17 @@ The output from `led launch` should give a link to the swarming task, e.g.
 [I 2019-05-06 15:31:43] LUCI UI: https://ci.chromium.org/swarming/task/44a7e0cb7a0d6310?server=chrome-swarming.appspot.com
 ```
 
-## Recipe Tester Presubmit
+## Test Recipes Presubmit
 
 Recipe changes run through a presubmit job that verifies them on actual ChromeOS CI builders
 (essentially automating the `led` testing process).
 
-The builders to be run are controlled with the `builders` property on the `recipes_tester` recipe.
+The builders to be run are controlled with the `builders` property on the `test_recipes` recipe.
 Builders will not be run if the recipe change does not affect them (as determined by
 `./recipes.py analyze`, which checks if the recipe or any of its dependencies has been modified).
 
 If you are confident that your change does not need testing, you can include the
-`Recipes-Tester-Skip-Builder` footer in your CL. **That this should be done sparingly. If the
+`Test-Recipes-Skip-Builder` footer in your CL. **That this should be done sparingly. If the
 presubmit is flaky, the root cause should be fixed. Please put a justification in the CL
 description for why the builder is skipped**. The footer syntax is a bit picky; an example commit
 message would look like
@@ -109,16 +109,16 @@ A test commit
 
 - Note: Skipping testers because this change must be submitted now.
 
-Recipes-Tester-Skip-Builder: Builder1
-Recipes-Tester-Skip-Builder: Builder2
+Test-Recipes-Skip-Builder: Builder1
+Test-Recipes-Skip-Builder: Builder2
 Change-Id: 1234
 ```
 
 Use `depot_tools/git-footers` to verify the footer syntax. For example, the above commit returns
 
 ```
-Recipes-Tester-Skip-Builder: Builder2
-Recipes-Tester-Skip-Builder: Builder1
+Test-Recipes-Skip-Builder: Builder2
+Test-Recipes-Skip-Builder: Builder1
 Change-Id: 1234
 ```
 
@@ -129,8 +129,8 @@ A test commit
 
 - Note: Skipping testers because this change must be submitted now.
 
-Recipes-Tester-Skip-Builder: Builder1
-Recipes-Tester-Skip-Builder: Builder2
+Test-Recipes-Skip-Builder: Builder1
+Test-Recipes-Skip-Builder: Builder2
 
 Change-Id: 1234
 ```
@@ -142,7 +142,7 @@ Change-Id: 1234
 ```
 
 and thus the builders will not be skipped. Also note that each builder to skip must have its own
-line; `Recipes-Tester-Skip-Builder: Builder1, Builder2` will not work.
+line; `Test-Recipes-Skip-Builder: Builder1, Builder2` will not work.
 
 ## Chrome OS Recipes Code Style
 
