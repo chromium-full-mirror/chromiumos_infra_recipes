@@ -1869,8 +1869,13 @@
   },
   {
     "cmd": [],
-    "name": "get snapshot builds",
+    "name": "find baseline builds"
+  },
+  {
+    "cmd": [],
+    "name": "find baseline builds.get snapshot builds",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@found 0 snapshot builds@@@"
     ]
   },
@@ -1882,10 +1887,10 @@
       "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "get snapshot builds.buildbucket.search",
+    "name": "find baseline builds.get snapshot builds.buildbucket.search",
     "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:23Z\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles///+/\"}]}}}]}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{@@@",

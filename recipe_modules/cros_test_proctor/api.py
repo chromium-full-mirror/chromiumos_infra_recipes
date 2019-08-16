@@ -128,13 +128,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             for test_name in failed_test_names
         ])
         baseline_builds = []
-        for build in completed_builds:
-          # Assuming that completed_builds have build_targets.
-          build_target = self.m.cros_history.get_build_target(build)
-          if build_target and build_target in build_targets_to_verify:
-            baseline_builds += self.m.cros_history.get_snapshot_builds(
-                build.input.gitiles_commit, [build_target + '-snapshot'],
-                [common_pb2.SUCCESS])
+        with self.m.step.nest('find baseline builds'):
+          for build in completed_builds:
+            # Assuming that completed_builds have build_targets.
+            build_target = self.m.cros_history.get_build_target(build)
+            if build_target and build_target in build_targets_to_verify:
+              baseline_builds += self.m.cros_history.get_snapshot_builds(
+                  build.input.gitiles_commit, [build_target + '-snapshot'],
+                  [common_pb2.SUCCESS])
         with self.m.step.nest('run baseline tests'):
           with self.m.step.nest('schedule baseline tests'):
             baseline_test_plan = self.m.cros_test_plan.generate(
