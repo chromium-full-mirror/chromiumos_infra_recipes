@@ -50,7 +50,7 @@
       "----",
       "cp",
       "gs://chromeos-image-archive/test-board-release/R10-11.0.0/debug_breakpad.tar.xz",
-      "[CLEANUP]/image_archive_tmp_1/debug_breakpad.tar.xz"
+      "[CLEANUP]/image_archive_tmp_2/debug_breakpad.tar.xz"
     ],
     "infra_step": true,
     "name": "symbolicate dump.gsutil download_url",
@@ -63,9 +63,9 @@
     "cmd": [
       "tar",
       "xf",
-      "[CLEANUP]/image_archive_tmp_1/debug_breakpad.tar.xz",
+      "[CLEANUP]/image_archive_tmp_2/debug_breakpad.tar.xz",
       "-C",
-      "[CLEANUP]/extracted_symbols_tmp_2"
+      "[CLEANUP]/extracted_symbols_tmp_3"
     ],
     "name": "symbolicate dump.extract symbols",
     "~followup_annotations": [
@@ -86,33 +86,12 @@
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "cp",
-      "-r",
-      "gs://chromeos-autotest-results/swarming-1234",
-      "[CLEANUP]/test_result_tmp_3"
-    ],
-    "infra_step": true,
-    "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.gsutil download_url",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gs://chromeos-autotest-results/swarming-1234@https://storage.cloud.google.com/chromeos-autotest-results/swarming-1234@@@"
-    ]
-  },
-  {
-    "cmd": [
       "find",
       ".",
       "-name",
       "*.dmp"
     ],
-    "cwd": "[CLEANUP]/test_result_tmp_3",
+    "cwd": "[CLEANUP]/test_result_tmp_1",
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.find .dmp files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -131,9 +110,9 @@
     "cmd": [
       "[START_DIR]/breakpad/minidump_stackwalk",
       "./a/b/c.dmp",
-      "[CLEANUP]/extracted_symbols_tmp_2"
+      "[CLEANUP]/extracted_symbols_tmp_3"
     ],
-    "cwd": "[CLEANUP]/test_result_tmp_3",
+    "cwd": "[CLEANUP]/test_result_tmp_1",
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/c.dmp.minidump_stackwalk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -148,9 +127,9 @@
       "/path/to/tmp/json",
       "copy",
       "TEST_MINIDUMP_STDOUT",
-      "[CLEANUP]/test_result_tmp_3/a/b/c.dmp.txt"
+      "[CLEANUP]/test_result_tmp_1/a/b/c.dmp.txt"
     ],
-    "cwd": "[CLEANUP]/test_result_tmp_3",
+    "cwd": "[CLEANUP]/test_result_tmp_1",
     "infra_step": true,
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/c.dmp.write .dmp.txt",
     "~followup_annotations": [
@@ -172,9 +151,9 @@
     "cmd": [
       "[START_DIR]/breakpad/minidump_stackwalk",
       "./a/b/d.dmp",
-      "[CLEANUP]/extracted_symbols_tmp_2"
+      "[CLEANUP]/extracted_symbols_tmp_3"
     ],
-    "cwd": "[CLEANUP]/test_result_tmp_3",
+    "cwd": "[CLEANUP]/test_result_tmp_1",
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/d.dmp.minidump_stackwalk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -189,9 +168,9 @@
       "/path/to/tmp/json",
       "copy",
       "TEST_MINIDUMP_STDOUT",
-      "[CLEANUP]/test_result_tmp_3/a/b/d.dmp.txt"
+      "[CLEANUP]/test_result_tmp_1/a/b/d.dmp.txt"
     ],
-    "cwd": "[CLEANUP]/test_result_tmp_3",
+    "cwd": "[CLEANUP]/test_result_tmp_1",
     "infra_step": true,
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/d.dmp.write .dmp.txt",
     "~followup_annotations": [
@@ -214,9 +193,9 @@
     "cmd": [
       "[START_DIR]/breakpad/minidump_stackwalk",
       "./a/b/corrupted.dmp",
-      "[CLEANUP]/extracted_symbols_tmp_2"
+      "[CLEANUP]/extracted_symbols_tmp_3"
     ],
-    "cwd": "[CLEANUP]/test_result_tmp_3",
+    "cwd": "[CLEANUP]/test_result_tmp_1",
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/corrupted.dmp.minidump_stackwalk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -234,10 +213,10 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/test_result_tmp_3/swarming-1234",
+      "[CLEANUP]/test_result_tmp_1/swarming-1234",
       "gs://chromeos-autotest-results/swarming-1234"
     ],
-    "cwd": "[CLEANUP]/test_result_tmp_3",
+    "cwd": "[CLEANUP]/test_result_tmp_1",
     "infra_step": true,
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.gsutil upload symbolicated files",
     "~followup_annotations": [

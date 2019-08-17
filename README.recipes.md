@@ -23,6 +23,7 @@
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_test_plan](#recipe_modules-cros_test_plan)
   * [cros_test_platform](#recipe_modules-cros_test_platform)
+  * [cros_test_postprocess](#recipe_modules-cros_test_postprocess)
   * [cros_test_proctor](#recipe_modules-cros_test_proctor)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
@@ -85,6 +86,7 @@
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full)
+  * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full)
   * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
@@ -230,8 +232,9 @@ minidump files to text, and copies the text files back to `test_results`.
 
 Args:
   image_archive_path (str): A Google Storage path to the image archive.
-  test_results (list[TestResult]): cros_test_postprocess.TestResult protos
-    to process.
+  test_results (list[(DownloadedTestResult)]): A list of
+      DownloadedTestResult which has both GS path and local path of the
+      test result to process.
 
 Returns:
   A list[Path] of symbolicated files written.
@@ -1081,6 +1084,24 @@ Args:
   request: a ExecuteRequest.
 
 Returns: ExecuteResponse.
+### *recipe_modules* / [cros\_test\_postprocess](/recipe_modules/cros_test_postprocess)
+
+#### **class [CrosTestPostProcessApi](/recipe_modules/cros_test_postprocess/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Data structures used by the cros_test_postprocess recipe.
+
+&mdash; **def [downloaded\_test\_result](/recipe_modules/cros_test_postprocess/api.py#16)(self, gs_path, local_path):**
+
+Create an object of DownloadedTestResult.
+
+The object created is passed to each post process api to consume.
+
+Args:
+  gs_path: A string of GS path of test result to download.
+  local_path: A Path object to save downloaded test result locally.
+
+Returns:
+  A named tuple of (gs_path, local_path).
 ### *recipe_modules* / [cros\_test\_proctor](/recipe_modules/cros_test_proctor)
 
 [DEPS](/recipe_modules/cros_test_proctor/__init__.py#1): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2538,9 +2559,9 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipes/branch_rename.py#22)(api, properties):**
 ### *recipes* / [breakpad:examples/full](/recipe_modules/breakpad/examples/full.py)
 
-[DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/breakpad/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/breakpad/examples/full.py#18)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [portage](#recipe_modules-portage), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2714,6 +2735,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#18)(api):**
+### *recipes* / [cros\_test\_postprocess:examples/full](/recipe_modules/cros_test_postprocess/examples/full.py)
+
+[DEPS](/recipe_modules/cros_test_postprocess/examples/full.py#6): [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_postprocess/examples/full.py#12)(api):**
 ### *recipes* / [cros\_test\_proctor:examples/full](/recipe_modules/cros_test_proctor/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_proctor/examples/full.py#16): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -3173,9 +3199,9 @@ Args:
 Returns: (test_platform.Request, bool (skylab)) tuple.
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
-[DEPS](/recipes/test_platform/cros_test_postprocess.py#8): [breakpad](#recipe_modules-breakpad), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/test_platform/cros_test_postprocess.py#10): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#18)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#45)(api, properties):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
 [DEPS](/recipes/test_platform/test_runner.py#10): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -112,8 +112,9 @@ class BreakpadApi(recipe_api.RecipeApi):
 
     Args:
       image_archive_path (str): A Google Storage path to the image archive.
-      test_results (list[TestResult]): cros_test_postprocess.TestResult protos
-        to process.
+      test_results (list[(DownloadedTestResult)]): A list of
+          DownloadedTestResult which has both GS path and local path of the
+          test result to process.
 
     Returns:
       A list[Path] of symbolicated files written.
@@ -126,13 +127,8 @@ class BreakpadApi(recipe_api.RecipeApi):
 
       for test_result in test_results:
         with self.m.step.nest('symbolicate dumps from {}'.format(
-            test_result.path)) as step:
-          test_result_local_path = self.m.path.mkdtemp(prefix='test_result')
-          self._download_and_log_gs_url(test_result.path,
-                                        test_result_local_path, args=['-r'],
-                                        multithreaded=True)
-
-          with self.m.context(cwd=test_result_local_path):
+            test_result.gs_path)) as step:
+          with self.m.context(cwd=test_result.local_path):
             # Get all '.dmp' files in the test results dir. Note that the
             # `recipe_engine/file` module does not provide recursive search
             # functionality. The `glob` function does not recurse directory
@@ -167,11 +163,11 @@ class BreakpadApi(recipe_api.RecipeApi):
             # rsync command so the directory structure lines up, e.g.
             # "rsync [local tmp dir]/test_result/swarming-1234
             #  gs://chromeos-autotest-results/swarming-1234"
-            test_result_basename = os.path.basename(test_result.path)
+            test_result_basename = os.path.basename(test_result.gs_path)
             self.m.gsutil([
                 'rsync', '-r',
-                test_result_local_path.join(test_result_basename),
-                test_result.path
+                test_result.local_path.join(test_result_basename),
+                test_result.gs_path
             ], name='upload symbolicated files', multithreaded=True)
 
     return stackwalk_output_paths

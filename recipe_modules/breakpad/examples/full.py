@@ -4,7 +4,9 @@
 
 DEPS = [
     'breakpad',
+    'cros_test_postprocess',
     'recipe_engine/assertions',
+    'recipe_engine/path',
     'recipe_engine/raw_io',
 ]
 
@@ -17,9 +19,9 @@ def RunSteps(api):
   stackwalk_output_paths = api.breakpad.symbolicate_dump(
       image_archive_path=
       'gs://chromeos-image-archive/test-board-release/R10-11.0.0',
-      test_results=[
-          TestResult(path=TEST_RESULT_PATH),
-      ])
+      test_results=[api.cros_test_postprocess.downloaded_test_result(
+          gs_path=TEST_RESULT_PATH, local_path=api.path.mkdtemp('test_result'))]
+  )
 
   api.assertions.assertEqual(len(stackwalk_output_paths), 2)
   api.assertions.assertEqual(stackwalk_output_paths[0].pieces[-1],
