@@ -2900,7 +2900,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#53)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#144)(api, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#155)(api, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -2916,7 +2916,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#215)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#226)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -2937,7 +2937,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#128)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#139)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -2947,7 +2947,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#321)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#332)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2961,7 +2961,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#373)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#384)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2972,7 +2972,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#176)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#187)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -2985,7 +2985,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#362)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#373)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -2993,7 +2993,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#349)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#360)(refs):**
 
 Assert the given refs start with refs/heads.
 

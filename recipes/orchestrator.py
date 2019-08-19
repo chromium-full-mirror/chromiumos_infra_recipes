@@ -75,19 +75,30 @@ def RunSteps(api, properties):
   if gerrit_changes and not api.gerrit.changes_are_submittable(gerrit_changes):
     raise api.step.StepFailure('failed to cherry-pick changes, '
                                'please rebase and retry')
+
   if properties.enable_history and gerrit_changes:
     if properties.assert_singleton:
       with api.step.nest('find inflight orchestrator') as step:
         older_running_builds = api.cros_history.get_matching_builds(
             api.buildbucket.build, statuses=[common_pb2.STARTED])
+
+        # Is a run of the same configuration ongoing? If so, inform and join().
         if len(older_running_builds) > 1:
-          # Current build is redundant (Yourself + Another). Exit with failure.
-          step.presentation.step_text = 'found inflight run(s)'
+          step.presentation.step_text = 'found {} inflight run(s) to wait on'\
+                                        .format(len(older_running_builds))
+
+          # Give the UI the links to STARTED builds with same configuration.
           for build in older_running_builds:
             title = api.naming.get_build_title(build)
             url = api.buildbucket.build_url(build_id=build.id)
             step.presentation.links[title] = url
-          raise api.step.StepFailure('current build is redundant, exiting')
+
+          # Wait for all started builds.
+          api.buildbucket.collect_builds(
+              [b.id for b in older_running_builds],
+              step_name='waiting for existing runs',
+              timeout=60 * 60 * 4,
+          )
         else:
           step.presentation.step_text = 'found no inflight run'
 
@@ -585,14 +596,30 @@ def GenTests(api):
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
 
-  yield (api.test('fails_if_inflight_orchs') +  #
+  yield (api.test('join_if_inflight_orchs') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='run builds.orchestrator pointless build check') +  #
          api.buildbucket.simulated_search_results(
              builds, step_name='find inflight orchestrator.'
-             'find matching builds.buildbucket.search'))
+             'find matching builds.buildbucket.search') +  #
+         api.buildbucket.simulated_collect_output(
+             builds, 'find inflight orchestrator.waiting for existing runs') +
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             vm_tests,
+             step_name='run tests.collect tests.collect autotest vm tests') +
+         api.buildbucket.simulated_collect_output(
+             [], step_name='run tests.collect tests.collect tast vm tests') +
+         api.buildbucket.simulated_collect_output(
+             moblab_vm_tests,
+             step_name='run tests.collect tests.collect moblab vm tests'))
+
 
   yield (api.test('runs_if_no_inflight_orchs') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
