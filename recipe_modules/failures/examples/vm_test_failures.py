@@ -33,6 +33,7 @@ def RunSteps(api):
 
   api.assertions.assertFalse(
       api.failures.is_critical_vm_test_failure(vm_success))
+  api.assertions.assertFalse(api.failures.is_critical_test_failure(vm_success))
   api.assertions.assertFalse(
       api.failures.is_critical_vm_test_failure(vm_failure))
   api.assertions.assertTrue(

@@ -32,6 +32,8 @@ def RunSteps(api):
       api.failures.is_critical_hw_test_failure(skylab_failure))
   api.assertions.assertTrue(
       api.failures.is_critical_hw_test_failure(skylab_critical_failure))
+  api.assertions.assertTrue(
+      api.failures.is_critical_test_failure(skylab_critical_failure))
 
   # Do the obvious thing without baseline tests: raise critical failures only.
   api.assertions.assertFalse(

@@ -95,6 +95,7 @@
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
   * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
   * [failures:examples/ignore_exceptions](#recipes-failures_examples_ignore_exceptions)
+  * [failures:examples/is_critical_test_failure](#recipes-failures_examples_is_critical_test_failure)
   * [failures:examples/moblab_vm_test_failures](#recipes-failures_examples_moblab_vm_test_failures)
   * [failures:examples/package_failures](#recipes-failures_examples_package_failures)
   * [failures:examples/silences](#recipes-failures_examples_silences)
@@ -120,6 +121,7 @@
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
   * [naming:examples/full](#recipes-naming_examples_full)
+  * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
@@ -1070,9 +1072,36 @@ Returns: ExecuteResponse.
 
 [DEPS](/recipe_modules/cros_test_proctor/__init__.py#1): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#23)(self, need_tests_builds, completed_builds, snapshot, gerrit_changes, enable_history, baseline_validation_percent, baseline_validation_count):**
+&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#187)(self, test_tasks, bb=False):**
+
+Collect on all tests from test_tasks.
+
+The tests are collected in the order: skylab, autotest_vm,
+tast_vm, moblab_vm.
+
+Args:
+  test_tasks (MetaTestTuple): lists of tests to collect.
+  bb(boolean): Whether to use buildbucket-backed cros_test_platform.
+                  Note: this flag is temporary, and will exist only during
+                  cros_test_platform migration.
+
+Returns:
+  MetaTestTuple of lists of tests collected.
+
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#224)(self, test_results, baseline_results):**
+
+Logs all test failures to the UI and raises on failed tests.
+
+Args:
+  test_results: MetaTestTuple of the tests on the changes.
+  baseline_results: MetaTestTuple of the tests on the baseline images.
+Returns:
+  list[Failure]: All failures discovered in the given runs filtered
+  by baseline failures.
+
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#27)(self, need_tests_builds, completed_builds, snapshot, gerrit_changes, enable_history, baseline_validation_percent, baseline_validation_count):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -1097,6 +1126,26 @@ Args:
 
 Returns
   list[failures.Failure]: failures encountered running tests
+
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#152)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, bb=False):**
+
+Schedule all tests from the test_plan.
+
+Args:
+  test_plan (GenerateTestPlanResponse): A plan for all tests to
+    be scheduled.
+  passed_tests (list[string]): A list of names for the tests that
+    have passed before.
+  test_to_build_map (dict{string->string}): Map of test names to
+    build_targets to be populated.
+  snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
+      the included builds were created.
+  bb(boolean): Whether to use buildbucket-backed cros_test_platform.
+                  Note: this flag is temporary, and will exist only during
+                  cros_test_platform migration.
+
+Returns:
+  MetaTestTuple of lists of the tests scheduled.
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1195,15 +1244,15 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
-[DEPS](/recipe_modules/failures/__init__.py#6): [cros\_som](#recipe_modules-cros_som), [naming](#recipe_modules-naming), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/failures/__init__.py#6): [cros\_som](#recipe_modules-cros_som), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 API for raising failures and presenting them in cute ways.
 
-#### **class [FailuresApi](/recipe_modules/failures/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [FailuresApi](/recipe_modules/failures/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#181)(self, failures):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#182)(self, failures):**
 
 Returns a recipe result based on the given failures.
 
@@ -1215,7 +1264,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#234)(self, builds):**
+&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#235)(self, builds):**
 
 Verify all builds completed successfully.
 
@@ -1225,7 +1274,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#247)(self, hw_tests, baseline_hw_tests=None):**
+&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#248)(self, hw_tests, baseline_hw_tests=None):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -1238,7 +1287,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#281)(self, moblab_vm_tests, baseline_moblab_vm_tests=None):**
+&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#282)(self, moblab_vm_tests, baseline_moblab_vm_tests=None):**
 
 Logs Moblab VM test status to UI, but does not rais on failed tests.
 
@@ -1251,7 +1300,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#264)(self, vm_tests, baseline_vm_tests=None):**
+&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#265)(self, vm_tests, baseline_vm_tests=None):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -1264,14 +1313,14 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#143)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#144)(self):**
 
 Catches exceptions and logs them instead.
 
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#299)(self, build):**
+&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#300)(self, build):**
 
 Determine if the build failed.
 
@@ -1281,7 +1330,7 @@ Args:
 Returns:
   bool: True if the build failed.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#343)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#360)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -1291,7 +1340,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#355)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#372)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1301,7 +1350,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#378)(self, moblab_vm_test):**
+&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#395)(self, moblab_vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1311,7 +1360,17 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#367)(self, vm_test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#311)(self, test):**
+
+Determine if the test is critical and has failed.
+
+Args:
+  test (Build|SkylabResult): The test in question.
+
+Returns:
+  bool: True if the test is critical and has failed.
+
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#384)(self, vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1321,7 +1380,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#310)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#327)(self, hw_test):**
 
 Determine if the hardware test failed.
 
@@ -1331,7 +1390,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#332)(self, moblab_vm_test):**
+&mdash; **def [is\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#349)(self, moblab_vm_test):**
 
 Determine if the VM test failed.
 
@@ -1341,7 +1400,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#321)(self, vm_test):**
+&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#338)(self, vm_test):**
 
 Determine if the VM test failed.
 
@@ -1351,7 +1410,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#156)(self, packages):**
+&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#157)(self, packages):**
 
 Display failed packages and raise a failure.
 
@@ -1886,13 +1945,27 @@ Returns:
   str: the current revision hash of the specified branch
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
+[DEPS](/recipe_modules/naming/__init__.py#6): [skylab](#recipe_modules-skylab)
+
 API featuring shared helpers for naming things.
 
-#### **class [NamingApi](/recipe_modules/naming/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [NamingApi](/recipe_modules/naming/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with helpers for naming things.
 
-&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#19)(self, build):**
+&mdash; **def [get\_all\_vm\_test\_title](/recipe_modules/naming/api.py#81)(self, vm_test):**
+
+Get a string to describe the VM test.
+
+Args:
+  vm_test (Build): The buildbucket build for the VM test.
+
+Returns:
+  str: A string describing the VM test.
+Raises:
+  ValueError if name not in vm_test.input.properties.
+
+&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#20)(self, build):**
 
 Get a string to describe the build.
 
@@ -1902,7 +1975,7 @@ Args:
 Returns:
   str: A string describing the build.
 
-&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#97)(self, commit):**
+&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#129)(self, commit):**
 
 Get a string to describe the commit.
 
@@ -1914,7 +1987,7 @@ Args:
 Returns:
   str: The commit title.
 
-&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#31)(self, hw_test):**
+&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#48)(self, hw_test):**
 
 Get a string to describe the HW test.
 
@@ -1924,7 +1997,7 @@ Args:
 Returns:
   str: The HW test title.
 
-&mdash; **def [get\_moblab\_vm\_test\_title](/recipe_modules/naming/api.py#80)(self, moblab_vm_test):**
+&mdash; **def [get\_moblab\_vm\_test\_title](/recipe_modules/naming/api.py#112)(self, moblab_vm_test):**
 
 Get a string to describe the VM test.
 
@@ -1934,7 +2007,7 @@ Args:
 Returns:
   str: A string describing the VM test.
 
-&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#112)(self, package):**
+&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#144)(self, package):**
 
 Get a string to describe the package.
 
@@ -1944,7 +2017,7 @@ Args:
 Returns:
   str: The package title.
 
-&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#53)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#70)(self, skylab_result):**
 
 Get a string to describe the HW test.
 
@@ -1954,7 +2027,7 @@ Args:
 Returns:
   str: The HW test title.
 
-&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#42)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#59)(self, skylab_task):**
 
 Get a string to describe the Skylab task.
 
@@ -1964,7 +2037,17 @@ Args:
 Returns:
   str: The Skylab task title.
 
-&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#64)(self, vm_test):**
+&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#32)(self, test):**
+
+Get a string to describe the test.
+
+Args:
+  test (SkylabResult|Build): The test in question.
+
+Returns:
+  A str describing the test.
+
+&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#96)(self, vm_test):**
 
 Get a string to describe the VM test.
 
@@ -2654,6 +2737,11 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 [DEPS](/recipe_modules/failures/examples/ignore_exceptions.py#6): [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/ignore_exceptions.py#12)(api):**
+### *recipes* / [failures:examples/is\_critical\_test\_failure](/recipe_modules/failures/examples/is_critical_test_failure.py)
+
+[DEPS](/recipe_modules/failures/examples/is_critical_test_failure.py#6): [failures](#recipe_modules-failures)
+
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/is_critical_test_failure.py#11)(api):**
 ### *recipes* / [failures:examples/moblab\_vm\_test\_failures](/recipe_modules/failures/examples/moblab_vm_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/moblab_vm_test_failures.py#6): [failures](#recipe_modules-failures), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2797,6 +2885,11 @@ Test git_footers calls.
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#17)(api):**
+### *recipes* / [naming:examples/get\_test\_title](/recipe_modules/naming/examples/get_test_title.py)
+
+[DEPS](/recipe_modules/naming/examples/get_test_title.py#6): [naming](#recipe_modules-naming)
+
+&mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#11): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

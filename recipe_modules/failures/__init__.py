@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/time',
     'cros_som',
     'naming',
+    'skylab',
     'urls',
 ]
 

@@ -47,11 +47,13 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         hw_test_cfg=HwTestCfg(
             hw_test=[
                 HwTestCfg.HwTest(
-                    common=TestSuiteCommon(display_name='htarget.hw.bvt-cq'),
+                    common=TestSuiteCommon(display_name='htarget.hw.bvt-cq',
+                                           critical={'value': True}),
                     suite='bvt-cq',
                     skylab_board='target',
                 ),
-            ],),)
+            ],),
+    )
 
   @property
   def another_hw_test_unit(self):
@@ -60,8 +62,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         hw_test_cfg=HwTestCfg(
             hw_test=[
                 HwTestCfg.HwTest(
-                    common=TestSuiteCommon(
-                        display_name='htarget.hw.bvt-inline'),
+                    common=TestSuiteCommon(display_name='htarget.hw.bvt-inline',
+                                           critical={'value': True}),
                     suite='bvt-inline',
                     skylab_board='target',
                 ),

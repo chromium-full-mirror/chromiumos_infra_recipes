@@ -38,6 +38,8 @@ Plagueis the Wise?
   skylab_result = api.skylab.test_api.skylab_result(task=skylab_task)
   api.assertions.assertEqual(api.naming.get_skylab_result_title(skylab_result),
                              'hw-test')
+  api.assertions.assertEqual(
+      api.naming.get_test_title(skylab_result), 'hw-test')
 
   properties = {'name': 'vm-test'}
 
@@ -48,6 +50,9 @@ Plagueis the Wise?
   vm_test = build_pb2.Build()
   vm_test.output.properties.update(properties)
   api.assertions.assertEqual(api.naming.get_vm_test_title(vm_test), 'vm-test')
+  api.assertions.assertEqual(
+      api.naming.get_all_vm_test_title(vm_test), 'vm-test')
+  api.assertions.assertEqual(api.naming.get_test_title(vm_test), 'vm-test')
 
   properties = {'name': 'moblab-vm-test'}
 
@@ -66,6 +71,7 @@ Plagueis the Wise?
   package = PackageInfo(category='cat', package_name='name', version='123')
   api.assertions.assertEqual(api.naming.get_package_title(package),
                              'cat/name-123')
+
 
 def GenTests(api):
   yield api.test('basic')

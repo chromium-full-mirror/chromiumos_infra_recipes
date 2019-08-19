@@ -4,5 +4,14 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'skylab',
+    'naming',
 ]
+
+
+def RunSteps(api):
+  api.naming.get_test_title(1234)
+
+
+def GenTests(api):
+  yield (api.test('basic') +  #
+         api.expect_exception('TypeError'))

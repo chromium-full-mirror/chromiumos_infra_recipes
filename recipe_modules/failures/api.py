@@ -5,6 +5,7 @@
 
 """API for raising failures and presenting them in cute ways."""
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 
@@ -306,6 +307,22 @@ class FailuresApi(recipe_api.RecipeApi):
       bool: True if the build failed.
     """
     return build.status != common_pb2.SUCCESS
+
+  def is_critical_test_failure(self, test):
+    """Determine if the test is critical and has failed.
+
+    Args:
+      test (Build|SkylabResult): The test in question.
+
+    Returns:
+      bool: True if the test is critical and has failed.
+    """
+    if isinstance(test, build_pb2.Build):
+      return self.is_critical_vm_test_failure(test)
+    elif isinstance(test, self.m.skylab.SkylabResult):
+      return self.is_critical_hw_test_failure(test)
+    else:
+      raise TypeError('expected Build or SkylabResult,' 'got %s' % type(test))
 
   def is_hw_test_failure(self, hw_test):
     """Determine if the hardware test failed.

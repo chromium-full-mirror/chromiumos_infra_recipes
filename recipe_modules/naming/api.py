@@ -5,6 +5,7 @@
 
 """API featuring shared helpers for naming things."""
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.test_moblab_vm import TestMoblabVmProperties
 from PB.recipes.chromeos.test_vm import TestVmProperties
 
@@ -27,6 +28,22 @@ class NamingApi(recipe_api.RecipeApi):
     """
     return '%s.%s.%s' % (build.builder.project, build.builder.bucket,
                          build.builder.builder)
+
+  def get_test_title(self, test):
+    """Get a string to describe the test.
+
+    Args:
+      test (SkylabResult|Build): The test in question.
+
+    Returns:
+      A str describing the test.
+    """
+    if isinstance(test, build_pb2.Build):
+      return self.get_all_vm_test_title(test)
+    elif isinstance(test, self.m.skylab.SkylabResult):
+      return self.get_skylab_result_title(test)
+    else:
+      raise TypeError('Expected Build or SkylabResult,' 'got %s' % type(test))
 
   def get_hw_test_title(self, hw_test):
     """Get a string to describe the HW test.
@@ -60,6 +77,21 @@ class NamingApi(recipe_api.RecipeApi):
       str: The HW test title.
     """
     return self.get_skylab_task_title(skylab_result.task)
+
+  def get_all_vm_test_title(self, vm_test):
+    """Get a string to describe the VM test.
+
+    Args:
+      vm_test (Build): The buildbucket build for the VM test.
+
+    Returns:
+      str: A string describing the VM test.
+    Raises:
+      ValueError if name not in vm_test.input.properties.
+    """
+    all_properties = vm_test.input.properties or vm_test.output.properties
+    return all_properties['name']
+
 
   def get_vm_test_title(self, vm_test):
     """Get a string to describe the VM test.

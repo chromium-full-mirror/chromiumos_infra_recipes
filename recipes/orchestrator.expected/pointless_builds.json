@@ -799,6 +799,7 @@
       "@@@STEP_LOG_LINE@response@          {@@@",
       "@@@STEP_LOG_LINE@response@            \"suite\": \"bvt-cq\", @@@",
       "@@@STEP_LOG_LINE@response@            \"common\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"critical\": true, @@@",
       "@@@STEP_LOG_LINE@response@              \"displayName\": \"htarget.hw.bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@response@            }, @@@",
       "@@@STEP_LOG_LINE@response@            \"skylabBoard\": \"target\"@@@",
@@ -853,6 +854,7 @@
       "@@@STEP_LOG_LINE@response@          {@@@",
       "@@@STEP_LOG_LINE@response@            \"suite\": \"bvt-inline\", @@@",
       "@@@STEP_LOG_LINE@response@            \"common\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"critical\": true, @@@",
       "@@@STEP_LOG_LINE@response@              \"displayName\": \"htarget.hw.bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@response@            }, @@@",
       "@@@STEP_LOG_LINE@response@            \"skylabBoard\": \"target\"@@@",
@@ -1524,6 +1526,9 @@
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@  critical {@@@",
+      "@@@STEP_LOG_LINE@return value@    value: true@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@, unit=common {@@@",
       "@@@STEP_LOG_LINE@return value@  build_target {@@@",
@@ -1642,6 +1647,9 @@
       "@@@STEP_LOG_LINE@return value@    skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@    common {@@@",
       "@@@STEP_LOG_LINE@return value@      display_name: \"htarget.hw.bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@      critical {@@@",
+      "@@@STEP_LOG_LINE@return value@        value: true@@@",
+      "@@@STEP_LOG_LINE@return value@      }@@@",
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
@@ -1650,6 +1658,9 @@
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.bvt-inline\"@@@",
+      "@@@STEP_LOG_LINE@return value@  critical {@@@",
+      "@@@STEP_LOG_LINE@return value@    value: true@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@, unit=common {@@@",
       "@@@STEP_LOG_LINE@return value@  build_target {@@@",
@@ -1768,6 +1779,9 @@
       "@@@STEP_LOG_LINE@return value@    skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@    common {@@@",
       "@@@STEP_LOG_LINE@return value@      display_name: \"htarget.hw.bvt-inline\"@@@",
+      "@@@STEP_LOG_LINE@return value@      critical {@@@",
+      "@@@STEP_LOG_LINE@return value@        value: true@@@",
+      "@@@STEP_LOG_LINE@return value@      }@@@",
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
@@ -1826,7 +1840,7 @@
   },
   {
     "cmd": [],
-    "name": "run tests.collect tests.collect vm tests",
+    "name": "run tests.collect tests.collect autotest vm tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1839,11 +1853,10 @@
       "beefy-dot-cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "8922054662172514001",
-      "8922054662172514002"
+      "8922054662172514001"
     ],
     "infra_step": true,
-    "name": "run tests.collect tests.collect vm tests.wait",
+    "name": "run tests.collect tests.collect autotest vm tests.wait",
     "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1857,8 +1870,8 @@
       "beefy-dot-cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "run tests.collect tests.collect vm tests.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514001\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514002\"}}]}",
+    "name": "run tests.collect tests.collect autotest vm tests.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514001\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1883,7 +1896,53 @@
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514001\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@0@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.collect tests.collect tast vm tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "collect",
+      "-host",
+      "beefy-dot-cr-buildbucket.appspot.com",
+      "-interval",
+      "60s",
+      "8922054662172514002"
+    ],
+    "infra_step": true,
+    "name": "run tests.collect tests.collect tast vm tests.wait",
+    "timeout": 14400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "beefy-dot-cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "run tests.collect tests.collect tast vm tests.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514002\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
@@ -1892,8 +1951,7 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@0@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -2010,6 +2068,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check test results.vm test results (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@all vm tests succeeded@@@"
     ]
   },
   {

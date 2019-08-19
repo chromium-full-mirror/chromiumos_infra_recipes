@@ -4,5 +4,14 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'skylab',
+    'failures',
 ]
+
+
+def RunSteps(api):
+  api.failures.is_critical_test_failure(1234)
+
+
+def GenTests(api):
+  yield (api.test('basic') +  #
+         api.expect_exception('TypeError'))

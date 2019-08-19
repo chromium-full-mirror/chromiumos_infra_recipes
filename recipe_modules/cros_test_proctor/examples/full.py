@@ -92,8 +92,11 @@ def GenTests(api):
 
   def vm_test_build(name):
     output = build_pb2.Build.Output()
+    input_proto = build_pb2.Build.Input()
     output.properties.update({'name': name})
-    return build_pb2.Build(output=output, status=common_pb2.SUCCESS)
+    input_proto.properties.update({'name': name})
+    return build_pb2.Build(output=output, input=input_proto,
+                           status=common_pb2.SUCCESS)
 
   def input_proto(snapshot, build_target):
     """Generate an instance of Build.Input.
@@ -145,7 +148,10 @@ def GenTests(api):
           'run tests.collect tests.'
           'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
       api.buildbucket.simulated_collect_output(
-          vm_tests, step_name='run tests.collect tests.collect vm tests') +
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
           step_name='run tests.collect tests.collect moblab vm tests'))
@@ -164,7 +170,10 @@ def GenTests(api):
           'run tests.collect tests.'
           'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
       api.buildbucket.simulated_collect_output(
-          vm_tests, step_name='run tests.collect tests.collect vm tests') +
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
           step_name='run tests.collect tests.collect moblab vm tests'))
@@ -180,7 +189,10 @@ def GenTests(api):
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+             vm_tests,
+             step_name='run tests.collect tests.collect autotest vm tests') +
+         api.buildbucket.simulated_collect_output(
+             [], step_name='run tests.collect tests.collect tast vm tests') +
          api.buildbucket.simulated_collect_output(
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
@@ -196,7 +208,10 @@ def GenTests(api):
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+             vm_tests,
+             step_name='run tests.collect tests.collect autotest vm tests') +
+         api.buildbucket.simulated_collect_output(
+             [], step_name='run tests.collect tests.collect tast vm tests') +
          api.buildbucket.simulated_collect_output(
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
@@ -228,10 +243,10 @@ def GenTests(api):
   ]
   hw_tests = {
       'results': [
-          api.skylab.wait_task_result(id='bvt-cq-task-id', name='hw test1',
-                                      success=True),
-          api.skylab.wait_task_result(id='bvt-inline-task-id', name='hw test2',
-                                      success=False),
+          api.skylab.wait_task_result(id='bvt-cq-task-id',
+                                      name='bvt-cq-task-id', success=True),
+          api.skylab.wait_task_result(id='bvt-inline-task-id',
+                                      name='bvt-inline-task-id', success=False),
       ]
   }
 
@@ -245,15 +260,18 @@ def GenTests(api):
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
-             vm_tests, step_name='run tests.collect tests.collect vm tests') +
+             vm_tests,
+             step_name='run tests.collect tests.collect autotest vm tests') +
+         api.buildbucket.simulated_collect_output(
+             [], step_name='run tests.collect tests.collect tast vm tests') +
          api.buildbucket.simulated_collect_output(
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
 
   baseline_results_failure = {
       'results': [
-          api.skylab.wait_task_result(id='bvt-inline-task-id', name='hw test2',
-                                      success=False),
+          api.skylab.wait_task_result(id='bvt-inline-task-id',
+                                      name='bvt-inline-task-id', success=False),
       ]
   }
   yield (
@@ -268,12 +286,19 @@ def GenTests(api):
           'run tests.collect tests.'
           'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
       api.buildbucket.simulated_collect_output(
-          vm_tests, step_name='run tests.collect tests.collect vm tests') +
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests') +
       api.buildbucket.simulated_collect_output(
           [], step_name='run baseline tests.collect baseline tests.collect'
-          ' baseline vm tests') + api.buildbucket.simulated_collect_output(
-              moblab_vm_tests,
-              step_name='run tests.collect tests.collect moblab vm tests') +
+          ' autotest vm tests') +  #
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run baseline tests.collect baseline tests.collect'
+          ' tast vm tests') +  #
       api.easy.simulate_json_step(
           'run baseline tests.collect baseline tests.'
           'collect skylab tasks.skylab wait-tasks', baseline_results_failure))
@@ -295,12 +320,19 @@ def GenTests(api):
           'run tests.collect tests.'
           'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
       api.buildbucket.simulated_collect_output(
-          vm_tests, step_name='run tests.collect tests.collect vm tests') +
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +  #
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +  #
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests') +  #
       api.buildbucket.simulated_collect_output(
           [], step_name='run baseline tests.collect baseline tests.collect'
-          ' baseline vm tests') + api.buildbucket.simulated_collect_output(
-              moblab_vm_tests,
-              step_name='run tests.collect tests.collect moblab vm tests') +
+          ' autotest vm tests') +  #
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run baseline tests.collect baseline tests.collect'
+          ' tast vm tests') +  #
       api.easy.simulate_json_step(
           'run baseline tests.collect baseline tests.'
           'collect skylab tasks.skylab wait-tasks', baseline_results_success))
