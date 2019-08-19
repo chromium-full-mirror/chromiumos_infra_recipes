@@ -25,11 +25,10 @@ from PB.recipes.chromeos.generator import GeneratorProperties
 from PB.recipes.chromeos.generator import G3OncallRotation
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SendToCqPolicy
-from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (
-    triggers as triggers_pb2)
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
+                                                                triggers_pb2)
 
 from google.protobuf import json_format
-
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -93,8 +92,7 @@ def RunSteps(api, properties):
           versions=[
               UprevVersionedPackageRequest.GitRef(
                   repository=urlparse.urlparse(trigger.gitiles.repo).path,
-                  ref=trigger.gitiles.ref,
-                  revision=trigger.gitiles.revision)
+                  ref=trigger.gitiles.ref, revision=trigger.gitiles.revision)
               for trigger in triggers
           ],
       )
@@ -126,47 +124,47 @@ def RunSteps(api, properties):
           api.git.add(ebuilds)
           api.git.commit(commit_message)
 
-  reviewer_users = set()
-  with api.step.nest('resolve reviewers') as step:
-    step.presentation.logs['resolved reviewers with reasons'] = logs = []
-    for reviewer in properties.reviewers:
-      # If it's just a chromium user, easy peasy.
-      if reviewer.HasField('chromium_user'):
-        user = reviewer.chromium_user
-        reviewer_users.add(user)
-        logs.append('{} (hardcoded in config)'.format(user))
-        continue
+    reviewer_users = set()
+    with api.step.nest('resolve reviewers') as step:
+      step.presentation.logs['resolved reviewers with reasons'] = logs = []
+      for reviewer in properties.reviewers:
+        # If it's just a chromium user, easy peasy.
+        if reviewer.HasField('chromium_user'):
+          user = reviewer.chromium_user
+          reviewer_users.add(user)
+          logs.append('{} (hardcoded in config)'.format(user))
+          continue
 
-      # Otherwise we must resolve an oncall rotation.
-      rotation = reviewer.g3oncall_rotation
-      oncall = api.g3oncall.status(rotation.name)
-      if rotation.position in (G3OncallRotation.PRIMARY,
-                               G3OncallRotation.PRIMARY_AND_SECONDARY,
-                               G3OncallRotation.UNSPECIFIED):
-        user = oncall.primary
-        reviewer_users.add(user)
-        logs.append('{} (primary for {})'.format(user, rotation.name))
-      if rotation.position in (G3OncallRotation.SECONDARY,
-                               G3OncallRotation.PRIMARY_AND_SECONDARY):
-        user = oncall.secondary
-        reviewer_users.add(user)
-        logs.append('{} (secondary for {})'.format(user, rotation.name))
+        # Otherwise we must resolve an oncall rotation.
+        rotation = reviewer.g3oncall_rotation
+        oncall = api.g3oncall.status(rotation.name)
+        if rotation.position in (G3OncallRotation.PRIMARY,
+                                 G3OncallRotation.PRIMARY_AND_SECONDARY,
+                                 G3OncallRotation.UNSPECIFIED):
+          user = oncall.primary
+          reviewer_users.add(user)
+          logs.append('{} (primary for {})'.format(user, rotation.name))
+        if rotation.position in (G3OncallRotation.SECONDARY,
+                                 G3OncallRotation.PRIMARY_AND_SECONDARY):
+          user = oncall.secondary
+          reviewer_users.add(user)
+          logs.append('{} (secondary for {})'.format(user, rotation.name))
 
-  topic = properties.topic or cpv
-  with api.step.nest('find existing uprev CLs') as step:
-    existing_changes = []
-    for host in ('chromium', 'chrome-internal'):
-      with api.step.nest('find cls from {} host'.format(host)):
-        host_url = 'https://{}-review.googlesource.com'.format(host)
-        existing_changes.extend(
-            api.gerrit.query_changes(
-                host_url, [('topic', topic), ('status', 'open')]))
+    topic = properties.topic or cpv
+    with api.step.nest('find existing uprev CLs') as step:
+      existing_changes = []
+      for host in ('chromium', 'chrome-internal'):
+        with api.step.nest('find cls from {} host'.format(host)):
+          host_url = 'https://{}-review.googlesource.com'.format(host)
+          existing_changes.extend(
+              api.gerrit.query_changes(host_url, [('topic', topic),
+                                                  ('status', 'open')]))
 
-  with api.step.nest('generate CLs') as step:
-    repositories = map(api.path.abs_to_path, ebuilds_by_repository.keys())
-    changes = [
-        api.gerrit.create_change(
-            repository, '''
+    with api.step.nest('generate CLs') as step:
+      repositories = map(api.path.abs_to_path, ebuilds_by_repository.keys())
+      changes = [
+          api.gerrit.create_change(
+              repository, '''
                      ,
                 ,.  | \
                |: \ ; :\
@@ -189,66 +187,66 @@ def RunSteps(api, properties):
                          ) `--'       ,..::::
       -pupr-             ; `.        ,:::::::
                           ;  ``::.    :::::::
-            ''',
-            reviewers=['{}@chromium.org'.format(ru) for ru in reviewer_users],
-            topic=topic)
-        for repository in repositories
-    ]
-
-  if len(changes) > 1:
-    with api.step.nest('cq-depend generated CLs'):
-      cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
-      for change, cq_depend in zip(changes, cq_depends):
-        with api.step.nest('set cq-depend for {} CL'.format(repository)):
-          description = api.gerrit.get_change_description(change)
-          description = '{}\n{}'.format(description, cq_depend)
-          api.gerrit.set_change_description(change, description)
-
-  existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
-  no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
-  send_to_cq_policy = (existing_cls_policy
-                       if existing_changes else no_existing_cls_policy)
-
-  with api.step.nest('update CL labels'):
-    for change in changes:
-      # First post explanatory message.
-      message_lines = [
-          'Found {} open CL(s) for Gerrit topic {}:'.format(
-              len(existing_changes), topic),
-          '\n'.join(map(api.gerrit.parse_gerrit_change_url, existing_changes)),
-          'Send-to-cq policy for this case is {}.'.format(
-              SendToCqPolicy.Name(send_to_cq_policy))
+              ''',
+              reviewers=['{}@chromium.org'.format(ru)
+                         for ru in reviewer_users], topic=topic)
+          for repository in repositories
       ]
 
-      message_lines.append({
-          DRY_RUN: 'Therefore, marking CL as CQ+1',
-          FULL_RUN: 'Therefore, marking CL as CQ+2',
-          ABANDON: 'Therefore, abandoning the CL',
-      }.get(
-          send_to_cq_policy,
-          'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
-          'Reviewers may also want to abandon the existing CL(s).',
-      ))
+    if len(changes) > 1:
+      with api.step.nest('cq-depend generated CLs'):
+        cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
+        for change, cq_depend in zip(changes, cq_depends):
+          with api.step.nest('set cq-depend for {} CL'.format(repository)):
+            description = api.gerrit.get_change_description(change)
+            description = '{}\n{}'.format(description, cq_depend)
+            api.gerrit.set_change_description(change, description)
 
-      message = '\n'.join(message_lines)
-      if send_to_cq_policy == ABANDON:
-        api.gerrit.abandon_change(change, message=message)
-      else:
-        api.gerrit.add_change_comment(change, message)
+    existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
+    no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
+    send_to_cq_policy = (
+        existing_cls_policy if existing_changes else no_existing_cls_policy)
 
-      # Then set labels.
-      labels = {
-          DRY_RUN: {
-              api.gerrit.Label.COMMIT_QUEUE: 1,
-          },
-          FULL_RUN: {
-              api.gerrit.Label.BOT_COMMIT: 1,
-              api.gerrit.Label.COMMIT_QUEUE: 2,
-          }
-      }.get(send_to_cq_policy)
+    with api.step.nest('update CL labels'):
+      for change in changes:
+        # First post explanatory message.
+        message_lines = [
+            'Found {} open CL(s) for Gerrit topic {}:'.format(
+                len(existing_changes), topic), '\n'.join(
+                    map(api.gerrit.parse_gerrit_change_url, existing_changes)),
+            'Send-to-cq policy for this case is {}.'.format(
+                SendToCqPolicy.Name(send_to_cq_policy))
+        ]
 
-      if labels is not None:
-        api.gerrit.set_change_labels(change, labels)
+        message_lines.append({
+            DRY_RUN: 'Therefore, marking CL as CQ+1',
+            FULL_RUN: 'Therefore, marking CL as CQ+2',
+            ABANDON: 'Therefore, abandoning the CL',
+        }.get(
+            send_to_cq_policy,
+            'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
+            'Reviewers may also want to abandon the existing CL(s).',
+        ))
+
+        message = '\n'.join(message_lines)
+        if send_to_cq_policy == ABANDON:
+          api.gerrit.abandon_change(change, message=message)
+        else:
+          api.gerrit.add_change_comment(change, message)
+
+        # Then set labels.
+        labels = {
+            DRY_RUN: {
+                api.gerrit.Label.COMMIT_QUEUE: 1,
+            },
+            FULL_RUN: {
+                api.gerrit.Label.BOT_COMMIT: 1,
+                api.gerrit.Label.COMMIT_QUEUE: 2,
+            },
+        }.get(send_to_cq_policy)
+
+        if labels is not None:
+          api.gerrit.set_change_labels(change, labels)
 
 
 def GenTests(api):
@@ -262,11 +260,9 @@ def GenTests(api):
                   g3oncall_rotation=G3OncallRotation(
                       name='chromeos-ci-eng',
                       position=G3OncallRotation.PRIMARY_AND_SECONDARY,
-                  ),
-              ),
+                  ),),
           ],
-      ),
-  )
+      ),)
   gitiles_triggers = [
       triggers_pb2.Trigger(
           id='123',
@@ -278,56 +274,44 @@ def GenTests(api):
       ),
   ]
 
-  yield (api.test('with-uprev-do-nothing-policy') +
-         api.properties(existing_cls_policy=DO_NOTHING, **properties) +
-         api.scheduler(triggers=gitiles_triggers) +
-         api.g3oncall.status(
+  yield (api.test('with-uprev-do-nothing-policy') + api.properties(
+      existing_cls_policy=DO_NOTHING, **properties) +
+         api.scheduler(triggers=gitiles_triggers) + api.g3oncall.status(
              'resolve reviewers.resolve chromeos-ci-eng rotation status'))
 
-  yield (api.test('with-uprev-dry-run-policy') +
-         api.properties(existing_cls_policy=DRY_RUN, **properties) +
-         api.scheduler(triggers=gitiles_triggers) +
-         api.g3oncall.status(
+  yield (api.test('with-uprev-dry-run-policy') + api.properties(
+      existing_cls_policy=DRY_RUN, **properties) +
+         api.scheduler(triggers=gitiles_triggers) + api.g3oncall.status(
              'resolve reviewers.resolve chromeos-ci-eng rotation status'))
 
-  yield (api.test('with-uprev-full-run-policy') +
-         api.properties(existing_cls_policy=FULL_RUN, **properties) +
-         api.scheduler(triggers=gitiles_triggers) +
-         api.g3oncall.status(
+  yield (api.test('with-uprev-full-run-policy') + api.properties(
+      existing_cls_policy=FULL_RUN, **properties) +
+         api.scheduler(triggers=gitiles_triggers) + api.g3oncall.status(
              'resolve reviewers.resolve chromeos-ci-eng rotation status'))
 
-  yield (api.test('with-uprev-abandon-policy') +
-         api.properties(existing_cls_policy=ABANDON, **properties) +
-         api.scheduler(triggers=gitiles_triggers) +
-         api.g3oncall.status(
+  yield (api.test('with-uprev-abandon-policy') + api.properties(
+      existing_cls_policy=ABANDON, **properties) +
+         api.scheduler(triggers=gitiles_triggers) + api.g3oncall.status(
              'resolve reviewers.resolve chromeos-ci-eng rotation status'))
 
   yield api.test('no-package-info') + api.expect_exception('ValueError')
 
-  yield (api.test('no-reviewers') +
-         api.properties(package_info=package) +
+  yield (api.test('no-reviewers') + api.properties(package_info=package) +
          api.expect_exception('ValueError'))
 
-  yield (api.test('blank-reviewer') +
-         api.properties(package_info=package, reviewers=[{}]) +
+  yield (api.test('blank-reviewer') + api.properties(package_info=package,
+                                                     reviewers=[{}]) +
          api.expect_exception('ValueError'))
 
-  yield (api.test('no-triggers') +
-         api.properties(**properties) +
-         api.scheduler(triggers=[]) +
-         api.expect_exception('ValueError'))
+  yield (api.test('no-triggers') + api.properties(**properties) +
+         api.scheduler(triggers=[]) + api.expect_exception('ValueError'))
 
-  yield (api.test('non-gitiles-triggers') +
-         api.properties(**properties) +
+  yield (api.test('non-gitiles-triggers') + api.properties(**properties) +
          api.scheduler(triggers=[
              triggers_pb2.Trigger(id='456', webui=triggers_pb2.WebUITrigger()),
-         ]) +
-         api.expect_exception('ValueError'))
+         ]) + api.expect_exception('ValueError'))
 
-  yield (api.test('without-uprev') +
-         api.properties(**properties) +
-         api.scheduler(triggers=gitiles_triggers) +
-         api.step_data(
+  yield (api.test('without-uprev') + api.properties(**properties) +
+         api.scheduler(triggers=gitiles_triggers) + api.step_data(
              'try uprev chromeos-base/chromite.uprev versioned package'
-             '.read output file',
-             api.file.read_raw(content='{}')))
+             '.read output file', api.file.read_raw(content='{}')))

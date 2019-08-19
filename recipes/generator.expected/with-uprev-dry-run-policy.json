@@ -570,34 +570,6 @@
   },
   {
     "cmd": [],
-    "name": "clean up overlayfs mounts"
-  },
-  {
-    "cmd": [
-      "sudo",
-      "umount",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay master",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "umount",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "resolve reviewers",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@resolved reviewers with reasons@evanhernandez (hardcoded in config)@@@",
@@ -820,7 +792,7 @@
       "--topic",
       "chromeos-base/chromite",
       "--message-file",
-      "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n            "
+      "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n              "
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
@@ -891,7 +863,7 @@
       "--topic",
       "chromeos-base/chromite",
       "--message-file",
-      "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n            "
+      "\n                     ,\n                ,.  |                |: \\ ; :               :' ;\\| ::                \\ : | `::                _)  |   `:`.\n              ,' , `.    ;: ;\n            ,' ;:  ;\"'  ,:: |_\n           /,   ` .    ;::: |:`-.__\n        _,' _o\\  ,::.`:' ;  ;   . '\n    _,-'           `:.          ;\"\"\\,\n ,-'                     ,:         `-;,\n \\,                       ;:           ;--._\n  `.______,-,----._     ,' ;:        ,/ ,  ,`\n         / /,-';'  \\     ; `:      ,'/,::.:::\n       ,',;-'-'_,--;    ;   :.   ,',',;::::::\n      ( /___,-'     `.     ;::,,'o/  ,:::::::\n       `'             )    ;:,'o /  ;\"-   -::\n                      \\__ _,'o ,'         ,::\n                         ) `--'       ,..::::\n      -pupr-             ; `.        ,:::::::\n                          ;  ``::.    :::::::\n              "
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
@@ -1309,6 +1281,34 @@
     "name": "update CL labels.set labels on CL 1 (2).git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up overlayfs mounts"
+  },
+  {
+    "cmd": [
+      "sudo",
+      "umount",
+      "[START_DIR]/chromiumos_master"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay master",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "umount",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
