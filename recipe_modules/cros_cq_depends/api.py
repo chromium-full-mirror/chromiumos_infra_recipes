@@ -154,11 +154,6 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
                                (change.get('change_number'), project))
           continue
 
-        # Temporary hack to unbreak Annealing.
-        if change.get('change_number') == 1588324:  # pragma: nocover
-          dep_local_log.append('skipping blacklisted dep')
-          continue
-
         # TODO(crbug.com/980288): Find a better way to handle the error where path isn't found.
         try:
           path = self.m.cros_source.find_project_path(project, branch)
@@ -170,20 +165,21 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
         # Ensure that rev exists in the git repo at that path. Fail otherwise.
         with self.m.context(cwd=self.m.cros_source.workspace_path.join(path)):
 
-          # Ensure the dep is reachable locally
+          # Check whether the dep is reachable locally
+          # If it's not, we'll carry along anyway, because there's little else
+          # we can do about it.
           if not self.m.git.is_reachable(rev):
             dep_local_log.append(
-                'Unsatisfied dep! %s does not exist at %s on branch %s' %
+                'Unsatisfied dep :(. %s does not exist at %s on branch %s' %
                 (rev, path, branch))
-            step.presentation.status = self.m.step.FAILURE
-            raise self.m.step.StepFailure('cq-depend missing locally')
+            continue
 
           # Dep is satisfied locally
           dep_local_log.append(
               '%s found at %s on branch %s' % (rev, path, branch))
 
       # All deps satisfied
-      step.presentation.step_text = 'all cq-depends fulfilled'
+      step.presentation.step_text = 'cq-depend checked'
 
   def get_cq_depend_reference(self, gerrit_change):
     """Return the Cq-Depend reference string for the given change.

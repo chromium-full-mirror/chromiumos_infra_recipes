@@ -292,6 +292,7 @@
     "cmd": [],
     "name": "ensure manifest cq-depend fulfilled (2)",
     "~followup_annotations": [
+      "@@@STEP_TEXT@cq-depend checked@@@",
       "@@@STEP_LOG_LINE@diff manifest@PATH upreved from FROM_REV to TO_REV@@@",
       "@@@STEP_LOG_END@diff manifest@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@deadbeef has dep_line chromium:12345,chromium:IAmNotAnInteger,chrome-internal:67890@@@",
@@ -299,9 +300,11 @@
       "@@@STEP_LOG_LINE@gather cq-depend@invalid dep: chromium:IAmNotAnInteger@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@chrome-internal:67890@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
-      "@@@STEP_LOG_LINE@dep local@Unsatisfied dep! deadbeef does not exist at src/c on branch master@@@",
+      "@@@STEP_LOG_LINE@dep local@Unsatisfied dep :(. deadbeef does not exist at src/c on branch master@@@",
+      "@@@STEP_LOG_LINE@dep local@change None in non-Chrome OS repo not-a-project@@@",
+      "@@@STEP_LOG_LINE@dep local@gerrit query failure for cl 1234@@@",
       "@@@STEP_LOG_END@dep local@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -481,10 +484,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "cq-depend missing locally"
-    },
     "name": "$result"
   }
 ]
