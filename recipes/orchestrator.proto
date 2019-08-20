@@ -15,10 +15,12 @@ message OrchestratorProperties {
     // right when the orchestrator launches.
     string start = 1;
 
-    // The success ref is updated only if all child builds succeed.
-    // An example success ref is 'stable', which should update only
-    // when postsubmit builds succeed.
-    string success = 2;
+    // The "build" ref is updated only if all child builds (but not necessarily
+    // tests) succeed.
+    string build = 2;
+
+    // The "test" ref is updated only if ALL tests succeed.
+    string test = 3;
   }
   UpdateManifestRefs update_manifest_refs = 1;
 

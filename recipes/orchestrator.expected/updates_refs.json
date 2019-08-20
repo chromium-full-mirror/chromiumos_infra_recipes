@@ -1912,65 +1912,6 @@
   },
   {
     "cmd": [],
-    "name": "update manifest success ref"
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "https://chromium.googlesource.com/chromeos",
-      "."
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
-    "infra_step": true,
-    "name": "update manifest success ref.git clone",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/chromeos",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
-    "infra_step": true,
-    "name": "update manifest success ref.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
-    "infra_step": true,
-    "name": "update manifest success ref.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "https://chromium.googlesource.com/chromeos",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:refs/heads/bar"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
-    "infra_step": true,
-    "name": "update manifest success ref.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "read build config (2)"
   },
   {

@@ -118,6 +118,12 @@ def RunSteps(api, properties):
   with api.step.nest('check build results'):
     failures = api.failures.get_build_failures(completed_builds)
 
+  if not failures:
+    # If we've made it this far, the child builders were successful
+    # and we can update the build success manifest ref if it is specified.
+    maybe_update_manifest_ref(api, properties.update_manifest_refs, 'build',
+                              snapshot)
+
   # If this is a dry run, check that the builds passed and quit.
   if api.cq.state == api.cq.DRY:
     return api.failures.aggregate_failures(failures)
@@ -133,9 +139,9 @@ def RunSteps(api, properties):
       properties.baseline_validation_count)
   failures.extend(test_failures)
 
-  # Victory! If we've made it this far, the child builders were successful
-  # and we can update the success manifest ref if it is specified.
-  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success',
+  # Victory! If we've made it this far, all tests were successful
+  # and we can update the test success manifest ref if it is specified.
+  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'test',
                             snapshot)
 
   # Recheck the BuilderConfigs at HEAD to see if any failed builders are now
@@ -379,7 +385,8 @@ def validate_refs(refs):
     AssertionError: If any invalid ref is found.
   """
   validate_ref(refs.start, 'start')
-  validate_ref(refs.success, 'success')
+  validate_ref(refs.build, 'build')
+  validate_ref(refs.test, 'test')
 
 
 def validate_ref(ref, name):
