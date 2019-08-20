@@ -117,6 +117,9 @@ def RunSteps(api, properties):
         with api.context(cwd=api.path.abs_to_path(api.path.dirname(path))):
           ebuilds_by_repository[api.git.repository_root()].append(path)
 
+      # Checkout git branches via repo so they track correctly.
+      api.repo.start('pupr', projects=ebuilds_by_repository.keys())
+
       for repository, ebuilds in ebuilds_by_repository.iteritems():
         name = api.path.basename(repository)
         root = api.path.abs_to_path(repository)

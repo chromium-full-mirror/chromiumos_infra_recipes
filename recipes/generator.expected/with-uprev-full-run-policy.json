@@ -457,6 +457,19 @@
     ]
   },
   {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "[START_DIR]/chromiumos/src/private-overlay",
+      "[START_DIR]/chromiumos/src/overlay"
+    ],
+    "infra_step": true,
+    "name": "commit uprev.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "commit uprev.commit in private-overlay",
     "~followup_annotations": [
