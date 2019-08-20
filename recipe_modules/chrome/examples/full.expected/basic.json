@@ -174,21 +174,6 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chrome"
-    ],
-    "infra_step": true,
-    "name": "ensure chrome cache"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
       "[START_DIR]/chrome"
     ],
     "infra_step": true,
@@ -201,7 +186,7 @@
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
-      "cache_dir = '[CACHE]/chrome'\nsolutions = [{'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]"
+      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]"
     ],
     "cwd": "[START_DIR]/chrome",
     "env_suffixes": {

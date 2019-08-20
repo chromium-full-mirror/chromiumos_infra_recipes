@@ -7,17 +7,10 @@ from recipe_engine import recipe_api
 
 from PB.chromite.api import packages
 
+CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
+
 
 class ChromeApi(recipe_api.RecipeApi):
-
-  @property
-  def cache_path(self):
-    """ The path to use for gclient caching.
-
-    All git repos are cached here, and it is used for clones, instead of cloning
-    directly from the remote.
-    """
-    return self.m.path['cache'].join('chrome')
 
   def sync(self, chrome_root):
     """
@@ -35,10 +28,9 @@ class ChromeApi(recipe_api.RecipeApi):
     revision = self.m.cros_build_api.PackageService.GetBestVisible(
         request, infra_step=True).package_info.version
 
-    self.m.file.ensure_directory('ensure chrome cache', self.cache_path)
     self.m.file.ensure_directory('ensure chrome root', chrome_root)
     with self.m.context(cwd=chrome_root):
-      cfg = self.m.gclient.make_config(CACHE_DIR=self.cache_path)
+      cfg = self.m.gclient.make_config(CACHE_DIR=CHROMIUM_CACHE_DIR)
       soln = cfg.solutions.add()
       soln.name = 'src'
       soln.url = 'https://chromium.googlesource.com/chromium/src.git'

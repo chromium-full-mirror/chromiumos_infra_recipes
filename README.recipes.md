@@ -239,16 +239,9 @@ Returns:
 
 [DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [portage](#recipe_modules-portage), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/chrome/api.py#13)(self):**
-
-The path to use for gclient caching.
-
-All git repos are cached here, and it is used for clones, instead of cloning
-directly from the remote.
-
-&mdash; **def [sync](/recipe_modules/chrome/api.py#22)(self, chrome_root):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#15)(self, chrome_root):**
 
 Sync Chrome source code.
 
