@@ -334,8 +334,9 @@ class GerritApi(recipe_api.RecipeApi):
 
       if reviewers is not None:
         upload_args.append('--send-mail')
-        upload_args.append('--reviewers')
-        upload_args.extend(reviewers)
+        for reviewer in reviewers:
+          upload_args.append('--reviewers')
+          upload_args.append(reviewer)
 
       if topic is not None:
         upload_args.append('--topic')
