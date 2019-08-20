@@ -2183,10 +2183,6 @@ See: https://chromium.googlesource.com/external/repo/
 
 A module for interacting with the repo tool.
 
-&mdash; **def [clearGitLocks](/recipe_modules/repo/api.py#101)(self):**
-
-Removes any git locks found in the entire repo checkout.
-
 &mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#257)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
@@ -2237,7 +2233,7 @@ Args:
   * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#70)(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None, groups=None, depth=None, repo_url=None):**
+&mdash; **def [init](/recipe_modules/repo/api.py#83)(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None, groups=None, depth=None, repo_url=None):**
 
 Executes 'repo init' with the given arguments.
 

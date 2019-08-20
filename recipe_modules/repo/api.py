@@ -67,6 +67,19 @@ class RepoApi(recipe_api.RecipeApi):
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, [self.repo_path] + args, **kwargs)
 
+  def _clear_git_locks(self):
+    """Removes any git locks found in the entire repo checkout."""
+
+    repo_cmd = [
+        'find', '.repo/', '-type', 'f', '-name', '*.lock', '-print', '-delete'
+    ]
+    self.m.step('clear repo locks', repo_cmd, infra_step=True)
+    git_cmd = [
+        'forall', '-c', 'find', '.git/', '-type', 'f', '-name', '*.lock',
+        '-print', '-delete'
+    ]
+    self._step(git_cmd, 'clear git locks')
+
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
            groups=None, depth=None, repo_url=None):
     """Executes 'repo init' with the given arguments.
@@ -93,23 +106,10 @@ class RepoApi(recipe_api.RecipeApi):
     if repo_url is not None:
       cmd += ['--repo-url', repo_url]
     self._step(cmd)
-    self.clearGitLocks()
+    self._clear_git_locks()
 
     if self.m.context.cwd:
       self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))
-
-  def clearGitLocks(self):
-    """Removes any git locks found in the entire repo checkout."""
-
-    repo_cmd = [
-        'find', '.repo/', '-type', 'f', '-name', '*.lock', '-print', '-delete'
-    ]
-    self.m.step('clear repo locks', repo_cmd, infra_step=True)
-    git_cmd = [
-        'forall', '-c', 'find', '.git/', '-type', 'f', '-name', '*.lock',
-        '-print', '-delete'
-    ]
-    self._step(git_cmd, 'clear git locks')
 
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,
