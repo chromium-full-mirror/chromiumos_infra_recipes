@@ -14,6 +14,7 @@ import structs
 
 from PB.test_platform.skylab_tool.result import WaitTasksResult
 
+
 class SkylabApi(recipe_api.RecipeApi):
   """Module for issuing commands to Skylab"""
 
@@ -22,7 +23,8 @@ class SkylabApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, **kwargs):
     super(SkylabApi, self).__init__(**kwargs)
-    self._server = str(properties.skylab_server) or 'https://chromeos-swarming.appspot.com'
+    self._server = str(
+        properties.skylab_server) or 'https://chromeos-swarming.appspot.com'
     # TODO(crbug.com/991703): Once there is a meaninful cipd package tag that
     # corresponds to a CI-blessed version of the skylab tool, track it
     # instead of the "latest" tag.
@@ -33,7 +35,7 @@ class SkylabApi(recipe_api.RecipeApi):
   def initialize(self):
     self._client = None
 
-  def create_suite(self, test, unit, name=None, bb=False):
+  def create_suite(self, test, unit, name=None, bb=False, dev=False):
     """Schedule a HW test suite.
 
     Args:
@@ -43,6 +45,7 @@ class SkylabApi(recipe_api.RecipeApi):
       bb (boolean): Whether to use buildbucket-backed cros_test_platform.
                     Note: this flag is temporary, and will exist only during
                     cros_test_platform migration.
+      dev (boolean): Whether to use Skylab dev instance.
 
     Returns:
       SkylabTask: The swarming task ID.
@@ -67,8 +70,10 @@ class SkylabApi(recipe_api.RecipeApi):
           self._qs_account,
           '-task-name',
           test.common.display_name,
-          test.suite,
       ]
+      if dev:
+        cmd.append('-dev')
+      cmd += test.suite,
       task_json = self.m.easy.stdout_json_step(
           'skylab create-suite', cmd, infra_step=True,
           test_stdout=self.test_api.create_suite_json_output(test.suite))
@@ -77,7 +82,7 @@ class SkylabApi(recipe_api.RecipeApi):
       step.presentation.links['swarming task'] = task_url
       return self.SkylabTask(id=task_id, url=task_url, test=test, unit=unit)
 
-  def wait_tasks(self, tasks, bb=False):
+  def wait_tasks(self, tasks, bb=False, dev=False):
     """Wait for all Skylab suites to finish and return the results.
 
     Uses skylab wait-tasks internally.
@@ -87,6 +92,7 @@ class SkylabApi(recipe_api.RecipeApi):
       bb (boolean): Whether to use buildbucket-backed cros_test_platform.
                     Note: this flag is temporary, and will exist only during
                     cros_test_platform migration.
+      dev (boolean): Whether to use Skylab dev instance.
 
     Returns:
       list[SkylabResult]: The results for each suite.
@@ -102,6 +108,8 @@ class SkylabApi(recipe_api.RecipeApi):
           self._client, 'wait-tasks', '-bb=' + repr(bb), '-timeout-mins',
           7 * 60 + 10
       ]
+      if dev:
+        cmd.append('-dev')
       cmd += task_ids
       output_json = self.m.easy.stdout_json_step(
           'skylab wait-tasks', cmd, infra_step=True, ignore_exceptions=True,

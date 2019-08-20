@@ -18,6 +18,7 @@ def RunSteps(api):
 
   task = api.skylab.create_suite(hw_test, hw_test_unit)
   api.assertions.assertEqual(task.test, hw_test)
+  task = api.skylab.create_suite(hw_test, hw_test_unit, dev=True)
 
 
 def GenTests(api):

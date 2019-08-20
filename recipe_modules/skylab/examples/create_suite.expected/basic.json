@@ -70,6 +70,45 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "schedule my_little_hw_test (2)",
+    "~followup_annotations": [
+      "@@@STEP_LINK@swarming task@https://swarming.com/bvt-cq@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/skylab/skylab",
+      "create-suite",
+      "-bb=False",
+      "-json",
+      "-pool",
+      "DUT_POOL_QUOTA",
+      "-image",
+      "target-cq/R12-3.4.5-6789",
+      "-board",
+      "target",
+      "-timeout-mins",
+      "420",
+      "-qs-account",
+      "pcq",
+      "-task-name",
+      "my_little_hw_test",
+      "-dev",
+      "bvt-cq"
+    ],
+    "infra_step": true,
+    "name": "schedule my_little_hw_test (2).skylab create-suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-cq-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

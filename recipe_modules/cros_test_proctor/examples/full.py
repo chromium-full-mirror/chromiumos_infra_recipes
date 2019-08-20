@@ -349,16 +349,41 @@ def GenTests(api):
   builds = [api.buildbucket.ci_build_message(status='SUCCESS')]
   api.cros_bisect.add_output_props(builds[0], 'amd64-generic')
 
-  yield (api.test('with_test_bisection_invocation') + #
+  yield (
+      api.test('with_test_bisection_invocation') +  #
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
       api.properties(
-          need_tests_builds_serialized=serialize_builds(builds)) +  #
-      api.properties(**{
-          '$chromeos/cros_bisect': CrosBisectProperties(test={
-              'hw_test_failures': [
-                  {'test_spec': json_format.MessageToJson(hw_test_unit)},
-              ],
-          })
-      }) + #
+          **{
+              '$chromeos/cros_bisect':
+                  CrosBisectProperties(
+                      test={
+                          'hw_test_failures': [{
+                              'test_spec':
+                                  json_format.MessageToJson(hw_test_unit)
+                          },],
+                      })
+          }) +  #
       api.easy.simulate_json_step(
           'run tests.collect tests.'
           'collect skylab tasks.skylab wait-tasks', hw_tests))
+
+  builds = [
+      build_pb2.Build(id=8922054662172514001, builder={
+          'builder': 'staging-arm-generic-cq'
+      }, status=common_pb2.STARTED, input=input_proto(None, 'arm-generic')),
+  ]
+
+  yield (
+      api.test('staging') +  #
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
+      api.easy.simulate_json_step(
+          'run tests.collect tests.'
+          'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))

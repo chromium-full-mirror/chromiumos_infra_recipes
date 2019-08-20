@@ -19,6 +19,7 @@ def RunSteps(api):
   actual = api.skylab.wait_tasks([task])
   expected = [api.skylab.SkylabResult(task=task, success=True, output=None)]
   api.assertions.assertEqual(actual, expected)
+  api.skylab.wait_tasks([task], dev=True)
 
 
 def GenTests(api):
