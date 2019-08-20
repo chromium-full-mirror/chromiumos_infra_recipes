@@ -16,6 +16,7 @@ def RunSteps(api):
   builder_config = api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
   api.cros_infra_config.force_reload()
+  api.cros_infra_config.safe_get_builder_configs(['abc'])
 
   api.assertions.assertEqual(builder_config.id.name, "postsubmit-orchestrator")
 

@@ -1852,9 +1852,40 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "read build config (2)"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "read build config (2).fetch master:generated/builder_configs.cfg",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "non-critical build check",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@new non-critical builders@changed arm-generic-cq to non-critical@@@",
+      "@@@STEP_LOG_END@new non-critical builders@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
-      "humanReason": "2 builds failed\n\n- [..arm-generic-cq](https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001)\n\n- [..atlas-cq](https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002)"
+      "humanReason": "1 build failed\n\n- [..atlas-cq](https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002)"
     },
     "name": "$result"
   }

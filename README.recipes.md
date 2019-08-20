@@ -705,7 +705,7 @@ Generate start time in seconds.
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#108)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#130)(self):**
 
 Force a reload of the config map from ToT.
 
@@ -731,7 +731,7 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#87)(self, config_name):**
+&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#109)(self, config_name):**
 
 Gets Path of most recent test config.
 
@@ -745,9 +745,23 @@ Returns:
 
 Init the InfraConfigApi module.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#115)(self, run_spec):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#87)(self, builder_names):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#112)(self, run_spec):**
+Gets the BuilderConfigs for the specified builder names from master.
+
+The returned dict will not contain key/values for builder names that could
+not be found in config.
+
+Args:
+  * builder_names (list[str]): Buildbucket builders to look for, matched
+    against BuilderConfig id.name.
+
+Returns:
+  dict(str, BuilderConfig) of found BuilderConfigs.
+
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#137)(self, run_spec):**
+
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#134)(self, run_spec):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2918,7 +2932,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#53)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#166)(api, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#163)(api, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -2934,7 +2948,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#237)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#234)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -2955,7 +2969,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#150)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#147)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -2965,7 +2979,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#343)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#340)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -2979,7 +2993,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#395)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#392)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -2990,7 +3004,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#198)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#195)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3003,7 +3017,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#384)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#381)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3011,7 +3025,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#371)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#368)(refs):**
 
 Assert the given refs start with refs/heads.
 

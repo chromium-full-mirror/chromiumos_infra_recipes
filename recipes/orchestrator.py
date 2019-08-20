@@ -133,16 +133,13 @@ def RunSteps(api, properties):
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success',
                             snapshot)
 
-#   api.cros_infra_config.force_reload()
-#   fresh_builders = {}
-#   for b in completed_builds:
-#     name = b.builder.builder
-#     try:
-#       fresh_builders[name] = api.cros_infra_config.get_builder_config(name)
-#     except LookupError:
-#       # Carry on if the builder doesn't exist anymore.
-#       pass
-#   failures = api.failures.update_non_critical_failures(failures, fresh_builders)
+  # Recheck the BuilderConfigs at HEAD to see if any failed builders are now
+  # noncritical.
+  api.cros_infra_config.force_reload()
+  fresh_builder_configs = api.cros_infra_config.safe_get_builder_configs(
+      [b.builder.builder for b in completed_builds])
+  failures = api.failures.update_non_critical_failures(failures,
+                                                       fresh_builder_configs)
 
   return api.failures.aggregate_failures(failures)
 

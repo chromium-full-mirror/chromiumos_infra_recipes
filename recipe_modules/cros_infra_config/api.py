@@ -84,6 +84,28 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       raise LookupError("No BuilderConfig for builder {}".format(builder_name))
     return config
 
+  def safe_get_builder_configs(self, builder_names):
+    """Gets the BuilderConfigs for the specified builder names from master.
+
+    The returned dict will not contain key/values for builder names that could
+    not be found in config.
+
+    Args:
+      * builder_names (list[str]): Buildbucket builders to look for, matched
+        against BuilderConfig id.name.
+
+    Returns:
+      dict(str, BuilderConfig) of found BuilderConfigs.
+    """
+    builder_configs = {}
+    for name in builder_names:
+      try:
+        builder_configs[name] = self.get_builder_config(name)
+      except LookupError:
+        # Carry on if the builder doesn't exist anymore.
+        pass
+    return builder_configs
+
   def get_test_config(self, config_name):
     """Gets Path of most recent test config.
 
