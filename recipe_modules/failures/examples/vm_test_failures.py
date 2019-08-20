@@ -46,7 +46,7 @@ def RunSteps(api):
       api.failures.get_vm_test_failures([vm_critical_failure]), [
           api.failures.Failure('vm test', 'target.vm.suite',
                                api.urls.get_build_url(vm_critical_failure),
-                               True)
+                               True, 'target.vm.suite')
       ])
 
 

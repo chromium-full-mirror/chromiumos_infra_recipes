@@ -18,20 +18,21 @@ def RunSteps(api):
   api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
 
   failures = [
-      api.failures.Failure(kind='kind', title='title', url='url', fatal=False),
+      api.failures.Failure(kind='kind', title='title', url='url', fatal=False,
+                           id='my id'),
   ]
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
 
   failures = [
       api.failures.Failure(kind='build', title='build-a', url='build-a.com',
-                           fatal=True),
+                           fatal=True, id='id-0'),
       api.failures.Failure(kind='build', title='build-b', url='build-b.com',
-                           fatal=True),
+                           fatal=True, id='id-1'),
       api.failures.Failure(kind='test', title='test-a', url='test-a.com',
-                           fatal=True),
+                           fatal=True, id='id-2'),
       api.failures.Failure(kind='test', title='test-b', url='test-b.com',
-                           fatal=False),
+                           fatal=False, id='id-3'),
   ]
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.FAILURE)
@@ -49,11 +50,12 @@ def RunSteps(api):
 
   failures = [
       api.failures.Failure(kind='build', title='build-a', url='build-a.com',
-                           fatal=True),
+                           fatal=True, id='my id'),
   ] * 50
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.FAILURE)
   api.assertions.assertIn('40 others', result.summary_markdown)
+
 
 def GenTests(api):
   yield api.test('basic')

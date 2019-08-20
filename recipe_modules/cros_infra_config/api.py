@@ -35,12 +35,15 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         step_test_data=self.test_api.builder_configs_step_test_data,
         timeout=self.test_api.gitiles_timeout_seconds)
 
-  def _get_name_to_builder_config(self):
+  def _get_name_to_builder_config(self, force_reload=False):
     """Helper method that returns the name to BuilderConfig map.
 
     Loads the proto and builds the map if it hasn't already been done.
     """
+    if force_reload:
+      self._name_to_builder_config.clear()
     if not self._name_to_builder_config:
+      name_to_builder_config = {}
       # Step nesting needs to happen here or it shows up many times in Milo,
       # once for each builder.
       with self.m.step.nest('read build config'), self.m.context(
@@ -51,8 +54,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       builder_configs = jsonpb.Parse(builder_configs_file, BuilderConfigs(),
                                      ignore_unknown_fields=True).builder_configs
       for config in builder_configs:
-        self._name_to_builder_config[config.id.name] = config
-
+        name_to_builder_config[config.id.name] = config
+      self._name_to_builder_config = name_to_builder_config
     return self._name_to_builder_config
 
   def get_builder_config(self, builder_name):
@@ -101,6 +104,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
       self.m.file.write_raw('save %s' % config_name, path, conf_contents)
       return path
+
+  def force_reload(self):
+    """Force a reload of the config map from ToT."""
+    self._get_name_to_builder_config(force_reload=True)
 
   def should_run(self, run_spec):
     return run_spec in [BuilderConfig.RUN, BuilderConfig.RUN_EXIT]

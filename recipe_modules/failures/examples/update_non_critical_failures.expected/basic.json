@@ -1,0 +1,17 @@
+[
+  {
+    "cmd": [],
+    "name": "non-critical build check",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@new non-critical builders@changed noncritical builder to non-critical@@@",
+      "@@@STEP_LOG_END@new non-critical builders@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "non-critical build check (2)"
+  },
+  {
+    "name": "$result"
+  }
+]

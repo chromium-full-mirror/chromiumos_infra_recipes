@@ -45,7 +45,7 @@ def RunSteps(api):
       api.failures.get_build_failures([build_critical_failure]), [
           api.failures.Failure('build', 'chromeos.bucket.builder',
                                api.urls.get_build_url(build_critical_failure),
-                               True)
+                               True, 'builder')
       ])
 
 

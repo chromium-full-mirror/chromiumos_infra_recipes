@@ -133,6 +133,17 @@ def RunSteps(api, properties):
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'success',
                             snapshot)
 
+#   api.cros_infra_config.force_reload()
+#   fresh_builders = {}
+#   for b in completed_builds:
+#     name = b.builder.builder
+#     try:
+#       fresh_builders[name] = api.cros_infra_config.get_builder_config(name)
+#     except LookupError:
+#       # Carry on if the builder doesn't exist anymore.
+#       pass
+#   failures = api.failures.update_non_critical_failures(failures, fresh_builders)
+
   return api.failures.aggregate_failures(failures)
 
 
@@ -489,6 +500,8 @@ def GenTests(api):
   ]
 
   yield (api.test('basic') + postsubmit_orchestrator_build() +
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
          api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
@@ -515,6 +528,8 @@ def GenTests(api):
          api.buildbucket.simulated_search_results(
              builds, 'run builds.get build history for changes.'
              'get change build history.buildbucket.search') +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
          api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
@@ -534,6 +549,8 @@ def GenTests(api):
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='run builds.orchestrator pointless build check',
              build_is_pointless=True) +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
          api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
@@ -608,6 +625,8 @@ def GenTests(api):
              'find matching builds.buildbucket.search') +  #
          api.buildbucket.simulated_collect_output(
              builds, 'find inflight orchestrator.waiting for existing runs') +
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
          api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
@@ -620,7 +639,6 @@ def GenTests(api):
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
 
-
   yield (api.test('runs_if_no_inflight_orchs') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True) +  #
@@ -631,6 +649,8 @@ def GenTests(api):
          api.buildbucket.simulated_search_results(
              [], step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search') +
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
          api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
@@ -648,7 +668,10 @@ def GenTests(api):
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }) + api.easy.simulate_json_step(
+         }) +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
+         api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
@@ -665,7 +688,10 @@ def GenTests(api):
          api.properties(update_manifest_refs={
              'start': 'refs/heads/foo',
              'success': 'refs/heads/bar'
-         }) + api.easy.simulate_json_step(
+         }) +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
+         api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
          api.buildbucket.simulated_collect_output(
@@ -707,6 +733,8 @@ def GenTests(api):
              '.find matching builds.buildbucket.search') +
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='run builds.orchestrator pointless build check') +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
          api.easy.simulate_json_step(
              'run tests.collect tests.'
              'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
@@ -892,17 +920,21 @@ def GenTests(api):
   builds = [api.buildbucket.ci_build_message(status='SUCCESS')]
   api.cros_bisect.add_output_props(builds[0], 'amd64-generic')
 
-  yield (api.test('with_test_bisection_invocation') + #
-      postsubmit_orchestrator_build() + #
-      api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +  #
-      api.properties(**{
-          '$chromeos/cros_bisect': CrosBisectProperties(test={
-              'hw_test_failures': [
-                  {'test_spec': json_format.MessageToJson(hw_test_unit)},
-              ],
-          })
-      }) + #
-      api.easy.simulate_json_step(
-          'run tests.collect tests.'
-          'collect skylab tasks.skylab wait-tasks', hw_tests))
+  yield (api.test('with_test_bisection_invocation') +  #
+         postsubmit_orchestrator_build() +  #
+         api.buildbucket.simulated_collect_output(
+             builds, step_name='run builds.collect') +  #
+         api.properties(
+             **{
+                 '$chromeos/cros_bisect':
+                     CrosBisectProperties(
+                         test={
+                             'hw_test_failures': [{
+                                 'test_spec':
+                                     json_format.MessageToJson(hw_test_unit)
+                             },],
+                         })
+             }) +  #
+         api.easy.simulate_json_step(
+             'run tests.collect tests.'
+             'collect skylab tasks.skylab wait-tasks', hw_tests))

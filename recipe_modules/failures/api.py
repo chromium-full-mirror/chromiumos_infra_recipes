@@ -27,7 +27,10 @@ class FailuresApi(recipe_api.RecipeApi):
   #   url (str): URL for the failed task.
   #   fatal (bool): Whether or not the failure is fatal. Fatal failures cause
   #       recipes to fail when the failure is aggregated.
-  Failure = collections.namedtuple('Failure', ['kind', 'title', 'url', 'fatal'])
+  #   id (str): a unique, reproducible name for this failure. For build-type
+  #       failures, this is the builder name.
+  Failure = collections.namedtuple('Failure',
+                                   ['kind', 'title', 'url', 'fatal', 'id'])
 
   def __init__(self, properties, *args, **kwargs):
     super(FailuresApi, self).__init__(*args, **kwargs)
@@ -74,7 +77,7 @@ class FailuresApi(recipe_api.RecipeApi):
 
       return silence_reason is not None
 
-  def _get_failures(self, kind, runs, is_failure, get_title, get_url):
+  def _get_failures(self, kind, runs, is_failure, get_title, get_url, get_id):
     with self.m.step.nest('{} results'.format(kind)) as results_step:
       failures = []
       failed_runs = filter(is_failure, runs)
@@ -83,13 +86,15 @@ class FailuresApi(recipe_api.RecipeApi):
       for failed_run in sorted(failed_runs, key=get_title):
         title = get_title(failed_run)
         url = get_url(failed_run)
+        fail_id = get_id(failed_run)
 
         silenced = self._present_run(title, url, self.m.step.FAILURE)
         if silenced:
           silenced_failure_count += 1
 
         failures.append(
-            self.Failure(kind=kind, title=title, url=url, fatal=not silenced))
+            self.Failure(kind=kind, title=title, url=url, fatal=not silenced,
+                         id=fail_id))
 
       success_runs = [run for run in runs if not is_failure(run)]
       for success_run in sorted(success_runs, key=get_title):
@@ -117,7 +122,7 @@ class FailuresApi(recipe_api.RecipeApi):
       return failures
 
   def _get_baseline_validated_failures(self, kind, runs, baseline_runs,
-                                       is_failure, get_title, get_url):
+                                       is_failure, get_title, get_url, get_id):
     """Wraps _get_failures() to enable baseline filtering.
 
     Args:
@@ -128,6 +133,7 @@ class FailuresApi(recipe_api.RecipeApi):
       is_failure(func): A func(run->bool) returns the status of the run.
       get_title(func): A func(run->str) returns the name of the run.
       get_url(func): A func(run->str) returns the url of the run.
+      get_id(func): A func (run->str) returns the id of the run.
     """
     failed_baseline_run_names = set(
         [get_title(run) for run in baseline_runs if is_failure(run)])
@@ -135,10 +141,10 @@ class FailuresApi(recipe_api.RecipeApi):
         run for run in runs if get_title(run) not in failed_baseline_run_names
     ]
     failures = self._get_failures(kind, filtered_runs, is_failure, get_title,
-                                  get_url)
+                                  get_url, get_id)
     if baseline_runs:
       self._get_failures('baseline ' + kind, baseline_runs, is_failure,
-                         get_title, get_url)
+                         get_title, get_url, get_id)
     return failures
 
   @contextlib.contextmanager
@@ -221,11 +227,11 @@ class FailuresApi(recipe_api.RecipeApi):
       # Truncate the list of failures per section to keep the summary under
       # Buildbucket's 4000 byte limit on the summary_markdown field.
       truncate_max = 10
-      failures_to_print = failure_group[0 : truncate_max]
+      failures_to_print = failure_group[0:truncate_max]
       for failure in failures_to_print:
         lines.append('- [{}]({})'.format(failure.title, failure.url))
       if count > truncate_max:
-        lines.append('- ...and {} others'.format(count-truncate_max))
+        lines.append('- ...and {} others'.format(count - truncate_max))
       sections.append('\n\n'.join(lines))
 
     summary_markdown = '\n\n'.join(sections)
@@ -241,9 +247,10 @@ class FailuresApi(recipe_api.RecipeApi):
     Returns:
       list[Failure]: All failures discovered in the given runs.
     """
+    get_id = lambda b: b.builder.builder
     return self._get_failures('build', builds, self.is_critical_build_failure,
                               self.m.naming.get_build_title,
-                              self.m.urls.get_build_url)
+                              self.m.urls.get_build_url, get_id)
 
   def get_hw_test_failures(self, hw_tests, baseline_hw_tests=None):
     """Logs hardware test status to UI, and raises on failed tests.
@@ -257,10 +264,11 @@ class FailuresApi(recipe_api.RecipeApi):
       list[Failure]: All failures discovered in the given runs filtered
       by baseline failures.
     """
+    get_id = self.m.naming.get_skylab_result_title
     return self._get_baseline_validated_failures(
         'hw test', hw_tests, baseline_hw_tests or [],
         self.is_critical_hw_test_failure, self.m.naming.get_skylab_result_title,
-        self.m.urls.get_skylab_result_url)
+        self.m.urls.get_skylab_result_url, get_id)
 
   def get_vm_test_failures(self, vm_tests, baseline_vm_tests=None):
     """Logs VM test status to UI, and raises on failed tests.
@@ -274,10 +282,11 @@ class FailuresApi(recipe_api.RecipeApi):
       list[Failure]: All failures discovered in the given runs filtered
       by baseline failures.
     """
+    get_id = self.m.naming.get_vm_test_title
     return self._get_baseline_validated_failures(
         'vm test', vm_tests, baseline_vm_tests or [],
         self.is_critical_vm_test_failure, self.m.naming.get_vm_test_title,
-        self.m.urls.get_build_url)
+        self.m.urls.get_build_url, get_id)
 
   def get_moblab_vm_test_failures(self, moblab_vm_tests,
                                   baseline_moblab_vm_tests=None):
@@ -292,10 +301,12 @@ class FailuresApi(recipe_api.RecipeApi):
       list[Failure]: All failures discovered in the given runs filtered
       by baseline failures.
     """
+    get_id = self.m.naming.get_moblab_vm_test_title
     return self._get_baseline_validated_failures(
         'moblab vm test', moblab_vm_tests, baseline_moblab_vm_tests or [],
         self.is_critical_moblab_vm_test_failure,
-        self.m.naming.get_moblab_vm_test_title, self.m.urls.get_build_url)
+        self.m.naming.get_moblab_vm_test_title, self.m.urls.get_build_url,
+        get_id)
 
   def is_build_failure(self, build):
     """Determine if the build failed.
@@ -402,3 +413,33 @@ class FailuresApi(recipe_api.RecipeApi):
       bool: True if the test failed and was critical
     """
     return self.is_critical_build_failure(moblab_vm_test)
+
+  def update_non_critical_failures(self, failures, fresh_builder_configs):
+    """
+
+    Args:
+      failures (list[Failure]): All failures encountered during execution.
+      fresh_builder_configs (dict(str, BuilderConfig)): name to builder config
+          for all BuilderConfigs that should have criticality checked.
+
+    Returns:
+      list[Failure]: the updated list of builders with 'fatal' statuses
+          possibly updated.
+    """
+    with self.m.step.nest('non-critical build check') as step:
+      new_failures = []
+      presentation_log = []
+      for f in failures:
+        fatal = f.fatal
+        if f.kind == 'build':
+          if f.id in fresh_builder_configs:
+            cfg = fresh_builder_configs[f.id]
+            if cfg.general.critical and not cfg.general.critical.value and f.fatal:
+              presentation_log.append('changed {} to non-critical'.format(f.id))
+              fatal = False
+        new_failures.append(
+            self.Failure(kind=f.kind, title=f.title, url=f.url, fatal=fatal,
+                         id=f.id))
+      if presentation_log:
+        step.presentation.logs['new non-critical builders'] = presentation_log
+      return new_failures

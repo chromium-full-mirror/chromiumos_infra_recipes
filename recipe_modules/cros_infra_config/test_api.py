@@ -178,6 +178,35 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "atlas-cq",
+                    "branch": "master",
+                    "type": "CQ"
+                  },
+                  "general": {
+                    "critical": true
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE",
+                    "artifact_types": ["IMAGE_ZIP"]
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "install_packages": "RUN",
+                    "apply_gerrit_changes": true
+                  },
+                  "unit_tests": {
+                    "package_blacklist": [{
+                      "package_name": "chromite",
+                      "category": "chromeos-base",
+                      "version": ""
+                    }],
+                    "ebuilds_run_spec": "RUN"
+                  }
+                },
+                {
+                  "id": {
                     "name": "target-baseline",
                     "branch": "master",
                     "type": "CQ"
@@ -255,7 +284,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   "orchestrator": {
                     "children": [
                       "amd64-generic-cq",
-                      "arm-generic-cq"
+                      "arm-generic-cq",
+                      "atlas-cq"
                     ]
                   }
                 },

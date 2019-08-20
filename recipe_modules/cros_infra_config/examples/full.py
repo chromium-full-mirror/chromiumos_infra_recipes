@@ -15,6 +15,7 @@ from PB.chromiumos.builder_config import BuilderConfig
 def RunSteps(api):
   builder_config = api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder)
+  api.cros_infra_config.force_reload()
 
   api.assertions.assertEqual(builder_config.id.name, "postsubmit-orchestrator")
 
@@ -28,8 +29,7 @@ def RunSteps(api):
 
   api.assertions.assertFalse(
       api.cros_infra_config.should_run(BuilderConfig.NO_RUN))
-  api.assertions.assertTrue(
-      api.cros_infra_config.should_run(BuilderConfig.RUN))
+  api.assertions.assertTrue(api.cros_infra_config.should_run(BuilderConfig.RUN))
   api.assertions.assertTrue(
       api.cros_infra_config.should_run(BuilderConfig.RUN_EXIT))
 

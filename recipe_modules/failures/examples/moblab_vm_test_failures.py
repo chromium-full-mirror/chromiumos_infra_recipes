@@ -51,7 +51,8 @@ def RunSteps(api):
       api.failures.get_moblab_vm_test_failures([moblab_vm_critical_failure]), [
           api.failures.Failure(
               'moblab vm test', 'target.moblab-vm.suite',
-              api.urls.get_build_url(moblab_vm_critical_failure), True)
+              api.urls.get_build_url(moblab_vm_critical_failure), True,
+              'target.moblab-vm.suite')
       ])
 
 
