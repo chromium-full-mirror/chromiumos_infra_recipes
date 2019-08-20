@@ -2183,7 +2183,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 A module for interacting with the repo tool.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#257)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#271)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -2199,7 +2199,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#300)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#314)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -2207,7 +2207,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#223)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#237)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -2223,7 +2223,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#323)(self, root_path, manifest_url, init_opts=None, sync_opts=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#337)(self, root_path, manifest_url, init_opts=None, sync_opts=None):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -2245,14 +2245,14 @@ Args:
   * depth (int): Create a shallow clone of the given depth.
   * repo_url (str): URL of the repo repository.
 
-&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#211)(self):**
+&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#225)(self):**
 
 Uses repo to create a manifest snapshot and returns it as a string.
 
 Returns:
   str: The manifest XML as a string.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#198)(self, projects):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#212)(self, projects):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -2262,7 +2262,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#167)(self, projects=[]):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#181)(self, projects=[]):**
 
 Uses 'repo forall' to gather project information.
 
@@ -2274,6 +2274,14 @@ Returns:
   List[ProjectInfo]: Requested project infos.
 
 &emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#34)(self):**
+
+&mdash; **def [start](/recipe_modules/repo/api.py#167)(self, branch, projects=None):**
+
+Start a new branch in the given projects, or all projects if not set.
+
+Args:
+  branch (str): The new branch name.
+  projects (list[str]): The projects for which to start a branch.
 
 &mdash; **def [sync](/recipe_modules/repo/api.py#114)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None):**
 

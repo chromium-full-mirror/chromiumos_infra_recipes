@@ -164,6 +164,20 @@ class RepoApi(recipe_api.RecipeApi):
         str(manifest_path), str(repo_manifests_path))
     self.sync(manifest_name=manifest_relpath, **kwargs)
 
+  def start(self, branch, projects=None):
+    """Start a new branch in the given projects, or all projects if not set.
+
+    Args:
+      branch (str): The new branch name.
+      projects (list[str]): The projects for which to start a branch.
+    """
+    cmd = ['start']
+    if projects is not None:
+      cmd.extend(projects)
+    else:
+      cmd.append('--all')
+    self._step(cmd)
+
   def project_infos(self, projects=[]):
     """Uses 'repo forall' to gather project information.
 

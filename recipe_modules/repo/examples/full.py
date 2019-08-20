@@ -68,6 +68,9 @@ def RunSteps(api):
   api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
                                   'http://manifest_url')
 
+  api.repo.start('no-projects')
+  api.repo.start('with-projects', projects=['project'])
+
 
 def GenTests(api):
   yield api.test('setup_repo')

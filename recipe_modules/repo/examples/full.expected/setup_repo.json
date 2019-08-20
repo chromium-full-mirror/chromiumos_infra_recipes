@@ -377,6 +377,24 @@
     ]
   },
   {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "--all"
+    ],
+    "infra_step": true,
+    "name": "repo start"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "project"
+    ],
+    "infra_step": true,
+    "name": "repo start (2)"
+  },
+  {
     "name": "$result"
   }
 ]
