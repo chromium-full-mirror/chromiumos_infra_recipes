@@ -1108,7 +1108,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#194)(self, test_tasks, bb=False):**
+&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#189)(self, test_tasks):**
 
 Collect on all tests from test_tasks.
 
@@ -1117,14 +1117,11 @@ tast_vm, moblab_vm.
 
 Args:
   test_tasks (MetaTestTuple): lists of tests to collect.
-  bb(boolean): Whether to use buildbucket-backed cros_test_platform.
-                  Note: this flag is temporary, and will exist only during
-                  cros_test_platform migration.
 
 Returns:
   MetaTestTuple of lists of tests collected.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#231)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#223)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -1161,7 +1158,7 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#158)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, bb=False, dev=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#156)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
 
 Schedule all tests from the test_plan.
 
@@ -1174,9 +1171,6 @@ Args:
     build_targets to be populated.
   snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
       the included builds were created.
-  bb(boolean): Whether to use buildbucket-backed cros_test_platform.
-                  Note: this flag is temporary, and will exist only during
-                  cros_test_platform migration.
   dev(boolean): Whether to use Skylab dev instance.
 
 Returns:
@@ -2333,7 +2327,7 @@ Args:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#38)(self, test, unit, name=None, bb=False, dev=False):**
+&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#38)(self, test, unit, name=None, dev=False):**
 
 Schedule a HW test suite.
 
@@ -2341,9 +2335,6 @@ Args:
   test (HwTest): A hardware test config.
   unit (HwTestUnit): The unit the test was defined in.
   name (str): The step name. Defaults to 'schedule <test title>'
-  bb (boolean): Whether to use buildbucket-backed cros_test_platform.
-                Note: this flag is temporary, and will exist only during
-                cros_test_platform migration.
   dev (boolean): Whether to use Skylab dev instance.
 
 Returns:
@@ -2351,7 +2342,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/skylab/api.py#35)(self):**
 
-&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#85)(self, tasks, bb=False, dev=False):**
+&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#81)(self, tasks, dev=False):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -2359,9 +2350,6 @@ Uses skylab wait-tasks internally.
 
 Args:
   tasks (list[SkylabTask]): The Skylab tasks to wait on.
-  bb (boolean): Whether to use buildbucket-backed cros_test_platform.
-                Note: this flag is temporary, and will exist only during
-                cros_test_platform migration.
   dev (boolean): Whether to use Skylab dev instance.
 
 Returns:

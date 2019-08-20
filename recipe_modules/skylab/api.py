@@ -35,16 +35,13 @@ class SkylabApi(recipe_api.RecipeApi):
   def initialize(self):
     self._client = None
 
-  def create_suite(self, test, unit, name=None, bb=False, dev=False):
+  def create_suite(self, test, unit, name=None, dev=False):
     """Schedule a HW test suite.
 
     Args:
       test (HwTest): A hardware test config.
       unit (HwTestUnit): The unit the test was defined in.
       name (str): The step name. Defaults to 'schedule <test title>'
-      bb (boolean): Whether to use buildbucket-backed cros_test_platform.
-                    Note: this flag is temporary, and will exist only during
-                    cros_test_platform migration.
       dev (boolean): Whether to use Skylab dev instance.
 
     Returns:
@@ -56,7 +53,6 @@ class SkylabApi(recipe_api.RecipeApi):
       cmd = [
           self._client,
           'create-suite',
-          '-bb=' + repr(bb),
           '-json',
           '-pool',
           'DUT_POOL_QUOTA',
@@ -82,16 +78,13 @@ class SkylabApi(recipe_api.RecipeApi):
       step.presentation.links['swarming task'] = task_url
       return self.SkylabTask(id=task_id, url=task_url, test=test, unit=unit)
 
-  def wait_tasks(self, tasks, bb=False, dev=False):
+  def wait_tasks(self, tasks, dev=False):
     """Wait for all Skylab suites to finish and return the results.
 
     Uses skylab wait-tasks internally.
 
     Args:
       tasks (list[SkylabTask]): The Skylab tasks to wait on.
-      bb (boolean): Whether to use buildbucket-backed cros_test_platform.
-                    Note: this flag is temporary, and will exist only during
-                    cros_test_platform migration.
       dev (boolean): Whether to use Skylab dev instance.
 
     Returns:
@@ -105,7 +98,7 @@ class SkylabApi(recipe_api.RecipeApi):
       # TODO(crbug.com/989623) once wait-tasks supports partial results
       # drop the extra 10 min wait.
       cmd = [
-          self._client, 'wait-tasks', '-bb=' + repr(bb), '-timeout-mins',
+          self._client, 'wait-tasks', '-timeout-mins',
           7 * 60 + 10
       ]
       if dev:
