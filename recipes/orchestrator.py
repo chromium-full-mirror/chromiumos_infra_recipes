@@ -97,7 +97,7 @@ def RunSteps(api, properties):
           api.buildbucket.collect_builds(
               [b.id for b in older_running_builds],
               step_name='waiting for existing runs',
-              timeout=60 * 60 * 4,
+              timeout=60 * 60 * 23,
           )
         else:
           step.presentation.step_text = 'found no inflight run'
