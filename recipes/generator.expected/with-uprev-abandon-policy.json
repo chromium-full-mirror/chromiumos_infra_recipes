@@ -479,6 +479,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
+      "pupr",
       "[START_DIR]/chromiumos/src/private-overlay",
       "[START_DIR]/chromiumos/src/overlay"
     ],

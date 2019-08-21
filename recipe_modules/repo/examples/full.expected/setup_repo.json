@@ -380,6 +380,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
+      "no-projects",
       "--all"
     ],
     "infra_step": true,
@@ -389,6 +390,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
+      "with-projects",
       "project"
     ],
     "infra_step": true,

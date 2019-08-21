@@ -171,7 +171,7 @@ class RepoApi(recipe_api.RecipeApi):
       branch (str): The new branch name.
       projects (list[str]): The projects for which to start a branch.
     """
-    cmd = ['start']
+    cmd = ['start', branch]
     if projects is not None:
       cmd.extend(projects)
     else:
