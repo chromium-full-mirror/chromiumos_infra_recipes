@@ -503,6 +503,7 @@ class GerritApi(recipe_api.RecipeApi):
           for result in results
       ]
 
+      step.presentation.step_text = 'found %d matching CLs' % len(changes)
       for change in changes:
         change_url = self.parse_gerrit_change_url(change)
         step.presentation.links['found CL %d' % change.change] = change_url

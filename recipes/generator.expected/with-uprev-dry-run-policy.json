@@ -675,6 +675,7 @@
     "name": "find existing uprev CLs.find cls from chromium host.query https://chromium-review.googlesource.com",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
       "@@@STEP_LINK@found CL 91827@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
   },
@@ -735,6 +736,7 @@
     "name": "find existing uprev CLs.find cls from chrome-internal host.query https://chrome-internal-review.googlesource.com",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
       "@@@STEP_LINK@found CL 91827@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
   },

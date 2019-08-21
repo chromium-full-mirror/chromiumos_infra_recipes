@@ -3,6 +3,7 @@
     "cmd": [],
     "name": "query https://chromium-review.googlesource.com",
     "~followup_annotations": [
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
       "@@@STEP_LINK@found CL 91827@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
   },
