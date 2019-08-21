@@ -69,10 +69,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         test_tasks = self.schedule_tests(
             test_plan, passed_tests, test_to_build_target_map, snapshot,
-            dev=dev)
+            bb=self.m.gerrit.has_chromite_changes(gerrit_changes), dev=dev)
 
       with self.m.step.nest('collect tests'):
-        test_results = self.collect_tests(test_tasks)
+        test_results = self.collect_tests(
+            test_tasks, bb=self.m.gerrit.has_chromite_changes(gerrit_changes))
         # Record test results.
         passed_tests = [
             self.m.naming.get_test_title(test_result)
@@ -112,10 +113,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             baseline_test_plan = self.m.cros_test_plan.generate(
                 baseline_builds, snapshot.id)
             baseline_tasks = self.schedule_tests(
-                baseline_test_plan, passed_tests, snapshot=snapshot, dev=dev)
+                baseline_test_plan, passed_tests, snapshot=snapshot, bb=True,
+                dev=dev)
 
           with self.m.step.nest('collect baseline tests'):
-            baseline_results = self.collect_tests(baseline_tasks)
+            baseline_results = self.collect_tests(baseline_tasks, bb=True)
 
             # Add failures here to passed_tests.
             passed_tests.extend([
@@ -154,7 +156,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return build_target.name + '-tast-vm'
 
   def schedule_tests(self, test_plan, passed_tests, test_to_build_map=None,
-                     snapshot=None, dev=False):
+                     snapshot=None, bb=False, dev=False):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -166,13 +168,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         build_targets to be populated.
       snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
           the included builds were created.
+      bb(boolean): Whether to use buildbucket-backed cros_test_platform.
+                      Note: this flag is temporary, and will exist only during
+                      cros_test_platform migration.
       dev(boolean): Whether to use Skylab dev instance.
 
     Returns:
       MetaTestTuple of lists of the tests scheduled.
     """
     skylab_tasks = self._schedule_skylab_tests(
-        test_plan, passed_tests, test_to_build_map, dev=dev)
+        test_plan, passed_tests, test_to_build_map, bb=bb, dev=dev)
 
     autotest_vm_tests = self._schedule_autotest_vm_tests(
         test_plan, passed_tests, snapshot, test_to_build_map)
@@ -186,7 +191,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         skylab=skylab_tasks or [], autotest_vm=autotest_vm_tests or [],
         tast_vm=tast_vm_tests or [], moblab_vm=moblab_vm_tests or [])
 
-  def collect_tests(self, test_tasks):
+  def collect_tests(self, test_tasks, bb=False):
     """Collect on all tests from test_tasks.
 
     The tests are collected in the order: skylab, autotest_vm,
@@ -194,13 +199,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     Args:
       test_tasks (MetaTestTuple): lists of tests to collect.
+      bb(boolean): Whether to use buildbucket-backed cros_test_platform.
+                      Note: this flag is temporary, and will exist only during
+                      cros_test_platform migration.
 
     Returns:
       MetaTestTuple of lists of tests collected.
     """
     hw_results = []
     if test_tasks.skylab:
-      hw_results = self.m.skylab.wait_tasks(test_tasks.skylab)
+      hw_results = self.m.skylab.wait_tasks(test_tasks.skylab, bb=bb)
     autotest_vm_results = []
     if test_tasks.autotest_vm:
       autotest_vm_results = self.m.buildbucket.collect_builds(
@@ -240,7 +248,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return failures
 
   def _schedule_skylab_tests(self, test_plan, passed_tests,
-                             test_to_build_map=None, dev=False):
+                             test_to_build_map=None, bb=False, dev=False):
     """Schedule skylab tests from the test_plan.
 
     Args:
@@ -250,6 +258,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         have passed before.
       test_to_build_map (dict{string->string}): Map of test names to
         build_targets to be populated.
+        bb(boolean): Whether to use buildbucket-backed cros_test_platform.
+                      Note: this flag is temporary, and will exist only during
+                      cros_test_platform migration.
         dev(boolean): Whether to use Skylab dev instance.
 
     Returns:
@@ -265,7 +276,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             build_target = unit.common.build_target
             test_to_build_map[test_name] = build_target.name
             skylab_tasks.append(
-                self.m.skylab.create_suite(test, unit, dev=dev))
+                self.m.skylab.create_suite(test, unit, bb=bb, dev=dev))
 
     return skylab_tasks
 
