@@ -192,7 +192,7 @@ def filter_schedule_wait_builds(api, child_builders, enable_history, snapshot,
 
   # request new builds and add to total existing.
   existing_builds += api.buildbucket.schedule(
-      new_build_requests, url_title_fn=lambda x: "schedule builds")
+      new_build_requests, url_title_fn=api.naming.get_build_title)
 
   # collect all existing builds, add to completed builds
   completed_builds += api.buildbucket.collect_builds(
