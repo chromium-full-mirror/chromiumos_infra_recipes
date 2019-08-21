@@ -12,7 +12,7 @@ CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 
 class ChromeApi(recipe_api.RecipeApi):
 
-  def sync(self, chrome_root):
+  def sync(self, chrome_root, internal):
     """
     Sync Chrome source code.
 
@@ -20,6 +20,7 @@ class ChromeApi(recipe_api.RecipeApi):
 
     Args:
       chrome_root (str): Directory to sync the Chrome source code to.
+      internal (bool): True for internal checkout.
     """
     # TODO(crbug.com/945606): Call sync_chrome in build_target recipe.
     # portageq must be run with cwd inside a chromiumos source root.
@@ -35,7 +36,8 @@ class ChromeApi(recipe_api.RecipeApi):
       soln.name = 'src'
       soln.url = 'https://chromium.googlesource.com/chromium/src.git'
       soln.revision = revision
-      # TODO(chromium:945606): Read chrome_internal from infra_config and add
-      # internal checkout.
+      soln.custom_vars = {
+          'checkout_src_internal': internal,
+      }
 
       self.m.gclient.checkout(gclient_config=cfg)

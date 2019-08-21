@@ -241,7 +241,7 @@ Returns:
 
 #### **class [ChromeApi](/recipe_modules/chrome/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#15)(self, chrome_root):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#15)(self, chrome_root, internal):**
 
 Sync Chrome source code.
 
@@ -249,6 +249,7 @@ Must be run with cwd inside a chromiumos source root.
 
 Args:
   chrome_root (str): Directory to sync the Chrome source code to.
+  internal (bool): True for internal checkout.
 ### *recipe_modules* / [cloud\_pubsub](/recipe_modules/cloud_pubsub)
 
 [DEPS](/recipe_modules/cloud_pubsub/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
