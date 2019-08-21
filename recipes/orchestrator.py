@@ -82,8 +82,13 @@ def RunSteps(api, properties):
         older_running_builds = api.cros_history.get_matching_builds(
             api.buildbucket.build, statuses=[common_pb2.STARTED])
 
+        # remove yourself potentially.
+        older_running_builds = [
+            b for b in older_running_builds if b.id != api.buildbucket.build.id
+        ]
+
         # Is a run of the same configuration ongoing? If so, inform and join().
-        if len(older_running_builds) > 1:
+        if len(older_running_builds) > 0:
           step.presentation.step_text = 'found {} inflight run(s) to wait on'\
                                         .format(len(older_running_builds))
 
@@ -140,7 +145,6 @@ def RunSteps(api, properties):
       [b.builder.builder for b in completed_builds])
   failures = api.failures.update_non_critical_failures(failures,
                                                        fresh_builder_configs)
-
   return api.failures.aggregate_failures(failures)
 
 
