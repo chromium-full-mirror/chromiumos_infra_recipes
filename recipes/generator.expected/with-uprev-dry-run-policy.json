@@ -463,6 +463,7 @@
       "[START_DIR]/chromiumos/src/private-overlay",
       "[START_DIR]/chromiumos/src/overlay"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "commit uprev.repo start",
     "~followup_annotations": [
