@@ -119,7 +119,8 @@ def RunSteps(api, properties):
 
       # Checkout git branches via repo so they track correctly.
       with api.context(cwd=api.cros_source.workspace_path):
-        api.repo.start('pupr', projects=ebuilds_by_repository.keys())
+        projects = api.repo.project_infos(projects=ebuilds_by_repository.keys())
+        api.repo.start('pupr', projects=[project.name for project in projects])
 
       for repository, ebuilds in ebuilds_by_repository.iteritems():
         name = api.path.basename(repository)
