@@ -307,15 +307,14 @@ class GerritApi(recipe_api.RecipeApi):
 
     return True
 
-  def create_change(self, project, message, reviewers=None, topic=None):
+  def create_change(self, project, reviewers=None, topic=None):
     """Create a Gerrit change for the most recent commits in the given project.
 
-    Assumes one or more local commits exists in the project.
+    Assumes one or more local commits exists in the project. The commit message
+    is always used as the CL description.
 
     Args:
       project (str|Path): Any path within the project of interest.
-      message (str): Initial upload message to post on the CL.
-          NOT the same as CL description, which comes from commit message.
       reviewers (list[str]): List of reviewer emails. If specified, gerrit will
           email the reviewers.
       topic (str): Topic to set for the CL.
@@ -327,24 +326,9 @@ class GerritApi(recipe_api.RecipeApi):
       with self.m.context(cwd=self.m.cros_source.workspace_path):
         project_info = self.m.repo.project_info([project])
 
-      upload_args = [
-          '--bypass-hooks',
-          '--force',
-      ]
-
-      if reviewers is not None:
-        upload_args.append('--send-mail')
-        for reviewer in reviewers:
-          upload_args.append('--reviewers')
-          upload_args.append(reviewer)
-
-      if topic is not None:
-        upload_args.append('--topic')
-        upload_args.append(topic)
-
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
-        self.m.git_cl.upload(message, upload_args=upload_args)
+        self.m.git_cl.upload(reviewers=reviewers, topic=topic, send_mail=True)
         gerrit_change_url = self.m.git_cl.status(
             field='url', fast=True,
             step_test_data=functools.partial(

@@ -2,17 +2,21 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/git_cl.py",
-      "description",
-      "-d",
-      "--gerrit",
-      "foo"
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--topic",
+      "tensorflow",
+      "--reviewers",
+      "jeff@google.com",
+      "--send-mail"
     ],
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "git_cl description"
+    "name": "git_cl upload"
   },
   {
     "name": "$result"

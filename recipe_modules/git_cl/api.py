@@ -14,8 +14,16 @@ class GitClApi(recipe_api.RecipeApi):
   """A module for interacting with git cl."""
 
   def __call__(self, *args, **kwargs):
+    # Verify and adjust kwargs so they align with depot_tools/git_cl.
+    assert 'stdout' not in kwargs, 'cannot set stdout'
+    step_name = kwargs.pop('step_name', None)
+    if step_name is not None:
+      kwargs['name'] = step_name
+
     with self.m.depot_tools.on_path():
-      return self.m.depot_tools_git_cl(*args, **kwargs)
+      return self.m.depot_tools_git_cl(
+          *args, stdout=self.m.raw_io.output(), **kwargs
+      ).stdout.strip()
 
   def __getattr__(self, name):
     attr = getattr(self.m.depot_tools_git_cl, name)
@@ -29,29 +37,55 @@ class GitClApi(recipe_api.RecipeApi):
 
     return wrapper
 
+  def upload(self, topic=None, reviewers=None, send_mail=False, **kwargs):
+    """Run `git cl upload`.
+
+    --force and --bypass-hooks are always set to remove the need to enter
+    confirmations and address nits.
+
+    Args:
+      topic (str): Optional --topic to set.
+      reviewers (list[str]): Optional list of --reviewers to set.
+      send_mail (bool): If true, set --send-mail.
+      kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
+
+    Returns:
+      str: The command output.
+    """
+    args = ['--bypass-hooks', '--force']
+
+    if topic is not None:
+      args.append('--topic')
+      args.append(topic)
+
+    if reviewers is not None:
+      for reviewer in reviewers:
+        args.append('--reviewers')
+        args.append(reviewer)
+
+    if send_mail:
+      args.append('--send-mail')
+
+    return self('upload', args, **kwargs)
+
   def status(self, field=None, fast=False, **kwargs):
     """Run `git cl status` with given arguments.
 
     Args:
       field: Set --field to this value.
       fast: Set --fast.
-      kwargs: Passed to recipe_engine/step.
+      kwargs: Passed to recipe_engine/step. May NOT set stdout.
 
     Returns:
       str: The command output.
     """
-    assert 'stdout' not in kwargs, 'cannot set stdout'
-
-    step_name = kwargs.pop('step_name', None)
-    if step_name is not None:
-      kwargs['name'] = step_name
-
     args = []
+
     if field is not None:
       args.append('--field')
       args.append(field)
+
     if fast:
       args.append('--fast')
-    return self(
-        'status', args, stdout=self.m.raw_io.output(), **kwargs
-    ).stdout.strip()
+
+    return self('status', args, **kwargs)

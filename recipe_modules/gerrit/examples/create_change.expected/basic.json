@@ -29,13 +29,11 @@
       "upload",
       "--bypass-hooks",
       "--force",
-      "--send-mail",
-      "--reviewers",
-      "jeff",
       "--topic",
       "pupr",
-      "--message-file",
-      "some upload message"
+      "--reviewers",
+      "jeff",
+      "--send-mail"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "env_suffixes": {

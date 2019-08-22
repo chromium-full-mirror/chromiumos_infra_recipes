@@ -11,8 +11,7 @@ DEPS = [
 ]
 
 def RunSteps(api):
-  change = api.gerrit.create_change('project', 'some upload message',
-                                    reviewers=['jeff'], topic='pupr')
+  change = api.gerrit.create_change('project', reviewers=['jeff'], topic='pupr')
   api.assertions.assertEqual(change.host, 'host-review.googlesource.com')
   api.assertions.assertEqual(change.project, 'project')
   api.assertions.assertEqual(change.change, 123)

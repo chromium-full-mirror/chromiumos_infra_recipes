@@ -120,6 +120,7 @@
   * [git:examples/full](#recipes-git_examples_full)
   * [git_cl:examples/forwarding](#recipes-git_cl_examples_forwarding)
   * [git_cl:examples/status](#recipes-git_cl_examples_status)
+  * [git_cl:examples/upload](#recipes-git_cl_examples_upload)
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
@@ -1495,7 +1496,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#468)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#452)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -1503,7 +1504,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#386)(self, gerrit_change, comment):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#370)(self, gerrit_change, comment):**
 
 Add a comment to the given Gerrit change.
 
@@ -1524,16 +1525,15 @@ Args:
 Returns:
   bool: whether the changes are submittable
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#310)(self, project, message, reviewers=None, topic=None):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#310)(self, project, reviewers=None, topic=None):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
-Assumes one or more local commits exists in the project.
+Assumes one or more local commits exists in the project. The commit message
+is always used as the CL description.
 
 Args:
   project (str|Path): Any path within the project of interest.
-  message (str): Initial upload message to post on the CL.
-      NOT the same as CL description, which comes from commit message.
   reviewers (list[str]): List of reviewer emails. If specified, gerrit will
       email the reviewers.
   topic (str): Topic to set for the CL.
@@ -1555,7 +1555,7 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#414)(self, gerrit_change):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#398)(self, gerrit_change):**
 
 Get the description of the given Gerrit change.
 
@@ -1601,7 +1601,7 @@ Args:
 Returns:
   str: The Gerrit URL.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#482)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#466)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -1614,7 +1614,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#446)(self, gerrit_change, description):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#430)(self, gerrit_change, description):**
 
 Set the description of the given Gerrit change.
 
@@ -1623,7 +1623,7 @@ Args:
   description (str): The new description, in full. Be sure this still
       includes the Change-Id and other essential metadata.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#356)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#340)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
 
@@ -1836,14 +1836,30 @@ API for working with git cl.
 
 A module for interacting with git cl.
 
-&mdash; **def [status](/recipe_modules/git_cl/api.py#32)(self, field=None, fast=False, \*\*kwargs):**
+&mdash; **def [status](/recipe_modules/git_cl/api.py#71)(self, field=None, fast=False, \*\*kwargs):**
 
 Run `git cl status` with given arguments.
 
 Args:
   field: Set --field to this value.
   fast: Set --fast.
-  kwargs: Passed to recipe_engine/step.
+  kwargs: Passed to recipe_engine/step. May NOT set stdout.
+
+Returns:
+  str: The command output.
+
+&mdash; **def [upload](/recipe_modules/git_cl/api.py#40)(self, topic=None, reviewers=None, send_mail=False, \*\*kwargs):**
+
+Run `git cl upload`.
+
+--force and --bypass-hooks are always set to remove the need to enter
+confirmations and address nits.
+
+Args:
+  topic (str): Optional --topic to set.
+  reviewers (list[str]): Optional list of --reviewers to set.
+  send_mail (bool): If true, set --send-mail.
+  kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
 
 Returns:
   str: The command output.
@@ -2911,6 +2927,11 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 [DEPS](/recipe_modules/git_cl/examples/status.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/git_cl/examples/status.py#12)(api):**
+### *recipes* / [git\_cl:examples/upload](/recipe_modules/git_cl/examples/upload.py)
+
+[DEPS](/recipe_modules/git_cl/examples/upload.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#12)(api):**
 ### *recipes* / [git\_footers:examples/full](/recipe_modules/git_footers/examples/full.py)
 
 [DEPS](/recipe_modules/git_footers/examples/full.py#8): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
