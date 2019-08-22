@@ -2910,7 +2910,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_gerrit_change_url.py#19)(api, properties):**
 ### *recipes* / [gerrit:examples/parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/examples/parse_qualified_gerrit_host.py)
 
-[DEPS](/recipe_modules/gerrit/examples/parse_qualified_gerrit_host.py#11): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/gerrit/examples/parse_qualified_gerrit_host.py#10): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_qualified_gerrit_host.py#19)(api, properties):**
 ### *recipes* / [gerrit:examples/query\_changes](/recipe_modules/gerrit/examples/query_changes.py)
