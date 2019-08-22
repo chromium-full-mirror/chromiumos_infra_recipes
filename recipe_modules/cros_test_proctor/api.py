@@ -410,19 +410,44 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       A boolean indicating whether we need to initiate baseline
       validation.
     """
-    test_count = sum(
-        [len(unit.hw_test_cfg.hw_test) for unit in test_plan.hw_test_units] +
-        [len(unit.vm_test_cfg.vm_test) for unit in test_plan.vm_test_units] + [
-            len(unit.tast_vm_test_cfg.tast_vm_test)
-            for unit in test_plan.tast_vm_test_units
-        ])
-    if failed_results:
+    test_count = (
+        self._critical_test_count(test_plan.hw_test_units,
+                                  lambda unit: unit.hw_test_cfg,
+                                  lambda cfg: cfg.hw_test) +
+        self._critical_test_count(test_plan.vm_test_units,
+                                  lambda unit: unit.vm_test_cfg,
+                                  lambda cfg: cfg.vm_test) +
+        self._critical_test_count(test_plan.tast_vm_test_units,
+                                  lambda unit: unit.tast_vm_test_cfg,
+                                  lambda cfg: cfg.tast_vm_test))
+    if test_count != 0 and failed_results:
       failure_ratio = float(len(failed_results)) / test_count
       if (failure_ratio <= float(percent_threshold) / 100 or
           len(failed_results) <= count_threshold):
         return True
 
     return False
+
+  def _critical_test_count(self, units, cfg_func, tests_func):
+    """Returns the count of critical tests within `units`.
+
+    Args:
+      units: (list[HwTestUnit|VmTestUnit|TastVmTestUnit]): Units to count the
+          critical tests within.
+      cfg_func: (lambda): Lambda function that takes a unit from units and
+          returns the *test_cfg field.
+      tests_func: (lambda): Lambda function that takes the *test_cfg field and
+          returns the *test field holding the list of tests.
+
+    Returns:
+      An integer count of the critical tests with `units`.
+    """
+    count = 0
+    for unit in units:
+      for test in tests_func(cfg_func(unit)):
+        if test.common.critical and test.common.critical.value:
+          count += 1
+    return count
 
   def _with_props_for_child_build(self, properties):
     """Merge 'properties' and 'api.cq.props_for_child_build'.
