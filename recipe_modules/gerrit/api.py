@@ -245,7 +245,7 @@ class GerritApi(recipe_api.RecipeApi):
     assert gerrit_change.host, 'found GerritChange with no host'
     assert gerrit_change.change, 'found GerritChange with no change number'
 
-    qualified_host = 'https://%s' % gerrit_change.host
+    qualified_host = self.parse_qualified_gerrit_host(gerrit_change)
     if gerrit_change.project:
       url = '%s/c/%s/+/%d' % (qualified_host, gerrit_change.project.strip('/'),
                               gerrit_change.change)
@@ -254,6 +254,21 @@ class GerritApi(recipe_api.RecipeApi):
       return url
     else:
       return '%s/%d' % (qualified_host, gerrit_change.change)
+
+  def parse_qualified_gerrit_host(self, gerrit_change):
+    """Transform a GerritChange proto into a fully qualified host.
+
+    Args:
+      gerrit_change (GerritChange): The change in question.
+
+    Returns:
+      str: The fully qualified Gerrit host.
+    """
+    host = gerrit_change.host
+    for prefix in ('http://', 'https://'):
+      if host.startswith(prefix):
+        host = host[len(prefix):]
+    return 'https://' + host
 
   def changes_are_submittable(self, gerrit_changes, test_output_data=None):
     """Checks if the provided changes can be merged onto their Git branches.
@@ -465,7 +480,8 @@ class GerritApi(recipe_api.RecipeApi):
           gerrit_change)
 
       self.m.depot_tools_gerrit.abandon_change(
-          gerrit_change.host, gerrit_change.change, message=message)
+          self.parse_qualified_gerrit_host(gerrit_change), gerrit_change.change,
+          message=message)
 
   def query_changes(self, host, query_params):
     """Query gerrit for the given changes.

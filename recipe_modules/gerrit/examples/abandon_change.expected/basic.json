@@ -13,7 +13,7 @@
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "abandon",
       "--host",
-      "chromium-review.googlesource.com",
+      "https://chromium-review.googlesource.com",
       "--change",
       "123",
       "--json_file",
