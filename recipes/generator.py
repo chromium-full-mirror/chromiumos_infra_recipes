@@ -205,7 +205,7 @@ def RunSteps(api, properties):
         cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
         for change, cq_depend in zip(changes, cq_depends):
           with api.step.nest('set cq-depend for {} CL'.format(repository)):
-            description = api.gerrit.get_change_description(change)
+            description = api.gerrit.get_change_description(change).stdout
             description = '{}\n{}'.format(description, cq_depend)
             api.gerrit.set_change_description(change, description)
 
