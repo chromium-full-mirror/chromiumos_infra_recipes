@@ -996,14 +996,14 @@
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/chromite",
+      "[START_DIR]/chromiumos/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
@@ -1012,7 +1012,7 @@
     "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.get CL 1 description.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/private-overlay|src/[START_DIR]/chromiumos/src/private-overlay|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1022,9 +1022,9 @@
       "description",
       "-d",
       "--gerrit",
-      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1"
+      "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
@@ -1041,16 +1041,16 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@description text@StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)@@@",
-      "@@@STEP_LOG_LINE@description text@Cq-Depend: @@@",
+      "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/chromite",
+      "[START_DIR]/chromiumos/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
@@ -1059,7 +1059,7 @@
     "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.set CL 1 description.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/private-overlay|src/[START_DIR]/chromiumos/src/private-overlay|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1069,17 +1069,17 @@
       "description",
       "-n",
       "-",
-      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1",
+      "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1",
       "--gerrit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
     },
     "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.set CL 1 description.git_cl set description",
-    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
+    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: chromium:1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1101,14 +1101,14 @@
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/chromite",
+      "[START_DIR]/chromiumos/src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
@@ -1117,7 +1117,7 @@
     "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).get CL 1 description.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/overlay|src/[START_DIR]/chromiumos/src/overlay|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1127,9 +1127,9 @@
       "description",
       "-d",
       "--gerrit",
-      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1"
+      "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
@@ -1146,16 +1146,16 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@description text@StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2)', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)@@@",
-      "@@@STEP_LOG_LINE@description text@Cq-Depend: @@@",
+      "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/chromite",
+      "[START_DIR]/chromiumos/src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
     ],
@@ -1164,7 +1164,7 @@
     "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).set CL 1 description.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/overlay|src/[START_DIR]/chromiumos/src/overlay|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1174,17 +1174,17 @@
       "description",
       "-n",
       "-",
-      "https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1",
+      "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1",
       "--gerrit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
     },
     "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).set CL 1 description.git_cl set description",
-    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2)', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: ",
+    "stdin": "StepData(name_tokens=('cq-depend generated CLs', 'set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2)', 'get CL 1 description', 'git_cl description'), exc_result=ExecutionResult(retcode=0, had_timeout=False, had_exception=False, was_cancelled=False), stdout='a quick description\\n\\nChange-Id: deadbeef\\n    ', stderr=None, _staged_placeholders=None, _finalized=True)\nCq-Depend: chromium:1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1198,7 +1198,7 @@
     "name": "update CL labels.abandon CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1@@@"
     ]
   },
   {
@@ -1251,7 +1251,7 @@
     "name": "update CL labels.abandon CL 1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1@@@"
     ]
   },
   {

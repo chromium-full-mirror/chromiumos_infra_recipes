@@ -335,7 +335,11 @@ class GerritApi(recipe_api.RecipeApi):
                 self.m.raw_io.test_api.stream_output,
                 self.test_api.test_gerrit_change_url()))
         step.presentation.links['link to change'] = gerrit_change_url
-        return self.parse_gerrit_change(gerrit_change_url)
+
+        # The URL does not always include the project name, so always set it.
+        change = self.parse_gerrit_change(gerrit_change_url)
+        change.project = project_info.name
+        return change
 
   def set_change_labels(self, gerrit_change, labels):
     """Set the given labels for the given Gerrit change.
