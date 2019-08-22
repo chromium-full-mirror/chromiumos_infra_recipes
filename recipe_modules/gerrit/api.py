@@ -382,6 +382,8 @@ class GerritApi(recipe_api.RecipeApi):
       refspec = 'HEAD:%s' % ref
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+        # Rebase before pushing so Gerrit does not complain there was no change.
+        self.m.git.rebase(force=True)
         self.m.git.push(project_info.remote, refspec)
 
       return ref

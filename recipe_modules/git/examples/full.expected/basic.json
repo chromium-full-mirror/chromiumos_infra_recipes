@@ -254,6 +254,15 @@
     "name": "git rev-parse (2)"
   },
   {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "infra_step": true,
+    "name": "git rebase"
+  },
+  {
     "name": "$result"
   }
 ]

@@ -1229,6 +1229,19 @@
   {
     "cmd": [
       "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1.git rebase",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "push",
       "cros",
       "HEAD:refs/for/master%l=Commit-Queue+1"
@@ -1309,6 +1322,19 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/overlay|src/[START_DIR]/chromiumos/src/overlay|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1 (2).git rebase",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

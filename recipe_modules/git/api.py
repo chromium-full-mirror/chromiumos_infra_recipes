@@ -346,3 +346,14 @@ other_test.txt
       # Clone into current directory (no extra subdirectory) by default.
       target_path = '.'
     self._step(['clone', repo_url, target_path])
+
+  def rebase(self, force=False):
+    """Run `git rebase` with the given arguments.
+
+    Args:
+      force (bool): If True, set --force.
+    """
+    cmd = ['rebase']
+    if force:
+      cmd.append('--force-rebase')
+    self._step(cmd)

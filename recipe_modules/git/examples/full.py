@@ -41,6 +41,7 @@ def RunSteps(api):
     pass
 
   api.git.repository_root()
+  api.git.rebase(force=True)
 
 
 def GenTests(api):

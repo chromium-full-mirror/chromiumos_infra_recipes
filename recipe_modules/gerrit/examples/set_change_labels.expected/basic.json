@@ -27,6 +27,19 @@
   {
     "cmd": [
       "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "infra_step": true,
+    "name": "set labels on CL 123.git rebase",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "push",
       "cros",
       "HEAD:refs/for/master%l=Code-Review+2,l=Verified+1"
