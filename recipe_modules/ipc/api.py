@@ -1,0 +1,78 @@
+# -*- coding: utf-8 -*-
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from os import listdir
+from recipe_engine import recipe_api
+from shutil import rmtree
+
+
+class IPCApi(recipe_api.RecipeApi):
+  """A module for inter-process communication."""
+
+  def initialize(self):
+    self._args = None
+    self._bin = None
+    self._version = 'latest'
+
+  def send(self, topic, message_body, attributes=None):
+    """Send a pubsub message on the given topic.
+
+    Args:
+      topic: Pubsub topic name (string)
+      message_body: byte string of message to send
+      attributes: dict of {strings: strings} encoding a 'subtopic'; subscribers
+      will take no action on messages outside their subtopic.
+    Returns: nothing
+    """
+    if attributes == None:
+      attributes = {}
+    json_attributes = self.m.json.input(attributes)
+
+    self._execute("publish", ["-topic", topic, "-file", '/dev/stdin',
+                   "-attributes", json_attributes], stdin_data=message_body)
+
+  def receive(self, topic, sub_name, filter_attributes=None):
+    """Receive one message from the filtered subscription specified.
+
+    Args:
+      topic: Pubsub topic name (string)
+      sub_name: Pubsub subscription name (string)
+      filter_attributes: dict of {strings: strings} encoding a 'subtopic';
+        messages which do not include the required attributes will be
+        acknowledged but the message body will be ignored
+    Returns:
+      Message body, as a byte string.
+    """
+    if not filter_attributes:
+      filter_attributes = {}
+    json_filter = self.m.json.input(filter_attributes)
+    return self._execute("subscribe", ["-topic", topic, "-sub-name", sub_name,
+                                "-attributes", json_filter])
+
+  def _ensure_binary_present(self):
+    """Ensure the IPC pubsub CLI is installed."""
+    if self._bin:
+      return
+
+    with self.m.step.nest('ensure ipcpubsub exists'):
+      with self.m.context(infra_steps=True):
+        cipd_dir = self.m.path['start_dir'].join('cipd', 'ipcpubsub')
+
+        pkgs = self.m.cipd.EnsureFile()
+        pkgs.add_package('chromiumos/infra/ipcpubsub/${version}',
+                         self._version)
+        self.m.cipd.ensure(cipd_dir, pkgs)
+
+        self._bin = cipd_dir.join('ipcpubsub')
+
+  def _execute(self, subcommand, args, stdin_data=None):
+    """Execute command with specified args"""
+    self._ensure_binary_present()
+    if not stdin_data:
+      stdin_data = ''
+    cmd = [self._bin, subcommand] + args
+    return self.m.easy.stdout_step(
+        'ipc_pubsub: %s' % subcommand, cmd, infra_step=True,
+        stdin=self.m.raw_io.input(stdin_data))

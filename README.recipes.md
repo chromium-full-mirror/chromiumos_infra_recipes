@@ -34,6 +34,7 @@
   * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) &mdash; APIs for dealing with Gitiles.
+  * [ipc](#recipe_modules-ipc)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
@@ -123,6 +124,9 @@
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
+  * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs)
+  * [ipc:examples/full](#recipes-ipc_examples_full)
+  * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
@@ -2000,6 +2004,39 @@ Args:
 
 Returns:
   str: the current revision hash of the specified branch
+### *recipe_modules* / [ipc](/recipe_modules/ipc)
+
+[DEPS](/recipe_modules/ipc/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [IPCApi](/recipe_modules/ipc/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for inter-process communication.
+
+&mdash; **def [initialize](/recipe_modules/ipc/api.py#14)(self):**
+
+&mdash; **def [receive](/recipe_modules/ipc/api.py#36)(self, topic, sub_name, filter_attributes=None):**
+
+Receive one message from the filtered subscription specified.
+
+Args:
+  topic: Pubsub topic name (string)
+  sub_name: Pubsub subscription name (string)
+  filter_attributes: dict of {strings: strings} encoding a 'subtopic';
+    messages which do not include the required attributes will be
+    acknowledged but the message body will be ignored
+Returns:
+  Message body, as a byte string.
+
+&mdash; **def [send](/recipe_modules/ipc/api.py#19)(self, topic, message_body, attributes=None):**
+
+Send a pubsub message on the given topic.
+
+Args:
+  topic: Pubsub topic name (string)
+  message_body: byte string of message to send
+  attributes: dict of {strings: strings} encoding a 'subtopic'; subscribers
+  will take no action on messages outside their subtopic.
+Returns: nothing
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
 [DEPS](/recipe_modules/naming/__init__.py#6): [skylab](#recipe_modules-skylab)
@@ -2975,6 +3012,21 @@ Test git_footers calls.
 [DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles)
 
 &mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#11)(api):**
+### *recipes* / [ipc:examples/falsy\_attrs](/recipe_modules/ipc/examples/falsy_attrs.py)
+
+[DEPS](/recipe_modules/ipc/examples/falsy_attrs.py#6): [ipc](#recipe_modules-ipc)
+
+&mdash; **def [RunSteps](/recipe_modules/ipc/examples/falsy_attrs.py#10)(api):**
+### *recipes* / [ipc:examples/full](/recipe_modules/ipc/examples/full.py)
+
+[DEPS](/recipe_modules/ipc/examples/full.py#6): [ipc](#recipe_modules-ipc)
+
+&mdash; **def [RunSteps](/recipe_modules/ipc/examples/full.py#10)(api):**
+### *recipes* / [ipc:examples/no\_attrs](/recipe_modules/ipc/examples/no_attrs.py)
+
+[DEPS](/recipe_modules/ipc/examples/no_attrs.py#6): [ipc](#recipe_modules-ipc)
+
+&mdash; **def [RunSteps](/recipe_modules/ipc/examples/no_attrs.py#10)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
