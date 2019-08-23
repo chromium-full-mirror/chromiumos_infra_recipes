@@ -407,7 +407,7 @@ class GerritApi(recipe_api.RecipeApi):
         project_info = self.m.repo.project_info([gerrit_change.project])
 
       # Refspec cannot contain spaces, so swap space characters with +
-      comment = urllib.quote(comment)
+      comment = urllib.quote(comment, safe='')
       branch = project_info.branch.split('/')[-1]
       ref = 'refs/for/%s%%m=%s' % (branch, comment)
       refspec = 'HEAD:%s' % ref
