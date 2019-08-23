@@ -15,7 +15,7 @@
       "    force=properties.force)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
       "    return func(*a, **kw)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_branch/api.py\", line 101, in rename",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_branch/api.py\", line 103, in rename",
       "    raise ValueError('New branch name is required.')",
       "ValueError: New branch name is required."
     ]

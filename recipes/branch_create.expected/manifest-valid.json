@@ -82,7 +82,9 @@
       "--descriptor",
       "nami",
       "--force",
-      "--push"
+      "--push",
+      "-j",
+      "8"
     ],
     "name": "create branch"
   },

@@ -37,7 +37,9 @@
       "delete",
       "my_branch",
       "--force",
-      "--push"
+      "--push",
+      "-j",
+      "8"
     ],
     "name": "delete branch my_branch"
   },

@@ -35,6 +35,8 @@ class CrosBranchApi(recipe_api.RecipeApi):
       branch_args.append('--force')
     if push:
       branch_args.append('--push')
+    # These recipes are always run on MEDIUM bots, which have 8 cores.
+    branch_args.extend(['-j', 8])
 
     self._ensure_branch_util()
     self.m.step(step_name or '%s branch' % cmd[0],

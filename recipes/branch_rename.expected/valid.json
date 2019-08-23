@@ -38,7 +38,9 @@
       "my_branch",
       "renamed_branch",
       "--force",
-      "--push"
+      "--push",
+      "-j",
+      "8"
     ],
     "name": "rename branch my_branch to renamed_branch"
   },
