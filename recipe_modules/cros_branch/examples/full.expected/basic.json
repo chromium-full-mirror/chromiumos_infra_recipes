@@ -1,65 +1,72 @@
 [
   {
+    "cmd": [],
+    "name": "ensure branch_util"
+  },
+  {
     "cmd": [
-      "chromite/bin/cros",
-      "branch",
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/test_planner",
+      "-ensure-file",
+      "chromiumos/infra/test_planner latest",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "ensure branch_util.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_planner\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/branch_util",
       "create",
-      "--yes",
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release"
     ],
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml"
   },
   {
     "cmd": [
-      "chromite/bin/cros",
-      "branch",
-      "--force",
-      "--push",
+      "[START_DIR]/cipd/test_planner/branch_util",
       "create",
-      "--yes",
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
-      "--release"
+      "--release",
+      "--force",
+      "--push"
     ],
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "name": "create branch from http://chromium.org/manifest.xml"
   },
   {
     "cmd": [
-      "chromite/bin/cros",
-      "branch",
-      "--root",
-      "~/chromiumos/",
+      "[START_DIR]/cipd/test_planner/branch_util",
       "create",
-      "--yes",
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release"
     ],
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml (2)"
   },
   {
     "cmd": [
-      "chromite/bin/cros",
-      "branch",
+      "[START_DIR]/cipd/test_planner/branch_util",
       "create",
-      "--yes",
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--custom",
@@ -67,40 +74,23 @@
       "--descriptor",
       "nami"
     ],
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml (3)"
   },
   {
     "cmd": [
-      "chromite/bin/cros",
-      "branch",
+      "[START_DIR]/cipd/test_planner/branch_util",
       "rename",
       "my_branch",
       "branch_new_name"
     ],
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "name": "rename branch my_branch to branch_new_name"
   },
   {
     "cmd": [
-      "chromite/bin/cros",
-      "branch",
+      "[START_DIR]/cipd/test_planner/branch_util",
       "delete",
       "my_branch"
     ],
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "name": "delete branch my_branch"
   },
   {

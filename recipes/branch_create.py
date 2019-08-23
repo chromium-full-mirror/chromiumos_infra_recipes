@@ -47,18 +47,13 @@ def RunSteps(api, properties):
     api.file.write_raw(
         name='write manifest to file', dest=download_path, data=manifest)
 
-  api.cros_source.ensure_synced_cache()
-  with api.cros_source.checkout_overlays_context(), api.context(
-      cwd=api.cros_source.workspace_path):
-
-    # Run `cros branch create`.
-    api.cros_branch.create_from_file(
-        download_path,
-        properties.branch_info,
-        step_name='create branch',
-        push=properties.push,
-        force=properties.force,
-        root=api.cros_source.workspace_path)
+  # Run `cros branch create`.
+  api.cros_branch.create_from_file(
+      download_path,
+      properties.branch_info,
+      step_name='create branch',
+      push=properties.push,
+      force=properties.force)
 
 
 def GenTests(api):

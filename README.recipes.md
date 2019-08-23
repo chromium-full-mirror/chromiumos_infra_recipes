@@ -433,7 +433,7 @@ Args:
       hardware tests
 ### *recipe_modules* / [cros\_branch](/recipe_modules/cros_branch)
 
-[DEPS](/recipe_modules/cros_branch/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_branch/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API wrapping the cros branch tool.
 
@@ -441,20 +441,18 @@ API wrapping the cros branch tool.
 
 A module for calling cros branch.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_branch/api.py#15)(self, cmd, step_name=None, root=None, force=False, push=False, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_branch/api.py#18)(self, cmd, step_name=None, force=False, push=False, \*\*kwargs):**
 
 Call cros branch with the given args.
 
 Args:
   cmd: Command to be run with cros branch
   step_name (str): Message to use for step. Optional.
-  root (str): Root of checkout to be used with cros branch tool (with
-    --root). If not set, no root will be used.
   force (bool): If True, cros branch will be run with --force.
   push (bool): If True, cros branch will be run with --push.
   kwargs: Keyword arguments for recipe_engine/step.
 
-&mdash; **def [create\_from\_file](/recipe_modules/cros_branch/api.py#46)(self, manifest_file, branch, manifest_src=None, \*\*kwargs):**
+&mdash; **def [create\_from\_file](/recipe_modules/cros_branch/api.py#44)(self, manifest_file, branch, manifest_src=None, \*\*kwargs):**
 
 Call `cros branch create`, branching from the file specified in
   manifest_file.
@@ -470,7 +468,7 @@ Args:
 Returns:
   TODO(jackneus): return branch name?
 
-&mdash; **def [delete](/recipe_modules/cros_branch/api.py#109)(self, branch, \*\*kwargs):**
+&mdash; **def [delete](/recipe_modules/cros_branch/api.py#107)(self, branch, \*\*kwargs):**
 
 Call `cros branch delete` with the appropriate arguments.
 
@@ -479,7 +477,9 @@ Args:
   kwargs: Keyword arguments for cros branch/recipe_engine/step.
     Accepts the same keyword arguments as __call__.
 
-&mdash; **def [rename](/recipe_modules/cros_branch/api.py#84)(self, branch, new_branch_name, \*\*kwargs):**
+&mdash; **def [initialize](/recipe_modules/cros_branch/api.py#15)(self):**
+
+&mdash; **def [rename](/recipe_modules/cros_branch/api.py#82)(self, branch, new_branch_name, \*\*kwargs):**
 
 Call `cros branch rename` with the appropriate arguments.
 

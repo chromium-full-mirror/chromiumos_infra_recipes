@@ -25,7 +25,7 @@ def RunSteps(api):
       push=True,
       force=True)
   api.cros_branch.create_from_file(
-      download_path, branch=Branch(type=Branch.RELEASE), root='~/chromiumos/')
+      download_path, branch=Branch(type=Branch.RELEASE))
 
   with api.assertions.assertRaises(ValueError):
     api.cros_branch.create_from_file(download_path, branch=None)

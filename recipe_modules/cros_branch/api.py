@@ -12,10 +12,12 @@ from PB.chromiumos.branch import Branch
 class CrosBranchApi(recipe_api.RecipeApi):
   """A module for calling cros branch."""
 
+  def initialize(self):
+    self._branch_util_path = None
+
   def __call__(self,
                cmd,
                step_name=None,
-               root=None,
                force=False,
                push=False,
                **kwargs):
@@ -24,24 +26,20 @@ class CrosBranchApi(recipe_api.RecipeApi):
     Args:
       cmd: Command to be run with cros branch
       step_name (str): Message to use for step. Optional.
-      root (str): Root of checkout to be used with cros branch tool (with
-        --root). If not set, no root will be used.
       force (bool): If True, cros branch will be run with --force.
       push (bool): If True, cros branch will be run with --push.
       kwargs: Keyword arguments for recipe_engine/step.
     """
     branch_args = []
-    if root:
-      branch_args.extend(['--root', root])
     if force:
       branch_args.append('--force')
     if push:
       branch_args.append('--push')
 
-    with self.m.depot_tools.on_path():
-      self.m.step(step_name or '%s branch' % cmd[0],
-                  ['chromite/bin/cros', 'branch'] + branch_args + cmd,
-                  **kwargs)
+    self._ensure_branch_util()
+    self.m.step(step_name or '%s branch' % cmd[0],
+                [self._branch_util_path] + cmd + branch_args,
+                **kwargs)
 
   def create_from_file(self, manifest_file, branch, manifest_src=None,
                        **kwargs):
@@ -59,7 +57,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     Returns:
       TODO(jackneus): return branch name?
     """
-    cmd = ['create', '--yes', '--file', manifest_file]
+    cmd = ['create', '--file', manifest_file]
 
     # Branch unspecified.
     if not branch or branch.type == Branch.UNSPECIFIED:
@@ -123,3 +121,18 @@ class CrosBranchApi(recipe_api.RecipeApi):
 
     kwargs.setdefault('step_name', 'delete branch %s' % branch.name)
     self(cmd, **kwargs)
+
+  def _ensure_branch_util(self):
+    """Ensure the branch_util cli is installed."""
+    if self._branch_util_path:
+      return  # pragma: nocover
+
+    with self.m.step.nest('ensure branch_util'):
+      with self.m.context(infra_steps=True):
+        cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
+
+        pkgs = self.m.cipd.EnsureFile()
+        pkgs.add_package('chromiumos/infra/test_planner', 'latest')
+        self.m.cipd.ensure(cipd_dir, pkgs)
+
+        self._branch_util_path = cipd_dir.join('branch_util')

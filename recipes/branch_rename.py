@@ -20,15 +20,11 @@ PROPERTIES = RenameBranchProperties
 
 
 def RunSteps(api, properties):
-  api.cros_source.ensure_synced_cache()
-  with api.cros_source.checkout_overlays_context(), api.context(
-      cwd=api.cros_source.workspace_path):
-    api.cros_branch.rename(
-        properties.branch_info,
-        properties.new_name,
-        push=properties.push,
-        force=properties.force,
-        root=api.cros_source.workspace_path)
+  api.cros_branch.rename(
+      properties.branch_info,
+      properties.new_name,
+      push=properties.push,
+      force=properties.force)
 
 
 def GenTests(api):
