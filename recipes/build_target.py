@@ -21,6 +21,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'cros_version',
+    'easy',
     'failures',
     'gerrit',
     'portage',
@@ -137,10 +138,12 @@ def RunSteps(api, properties):
         if api.cros_infra_config.should_exit(install_packages):
           return
 
+      version = api.cros_version.read_workspace_version()
+      api.easy.set_property_step('chromeos_version', str(version))
+
       image_types = build_config.build.image_types
       if image_types:
         with api.step.nest('build image'):
-          version = api.cros_version.read_workspace_version()
           response = api.cros_build_api.ImageService.Create(
               CreateImageRequest(
                   build_target=build_target, chroot=api.cros_sdk.chroot,
