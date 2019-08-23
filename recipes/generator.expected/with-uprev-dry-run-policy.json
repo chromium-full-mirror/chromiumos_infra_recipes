@@ -1205,7 +1205,7 @@
     "name": "update CL labels.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Commit-Queue+1@@@",
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+1@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1@@@"
     ]
   },
@@ -1244,7 +1244,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%l=Commit-Queue+1"
+      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "infra_step": true,
@@ -1303,7 +1303,7 @@
     "name": "update CL labels.set labels on CL 1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Commit-Queue+1@@@",
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+1@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1@@@"
     ]
   },
@@ -1342,7 +1342,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%l=Commit-Queue+1"
+      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "infra_step": true,

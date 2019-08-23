@@ -219,6 +219,7 @@ def RunSteps(api, properties):
         # Then set labels.
         labels = {
             DRY_RUN: {
+                api.gerrit.Label.BOT_COMMIT: 1,
                 api.gerrit.Label.COMMIT_QUEUE: 1,
             },
             FULL_RUN: {
