@@ -22,7 +22,6 @@ from PB.recipes.chromeos.generator import DO_NOTHING
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import GeneratorProperties
-from PB.recipes.chromeos.generator import G3OncallRotation
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SendToCqPolicy
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
@@ -43,7 +42,6 @@ DEPS = [
     'gerrit',
     'cros_sdk',
     'cros_source',
-    'g3oncall',
     'git',
     'git_cl',
     'naming',
@@ -62,8 +60,8 @@ def RunSteps(api, properties):
       raise ValueError('need at least one reviewer')
 
     for reviewer in properties.reviewers:
-      if reviewer.WhichOneof('identifier') is None:
-        raise ValueError('must set reviewer idenifier')
+      if not reviewer.email:
+        raise ValueError('must set reviewer email')
 
     step.presentation.step_text = 'all properties good'
 
@@ -131,32 +129,6 @@ def RunSteps(api, properties):
           api.git.add(ebuilds)
           api.git.commit(commit_message)
 
-    reviewer_users = set()
-    with api.step.nest('resolve reviewers') as step:
-      step.presentation.logs['resolved reviewers with reasons'] = logs = []
-      for reviewer in properties.reviewers:
-        # If it's just a chromium user, easy peasy.
-        if reviewer.HasField('chromium_user'):
-          user = reviewer.chromium_user
-          reviewer_users.add(user)
-          logs.append('{} (hardcoded in config)'.format(user))
-          continue
-
-        # Otherwise we must resolve an oncall rotation.
-        rotation = reviewer.g3oncall_rotation
-        oncall = api.g3oncall.status(rotation.name)
-        if rotation.position in (G3OncallRotation.PRIMARY,
-                                 G3OncallRotation.PRIMARY_AND_SECONDARY,
-                                 G3OncallRotation.UNSPECIFIED):
-          user = oncall.primary
-          reviewer_users.add(user)
-          logs.append('{} (primary for {})'.format(user, rotation.name))
-        if rotation.position in (G3OncallRotation.SECONDARY,
-                                 G3OncallRotation.PRIMARY_AND_SECONDARY):
-          user = oncall.secondary
-          reviewer_users.add(user)
-          logs.append('{} (secondary for {})'.format(user, rotation.name))
-
     topic = properties.topic or cpv
     with api.step.nest('find existing uprev CLs') as step:
       existing_changes = []
@@ -172,8 +144,9 @@ def RunSteps(api, properties):
       changes = [
           api.gerrit.create_change(
               repository,
-              reviewers=['{}@chromium.org'.format(ru)
-                         for ru in reviewer_users], topic=topic)
+              reviewers=[reviewer.email for reviewer in properties.reviewers],
+              topic=topic,
+          )
           for repository in repositories
       ]
 
@@ -240,12 +213,8 @@ def GenTests(api):
       GeneratorProperties(
           package_info=package,
           reviewers=[
-              Reviewer(chromium_user='evanhernandez'),
-              Reviewer(
-                  g3oncall_rotation=G3OncallRotation(
-                      name='chromeos-ci-eng',
-                      position=G3OncallRotation.PRIMARY_AND_SECONDARY,
-                  ),),
+              Reviewer(email='evanhernandez@chromium.org'),
+              Reviewer(email='chromeos-continuous-integration-team@google.com'),
           ],
       ),)
   gitiles_triggers = [
@@ -261,23 +230,19 @@ def GenTests(api):
 
   yield (api.test('with-uprev-do-nothing-policy') + api.properties(
       existing_cls_policy=DO_NOTHING, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.g3oncall.status(
-             'resolve reviewers.resolve chromeos-ci-eng rotation status'))
+         api.scheduler(triggers=gitiles_triggers))
 
   yield (api.test('with-uprev-dry-run-policy') + api.properties(
       existing_cls_policy=DRY_RUN, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.g3oncall.status(
-             'resolve reviewers.resolve chromeos-ci-eng rotation status'))
+         api.scheduler(triggers=gitiles_triggers))
 
   yield (api.test('with-uprev-full-run-policy') + api.properties(
       existing_cls_policy=FULL_RUN, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.g3oncall.status(
-             'resolve reviewers.resolve chromeos-ci-eng rotation status'))
+         api.scheduler(triggers=gitiles_triggers))
 
   yield (api.test('with-uprev-abandon-policy') + api.properties(
       existing_cls_policy=ABANDON, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.g3oncall.status(
-             'resolve reviewers.resolve chromeos-ci-eng rotation status'))
+         api.scheduler(triggers=gitiles_triggers))
 
   yield api.test('no-package-info') + api.expect_exception('ValueError')
 

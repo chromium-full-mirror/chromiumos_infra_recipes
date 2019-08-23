@@ -22,19 +22,10 @@ message G3OncallRotation {
   Position position = 2;
 }
 
-// A reviewer must be a chromium.org user or a g3oncall rotation.
-// TODO(evanhernandez): Support OWNERS resolution?
+// A reviewer must be some user known by Gerrit. Could be an email
+// alias that is processed by GWS.
 message Reviewer {
-  oneof identifier {
-    // The rotation in which to look for reviewers. The "name" field
-    // identifies the rotation, and the "position" field identifies whether
-    // primary, secondary, or both should be added as reviewer. Latter
-    // defaults to primary.
-    G3OncallRotation g3oncall_rotation = 1;
-
-    // The chromium.org username WITHOUT the @chromium.org extension.
-    string chromium_user = 2;
-  }
+  string email = 1;
 }
 
 // Describes how to send a CL to CQ (i.e., dry run, .
@@ -63,11 +54,11 @@ message GeneratorProperties {
   repeated Reviewer reviewers = 2;
 
   // Tag to add to all generated CLs. Defaults to qualified package name.
-  string topic = 5;
+  string topic = 3;
 
   // Policy to follow when no related CLs exist. Defaults to DO_NOTHING.
-  SendToCqPolicy no_existing_cls_policy = 3;
+  SendToCqPolicy no_existing_cls_policy = 4;
 
   // Policy to follow when related CLs exist. Defaults to DO_NOTHING.
-  SendToCqPolicy existing_cls_policy = 4;
+  SendToCqPolicy existing_cls_policy = 5;
 }

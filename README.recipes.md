@@ -28,7 +28,6 @@
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
-  * [g3oncall](#recipe_modules-g3oncall) &mdash; API for interacting with g3oncall.
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_cl](#recipe_modules-git_cl) &mdash; API for working with git cl.
@@ -103,7 +102,6 @@
   * [failures:examples/silences](#recipes-failures_examples_silences)
   * [failures:examples/update_non_critical_failures](#recipes-failures_examples_update_non_critical_failures)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
-  * [g3oncall:examples/status](#recipes-g3oncall_examples_status)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change)
   * [gerrit:examples/add_change_comment](#recipes-gerrit_examples_add_change_comment)
@@ -1463,26 +1461,6 @@ Args:
 Returns:
   list[Failure]: the updated list of builders with 'fatal' statuses
       possibly updated.
-### *recipe_modules* / [g3oncall](/recipe_modules/g3oncall)
-
-[DEPS](/recipe_modules/g3oncall/__init__.py#1): [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
-
-API for interacting with g3oncall.
-
-#### **class [G3OncallApi](/recipe_modules/g3oncall/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for support tool steps.
-
-&mdash; **def [status](/recipe_modules/g3oncall/api.py#26)(self, rotation, step_name=None):**
-
-Get the status for a given oncall rotation.
-
-Args:
-  rotation (str): The name of the rotation.
-  step_name (str): Optional step name.
-
-Returns:
-  RotationStatus: The current status for the rotation.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2852,14 +2830,9 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/vm_test_failures.py#23)(api):**
 
 &mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
-### *recipes* / [g3oncall:examples/status](/recipe_modules/g3oncall/examples/status.py)
-
-[DEPS](/recipe_modules/g3oncall/examples/status.py#8): [g3oncall](#recipe_modules-g3oncall), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-&mdash; **def [RunSteps](/recipe_modules/g3oncall/examples/status.py#18)(api, properties):**
 ### *recipes* / [generator](/recipes/generator.py)
 
-[DEPS](/recipes/generator.py#33): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [g3oncall](#recipe_modules-g3oncall), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/generator.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the PUpr generator.
 
@@ -2869,7 +2842,7 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#56)(api, properties):**
+&mdash; **def [RunSteps](/recipes/generator.py#54)(api, properties):**
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/abandon_change.py#8): [gerrit](#recipe_modules-gerrit)
