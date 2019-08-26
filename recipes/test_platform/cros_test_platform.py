@@ -153,6 +153,9 @@ def RunSteps(api, properties):
       failed_tests = [x for x in resp.task_results
                       if x.state.verdict == TaskState.VERDICT_FAILED]
       _emit_links(step.links, failed_tests)
+      # TODO(akeshet): Don't present failure if the underlying enumeration item
+      # was retried and passed separately. Instead, include in a "failed but
+      # retried" section.
       if failed_tests:
         raise api.step.StepFailure('tests failed')
     # TODO(akeshet): Handle task links for verdictless tasks (including
