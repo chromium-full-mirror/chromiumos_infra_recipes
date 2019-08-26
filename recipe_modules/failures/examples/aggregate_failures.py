@@ -18,21 +18,25 @@ def RunSteps(api):
   api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
 
   failures = [
-      api.failures.Failure(kind='kind', title='title', url='url', fatal=False,
-                           id='my id'),
+      api.failures.Failure(kind='kind', title='title',
+                           link_map={'title': 'url'}, fatal=False, id='my id'),
   ]
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
 
   failures = [
-      api.failures.Failure(kind='build', title='build-a', url='build-a.com',
-                           fatal=True, id='id-0'),
-      api.failures.Failure(kind='build', title='build-b', url='build-b.com',
-                           fatal=True, id='id-1'),
-      api.failures.Failure(kind='test', title='test-a', url='test-a.com',
-                           fatal=True, id='id-2'),
-      api.failures.Failure(kind='test', title='test-b', url='test-b.com',
-                           fatal=False, id='id-3'),
+      api.failures.Failure(kind='build', title='build-a',
+                           link_map={'build page': 'build-a.com'}, fatal=True,
+                           id='id-0'),
+      api.failures.Failure(kind='build', title='build-b',
+                           link_map={'build page': 'build-b.com'}, fatal=True,
+                           id='id-1'),
+      api.failures.Failure(kind='test', title='test-a',
+                           link_map={'subtest-1': 'test-a.com'}, fatal=True,
+                           id='id-2'),
+      api.failures.Failure(kind='test', title='test-b',
+                           link_map={'test-b': 'test-b.com'}, fatal=False,
+                           id='id-3'),
   ]
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.FAILURE)
@@ -40,17 +44,18 @@ def RunSteps(api):
       result.summary_markdown, '''\
 2 builds failed
 
-- [build-a](build-a.com)
+- build-a: [build page](build-a.com)
 
-- [build-b](build-b.com)
+- build-b: [build page](build-b.com)
 
 1 test failed
 
-- [test-a](test-a.com)''')
+- test-a: [subtest-1](test-a.com)''')
 
   failures = [
-      api.failures.Failure(kind='build', title='build-a', url='build-a.com',
-                           fatal=True, id='my id'),
+      api.failures.Failure(kind='build', title='build-a', link_map={
+          'build page': 'build-a.com'
+      }, fatal=True, id='my id'),
   ] * 50
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.FAILURE)

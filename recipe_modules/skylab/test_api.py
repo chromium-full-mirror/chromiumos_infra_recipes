@@ -97,9 +97,9 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         test=test,
         unit=unit)
 
-  def skylab_result(self, task=None, success=True, output=None):
+  def skylab_result(self, task=None, success=True, child_results=None):
     return structs.SkylabResult(
         task=task or self.skylab_task(),
         success=success,
-        output=output or 'Successfully ran all tests!',
+        child_results=child_results or [],
     )  # pragma: no cover

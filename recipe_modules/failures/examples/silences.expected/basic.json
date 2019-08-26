@@ -12,7 +12,7 @@
     "name": "build results.chromeos.bucket.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -110,7 +110,7 @@
     "name": "build results (2).chromeos.bucket.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -127,7 +127,7 @@
     "name": "build results (3).chromeos.bucket.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -145,7 +145,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@silence reason@step failure is snoozed by Sheriff-o-Matic.@@@",
       "@@@STEP_LOG_END@silence reason@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -163,7 +163,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@silence reason@step failure is snoozed by Sheriff-o-Matic.@@@",
       "@@@STEP_LOG_END@silence reason@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@"
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {

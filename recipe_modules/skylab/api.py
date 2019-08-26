@@ -119,10 +119,10 @@ class SkylabApi(recipe_api.RecipeApi):
         task_name = tasks_by_id[task_id].test.common.display_name
         task_url = task_result.task_run_url
         step.presentation.links[task_name] = task_url
-        # TODO(dhanyaganesh): output seems to be unused.
         results.append(
             self.SkylabResult(task=tasks_by_id[task_id],
-                              success=task_result.success, output=None))
+                              success=task_result.success,
+                              child_results=wait_result.child_results))
 
       step.presentation.logs['return value'] = [str(x) for x in results]
       return results

@@ -11,7 +11,7 @@
     "name": "moblab vm test results.target.moblab-vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
@@ -107,7 +107,7 @@
     "name": "moblab vm test results (2).target.moblab-vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "name": "moblab vm test results (3).target.moblab-vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

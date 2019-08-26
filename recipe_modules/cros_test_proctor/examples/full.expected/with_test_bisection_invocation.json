@@ -178,7 +178,7 @@
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), success=True, output=None)@@@",
+      "@@@STEP_LOG_LINE@return value@), success=True, child_results=[])@@@",
       "@@@STEP_LOG_END@return value@@@",
       "@@@STEP_LINK@kip.hw.bvt-cq@http://example.com@@@"
     ]
@@ -239,7 +239,7 @@
     "name": "check test results.hw test results.kip.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite job details@https://swarming.com/bvt-cq@@@"
+      "@@@STEP_LINK@suite page@https://swarming.com/bvt-cq@@@"
     ]
   },
   {

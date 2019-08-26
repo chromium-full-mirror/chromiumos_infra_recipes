@@ -24,13 +24,13 @@ class FailuresApi(recipe_api.RecipeApi):
   # Fields:
   #   kind (str): Describes the kind of failure, e.g. 'build'
   #   title (str): Full title of the failure.
-  #   url (str): URL for the failed task.
+  #   link_map (str->str): title to URL map for the failed task.
   #   fatal (bool): Whether or not the failure is fatal. Fatal failures cause
   #       recipes to fail when the failure is aggregated.
   #   id (str): a unique, reproducible name for this failure. For build-type
   #       failures, this is the builder name.
   Failure = collections.namedtuple('Failure',
-                                   ['kind', 'title', 'url', 'fatal', 'id'])
+                                   ['kind', 'title', 'link_map', 'fatal', 'id'])
 
   def __init__(self, properties, *args, **kwargs):
     super(FailuresApi, self).__init__(*args, **kwargs)
@@ -59,10 +59,11 @@ class FailuresApi(recipe_api.RecipeApi):
 
       return self.m.cros_som.get_silence_reason(annotation)
 
-  def _present_run(self, title, url, status):
+  def _present_run(self, title, link_map, status):
     with self.m.step.nest(title) as step:
       step.presentation.status = status
-      step.presentation.links['suite job details'] = url
+      for link_text, link_url in link_map.items():
+        step.presentation.links[link_text] = link_url
 
       silence_reason = self._get_silence_reason(self.m.step.active_result.name)
       if silence_reason:
@@ -77,7 +78,8 @@ class FailuresApi(recipe_api.RecipeApi):
 
       return silence_reason is not None
 
-  def _get_failures(self, kind, runs, is_failure, get_title, get_url, get_id):
+  def _get_failures(self, kind, runs, is_failure, get_title, get_link_map,
+                    get_id):
     with self.m.step.nest('{} results'.format(kind)) as results_step:
       failures = []
       failed_runs = filter(is_failure, runs)
@@ -85,23 +87,23 @@ class FailuresApi(recipe_api.RecipeApi):
 
       for failed_run in sorted(failed_runs, key=get_title):
         title = get_title(failed_run)
-        url = get_url(failed_run)
+        link_map = get_link_map(failed_run)
         fail_id = get_id(failed_run)
 
-        silenced = self._present_run(title, url, self.m.step.FAILURE)
+        silenced = self._present_run(title, link_map, self.m.step.FAILURE)
         if silenced:
           silenced_failure_count += 1
 
         failures.append(
-            self.Failure(kind=kind, title=title, url=url, fatal=not silenced,
-                         id=fail_id))
+            self.Failure(kind=kind, title=title, link_map=link_map,
+                         fatal=not silenced, id=fail_id))
 
       success_runs = [run for run in runs if not is_failure(run)]
       for success_run in sorted(success_runs, key=get_title):
         title = get_title(success_run)
-        url = get_url(success_run)
+        link_map = get_link_map(success_run)
 
-        self._present_run(title, url, self.m.step.SUCCESS)
+        self._present_run(title, link_map, self.m.step.SUCCESS)
 
       success_count = len(success_runs)
       fail_count = len(failed_runs) - silenced_failure_count
@@ -122,7 +124,8 @@ class FailuresApi(recipe_api.RecipeApi):
       return failures
 
   def _get_baseline_validated_failures(self, kind, runs, baseline_runs,
-                                       is_failure, get_title, get_url, get_id):
+                                       is_failure, get_title, get_link_map,
+                                       get_id):
     """Wraps _get_failures() to enable baseline filtering.
 
     Args:
@@ -132,7 +135,7 @@ class FailuresApi(recipe_api.RecipeApi):
         from baseline runs.
       is_failure(func): A func(run->bool) returns the status of the run.
       get_title(func): A func(run->str) returns the name of the run.
-      get_url(func): A func(run->str) returns the url of the run.
+      get_link_map(func): A func(run->map) returns the link map of the run.
       get_id(func): A func (run->str) returns the id of the run.
     """
     failed_baseline_run_names = set(
@@ -141,10 +144,10 @@ class FailuresApi(recipe_api.RecipeApi):
         run for run in runs if get_title(run) not in failed_baseline_run_names
     ]
     failures = self._get_failures(kind, filtered_runs, is_failure, get_title,
-                                  get_url, get_id)
+                                  get_link_map, get_id)
     if baseline_runs:
       self._get_failures('baseline ' + kind, baseline_runs, is_failure,
-                         get_title, get_url, get_id)
+                         get_title, get_link_map, get_id)
     return failures
 
   @contextlib.contextmanager
@@ -211,11 +214,11 @@ class FailuresApi(recipe_api.RecipeApi):
     # The summary markdown will look roughly as follows:
     #
     # 1 build failed:
-    # - chromeos.cq.nami-cq
+    # - chromeos.cq.nami-cq: <a>build page<\a>
     #
     # 2 hw tests failed
-    # - hw.coral.bvt-cq
-    # - hw.coral.bvt-tast-cq
+    # - hw.coral.bvt-cq: <a>Graphics_Something<\a>
+    # - hw.coral.bvt-tast-cq: <a>Cheets_SomethingElse<\a>
     # ...
     sections = []
     for kind in sorted(failures_by_kind):
@@ -229,7 +232,10 @@ class FailuresApi(recipe_api.RecipeApi):
       truncate_max = 10
       failures_to_print = failure_group[0:truncate_max]
       for failure in failures_to_print:
-        lines.append('- [{}]({})'.format(failure.title, failure.url))
+        line = '- {}:'.format(failure.title)
+        for link_text, link_url in failure.link_map.items():
+          line += ' [{}]({})'.format(link_text, link_url)
+        lines.append(line)
       if count > truncate_max:
         lines.append('- ...and {} others'.format(count - truncate_max))
       sections.append('\n\n'.join(lines))
@@ -250,7 +256,7 @@ class FailuresApi(recipe_api.RecipeApi):
     get_id = lambda b: b.builder.builder
     return self._get_failures('build', builds, self.is_critical_build_failure,
                               self.m.naming.get_build_title,
-                              self.m.urls.get_build_url, get_id)
+                              self.m.urls.get_build_link_map, get_id)
 
   def get_hw_test_failures(self, hw_tests, baseline_hw_tests=None):
     """Logs hardware test status to UI, and raises on failed tests.
@@ -268,7 +274,7 @@ class FailuresApi(recipe_api.RecipeApi):
     return self._get_baseline_validated_failures(
         'hw test', hw_tests, baseline_hw_tests or [],
         self.is_critical_hw_test_failure, self.m.naming.get_skylab_result_title,
-        self.m.urls.get_skylab_result_url, get_id)
+        self.m.urls.get_skylab_result_link_map, get_id)
 
   def get_vm_test_failures(self, vm_tests, baseline_vm_tests=None):
     """Logs VM test status to UI, and raises on failed tests.
@@ -286,7 +292,7 @@ class FailuresApi(recipe_api.RecipeApi):
     return self._get_baseline_validated_failures(
         'vm test', vm_tests, baseline_vm_tests or [],
         self.is_critical_vm_test_failure, self.m.naming.get_vm_test_title,
-        self.m.urls.get_build_url, get_id)
+        self.m.urls.get_vm_test_link_map, get_id)
 
   def get_moblab_vm_test_failures(self, moblab_vm_tests,
                                   baseline_moblab_vm_tests=None):
@@ -305,8 +311,8 @@ class FailuresApi(recipe_api.RecipeApi):
     return self._get_baseline_validated_failures(
         'moblab vm test', moblab_vm_tests, baseline_moblab_vm_tests or [],
         self.is_critical_moblab_vm_test_failure,
-        self.m.naming.get_moblab_vm_test_title, self.m.urls.get_build_url,
-        get_id)
+        self.m.naming.get_moblab_vm_test_title,
+        self.m.urls.get_vm_test_link_map, get_id)
 
   def is_build_failure(self, build):
     """Determine if the build failed.
@@ -438,8 +444,8 @@ class FailuresApi(recipe_api.RecipeApi):
               presentation_log.append('changed {} to non-critical'.format(f.id))
               fatal = False
         new_failures.append(
-            self.Failure(kind=f.kind, title=f.title, url=f.url, fatal=fatal,
-                         id=f.id))
+            self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
+                         fatal=fatal, id=f.id))
       if presentation_log:
         step.presentation.logs['new non-critical builders'] = presentation_log
       return new_failures

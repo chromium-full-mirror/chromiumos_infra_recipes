@@ -11,16 +11,29 @@ from recipe_engine import recipe_api
 class UrlsApi(recipe_api.RecipeApi):
   """A module for creating links to tasks."""
 
-  def get_build_url(self, build):
-    """Returns the URL to the given buildbucket build.
+  def get_build_link_map(self, build):
+    """Returns the title->URL to the given buildbucket build.
 
     Args:
       build (Build): The buildbucket build in question.
 
     Returns:
-      str: URL pointing to the build milo page.
+      str->str: title->URL pointing to the build milo page.
     """
-    return self.m.buildbucket.build_url(build_id=build.id)
+    link_url = self.m.buildbucket.build_url(build_id=build.id)
+    return {'build page': link_url}
+
+  def get_vm_test_link_map(self, vm_test):
+    """Returns the title->URL to the given vm test.
+
+    Args:
+      vm_test (Build): The vm test in question.
+
+    Returns:
+      str->str: title->URL pointing to the vm_test's milo page.
+    """
+    link_url = self.m.buildbucket.build_url(build_id=vm_test.id)
+    return {'test page': link_url}
 
   def get_skylab_task_url(self, skylab_task):
     """Returns the URL to the given skylab task.
@@ -33,16 +46,26 @@ class UrlsApi(recipe_api.RecipeApi):
     """
     return skylab_task.url
 
-  def get_skylab_result_url(self, skylab_result):
+  def get_skylab_result_link_map(self, skylab_result):
     """Returns the URL to the given skylab result page.
 
     Args:
       skylab_task (SkylabResult): The Skylab result in question.
 
     Returns:
-      str: URL pointing to the skylab swarming task page.
+      str->str map: title to URL to the skylab swarming task page
+      if the suite succeeded or entries of just the failed tests.
     """
-    return self.get_skylab_task_url(skylab_result.task)
+    if skylab_result.success:
+      link_url = self.get_skylab_task_url(skylab_result.task)
+      return {'suite page': link_url}
+    else:
+      link_map = {}
+      for task_result in skylab_result.child_results:
+        if not task_result.success:
+          link_map[task_result.name] = task_result.task_run_url
+
+      return link_map
 
   def get_gs_path_url(self, gs_path):
     """Returns the Cloud Storage Browser URL to the given GS path.

@@ -64,7 +64,7 @@
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), success=True, output=None)@@@",
+      "@@@STEP_LOG_LINE@return value@), success=True, child_results=[])@@@",
       "@@@STEP_LOG_END@return value@@@",
       "@@@STEP_LINK@target.hw.bvt-cq@http://example.com@@@"
     ]
@@ -134,7 +134,7 @@
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), success=True, output=None)@@@",
+      "@@@STEP_LOG_LINE@return value@), success=True, child_results=[])@@@",
       "@@@STEP_LOG_END@return value@@@",
       "@@@STEP_LINK@target.hw.bvt-cq@http://example.com@@@"
     ]

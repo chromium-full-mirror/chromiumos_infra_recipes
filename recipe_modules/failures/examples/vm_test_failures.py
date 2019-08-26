@@ -44,9 +44,10 @@ def RunSteps(api):
   api.assertions.assertFalse(api.failures.get_vm_test_failures([vm_failure]))
   api.assertions.assertEqual(
       api.failures.get_vm_test_failures([vm_critical_failure]), [
-          api.failures.Failure('vm test', 'target.vm.suite',
-                               api.urls.get_build_url(vm_critical_failure),
-                               True, 'target.vm.suite')
+          api.failures.Failure(
+              'vm test', 'target.vm.suite',
+              api.urls.get_vm_test_link_map(vm_critical_failure), True,
+              'target.vm.suite')
       ])
 
 

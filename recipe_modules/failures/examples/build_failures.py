@@ -43,9 +43,10 @@ def RunSteps(api):
   api.assertions.assertFalse(api.failures.get_build_failures([build_failure]))
   api.assertions.assertEqual(
       api.failures.get_build_failures([build_critical_failure]), [
-          api.failures.Failure('build', 'chromeos.bucket.builder',
-                               api.urls.get_build_url(build_critical_failure),
-                               True, 'builder')
+          api.failures.Failure(
+              'build', 'chromeos.bucket.builder',
+              api.urls.get_build_link_map(build_critical_failure), True,
+              'builder')
       ])
 
 

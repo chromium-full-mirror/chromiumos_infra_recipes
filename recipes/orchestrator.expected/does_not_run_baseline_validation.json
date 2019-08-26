@@ -531,7 +531,7 @@
     "name": "check build results.build results...amd64-generic-postsubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+      "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@"
     ]
   },
   {
@@ -620,7 +620,7 @@
     "name": "check build results.build results...arm-generic-postsubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@"
+      "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@"
     ]
   },
   {
@@ -1612,7 +1612,7 @@
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), success=True, output=None)@@@",
+      "@@@STEP_LOG_LINE@return value@), success=True, child_results=[])@@@",
       "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id='bvt-inline-task-id', url='https://swarming.com/bvt-inline', test=suite: \"bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
@@ -1744,7 +1744,7 @@
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), success=False, output=None)@@@",
+      "@@@STEP_LOG_LINE@return value@), success=False, child_results=[])@@@",
       "@@@STEP_LOG_END@return value@@@",
       "@@@STEP_LINK@htarget.hw.bvt-cq@http://example.com@@@",
       "@@@STEP_LINK@htarget.hw.bvt-inline@http://example.com@@@"
@@ -2013,7 +2013,6 @@
     "name": "check test results.hw test results.htarget.hw.bvt-inline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite job details@https://swarming.com/bvt-inline@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -2022,7 +2021,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite job details@https://swarming.com/bvt-cq@@@"
+      "@@@STEP_LINK@suite page@https://swarming.com/bvt-cq@@@"
     ]
   },
   {
@@ -2038,7 +2037,7 @@
     "name": "check test results.vm test results.vm-test",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite job details@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@test page@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {
@@ -2079,7 +2078,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 hw test failed\n\n- [htarget.hw.bvt-inline](https://swarming.com/bvt-inline)"
+      "humanReason": "1 hw test failed\n\n- htarget.hw.bvt-inline:"
     },
     "name": "$result"
   }

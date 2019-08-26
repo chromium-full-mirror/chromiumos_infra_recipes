@@ -18,5 +18,5 @@ SkylabTask = namedtuple('SkylabTask', ['id', 'url', 'test', 'unit'])
 # Fields:
 #   task (SkylabTask): The SkylabTask that ran.
 #   success (bool): Whether or not the task exited non-zero.
-#   output (str): The task logs.
-SkylabResult = namedtuple('SkylabResult', ['task', 'success', 'output'])
+#   child_results (list[WaitTaskResult.Task]): The task result of individual tests within.
+SkylabResult = namedtuple('SkylabResult', ['task', 'success', 'child_results'])

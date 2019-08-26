@@ -23,8 +23,9 @@ def RunSteps(api):
               general=BuilderConfig.General(critical={'value': True})),
   }
 
+  link_map = {'a title': 'someurl'}
   in_failures = [
-      api.failures.Failure(kind='build', title='title', url='someurl',
+      api.failures.Failure(kind='build', title='title', link_map=link_map,
                            fatal=True, id='noncritical builder')
   ]
   out_failures = api.failures.update_non_critical_failures(
@@ -32,7 +33,7 @@ def RunSteps(api):
   api.assertions.assertFalse(out_failures[0].fatal)
 
   in_failures = [
-      api.failures.Failure(kind='build', title='title', url='someurl',
+      api.failures.Failure(kind='build', title='title', link_map=link_map,
                            fatal=True, id='critical builder')
   ]
   out_failures = api.failures.update_non_critical_failures(

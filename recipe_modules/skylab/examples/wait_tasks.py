@@ -10,15 +10,18 @@ DEPS = [
     'skylab',
 ]
 
+from PB.test_platform.skylab_tool.result import WaitTasksResult
+
 
 def RunSteps(api):
 
   hw_test = api.skylab.test_api.hw_test()
   task = api.skylab.test_api.skylab_task(id='ID', url='https://google.com',
                                          test=hw_test)
-  actual = api.skylab.wait_tasks([task])
-  expected = [api.skylab.SkylabResult(task=task, success=True, output=None)]
-  api.assertions.assertEqual(actual, expected)
+  actual = api.skylab.wait_tasks([task])[0]
+  expected = api.skylab.SkylabResult(task=task, success=True, child_results=[])
+  api.assertions.assertEqual(actual.task, expected.task)
+  api.assertions.assertEqual(actual.success, expected.success)
   api.skylab.wait_tasks([task], dev=True)
 
 

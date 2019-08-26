@@ -1283,7 +1283,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#188)(self, failures):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#191)(self, failures):**
 
 Returns a recipe result based on the given failures.
 
@@ -1295,7 +1295,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#241)(self, builds):**
+&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#247)(self, builds):**
 
 Verify all builds completed successfully.
 
@@ -1305,7 +1305,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#255)(self, hw_tests, baseline_hw_tests=None):**
+&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#261)(self, hw_tests, baseline_hw_tests=None):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -1318,7 +1318,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#291)(self, moblab_vm_tests, baseline_moblab_vm_tests=None):**
+&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#297)(self, moblab_vm_tests, baseline_moblab_vm_tests=None):**
 
 Logs Moblab VM test status to UI, but does not rais on failed tests.
 
@@ -1331,7 +1331,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#273)(self, vm_tests, baseline_vm_tests=None):**
+&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#279)(self, vm_tests, baseline_vm_tests=None):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -1344,14 +1344,14 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#150)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#153)(self):**
 
 Catches exceptions and logs them instead.
 
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#311)(self, build):**
+&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#317)(self, build):**
 
 Determine if the build failed.
 
@@ -1361,7 +1361,7 @@ Args:
 Returns:
   bool: True if the build failed.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#371)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#377)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -1371,7 +1371,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#383)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#389)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1381,7 +1381,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#406)(self, moblab_vm_test):**
+&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#412)(self, moblab_vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1391,7 +1391,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#322)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#328)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -1401,7 +1401,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#395)(self, vm_test):**
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#401)(self, vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1411,7 +1411,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#338)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#344)(self, hw_test):**
 
 Determine if the hardware test failed.
 
@@ -1421,7 +1421,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#360)(self, moblab_vm_test):**
+&mdash; **def [is\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#366)(self, moblab_vm_test):**
 
 Determine if the VM test failed.
 
@@ -1431,7 +1431,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#349)(self, vm_test):**
+&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#355)(self, vm_test):**
 
 Determine if the VM test failed.
 
@@ -1441,7 +1441,7 @@ Args:
 Returns:
   bool: True if the test failed.
 
-&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#163)(self, packages):**
+&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#166)(self, packages):**
 
 Display failed packages and raise a failure.
 
@@ -1453,7 +1453,7 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [update\_non\_critical\_failures](/recipe_modules/failures/api.py#417)(self, failures, fresh_builder_configs):**
+&mdash; **def [update\_non\_critical\_failures](/recipe_modules/failures/api.py#423)(self, failures, fresh_builder_configs):**
 
 Args:
   failures (list[Failure]): All failures encountered during execution.
@@ -2431,17 +2431,17 @@ API for creating task URLs out of complex data structures.
 
 A module for creating links to tasks.
 
-&mdash; **def [get\_build\_url](/recipe_modules/urls/api.py#14)(self, build):**
+&mdash; **def [get\_build\_link\_map](/recipe_modules/urls/api.py#14)(self, build):**
 
-Returns the URL to the given buildbucket build.
+Returns the title->URL to the given buildbucket build.
 
 Args:
   build (Build): The buildbucket build in question.
 
 Returns:
-  str: URL pointing to the build milo page.
+  str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#47)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#70)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -2452,7 +2452,7 @@ Returns:
   str: URL pointing to the Cloud Storage Browser page for the
     object.
 
-&mdash; **def [get\_skylab\_result\_url](/recipe_modules/urls/api.py#36)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#49)(self, skylab_result):**
 
 Returns the URL to the given skylab result page.
 
@@ -2460,9 +2460,10 @@ Args:
   skylab_task (SkylabResult): The Skylab result in question.
 
 Returns:
-  str: URL pointing to the skylab swarming task page.
+  str->str map: title to URL to the skylab swarming task page
+  if the suite succeeded or entries of just the failed tests.
 
-&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#25)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#38)(self, skylab_task):**
 
 Returns the URL to the given skylab task.
 
@@ -2471,6 +2472,16 @@ Args:
 
 Returns:
   str: URL pointing to the skylab swarming task page.
+
+&mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#26)(self, vm_test):**
+
+Returns the title->URL to the given vm test.
+
+Args:
+  vm_test (Build): The vm test in question.
+
+Returns:
+  str->str: title->URL pointing to the vm_test's milo page.
 ## Recipes
 
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
@@ -3128,7 +3139,7 @@ Recipe for signing ChromeOS images.
 
 [DEPS](/recipe_modules/skylab/examples/wait_tasks.py#6): [easy](#recipe_modules-easy), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_tasks.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_tasks.py#16)(api):**
 ### *recipes* / [skylab\_local\_state:examples/full](/recipe_modules/skylab_local_state/examples/full.py)
 
 [DEPS](/recipe_modules/skylab_local_state/examples/full.py#6): [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -3261,11 +3272,11 @@ The steps specific to VM testing are:
 &mdash; **def [RunSteps](/recipes/test_vm.py#56)(api, properties):**
 ### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
 
-[DEPS](/recipe_modules/urls/examples/full.py#10): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/urls/examples/full.py#14): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 Basic tests for the urls recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#21)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/90e930e2da74f78601bb968224ed3b15be2e36f5/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/90e930e2da74f78601bb968224ed3b15be2e36f5/recipes/README.recipes.md#recipe_modules-gclient

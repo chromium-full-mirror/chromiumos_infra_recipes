@@ -985,7 +985,7 @@
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), success=True, output=None)@@@",
+      "@@@STEP_LOG_LINE@return value@), success=True, child_results=[])@@@",
       "@@@STEP_LOG_END@return value@@@",
       "@@@STEP_LINK@htarget.hw.bvt-cq@http://example.com@@@"
     ]
@@ -1238,7 +1238,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite job details@https://swarming.com/bvt-cq@@@"
+      "@@@STEP_LINK@suite page@https://swarming.com/bvt-cq@@@"
     ]
   },
   {
@@ -1335,7 +1335,7 @@
     "name": "check test results.vm test results.vm-test",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite job details@https://cr-buildbucket.appspot.com/build/0@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
