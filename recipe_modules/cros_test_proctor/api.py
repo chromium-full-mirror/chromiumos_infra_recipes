@@ -89,10 +89,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         if self.m.failures.is_critical_test_failure(test_result)
     ])
 
-    with self.m.failures.ignore_exceptions():
-      if gerrit_changes and self._needs_baseline_validation(
+    needs_baseline_validation = self._needs_baseline_validation(
           failed_test_names, test_plan, baseline_validation_percent,
-          baseline_validation_count):
+          baseline_validation_count)
+
+    with self.m.failures.ignore_exceptions():
+      if gerrit_changes and needs_baseline_validation:
         # Start Baseline HW Verification process.
         build_targets_to_verify = set([
             test_to_build_target_map[test_name]
@@ -129,7 +131,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self.m.cros_history.set_passed_tests(passed_tests)
 
     with self.m.step.nest('check test results'):
-      self.m.cros_bisect.set_test_failures(test_results.skylab)
+      self.m.cros_bisect.set_test_failures(test_results.skylab,
+                                           needs_baseline_validation)
       failures = self.get_test_failures(test_results, baseline_results)
     return failures
 

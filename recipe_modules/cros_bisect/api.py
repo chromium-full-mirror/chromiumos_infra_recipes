@@ -88,7 +88,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
     payload = self._create_failures_payload(failed_packages)
     self.m.easy.set_property_step('compile_failures', payload)
 
-  def set_test_failures(self, hw_results):
+  def set_test_failures(self, hw_results, needs_bisection):
     """Outputs the failed hardware tests, if any, for FindIt consumption.
 
     Outputs hardware test failures from the results for consumption by FindIt
@@ -98,6 +98,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
     Args:
       hw_results (list[SkylabResult]): list of SkylabResults from running
           hardware tests
+      needs_bisection: (bool): Whether or not bisection is needed for this run.
     """
     hw_failed_results = [
         result for result in hw_results
@@ -120,7 +121,8 @@ class CrosBisectApi(recipe_api.RecipeApi):
       })
     if hw_test_failures:
       payload = {
-        'hw_test_failures': hw_test_failures
+          'hw_test_failures': hw_test_failures,
+          'needs_bisection': needs_bisection,
       }
       self.m.easy.set_property_step('test_failures', payload)
 

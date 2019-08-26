@@ -18,19 +18,19 @@ def RunSteps(api):
   skylab_critical_failure2 = api.skylab.test_api.skylab_result(success=False)
 
   # Doesn't output, nothing to report.
-  api.cros_bisect.set_test_failures([])
+  api.cros_bisect.set_test_failures([], False)
   # Doesn't output, only success.
-  api.cros_bisect.set_test_failures([skylab_success])
+  api.cros_bisect.set_test_failures([skylab_success], False)
   # Doesn't output, failure but not critical.
-  api.cros_bisect.set_test_failures([skylab_failure])
+  api.cros_bisect.set_test_failures([skylab_failure], False)
   # Outputs the failure.
-  api.cros_bisect.set_test_failures([skylab_critical_failure1])
-  # Outputs two failures.
+  api.cros_bisect.set_test_failures([skylab_critical_failure1], False)
+  # Outputs two failures and indicates bisection is needed.
   api.cros_bisect.set_test_failures([
       skylab_critical_failure1,
       skylab_success,
       skylab_critical_failure2,
-  ])
+  ], True)
 
 
 def GenTests(api):
