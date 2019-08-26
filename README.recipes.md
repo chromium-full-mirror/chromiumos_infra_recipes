@@ -1475,7 +1475,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#473)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#467)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -1534,7 +1534,7 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#419)(self, gerrit_change):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#413)(self, gerrit_change):**
 
 Get the description of the given Gerrit change.
 
@@ -1590,7 +1590,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#488)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#482)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -1603,7 +1603,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#451)(self, gerrit_change, description):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#445)(self, gerrit_change, description):**
 
 Set the description of the given Gerrit change.
 
@@ -2850,9 +2850,9 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/abandon_change.py#12)(api):**
 ### *recipes* / [gerrit:examples/add\_change\_comment](/recipe_modules/gerrit/examples/add_change_comment.py)
 
-[DEPS](/recipe_modules/gerrit/examples/add_change_comment.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/gerrit/examples/add_change_comment.py#8): [gerrit](#recipe_modules-gerrit)
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/add_change_comment.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/add_change_comment.py#12)(api):**
 ### *recipes* / [gerrit:examples/changes\_are\_submittable](/recipe_modules/gerrit/examples/changes_are_submittable.py)
 
 [DEPS](/recipe_modules/gerrit/examples/changes_are_submittable.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

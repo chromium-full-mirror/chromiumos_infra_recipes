@@ -1127,14 +1127,18 @@
   },
   {
     "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/master%m=Found%202%20open%20CL%28s%29%20for%20Gerrit%20topic%20chromeos-base%2Fchromite%3A%0Ahttps%3A%2F%2Fchromium-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F91827%0Ahttps%3A%2F%2Fchrome-internal-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F91827%0ASend-to-cq%20policy%20for%20this%20case%20is%20DRY_RUN.%0ATherefore%2C%20marking%20CL%20as%20CQ%2B1"
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "comment",
+      "-a",
+      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DRY_RUN.\nTherefore, marking CL as CQ+1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
-    "infra_step": true,
-    "name": "update CL labels.comment on CL 1.git push",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "update CL labels.comment on CL 1.git_cl comment",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1225,14 +1229,18 @@
   },
   {
     "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/master%m=Found%202%20open%20CL%28s%29%20for%20Gerrit%20topic%20chromeos-base%2Fchromite%3A%0Ahttps%3A%2F%2Fchromium-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F91827%0Ahttps%3A%2F%2Fchrome-internal-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F91827%0ASend-to-cq%20policy%20for%20this%20case%20is%20DRY_RUN.%0ATherefore%2C%20marking%20CL%20as%20CQ%2B1"
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "comment",
+      "-a",
+      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DRY_RUN.\nTherefore, marking CL as CQ+1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
-    "infra_step": true,
-    "name": "update CL labels.comment on CL 1 (2).git push",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "update CL labels.comment on CL 1 (2).git_cl comment",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

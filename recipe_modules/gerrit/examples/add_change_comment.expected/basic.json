@@ -27,14 +27,18 @@
   },
   {
     "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/master%m=my%20comment"
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "comment",
+      "-a",
+      "my comment"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
-    "infra_step": true,
-    "name": "comment on CL 123.git push",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "comment on CL 123.git_cl comment",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

@@ -6,7 +6,6 @@
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 DEPS = [
-    'recipe_engine/assertions',
     'gerrit',
 ]
 
@@ -16,8 +15,8 @@ def RunSteps(api):
       project='project',
       change=123,
   )
-  ref = api.gerrit.add_change_comment(gerrit_change, 'my comment')
-  api.assertions.assertEqual(ref, 'refs/for/master%m=my%20comment')
+  # TODO(evanhernandez): An assertion would be nice...
+  api.gerrit.add_change_comment(gerrit_change, 'my comment')
 
 def GenTests(api):
   yield api.test('basic')

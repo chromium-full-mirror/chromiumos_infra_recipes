@@ -406,15 +406,9 @@ class GerritApi(recipe_api.RecipeApi):
       with self.m.context(cwd=self.m.cros_source.workspace_path):
         project_info = self.m.repo.project_info([gerrit_change.project])
 
-      # Refspec cannot contain spaces, so swap space characters with +
-      comment = urllib.quote(comment, safe='')
-      branch = project_info.branch.split('/')[-1]
-      ref = 'refs/for/%s%%m=%s' % (branch, comment)
-      refspec = 'HEAD:%s' % ref
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
-        self.m.git.push(project_info.remote, refspec)
-      return ref
+        self.m.git_cl('comment', ['-a', comment])
 
   def get_change_description(self, gerrit_change):
     """Get the description of the given Gerrit change.
