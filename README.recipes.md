@@ -3164,15 +3164,15 @@ Recipe for running Moblab VM tests.
 &mdash; **def [RunSteps](/recipes/test_moblab_vm.py#41)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#26): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#26): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#128)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#129)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#36)(api, request):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#37)(api, request):**
 
 Resolve request into list of tests and their metadata.
 
@@ -3182,7 +3182,7 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#106)(api, request, enumeration, config, use_skylab):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#107)(api, request, enumeration, config, use_skylab):**
 
 Execute request in the correct backend.
 
@@ -3193,7 +3193,7 @@ Args:
   use_skylab: bool indicating which backend to run in
               (True -> skylab, False -> autotest).
 
-&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#70)(api, request, config):**
+&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#71)(api, request, config):**
 
 Determine which backend will execute the request.
 

@@ -24,6 +24,7 @@ import json
 from google.protobuf import json_format
 
 DEPS = [
+    'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -126,12 +127,17 @@ def execute(api, request, enumeration, config, use_skylab):
 
 
 def RunSteps(api, properties):
+  # Traffic split failures can be due to malformed requests.
   request, skylab = split(api, properties.request, properties.config)
 
-  enumeration = enumerate_tests(api, request)
+  # Enumeration or execution failures are all infra failures
+  # TODO(akeshet) (with the possible exception of certain kinds of execution
+  # timeouts; needs revisiting).
+  with api.context(infra_steps=True):
+    enumeration = enumerate_tests(api, request)
+    resp = execute(api, request, enumeration, properties.config, skylab)
 
-  resp = execute(api, request, enumeration, properties.config, skylab)
-
+  # Failures in summarization are non-infra related.
   with api.step.nest('summarize') as step:
     # The `response` field of CrosTestPlatformProperties is a message of
     # type ExecuteResponse. However, the recipe-supported mechanism for setting
@@ -147,6 +153,8 @@ def RunSteps(api, properties):
       failed_tests = [x for x in resp.task_results
                       if x.state.verdict == TaskState.VERDICT_FAILED]
       _emit_links(step.links, failed_tests)
+      if failed_tests:
+        raise api.step.StepFailure('tests failed')
     # TODO(akeshet): Handle task links for verdictless tasks (including
     # incomplete tasks and completed tasks which provide no verdict).
 

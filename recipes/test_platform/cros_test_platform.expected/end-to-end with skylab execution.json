@@ -153,6 +153,7 @@
       "-output_json",
       "/dev/stdout"
     ],
+    "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
     "stdin": "{\n  \"testPlan\": {\n    \"suite\": [\n      {\n        \"name\": \"foo-suite\"\n      }\n    ]\n  }, \n  \"metadata\": {\n    \"testMetadataUrl\": \"foo-metadata-url\"\n  }\n}",
     "~followup_annotations": [
@@ -232,6 +233,7 @@
       "-output_json",
       "/dev/stdout"
     ],
+    "infra_step": true,
     "name": "execute.call binary.skylab-execute",
     "stdin": "{\n  \"requestParams\": {\n    \"hardwareAttributes\": {\n      \"model\": \"foo-model\"\n    }, \n    \"metadata\": {\n      \"testMetadataUrl\": \"foo-metadata-url\"\n    }\n  }, \n  \"config\": {\n    \"skylabWorker\": {\n      \"luciProject\": \"foo luci project\"\n    }, \n    \"schedulerMigration\": {\n      \"gitilesHost\": \"foo gitiles host\"\n    }\n  }, \n  \"enumeration\": {\n    \"autotestInvocations\": [\n      {\n        \"test\": {\n          \"name\": \"foo-test\"\n        }\n      }\n    ]\n  }\n}",
     "~followup_annotations": [
@@ -242,7 +244,8 @@
     "cmd": [],
     "name": "summarize",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -260,10 +263,15 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@(log)   foo-failed@logs://bar/baz@@@",
-      "@@@STEP_LINK@(task)  foo-failed@foo://bar/baz@@@"
+      "@@@STEP_LINK@(task)  foo-failed@foo://bar/baz@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "tests failed"
+    },
     "name": "$result"
   }
 ]
