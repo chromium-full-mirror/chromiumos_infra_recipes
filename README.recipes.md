@@ -245,7 +245,7 @@ Returns:
 
 #### **class [ChromeApi](/recipe_modules/chrome/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#15)(self, chrome_root, internal):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#15)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -253,6 +253,8 @@ Must be run with cwd inside a chromiumos source root.
 
 Args:
   chrome_root (str): Directory to sync the Chrome source code to.
+  chroot (chromiumos.Chroot): Information on the chroot for the build.
+  build_target (chromiumos.BuildTarget): Build target of the build.
   internal (bool): True for internal checkout.
 ### *recipe_modules* / [cloud\_pubsub](/recipe_modules/cloud_pubsub)
 
@@ -2586,7 +2588,7 @@ Recipe for building a BuildTarget image.
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#9)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#11)(api):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)

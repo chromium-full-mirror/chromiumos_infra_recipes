@@ -12,7 +12,7 @@ CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 
 class ChromeApi(recipe_api.RecipeApi):
 
-  def sync(self, chrome_root, internal):
+  def sync(self, chrome_root, chroot, build_target, internal):
     """
     Sync Chrome source code.
 
@@ -20,12 +20,16 @@ class ChromeApi(recipe_api.RecipeApi):
 
     Args:
       chrome_root (str): Directory to sync the Chrome source code to.
+      chroot (chromiumos.Chroot): Information on the chroot for the build.
+      build_target (chromiumos.BuildTarget): Build target of the build.
       internal (bool): True for internal checkout.
     """
     # TODO(crbug.com/945606): Call sync_chrome in build_target recipe.
     # portageq must be run with cwd inside a chromiumos source root.
     request = packages.GetBestVisibleRequest(
-        atom='chromeos-base/chromeos-chrome')
+        atom='chromeos-base/chromeos-chrome',
+        chroot=chroot,
+        build_target=build_target)
     revision = self.m.cros_build_api.PackageService.GetBestVisible(
         request, infra_step=True).package_info.version
 

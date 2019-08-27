@@ -4,6 +4,8 @@
     "name": "call chromite.api.PackageService/GetBestVisible",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -19,7 +21,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"atom\": \"chromeos-base/chromeos-chrome\"\n}",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}, \n  \"atom\": \"chromeos-base/chromeos-chrome\"\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -27,6 +29,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -86,6 +90,14 @@
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"getBestVisibleRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }, @@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"cacheDir\": \"\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
@@ -155,7 +167,7 @@
     ],
     "infra_step": true,
     "name": "call chromite.api.PackageService/GetBestVisible.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCRWNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldEJlc3RWaXNpYmxlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdPICHwodY2hyb21lb3MtYmFzZS9j\\naHJvbWVvcy1jaHJvbWX6Ah4KHAoHcGFja2FnZRIIY2F0ZWdvcnkaB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCRWNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldEJlc3RWaXNpYmxlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdPICIwodY2hyb21lb3MtYmFzZS9j\\naHJvbWVvcy1jaHJvbWUSABoA+gIeChwKB3BhY2thZ2USCGNhdGVnb3J5Ggd2ZXJzaW9u\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -282,6 +294,8 @@
     "name": "call chromite.api.PackageService/GetBestVisible (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -297,7 +311,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"atom\": \"chromeos-base/chromeos-chrome\"\n}",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}, \n  \"atom\": \"chromeos-base/chromeos-chrome\"\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
@@ -305,6 +319,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -364,6 +380,14 @@
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"getBestVisibleRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }, @@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"cacheDir\": \"\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:26Z\"@@@",
@@ -384,7 +408,7 @@
     ],
     "infra_step": true,
     "name": "call chromite.api.PackageService/GetBestVisible (2).publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCSWNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldEJlc3RWaXNpYmxlICgyKXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTyAh8KHWNocm9tZW9zLWJh\\nc2UvY2hyb21lb3MtY2hyb21l+gIeChwKB3BhY2thZ2USCGNhdGVnb3J5Ggd2ZXJzaW9u\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCSWNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldEJlc3RWaXNpYmxlICgyKXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTyAiMKHWNocm9tZW9zLWJh\\nc2UvY2hyb21lb3MtY2hyb21lEgAaAPoCHgocCgdwYWNrYWdlEghjYXRlZ29yeRoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
