@@ -1108,11 +1108,11 @@ Returns:
   A named tuple of (gs_path, local_path).
 ### *recipe_modules* / [cros\_test\_proctor](/recipe_modules/cros_test_proctor)
 
-[DEPS](/recipe_modules/cros_test_proctor/__init__.py#1): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_proctor/__init__.py#5): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#192)(self, test_tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#194)(self, test_tasks):**
 
 Collect on all tests from test_tasks.
 
@@ -1125,7 +1125,7 @@ Args:
 Returns:
   MetaTestTuple of lists of tests collected.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#226)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#228)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -1136,7 +1136,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#27)(self, need_tests_builds, completed_builds, snapshot, gerrit_changes, enable_history, baseline_validation_percent, baseline_validation_count):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#28)(self, need_tests_builds, completed_builds, snapshot, gerrit_changes, enable_history, baseline_validation_percent, baseline_validation_count):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -1162,7 +1162,7 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#159)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#161)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
 
 Schedule all tests from the test_plan.
 

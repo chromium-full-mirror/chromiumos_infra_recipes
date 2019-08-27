@@ -346,7 +346,8 @@ def GenTests(api):
       ]
   }
 
-  builds = [api.buildbucket.ci_build_message(status='SUCCESS')]
+  builds = [api.buildbucket.ci_build_message(builder='amd64-generic-postsubmit',
+                                             status='SUCCESS')]
   api.cros_bisect.add_output_props(builds[0], 'amd64-generic')
 
   yield (

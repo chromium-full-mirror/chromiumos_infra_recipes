@@ -11,6 +11,7 @@ from recipe_engine import recipe_api
 import structs
 
 from PB.chromite.api.test import VmTestRequest
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.test_moblab_vm import TestMoblabVmProperties
@@ -57,8 +58,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         dev = False
         if need_tests_builds:
-          # TODO(crbug.com/995801): Make a less ugly way to do this.
-          dev = need_tests_builds[0].builder.builder.startswith('staging-')
+          environment = self.m.cros_infra_config.get_builder_config(
+              need_tests_builds[0].builder.builder).general.environment
+          dev = environment == BuilderConfig.General.STAGING
 
         # We will not run tests that have already passed for this patch set.
         passed_tests = []

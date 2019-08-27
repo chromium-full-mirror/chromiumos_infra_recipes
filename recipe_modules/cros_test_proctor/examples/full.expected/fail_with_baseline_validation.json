@@ -428,6 +428,32 @@
   },
   {
     "cmd": [],
+    "name": "run tests.schedule tests.read build config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.read build config.fetch master:generated/builder_configs.cfg",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests.schedule tests.get change test history",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

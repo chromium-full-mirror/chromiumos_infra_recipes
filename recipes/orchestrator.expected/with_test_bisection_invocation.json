@@ -222,7 +222,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"amd64-generic-postsubmit\", @@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\", @@@",
@@ -273,7 +273,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@builder@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@amd64-generic-postsubmit@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {
@@ -290,7 +290,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.builder",
+    "name": "check build results.build results.amd64-generic-postsubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
@@ -304,7 +304,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "check build results.build results.builder.get access token for default account",
+    "name": "check build results.build results.amd64-generic-postsubmit.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -325,7 +325,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "check build results.build results.builder.get Sheriff-o-Matic annotations",
+    "name": "check build results.build results.amd64-generic-postsubmit.get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",

@@ -148,6 +148,34 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "staging-arm-generic-cq",
+                    "branch": "master",
+                    "type": "CQ"
+                  },
+                  "general": {
+                    "critical": false,
+                    "environment": "STAGING"
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE"
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "install_packages": "RUN"
+                  },
+                  "unit_tests": {
+                    "package_blacklist": [{
+                      "package_name": "chromite",
+                      "category": "chromeos-base",
+                      "version": ""
+                    }],
+                    "ebuilds_run_spec": "RUN"
+                  }
+                },
+                {
+                  "id": {
                     "name": "amd64-generic-bisect",
                     "branch": "master",
                     "type": "POSTSUBMIT"
