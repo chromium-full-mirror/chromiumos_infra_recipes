@@ -300,7 +300,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@found 4 snapshot builds@@@",
-      "@@@STEP_LINK@..amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514005@@@"
+      "@@@STEP_LINK@amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514005@@@"
     ]
   },
   {
@@ -409,7 +409,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514005@@@"
+      "@@@STEP_LINK@amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514005@@@"
     ]
   },
   {
@@ -540,8 +540,8 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@chromeos.cq.arm-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_LINK@chromeos.cq.atlas-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@"
+      "@@@STEP_LINK@arm-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@atlas-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@"
     ]
   },
   {
@@ -658,9 +658,9 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_LINK@..arm-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@",
-      "@@@STEP_LINK@..atlas-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+      "@@@STEP_LINK@amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@arm-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@",
+      "@@@STEP_LINK@atlas-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {
@@ -681,7 +681,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results...arm-generic-cq",
+    "name": "check build results.build results.arm-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@",
@@ -696,7 +696,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "check build results.build results...arm-generic-cq.get access token for default account",
+    "name": "check build results.build results.arm-generic-cq.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -717,7 +717,7 @@
       "--transient-retry",
       "3"
     ],
-    "name": "check build results.build results...arm-generic-cq.get Sheriff-o-Matic annotations",
+    "name": "check build results.build results.arm-generic-cq.get Sheriff-o-Matic annotations",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output[output]@[@@@",
@@ -744,13 +744,13 @@
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|chromeos.bucket.builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|builder\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (5)|chromeos.bucket.builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (5)|builder\", @@@",
       "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
       "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
       "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
@@ -771,7 +771,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results...atlas-cq",
+    "name": "check build results.build results.atlas-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@",
@@ -780,7 +780,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results...amd64-generic-cq",
+    "name": "check build results.build results.amd64-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@"
@@ -1476,7 +1476,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@chromeos.cq.target-autotest-vm@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+      "@@@STEP_LINK@target-autotest-vm@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {
@@ -1589,7 +1589,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@chromeos.cq.target-tast-vm@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+      "@@@STEP_LINK@target-tast-vm@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514003@@@"
     ]
   },
   {
@@ -1695,7 +1695,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@chromeos.cq.moblab-vm-test@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LINK@moblab-vm-test@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514004@@@"
     ]
   },
   {
@@ -2299,7 +2299,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 build failed\n\n- ..atlas-cq: [build page](https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002)"
+      "humanReason": "1 build failed\n\n- atlas-cq: [build page](https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002)"
     },
     "name": "$result"
   }

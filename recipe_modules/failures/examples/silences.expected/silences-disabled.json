@@ -9,7 +9,7 @@
   },
   {
     "cmd": [],
-    "name": "build results.chromeos.bucket.builder",
+    "name": "build results.builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@",
@@ -26,7 +26,7 @@
   },
   {
     "cmd": [],
-    "name": "build results (2).chromeos.bucket.builder",
+    "name": "build results (2).builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@",
@@ -43,7 +43,7 @@
   },
   {
     "cmd": [],
-    "name": "build results (3).chromeos.bucket.builder",
+    "name": "build results (3).builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@",
@@ -60,7 +60,7 @@
   },
   {
     "cmd": [],
-    "name": "build results (4).chromeos.bucket.builder",
+    "name": "build results (4).builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@",
@@ -76,7 +76,7 @@
   },
   {
     "cmd": [],
-    "name": "build results (5).chromeos.bucket.builder",
+    "name": "build results (5).builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@"

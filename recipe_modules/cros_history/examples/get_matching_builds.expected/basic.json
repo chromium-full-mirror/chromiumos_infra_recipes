@@ -48,7 +48,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..@https://cr-buildbucket.appspot.com/build/0@@@"
+      "@@@STEP_LINK@@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {

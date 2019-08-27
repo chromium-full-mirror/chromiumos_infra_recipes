@@ -26,8 +26,7 @@ class NamingApi(recipe_api.RecipeApi):
     Returns:
       str: A string describing the build.
     """
-    return '%s.%s.%s' % (build.builder.project, build.builder.bucket,
-                         build.builder.builder)
+    return build.builder.builder
 
   def get_test_title(self, test):
     """Get a string to describe the test.

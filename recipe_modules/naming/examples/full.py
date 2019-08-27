@@ -17,8 +17,7 @@ from PB.testplans.target_test_requirements_config import HwTestCfg
 def RunSteps(api):
   build = build_pb2.Build(builder=build_pb2.BuilderID(
       project='foo', bucket='bar', builder='baz'))
-  api.assertions.assertEqual(
-      api.naming.get_build_title(build), 'foo.bar.baz')
+  api.assertions.assertEqual(api.naming.get_build_title(build), 'baz')
 
   commit = api.git.Commit('abcdef', '''
 title

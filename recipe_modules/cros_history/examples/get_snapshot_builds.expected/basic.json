@@ -4,8 +4,8 @@
     "name": "get snapshot builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@found 2 snapshot builds@@@",
-      "@@@STEP_LINK@..eve-snapshot@https://cr-buildbucket.appspot.com/build/123@@@",
-      "@@@STEP_LINK@..bob-snapshot@https://cr-buildbucket.appspot.com/build/231@@@"
+      "@@@STEP_LINK@eve-snapshot@https://cr-buildbucket.appspot.com/build/123@@@",
+      "@@@STEP_LINK@bob-snapshot@https://cr-buildbucket.appspot.com/build/231@@@"
     ]
   },
   {
@@ -88,9 +88,9 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..eve-snapshot@https://cr-buildbucket.appspot.com/build/123@@@",
-      "@@@STEP_LINK@..bob-snapshot@https://cr-buildbucket.appspot.com/build/231@@@",
-      "@@@STEP_LINK@..cq-orchestrator@https://cr-buildbucket.appspot.com/build/312@@@"
+      "@@@STEP_LINK@eve-snapshot@https://cr-buildbucket.appspot.com/build/123@@@",
+      "@@@STEP_LINK@bob-snapshot@https://cr-buildbucket.appspot.com/build/231@@@",
+      "@@@STEP_LINK@cq-orchestrator@https://cr-buildbucket.appspot.com/build/312@@@"
     ]
   },
   {

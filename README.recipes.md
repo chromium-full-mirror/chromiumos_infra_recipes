@@ -2009,7 +2009,7 @@ API featuring shared helpers for naming things.
 
 A module with helpers for naming things.
 
-&mdash; **def [get\_all\_vm\_test\_title](/recipe_modules/naming/api.py#81)(self, vm_test):**
+&mdash; **def [get\_all\_vm\_test\_title](/recipe_modules/naming/api.py#80)(self, vm_test):**
 
 Get a string to describe the VM test.
 
@@ -2031,7 +2031,7 @@ Args:
 Returns:
   str: A string describing the build.
 
-&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#129)(self, commit):**
+&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#128)(self, commit):**
 
 Get a string to describe the commit.
 
@@ -2043,7 +2043,7 @@ Args:
 Returns:
   str: The commit title.
 
-&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#48)(self, hw_test):**
+&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#47)(self, hw_test):**
 
 Get a string to describe the HW test.
 
@@ -2053,7 +2053,7 @@ Args:
 Returns:
   str: The HW test title.
 
-&mdash; **def [get\_moblab\_vm\_test\_title](/recipe_modules/naming/api.py#112)(self, moblab_vm_test):**
+&mdash; **def [get\_moblab\_vm\_test\_title](/recipe_modules/naming/api.py#111)(self, moblab_vm_test):**
 
 Get a string to describe the VM test.
 
@@ -2063,7 +2063,7 @@ Args:
 Returns:
   str: A string describing the VM test.
 
-&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#144)(self, package):**
+&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#143)(self, package):**
 
 Get a string to describe the package.
 
@@ -2073,7 +2073,7 @@ Args:
 Returns:
   str: The package title.
 
-&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#70)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#69)(self, skylab_result):**
 
 Get a string to describe the HW test.
 
@@ -2083,7 +2083,7 @@ Args:
 Returns:
   str: The HW test title.
 
-&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#59)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#58)(self, skylab_task):**
 
 Get a string to describe the Skylab task.
 
@@ -2093,7 +2093,7 @@ Args:
 Returns:
   str: The Skylab task title.
 
-&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#32)(self, test):**
+&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#31)(self, test):**
 
 Get a string to describe the test.
 
@@ -2103,7 +2103,7 @@ Args:
 Returns:
   A str describing the test.
 
-&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#96)(self, vm_test):**
+&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#95)(self, vm_test):**
 
 Get a string to describe the VM test.
 

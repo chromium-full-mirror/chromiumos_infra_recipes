@@ -428,7 +428,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..staging-chromite-postsubmit@https://cr-buildbucket.appspot.com/build/1@@@"
+      "@@@STEP_LINK@staging-chromite-postsubmit@https://cr-buildbucket.appspot.com/build/1@@@"
     ]
   },
   {

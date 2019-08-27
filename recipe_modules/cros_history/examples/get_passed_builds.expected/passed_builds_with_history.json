@@ -4,8 +4,8 @@
     "name": "get change build history",
     "~followup_annotations": [
       "@@@STEP_TEXT@some builds already completed@@@",
-      "@@@STEP_LINK@..betty@https://cr-buildbucket.appspot.com/build/123@@@",
-      "@@@STEP_LINK@..reef@https://cr-buildbucket.appspot.com/build/231@@@"
+      "@@@STEP_LINK@betty@https://cr-buildbucket.appspot.com/build/123@@@",
+      "@@@STEP_LINK@reef@https://cr-buildbucket.appspot.com/build/231@@@"
     ]
   },
   {
@@ -69,9 +69,9 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@..betty@https://cr-buildbucket.appspot.com/build/123@@@",
-      "@@@STEP_LINK@..reef@https://cr-buildbucket.appspot.com/build/231@@@",
-      "@@@STEP_LINK@..cq-orch@https://cr-buildbucket.appspot.com/build/312@@@"
+      "@@@STEP_LINK@betty@https://cr-buildbucket.appspot.com/build/123@@@",
+      "@@@STEP_LINK@reef@https://cr-buildbucket.appspot.com/build/231@@@",
+      "@@@STEP_LINK@cq-orch@https://cr-buildbucket.appspot.com/build/312@@@"
     ]
   },
   {
