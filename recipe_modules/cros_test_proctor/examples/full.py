@@ -69,20 +69,6 @@ def RunSteps(api, need_tests_builds_serialized, completed_builds_serialized,
 
 def GenTests(api):
 
-  def postsubmit_orchestrator_build():
-    """Generate a test build proto for the postsubmit orchestrator."""
-    return api.buildbucket.ci_build_message(project='chromeos',
-                                            bucket='postsubmit',
-                                            builder='postsubmit-orchestrator')
-
-  def postsubmit_orchestrator_build_with_no_gitiles():
-    """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(project='chromeos',
-                                             bucket='postsubmit',
-                                             builder='postsubmit-orchestrator')
-    build.input.gitiles_commit.Clear()
-    return build
-
   def cq_orchestrator_build_with_gerrit_change():
     """Generate a test build proto with no gitiles commit project."""
     build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
@@ -142,21 +128,6 @@ def GenTests(api):
   ]
 
   yield (
-      api.test('basic') +  #
-      api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
-      api.easy.simulate_json_step(
-          'run tests.collect tests.'
-          'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
-      api.buildbucket.simulated_collect_output(
-          vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests') +
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests') +
-      api.buildbucket.simulated_collect_output(
-          moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
-
-  yield (
       api.test('tests_with_history') +  #
       api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
       # cq_orchestrator_build_with_gerrit_change() +  #
@@ -177,55 +148,6 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
           step_name='run tests.collect tests.collect moblab vm tests'))
-
-  yield (api.test('updates_refs') +  #
-         api.properties(
-             need_tests_builds_serialized=serialize_builds(
-                 [postsubmit_orchestrator_build()])) +  #
-         api.properties(update_manifest_refs={
-             'start': 'refs/heads/foo',
-             'success': 'refs/heads/bar'
-         }) + api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
-
-  yield (api.test('missing_gitiles_commit') +  #
-         api.properties(
-             need_tests_builds_serialized=serialize_builds(
-                 [postsubmit_orchestrator_build_with_no_gitiles()])) +  #
-         api.properties(update_manifest_refs={
-             'start': 'refs/heads/foo',
-             'success': 'refs/heads/bar'
-         }) + api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
-
-  builds = [
-      build_pb2.Build(id=8922054662172514000, builder={
-          'builder': 'amd64-generic-postsubmit'
-      }, status=common_pb2.FAILURE, critical=common_pb2.NO, input=input_proto(
-          None, 'amd64-generic')),
-      build_pb2.Build(id=8922054662172514001, builder={
-          'builder': 'arm-generic-postsubmit'
-      }, status=common_pb2.SUCCESS, critical=common_pb2.NO, input=input_proto(
-          None, 'arm-generic')),
-  ]
 
   builds = [
       build_pb2.Build(
