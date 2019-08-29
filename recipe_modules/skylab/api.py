@@ -30,7 +30,7 @@ class SkylabApi(recipe_api.RecipeApi):
     # instead of the "latest" tag.
     self._version = str(properties.skylab_version) or 'latest'
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
-    self._skylab_timeout = str(properties.skylab_timeout) or '7h'
+    self._skylab_timeout_mins = properties.skylab_timeout_mins or 7 * 60
 
   def initialize(self):
     self._client = None
@@ -61,7 +61,7 @@ class SkylabApi(recipe_api.RecipeApi):
           '-board',
           test.skylab_board,
           '-timeout-mins',
-          7 * 60,  # 7 hours to account for skylab capacity under strain.
+          self._skylab_timeout_mins,  # 7 hours to account for skylab capacity under strain.
           '-qs-account',
           self._qs_account,
           '-task-name',
@@ -99,7 +99,7 @@ class SkylabApi(recipe_api.RecipeApi):
       # drop the extra 10 min wait.
       cmd = [
           self._client, 'wait-tasks', '-timeout-mins',
-          7 * 60 + 10
+          self._skylab_timeout_mins + 10
       ]
       if dev:
         cmd.append('-dev')
