@@ -11,4 +11,5 @@ message SkylabProperties {
   string skylab_version = 2;
   string skylab_qs_account = 3;
   int32 skylab_timeout_mins = 4;
+  int32 skylab_priority = 5;
 }

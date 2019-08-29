@@ -5,6 +5,7 @@
 from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/path',

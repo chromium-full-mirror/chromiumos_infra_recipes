@@ -269,8 +269,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             test_name = test.common.display_name
             build_target = unit.common.build_target
             test_to_build_map[test_name] = build_target.name
-            skylab_tasks.append(
-                self.m.skylab.create_suite(test, unit, dev=dev))
+            skylab_tasks.append(self.m.skylab.create_recipe(test, unit))
 
     return skylab_tasks
 

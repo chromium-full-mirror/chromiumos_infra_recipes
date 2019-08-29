@@ -134,6 +134,7 @@
   * [sign_image](#recipes-sign_image) &mdash; Recipe for signing ChromeOS images.
   * [sign_paygen](#recipes-sign_paygen) &mdash; Recipe for signing ChromeOS payloads (AU deltas etc).
   * [signing](#recipes-signing) &mdash; Recipe for signing ChromeOS images.
+  * [skylab:examples/create_recipe](#recipes-skylab_examples_create_recipe)
   * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
   * [skylab:examples/wait_tasks](#recipes-skylab_examples_wait_tasks)
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
@@ -2337,13 +2338,25 @@ Args:
   * kwargs: Keyword arguments to pass to 'repo.sync'.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
-[DEPS](/recipe_modules/skylab/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/skylab/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#38)(self, test, unit, name=None, dev=False):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#84)(self, test, unit, name=None):**
+
+Schedule a HW test suite by invoking the cros_test_platform recipe.
+
+Args:
+  test (HwTest): A hardware test config.
+  unit (HwTestUnit): The unit the test was defined in.
+  name (str): The step name. Defaults to 'schedule <test title>'
+
+Returns:
+  SkylabTask: with buildbucket_id of the recipe launched.
+
+&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#41)(self, test, unit, name=None, dev=False):**
 
 Schedule a HW test suite.
 
@@ -2356,9 +2369,9 @@ Args:
 Returns:
   SkylabTask: The swarming task ID.
 
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#35)(self):**
+&mdash; **def [initialize](/recipe_modules/skylab/api.py#38)(self):**
 
-&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#81)(self, tasks, dev=False):**
+&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#140)(self, tasks, dev=False):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -2757,9 +2770,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_postprocess/examples/full.py#12)(api):**
 ### *recipes* / [cros\_test\_proctor:examples/full](/recipe_modules/cros_test_proctor/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_proctor/examples/full.py#16): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_test_proctor/examples/full.py#17): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#42)(api, need_tests_builds_serialized, completed_builds_serialized, baseline_validation_percent, baseline_validation_count):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#43)(api, need_tests_builds_serialized, completed_builds_serialized, baseline_validation_percent, baseline_validation_count):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
@@ -2980,9 +2993,9 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#53)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#173)(api, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#174)(api, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -2998,7 +3011,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#244)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#245)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -3019,7 +3032,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#157)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#158)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -3029,7 +3042,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#350)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#351)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -3043,7 +3056,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#403)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#404)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3054,7 +3067,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#205)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#206)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3067,7 +3080,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#392)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#393)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3075,7 +3088,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#378)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#379)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -3132,6 +3145,11 @@ Recipe for signing ChromeOS payloads (AU deltas etc).
 Recipe for signing ChromeOS images.
 
 &mdash; **def [RunSteps](/recipes/signing.py#14)(api):**
+### *recipes* / [skylab:examples/create\_recipe](/recipe_modules/skylab/examples/create_recipe.py)
+
+[DEPS](/recipe_modules/skylab/examples/create_recipe.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_recipe.py#14)(api):**
 ### *recipes* / [skylab:examples/create\_suite](/recipe_modules/skylab/examples/create_suite.py)
 
 [DEPS](/recipe_modules/skylab/examples/create_suite.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

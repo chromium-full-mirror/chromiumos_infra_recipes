@@ -55,7 +55,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
             "state": "",
             "failure": not success,
             "success": success,
-            "task-request-id": id,
+            "task-request-id": str(id),
             "task-run-url": "http://example.com",
             "task-logs-url": "http://example.log"
         },

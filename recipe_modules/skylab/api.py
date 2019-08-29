@@ -12,7 +12,9 @@ from recipe_engine import recipe_api
 
 import structs
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.skylab_tool.result import WaitTasksResult
+from PB.test_platform.request import Request
 
 
 class SkylabApi(recipe_api.RecipeApi):
@@ -31,6 +33,7 @@ class SkylabApi(recipe_api.RecipeApi):
     self._version = str(properties.skylab_version) or 'latest'
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._skylab_timeout_mins = properties.skylab_timeout_mins or 7 * 60
+    self._skylab_priority = properties.skylab_priority or 140
 
   def initialize(self):
     self._client = None
@@ -77,6 +80,62 @@ class SkylabApi(recipe_api.RecipeApi):
       task_url = task_json['task_url']
       step.presentation.links['swarming task'] = task_url
       return self.SkylabTask(id=task_id, url=task_url, test=test, unit=unit)
+
+  def create_recipe(self, test, unit, name=None):
+    """Schedule a HW test suite by invoking the cros_test_platform recipe.
+
+    Args:
+      test (HwTest): A hardware test config.
+      unit (HwTestUnit): The unit the test was defined in.
+      name (str): The step name. Defaults to 'schedule <test title>'
+
+    Returns:
+      SkylabTask: with buildbucket_id of the recipe launched.
+    """
+    name = name or 'schedule %s' % test.common.display_name
+    with self.m.step.nest(name) as step:
+      req = Request()
+      req.params.hardware_attributes.model = ""
+      req.params.time.maximum_duration.seconds = self._skylab_timeout_mins * 60
+      image_path = unit.common.build_payload.artifacts_gs_path
+      req.params.metadata.test_metadata_url = (
+          'gs://' + unit.common.build_payload.artifacts_gs_bucket + '/' +
+          unit.common.build_payload.artifacts_gs_path)
+      req.params.scheduling.priority = self._skylab_priority
+      sw_dep = req.params.software_dependencies.add()
+      sw_dep.chromeos_build = image_path
+      req.params.scheduling.quota_account = self._qs_account
+      req.params.software_attributes.build_target.name = test.skylab_board
+      suite_to_create = req.test_plan.suite.add()
+      suite_to_create.name = test.suite
+
+      tags = self._get_ctp_tags(
+          test, unit, self._skylab_priority, image_path)
+      request_tags = ['{}:{}'.format(key, value)
+                      for key, value in tags.items()]
+      bb_tags = [common_pb2.StringPair(key=key, value=value)
+                 for key, value in tags.items()]
+      req.params.decorations.tags.extend(request_tags)
+
+      request_dict = json_format.MessageToDict(req)
+      bb_request = self.m.buildbucket.schedule_request(
+          'cros_test_platform', bucket='testplatform', properties={
+              'request': request_dict,
+          }, tags=bb_tags)
+      build = self.m.buildbucket.schedule([bb_request])[0]
+
+      build_url = self.m.buildbucket.build_url(build_id=build.id)
+      step.presentation.links['suite link'] = build_url
+      return self.SkylabTask(id=build.id, url=build_url, test=test, unit=unit)
+
+  def _get_ctp_tags(self, test, unit, priority, image_path):
+    return {
+        'label-pool': 'DUT_POOL_QUOTA',
+        'priority': str(priority),
+        'build': image_path,
+        'label-board': test.skylab_board,
+        'suite': test.suite,
+    }
 
   def wait_tasks(self, tasks, dev=False):
     """Wait for all Skylab suites to finish and return the results.
