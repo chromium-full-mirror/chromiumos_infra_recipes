@@ -574,7 +574,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-cq-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"task_id\": 1234, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -612,7 +612,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-inline-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"task_id\": 4321, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -926,7 +926,7 @@
     "name": "run tests.collect tests.collect skylab tasks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id='bvt-cq-task-id', url='https://swarming.com/bvt-cq', test=suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=1234, url='https://swarming.com/bvt-cq', test=suite: \"bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.bvt-cq\"@@@",
@@ -1058,7 +1058,7 @@
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@), success=True, child_results=[])@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id='bvt-inline-task-id', url='https://swarming.com/bvt-inline', test=suite: \"bvt-inline\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=4321, url='https://swarming.com/bvt-inline', test=suite: \"bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.bvt-inline\"@@@",
@@ -1201,8 +1201,8 @@
       "wait-tasks",
       "-timeout-mins",
       "430",
-      "bvt-cq-task-id",
-      "bvt-inline-task-id"
+      "1234",
+      "4321"
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect skylab tasks.skylab wait-tasks",
@@ -1219,7 +1219,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"state\": \"\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"success\": true, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-logs-url\": \"http://example.log\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"bvt-cq-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"1234\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-run-url\": \"http://example.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
@@ -1232,7 +1232,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"state\": \"\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"success\": false, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-logs-url\": \"http://example.log\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"bvt-inline-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"4321\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-run-url\": \"http://example.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -1884,7 +1884,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-inline-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"task_id\": 4321, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -2198,7 +2198,7 @@
     "name": "run baseline tests.collect baseline tests.collect skylab tasks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id='bvt-inline-task-id', url='https://swarming.com/bvt-inline', test=suite: \"bvt-inline\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=4321, url='https://swarming.com/bvt-inline', test=suite: \"bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.bvt-inline\"@@@",
@@ -2340,7 +2340,7 @@
       "wait-tasks",
       "-timeout-mins",
       "430",
-      "bvt-inline-task-id"
+      "4321"
     ],
     "infra_step": true,
     "name": "run baseline tests.collect baseline tests.collect skylab tasks.skylab wait-tasks",
@@ -2357,7 +2357,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"state\": \"\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"success\": false, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-logs-url\": \"http://example.log\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"bvt-inline-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"4321\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-run-url\": \"http://example.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",

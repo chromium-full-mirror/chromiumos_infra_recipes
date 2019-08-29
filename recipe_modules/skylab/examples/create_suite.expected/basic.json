@@ -62,7 +62,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-cq-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"task_id\": 1234, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -100,7 +100,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"task_id\": \"bvt-cq-task-id\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"task_id\": 1234, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"task_url\": \"https://swarming.com/bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"

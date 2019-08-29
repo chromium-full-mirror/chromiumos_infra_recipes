@@ -19,22 +19,27 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for test_plan api."""
 
   def create_suite_json_output(self, label):
+    # Really ugly. Should be deleted with create_suite().
+    if label == 'bvt-cq':
+      task_id = 1234
+    else:  # pragma: no cover
+      task_id = 4321
     return {
-        'task_id': '%s-task-id' % label,
+        'task_id': task_id,
         'task_url': 'https://swarming.com/%s' % label,
     }
 
   def wait_tasks_json_output(self):
     # TODO(akeshet): Use a skylab_tool.Result proto here, instead of
     # handcrafted dict.
-    return {'results':
-        [{
+    return {
+        'results': [{
             "task-result": {
                 "name": "a test",
                 "state": "",
                 "failure": False,
                 "success": True,
-                "task-request-id": "ID",
+                "task-request-id": "1234",
                 "task-run-url": "http://example.com",
                 "task-logs-url": "http://example.log"
             },
@@ -91,11 +96,8 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
       test = unit.hw_test_cfg.hw_test[0] # pragma: no cover
     else:
       unit = self.hw_test_unit(hw_tests=[test])
-    return structs.SkylabTask(
-        id=id or 'task-id',
-        url=url or 'https://google.com',
-        test=test,
-        unit=unit)
+    return structs.SkylabTask(id=id or 1234, url=url or 'https://google.com',
+                              test=test, unit=unit)
 
   def skylab_result(self, task=None, success=True, child_results=None):
     return structs.SkylabResult(

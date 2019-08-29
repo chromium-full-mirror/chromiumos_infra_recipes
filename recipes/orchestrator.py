@@ -471,10 +471,8 @@ def GenTests(api):
 
   hw_tests = {
       'results': [
-          api.skylab.wait_task_result(id='bvt-cq-task-id', name='hw test1',
-                                      success=True),
-          api.skylab.wait_task_result(id='bvt-inline-task-id', name='hw test2',
-                                      success=True),
+          api.skylab.wait_task_result(id='1234', name='hw test1', success=True),
+          api.skylab.wait_task_result(id='4321', name='hw test2', success=True),
       ]
   }
 
@@ -777,11 +775,9 @@ def GenTests(api):
              step_name='run tests.collect tests.collect moblab vm tests'))
 
   hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
-  task_id = hw_test_unit.hw_test_cfg.hw_test[0].suite + '-task-id'
   hw_tests = {
       'results': [
-          api.skylab.wait_task_result(id=task_id, name='hw test1',
-                                      success=True),
+          api.skylab.wait_task_result(id='1234', name='hw test1', success=True),
       ]
   }
 

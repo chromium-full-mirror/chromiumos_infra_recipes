@@ -115,7 +115,7 @@ class SkylabApi(recipe_api.RecipeApi):
       results = []
       for wait_result in wait_results.results:
         task_result = wait_result.result
-        task_id = task_result.task_request_id
+        task_id = int(task_result.task_request_id)
         task_name = tasks_by_id[task_id].test.common.display_name
         task_url = task_result.task_run_url
         step.presentation.links[task_name] = task_url

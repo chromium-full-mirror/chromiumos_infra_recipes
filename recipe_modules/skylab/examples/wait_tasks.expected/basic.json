@@ -35,7 +35,7 @@
     "cmd": [],
     "name": "collect skylab tasks",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id='ID', url='https://google.com', test=suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=1234, url='https://google.com', test=suite: \"bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"target.hw.bvt-cq\"@@@",
@@ -75,7 +75,7 @@
       "wait-tasks",
       "-timeout-mins",
       "430",
-      "ID"
+      "1234"
     ],
     "infra_step": true,
     "name": "collect skylab tasks.skylab wait-tasks",
@@ -92,7 +92,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"state\": \"\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"success\": true, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-logs-url\": \"http://example.log\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"ID\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"1234\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-run-url\": \"http://example.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -105,7 +105,7 @@
     "cmd": [],
     "name": "collect skylab tasks (2)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id='ID', url='https://google.com', test=suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=1234, url='https://google.com', test=suite: \"bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"target.hw.bvt-cq\"@@@",
@@ -146,7 +146,7 @@
       "-timeout-mins",
       "430",
       "-dev",
-      "ID"
+      "1234"
     ],
     "infra_step": true,
     "name": "collect skylab tasks (2).skylab wait-tasks",
@@ -163,7 +163,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"state\": \"\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"success\": true, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-logs-url\": \"http://example.log\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"ID\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"task-request-id\": \"1234\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"task-run-url\": \"http://example.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
