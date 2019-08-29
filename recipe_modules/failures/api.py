@@ -220,15 +220,13 @@ class FailuresApi(recipe_api.RecipeApi):
     # - hw.coral.bvt-cq: <a>Graphics_Something<\a>
     # - hw.coral.bvt-tast-cq: <a>Cheets_SomethingElse<\a>
     # ...
-    sections = []
+    summary_lines = []
     for kind in sorted(failures_by_kind):
       failure_group = sorted(failures_by_kind[kind],
                              key=operator.attrgetter('title'))
       count = len(failure_group)
       lines = ['{} {} failed'.format(count, kind + 's' if count > 1 else kind)]
 
-      # Truncate the list of failures per section to keep the summary under
-      # Buildbucket's 4000 byte limit on the summary_markdown field.
       truncate_max = 10
       failures_to_print = failure_group[0:truncate_max]
       for failure in failures_to_print:
@@ -238,9 +236,20 @@ class FailuresApi(recipe_api.RecipeApi):
         lines.append(line)
       if count > truncate_max:
         lines.append('- ...and {} others'.format(count - truncate_max))
-      sections.append('\n\n'.join(lines))
+      summary_lines.extend(lines)
 
-    summary_markdown = '\n\n'.join(sections)
+    # Truncate the list of failures per section to keep the summary under
+    # Buildbucket's 4000 byte limit on the summary_markdown field.
+    summary_markdown = ''
+    for line in summary_lines:
+      if len(summary_markdown) + len(line) < 3990:
+        summary_markdown += ('\n\n' + line)
+      else:
+        # Abruptly truncate to avoid INFRA_FAILURE.
+        summary_markdown += ('\n\n...')
+        break
+
+    summary_markdown = summary_markdown.strip()
     return result_pb2.RawResult(status=common_pb2.FAILURE,
                                 summary_markdown=summary_markdown)
 

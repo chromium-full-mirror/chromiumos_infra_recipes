@@ -61,6 +61,17 @@ def RunSteps(api):
   api.assertions.assertEqual(result.status, common_pb2.FAILURE)
   api.assertions.assertIn('40 others', result.summary_markdown)
 
+  # Try to exceed the 4000 limit with really long test links.
+  really_long_text = 'All code and no test makes failures a dull module.' * 4000
+  failures = [
+      api.failures.Failure(
+          kind='test', title='test-a', link_map={
+              'subtest-1': 'testlink.com',
+              'subtest-2': really_long_text,
+          }, fatal=True, id='id-3'),
+  ]
+  result = api.failures.aggregate_failures(failures)
+
 
 def GenTests(api):
   yield api.test('basic')
