@@ -26,12 +26,11 @@ class ChromeApi(recipe_api.RecipeApi):
     """
     # TODO(crbug.com/945606): Call sync_chrome in build_target recipe.
     # portageq must be run with cwd inside a chromiumos source root.
-    request = packages.GetBestVisibleRequest(
-        atom='chromeos-base/chromeos-chrome',
+    request = packages.GetChromeVersionRequest(
         chroot=chroot,
         build_target=build_target)
-    revision = self.m.cros_build_api.PackageService.GetBestVisible(
-        request, infra_step=True).package_info.version
+    revision = self.m.cros_build_api.PackageService.GetChromeVersion(
+        request, infra_step=True).version
 
     self.m.file.ensure_directory('ensure chrome root', chrome_root)
     with self.m.context(cwd=chrome_root):

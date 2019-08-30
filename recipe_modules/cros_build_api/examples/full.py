@@ -80,6 +80,7 @@ def RunSteps(api):
       },
       'PackageService': {
           'GetBestVisible': packages.GetBestVisibleResponse,
+          'GetChromeVersion': packages.GetChromeVersionResponse,
           'Uprev': packages.UprevPackagesResponse,
           'UprevVersionedPackage': packages.UprevPackagesResponse,
       },

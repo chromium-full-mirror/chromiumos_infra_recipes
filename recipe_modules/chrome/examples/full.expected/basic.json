@@ -1,15 +1,14 @@
 [
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetBestVisible",
+    "name": "call chromite.api.PackageService/GetChromeVersion",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"package_info\": {\"category\": \"category\", \"version\": \"version\", \"package_name\": \"package\"}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"version\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -21,17 +20,16 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}, \n  \"atom\": \"chromeos-base/chromeos-chrome\"\n}",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible.write input file",
+    "name": "call chromite.api.PackageService/GetChromeVersion.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -43,7 +41,7 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "chromite.api.PackageService/GetBestVisible"
+      "chromite.api.PackageService/GetChromeVersion"
     ],
     "env_suffixes": {
       "PATH": [
@@ -51,7 +49,7 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible.call build API script",
+    "name": "call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -68,31 +66,26 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible.read output file",
+    "name": "call chromite.api.PackageService/GetChromeVersion.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetBestVisible.publish event",
+    "name": "call chromite.api.PackageService/GetChromeVersion.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.PackageService/GetBestVisible|call build API script\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"getBestVisibleRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {}, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"getBestVisibleResponse\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"packageInfo\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"category\": \"category\", @@@",
-      "@@@STEP_LOG_LINE@published event@      \"packageName\": \"package\", @@@",
-      "@@@STEP_LOG_LINE@published event@      \"version\": \"version\"@@@",
-      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
       "@@@STEP_LOG_LINE@published event@  }@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
@@ -100,7 +93,7 @@
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetBestVisible.publish event.publish message",
+    "name": "call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -114,7 +107,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible.publish event.publish message.read deploy_cipd.json",
+    "name": "call chromite.api.PackageService/GetChromeVersion.publish event.publish message.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -138,7 +131,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible.publish event.publish message.ensure_installed",
+    "name": "call chromite.api.PackageService/GetChromeVersion.publish event.publish message.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -159,8 +152,8 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCRWNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldEJlc3RWaXNpYmxlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdPICIwodY2hyb21lb3MtYmFzZS9j\\naHJvbWVvcy1jaHJvbWUSABoA+gIeChwKB3BhY2thZ2USCGNhdGVnb3J5Ggd2ZXJzaW9u\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCR2NhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgASAIoDCQoHdmVyc2lv\\nbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -284,15 +277,14 @@
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetBestVisible (2)",
+    "name": "call chromite.api.PackageService/GetChromeVersion (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"package_info\": {\"category\": \"category\", \"version\": \"version\", \"package_name\": \"package\"}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"version\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -304,17 +296,16 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}, \n  \"atom\": \"chromeos-base/chromeos-chrome\"\n}",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible (2).write input file",
+    "name": "call chromite.api.PackageService/GetChromeVersion (2).write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -326,7 +317,7 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "chromite.api.PackageService/GetBestVisible"
+      "chromite.api.PackageService/GetChromeVersion"
     ],
     "env_suffixes": {
       "PATH": [
@@ -334,7 +325,7 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible (2).call build API script",
+    "name": "call chromite.api.PackageService/GetChromeVersion (2).call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -351,31 +342,26 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible (2).read output file",
+    "name": "call chromite.api.PackageService/GetChromeVersion (2).read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetBestVisible (2).publish event",
+    "name": "call chromite.api.PackageService/GetChromeVersion (2).publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.PackageService/GetBestVisible (2)|call build API script\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"getBestVisibleRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.PackageService/GetChromeVersion (2)|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {}, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"atom\": \"chromeos-base/chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:24.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:26Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"getBestVisibleResponse\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"packageInfo\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"category\": \"category\", @@@",
-      "@@@STEP_LOG_LINE@published event@      \"packageName\": \"package\", @@@",
-      "@@@STEP_LOG_LINE@published event@      \"version\": \"version\"@@@",
-      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
       "@@@STEP_LOG_LINE@published event@  }@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
@@ -383,7 +369,7 @@
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetBestVisible (2).publish event.publish message",
+    "name": "call chromite.api.PackageService/GetChromeVersion (2).publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -393,8 +379,8 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetBestVisible (2).publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCSWNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldEJlc3RWaXNpYmxlICgyKXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTyAiMKHWNocm9tZW9zLWJh\\nc2UvY2hyb21lb3MtY2hyb21lEgAaAPoCHgocCgdwYWNrYWdlEghjYXRlZ29yeRoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "call chromite.api.PackageService/GetChromeVersion (2).publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCS2NhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldENocm9tZVZlcnNpb24gKDIpfGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDBAoAEgCKAwkKB3Zl\\ncnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
