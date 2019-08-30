@@ -182,8 +182,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       analysis_service_event.response_time.CopyFrom(response_time)
 
       step.presentation.logs['published event'] = [
-          json_format.MessageToJson(analysis_service_event,
-                                    including_default_value_fields=True)
+          json_format.MessageToJson(analysis_service_event)
       ]
 
       # Data is passed to the publish-message support binary via JSON. The
