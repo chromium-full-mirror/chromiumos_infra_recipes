@@ -129,7 +129,7 @@ class EasyApi(recipe_api.RecipeApi):
     output = message_type()
     step_data = self.stdout_step(
         name, cmd, test_stdout=test_output_str, **kwargs)
-    return json_format.Parse(step_data, output)
+    return json_format.Parse(step_data, output, ignore_unknown_fields=True)
 
 
 def maybe_lazy_test_data(test_data):
