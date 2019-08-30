@@ -106,7 +106,8 @@
     "cmd": [],
     "name": "hw test results (2).target.hw.bvt-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite page@https://google.com@@@"
     ]
   },
   {
@@ -122,6 +123,7 @@
     "name": "hw test results (3).target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite page@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -145,6 +147,7 @@
     "name": "baseline hw test results.target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite page@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -161,6 +164,7 @@
     "name": "hw test results (5).target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite page@https://google.com@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

@@ -56,7 +56,7 @@ class UrlsApi(recipe_api.RecipeApi):
       str->str map: title to URL to the skylab swarming task page
       if the suite succeeded or entries of just the failed tests.
     """
-    if skylab_result.success:
+    if skylab_result.success or not skylab_result.child_results:
       link_url = self.get_skylab_task_url(skylab_result.task)
       return {'suite page': link_url}
     else:

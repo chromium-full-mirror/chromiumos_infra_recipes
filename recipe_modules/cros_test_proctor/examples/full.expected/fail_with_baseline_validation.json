@@ -2765,6 +2765,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-inline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
