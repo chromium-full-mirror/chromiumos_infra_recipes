@@ -3,10 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-DEPS = ['recipe_engine/path', 'chrome']
+DEPS = ['recipe_engine/path', 'recipe_engine/properties', 'chrome']
 
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
+
+from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
 def RunSteps(api):
   chroot = Chroot()
@@ -26,4 +28,10 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic'))
+
+  yield (api.test('with_properties') + #
+         api.properties(**{
+             "$chromeos/chrome":
+             ChromeProperties(parallel_sync_jobs=42)
+         }))

@@ -12,6 +12,12 @@ CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 
 class ChromeApi(recipe_api.RecipeApi):
 
+  def __init__(self, properties, *args, **kwargs):
+    super(ChromeApi, self).__init__(*args, **kwargs)
+    self._parallel_sync_jobs = 72
+    if properties.parallel_sync_jobs > 0:
+      self._parallel_sync_jobs = properties.parallel_sync_jobs
+
   def sync(self, chrome_root, chroot, build_target, internal):
     """
     Sync Chrome source code.
@@ -29,18 +35,43 @@ class ChromeApi(recipe_api.RecipeApi):
     request = packages.GetChromeVersionRequest(
         chroot=chroot,
         build_target=build_target)
-    revision = self.m.cros_build_api.PackageService.GetChromeVersion(
+    version = self.m.cros_build_api.PackageService.GetChromeVersion(
         request, infra_step=True).version
 
     self.m.file.ensure_directory('ensure chrome root', chrome_root)
+
+    # Similar to what you would get with self.m.gclient.checkout approach
+    # but here we up the job parallelism for a speed boost.
     with self.m.context(cwd=chrome_root):
       cfg = self.m.gclient.make_config(CACHE_DIR=CHROMIUM_CACHE_DIR)
       soln = cfg.solutions.add()
       soln.name = 'src'
       soln.url = 'https://chromium.googlesource.com/chromium/src.git'
-      soln.revision = revision
+      soln.revision = version
       soln.custom_vars = {
           'checkout_src_internal': internal,
       }
 
-      self.m.gclient.checkout(gclient_config=cfg)
+      cmd = [
+          'sync',
+          '--spec',
+          self.m.gclient.config_to_pythonish(cfg),
+          '--verbose',
+          '--nohooks',
+          '-j%d' % self._parallel_sync_jobs,
+          '--reset',
+          '--force',
+          '--upstream',
+          '--no-nag-max',
+          '--with_branch_heads',
+          '--with_tags',
+          '--delete_unversioned_trees',
+          '--revision',
+          'src@%s' % version,
+      ]
+
+      with self.m.depot_tools.on_path():
+        self.m.python('gclient sync',
+                      self.m.depot_tools.root.join('gclient.py'),
+                      cmd,
+                      infra_step=True)
