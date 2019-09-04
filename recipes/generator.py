@@ -16,6 +16,7 @@ import collections
 import urlparse
 
 from PB.chromiumos.common import PackageInfo
+from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import DO_NOTHING
@@ -93,6 +94,7 @@ def RunSteps(api, properties):
                   ref=trigger.gitiles.ref, revision=trigger.gitiles.revision)
               for trigger in triggers
           ],
+          build_targets=properties.build_targets,
       )
       response = api.cros_build_api.PackageService.UprevVersionedPackage(
           request, name='uprev versioned package')
@@ -215,6 +217,9 @@ def GenTests(api):
           reviewers=[
               Reviewer(email='evanhernandez@chromium.org'),
               Reviewer(email='chromeos-continuous-integration-team@google.com'),
+          ],
+          build_targets=[
+            BuildTarget(name='build_target'),
           ],
       ),)
   gitiles_triggers = [

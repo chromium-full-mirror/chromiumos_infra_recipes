@@ -61,4 +61,7 @@ message GeneratorProperties {
 
   // Policy to follow when related CLs exist. Defaults to DO_NOTHING.
   SendToCqPolicy existing_cls_policy = 5;
+
+  // The build targets to uprev. Only populate if required by endpoint.
+  repeated chromiumos.BuildTarget build_targets = 6;
 }
