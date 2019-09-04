@@ -1,8 +1,13 @@
 [
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetChromeVersion",
+    "name": "sync chrome"
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
@@ -24,9 +29,9 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion.write input file",
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
@@ -49,9 +54,9 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -66,18 +71,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion.read output file",
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetChromeVersion.publish event",
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {}, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {}@@@",
@@ -93,9 +98,9 @@
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -107,9 +112,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion.publish event.publish message.read deploy_cipd.json",
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.read deploy_cipd.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
@@ -131,9 +136,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion.publish event.publish message.ensure_installed",
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -152,10 +157,10 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCR2NhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgASAIoDCQoHdmVyc2lv\\nbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCU3N5bmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBh\\nY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgAS\\nAIoDCQoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -175,7 +180,10 @@
       "[START_DIR]/chrome"
     ],
     "infra_step": true,
-    "name": "ensure chrome root"
+    "name": "sync chrome.ensure chrome root",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -205,12 +213,20 @@
       ]
     },
     "infra_step": true,
-    "name": "gclient sync"
+    "name": "sync chrome.gclient sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetChromeVersion (2)",
+    "name": "sync chrome (2)"
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
@@ -232,9 +248,9 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion (2).write input file",
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
@@ -257,9 +273,9 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion (2).call build API script",
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -274,18 +290,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion (2).read output file",
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetChromeVersion (2).publish event",
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.PackageService/GetChromeVersion (2)|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"sync chrome (2)|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {}, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {}@@@",
@@ -301,9 +317,9 @@
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/GetChromeVersion (2).publish event.publish message",
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -311,10 +327,10 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/GetChromeVersion (2).publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCS2NhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNl\\nL0dldENocm9tZVZlcnNpb24gKDIpfGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDBAoAEgCKAwkKB3Zl\\ncnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCV3N5bmMgY2hyb21lICgyKXxjYWxsIGNocm9taXRlLmFw\\naS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIID\\nBAoAEgCKAwkKB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -334,7 +350,10 @@
       "[START_DIR]/chrome"
     ],
     "infra_step": true,
-    "name": "ensure chrome root (2)"
+    "name": "sync chrome (2).ensure chrome root",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -364,7 +383,10 @@
       ]
     },
     "infra_step": true,
-    "name": "gclient sync (2)"
+    "name": "sync chrome (2).gclient sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "name": "$result"

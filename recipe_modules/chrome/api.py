@@ -30,48 +30,47 @@ class ChromeApi(recipe_api.RecipeApi):
       build_target (chromiumos.BuildTarget): Build target of the build.
       internal (bool): True for internal checkout.
     """
-    # TODO(crbug.com/945606): Call sync_chrome in build_target recipe.
-    # portageq must be run with cwd inside a chromiumos source root.
-    request = packages.GetChromeVersionRequest(
-        chroot=chroot,
-        build_target=build_target)
-    version = self.m.cros_build_api.PackageService.GetChromeVersion(
-        request, infra_step=True).version
+    with self.m.step.nest('sync chrome'):
+      request = packages.GetChromeVersionRequest(
+          chroot=chroot,
+          build_target=build_target)
+      version = self.m.cros_build_api.PackageService.GetChromeVersion(
+          request, infra_step=True).version
 
-    self.m.file.ensure_directory('ensure chrome root', chrome_root)
+      self.m.file.ensure_directory('ensure chrome root', chrome_root)
 
-    # Similar to what you would get with self.m.gclient.checkout approach
-    # but here we up the job parallelism for a speed boost.
-    with self.m.context(cwd=chrome_root):
-      cfg = self.m.gclient.make_config(CACHE_DIR=CHROMIUM_CACHE_DIR)
-      soln = cfg.solutions.add()
-      soln.name = 'src'
-      soln.url = 'https://chromium.googlesource.com/chromium/src.git'
-      soln.revision = version
-      soln.custom_vars = {
-          'checkout_src_internal': internal,
-      }
+      # Similar to what you would get with self.m.gclient.checkout approach
+      # but here we up the job parallelism for a speed boost.
+      with self.m.context(cwd=chrome_root):
+        cfg = self.m.gclient.make_config(CACHE_DIR=CHROMIUM_CACHE_DIR)
+        soln = cfg.solutions.add()
+        soln.name = 'src'
+        soln.url = 'https://chromium.googlesource.com/chromium/src.git'
+        soln.revision = version
+        soln.custom_vars = {
+            'checkout_src_internal': internal,
+        }
 
-      cmd = [
-          'sync',
-          '--spec',
-          self.m.gclient.config_to_pythonish(cfg),
-          '--verbose',
-          '--nohooks',
-          '-j%d' % self._parallel_sync_jobs,
-          '--reset',
-          '--force',
-          '--upstream',
-          '--no-nag-max',
-          '--with_branch_heads',
-          '--with_tags',
-          '--delete_unversioned_trees',
-          '--revision',
-          'src@%s' % version,
-      ]
+        cmd = [
+            'sync',
+            '--spec',
+            self.m.gclient.config_to_pythonish(cfg),
+            '--verbose',
+            '--nohooks',
+            '-j%d' % self._parallel_sync_jobs,
+            '--reset',
+            '--force',
+            '--upstream',
+            '--no-nag-max',
+            '--with_branch_heads',
+            '--with_tags',
+            '--delete_unversioned_trees',
+            '--revision',
+            'src@%s' % version,
+        ]
 
-      with self.m.depot_tools.on_path():
-        self.m.python('gclient sync',
-                      self.m.depot_tools.root.join('gclient.py'),
-                      cmd,
-                      infra_step=True)
+        with self.m.depot_tools.on_path():
+          self.m.python('gclient sync',
+                        self.m.depot_tools.root.join('gclient.py'),
+                        cmd,
+                        infra_step=True)
