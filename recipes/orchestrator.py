@@ -339,10 +339,19 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
           'value': str(api.buildbucket.build.id)
       }]
 
+      # Technically per current appraoches a bisecting orchestrator doing hw
+      # test bisection should find all builds already completed or in flight
+      # as *-snapshot builds. If it does need to schedule such a build, those
+      # builders run in the postsubmit bucket.
+      bucket = api.buildbucket.build.builder.bucket
+      if bucket == 'bisect':
+        bucket = 'postsubmit'
+
       new_build_requests.append(
           api.buildbucket.schedule_request(
-              gitiles_commit=snapshot, builder=child, critical=critical,
-              properties=api.cq.props_for_child_build, tags=tags))
+              gitiles_commit=snapshot, builder=child, bucket=bucket,
+              critical=critical, properties=api.cq.props_for_child_build,
+              tags=tags))
     step.presentation.logs['filter log'] = filter_log
 
   return completed_builds, filtered_snapshot_builds, new_build_requests
@@ -445,6 +454,11 @@ def GenTests(api):
                                              builder='cq-orchestrator')
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return api.buildbucket.build(build)
+
+  def bisecting_orchestrator_build():
+    """Generate a test build proto for the bisecting orchestrator."""
+    return api.buildbucket.ci_build(project='chromeos', bucket='bisect',
+                                    builder='bisecting-orchestrator')
 
   def vm_test_build(name):
     output = build_pb2.Build.Output()
@@ -864,7 +878,7 @@ def GenTests(api):
   api.cros_bisect.add_output_props(builds[0], 'amd64-generic')
 
   yield (api.test('with_test_bisection_invocation') +  #
-         postsubmit_orchestrator_build() +  #
+         bisecting_orchestrator_build() +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.properties(
