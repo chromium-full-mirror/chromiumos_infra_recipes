@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -10,10 +12,21 @@ DEPS = [
 ]
 
 def RunSteps(api):
-  tags = api.cros_tags.make_schedule_tags()
-  api.assertions.assertEqual(
-      tags, [{'value': str(api.buildbucket.build.id),
-              'key': 'parent_buildbucket_id'}])
+  snapshot = bbcommon_pb2.GitilesCommit(id='deadbeef')
+  expected_tags = [
+      {
+          'value': str(api.buildbucket.build.id),
+          'key': 'parent_buildbucket_id'
+      },
+      {
+          'value': snapshot.id,
+          'key': 'snapshot'
+      },
+  ]
+
+  tags = api.cros_tags.make_schedule_tags(snapshot)
+
+  api.assertions.assertEqual(tags, expected_tags)
 
 def GenTests(api):
   yield (api.test('basic') + #

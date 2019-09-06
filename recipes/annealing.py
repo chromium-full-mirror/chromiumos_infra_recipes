@@ -151,7 +151,7 @@ def RunSteps(api, properties):
 
     if properties.child_builders:
       with api.step.nest('schedule child builds'):
-        tags = api.cros_tags.make_schedule_tags()
+        tags = api.cros_tags.make_schedule_tags(snapshot_commit)
         requests = [
             api.buildbucket.schedule_request(gitiles_commit=snapshot_commit,
                                              builder=child, bucket='postsubmit',

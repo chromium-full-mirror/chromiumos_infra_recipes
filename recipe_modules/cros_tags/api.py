@@ -10,13 +10,23 @@ from recipe_engine import recipe_api
 class CrosTagsApi(recipe_api.RecipeApi):
   """A module for generating tags."""
 
-  def make_schedule_tags(self):
+  def make_schedule_tags(self, snapshot):
     """Returns the tags typically added to scheduled child builders.
+
+    Args:
+      snapshot (GitilesCommit): snapshot the build was synced on
 
     Returns:
       list[{key, value}] to output as buildbucket tags
     """
-    return [{
-        'key': 'parent_buildbucket_id',
-        'value': str(self.m.buildbucket.build.id),
-    }]
+    tags = []
+    tags.append(self._key_value('parent_buildbucket_id',
+                                str(self.m.buildbucket.build.id)))
+    tags.append(self._key_value('snapshot', snapshot.id))
+    return tags;
+
+  def _key_value(self, key, value):
+    return {
+        'value': value,
+        'key': key,
+    }

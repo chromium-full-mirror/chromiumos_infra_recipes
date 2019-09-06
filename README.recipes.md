@@ -1039,7 +1039,7 @@ API for generating tags.
 
 A module for generating tags.
 
-&mdash; **def [make\_schedule\_tags](/recipe_modules/cros_tags/api.py#13)(self):**
+&mdash; **def [make\_schedule\_tags](/recipe_modules/cros_tags/api.py#13)(self, snapshot):**
 
 Returns the tags typically added to scheduled child builders.
 
@@ -2810,9 +2810,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#18)(api):**
 ### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
 
-[DEPS](/recipe_modules/cros_tags/examples/full.py#6): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/cros_tags/examples/full.py#8): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#14)(api):**
 ### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#8): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

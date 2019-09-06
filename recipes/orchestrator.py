@@ -337,7 +337,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
         filter_log.append('{} is non-critical and already ran'.format(child))
         continue
 
-      tags = api.cros_tags.make_schedule_tags()
+      tags = api.cros_tags.make_schedule_tags(snapshot)
 
       # Technically per current appraoches a bisecting orchestrator doing hw
       # test bisection should find all builds already completed or in flight
