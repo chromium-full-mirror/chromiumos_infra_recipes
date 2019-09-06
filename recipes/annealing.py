@@ -43,6 +43,7 @@ DEPS = [
     'cros_cq_depends',
     'cros_sdk',
     'cros_source',
+    'cros_tags',
     'easy',
     'gerrit',
     'git',
@@ -150,9 +151,11 @@ def RunSteps(api, properties):
 
     if properties.child_builders:
       with api.step.nest('schedule child builds'):
+        tags = api.cros_tags.make_schedule_tags()
         requests = [
             api.buildbucket.schedule_request(gitiles_commit=snapshot_commit,
-                                             builder=child, bucket='postsubmit')
+                                             builder=child, bucket='postsubmit',
+                                             tags=tags)
             for child in properties.child_builders
         ]
         api.buildbucket.schedule(requests)

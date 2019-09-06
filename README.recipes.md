@@ -21,6 +21,7 @@
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_som](#recipe_modules-cros_som)
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
+  * [cros_tags](#recipe_modules-cros_tags) &mdash; API for generating tags.
   * [cros_test_plan](#recipe_modules-cros_test_plan)
   * [cros_test_platform](#recipe_modules-cros_test_platform)
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess)
@@ -84,6 +85,7 @@
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_som:examples/full](#recipes-cros_som_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
+  * [cros_tags:examples/full](#recipes-cros_tags_examples_full)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full)
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full)
@@ -1027,6 +1029,22 @@ The "workspace" checkout path.
 
 This is where the build is processed. It will contain the target base
 checkout and any modifications made by the build.
+### *recipe_modules* / [cros\_tags](/recipe_modules/cros_tags)
+
+[DEPS](/recipe_modules/cros_tags/__init__.py#5): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+API for generating tags.
+
+#### **class [CrosTagsApi](/recipe_modules/cros_tags/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for generating tags.
+
+&mdash; **def [make\_schedule\_tags](/recipe_modules/cros_tags/api.py#13)(self):**
+
+Returns the tags typically added to scheduled child builders.
+
+Returns:
+  list[{key, value}] to output as buildbucket tags
 ### *recipe_modules* / [cros\_test\_plan](/recipe_modules/cros_test_plan)
 
 [DEPS](/recipe_modules/cros_test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2543,7 +2561,7 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#36)(api):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [portage](#recipe_modules-portage), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [portage](#recipe_modules-portage), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -2557,13 +2575,13 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#60)(api, properties):**
+&mdash; **def [RunSteps](/recipes/annealing.py#61)(api, properties):**
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#210)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#213)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#220)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#223)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -2586,7 +2604,7 @@ Args:
 Returns:
   A string containing the commit message.
 
-&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#161)(api, manifest_diffs):**
+&mdash; **def [record\_gerrit\_changes](/recipes/annealing.py#164)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 
@@ -2790,6 +2808,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#18)(api):**
+### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
+
+[DEPS](/recipe_modules/cros_tags/examples/full.py#6): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#12)(api):**
 ### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#8): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -3039,15 +3062,15 @@ Test git_footers calls.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/orchestrator.py#11): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#55)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#176)(api, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#177)(api, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3063,7 +3086,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#247)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#248)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -3084,7 +3107,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#160)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#161)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -3094,7 +3117,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#362)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#360)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -3108,7 +3131,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#415)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#413)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3119,7 +3142,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#208)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#209)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3132,7 +3155,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#404)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#402)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3140,7 +3163,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#390)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#388)(refs):**
 
 Assert the given refs start with refs/heads.
 

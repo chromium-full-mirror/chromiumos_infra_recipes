@@ -21,6 +21,7 @@ DEPS = [
     'cros_infra_config',
     'cros_relevance',
     'cros_source',
+    'cros_tags',
     'cros_test_proctor',
     'cros_version',
     'easy',
@@ -336,10 +337,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
         filter_log.append('{} is non-critical and already ran'.format(child))
         continue
 
-      tags = [{
-          'key': 'parent_buildbucket_id',
-          'value': str(api.buildbucket.build.id)
-      }]
+      tags = api.cros_tags.make_schedule_tags()
 
       # Technically per current appraoches a bisecting orchestrator doing hw
       # test bisection should find all builds already completed or in flight
