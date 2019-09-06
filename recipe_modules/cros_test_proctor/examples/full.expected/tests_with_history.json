@@ -23,7 +23,10 @@
   },
   {
     "cmd": [],
-    "name": "run tests"
+    "name": "run tests",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all tests passed. no need for baseline validation@@@"
+    ]
   },
   {
     "cmd": [],
@@ -1573,14 +1576,15 @@
   },
   {
     "cmd": [],
-    "name": "set passed_tests",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"htarget.hw.bvt-inline\", \"vm-test\", \"moblab-vm-test\"]@@@"
-    ]
+    "name": "check test results"
   },
   {
     "cmd": [],
-    "name": "check test results"
+    "name": "check test results.set passed_tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"htarget.hw.bvt-inline\", \"vm-test\", \"moblab-vm-test\"]@@@"
+    ]
   },
   {
     "cmd": [],

@@ -23,8 +23,13 @@
   },
   {
     "cmd": [],
-    "name": "set BISECT_BUILDER",
+    "name": "set up orchestrator"
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.set BISECT_BUILDER",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"bisecting-orchestrator\"@@@"
     ]
   },
@@ -161,7 +166,14 @@
   },
   {
     "cmd": [],
-    "name": "read build config"
+    "name": "run builds"
+  },
+  {
+    "cmd": [],
+    "name": "run builds.read build config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -176,15 +188,11 @@
       "text"
     ],
     "infra_step": true,
-    "name": "read build config.fetch master:generated/builder_configs.cfg",
+    "name": "run builds.read build config.fetch master:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "run builds"
   },
   {
     "cmd": [],
@@ -835,7 +843,10 @@
   },
   {
     "cmd": [],
-    "name": "run tests"
+    "name": "run tests",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all tests passed. no need for baseline validation@@@"
+    ]
   },
   {
     "cmd": [],
@@ -2445,14 +2456,15 @@
   },
   {
     "cmd": [],
-    "name": "set passed_tests",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"htarget.hw.bvt-inline\", \"vm-test\", \"moblab-vm-test\"]@@@"
-    ]
+    "name": "check test results"
   },
   {
     "cmd": [],
-    "name": "check test results"
+    "name": "check test results.set passed_tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"htarget.hw.bvt-inline\", \"vm-test\", \"moblab-vm-test\"]@@@"
+    ]
   },
   {
     "cmd": [],
@@ -2504,7 +2516,14 @@
   },
   {
     "cmd": [],
-    "name": "read build config (2)"
+    "name": "clean up orchestrator"
+  },
+  {
+    "cmd": [],
+    "name": "clean up orchestrator.read build config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -2519,16 +2538,17 @@
       "text"
     ],
     "infra_step": true,
-    "name": "read build config (2).fetch master:generated/builder_configs.cfg",
+    "name": "clean up orchestrator.read build config.fetch master:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "non-critical build check",
+    "name": "clean up orchestrator.non-critical build check",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@new non-critical builders@changed arm-generic-cq to non-critical@@@",
       "@@@STEP_LOG_END@new non-critical builders@@@"
     ]

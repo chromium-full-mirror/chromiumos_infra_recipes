@@ -54,24 +54,25 @@ PROPERTIES = OrchestratorProperties
 def RunSteps(api, properties):
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
 
-  validate_refs(properties.update_manifest_refs)
-  api.cros_bisect.set_orchestrator_bisect_builder()
+  with api.step.nest('set up orchestrator'):
+    validate_refs(properties.update_manifest_refs)
+    api.cros_bisect.set_orchestrator_bisect_builder()
 
-  gerrit_changes = api.buildbucket.build.input.gerrit_changes
+    gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
-  snapshot = api.buildbucket.gitiles_commit
-  if not snapshot.project:
-    with api.step.nest('fetch snapshot ref'):
-      snapshot_sha1 = api.gitiles.fetch_revision(
-          'chrome-internal', 'chromeos/manifest-internal', 'snapshot')
-      snapshot = common_pb2.GitilesCommit(
-          host='chrome-internal.googlesource.com',
-          project='chromeos/manifest-internal', ref='refs/heads/snapshot',
-          id=snapshot_sha1)
+    snapshot = api.buildbucket.gitiles_commit
+    if not snapshot.project:
+      with api.step.nest('fetch snapshot ref'):
+        snapshot_sha1 = api.gitiles.fetch_revision(
+            'chrome-internal', 'chromeos/manifest-internal', 'snapshot')
+        snapshot = common_pb2.GitilesCommit(
+            host='chrome-internal.googlesource.com',
+            project='chromeos/manifest-internal', ref='refs/heads/snapshot',
+            id=snapshot_sha1)
 
-  # Point start ref to the input snapshot if specified.
-  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
-                            snapshot)
+    # Point start ref to the input snapshot if specified.
+    maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
+                              snapshot)
 
   if gerrit_changes and not api.gerrit.changes_are_submittable(gerrit_changes):
     raise api.step.StepFailure('failed to cherry-pick changes, '
@@ -108,9 +109,9 @@ def RunSteps(api, properties):
         else:
           step.presentation.step_text = 'found no inflight run'
 
-  child_builders = get_child_builders(api)
-
+  child_builders = []
   with api.step.nest('run builds'):
+    child_builders = get_child_builders(api)
     completed_builds = filter_schedule_wait_builds(api, child_builders,
                                                    properties.enable_history,
                                                    snapshot, gerrit_changes)
@@ -145,13 +146,14 @@ def RunSteps(api, properties):
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'test',
                             snapshot)
 
-  # Recheck the BuilderConfigs at HEAD to see if any failed builders are now
-  # noncritical.
-  api.cros_infra_config.force_reload()
-  fresh_builder_configs = api.cros_infra_config.safe_get_builder_configs(
-      [b.builder.builder for b in completed_builds])
-  failures = api.failures.update_non_critical_failures(failures,
-                                                       fresh_builder_configs)
+  with api.step.nest('clean up orchestrator'):
+    # Recheck the BuilderConfigs at HEAD to see if any failed builders are now
+    # noncritical.
+    api.cros_infra_config.force_reload()
+    fresh_builder_configs = api.cros_infra_config.safe_get_builder_configs(
+        [b.builder.builder for b in completed_builds])
+    failures = api.failures.update_non_critical_failures(
+        failures, fresh_builder_configs)
   return api.failures.aggregate_failures(failures)
 
 
@@ -873,8 +875,10 @@ def GenTests(api):
       ]
   }
 
-  builds = [api.buildbucket.ci_build_message(builder='amd64-generic-postsubmit',
-                                             status='SUCCESS')]
+  builds = [
+      api.buildbucket.ci_build_message(builder='amd64-generic-postsubmit',
+                                       status='SUCCESS')
+  ]
   api.cros_bisect.add_output_props(builds[0], 'amd64-generic')
 
   yield (api.test('with_test_bisection_invocation') +  #

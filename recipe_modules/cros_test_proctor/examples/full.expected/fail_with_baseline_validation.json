@@ -23,7 +23,10 @@
   },
   {
     "cmd": [],
-    "name": "run tests"
+    "name": "run tests",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 test(s) failed. will run baseline validation@@@"
+    ]
   },
   {
     "cmd": [],
@@ -1600,11 +1603,14 @@
   },
   {
     "cmd": [],
-    "name": "find baseline builds"
+    "name": "run baseline tests"
   },
   {
     "cmd": [],
-    "name": "run baseline tests"
+    "name": "run baseline tests.find baseline builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
@@ -2731,16 +2737,17 @@
   },
   {
     "cmd": [],
-    "name": "set passed_tests",
+    "name": "check test results",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"vm-test\", \"moblab-vm-test\"]@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "check test results",
+    "name": "check test results.set passed_tests",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"vm-test\", \"moblab-vm-test\"]@@@"
     ]
   },
   {

@@ -52,7 +52,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns
       list[failures.Failure]: failures encountered running tests
     """
-    with self.m.step.nest('run tests'):
+    with self.m.step.nest('run tests') as step:
       with self.m.step.nest('schedule tests'):
         test_plan = self._get_test_plan(need_tests_builds, snapshot)
 
@@ -69,9 +69,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         test_to_build_target_map = {}
 
-        test_tasks = self.schedule_tests(
-            test_plan, passed_tests, test_to_build_target_map, snapshot,
-            dev=dev)
+        test_tasks = self.schedule_tests(test_plan, passed_tests,
+                                         test_to_build_target_map, snapshot,
+                                         dev=dev)
 
       with self.m.step.nest('collect tests'):
         test_results = self.collect_tests(test_tasks)
@@ -83,17 +83,26 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             if not self.m.failures.is_critical_test_failure(test_result)
         ]
 
-    baseline_results = self.MetaTestTuple([], [], [], [])
-    failed_test_names = ([
-        self.m.naming.get_test_title(test_result)
-        for test_result in (test_results.skylab + test_results.autotest_vm +
-                            test_results.tast_vm)
-        if self.m.failures.is_critical_test_failure(test_result)
-    ])
-
-    needs_baseline_validation = self._needs_baseline_validation(
+      baseline_results = self.MetaTestTuple([], [], [], [])
+      failed_test_names = ([
+          self.m.naming.get_test_title(test_result)
+          for test_result in (test_results.skylab + test_results.autotest_vm +
+                              test_results.tast_vm)
+          if self.m.failures.is_critical_test_failure(test_result)
+      ])
+      needs_baseline_validation = self._needs_baseline_validation(
           failed_test_names, test_plan, baseline_validation_percent,
           baseline_validation_count)
+      if needs_baseline_validation:
+        step.presentation.step_text = (
+            '{} test(s) failed. will run baseline validation'.format(
+                len(failed_test_names)))
+      elif failed_test_names:
+        step.presentation.step_text = ('{} test(s) failed'.format(
+            len(failed_test_names)))
+      else:
+        step.presentation.step_text = (
+            'all tests passed. no need for baseline validation')
 
     with self.m.failures.ignore_exceptions():
       if gerrit_changes and needs_baseline_validation:
@@ -103,15 +112,15 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             for test_name in failed_test_names
         ])
         baseline_builds = []
-        with self.m.step.nest('find baseline builds'):
-          for build in completed_builds:
-            build_target = self.m.cros_history.get_build_target(build)
-            if build_target and build_target in build_targets_to_verify:
-              baseline_builds += self.m.cros_history.get_snapshot_builds(
-                  build.input.gitiles_commit, [build_target + '-snapshot'],
-                  [common_pb2.SUCCESS])
 
         with self.m.step.nest('run baseline tests'):
+          with self.m.step.nest('find baseline builds'):
+            for build in completed_builds:
+              build_target = self.m.cros_history.get_build_target(build)
+              if build_target and build_target in build_targets_to_verify:
+                baseline_builds += self.m.cros_history.get_snapshot_builds(
+                    build.input.gitiles_commit, [build_target + '-snapshot'],
+                    [common_pb2.SUCCESS])
           with self.m.step.nest('schedule baseline tests'):
             baseline_test_plan = self.m.cros_test_plan.generate(
                 baseline_builds, snapshot.id)
@@ -130,9 +139,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                 if self.m.failures.is_critical_test_failure(test_result)
             ])
 
-    self.m.cros_history.set_passed_tests(passed_tests)
-
     with self.m.step.nest('check test results'):
+      self.m.cros_history.set_passed_tests(passed_tests)
       self.m.cros_bisect.set_test_failures(test_results.skylab,
                                            needs_baseline_validation)
       failures = self.get_test_failures(test_results, baseline_results)
@@ -176,8 +184,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       MetaTestTuple of lists of the tests scheduled.
     """
-    skylab_tasks = self._schedule_skylab_tests(
-        test_plan, passed_tests, test_to_build_map, dev=dev)
+    skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests,
+                                               test_to_build_map, dev=dev)
 
     autotest_vm_tests = self._schedule_autotest_vm_tests(
         test_plan, passed_tests, snapshot, test_to_build_map)
@@ -417,10 +425,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     test_count = (
         self._critical_test_count(test_plan.hw_test_units,
                                   lambda unit: unit.hw_test_cfg,
-                                  lambda cfg: cfg.hw_test) +
+                                  lambda cfg: cfg.hw_test) +  #
         self._critical_test_count(test_plan.vm_test_units,
                                   lambda unit: unit.vm_test_cfg,
-                                  lambda cfg: cfg.vm_test) +
+                                  lambda cfg: cfg.vm_test) +  #
         self._critical_test_count(test_plan.tast_vm_test_units,
                                   lambda unit: unit.tast_vm_test_cfg,
                                   lambda cfg: cfg.tast_vm_test))

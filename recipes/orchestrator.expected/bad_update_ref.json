@@ -23,6 +23,13 @@
   },
   {
     "cmd": [],
+    "name": "set up orchestrator",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "RECIPE CRASH (Uncaught exception)",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@",
@@ -33,11 +40,11 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 57, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 58, in RunSteps",
       "    validate_refs(properties.update_manifest_refs)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 397, in validate_refs",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 399, in validate_refs",
       "    validate_ref(refs.start, 'start')",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 410, in validate_ref",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 412, in validate_ref",
       "    raise ValueError('%s ref %s is missing refs/heads/' % (name, ref))",
       "ValueError: start ref foo is missing refs/heads/"
     ]

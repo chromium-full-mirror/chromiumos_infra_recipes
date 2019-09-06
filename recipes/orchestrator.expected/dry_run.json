@@ -23,8 +23,13 @@
   },
   {
     "cmd": [],
-    "name": "set BISECT_BUILDER",
+    "name": "set up orchestrator"
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.set BISECT_BUILDER",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"bisecting-orchestrator\"@@@"
     ]
   },
@@ -99,7 +104,14 @@
   },
   {
     "cmd": [],
-    "name": "read build config"
+    "name": "run builds"
+  },
+  {
+    "cmd": [],
+    "name": "run builds.read build config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -114,15 +126,11 @@
       "text"
     ],
     "infra_step": true,
-    "name": "read build config.fetch master:generated/builder_configs.cfg",
+    "name": "run builds.read build config.fetch master:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "run builds"
   },
   {
     "cmd": [],
