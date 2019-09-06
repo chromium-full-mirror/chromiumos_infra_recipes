@@ -6,6 +6,7 @@
 """API for creating task URLs out of complex data structures."""
 
 from recipe_engine import recipe_api
+from PB.test_platform.taskstate import TaskState
 
 
 class UrlsApi(recipe_api.RecipeApi):
@@ -62,8 +63,8 @@ class UrlsApi(recipe_api.RecipeApi):
     else:
       link_map = {}
       for task_result in skylab_result.child_results:
-        if not task_result.success:
-          link_map[task_result.name] = task_result.task_run_url
+        if task_result.state != TaskState.VERDICT_PASSED:
+          link_map[task_result.name] = task_result.task_url
 
       return link_map
 

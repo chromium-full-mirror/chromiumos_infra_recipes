@@ -8,11 +8,15 @@ import structs
 from recipe_engine import recipe_test_api
 
 from PB.chromiumos.common import BuildTarget
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
+
+from google.protobuf import struct_pb2
+from google.protobuf import json_format
 
 
 class SkylabTestApi(recipe_test_api.RecipeTestApi):
@@ -105,3 +109,32 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         success=success,
         child_results=child_results or [],
     )  # pragma: no cover
+
+  def response(self, success=False):
+    json_string = """
+{
+  "response": {
+      "state": {
+          "verdict": "%s",
+          "lifeCycle": "LIFE_CYCLE_COMPLETED"
+      },
+      "taskResults": [
+          {
+              "state": {
+                  "verdict": "VERDICT_PASSED",
+                  "lifeCycle": "LIFE_CYCLE_COMPLETED"
+              },
+              "taskUrl": "https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010",
+              "name": "cheets_NotificationTest",
+              "logUrl": "https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/"
+          }
+      ]
+  }
+}"""
+    verdict = 'VERDICT_PASSED' if success else 'VERDICT_FAILED'
+    response_struct = struct_pb2.Struct()
+    return json_format.Parse(json_string % verdict, response_struct)
+
+  def test_with_execute_response(self, id, success=False):
+    return build_pb2.Build(
+        id=id, output=build_pb2.Build.Output(properties=self.response(success)))

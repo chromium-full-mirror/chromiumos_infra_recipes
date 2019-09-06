@@ -9,7 +9,8 @@ import json
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.test_platform.skylab_tool.result import WaitTaskResult
+from PB.test_platform.steps.execution import ExecuteResponse
+from PB.test_platform.taskstate import TaskState
 
 DEPS = [
     'recipe_engine/assertions',
@@ -38,21 +39,21 @@ def RunSteps(api):
       api.urls.get_skylab_result_link_map(skylab_result),
       {'suite page': 'skylab.whatever'})
 
-  all_results = WaitTaskResult()
-  child_result1 = all_results.child_results.add()
-  child_result1.success = False
+  response = ExecuteResponse()
+  child_result1 = response.task_results.add()
+  child_result1.state.verdict = TaskState.VERDICT_FAILED
   child_result1.name = 'first test'
-  child_result1.task_run_url = 'link.com'
-  child_result2 = all_results.child_results.add()
-  child_result2.success = False
+  child_result1.task_url = 'link.com'
+  child_result2 = response.task_results.add()
+  child_result2.state.verdict = TaskState.VERDICT_FAILED
   child_result2.name = 'second test'
-  child_result2.task_run_url = 'newlink.com'
+  child_result2.task_url = 'newlink.com'
   expected_map = {
       'first test': 'link.com',
       'second test': 'newlink.com',
   }
   skylab_result = api.skylab.test_api.skylab_result(
-      task=skylab_task, success=False, child_results=all_results.child_results)
+      task=skylab_task, success=False, child_results=response.task_results)
   api.assertions.assertEqual(
       api.urls.get_skylab_result_link_map(skylab_result), expected_map)
 

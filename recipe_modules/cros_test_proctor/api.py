@@ -213,7 +213,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """
     hw_results = []
     if test_tasks.skylab:
-      hw_results = self.m.skylab.wait_tasks(test_tasks.skylab)
+      hw_results = self.m.skylab.wait_on_recipes(test_tasks.skylab)
     autotest_vm_results = []
     if test_tasks.autotest_vm:
       autotest_vm_results = self.m.buildbucket.collect_builds(

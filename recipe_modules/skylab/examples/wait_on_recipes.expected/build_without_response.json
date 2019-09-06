@@ -1,0 +1,128 @@
+[
+  {
+    "cmd": [],
+    "name": "collect skylab tasks",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=1234, url='https://google.com', test=suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
+      "@@@STEP_LOG_LINE@return value@common {@@@",
+      "@@@STEP_LOG_LINE@return value@  display_name: \"target.hw.bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@  critical {@@@",
+      "@@@STEP_LOG_LINE@return value@    value: true@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@, unit=common {@@@",
+      "@@@STEP_LOG_LINE@return value@  build_target {@@@",
+      "@@@STEP_LOG_LINE@return value@    name: \"build_target_name\"@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@  build_payload {@@@",
+      "@@@STEP_LOG_LINE@return value@    artifacts_gs_bucket: \"gsbucket\"@@@",
+      "@@@STEP_LOG_LINE@return value@    artifacts_gs_path: \"gspath\"@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@hw_test_cfg {@@@",
+      "@@@STEP_LOG_LINE@return value@  hw_test {@@@",
+      "@@@STEP_LOG_LINE@return value@    suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@    skylab_board: \"target\"@@@",
+      "@@@STEP_LOG_LINE@return value@    common {@@@",
+      "@@@STEP_LOG_LINE@return value@      display_name: \"target.hw.bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@      critical {@@@",
+      "@@@STEP_LOG_LINE@return value@        value: true@@@",
+      "@@@STEP_LOG_LINE@return value@      }@@@",
+      "@@@STEP_LOG_LINE@return value@    }@@@",
+      "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@), success=False, child_results=[])@@@",
+      "@@@STEP_LOG_END@return value@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect skylab tasks.buildbucket.collect",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "collect",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-interval",
+      "60s",
+      "1234"
+    ],
+    "infra_step": true,
+    "name": "collect skylab tasks.buildbucket.collect.wait",
+    "timeout": 25200,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "collect skylab tasks.buildbucket.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"1234\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"1234\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
+      "    properties_def, api=api)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in invoke_with_properties",
+      "    arg_names, **additional_args)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in _invoke_with_properties",
+      "    return callable_obj(*props, **additional_args)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/skylab/examples/wait_on_recipes.py\", line 23, in RunSteps",
+      "    api.assertions.assertEqual(actual.success, expected.success)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_modules/assertions/api.py\", in assertion_wrapper",
+      "    raise AssertionError(e.message)",
+      "AssertionError: False != True"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: AssertionError('False != True',)"
+    },
+    "name": "$result"
+  }
+]

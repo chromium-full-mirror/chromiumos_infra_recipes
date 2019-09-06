@@ -495,12 +495,10 @@ def GenTests(api):
   ctp_response2 = rpc_pb2.BatchResponse(
       responses=[dict(schedule_build=cros_test_platforms[1])])
 
-  hw_tests = {
-      'results': [
-          api.skylab.wait_task_result(id=1234, name='hw test1', success=True),
-          api.skylab.wait_task_result(id=4321, name='hw test2', success=True),
-      ]
-  }
+  hw_tests = [
+      api.skylab.test_with_execute_response(id=1234, success=True),
+      api.skylab.test_with_execute_response(id=4321, success=True),
+  ]
 
   builds = [
       build_pb2.Build(id=8922054662172514000, builder={
@@ -540,9 +538,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -574,9 +572,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -601,9 +599,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -630,9 +628,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -662,9 +660,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -692,9 +690,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -718,9 +716,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -744,9 +742,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -794,9 +792,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -824,9 +822,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -854,9 +852,9 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
              'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests) +  #
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
              vm_tests,
              step_name='run tests.collect tests.collect autotest vm tests') +
@@ -867,11 +865,9 @@ def GenTests(api):
              step_name='run tests.collect tests.collect moblab vm tests'))
 
   hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
-  hw_tests = {
-      'results': [
-          api.skylab.wait_task_result(id='1234', name='hw test1', success=True),
-      ]
-  }
+  hw_tests = [
+      api.skylab.test_with_execute_response(id=1234, success=False),
+  ]
 
   builds = [
       api.buildbucket.ci_build_message(builder='amd64-generic-postsubmit',
@@ -897,6 +893,6 @@ def GenTests(api):
          api.buildbucket.simulated_schedule_output(
              ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
              'schedule kip.hw.bvt-cq.buildbucket.schedule') +  #
-         api.easy.simulate_json_step(
-             'run tests.collect tests.'
-             'collect skylab tasks.skylab wait-tasks', hw_tests))
+         api.buildbucket.simulated_collect_output(
+             hw_tests, 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect'))

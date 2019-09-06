@@ -15,6 +15,8 @@ import structs
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.skylab_tool.result import WaitTasksResult
 from PB.test_platform.request import Request
+from PB.test_platform.steps.execution import ExecuteResponse
+from PB.test_platform.taskstate import TaskState
 
 
 class SkylabApi(recipe_api.RecipeApi):
@@ -185,6 +187,52 @@ class SkylabApi(recipe_api.RecipeApi):
 
       step.presentation.logs['return value'] = [str(x) for x in results]
       return results
+
+  def wait_on_recipes(self, tasks):
+    """Wait for all Skylab suites to finish and return the results.
+
+    Args:
+      tasks (list[SkylabTask]): The Skylab tasks to wait on.
+
+    Returns:
+      list[SkylabResult]: The results for each suite.
+    """
+    tasks_by_id = {task.id: task for task in tasks}
+
+    with self.m.step.nest('collect skylab tasks') as step:
+      task_ids = [task.id for task in tasks]
+      all_hw_tests = self.m.buildbucket.collect_builds(
+          task_ids, timeout=self._skylab_timeout_mins * 60)
+
+      results = []
+      for test_id, test in all_hw_tests.items():
+        test_response = self._get_execute_response(test)
+        success = test_response.state.verdict == TaskState.VERDICT_PASSED
+        results.append(
+            self.SkylabResult(task=tasks_by_id[test_id], success=success,
+                              child_results=test_response.task_results))
+
+      step.presentation.logs['return value'] = [str(x) for x in results]
+      return results
+
+  def _get_execute_response(self, build):
+    # ExecuteResponse is stored as a Struct in output.properties.
+    # This helper handles the re-casting and error catching.
+    try:
+      response_struct = build.output.properties['response']
+      response_json = json_format.MessageToJson(response_struct)
+      response = ExecuteResponse()
+      json_format.Parse(response_json, response)
+    except (ValueError, json_format.ParseError) as e:  #pragma: no cover
+      return self._default_failed_response()
+
+    return response
+
+  def _default_failed_response(self):
+    response = ExecuteResponse()
+    response.state.verdict = TaskState.VERDICT_FAILED
+    response.state.life_cycle = TaskState.LIFE_CYCLE_COMPLETED
+    return response
 
   def _ensure_skylab(self):
     """Ensure the Skylab CLI is installed."""
