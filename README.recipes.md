@@ -1043,6 +1043,9 @@ A module for generating tags.
 
 Returns the tags typically added to scheduled child builders.
 
+Args:
+  snapshot (GitilesCommit): snapshot the build was synced on
+
 Returns:
   list[{key, value}] to output as buildbucket tags
 ### *recipe_modules* / [cros\_test\_plan](/recipe_modules/cros_test_plan)
