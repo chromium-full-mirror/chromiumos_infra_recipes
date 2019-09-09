@@ -177,6 +177,31 @@ def GenTests(api):
           critical=common_pb2.NO,
           input=input_proto(common_pb2.GitilesCommit(), 'target')),
   ]
+
+  yield (api.test('no_tests_scheduled') +  #
+         api.properties(
+             need_tests_builds_serialized=serialize_builds(
+                 [cq_orchestrator_build_with_gerrit_change()])) +  #
+         api.properties(baseline_validation_percent=0) +  #
+         api.properties(baseline_validation_count=0) +  #
+         api.buildbucket.simulated_schedule_output(
+             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+         api.buildbucket.simulated_schedule_output(
+             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+         api.buildbucket.simulated_collect_output(
+             [], 'run tests.collect tests.'
+             'collect skylab tasks.buildbucket.collect') +  #
+         api.buildbucket.simulated_collect_output(
+             [],
+             step_name='run tests.collect tests.collect autotest vm tests') +
+         api.buildbucket.simulated_collect_output(
+             [], step_name='run tests.collect tests.collect tast vm tests') +
+         api.buildbucket.simulated_collect_output(
+             [],
+             step_name='run tests.collect tests.collect moblab vm tests'))
+
   hw_tests = [
       api.skylab.test_with_execute_response(id=1234, success=False),
       api.skylab.test_with_execute_response(id=4321, success=False),

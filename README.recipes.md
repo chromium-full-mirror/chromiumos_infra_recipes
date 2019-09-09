@@ -1141,7 +1141,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#205)(self, test_tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#208)(self, test_tasks):**
 
 Collect on all tests from test_tasks.
 
@@ -1154,7 +1154,7 @@ Args:
 Returns:
   MetaTestTuple of lists of tests collected.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#239)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#242)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -1191,7 +1191,7 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#172)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#175)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
 
 Schedule all tests from the test_plan.
 

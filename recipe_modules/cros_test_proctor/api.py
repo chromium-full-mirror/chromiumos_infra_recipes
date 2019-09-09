@@ -74,6 +74,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                          test_to_build_target_map, snapshot,
                                          dev=dev)
 
+      passed_tests = []
       with self.m.step.nest('collect tests'):
         test_results = self.collect_tests(test_tasks)
         # Record test results.
@@ -101,9 +102,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       elif failed_test_names:
         step.presentation.step_text = ('{} test(s) failed'.format(
             len(failed_test_names)))
-      else:
+      elif passed_tests:
         step.presentation.step_text = (
             'all tests passed. no need for baseline validation')
+      else:
+        step.presentation.step_text = ('no tests were necessary')
 
     with self.m.failures.ignore_exceptions():
       if gerrit_changes and needs_baseline_validation:
