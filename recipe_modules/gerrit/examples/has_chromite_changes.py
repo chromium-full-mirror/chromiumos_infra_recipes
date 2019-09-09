@@ -145,14 +145,6 @@ def RunSteps(api):
   api.assertions.assertEqual(gerrit_change_url,
                              'https://chromium-review.googlesource.com/12345')
 
-  # Test has_chromite_changes
-  gerrit_change = common_pb2.GerritChange(
-      project='chromiumos/chromite', host='crrev.com', patchset=42, change=1)
-  api.assertions.assertTrue(api.gerrit.has_chromite_changes([gerrit_change]))
-  gerrit_change.project = 'something_else'
-  api.assertions.assertFalse(api.gerrit.has_chromite_changes([gerrit_change]))
-  api.assertions.assertFalse(api.gerrit.has_chromite_changes([]))
-
 
 def GenTests(api):
   yield api.test('basic')
