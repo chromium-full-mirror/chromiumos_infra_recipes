@@ -2756,9 +2756,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/cq_depend_strings.py#14)(api):**
 ### *recipes* / [cros\_cq\_depends:examples/ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py)
 
-[DEPS](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#6): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/tempfile][recipe_engine/recipe_modules/tempfile]
+[DEPS](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#6): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#17)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit)
@@ -3420,7 +3420,6 @@ Basic tests for the urls recipe module.
 [recipe_engine/recipe_modules/service_account]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8fd8dc56140820b86ce0bda8c61a66021413c9d6/README.recipes.md#recipe_modules-service_account
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8fd8dc56140820b86ce0bda8c61a66021413c9d6/README.recipes.md#recipe_modules-step
 [recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8fd8dc56140820b86ce0bda8c61a66021413c9d6/README.recipes.md#recipe_modules-swarming
-[recipe_engine/recipe_modules/tempfile]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8fd8dc56140820b86ce0bda8c61a66021413c9d6/README.recipes.md#recipe_modules-tempfile
 [recipe_engine/recipe_modules/time]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8fd8dc56140820b86ce0bda8c61a66021413c9d6/README.recipes.md#recipe_modules-time
 [recipe_engine/recipe_modules/url]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8fd8dc56140820b86ce0bda8c61a66021413c9d6/README.recipes.md#recipe_modules-url
 [recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8fd8dc56140820b86ce0bda8c61a66021413c9d6/recipe_engine/recipe_api.py#868

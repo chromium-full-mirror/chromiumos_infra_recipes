@@ -7,7 +7,6 @@ DEPS = [
   'recipe_engine/context',
   'recipe_engine/path',
   'recipe_engine/raw_io',
-  'recipe_engine/tempfile',
 
   'cros_source',
   'cros_cq_depends',
