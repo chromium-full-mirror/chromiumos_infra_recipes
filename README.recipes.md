@@ -141,9 +141,7 @@
   * [sign_paygen](#recipes-sign_paygen) &mdash; Recipe for signing ChromeOS payloads (AU deltas etc).
   * [signing](#recipes-signing) &mdash; Recipe for signing ChromeOS images.
   * [skylab:examples/create_recipe](#recipes-skylab_examples_create_recipe)
-  * [skylab:examples/create_suite](#recipes-skylab_examples_create_suite)
   * [skylab:examples/wait_on_recipes](#recipes-skylab_examples_wait_on_recipes)
-  * [skylab:examples/wait_tasks](#recipes-skylab_examples_wait_tasks)
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
@@ -2405,7 +2403,7 @@ Args:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#86)(self, test, unit, name=None):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#38)(self, test, unit, name=None):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -2417,40 +2415,12 @@ Args:
 Returns:
   SkylabTask: with buildbucket_id of the recipe launched.
 
-&mdash; **def [create\_suite](/recipe_modules/skylab/api.py#43)(self, test, unit, name=None, dev=False):**
-
-Schedule a HW test suite.
-
-Args:
-  test (HwTest): A hardware test config.
-  unit (HwTestUnit): The unit the test was defined in.
-  name (str): The step name. Defaults to 'schedule <test title>'
-  dev (boolean): Whether to use Skylab dev instance.
-
-Returns:
-  SkylabTask: The swarming task ID.
-
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#40)(self):**
-
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#191)(self, tasks):**
+&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#94)(self, tasks):**
 
 Wait for all Skylab suites to finish and return the results.
 
 Args:
   tasks (list[SkylabTask]): The Skylab tasks to wait on.
-
-Returns:
-  list[SkylabResult]: The results for each suite.
-
-&mdash; **def [wait\_tasks](/recipe_modules/skylab/api.py#142)(self, tasks, dev=False):**
-
-Wait for all Skylab suites to finish and return the results.
-
-Uses skylab wait-tasks internally.
-
-Args:
-  tasks (list[SkylabTask]): The Skylab tasks to wait on.
-  dev (boolean): Whether to use Skylab dev instance.
 
 Returns:
   list[SkylabResult]: The results for each suite.
@@ -3241,21 +3211,11 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/skylab/examples/create_recipe.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_recipe.py#14)(api):**
-### *recipes* / [skylab:examples/create\_suite](/recipe_modules/skylab/examples/create_suite.py)
-
-[DEPS](/recipe_modules/skylab/examples/create_suite.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_suite.py#14)(api):**
 ### *recipes* / [skylab:examples/wait\_on\_recipes](/recipe_modules/skylab/examples/wait_on_recipes.py)
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_recipes.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_recipes.py#15)(api):**
-### *recipes* / [skylab:examples/wait\_tasks](/recipe_modules/skylab/examples/wait_tasks.py)
-
-[DEPS](/recipe_modules/skylab/examples/wait_tasks.py#6): [easy](#recipe_modules-easy), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
-
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_tasks.py#16)(api):**
 ### *recipes* / [skylab\_local\_state:examples/full](/recipe_modules/skylab_local_state/examples/full.py)
 
 [DEPS](/recipe_modules/skylab_local_state/examples/full.py#6): [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
