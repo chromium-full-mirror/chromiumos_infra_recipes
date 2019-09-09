@@ -1,6 +1,5 @@
 DEPS = [
     'cros_build_api',
-    'cros_sdk',
     'cros_source',
     'recipe_engine/cipd',
     'recipe_engine/context',
