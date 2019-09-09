@@ -54,7 +54,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('run tests') as step:
       with self.m.step.nest('schedule tests'):
-        test_plan = self._get_test_plan(need_tests_builds, snapshot)
+        test_plan = self._get_test_plan(need_tests_builds, gerrit_changes,
+                                        snapshot)
 
         dev = False
         if need_tests_builds:
@@ -123,7 +124,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                     [common_pb2.SUCCESS])
           with self.m.step.nest('schedule baseline tests'):
             baseline_test_plan = self.m.cros_test_plan.generate(
-                baseline_builds, snapshot.id)
+                baseline_builds, gerrit_changes, snapshot.id)
             baseline_tasks = self.schedule_tests(
                 baseline_test_plan, passed_tests, snapshot=snapshot, dev=dev)
 
@@ -146,17 +147,19 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       failures = self.get_test_failures(test_results, baseline_results)
     return failures
 
-  def _get_test_plan(self, builds, snapshot):
+  def _get_test_plan(self, builds, gerrit_changes, snapshot):
     """Returns the test plan that should be executed for this invocation.
 
     Args:
       builds (list[build_pb2.Build]): builds to test.
+      gerrit_changes (list[common_pb2.GerritChange]): the changes that resulted
+          in the provided builds, or None.
       snapshot (GitilesCommit): Start ref of the child builds.
     """
     test_plan = self.m.cros_bisect.get_test_plan(builds)
     if test_plan:
       return test_plan
-    return self.m.cros_test_plan.generate(builds, snapshot.id)
+    return self.m.cros_test_plan.generate(builds, gerrit_changes, snapshot.id)
 
   def _autotest_vm_test(self, build_target):
     """Returns the autotest builder name for the given build_target."""

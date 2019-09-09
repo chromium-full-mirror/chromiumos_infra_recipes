@@ -1053,23 +1053,25 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#23)(self, builds, manifest_commit, name=None):**
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#24)(self, builds, gerrit_changes, manifest_commit, name=None):**
 
 Generate test plan.
 
 Args:
   * name (str): The step name.
   * builds (list[build_pb2.Build]): builds to test.
+  * gerrit_changes (list[common_pb2.GerritChange]): changes that were inputs
+      for these builds, or empty.
   * manifest_commit (str): manifest-internal hash for the build.
 
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#20)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#21)(self):**
 ### *recipe_modules* / [cros\_test\_platform](/recipe_modules/cros_test_platform)
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1139,7 +1141,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#202)(self, test_tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#205)(self, test_tasks):**
 
 Collect on all tests from test_tasks.
 
@@ -1152,7 +1154,7 @@ Args:
 Returns:
   MetaTestTuple of lists of tests collected.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#236)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#239)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -1189,7 +1191,7 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#169)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#172)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
 
 Schedule all tests from the test_plan.
 
@@ -2829,9 +2831,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#14)(api):**
 ### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_plan/examples/full.py#8): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_test_plan/examples/full.py#9): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#15)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

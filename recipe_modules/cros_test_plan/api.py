@@ -9,6 +9,7 @@ from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
@@ -20,12 +21,14 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
   def initialize(self):
     self._test_planner_path = None
 
-  def generate(self, builds, manifest_commit, name=None):
+  def generate(self, builds, gerrit_changes, manifest_commit, name=None):
     """Generate test plan.
 
     Args:
       * name (str): The step name.
       * builds (list[build_pb2.Build]): builds to test.
+      * gerrit_changes (list[common_pb2.GerritChange]): changes that were inputs
+          for these builds, or empty.
       * manifest_commit (str): manifest-internal hash for the build.
 
     Returns:
@@ -34,13 +37,17 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
     with self.m.step.nest(name or 'generate test plan') as step:
       self._ensure_test_planner()
 
+      if not gerrit_changes:
+        gerrit_changes = []  # pragma: nocover
       messages_path = self.m.path.mkdtemp(prefix='test-plan-')
       input_file = messages_path.join('input.json')
       output_file = messages_path.join('output.json')
 
       request_proto = GenerateTestPlanRequest(
-          manifest_commit=manifest_commit,
-          buildbucket_protos=[
+          manifest_commit=manifest_commit, gerrit_changes=[
+              ProtoBytes(serialized_proto=GerritChange.SerializeToString(gc))
+              for gc in gerrit_changes
+          ], buildbucket_protos=[
               ProtoBytes(serialized_proto=Build.SerializeToString(build))
               for build in builds
           ])
