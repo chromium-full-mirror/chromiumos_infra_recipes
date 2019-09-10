@@ -3048,7 +3048,6 @@
     "name": "check test results.hw test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@cheets_NotificationTest@https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -3147,7 +3146,6 @@
     "name": "check test results.baseline hw test results.htarget.hw.bvt-inline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@cheets_NotificationTest@https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
