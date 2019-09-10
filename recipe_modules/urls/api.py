@@ -63,7 +63,8 @@ class UrlsApi(recipe_api.RecipeApi):
     else:
       link_map = {}
       for task_result in skylab_result.child_results:
-        if task_result.state.verdict != TaskState.VERDICT_PASSED:
+        if task_result.state.verdict in (TaskState.VERDICT_FAILED,
+                                         TaskState.VERDICT_UNSPECIFIED):
           link_map[task_result.name] = task_result.task_url
 
       return link_map
