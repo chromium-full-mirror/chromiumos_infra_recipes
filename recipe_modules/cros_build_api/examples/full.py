@@ -59,16 +59,21 @@ def RunSteps(api):
   response_type_by_service = {
       'ArtifactsService': {
           endpoint: artifacts.BundleResponse for endpoint in [
-              'BundleImageZip', 'BundleTestUpdatePayloads',
-              'BundleAutotestFiles', 'BundleTastFiles',
-              'BundlePinnedGuestImages', 'BundleFirmware', 'BundleEbuildLogs',
-              'BundleChromeOSConfig', 'ExportCpeReport',
+              'BundleImageZip',
+              'BundleTestUpdatePayloads',
+              'BundleAutotestFiles',
+              'BundleTastFiles',
+              'BundlePinnedGuestImages',
+              'BundleFirmware',
+              'BundleEbuildLogs',
+              'BundleChromeOSConfig',
+              'ExportCpeReport',
           ]
       },
       'BinhostService': {
           'PrepareBinhostUploads': binhost.PrepareBinhostUploadsResponse,
           'SetBinhost': binhost.SetBinhostResponse,
-          'Get' : binhost.BinhostGetResponse,
+          'Get': binhost.BinhostGetResponse,
           'GetPrivatePrebuiltAclArgs': binhost.AclArgsResponse,
       },
       'DependencyService': {
@@ -82,7 +87,7 @@ def RunSteps(api):
           'GetBestVisible': packages.GetBestVisibleResponse,
           'GetChromeVersion': packages.GetChromeVersionResponse,
           'Uprev': packages.UprevPackagesResponse,
-          'UprevVersionedPackage': packages.UprevPackagesResponse,
+          'UprevVersionedPackage': packages.UprevVersionedPackageResponse,
       },
       'SdkService': {
           'Create': sdk.CreateResponse,

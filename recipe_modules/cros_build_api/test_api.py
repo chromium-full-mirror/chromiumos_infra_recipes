@@ -111,11 +111,27 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['GetChromeVersion'] = jsonify(
         version='version',
     )
-    for endpoint in ('Uprev', 'UprevVersionedPackage'):
-      responses[endpoint] = jsonify(version='1.2.3', modified_ebuilds=[
-          {'path': self.path('chromiumos/src/overlay/foo.ebuild')},
-          {'path': self.path('chromiumos/src/private-overlay/bar.ebuild')},
-      ])
+    responses['Uprev'] = jsonify(
+        version='1.2.3', modified_ebuilds=[
+            {
+                'path': self.path('chromiumos/src/overlay/foo.ebuild')
+            },
+            {
+                'path': self.path('chromiumos/src/private-overlay/bar.ebuild')
+            },
+        ])
+    responses['UprevVersionedPackage'] = jsonify(responses=[
+        dict(
+            version='1.2.3', modified_ebuilds=[
+                {
+                    'path': self.path('chromiumos/src/overlay/foo.ebuild')
+                },
+                {
+                    'path':
+                        self.path('chromiumos/src/private-overlay/bar.ebuild')
+                },
+            ])
+    ])
     return responses
 
   @property

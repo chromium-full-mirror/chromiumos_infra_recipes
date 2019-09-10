@@ -357,7 +357,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"}]}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
