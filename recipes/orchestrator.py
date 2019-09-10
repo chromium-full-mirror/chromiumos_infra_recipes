@@ -303,6 +303,8 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
 
   with api.step.nest('filter builds') as step:
     for child in child_builders:
+      child_builder_config = api.cros_infra_config.get_builder_config(child)
+      critical = child_builder_config.general.critical.value
 
       # now we have a list of build names such as ['buddy-postsubmit', ...]
       # whereas snapshot_builds and completed_builds might be postfixed
@@ -313,13 +315,14 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       if child in completed_builders:
         filter_log.append('{} already passed'.format(child_target))
         continue
+
       # We've already found an existing build, we'll just wait on it later.
       elif child_target in snapshot_build_targets:
-        filtered_snapshot_builds.append(snapshot_build_targets[child_target])
+        snapshot_build = snapshot_build_targets[child_target]
+        snapshot_build.critical = common_pb2.YES if critical else common_pb2.NO
+        filtered_snapshot_builds.append(snapshot_build)
         filter_log.append('{} exists, will join on it'.format(child_target))
         continue
-
-      child_builder_config = api.cros_infra_config.get_builder_config(child)
 
       # Don't do child builds that are unaffected by the gerrit_changes. The
       # IMAGE_ZIP check makes this check only apply to those builders that
@@ -332,7 +335,6 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
         continue
 
       # Don't retry non-critical builds.
-      critical = child_builder_config.general.critical.value
       if not critical and is_retry:
         filter_log.append('{} is non-critical and already ran'.format(child))
         continue
@@ -379,7 +381,9 @@ def get_completed_builds(api, cq_orch_children):
       builder_config = api.cros_infra_config.get_builder_config(
           build.builder.builder)
       # Refresh the criticality of the builders.
-      build.critical = builder_config.general.critical.value
+      build.critical = (
+          common_pb2.YES
+          if builder_config.general.critical.value else common_pb2.NO)
       completed_builds.append(build)
 
   return completed_builds
