@@ -130,7 +130,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
             presentation = self.m.step.active_result.presentation
             presentation.status = self.m.step.SUCCESS
             presentation.step_text = (
-                'merge gerrit changes (failed & forgiven)')
+                'merge failed. will try cherry-pick instead')
             self.m.git.cherry_pick(commit_id, infra_step=False)
 
           new_commit_id = self.m.git.head_commit()

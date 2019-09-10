@@ -65,7 +65,7 @@
       "--abort"
     ],
     "infra_step": true,
-    "name": "git merge (2)"
+    "name": "git merge --abort"
   },
   {
     "cmd": [

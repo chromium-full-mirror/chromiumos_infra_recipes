@@ -192,7 +192,7 @@ other_test.txt
 
   def merge_abort(self):
     """Runs 'git merge --abort'."""
-    self._step(['merge', '--abort'])
+    self._step(['merge', '--abort'], name='git merge --abort')
 
   def commit(self, message, files=None):
     """Runs 'git commit' with the given files.
