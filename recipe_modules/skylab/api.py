@@ -75,7 +75,7 @@ class SkylabApi(recipe_api.RecipeApi):
       bb_request = self.m.buildbucket.schedule_request(
           'cros_test_platform', bucket='testplatform', properties={
               'request': request_dict,
-          }, tags=bb_tags)
+          }, tags=bb_tags, gerrit_changes=[])
       build = self.m.buildbucket.schedule([bb_request])[0]
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
