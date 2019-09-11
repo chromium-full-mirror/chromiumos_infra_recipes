@@ -85,14 +85,17 @@ def RunSteps(api, properties):
 
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
-    with api.context(cwd=api.cros_source.workspace_path):
-      with api.step.nest('init sdk') as step:
+    if properties.init_sdk:
+      with api.context(cwd=api.cros_source.workspace_path), \
+           api.step.nest('init sdk') as step:
         response = api.cros_build_api.SdkService.Create(
             CreateSdkRequest(
                 flags=CreateSdkRequest.Flags(no_replace=True,
                                              no_use_image=True),
                 chroot=api.cros_sdk.chroot))
-        step.presentation.logs['sdk version'] = [str(response.version.version)]
+        step.presentation.logs['sdk version'] = [
+            str(response.version.version)
+        ]
         # TODO(crbug.com/949721): Currently, chromite depends on the chroot
         # living within the source tree. As a workaround, link the external
         # chroot the workspace to make it look legit. New chromite services
@@ -250,6 +253,10 @@ def GenTests(api):
 
   yield (api.test('with-uprev-do-nothing-policy') + api.properties(
       existing_cls_policy=DO_NOTHING, **properties) +
+         api.scheduler(triggers=gitiles_triggers))
+
+  yield (api.test('with-uprev-do-nothing-policy-init-sdk') + api.properties(
+      existing_cls_policy=DO_NOTHING, init_sdk=True, **properties) +
          api.scheduler(triggers=gitiles_triggers))
 
   yield (api.test('with-uprev-dry-run-policy') + api.properties(
