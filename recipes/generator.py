@@ -18,6 +18,7 @@ import urlparse
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.packages import UprevVersionedPackageRequest
+from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import DO_NOTHING
 from PB.recipes.chromeos.generator import DRY_RUN
@@ -84,6 +85,20 @@ def RunSteps(api, properties):
 
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
+    with api.context(cwd=api.cros_source.workspace_path):
+      with api.step.nest('init sdk') as step:
+        response = api.cros_build_api.SdkService.Create(
+            CreateSdkRequest(
+                flags=CreateSdkRequest.Flags(no_replace=True,
+                                             no_use_image=True),
+                chroot=api.cros_sdk.chroot))
+        step.presentation.logs['sdk version'] = [str(response.version.version)]
+        # TODO(crbug.com/949721): Currently, chromite depends on the chroot
+        # living within the source tree. As a workaround, link the external
+        # chroot the workspace to make it look legit. New chromite services
+        # should accept the chroot path as a parameter.
+        api.cros_sdk.link_chroot(api.cros_source.workspace_path)
+
     with api.step.nest('try uprev {}'.format(cpv)) as step:
       request = UprevVersionedPackageRequest(
           chroot=api.cros_sdk.chroot,
