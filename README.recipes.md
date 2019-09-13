@@ -2415,7 +2415,7 @@ Args:
 Returns:
   SkylabTask: with buildbucket_id of the recipe launched.
 
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#94)(self, tasks):**
+&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#106)(self, tasks):**
 
 Wait for all Skylab suites to finish and return the results.
 

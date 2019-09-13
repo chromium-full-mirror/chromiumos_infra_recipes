@@ -70,6 +70,7 @@ class SkylabApi(recipe_api.RecipeApi):
       bb_tags = [common_pb2.StringPair(key=key, value=value)
                  for key, value in tags.items()]
       req.params.decorations.tags.extend(request_tags)
+      self._enable_test_retries(req)
 
       request_dict = json_format.MessageToDict(req)
       bb_request = self.m.buildbucket.schedule_request(
@@ -90,6 +91,17 @@ class SkylabApi(recipe_api.RecipeApi):
         'label-board': test.skylab_board,
         'suite': test.suite,
     }
+
+  def _enable_test_retries(self, req):
+    """Enable test retries within suites.
+
+    The values here are in-line with what LCQ currently does.
+
+    Args:
+      params: A request.Request object.
+    """
+    req.params.retry.max = 5
+    req.params.retry.allow = True
 
   def wait_on_recipes(self, tasks):
     """Wait for all Skylab suites to finish and return the results.
