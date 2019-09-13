@@ -259,7 +259,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize.failed tests",
+    "name": "summarize.failed or incomplete tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@(log)   foo-failed@logs://bar/baz@@@",

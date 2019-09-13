@@ -149,9 +149,10 @@ def RunSteps(api, properties):
       passed_tests = [x for x in resp.task_results
                       if x.state.verdict == TaskState.VERDICT_PASSED]
       _emit_links(step.links, passed_tests)
-    with api.step.nest('failed tests') as step:
+    with api.step.nest('failed or incomplete tests') as step:
+      bad_verdicts = (TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED)
       failed_tests = [x for x in resp.task_results
-                      if x.state.verdict == TaskState.VERDICT_FAILED]
+                      if x.state.verdict in bad_verdicts]
       _emit_links(step.links, failed_tests)
       # TODO(akeshet): Don't present failure if the underlying enumeration item
       # was retried and passed separately. Instead, include in a "failed but
