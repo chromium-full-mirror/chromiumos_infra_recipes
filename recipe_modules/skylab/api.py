@@ -118,8 +118,14 @@ class SkylabApi(recipe_api.RecipeApi):
       task_ids = [task.id for task in tasks]
       # Give 30 minutes grace period for recipes to time out.
       timeout_seconds = (self._skylab_timeout_mins + 30) * 60
-      all_hw_tests = self.m.buildbucket.collect_builds(
-          task_ids, timeout=timeout_seconds)
+      try:
+        all_hw_tests = self.m.buildbucket.collect_builds(
+            task_ids, timeout=timeout_seconds)
+      except recipe_api.StepFailure as ex:  #pragma: no cover
+        # Mark the step as an INFRA_FAILURE and get the output
+        # properties of underlying recipes.
+        step.presentation.status = 'EXCEPTION'
+        all_hw_tests = self.m.buildbucket.get_multi(task_ids)
 
       results = []
       for test_id, test in all_hw_tests.items():
