@@ -6,6 +6,7 @@
 from recipe_engine import recipe_test_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from google.protobuf import struct_pb2
 
@@ -22,8 +23,10 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       Build: Containing the expected output properties.
     """
-    build = build_pb2.Build(id=123, builder=build_pb2.BuilderID(builder='nami'))
+    build = build_pb2.Build(id=123,
+                            builder=build_pb2.BuilderID(builder='atlas-cq'))
     build.output.properties.update({'passed_tests': tests})
+    build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return build
 
   @staticmethod

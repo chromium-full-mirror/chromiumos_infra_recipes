@@ -31,8 +31,6 @@ DEPS = [
 PROPERTIES = {
     'need_tests_builds_serialized':
         Property(kind=list, help='List of serialized Build protos', default=[]),
-    'completed_builds_serialized':
-        Property(kind=list, help='List of serialized Build protos', default=[]),
     'baseline_validation_count':
         Property(kind=int, help='', default=1),
     'baseline_validation_percent':
@@ -40,8 +38,8 @@ PROPERTIES = {
 }
 
 
-def RunSteps(api, need_tests_builds_serialized, completed_builds_serialized,
-             baseline_validation_percent, baseline_validation_count):
+def RunSteps(api, need_tests_builds_serialized, baseline_validation_percent,
+             baseline_validation_count):
   snapshot = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
@@ -53,29 +51,17 @@ def RunSteps(api, need_tests_builds_serialized, completed_builds_serialized,
     b = Build()
     b.ParseFromString(b_str)
     need_tests_builds.append(b)
-  completed_builds = []
-  for b_str in completed_builds_serialized:
-    b = Build()
-    b.ParseFromString(b_str)
-    completed_builds.append(b)
   gerrit_changes = []
   if need_tests_builds:
     gerrit_changes = need_tests_builds[0].input.gerrit_changes
   test_plan = api.cros_test_proctor.run_proctor(
-      need_tests_builds=need_tests_builds, completed_builds=completed_builds,
-      snapshot=snapshot, gerrit_changes=gerrit_changes, enable_history=True,
+      need_tests_builds=need_tests_builds, snapshot=snapshot,
+      gerrit_changes=gerrit_changes, enable_history=True,
       baseline_validation_percent=baseline_validation_percent,
       baseline_validation_count=baseline_validation_count)
 
 
 def GenTests(api):
-
-  def cq_orchestrator_build_with_gerrit_change():
-    """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                             builder='cq-orchestrator')
-    build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
-    return build
 
   def vm_test_build(name):
     output = build_pb2.Build.Output()
@@ -85,16 +71,17 @@ def GenTests(api):
     return build_pb2.Build(output=output, input=input_proto,
                            status=common_pb2.SUCCESS)
 
-  def input_proto(snapshot, build_target):
+  def input_proto(snapshot, build_target, gerrit_changes=None):
     """Generate an instance of Build.Input.
 
     Args:
       * snapshot(GitilesCommit): The snapshot of the build.
       * build_target (str): The name of the build target.
+      * gerrit_changes list(GerritChange): Changes being tested in the build.
     """
     return build_pb2.Build.Input(
         properties=api.cros_history.build_target_property(build_target),
-        gitiles_commit=snapshot)
+        gitiles_commit=snapshot, gerrit_changes=gerrit_changes)
 
   def serialize_builds(builds):
     return [Build.SerializeToString(b) for b in builds]
@@ -124,15 +111,18 @@ def GenTests(api):
   ]
 
   builds = [
-      build_pb2.Build(id=8922054662172514000, builder={
-          'builder': 'amd64-generic-cq'
-      }, status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic')),
-      build_pb2.Build(id=8922054662172514001, builder={
-          'builder': 'arm-generic-cq'
-      }, status=common_pb2.STARTED, input=input_proto(None, 'arm-generic')),
-      build_pb2.Build(id=8922054662172514002, builder={'builder': 'atlas-cq'},
-                      status=common_pb2.STARTED, input=input_proto(
-                          None, 'atlas')),
+      build_pb2.Build(
+          id=8922054662172514000, builder={'builder': 'amd64-generic-cq'},
+          status=common_pb2.SUCCESS, input=input_proto(
+              None, 'amd64-generic', [common_pb2.GerritChange(change=123)])),
+      build_pb2.Build(
+          id=8922054662172514001, builder={'builder': 'arm-generic-cq'},
+          status=common_pb2.STARTED, input=input_proto(
+              None, 'arm-generic', [common_pb2.GerritChange(change=123)])),
+      build_pb2.Build(
+          id=8922054662172514002, builder={'builder': 'atlas-cq'},
+          status=common_pb2.STARTED, input=input_proto(
+              None, 'atlas', [common_pb2.GerritChange(change=123)])),
   ]
 
   yield (
@@ -142,9 +132,10 @@ def GenTests(api):
       api.cq(full_run=True) +  #
       api.properties(enable_history=True) +  #
       api.properties(
-          completed_builds=serialize_builds(
-              [api.cros_history.build_with_passed_tests(['nami/hw/bvt-cq'])]))
-      +  #
+          need_tests_builds_serialized=serialize_builds([
+              api.cros_history.build_with_passed_tests(
+                  ['arm-generic/hw/bvt-cq'])
+          ])) +  #
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
@@ -169,77 +160,72 @@ def GenTests(api):
           builder={'builder': 'amd64-generic-postsubmit'},  #
           status=common_pb2.SUCCESS,
           critical=common_pb2.YES,
-          input=input_proto(None, 'amd64-generic')),
+          input=input_proto(None, 'amd64-generic',
+                            [common_pb2.GerritChange(change=123)])),
       build_pb2.Build(
           id=8922054662172514001,
           builder={'builder': 'arm-generic-postsubmit'},  #
           status=common_pb2.FAILURE,
           critical=common_pb2.NO,
-          input=input_proto(common_pb2.GitilesCommit(), 'target')),
+          input=input_proto(common_pb2.GitilesCommit(), 'target',
+                            [common_pb2.GerritChange(change=123)])),
   ]
 
-  yield (api.test('no_tests_scheduled') +  #
-         api.properties(
-             need_tests_builds_serialized=serialize_builds(
-                 [cq_orchestrator_build_with_gerrit_change()])) +  #
-         api.properties(baseline_validation_percent=0) +  #
-         api.properties(baseline_validation_count=0) +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             [], 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             [],
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [],
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield (
+      api.test('no_tests_scheduled') +  #
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
+      api.properties(baseline_validation_percent=0) +  #
+      api.properties(baseline_validation_count=0) +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          [], 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect moblab vm tests'))
 
   hw_tests = [
       api.skylab.test_with_execute_response(id=1234, success=False),
       api.skylab.test_with_execute_response(id=4321, success=False),
   ]
 
-  yield (api.test('does_not_run_baseline_validation') +  #
-         api.properties(
-             need_tests_builds_serialized=serialize_builds(
-                 [cq_orchestrator_build_with_gerrit_change()])) +  #
-         api.properties(baseline_validation_percent=0) +  #
-         api.properties(baseline_validation_count=0) +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield (
+      api.test('does_not_run_baseline_validation') +  #
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
+      api.properties(baseline_validation_percent=0) +  #
+      api.properties(baseline_validation_count=0) +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
 
   baseline_results_failure = [
       api.skylab.test_with_execute_response(id=4321, success=False),
   ]
   yield (
       api.test('pass_with_baseline_validation') +  #
-      api.properties(
-          need_tests_builds_serialized=serialize_builds(
-              [cq_orchestrator_build_with_gerrit_change()])) +  #
-      api.properties(completed_builds_serialized=serialize_builds(builds)) +  #
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
       api.properties(baseline_validation_percent=100) +  #
       api.properties(baseline_validation_count=1) +  #
       api.buildbucket.simulated_schedule_output(
@@ -278,9 +264,7 @@ def GenTests(api):
   ]
   yield (
       api.test('fail_with_baseline_validation') +  #
-      api.properties(
-          need_tests_builds_serialized=serialize_builds(
-              [cq_orchestrator_build_with_gerrit_change()])) +  #
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
       api.properties(baseline_validation_percent=100) +  #
       api.properties(baseline_validation_count=1) +  #
       api.buildbucket.simulated_schedule_output(

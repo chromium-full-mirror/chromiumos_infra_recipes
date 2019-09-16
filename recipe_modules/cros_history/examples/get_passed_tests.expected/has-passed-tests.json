@@ -34,9 +34,16 @@
       "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"nami\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"atlas-cq\"@@@",
       "@@@STEP_LOG_LINE@json.output@            }, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"id\": \"123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@                {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"change\": \"1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }@@@",
+      "@@@STEP_LOG_LINE@json.output@              ]@@@",
+      "@@@STEP_LOG_LINE@json.output@            }, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"passed_tests\": [@@@",
@@ -68,7 +75,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@nami@https://cr-buildbucket.appspot.com/build/123@@@"
+      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/123@@@"
     ]
   },
   {

@@ -137,8 +137,8 @@ def RunSteps(api, properties):
   ]
 
   test_failures = api.cros_test_proctor.run_proctor(
-      need_tests_builds, completed_builds, snapshot, gerrit_changes,
-      properties.enable_history, properties.baseline_validation_percent,
+      need_tests_builds, snapshot, gerrit_changes, properties.enable_history,
+      properties.baseline_validation_percent,
       properties.baseline_validation_count)
   failures.extend(test_failures)
 

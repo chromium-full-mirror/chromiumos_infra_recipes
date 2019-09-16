@@ -1139,7 +1139,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#208)(self, test_tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#206)(self, test_tasks):**
 
 Collect on all tests from test_tasks.
 
@@ -1152,7 +1152,7 @@ Args:
 Returns:
   MetaTestTuple of lists of tests collected.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#242)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#240)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -1163,7 +1163,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#28)(self, need_tests_builds, completed_builds, snapshot, gerrit_changes, enable_history, baseline_validation_percent, baseline_validation_count):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#28)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, baseline_validation_percent, baseline_validation_count):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -1172,8 +1172,6 @@ This is the entry point into the Chrome OS infra test platform via recipes.
 Args:
   need_tests_builds (list[build]): builds that are eligible for testing,
       i.e. ones that didn't suffer build failures.
-  completed_builds (list[build]): all builds related to this proctor run,
-      including builds that failed at build-time.
   snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
       the included builds were created.
   gerrit_changes (list[common_pb2.GerritChange]): the changes that resulted
@@ -1189,7 +1187,7 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#175)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#173)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
 
 Schedule all tests from the test_plan.
 
@@ -2806,7 +2804,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 [DEPS](/recipe_modules/cros_test_proctor/examples/full.py#17): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#43)(api, need_tests_builds_serialized, completed_builds_serialized, baseline_validation_percent, baseline_validation_count):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#41)(api, need_tests_builds_serialized, baseline_validation_percent, baseline_validation_count):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
