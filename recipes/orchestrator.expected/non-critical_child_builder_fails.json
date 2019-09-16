@@ -1694,7 +1694,7 @@
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect skylab tasks.buildbucket.collect.wait",
-    "timeout": 25200,
+    "timeout": 27000,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

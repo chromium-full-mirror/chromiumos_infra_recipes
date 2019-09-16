@@ -104,8 +104,10 @@ class SkylabApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('collect skylab tasks') as step:
       task_ids = [task.id for task in tasks]
+      # Give 30 minutes grace period for recipes to time out.
+      timeout_seconds = (self._skylab_timeout_mins + 30) * 60
       all_hw_tests = self.m.buildbucket.collect_builds(
-          task_ids, timeout=self._skylab_timeout_mins * 60)
+          task_ids, timeout=timeout_seconds)
 
       results = []
       for test_id, test in all_hw_tests.items():
