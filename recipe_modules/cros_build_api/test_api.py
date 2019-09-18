@@ -111,6 +111,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['GetChromeVersion'] = jsonify(
         version='version',
     )
+    responses['HasChromePrebuilt'] = jsonify(
+        has_prebuilt=False,
+    )
     responses['Uprev'] = jsonify(
         version='1.2.3', modified_ebuilds=[
             {

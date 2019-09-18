@@ -28,6 +28,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
     with self.m.step.nest('configure chroot path'):
       self._chroot_path = chroot_parent_path.join('cros_chroot')
       self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
+      self._chrome_root = None
 
   @property
   def cros_sdk_path(self):
@@ -37,7 +38,13 @@ class CrosSdkApi(recipe_api.RecipeApi):
   @property
   def chroot(self):
     """Return a chromiumos.common.Chroot."""
-    return common.Chroot(path=str(self._chroot_path))
+    return common.Chroot(
+        path=str(self._chroot_path),
+        chrome_dir=self._chrome_root,
+    )
+
+  def set_chrome_root(self, chrome_root):
+    self._chrome_root = chrome_root
 
   def __call__(self, name, args, **kwargs):
     """Executes 'cros_sdk' with the supplied arguments.

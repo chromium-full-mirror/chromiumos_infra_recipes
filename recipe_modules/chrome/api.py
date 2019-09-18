@@ -51,10 +51,21 @@ class ChromeApi(recipe_api.RecipeApi):
             'checkout_src_internal': internal,
         }
 
-        cmd = [
-            'sync',
+        config_cmd = [
+            'config',
             '--spec',
             self.m.gclient.config_to_pythonish(cfg),
+        ]
+
+        adjust_cmd = [
+            'sed',
+            '-i',
+            '$ a\\target_os = ["chromeos"]',
+            '.gclient',
+        ]
+
+        sync_cmd = [
+            'sync',
             '--verbose',
             '--nohooks',
             '-j%d' % self._parallel_sync_jobs,
@@ -70,7 +81,18 @@ class ChromeApi(recipe_api.RecipeApi):
         ]
 
         with self.m.depot_tools.on_path():
+          # Writes out the .gclient file.
+          self.m.python('gclient config',
+                        self.m.depot_tools.root.join('gclient.py'),
+                        config_cmd,
+                        infra_step=True)
+
+          # Adjust .gclient to include required target_os directive.
+          # This appends one line to the gclient config file.
+          self.m.step('adjust gclient config', adjust_cmd)
+
+          # Finally, start the sync.
           self.m.python('gclient sync',
                         self.m.depot_tools.root.join('gclient.py'),
-                        cmd,
+                        sync_cmd,
                         infra_step=True)

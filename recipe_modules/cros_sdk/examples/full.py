@@ -17,6 +17,10 @@ def RunSteps(api):
   api.assertions.assertTrue(
       api.cros_sdk.chroot.path.endswith('test/cros_chroot'))
 
+  api.cros_sdk.set_chrome_root('extremely custom_chrome_root')
+  api.assertions.assertEqual(api.cros_sdk.chroot.chrome_dir,
+                             'extremely custom_chrome_root')
+
   api.cros_sdk('get cros_sdk help', ['--help'])
   api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},
                    workspace=workspace)

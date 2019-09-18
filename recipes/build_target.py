@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'chrome',
     'cros_artifacts',
     'cros_bisect',
     'cros_build_api',
@@ -34,6 +35,7 @@ from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
+from PB.chromite.api.packages import HasChromePrebuiltRequest
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
@@ -127,6 +129,14 @@ def RunSteps(api, properties):
 
       install_packages = build_config.build.install_packages
       if api.cros_infra_config.should_run(install_packages):
+        if not api.cros_build_api.PackageService.HasChromePrebuilt(
+            HasChromePrebuiltRequest(build_target=build_target,
+                                     chroot=api.cros_sdk.chroot)).has_prebuilt:
+          chrome_root = api.path['start_dir'].join('chrome')
+          api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
+                          build_config.chrome.internal)
+          api.cros_sdk.set_chrome_root(str(chrome_root))
+
         with api.step.nest('install packages'):
           packages = get_packages(api, build_config)
           response = api.cros_build_api.SysrootService.InstallPackages(
