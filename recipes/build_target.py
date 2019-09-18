@@ -131,6 +131,7 @@ def RunSteps(api, properties):
           packages = get_packages(api, build_config)
           response = api.cros_build_api.SysrootService.InstallPackages(
               InstallPackagesRequest(sysroot=sysroot, packages=packages,
+                                     chroot=api.cros_sdk.chroot,
                                      use_flags=build_config.build.use_flags))
           api.cros_bisect.set_compile_failures(response.failed_packages)
           api.failures.raise_failed_packages(response.failed_packages)
