@@ -2619,6 +2619,22 @@ Renames a branch using `cros branch rename`.
 Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#58)(api, properties):**
+
+&mdash; **def [get\_packages](/recipes/build_target.py#183)(api, build_config):**
+
+Returns the packages that should be built for this invocation.
+
+Returns the list of packages that should be built for this or an
+empty list if all packages should be built. This will be a subset
+for cases like FindIt bisection where only prior failed packages
+are attempted or special builders like kernel builders.
+
+Args:
+  api (RecipeApi): See RunSteps.
+  build_config (BuilderConfig): builder configuration for the builder
+
+Returns:
+  list[PackageInfo] of packages to build
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -128,8 +128,7 @@ def RunSteps(api, properties):
       install_packages = build_config.build.install_packages
       if api.cros_infra_config.should_run(install_packages):
         with api.step.nest('install packages'):
-          # Packages subset will be present when FindIt doing bisection build.
-          packages = api.cros_bisect.get_packages()
+          packages = get_packages(api, build_config)
           response = api.cros_build_api.SysrootService.InstallPackages(
               InstallPackagesRequest(sysroot=sysroot, packages=packages,
                                      use_flags=build_config.build.use_flags))
@@ -180,6 +179,23 @@ def RunSteps(api, properties):
             build_target, build_config.id.type,
             build_config.artifacts.prebuilts_gs_bucket,
             private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
+
+def get_packages(api, build_config):
+  """Returns the packages that should be built for this invocation.
+
+  Returns the list of packages that should be built for this or an
+  empty list if all packages should be built. This will be a subset
+  for cases like FindIt bisection where only prior failed packages
+  are attempted or special builders like kernel builders.
+
+  Args:
+    api (RecipeApi): See RunSteps.
+    build_config (BuilderConfig): builder configuration for the builder
+
+  Returns:
+    list[PackageInfo] of packages to build
+  """
+  return api.cros_bisect.get_packages() or build_config.build.packages
 
 def GenTests(api):
   mock_CLs = [
@@ -260,3 +276,11 @@ def GenTests(api):
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('with-builder-config-limited-packages') +  #
+         api.buildbucket.try_build(
+             project='chromeos', bucket='cq',
+             builder='arm-generic-v42-buildtest-postsubmit') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='post-sync pointless build check') +
+         api.properties(build_target={'name': 'arm-generic'}))

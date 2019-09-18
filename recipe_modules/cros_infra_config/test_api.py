@@ -206,6 +206,24 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "arm-generic-v42-buildtest-postsubmit",
+                    "branch": "master",
+                    "type": "POSTSUBMIT"
+                  },
+                  "general": {
+                    "critical": false
+                  },
+                  "build": {
+                    "install_packages": "RUN_EXIT",
+                    "packages": [{
+                      "package_name": "chromeos-kernel",
+                      "category": "syskernel",
+                      "version": "4.19"
+                    }]
+                  }
+                },
+                {
+                  "id": {
                     "name": "atlas-cq",
                     "branch": "master",
                     "type": "CQ"
