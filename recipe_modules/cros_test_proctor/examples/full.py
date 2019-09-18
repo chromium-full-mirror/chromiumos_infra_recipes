@@ -9,6 +9,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
+from PB.recipe_modules.chromeos.cros_test_proctor.proctor import (
+    ProctorProperties)
 from recipe_engine.recipe_api import Property
 
 from google.protobuf import json_format
@@ -30,16 +32,11 @@ DEPS = [
 
 PROPERTIES = {
     'need_tests_builds_serialized':
-        Property(kind=list, help='List of serialized Build protos', default=[]),
-    'baseline_validation_count':
-        Property(kind=int, help='', default=1),
-    'baseline_validation_percent':
-        Property(kind=int, help='', default=100),
+        Property(kind=list, help='List of serialized Build protos', default=[])
 }
 
 
-def RunSteps(api, need_tests_builds_serialized, baseline_validation_percent,
-             baseline_validation_count):
+def RunSteps(api, need_tests_builds_serialized):
   snapshot = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
@@ -56,9 +53,7 @@ def RunSteps(api, need_tests_builds_serialized, baseline_validation_percent,
     gerrit_changes = need_tests_builds[0].input.gerrit_changes
   test_plan = api.cros_test_proctor.run_proctor(
       need_tests_builds=need_tests_builds, snapshot=snapshot,
-      gerrit_changes=gerrit_changes, enable_history=True,
-      baseline_validation_percent=baseline_validation_percent,
-      baseline_validation_count=baseline_validation_count)
+      gerrit_changes=gerrit_changes, enable_history=True)
 
 
 def GenTests(api):
@@ -226,8 +221,9 @@ def GenTests(api):
   yield (
       api.test('pass_with_baseline_validation') +  #
       api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
-      api.properties(baseline_validation_percent=100) +  #
-      api.properties(baseline_validation_count=1) +  #
+      api.properties(
+           **{'$chromeos/cros_test_proctor': ProctorProperties(
+               baseline_validation_percent=100)}) + #
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
@@ -265,8 +261,9 @@ def GenTests(api):
   yield (
       api.test('fail_with_baseline_validation') +  #
       api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
-      api.properties(baseline_validation_percent=100) +  #
-      api.properties(baseline_validation_count=1) +  #
+      api.properties(
+           **{'$chromeos/cros_test_proctor': ProctorProperties(
+               baseline_validation_percent=100)}) + #
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #

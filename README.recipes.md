@@ -1135,11 +1135,11 @@ Returns:
   A named tuple of (gs_path, local_path).
 ### *recipe_modules* / [cros\_test\_proctor](/recipe_modules/cros_test_proctor)
 
-[DEPS](/recipe_modules/cros_test_proctor/__init__.py#5): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#206)(self, test_tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#204)(self, test_tasks):**
 
 Collect on all tests from test_tasks.
 
@@ -1152,7 +1152,7 @@ Args:
 Returns:
   MetaTestTuple of lists of tests collected.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#240)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#238)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -1163,7 +1163,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#28)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, baseline_validation_percent, baseline_validation_count):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#33)(self, need_tests_builds, snapshot, gerrit_changes, enable_history):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -1178,16 +1178,11 @@ Args:
       in the provided builds, or None.
   enable_history (bool): whether to prune test history for previously
       successful tests on images with the same build inputs.
-  baseline_validation_percent (float): ∈[0,100], the threshold for the
-      portion of failed tests to total tests below which baseline
-      validation gets triggered.
-  baseline_validation_count (int): >=0, the threshold for the number of
-      failed tests below which baseline validation gets triggered.
 
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#173)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#171)(self, test_plan, passed_tests, test_to_build_map=None, snapshot=None, dev=False):**
 
 Schedule all tests from the test_plan.
 
@@ -2802,9 +2797,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_postprocess/examples/full.py#12)(api):**
 ### *recipes* / [cros\_test\_proctor:examples/full](/recipe_modules/cros_test_proctor/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_proctor/examples/full.py#17): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_test_proctor/examples/full.py#19): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#41)(api, need_tests_builds_serialized, baseline_validation_percent, baseline_validation_count):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#39)(api, need_tests_builds_serialized):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
@@ -3042,7 +3037,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#55)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#177)(api, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#175)(api, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3058,7 +3053,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#248)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#246)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -3079,7 +3074,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#161)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#159)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -3089,7 +3084,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#362)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#360)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -3103,7 +3098,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#417)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#415)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3114,7 +3109,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#209)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#207)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3127,7 +3122,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#406)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#404)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3135,7 +3130,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#392)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#390)(refs):**
 
 Assert the given refs start with refs/heads.
 

@@ -25,9 +25,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
   MetaTestTuple = structs.MetaTestTuple
 
+  def __init__(self, properties, **kwargs):
+    super(CrosTestProctorApi, self).__init__(**kwargs)
+    self._baseline_validation_percent = properties.baseline_validation_percent
+    self._baseline_validation_count = properties.baseline_validation_count
+
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
-                  enable_history, baseline_validation_percent,
-                  baseline_validation_count):
+                  enable_history):
     """Runs the test platform for a given bunch of builds.
 
     This is the entry point into the Chrome OS infra test platform via recipes.
@@ -41,11 +45,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           in the provided builds, or None.
       enable_history (bool): whether to prune test history for previously
           successful tests on images with the same build inputs.
-      baseline_validation_percent (float): ∈[0,100], the threshold for the
-          portion of failed tests to total tests below which baseline
-          validation gets triggered.
-      baseline_validation_count (int): >=0, the threshold for the number of
-          failed tests below which baseline validation gets triggered.
 
     Returns
       list[failures.Failure]: failures encountered running tests
@@ -91,8 +90,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           if self.m.failures.is_critical_test_failure(test_result)
       ])
       needs_baseline_validation = self._needs_baseline_validation(
-          failed_test_names, test_plan, baseline_validation_percent,
-          baseline_validation_count)
+          failed_test_names, test_plan)
       if needs_baseline_validation:
         step.presentation.step_text = (
             '{} test(s) failed. will run baseline validation'.format(
@@ -411,8 +409,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         url_title_fn=self.m.naming.get_build_title)
     return moblab_vm_tests
 
-  def _needs_baseline_validation(self, failed_results, test_plan,
-                                 percent_threshold, count_threshold):
+  def _needs_baseline_validation(self, failed_results, test_plan):
     """Check if we need baseline validation for this orchestrator.
 
     Args:
@@ -436,10 +433,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         self._critical_test_count(test_plan.tast_vm_test_units,
                                   lambda unit: unit.tast_vm_test_cfg,
                                   lambda cfg: cfg.tast_vm_test))
+    failure_ratio = 0
     if test_count != 0 and failed_results:
       failure_ratio = float(len(failed_results)) / test_count
-      if (failure_ratio <= float(percent_threshold) / 100 or
-          len(failed_results) <= count_threshold):
+      if (failure_ratio <= float(self._baseline_validation_percent) / 100 or
+          len(failed_results) <= self._baseline_validation_count):
         return True
 
     return False
