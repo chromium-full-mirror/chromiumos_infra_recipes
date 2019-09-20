@@ -278,7 +278,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
   if enable_history and gerrit_changes:
     with api.step.nest('get build history for changes'):
       is_retry = len(
-          api.cros_history.get_matching_builds(api.buildbucket.build)) > 0
+          api.cros_history.get_matching_builds(api.buildbucket.build)) > 1
       completed_builds = get_completed_builds(api, child_builders)
 
   snapshot_builds = api.cros_history.get_snapshot_builds(
