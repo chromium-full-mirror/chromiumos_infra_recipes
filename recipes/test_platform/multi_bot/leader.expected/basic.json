@@ -17,7 +17,7 @@
     "cmd": [
       "echo",
       "schedule children",
-      "-1"
+      "number"
     ],
     "name": "scheduling step.schedule children",
     "~followup_annotations": [
