@@ -117,15 +117,13 @@ def RunSteps(api, properties):
       )
       response = api.cros_build_api.PackageService.UprevVersionedPackage(
           request, name='uprev versioned package')
-      modified_ebuilds = itertools.chain(*[
-          uprev_response.modified_ebuilds
-          for uprev_response in response.responses
-      ])
-      versions = [
-          uprev_response.version
-          for uprev_response in response.responses
-          if uprev_response.version
-      ]
+      modified_ebuilds = []
+      versions = []
+      for uprev_response in response.responses:
+        if uprev_response.version:
+          versions.append(uprev_response.version)
+        for modified_ebuild in uprev_response.modified_ebuilds:
+          modified_ebuilds.append(modified_ebuild)
 
       if not modified_ebuilds or not versions:
         step.presentation.step_text = 'no new versions for {}'.format(cpv)
