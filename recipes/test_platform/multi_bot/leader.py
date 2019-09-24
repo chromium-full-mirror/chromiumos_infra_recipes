@@ -22,7 +22,7 @@ def RunSteps(api, properties):
 
   # CI steps here
   with api.step.nest('scheduling step'):
-    api.step('prejob coordination', ['echo', 'create subscription'])
+    api.step('prejob coordination', ['ipc.make_subscription'])
     api.step('schedule children', ['echo', 'schedule children', 'number'])
   api.step('prejob step', ['echo', 'local prejob task'])
   with api.step.nest('waiting steps'):

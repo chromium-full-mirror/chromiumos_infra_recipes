@@ -5,8 +5,7 @@
   },
   {
     "cmd": [
-      "echo",
-      "create subscription"
+      "ipc.make_subscription"
     ],
     "name": "scheduling step.prejob coordination",
     "~followup_annotations": [

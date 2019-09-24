@@ -2061,7 +2061,17 @@ A module for inter-process communication.
 
 &mdash; **def [initialize](/recipe_modules/ipc/api.py#14)(self):**
 
-&mdash; **def [receive](/recipe_modules/ipc/api.py#36)(self, topic, sub_name, filter_attributes=None):**
+&mdash; **def [make\_subscription](/recipe_modules/ipc/api.py#19)(self, topic, sub_name):**
+
+Create a subscription within a topic
+
+Args:
+  topic: Pubsub topic name (string)
+  sub_name: Pubsub subscription name (string)
+Returns:
+  nothing
+
+&mdash; **def [receive](/recipe_modules/ipc/api.py#47)(self, topic, sub_name, filter_attributes=None):**
 
 Receive one message from the filtered subscription specified.
 
@@ -2074,7 +2084,7 @@ Args:
 Returns:
   Message body, as a byte string.
 
-&mdash; **def [send](/recipe_modules/ipc/api.py#19)(self, topic, message_body, attributes=None):**
+&mdash; **def [send](/recipe_modules/ipc/api.py#30)(self, topic, message_body, attributes=None):**
 
 Send a pubsub message on the given topic.
 

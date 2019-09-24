@@ -16,6 +16,17 @@ class IPCApi(recipe_api.RecipeApi):
     self._bin = None
     self._version = 'latest'
 
+  def make_subscription(self, topic, sub_name):
+    """Create a subscription within a topic
+
+    Args:
+      topic: Pubsub topic name (string)
+      sub_name: Pubsub subscription name (string)
+    Returns:
+      nothing
+    """
+    self._execute("setup", ["-topic", topic, "-sub-name", sub_name])
+
   def send(self, topic, message_body, attributes=None):
     """Send a pubsub message on the given topic.
 

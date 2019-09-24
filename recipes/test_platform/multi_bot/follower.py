@@ -23,7 +23,7 @@ def RunSteps(api, properties):
   # CI steps here
   with api.step.nest('prejob step'):
     api.step('execute prejob', ['echo', 'prejob task'])
-    api.step('prejob coordination', ['echo', 'create subscription'])
+    api.step('prejob coordination', ['ipc.make_subscription'])
   api.step('send info step', ["ipc.send"])
   api.step('wait to start step', ["ipc.receive"])
   api.step('wait to finish step', ["ipc.receive"])

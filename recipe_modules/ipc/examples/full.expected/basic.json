@@ -61,6 +61,18 @@
     "name": "ipc_pubsub: subscribe"
   },
   {
+    "cmd": [
+      "[START_DIR]/cipd/ipcpubsub/ipcpubsub",
+      "setup",
+      "-topic",
+      "topic",
+      "-sub-name",
+      "subscription"
+    ],
+    "infra_step": true,
+    "name": "ipc_pubsub: setup"
+  },
+  {
     "name": "$result"
   }
 ]
