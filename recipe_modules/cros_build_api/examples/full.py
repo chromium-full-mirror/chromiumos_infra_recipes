@@ -68,6 +68,7 @@ def RunSteps(api):
               'BundleEbuildLogs',
               'BundleChromeOSConfig',
               'ExportCpeReport',
+              'BundleImageArchives',
           ]
       },
       'BinhostService': {
