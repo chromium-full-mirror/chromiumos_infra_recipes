@@ -202,7 +202,7 @@ def filter_schedule_wait_builds(api, child_builders, enable_history, snapshot,
   # collect all existing builds, add to completed builds
   try:
     completed_builds += api.buildbucket.collect_builds(
-        [b.id for b in existing_builds], timeout=60 * 60 * 6,
+        [b.id for b in existing_builds], timeout=60 * 60 * 36,
         step_name='collect', url_title_fn=api.naming.get_build_title).values()
   except api.step.StepFailure:  #pragma: no cover
     completed_builds += api.buildbucket.get_multi(
