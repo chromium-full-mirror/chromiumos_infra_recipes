@@ -137,33 +137,6 @@
   {
     "cmd": [
       "git",
-      "ls-files",
-      "--error-unmatch",
-      "some/file/path"
-    ],
-    "infra_step": true,
-    "name": "check diffs.diff check.git ls-files",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--quiet",
-      "HEAD",
-      "some/file/path"
-    ],
-    "infra_step": true,
-    "name": "check diffs.diff check.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "log",
       "--pretty=%H%x1E%B%x00",
       "START_REF...END_REF",
@@ -245,17 +218,8 @@
   {
     "cmd": [
       "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "infra_step": true,
-    "name": "git rev-parse (2)"
-  },
-  {
-    "cmd": [
-      "git",
       "checkout",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+      "master"
     ],
     "infra_step": true,
     "name": "git checkout (2)"
@@ -267,7 +231,7 @@
       "--show-toplevel"
     ],
     "infra_step": true,
-    "name": "git rev-parse (3)"
+    "name": "git rev-parse (2)"
   },
   {
     "cmd": [
