@@ -1721,6 +1721,39 @@
   },
   {
     "cmd": [],
+    "name": "ensure goma client"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/goma",
+      "-ensure-file",
+      "infra/goma/client/${platform} latest",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure goma client.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/goma/client/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "install packages"
   },
   {
@@ -1729,6 +1762,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"useGoma\": true@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"packages\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"category\": \"syskernel\", @@@",
@@ -1744,7 +1780,11 @@
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"goma\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"gomaDir\": \"[START_DIR]/cipd/goma\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -1760,7 +1800,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"packages\": [\n    {\n      \"category\": \"syskernel\", \n      \"packageName\": \"chromeos-kernel\", \n      \"version\": \"4.19\"\n    }\n  ], \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
+      "{\n  \"flags\": {\n    \"useGoma\": true\n  }, \n  \"packages\": [\n    {\n      \"category\": \"syskernel\", \n      \"packageName\": \"chromeos-kernel\", \n      \"version\": \"4.19\"\n    }\n  ], \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"goma\": {\n      \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\", \n      \"gomaDir\": \"[START_DIR]/cipd/goma\"\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1769,6 +1809,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"useGoma\": true@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"packages\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"category\": \"syskernel\", @@@",
@@ -1784,7 +1827,11 @@
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"goma\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"gomaDir\": \"[START_DIR]/cipd/goma\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -1838,6 +1885,9 @@
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"install packages|call chromite.api.SysrootService/InstallPackages|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"useGoma\": true@@@",
+      "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"packages\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
       "@@@STEP_LOG_LINE@published event@        \"category\": \"syskernel\", @@@",
@@ -1853,7 +1903,11 @@
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
-      "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\"@@@",
+      "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"goma\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\", @@@",
+      "@@@STEP_LOG_LINE@published event@        \"gomaDir\": \"[START_DIR]/cipd/goma\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {}, @@@",
@@ -1876,7 +1930,7 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CmoKGQoNL2J1aWxkL3RhcmdldBIICgZ0YXJnZXQaIgoPY2hyb21lb3Mta2VybmVsEglzeXNrZXJu\\nZWwaBDQuMTkiKQoTW0NBQ0hFXS9jcm9zX2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lEgAaDAjZ\\ngMT9BBCAyrXuASIGCNuAxP0E0ALQ7IDZrvG1knzaAldpbnN0YWxsIHBhY2thZ2VzfGNhbGwgY2hy\\nb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxQYWNrYWdlc3xjYWxsIGJ1aWxkIEFQSSBz\\nY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CsEBChkKDS9idWlsZC90YXJnZXQSCAoGdGFyZ2V0EgIYARoiCg9jaHJvbWVvcy1rZXJuZWwSCXN5\\nc2tlcm5lbBoENC4xOSJ8ChNbQ0FDSEVdL2Nyb3NfY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUq\\nUQoVW1NUQVJUX0RJUl0vY2lwZC9nb21hEjgvY3JlZHMvc2VydmljZV9hY2NvdW50cy9zZXJ2aWNl\\nLWFjY291bnQtZ29tYS1jbGllbnQuanNvbhIAGgwI2YDE/QQQgMq17gEiBgjbgMT9BNAC0OyA2a7x\\ntZJ82gJXaW5zdGFsbCBwYWNrYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9J\\nbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

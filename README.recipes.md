@@ -35,6 +35,7 @@
   * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) &mdash; APIs for dealing with Gitiles.
+  * [goma](#recipe_modules-goma) &mdash; API for working with goma.
   * [ipc](#recipe_modules-ipc)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
@@ -127,6 +128,7 @@
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
+  * [goma:examples/full](#recipes-goma_examples_full)
   * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs)
   * [ipc:examples/full](#recipes-ipc_examples_full)
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
@@ -877,7 +879,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#49)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#65)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -889,7 +891,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#38)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#40)(self):**
 
 Return a chromiumos.common.Chroot.
 
@@ -900,22 +902,24 @@ Configure CrosSdkApi.
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#33)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#35)(self):**
 
 Returns a Path to the cros_sdk script.
+
+&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#62)(self):**
 
 &mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#18)(self):**
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#70)(self, checkout_path):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#86)(self, checkout_path):**
 
 Link the chroot to a chromiumos checkout.
 
 Args:
   checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#88)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#104)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -931,7 +935,9 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#46)(self, chrome_root):**
+&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#55)(self, chrome_root):**
+
+&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#58)(self, goma_dir, goma_client_json):**
 ### *recipe_modules* / [cros\_som](/recipe_modules/cros_som)
 
 [DEPS](/recipe_modules/cros_som/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
@@ -2032,6 +2038,23 @@ Args:
 
 Returns:
   str: the current revision hash of the specified branch
+### *recipe_modules* / [goma](/recipe_modules/goma)
+
+[DEPS](/recipe_modules/goma/__init__.py#5): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for working with goma.
+
+#### **class [GomaApi](/recipe_modules/goma/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for working with goma.
+
+&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#16)(self):**
+
+&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#21)(self):**
+
+Lazily fetches the goma client and returns its path.
+
+&mdash; **def [initialize](/recipe_modules/goma/api.py#13)(self):**
 ### *recipe_modules* / [ipc](/recipe_modules/ipc)
 
 [DEPS](/recipe_modules/ipc/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2639,13 +2662,13 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipe_modules/breakpad/examples/full.py#18)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [portage](#recipe_modules-portage), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [portage](#recipe_modules-portage), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#60)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#61)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#194)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#202)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3048,6 +3071,11 @@ Test git_footers calls.
 [DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles)
 
 &mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#11)(api):**
+### *recipes* / [goma:examples/full](/recipe_modules/goma/examples/full.py)
+
+[DEPS](/recipe_modules/goma/examples/full.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/full.py#11)(api):**
 ### *recipes* / [ipc:examples/falsy\_attrs](/recipe_modules/ipc/examples/falsy_attrs.py)
 
 [DEPS](/recipe_modules/ipc/examples/falsy_attrs.py#6): [ipc](#recipe_modules-ipc)

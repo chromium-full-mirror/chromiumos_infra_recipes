@@ -17,9 +17,14 @@ def RunSteps(api):
   api.assertions.assertTrue(
       api.cros_sdk.chroot.path.endswith('test/cros_chroot'))
 
-  api.cros_sdk.set_chrome_root('extremely custom_chrome_root')
-  api.assertions.assertEqual(api.cros_sdk.chroot.chrome_dir,
-                             'extremely custom_chrome_root')
+  api.cros_sdk.set_chrome_root('/chrome_dir')
+  api.cros_sdk.set_goma_config('/goma_dir', '/creds/goma.json')
+
+  chroot = api.cros_sdk.chroot
+  api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
+  api.assertions.assertTrue(api.cros_sdk.has_goma_config())
+  api.assertions.assertEqual(chroot.goma.goma_dir, '/goma_dir')
+  api.assertions.assertEqual(chroot.goma.goma_client_json, '/creds/goma.json')
 
   api.cros_sdk('get cros_sdk help', ['--help'])
   api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},

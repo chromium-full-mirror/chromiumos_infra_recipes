@@ -29,6 +29,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
       self._chroot_path = chroot_parent_path.join('cros_chroot')
       self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
       self._chrome_root = None
+      self._goma_dir = None
+      self._goma_client_json = None
 
   @property
   def cros_sdk_path(self):
@@ -38,13 +40,27 @@ class CrosSdkApi(recipe_api.RecipeApi):
   @property
   def chroot(self):
     """Return a chromiumos.common.Chroot."""
+    goma_config = None
+    if self.has_goma_config():
+      goma_config = common.GomaConfig(
+          goma_dir=str(self._goma_dir),
+          goma_client_json=str(self._goma_client_json),
+      )
     return common.Chroot(
         path=str(self._chroot_path),
         chrome_dir=self._chrome_root,
+        goma=goma_config,
     )
 
   def set_chrome_root(self, chrome_root):
     self._chrome_root = chrome_root
+
+  def set_goma_config(self, goma_dir, goma_client_json):
+    self._goma_dir = goma_dir
+    self._goma_client_json = goma_client_json
+
+  def has_goma_config(self):
+    return bool(self._goma_dir and self._goma_client_json)
 
   def __call__(self, name, args, **kwargs):
     """Executes 'cros_sdk' with the supplied arguments.

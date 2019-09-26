@@ -25,6 +25,7 @@ DEPS = [
     'easy',
     'failures',
     'gerrit',
+    'goma',
     'portage',
 ]
 
@@ -136,11 +137,18 @@ def RunSteps(api, properties):
           api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
                           build_config.chrome.internal)
           api.cros_sdk.set_chrome_root(str(chrome_root))
+          api.cros_sdk.set_goma_config(str(api.goma.goma_dir),
+                                       str(api.goma.goma_client_json))
 
         with api.step.nest('install packages'):
           packages = get_packages(api, build_config)
+          flags = InstallPackagesRequest.Flags(
+              compile_source=False,
+              use_goma=api.cros_sdk.has_goma_config())
           response = api.cros_build_api.SysrootService.InstallPackages(
-              InstallPackagesRequest(sysroot=sysroot, packages=packages,
+              InstallPackagesRequest(sysroot=sysroot,
+                                     flags=flags,
+                                     packages=packages,
                                      chroot=api.cros_sdk.chroot,
                                      use_flags=build_config.build.use_flags))
           api.cros_bisect.set_compile_failures(response.failed_packages)
