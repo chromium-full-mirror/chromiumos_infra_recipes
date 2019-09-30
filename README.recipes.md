@@ -1078,11 +1078,11 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#94)(self, request):**
+&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#100)(self, request):**
 
 Execute work via `autotest-execute` subcommand.
 
@@ -1091,7 +1091,7 @@ Args:
 
 Returns: ExecuteResponse.
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#61)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#67)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -1100,9 +1100,9 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#20)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#23)(self):**
 
-&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#72)(self, request):**
+&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#78)(self, request):**
 
 Determine scheduler via `scheduler-traffic-split` subcommand.
 
@@ -1111,7 +1111,7 @@ Args:
 
 Returns: SchedulerTrafficSplitResponse.
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#83)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#89)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 

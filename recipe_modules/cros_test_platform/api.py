@@ -13,6 +13,9 @@ from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitRequest, SchedulerTrafficSplitResponse
 from PB.test_platform.steps.execution import ExecuteRequest, ExecuteResponse
 
+# This exit code is returned by cros_test_platform runs that had an error but
+# produced a response anyway.
+_RETCODE_PARTIAL_RESPONSE = 2
 
 class CrosTestPlatformCommand(recipe_api.RecipeApi):
   """Module for issuing cros_test_platform commands"""
@@ -54,7 +57,10 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
           cmd,
           response_type,
           stdin=self.m.raw_io.input_text(json_format.MessageToJson(request)),
-          test_output=response_type())
+          test_output=response_type(),
+          # TODO(crbug.com/1008921): Surface non-zero return codes as a step
+          # warning.
+          ok_ret=(0, _RETCODE_PARTIAL_RESPONSE))
       s.presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
