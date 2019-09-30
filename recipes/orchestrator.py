@@ -383,14 +383,26 @@ def get_completed_builds(api, cq_orch_children):
   for build in passed_builds:
     # Filter out non-child builds like vm_test, dry run orchestrator or
     # hw_tests in the future.
-    if build.builder.builder in cq_orch_children:
-      builder_config = api.cros_infra_config.get_builder_config(
-          build.builder.builder)
-      # Refresh the criticality of the builders.
-      build.critical = (
-          common_pb2.YES
-          if builder_config.general.critical.value else common_pb2.NO)
-      completed_builds.append(build)
+    if build.builder.builder not in cq_orch_children: #pragma: no cover
+      continue
+
+    # A temporary hack to force rebuilding of particular builders to pick up
+    # https://crrev.com/c/1830838. Filter out eve and winky builds from before
+    # Mon 30 Sep 2019 08:00:00 AM MDT
+    # We should later generalize this sort of filtering in config.
+    apply_hack_filter = (api.cros_history.get_build_target(build) == 'eve'
+                         or api.cros_history.get_build_target(build) == 'winky')
+    apply_hack_time = build.start_time.seconds < 1569852000
+    if apply_hack_filter and apply_hack_time: #pragma: no cover
+      continue
+
+    builder_config = api.cros_infra_config.get_builder_config(
+        build.builder.builder)
+    # Refresh the criticality of the builders.
+    build.critical = (
+        common_pb2.YES
+        if builder_config.general.critical.value else common_pb2.NO)
+    completed_builds.append(build)
 
   return completed_builds
 
