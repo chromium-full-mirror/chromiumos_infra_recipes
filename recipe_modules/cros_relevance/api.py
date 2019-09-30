@@ -5,6 +5,8 @@
 # found in the LICENSE file.
 
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
+from PB.chromiumos.generate_build_plan import GenerateBuildPlanRequest
+from PB.chromiumos.generate_build_plan import GenerateBuildPlanResponse
 from PB.testplans.pointless_build import PointlessBuildCheckRequest
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -15,15 +17,65 @@ from recipe_engine import recipe_api
 
 import os
 
+
 class CrosRelevanceApi(recipe_api.RecipeApi):
   """A module for determining if a build is unnecessary."""
 
   def initialize(self):
     """Initializes the module."""
     self._pointless_build_checker_path = None
+    self._build_planner_path = None
 
-  def are_all_image_builders_pointless(
-      self, gerrit_changes, gitiles_commit, name=None):
+  def get_necessary_builders(self, builder_configs, gerrit_changes,
+                             gitiles_commit, name=None):
+    """Determines which builders must be run (and which can be skipped).
+
+    This filters on preconfigured RunWhen rules, as well as on rules allowing
+    skipping of image builders. Image builders are those that run the
+    build_target recipe, producing an IMAGE_ZIP Chrome OS artifact.
+
+    Args:
+      builder_configs (list[chromiumos.BuilderConfig]): builder configs to
+          consider for skipping.
+      gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+          applied for the build, if any.
+      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+          snapshot Gitiles commit.
+      name (str): The step name.
+
+    Returns:
+      list[str]: the names of the child builders that must be run.
+    """
+    with self.m.step.nest(name or 'plan builds') as step_result:
+      self._ensure_binaries()
+      request = GenerateBuildPlanRequest(manifest_commit=gitiles_commit.id,)
+      request.builder_configs.extend(builder_configs)
+      for gc in gerrit_changes:
+        new_gc = request.gerrit_changes.add()
+        new_gc.serialized_proto = (
+            bbcommon_pb2.GerritChange.SerializeToString(gc))
+      cmd = [
+          self._build_planner_path,
+          'generate-plan',
+          '--input_json',
+          self.m.json.input(jsonpb.MessageToDict(request)),
+          '--output_json',
+          self.m.json.output(),
+      ]
+      test_plan_res = self.m.step('run planner', cmd, infra_step=True)
+      output = test_plan_res.json.output
+      result = jsonpb.ParseDict(output, GenerateBuildPlanResponse(),
+                                ignore_unknown_fields=True)
+      step_result.presentation.logs['planner_output'] = [str(result)]
+      step_result.presentation.step_text = (
+          'will run {} and skip {} builds'.format(
+              len(result.builds_to_run),
+              len(result.skip_for_global_build_irrelevance) + len(
+                  result.skip_for_run_when_rules)))
+      return [b.name for b in result.builds_to_run]
+
+  def are_all_image_builders_pointless(self, gerrit_changes, gitiles_commit,
+                                       name=None):
     """Determines if all image builders can be terminated early.
 
     Image builders are those that run the build_target recipe, producing an
@@ -42,8 +94,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     return self.is_build_pointless(gerrit_changes, gitiles_commit,
                                    build_target=None, name=name)
 
-  def is_build_pointless(
-      self, gerrit_changes, gitiles_commit, build_target, name=None):
+  def is_build_pointless(self, gerrit_changes, gitiles_commit, build_target,
+                         name=None):
     """Determines if build(s) can be terminated early.
 
     If build_target is set, then the chromiumos workspace must have been
@@ -65,15 +117,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       dep_graph = None
       if build_target:
         resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
-            GetBuildDependencyGraphRequest(
-                build_target=build_target,
-            ))
+            GetBuildDependencyGraphRequest(build_target=build_target,))
         dep_graph = resp.dep_graph
 
-      self._ensure_pointless_build_checker()
+      self._ensure_binaries()
       check_request = PointlessBuildCheckRequest(
-        manifest_commit = gitiles_commit.id,
-        dep_graph = dep_graph,
+          manifest_commit=gitiles_commit.id,
+          dep_graph=dep_graph,
       )
       for gc in gerrit_changes:
         new_gc = check_request.gerrit_changes.add()
@@ -93,20 +143,18 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                                 ignore_unknown_fields=True)
       step_result.presentation.logs['relevance_output'] = [str(result)]
       if result.build_is_pointless.value:
-        step_result.presentation.step_text = (
-            'build is irrelevant')
+        step_result.presentation.step_text = ('build is irrelevant')
         step_result.presentation.properties['pointless_build'] = True
       else:
-        step_result.presentation.step_text = (
-            'build is relevant')
+        step_result.presentation.step_text = ('build is relevant')
       return result.build_is_pointless.value
 
-  def _ensure_pointless_build_checker(self):
-    """Ensure the pointless_build_checker binary is installed."""
+  def _ensure_binaries(self):
+    """Ensure this module's binaries are installed."""
     if self._pointless_build_checker_path:
       return  # pragma: nocover
 
-    with self.m.step.nest('ensure pointless_build_checker'):
+    with self.m.step.nest('ensure binaries'):
       with self.m.context(infra_steps=True):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
 
@@ -116,3 +164,4 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
         self._pointless_build_checker_path = (
             cipd_dir.join('pointless_build_checker'))
+        self._build_planner_path = (cipd_dir.join('build_plan_generator'))

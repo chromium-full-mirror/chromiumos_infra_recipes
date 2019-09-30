@@ -13,7 +13,7 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check.ensure pointless_build_checker",
+    "name": "pointless build check.ensure binaries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -30,7 +30,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "pointless build check.ensure pointless_build_checker.ensure_installed",
+    "name": "pointless build check.ensure binaries.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

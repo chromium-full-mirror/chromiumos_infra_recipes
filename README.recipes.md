@@ -81,7 +81,8 @@
   * [cros_infra_config:examples/full](#recipes-cros_infra_config_examples_full)
   * [cros_infra_config:examples/no_builder_config](#recipes-cros_infra_config_examples_no_builder_config)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
-  * [cros_relevance:examples/full](#recipes-cros_relevance_examples_full)
+  * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
+  * [cros_relevance:examples/pointless_builds](#recipes-cros_relevance_examples_pointless_builds)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_som:examples/full](#recipes-cros_som_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
@@ -803,11 +804,11 @@ Args:
 
 [DEPS](/recipe_modules/cros_relevance/__init__.py#1): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [are\_all\_image\_builders\_pointless](/recipe_modules/cros_relevance/api.py#25)(self, gerrit_changes, gitiles_commit, name=None):**
+&mdash; **def [are\_all\_image\_builders\_pointless](/recipe_modules/cros_relevance/api.py#77)(self, gerrit_changes, gitiles_commit, name=None):**
 
 Determines if all image builders can be terminated early.
 
@@ -824,11 +825,31 @@ Args:
 Returns:
   bool: Whether the normal, image builders can be terminated early.
 
-&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#21)(self):**
+&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#29)(self, builder_configs, gerrit_changes, gitiles_commit, name=None):**
+
+Determines which builders must be run (and which can be skipped).
+
+This filters on preconfigured RunWhen rules, as well as on rules allowing
+skipping of image builders. Image builders are those that run the
+build_target recipe, producing an IMAGE_ZIP Chrome OS artifact.
+
+Args:
+  builder_configs (list[chromiumos.BuilderConfig]): builder configs to
+      consider for skipping.
+  gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+      applied for the build, if any.
+  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+      snapshot Gitiles commit.
+  name (str): The step name.
+
+Returns:
+  list[str]: the names of the child builders that must be run.
+
+&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#24)(self):**
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#45)(self, gerrit_changes, gitiles_commit, build_target, name=None):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#97)(self, gerrit_changes, gitiles_commit, build_target, name=None):**
 
 Determines if build(s) can be terminated early.
 
@@ -2775,11 +2796,16 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#18)(api):**
-### *recipes* / [cros\_relevance:examples/full](/recipe_modules/cros_relevance/examples/full.py)
+### *recipes* / [cros\_relevance:examples/build\_plan](/recipe_modules/cros_relevance/examples/build_plan.py)
 
-[DEPS](/recipe_modules/cros_relevance/examples/full.py#10): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#11): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#22)(api, expected_builders):**
+### *recipes* / [cros\_relevance:examples/pointless\_builds](/recipe_modules/cros_relevance/examples/pointless_builds.py)
+
+[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#10): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#16)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
