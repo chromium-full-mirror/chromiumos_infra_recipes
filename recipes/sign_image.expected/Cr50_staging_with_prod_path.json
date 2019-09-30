@@ -1,0 +1,20 @@
+[
+  {
+    "cmd": [],
+    "name": "validate request",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all properties good@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create Cr50 instructions"
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "TODO: support prod artifacts in staging/dev"
+    },
+    "name": "$result"
+  }
+]

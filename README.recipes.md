@@ -3242,11 +3242,13 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
 ### *recipes* / [sign\_image](/recipes/sign_image.py)
 
-[DEPS](/recipes/sign_image.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/sign_image.py#26): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for signing ChromeOS images.
 
-&mdash; **def [RunSteps](/recipes/sign_image.py#13)(api):**
+&mdash; **def [RunSteps](/recipes/sign_image.py#88)(api, properties):**
+
+Run steps.
 ### *recipes* / [sign\_paygen](/recipes/sign_paygen.py)
 
 [DEPS](/recipes/sign_paygen.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]

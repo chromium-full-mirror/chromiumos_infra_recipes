@@ -6,7 +6,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "illegal artifact type ARTIFACT_TYPE_UNSPECIFIED"
+      "humanReason": "must set device_id"
     },
     "name": "$result"
   }

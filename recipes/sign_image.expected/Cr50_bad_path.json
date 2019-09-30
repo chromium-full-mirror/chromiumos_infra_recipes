@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "validate request"
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "illegal archive location: gs://chromeos-releases-test/canary-channel/eve/12499.10.0/ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2"
+    },
+    "name": "$result"
+  }
+]

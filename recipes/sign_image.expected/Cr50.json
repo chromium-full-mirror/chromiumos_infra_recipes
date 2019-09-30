@@ -1,0 +1,112 @@
+[
+  {
+    "cmd": [],
+    "name": "validate request",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all properties good@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create Cr50 instructions"
+  },
+  {
+    "cmd": [],
+    "name": "upload cr50 instructions",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@instructions uploaded@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[general]\narchive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2\nboard = \ntype = cr50_firmware\nmilestone = RNone\nversion = Unknown\nversionrev = RNone-Unknown\n[insns]\nkeyset = cr50-accessory-mp\ntarget = Unchanged\n",
+      "[CLEANUP]/ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions"
+    ],
+    "infra_step": true,
+    "name": "upload cr50 instructions.instructions file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@[general]@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@archive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@board = @@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@type = cr50_firmware@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@milestone = RNone@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@version = Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@versionrev = RNone-Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@[insns]@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@keyset = cr50-accessory-mp@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@target = Unchanged@@@",
+      "@@@STEP_LOG_END@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions",
+      "gs://chromeos-releases/canary-channel/eve/12499.10.0/ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions"
+    ],
+    "infra_step": true,
+    "name": "upload cr50 instructions.gsutil cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "trigger cr50 signing",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@trigger uploaded@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/50,canary-channel,eve,12499.10.0,ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions"
+    ],
+    "infra_step": true,
+    "name": "trigger cr50 signing.trigger file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@50,canary-channel,eve,12499.10.0,ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/50,canary-channel,eve,12499.10.0,ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions",
+      "gs://chromeos-releases/tobesigned/50,canary-channel,eve,12499.10.0,ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions"
+    ],
+    "infra_step": true,
+    "name": "trigger cr50 signing.gsutil cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
