@@ -810,23 +810,6 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [are\_all\_image\_builders\_pointless](/recipe_modules/cros_relevance/api.py#77)(self, gerrit_changes, gitiles_commit, name=None):**
-
-Determines if all image builders can be terminated early.
-
-Image builders are those that run the build_target recipe, producing an
-IMAGE_ZIP Chrome OS artifact.
-
-Args:
-  gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
-      applied for the build, if any.
-  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
-      snapshot Gitiles commit.
-  name (str): The step name.
-
-Returns:
-  bool: Whether the normal, image builders can be terminated early.
-
 &mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#29)(self, builder_configs, gerrit_changes, gitiles_commit, name=None):**
 
 Determines which builders must be run (and which can be skipped).
@@ -851,7 +834,7 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#97)(self, gerrit_changes, gitiles_commit, build_target, name=None):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#77)(self, gerrit_changes, gitiles_commit, build_target, name=None):**
 
 Determines if build(s) can be terminated early.
 

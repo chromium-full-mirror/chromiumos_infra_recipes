@@ -74,26 +74,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                   result.skip_for_run_when_rules)))
       return [b.name for b in result.builds_to_run]
 
-  def are_all_image_builders_pointless(self, gerrit_changes, gitiles_commit,
-                                       name=None):
-    """Determines if all image builders can be terminated early.
-
-    Image builders are those that run the build_target recipe, producing an
-    IMAGE_ZIP Chrome OS artifact.
-
-    Args:
-      gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
-          applied for the build, if any.
-      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
-          snapshot Gitiles commit.
-      name (str): The step name.
-
-    Returns:
-      bool: Whether the normal, image builders can be terminated early.
-    """
-    return self.is_build_pointless(gerrit_changes, gitiles_commit,
-                                   build_target=None, name=name)
-
   def is_build_pointless(self, gerrit_changes, gitiles_commit, build_target,
                          name=None):
     """Determines if build(s) can be terminated early.

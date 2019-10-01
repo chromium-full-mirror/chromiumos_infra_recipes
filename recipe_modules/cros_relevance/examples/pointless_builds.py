@@ -17,8 +17,6 @@ def RunSteps(api):
   bt = BuildTarget(name='my_build_target')
   gc = [bbcommon_pb2.GerritChange(change=123),
         bbcommon_pb2.GerritChange(change=456)]
-  api.cros_relevance.are_all_image_builders_pointless(
-      gc, bbcommon_pb2.GitilesCommit())
   api.cros_relevance.is_build_pointless(
       gc, bbcommon_pb2.GitilesCommit(), build_target=bt)
 
@@ -27,13 +25,7 @@ def GenTests(api):
   build_config = [dict(build_target='build_target')]
   yield (api.test('not_pointless') +
          api.cros_relevance.simulate_run_pointless_build_checker(
-             build_is_pointless=False) +
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='pointless build check (2)',
              build_is_pointless=False))
   yield (api.test('is_pointless') +
          api.cros_relevance.simulate_run_pointless_build_checker(
-             build_is_pointless=True) +
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='pointless build check (2)',
              build_is_pointless=True))
