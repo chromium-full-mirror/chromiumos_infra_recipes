@@ -17,6 +17,102 @@
   },
   {
     "cmd": [],
+    "name": "run builds.read build config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "run builds.read build config.fetch master:generated/builder_configs.cfg",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.plan builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@will run 1 and skip 0 builds@@@",
+      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"amd64-generic-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_LOG_END@planner_output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.plan builds.ensure binaries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/test_planner",
+      "-ensure-file",
+      "chromiumos/infra/test_planner latest",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "run builds.plan builds.ensure binaries.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_planner\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/build_plan_generator",
+      "generate-plan",
+      "--input_json",
+      "{\"builderConfigs\": [{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\", \"AUTOTEST_FILES\", \"TAST_FILES\", \"PINNED_GUEST_IMAGES\", \"EBUILD_LOGS\", \"TEST_UPDATE_PAYLOAD\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"PUBLIC\", \"prebuiltsGsBucket\": \"chromeos-prebuilt\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": \"RUN\"}, \"chrome\": {}, \"general\": {\"critical\": false}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-snapshot\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}], \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
+      "--output_json",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "run builds.plan builds.run planner",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"buildsToRun\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"amd64-generic-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds.get snapshot builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -72,32 +168,6 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_END@filter log@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run builds.filter builds.read build config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "name": "run builds.filter builds.read build config.fetch master:generated/builder_configs.cfg",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

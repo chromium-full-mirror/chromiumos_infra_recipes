@@ -276,12 +276,11 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
   completed_builds, snapshot_builds, new_build_requests = [], [], []
   is_retry = False
 
-  image_builders_pointless = False
-  if gerrit_changes:
-    image_builders_pointless = (
-        api.cros_relevance.are_all_image_builders_pointless(
-            gerrit_changes, snapshot,
-            name='orchestrator pointless build check'))
+  builder_configs = [
+      api.cros_infra_config.get_builder_config(b) for b in child_builders
+  ]
+  necessary_builders = api.cros_relevance.get_necessary_builders(
+      builder_configs, gerrit_changes, snapshot)
 
   if enable_history and gerrit_changes:
     with api.step.nest('get build history for changes'):
@@ -322,22 +321,17 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
         filter_log.append('{} already passed'.format(child_target))
         continue
 
+      # Filter out builds not in the build plan.
+      if child not in necessary_builders:
+        filter_log.append('{} build is not needed for changes'.format(child))
+        continue
+
       # We've already found an existing build, we'll just wait on it later.
       elif child_target in snapshot_build_targets:
         snapshot_build = snapshot_build_targets[child_target]
         snapshot_build.critical = common_pb2.YES if critical else common_pb2.NO
         filtered_snapshot_builds.append(snapshot_build)
         filter_log.append('{} exists, will join on it'.format(child_target))
-        continue
-
-      # Don't do child builds that are unaffected by the gerrit_changes. The
-      # IMAGE_ZIP check makes this check only apply to those builders that
-      # produce Chrome OS builds, without affecting special builders like the
-      # chromite unit test ones.
-      image_zip = BuilderConfig.Artifacts.IMAGE_ZIP
-      if image_builders_pointless and (
-          image_zip in child_builder_config.artifacts.artifact_types):
-        filter_log.append('{} build is irrelevant for changes'.format(child))
         continue
 
       # Don't retry non-critical builds.
@@ -383,17 +377,18 @@ def get_completed_builds(api, cq_orch_children):
   for build in passed_builds:
     # Filter out non-child builds like vm_test, dry run orchestrator or
     # hw_tests in the future.
-    if build.builder.builder not in cq_orch_children: #pragma: no cover
+    if build.builder.builder not in cq_orch_children:  #pragma: no cover
       continue
 
     # A temporary hack to force rebuilding of particular builders to pick up
     # https://crrev.com/c/1830838. Filter out eve and winky builds from before
     # Mon 30 Sep 2019 08:00:00 AM MDT
     # We should later generalize this sort of filtering in config.
-    apply_hack_filter = (api.cros_history.get_build_target(build) == 'eve'
-                         or api.cros_history.get_build_target(build) == 'winky')
+    apply_hack_filter = (
+        api.cros_history.get_build_target(build) == 'eve' or
+        api.cros_history.get_build_target(build) == 'winky')
     apply_hack_time = build.start_time.seconds < 1569852000
-    if apply_hack_filter and apply_hack_time: #pragma: no cover
+    if apply_hack_filter and apply_hack_time:  #pragma: no cover
       continue
 
     builder_config = api.cros_infra_config.get_builder_config(
@@ -551,26 +546,32 @@ def GenTests(api):
       }, status=common_pb2.SCHEDULED, input=input_proto(None, 'amd64-generic')),
   ]
 
-  yield (api.test('basic') + postsubmit_orchestrator_build() +
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield (
+      api.test('basic') + postsubmit_orchestrator_build() +
+      api.cros_relevance.simulate_run_build_planner(
+          builder_ids=[
+              BuilderConfig.Id(name=n)
+              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
+          ], name='run builds.plan builds') +  #
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('fails_if_changes_not_submittable') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
@@ -581,8 +582,10 @@ def GenTests(api):
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='run builds.orchestrator pointless build check') +  #
+         api.cros_relevance.simulate_run_build_planner(
+             builder_ids=[
+                 BuilderConfig.Id(name=b.builder.builder) for b in builds
+             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_search_results(
              builds, 'run builds.get build history for changes.'
              'get change build history.buildbucket.search') +  #
@@ -610,9 +613,10 @@ def GenTests(api):
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='run builds.orchestrator pointless build check',
-             build_is_pointless=True) +  #
+         api.cros_relevance.simulate_run_build_planner(
+             # In this case, only one of the three builds is needed.
+             builder_ids=[BuilderConfig.Id(name='arm-generic-cq')],
+             name='run builds.plan builds') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_schedule_output(
@@ -640,8 +644,10 @@ def GenTests(api):
          api.buildbucket.simulated_search_results(
              existing_annealing_builds, 'run builds.get snapshot builds'
              '.buildbucket.search') +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='run builds.orchestrator pointless build check') +  #
+         api.cros_relevance.simulate_run_build_planner(
+             builder_ids=[
+                 BuilderConfig.Id(name=b.builder.builder) for b in builds
+             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_schedule_output(
@@ -667,8 +673,10 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='run builds.orchestrator pointless build check') +  #
+         api.cros_relevance.simulate_run_build_planner(
+             builder_ids=[
+                 BuilderConfig.Id(name=b.builder.builder) for b in builds
+             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_search_results(
              builds, step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search') +  #
@@ -699,8 +707,10 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='run builds.orchestrator pointless build check') +  #
+         api.cros_relevance.simulate_run_build_planner(
+             builder_ids=[
+                 BuilderConfig.Id(name=b.builder.builder) for b in builds
+             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_search_results(
              [], step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search') +
@@ -724,57 +734,69 @@ def GenTests(api):
              moblab_vm_tests,
              step_name='run tests.collect tests.collect moblab vm tests'))
 
-  yield (api.test('updates_refs') +  #
-         postsubmit_orchestrator_build() +  #
-         api.properties(update_manifest_refs={
-             'start': 'refs/heads/foo',
-             'success': 'refs/heads/bar'
-         }) +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield (
+      api.test('updates_refs') +  #
+      postsubmit_orchestrator_build() +  #
+      api.properties(update_manifest_refs={
+          'start': 'refs/heads/foo',
+          'success': 'refs/heads/bar'
+      }) +  #
+      api.cros_relevance.simulate_run_build_planner(
+          builder_ids=[
+              BuilderConfig.Id(name=n)
+              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
+          ], name='run builds.plan builds') +  #
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
 
-  yield (api.test('missing_gitiles_commit') +  #
-         postsubmit_orchestrator_build_with_no_gitiles() +
-         api.properties(update_manifest_refs={
-             'start': 'refs/heads/foo',
-             'success': 'refs/heads/bar'
-         }) +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield (
+      api.test('missing_gitiles_commit') +  #
+      postsubmit_orchestrator_build_with_no_gitiles() +
+      api.properties(update_manifest_refs={
+          'start': 'refs/heads/foo',
+          'success': 'refs/heads/bar'
+      }) +  #
+      api.cros_relevance.simulate_run_build_planner(
+          builder_ids=[
+              BuilderConfig.Id(name=n)
+              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
+          ], name='run builds.plan builds') +  #
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('bad_update_ref') +  #
          api.properties(update_manifest_refs={'start': 'foo'}) +  #
@@ -782,8 +804,10 @@ def GenTests(api):
 
   yield (api.test('dry_run') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='run builds.orchestrator pointless build check') +  #
+         api.cros_relevance.simulate_run_build_planner(
+             builder_ids=[
+                 BuilderConfig.Id(name=b.builder.builder) for b in builds
+             ], name='run builds.plan builds') +  #
          api.cq(dry_run=True))
 
   builds = [
@@ -804,8 +828,11 @@ def GenTests(api):
          api.buildbucket.simulated_search_results(
              builds, step_name='run builds.get build history for changes'
              '.find matching builds.buildbucket.search') +
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             name='run builds.orchestrator pointless build check') +  #
+         api.cros_relevance.simulate_run_build_planner(
+             builder_ids=[
+                 BuilderConfig.Id(name=n)
+                 for n in ['amd64-generic-cq', 'arm-generic-cq', 'atlas-cq']
+             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_schedule_output(
@@ -834,27 +861,33 @@ def GenTests(api):
                       builder={'builder': 'arm-generic-postsubmit'},
                       status=common_pb2.SUCCESS, critical=common_pb2.NO),
   ]
-  yield (api.test('critical_child_builder_fails') +  #
-         postsubmit_orchestrator_build() +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield (
+      api.test('critical_child_builder_fails') +  #
+      postsubmit_orchestrator_build() +  #
+      api.cros_relevance.simulate_run_build_planner(
+          builder_ids=[
+              BuilderConfig.Id(name=n)
+              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
+          ], name='run builds.plan builds') +  #
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
@@ -864,27 +897,33 @@ def GenTests(api):
                       builder={'builder': 'arm-generic-postsubmit'},
                       status=common_pb2.FAILURE, critical=common_pb2.NO),
   ]
-  yield (api.test('non-critical_child_builder_fails') +  #
-         postsubmit_orchestrator_build() +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield (
+      api.test('non-critical_child_builder_fails') +  #
+      postsubmit_orchestrator_build() +  #
+      api.cros_relevance.simulate_run_build_planner(
+          builder_ids=[
+              BuilderConfig.Id(name=n)
+              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
+          ], name='run builds.plan builds') +  #
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
 
   hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
   hw_tests = [
@@ -899,6 +938,10 @@ def GenTests(api):
 
   yield (api.test('with_test_bisection_invocation') +  #
          bisecting_orchestrator_build() +  #
+         api.cros_relevance.simulate_run_build_planner(
+             builder_ids=[
+                 BuilderConfig.Id(name=n) for n in ['amd64-generic-snapshot']
+             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.properties(

@@ -174,18 +174,25 @@
   },
   {
     "cmd": [],
-    "name": "run builds.orchestrator pointless build check",
+    "name": "run builds.plan builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@build is relevant@@@",
-      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
-      "@@@STEP_LOG_LINE@relevance_output@}@@@",
-      "@@@STEP_LOG_END@relevance_output@@@"
+      "@@@STEP_TEXT@will run 3 and skip 0 builds@@@",
+      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"amd64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"arm-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"atlas-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_LOG_END@planner_output@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run builds.orchestrator pointless build check.ensure binaries",
+    "name": "run builds.plan builds.ensure binaries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -202,7 +209,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run builds.orchestrator pointless build check.ensure binaries.ensure_installed",
+    "name": "run builds.plan builds.ensure binaries.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -220,19 +227,29 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_planner/pointless_build_checker",
-      "check-build",
+      "[START_DIR]/cipd/test_planner/build_plan_generator",
+      "generate-plan",
       "--input_json",
-      "{\"gerritChanges\": [{\"serializedProto\": \"GNIJ\"}], \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
+      "{\"builderConfigs\": [{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": \"RUN\"}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}, {\"artifacts\": {\"prebuilts\": \"NONE\"}, \"build\": {\"installPackages\": \"RUN\"}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false}, \"id\": {\"branch\": \"master\", \"name\": \"arm-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}, {\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": \"RUN\"}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"atlas-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}], \"gerritChanges\": [{\"serializedProto\": \"GNIJ\"}], \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run builds.orchestrator pointless build check.run check",
+    "name": "run builds.plan builds.run planner",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"buildIsPointless\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"buildsToRun\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"amd64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"arm-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"atlas-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
