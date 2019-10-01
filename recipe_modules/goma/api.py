@@ -32,6 +32,6 @@ class GomaApi(recipe_api.RecipeApi):
         infra_steps=True):
       goma_dir = self.m.path['start_dir'].join('cipd', 'goma')
       pkgs = self.m.cipd.EnsureFile()
-      pkgs.add_package('infra/goma/client/${platform}', 'latest')
+      pkgs.add_package('infra_internal/goma/client/${platform}', 'latest')
       self.m.cipd.ensure(goma_dir, pkgs)
       self._goma_dir = goma_dir

@@ -1730,7 +1730,7 @@
       "-root",
       "[START_DIR]/cipd/goma",
       "-ensure-file",
-      "infra/goma/client/${platform} latest",
+      "infra_internal/goma/client/${platform} latest",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -1744,7 +1744,7 @@
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/goma/client/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra_internal/goma/client/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
