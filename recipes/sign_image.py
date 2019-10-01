@@ -106,18 +106,23 @@ def RunSteps(api, properties):
     else:
       signer_type = properties.signer_type
     gs = _signer_buckets[signer_type]
+    prod = _signer_buckets[sign_image.SIGNER_PRODUCTION]
 
-    archive = properties.archive
     # The archive must point to a valid location.  In addition to inside their
     # own bucket, any instance is allowed to use the production bucket for
-    # images to sign.
-    valid_location = (
-        gs.path_in_bucket(archive) or
-        _signer_buckets[sign_image.SIGNER_PRODUCTION].path_in_bucket(archive))
-    if not valid_location:
-      return result_pb2.RawResult(
-          status=common_pb2.FAILURE,
-          summary_markdown='illegal archive location: %s' % archive)
+    # images to sign.  If needed, copy the archive into the non-prod bucket.
+    archive = properties.archive
+    if not gs.path_in_bucket(archive):
+      if prod.path_in_bucket(archive):
+        # We know that the archive is not in OUR bucket, but it is in the prod
+        # bucket.  Copy it into place and adjust the archive path.
+        new_archive = gs.gs_path(prod.rel_path(archive))
+        api.gsutil(['cp', archive, new_archive])
+        archive = new_archive
+      else:
+        return result_pb2.RawResult(
+            status=common_pb2.FAILURE,
+            summary_markdown='illegal archive location: %s' % archive)
 
     # Cr50 specific handling.
     cr50 = properties.cr50_instructions
@@ -129,13 +134,6 @@ def RunSteps(api, properties):
 
   with api.step.nest('create Cr50 instructions') as step:
     target = _target_type_to_name[cr50.target]
-
-    if not gs.path_in_bucket(archive):
-      # TODO(lamontjones): Copy archive to the right place, and adjust archive
-      # to be in the proper bucket.
-      return result_pb2.RawResult(
-          status=common_pb2.FAILURE,
-          summary_markdown='TODO: support prod artifacts in staging/dev')
 
     archive_base = os.path.basename(archive)
 
