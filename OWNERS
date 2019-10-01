@@ -4,12 +4,10 @@ andrewlamb@chromium.org
 dburger@chromium.org
 dhanyaganesh@chromium.org
 engeg@chromium.org
-evanhernandez@chromium.org
-jackneus@google.com
 jclinton@chromium.org
+lamontjones@chromium.org
 mikenichols@chromium.org
 seanabraham@chromium.org
-yshaul@chromium.org
 
 # Chrome OS test platform team
 # Test-related CLs should go to this group.
@@ -17,10 +15,6 @@ akeshet@chromium.org
 
 # Service accounts
 recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
-
-# Backup @google.com accounts
-evanhernandez@google.com
-jclinton@google.com
 
 # Changes to subdirectories or modules cause machine-generated updates to
 # README.recipes.md, so exclude it from OWNERS enforcement.
