@@ -25,6 +25,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
@@ -48,6 +50,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
       "--field",

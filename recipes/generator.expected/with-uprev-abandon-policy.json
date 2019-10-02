@@ -787,6 +787,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
@@ -812,6 +814,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
       "--field",
@@ -856,6 +860,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
@@ -881,6 +887,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
       "--field",
@@ -941,6 +949,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "description",
       "-d",
@@ -991,6 +1001,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "description",
       "-n",
@@ -1049,6 +1061,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "description",
       "-d",
@@ -1099,6 +1113,8 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "description",
       "-n",
