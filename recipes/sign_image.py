@@ -16,9 +16,10 @@
 
 import os
 
-from PB.recipes.chromeos import sign_image
-from PB.recipes.chromeos.sign_image import ArtifactType
-from PB.recipes.chromeos.sign_image import Cr50Instructions
+from PB.chromiumos import sign_image as sign_image_os
+from PB.chromiumos import common as common_os
+from PB.chromiumos.common import ImageType
+from PB.chromiumos.sign_image import Cr50Instructions
 from PB.recipes.chromeos.sign_image import SignImageProperties
 from PB.recipe_engine import result as result_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -71,10 +72,10 @@ class _BucketBase(object):
 
 
 _signer_buckets = {
-    sign_image.SIGNER_PRODUCTION: _BucketBase('chromeos-releases/', '/'),
-    sign_image.SIGNER_STAGING:
+    sign_image_os.SIGNER_PRODUCTION: _BucketBase('chromeos-releases/', '/'),
+    sign_image_os.SIGNER_STAGING:
         _BucketBase('chromeos-releases-test/', '/staging/'),
-    sign_image.SIGNER_DEV: _BucketBase('chromeos-releases-test/', '/dev/'),
+    sign_image_os.SIGNER_DEV: _BucketBase('chromeos-releases-test/', '/dev/'),
 }
 
 # Map cr50_instructions.target to the text value for instructions.
@@ -90,23 +91,22 @@ def RunSteps(api, properties):
   local_dir = api.path['cleanup']
 
   with api.step.nest('validate request') as step:
-    artifact_type = properties.artifact_type
-    artifact_type_name = ArtifactType.Name(
-        artifact_type).replace('ARTIFACT_TYPE_', '').lower()
+    image_type = properties.image_type
+    image_type_name = ImageType.Name(image_type).lower()
     # TODO(lamontjones): Extend this to checking the config for the list of
-    # permitted artifact_types.  Today, only cr50_firmware is permitted.
-    if artifact_type != sign_image.ARTIFACT_TYPE_CR50_FIRMWARE:
+    # permitted image_types.  Today, only cr50_firmware is permitted.
+    if image_type != common_os.CR50_FIRMWARE:
       return result_pb2.RawResult(
           status=common_pb2.FAILURE,
           summary_markdown='illegal artifact type %s' % (
-              ArtifactType.Name(artifact_type)))
+              ImageType.Name(image_type)))
 
-    if properties.signer_type == sign_image.SIGNER_UNSPECIFIED:
-      signer_type = sign_image.SIGNER_PRODUCTION
+    if properties.signer_type == sign_image_os.SIGNER_UNSPECIFIED:
+      signer_type = sign_image_os.SIGNER_PRODUCTION
     else:
       signer_type = properties.signer_type
     gs = _signer_buckets[signer_type]
-    prod = _signer_buckets[sign_image.SIGNER_PRODUCTION]
+    prod = _signer_buckets[sign_image_os.SIGNER_PRODUCTION]
 
     # The archive must point to a valid location.  In addition to inside their
     # own bucket, any instance is allowed to use the production bucket for
@@ -148,7 +148,7 @@ def RunSteps(api, properties):
         '[general]',
         'archive = %s' % archive_base,
         'board = %s' % properties.build_target.name,
-        'type = %s' % artifact_type_name,
+        'type = %s' % image_type_name,
         'milestone = %s' % milestone,
         'version = %s' % version,
         'versionrev = %s' % versionrev,
@@ -162,7 +162,7 @@ def RunSteps(api, properties):
   with api.step.nest('upload cr50 instructions') as step:
     content = str('\n'.join(insns) + '\n')
     insn_basename = 'ChromeOS-%s-%s-%s.instructions' % (
-        artifact_type_name, versionrev, properties.keyset)
+        image_type_name, versionrev, properties.keyset)
     local_insn = local_dir.join(insn_basename)
     insn_path = os.path.join(os.path.dirname(archive), insn_basename)
     rel_insn_path = gs.rel_path(insn_path)
@@ -191,7 +191,7 @@ def GenTests(api):
   yield (
       api.test('Cr50') +
       api.properties(SignImageProperties(
-          artifact_type=sign_image.ARTIFACT_TYPE_CR50_FIRMWARE,
+          image_type=common_os.CR50_FIRMWARE,
           keyset='cr50-accessory-mp',
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'))))
@@ -199,7 +199,7 @@ def GenTests(api):
   yield (
       api.test('Cr50_bad_path') +
       api.properties(SignImageProperties(
-          artifact_type=sign_image.ARTIFACT_TYPE_CR50_FIRMWARE,
+          image_type=common_os.CR50_FIRMWARE,
           keyset='cr50-accessory-mp',
           archive=('gs://chromeos-releases-test/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'))))
@@ -207,8 +207,8 @@ def GenTests(api):
   yield (
       api.test('Cr50_staging_with_prod_path') +
       api.properties(SignImageProperties(
-          signer_type=sign_image.SIGNER_STAGING,
-          artifact_type=sign_image.ARTIFACT_TYPE_CR50_FIRMWARE,
+          signer_type=sign_image_os.SIGNER_STAGING,
+          image_type=common_os.CR50_FIRMWARE,
           keyset='cr50-accessory-mp',
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'))))
@@ -216,7 +216,7 @@ def GenTests(api):
   yield (
       api.test('cr50_NodeLocked_no_device_id') +
       api.properties(SignImageProperties(
-          artifact_type=sign_image.ARTIFACT_TYPE_CR50_FIRMWARE,
+          image_type=common_os.CR50_FIRMWARE,
           keyset='cr50-accessory-mp',
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'),
@@ -226,7 +226,7 @@ def GenTests(api):
   yield (
       api.test('cr50_NodeLocked') +
       api.properties(SignImageProperties(
-          artifact_type=sign_image.ARTIFACT_TYPE_CR50_FIRMWARE,
+          image_type=common_os.CR50_FIRMWARE,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'),
           keyset='cr50-accessory-mp',

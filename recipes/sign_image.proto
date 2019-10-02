@@ -7,82 +7,14 @@ syntax = "proto3";
 package recipes.chromeos.sign_image;
 
 import "chromiumos/common.proto";
-
-enum ArtifactType {
-  // Unspecified.
-  ARTIFACT_TYPE_UNSPECIFIED = 0;
-
-  // Recovery image
-  ARTIFACT_TYPE_RECOVERY = 1;
-
-  // Install image (formerly "Factory").
-  ARTIFACT_TYPE_INSTALL = 2;
-
-  // Base
-  ARTIFACT_TYPE_BASE = 3;
-
-  // Accessory usbpd
-  ARTIFACT_TYPE_ACCESSORY_USBPD = 4;
-
-  // Accessory rwsig
-  ARTIFACT_TYPE_ACCESSORY_RWSIG = 5;
-
-  // Cr50 firmware
-  ARTIFACT_TYPE_CR50_FIRMWARE = 6;
-
-  // Firmware
-  ARTIFACT_TYPE_FIRMWARE = 7;
-
-  // Nv_lp0 firmware
-  ARTIFACT_TYPE_NV_LP0_FIRMWARE = 8;
-}
-
-enum Channel {
-  // Unspecified.
-  CHANNEL_UNSPECIFIED = 0;
-
-  // Stable
-  CHANNEL_STABLE = 1;
-
-  // Beta
-  CHANNEL_BETA = 2;
-
-  // Dev
-  CHANNEL_DEV = 3;
-
-  // Canary
-  CHANNEL_CANARY = 4;
-}
-
-enum SignerType {
-  SIGNER_UNSPECIFIED = 0;
-  SIGNER_PRODUCTION = 1;
-  SIGNER_STAGING = 2;
-  SIGNER_DEV = 3;
-}
-
-message Cr50Instructions {
-  // The target for the image.
-  // These names are assigned to target in the signing instructions file.
-  enum Target {
-    UNSPECIFIED = 0;
-    PREPVT = 1;
-    RELEASE_CANDIDATE = 2;
-    NODE_LOCKED = 3;
-    GENERAL_RELEASE = 4;
-  }
-  Target target = 1;
-
-  // Device ID for NODE_LOCKED.  (Format: '%08x-%08x'.)
-  string device_id = 2;
-}
+import "chromiumos/sign_image.proto";
 
 message SignImageProperties {
   // The build target being built.
   chromiumos.BuildTarget build_target = 1;
 
   // The artifact type.
-  ArtifactType artifact_type = 2;
+  chromiumos.ImageType image_type = 2;
 
   // The gs:// uri of the archive to sign.
   // (Maps to general.archive and tobesigned/filename.)
@@ -90,15 +22,15 @@ message SignImageProperties {
 
   // The channel.
   // (Maps to insns.channel.)
-  Channel channel = 4;
+  chromiumos.Channel channel = 4;
 
   // The keyset to use.
   // (Maps to insns.keyset.)
   string keyset = 5;
 
   // The signer branch to use
-  SignerType signer_type = 6;
+  chromiumos.SignerType signer_type = 6;
 
   // Cr50 stamping instructions, used only for artifact_type = CR50_FIRMWARE.
-  Cr50Instructions cr50_instructions = 7;
+  chromiumos.Cr50Instructions cr50_instructions = 7;
 }
