@@ -88,6 +88,11 @@ class GitApi(recipe_api.RecipeApi):
     #    1 - change to existing file || staged new file
     #    128 - other (missing file)
     with self.m.step.nest('diff check'):
+      if self._test_data.enabled:
+        has_diffs = self._test_data.get('diff_check', None)
+        if has_diffs is not None:
+          return has_diffs
+
       if self._step(['ls-files', '--error-unmatch', path],
                     ok_ret=(0, 1)).retcode != 0:
         return True

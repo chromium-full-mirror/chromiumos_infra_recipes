@@ -566,7 +566,11 @@
   },
   {
     "cmd": [],
-    "name": "try uprev chromeos-base/chromite"
+    "name": "try uprev chromeos-base/chromite",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@uprev versions@1.2.3@@@",
+      "@@@STEP_LOG_END@uprev versions@@@"
+    ]
   },
   {
     "cmd": [],
@@ -670,6 +674,20 @@
     ],
     "infra_step": true,
     "name": "try uprev chromeos-base/chromite.uprev versioned package.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "try uprev chromeos-base/chromite.verify updates",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "try uprev chromeos-base/chromite.verify updates.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

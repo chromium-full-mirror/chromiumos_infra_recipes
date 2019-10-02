@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/path',
+    'recipe_engine/step',
     'git',
 ]
 
@@ -22,7 +23,11 @@ def RunSteps(api):
   api.git.cherry_pick('branch')
   api.git.commit('Updated README\n\nMuch better now.', files=['README.md'])
   api.git.push('origin', 'HEAD:master', dry_run=True, capture_stdout=True)
-  api.git.diff_check('some/file/path')
+
+  with api.step.nest('check diffs') as result:
+    has_diffs = api.git.diff_check('some/file/path')
+    result.presentation.text = has_diffs
+
   [commit] = api.git.log('START_REF', 'END_REF', limit=30)
   api.assertions.assertEqual(commit.rev, commit_id)
   api.assertions.assertEqual(commit.message, 'message')
@@ -47,6 +52,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic')
 
+  yield api.test('diff_check') + api.git.diff_check(True)
+
   yield (api.test('show_file_path_not_found') +  #
          api.step_data('git show', retcode=128))
 
@@ -54,6 +61,6 @@ def GenTests(api):
          api.step_data('git symbolic-ref', retcode=1))
 
   yield api.test('diff_check_has_new_file') + api.step_data(
-      'diff check.git ls-files',
+      'check diffs.diff check.git ls-files',
       retcode=1,
   )
