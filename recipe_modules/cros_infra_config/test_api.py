@@ -46,7 +46,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       "profile": "generic_build"
                     },
                     "image_types": ["TEST"],
-                    "install_packages": "RUN"
+                    "install_packages": "RUN",
+                    "use_flags": [{"flag": "chrome_internal"}]
                   },
                   "unit_tests": {
                     "package_blacklist": [],
@@ -71,7 +72,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "build": {
                     "install_packages": "RUN",
-                    "apply_gerrit_changes": true
+                    "apply_gerrit_changes": true,
+                    "use_flags": [{"flag": "chrome_internal"}]
                   },
                   "unit_tests": {
                     "package_blacklist": [{

@@ -862,7 +862,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#65)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#75)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -874,7 +874,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#40)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#41)(self):**
 
 Return a chromiumos.common.Chroot.
 
@@ -885,24 +885,24 @@ Configure CrosSdkApi.
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#35)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#36)(self):**
 
 Returns a Path to the cros_sdk script.
 
-&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#62)(self):**
+&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#69)(self):**
 
 &mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#18)(self):**
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#86)(self, checkout_path):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#96)(self, checkout_path):**
 
 Link the chroot to a chromiumos checkout.
 
 Args:
   checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#104)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#114)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -918,9 +918,11 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#55)(self, chrome_root):**
+&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#62)(self, chrome_root):**
 
-&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#58)(self, goma_dir, goma_client_json):**
+&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#65)(self, goma_dir, goma_client_json):**
+
+&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#72)(self, use_flags):**
 ### *recipe_modules* / [cros\_som](/recipe_modules/cros_som)
 
 [DEPS](/recipe_modules/cros_som/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
@@ -2651,7 +2653,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#61)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#202)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#203)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2816,7 +2818,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#14)(api):**
 ### *recipes* / [cros\_som:examples/full](/recipe_modules/cros_som/examples/full.py)
 
 [DEPS](/recipe_modules/cros_som/examples/full.py#6): [cros\_som](#recipe_modules-cros_som), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

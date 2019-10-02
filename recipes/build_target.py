@@ -66,6 +66,7 @@ def RunSteps(api, properties):
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
   api.cros_bisect.set_bisect_builder(build_target.name)
+  api.cros_sdk.set_use_flags(build_config.build.use_flags)
 
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
