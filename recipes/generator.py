@@ -129,29 +129,9 @@ def RunSteps(api, properties):
         step.presentation.step_text = 'no new versions for {}'.format(cpv)
         return
 
-      valid_responses = []
-      with api.step.nest('verify updates'):
-        # only act on files that are actually modified
-        for uprev_response in response.responses:
-          has_changes = any([
-              api.git.diff_check(ebuild.path)
-              for ebuild in uprev_response.modified_ebuilds
-          ])
-          if has_changes:
-            valid_responses.append(uprev_response)
-
-      if not valid_responses:
-        step.presentation.step_text = (
-            'skipping uprev for {}. no modified files'.format(cpv))
-        return
-
-      step.presentation.logs['uprev versions'] = [
-          response.version for response in valid_responses
-      ]
-
     repositories = []
     with api.step.nest('commit uprev'):
-      for uprev_response in valid_responses:
+      for uprev_response in response.responses:
         commit_lines = [
             '{}: Automatic uprev to {}.'.format(package.package_name,
                                                 uprev_response.version),
@@ -287,46 +267,42 @@ def GenTests(api):
 
   yield (api.test('with-uprev-do-nothing-policy') + api.properties(
       existing_cls_policy=DO_NOTHING, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+         api.scheduler(triggers=gitiles_triggers))
 
   yield (api.test('with-uprev-do-nothing-policy-init-sdk') + api.properties(
       existing_cls_policy=DO_NOTHING, init_sdk=True, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+         api.scheduler(triggers=gitiles_triggers))
 
   yield (api.test('with-uprev-dry-run-policy') + api.properties(
       existing_cls_policy=DRY_RUN, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+         api.scheduler(triggers=gitiles_triggers))
 
   yield (api.test('with-uprev-full-run-policy') + api.properties(
       existing_cls_policy=FULL_RUN, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+         api.scheduler(triggers=gitiles_triggers))
 
   yield (api.test('with-uprev-abandon-policy') + api.properties(
       existing_cls_policy=ABANDON, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+         api.scheduler(triggers=gitiles_triggers))
 
   yield api.test('no-package-info') + api.expect_exception('ValueError')
 
   yield (api.test('no-reviewers') + api.properties(package_info=package) +
-         api.expect_exception('ValueError') + api.git.diff_check(True))
+         api.expect_exception('ValueError'))
 
-  yield (api.test('blank-reviewer') + api.properties(
-      package_info=package, reviewers=[{}]) + api.expect_exception('ValueError')
-         + api.git.diff_check(True))
+  yield (api.test('blank-reviewer') + api.properties(package_info=package,
+                                                     reviewers=[{}]) +
+         api.expect_exception('ValueError'))
 
   yield (api.test('no-triggers') + api.properties(**properties) +
-         api.scheduler(triggers=[]) + api.expect_exception('ValueError') +
-         api.git.diff_check(True))
+         api.scheduler(triggers=[]) + api.expect_exception('ValueError'))
 
   yield (api.test('non-gitiles-triggers') + api.properties(**properties) +
          api.scheduler(triggers=[
              triggers_pb2.Trigger(id='456', webui=triggers_pb2.WebUITrigger()),
-         ]) + api.expect_exception('ValueError') + api.git.diff_check(True))
+         ]) + api.expect_exception('ValueError'))
 
   yield (api.test('without-uprev') + api.properties(**properties) +
          api.scheduler(triggers=gitiles_triggers) + api.step_data(
              'try uprev chromeos-base/chromite.uprev versioned package'
              '.read output file', api.file.read_raw(content='{}')))
-
-  yield (api.test('no-changes') + api.properties(**properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(False))
