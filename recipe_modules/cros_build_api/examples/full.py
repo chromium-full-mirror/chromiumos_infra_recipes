@@ -85,6 +85,7 @@ def RunSteps(api):
           'Test': image.TestImageResult,
       },
       'PackageService': {
+          'BuildsChrome': packages.BuildsChromeResponse,
           'GetBestVisible': packages.GetBestVisibleResponse,
           'GetChromeVersion': packages.GetChromeVersionResponse,
           'HasChromePrebuilt': packages.HasChromePrebuiltResponse,

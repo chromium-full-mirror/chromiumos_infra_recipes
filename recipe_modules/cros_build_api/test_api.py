@@ -103,6 +103,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def package_service_responses(self):
     """Generate responses for PackageService."""
     responses = {}
+    responses['BuildsChrome'] = jsonify(
+        builds_chrome=True,
+    )
     responses['GetBestVisible'] = jsonify(
         package_info={
             'package_name': 'package',

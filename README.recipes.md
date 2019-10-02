@@ -2651,9 +2651,20 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#61)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#62)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#203)(api, build_config):**
+&mdash; **def [build\_chrome\_from\_source](/recipes/build_target.py#202)(api, build_target):**
+
+Returns whether this run should build chrome from source.
+
+Args:
+  api (RecipeApi): See RunSteps.
+  build_target (chromiumos.BuildTarget): Build target of the build.
+
+Returns:
+  bool: Whether or not this run needs to build chrome from sourc.
+
+&mdash; **def [get\_packages](/recipes/build_target.py#221)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
