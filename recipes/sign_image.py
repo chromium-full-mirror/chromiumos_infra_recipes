@@ -19,6 +19,7 @@ import os
 from PB.chromiumos import sign_image as sign_image_os
 from PB.chromiumos import common as common_os
 from PB.chromiumos.common import ImageType
+from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.sign_image import Cr50Instructions
 from PB.recipes.chromeos.sign_image import SignImageProperties
 from PB.recipe_engine import result as result_pb2
@@ -102,7 +103,7 @@ def RunSteps(api, properties):
     if image_type != common_os.CR50_FIRMWARE:
       return result_pb2.RawResult(
           status=common_pb2.FAILURE,
-          summary_markdown='illegal artifact type %s' % (
+          summary_markdown='illegal image type %s' % (
               ImageType.Name(image_type)))
 
     if properties.signer_type == sign_image_os.SIGNER_UNSPECIFIED:
@@ -148,11 +149,15 @@ def RunSteps(api, properties):
     milestone = 'RNone'
     version = 'Unknown'
     versionrev = '%s-%s' % (milestone, version)
+    if properties.build_target.name:
+      build_target = properties.build_target.name
+    else:
+      build_target = 'Unknown'
 
     insns = [
         '[general]',
         'archive = %s' % archive_base,
-        'board = %s' % properties.build_target.name,
+        'board = %s' % build_target,
         'type = %s' % image_type_name,
         'milestone = %s' % milestone,
         'version = %s' % version,
@@ -217,6 +222,7 @@ def GenTests(api):
       api.properties(SignImageProperties(
           signer_type=sign_image_os.SIGNER_STAGING,
           image_type=common_os.CR50_FIRMWARE,
+          build_target=BuildTarget(name='board'),
           keyset='cr50-accessory-mp',
           channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'

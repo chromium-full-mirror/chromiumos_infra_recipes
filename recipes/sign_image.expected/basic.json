@@ -6,7 +6,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "illegal artifact type IMAGE_TYPE_UNDEFINED"
+      "humanReason": "illegal image type IMAGE_TYPE_UNDEFINED"
     },
     "name": "$result"
   }

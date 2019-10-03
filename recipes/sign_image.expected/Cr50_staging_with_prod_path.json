@@ -43,7 +43,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[general]\narchive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2\nboard = \ntype = cr50_firmware\nmilestone = RNone\nversion = Unknown\nversionrev = RNone-Unknown\n[insns]\nchannel = canary\nkeyset = cr50-accessory-mp\ntarget = Unchanged\n",
+      "[general]\narchive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2\nboard = board\ntype = cr50_firmware\nmilestone = RNone\nversion = Unknown\nversionrev = RNone-Unknown\n[insns]\nchannel = canary\nkeyset = cr50-accessory-mp\ntarget = Unchanged\n",
       "[CLEANUP]/ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions"
     ],
     "infra_step": true,
@@ -52,7 +52,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@[general]@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@archive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@board = @@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@board = board@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@type = cr50_firmware@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@milestone = RNone@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@version = Unknown@@@",
