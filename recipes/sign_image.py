@@ -86,6 +86,10 @@ _target_type_to_name = {
     for k, v in Cr50Instructions.Target.items()
 }
 
+# Map channel numbers to names.
+_channel_to_name = {v: k.lower().replace('channel_', '')
+                    for k, v in common_os.Channel.items()}
+
 def RunSteps(api, properties):
   """Run steps."""
   local_dir = api.path['cleanup']
@@ -134,6 +138,7 @@ def RunSteps(api, properties):
 
   with api.step.nest('create Cr50 instructions') as step:
     target = _target_type_to_name[cr50.target]
+    channel = _channel_to_name[properties.channel]
 
     archive_base = os.path.basename(archive)
 
@@ -153,6 +158,7 @@ def RunSteps(api, properties):
         'version = %s' % version,
         'versionrev = %s' % versionrev,
         '[insns]',
+        'channel = %s' % channel,
         'keyset = %s' % properties.keyset,
         'target = %s' % target,
     ]
@@ -193,6 +199,7 @@ def GenTests(api):
       api.properties(SignImageProperties(
           image_type=common_os.CR50_FIRMWARE,
           keyset='cr50-accessory-mp',
+          channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'))))
 
@@ -201,6 +208,7 @@ def GenTests(api):
       api.properties(SignImageProperties(
           image_type=common_os.CR50_FIRMWARE,
           keyset='cr50-accessory-mp',
+          channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases-test/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'))))
 
@@ -210,6 +218,7 @@ def GenTests(api):
           signer_type=sign_image_os.SIGNER_STAGING,
           image_type=common_os.CR50_FIRMWARE,
           keyset='cr50-accessory-mp',
+          channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'))))
 
@@ -218,6 +227,7 @@ def GenTests(api):
       api.properties(SignImageProperties(
           image_type=common_os.CR50_FIRMWARE,
           keyset='cr50-accessory-mp',
+          channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'),
           cr50_instructions=Cr50Instructions(
@@ -227,6 +237,7 @@ def GenTests(api):
       api.test('cr50_NodeLocked') +
       api.properties(SignImageProperties(
           image_type=common_os.CR50_FIRMWARE,
+          channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'),
           keyset='cr50-accessory-mp',

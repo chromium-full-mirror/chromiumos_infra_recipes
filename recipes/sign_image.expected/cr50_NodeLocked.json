@@ -25,7 +25,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[general]\narchive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2\nboard = \ntype = cr50_firmware\nmilestone = RNone\nversion = Unknown\nversionrev = RNone-Unknown\n[insns]\nkeyset = cr50-accessory-mp\ntarget = NodeLocked\ndevice_id = 12345678-11223344\n",
+      "[general]\narchive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2\nboard = \ntype = cr50_firmware\nmilestone = RNone\nversion = Unknown\nversionrev = RNone-Unknown\n[insns]\nchannel = canary\nkeyset = cr50-accessory-mp\ntarget = NodeLocked\ndevice_id = 12345678-11223344\n",
       "[CLEANUP]/ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions"
     ],
     "infra_step": true,
@@ -40,6 +40,7 @@
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@version = Unknown@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@versionrev = RNone-Unknown@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@[insns]@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@channel = canary@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@keyset = cr50-accessory-mp@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@target = NodeLocked@@@",
       "@@@STEP_LOG_LINE@ChromeOS-cr50_firmware-RNone-Unknown-cr50-accessory-mp.instructions@device_id = 12345678-11223344@@@",

@@ -3231,7 +3231,7 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 
 Recipe for signing ChromeOS images.
 
-&mdash; **def [RunSteps](/recipes/sign_image.py#89)(api, properties):**
+&mdash; **def [RunSteps](/recipes/sign_image.py#93)(api, properties):**
 
 Run steps.
 ### *recipes* / [sign\_paygen](/recipes/sign_paygen.py)
