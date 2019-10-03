@@ -4,4 +4,4 @@
 /bundle/
 */branch-util/branch-util
 support/cipd-bin
-
+/.env
