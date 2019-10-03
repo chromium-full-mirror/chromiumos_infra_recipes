@@ -49,19 +49,22 @@ def enumerate_tests(api, request):
       test_plan=request.test_plan,
     )
     response = api.cros_test_platform.enumerate(enum_request)
-    log_lines = [_enumerate_log(x) for x in response.autotest_invocations]
-    step.presentation.logs['autotest tests'] = log_lines
+    step.presentation.logs['autotest tests'] = _enumeration_log(response)
     return response
 
 
-def _enumerate_log(autotest_invocation):
-  """Returns a 1-line string logging representation of an enumerated test.
+def _enumeration_log(response):
+  """Compute lines to log for the given test_platform.EnumerationResponse."""
+  return [_invocation_summary(x) for x in response.autotest_invocations]
+
+
+def _invocation_summary(autotest_invocation):
+  """Returns a 1-line string summary of an enumerated test.
 
   Args:
     * autotest_invocation: AutotestInvocation instance.
 
-  Returns:
-    * string logging representation.
+  Returns: A short summary string.
   """
   # Note: At some point, consider adding other fields to this log, such as
   # the test's declared dependencies, as defined by the AutotestTest proto.
@@ -84,24 +87,37 @@ def split(api, request, config):
       config=config.scheduler_migration,
     )
     split_resp = api.cros_test_platform.scheduler_traffic_split(split_req)
-
-    autotest_request = split_resp.autotest_request
-    skylab_request = split_resp.skylab_request
-    # Rely on ByteSize of protos to determine which message is nonempty.
-    has_autotest = bool(autotest_request.ByteSize())
-    has_skylab = bool(skylab_request.ByteSize())
-    if has_autotest and has_skylab:
-      raise ValueError('Traffic splits contains both autotest and skylab '
-                       'components; this is not supported.')
-    if not (has_autotest or has_skylab):
-      raise ValueError('Traffic split contains no traffic for either autotest '
-                       'or skylab.')
-
-    env_name = 'skylab' if has_skylab else 'autotest'
+    is_skylab, request = _get_backend_request(split_resp)
+    env_name = 'skylab' if is_skylab else 'autotest'
     step.presentation.step_summary_text = 'selected backend: ' + env_name
+    return request, is_skylab
 
-    request = skylab_request if has_skylab else autotest_request
-    return request, has_skylab
+
+def _get_backend_request(split_resp):
+  """Extract the backend request from traffic splitter response.
+
+  Args:
+    * split_resp: A test_platform.SchedulerTrafficSplitResponse object.
+
+  Returns: bool, test_platform.Request
+    * First item in the pair indicates whether this is a skylab request.
+    * Second item in the pair is the extracted request.
+  """
+  autotest = split_resp.autotest_request
+  skylab = split_resp.skylab_request
+  is_skylab = _is_non_empty_proto(skylab)
+  if is_skylab and _is_non_empty_proto(autotest):
+    raise ValueError('Traffic splits contains both autotest and skylab '
+                     'components; this is not supported.')
+  if not is_skylab and not _is_non_empty_proto(autotest):
+    raise ValueError('Traffic split contains no traffic for either autotest '
+                     'or skylab.')
+  request = skylab if is_skylab else autotest
+  return is_skylab, request
+
+
+def _is_non_empty_proto(p):
+  return bool(p.ByteSize())
 
 
 def execute(api, request, enumeration, config, use_skylab):
@@ -135,48 +151,67 @@ def RunSteps(api, properties):
   # timeouts; needs revisiting).
   with api.context(infra_steps=True):
     enumeration = enumerate_tests(api, request)
-    resp = execute(api, request, enumeration, properties.config, skylab)
+    response = execute(api, request, enumeration, properties.config, skylab)
 
   # Failures in summarization are non-infra related.
   with api.step.nest('summarize') as step:
-    # The `response` field of CrosTestPlatformProperties is a message of
-    # type ExecuteResponse. However, the recipe-supported mechanism for setting
-    # output properties supports only json-encodable python structures, not
-    # protos, so roundtrip the actual ExecuteResponse proto through json.
-    step.properties['response'] = json.loads(json_format.MessageToJson(resp))
-
-    with api.step.nest('passed tests') as step:
-      passed_tests = [x for x in resp.task_results
-                      if x.state.verdict == TaskState.VERDICT_PASSED]
-      _emit_links(step.links, passed_tests)
-    with api.step.nest('failed or incomplete tests') as step:
-      bad_verdicts = (TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED)
-      failed_tests = [x for x in resp.task_results
-                      if x.state.verdict in bad_verdicts]
-      _emit_links(step.links, failed_tests)
-      # TODO(akeshet): Don't present failure if the underlying enumeration item
-      # was retried and passed separately. Instead, include in a "failed but
-      # retried" section.
-      if failed_tests:
-        raise api.step.StepFailure('tests failed')
-    # TODO(akeshet): Handle task links for verdictless tasks (including
-    # incomplete tasks and completed tasks which provide no verdict).
+    _set_response_property(step, response)
+    _log_task_results(api, response.task_results)
 
 
-def _emit_links(links, tasks):
+def _set_response_property(step, response):
+  """Set the builder 'response' property from test_platform.ExecuteResponse."""
+  # The `response` field of CrosTestPlatformProperties is a message of
+  # type ExecuteResponse. However, the recipe-supported mechanism for setting
+  # output properties supports only json-encodable python structures, not
+  # protos, so roundtrip the actual ExecuteResponse proto through json.
+  step.properties['response'] = json.loads(json_format.MessageToJson(response))
+
+
+def _log_task_results(api, task_results):
+  """Report task results for a request on the UI."""
+  # TODO(akeshet): Don't present failure if the underlying enumeration item
+  # was retried and passed separately. Instead, include in a "failed but
+  # retried" section.
+  # TODO(akeshet): Handle task links for verdictless tasks (including
+  # incomplete tasks and completed tasks which provide no verdict).
+  with api.step.nest('passed tests') as step:
+    _emit_links(step, _filter_successful_task_results(task_results))
+  with api.step.nest('failed or incomplete tests') as step:
+    unsuccessful_task_results = _filter_unsuccessful_task_results(task_results)
+    _emit_links(step, unsuccessful_task_results)
+    if unsuccessful_task_results:
+      raise api.step.StepFailure('tests failed')
+
+
+def _filter_successful_task_results(task_results):
+  return [x for x in task_results
+          if x.state.verdict == TaskState.VERDICT_PASSED]
+
+
+_UNSUCCESSFUL_VERDICTS = (
+  TaskState.VERDICT_FAILED,
+  TaskState.VERDICT_UNSPECIFIED,
+)
+
+
+def _filter_unsuccessful_task_results(task_results):
+  return [x for x in task_results if x.state.verdict in _UNSUCCESSFUL_VERDICTS]
+
+
+def _emit_links(step, task_results):
   """Emit presentation links related to a task.
 
   Args:
-    * links: a step.presentation.links instance.
-    * tasks: a list of TaskResult instances.
+    * step:  a recipe step.
+    * task_results: a list of TaskResult instances.
   """
   # TODO(akeshet): Correctly handle link emission in the case of multiple
   # task results with the same name. This will involve a proto change that
   # includes attempt number in the result.
-  for t in tasks:
-    links['(log)   ' + t.name] = t.log_url
-    links['(task)  ' + t.name] = t.task_url
-
+  for t in task_results:
+    step.links['(log)   ' + t.name] = t.log_url
+    step.links['(task)  ' + t.name] = t.task_url
 
 
 def GenTests(api):

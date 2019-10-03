@@ -3322,7 +3322,7 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#129)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#145)(api, properties):**
 
 &mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#37)(api, request):**
 
@@ -3334,7 +3334,7 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#107)(api, request, enumeration, config, use_skylab):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#123)(api, request, enumeration, config, use_skylab):**
 
 Execute request in the correct backend.
 
@@ -3345,7 +3345,7 @@ Args:
   use_skylab: bool indicating which backend to run in
               (True -> skylab, False -> autotest).
 
-&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#71)(api, request, config):**
+&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#74)(api, request, config):**
 
 Determine which backend will execute the request.
 
