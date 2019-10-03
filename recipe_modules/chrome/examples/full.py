@@ -3,7 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-DEPS = ['recipe_engine/path', 'recipe_engine/properties', 'chrome']
+DEPS = [
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/properties',
+    'chrome',
+]
 
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
@@ -26,6 +31,8 @@ def RunSteps(api):
       internal=False,
   )
 
+  api.chrome.build_chrome_from_source(build_target, chroot)
+
 
 def GenTests(api):
   yield (api.test('basic'))
@@ -35,3 +42,8 @@ def GenTests(api):
              "$chromeos/chrome":
              ChromeProperties(parallel_sync_jobs=42)
          }))
+
+  yield (api.test('no-build-chrome') + #
+         api.step_data(
+             'call chromite.api.PackageService/BuildsChrome.read output file',
+             api.file.read_raw(content='{"builds_chrome": false}')))

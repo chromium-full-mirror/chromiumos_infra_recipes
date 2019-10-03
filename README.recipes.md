@@ -254,9 +254,20 @@ Returns:
 
 [DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [portage](#recipe_modules-portage), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#21)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [build\_chrome\_from\_source](/recipe_modules/chrome/api.py#102)(self, build_target, chroot):**
+
+Returns whether this run should build chrome from source.
+
+Args:
+  build_target (chromiumos.BuildTarget): Build target of the build.
+  chroot (chromiumos.Chroot): Information on the chroot for the build.
+
+Returns:
+  bool: Whether or not this run needs to build chrome from sourc.
+
+&mdash; **def [sync](/recipe_modules/chrome/api.py#23)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -2651,20 +2662,9 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#62)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#60)(api, properties):**
 
-&mdash; **def [build\_chrome\_from\_source](/recipes/build_target.py#202)(api, build_target):**
-
-Returns whether this run should build chrome from source.
-
-Args:
-  api (RecipeApi): See RunSteps.
-  build_target (chromiumos.BuildTarget): Build target of the build.
-
-Returns:
-  bool: Whether or not this run needs to build chrome from sourc.
-
-&mdash; **def [get\_packages](/recipes/build_target.py#221)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#201)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2681,9 +2681,9 @@ Returns:
   list[PackageInfo] of packages to build
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
-[DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#18)(api):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)

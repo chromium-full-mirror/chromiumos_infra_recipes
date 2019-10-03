@@ -36,8 +36,6 @@ from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
-from PB.chromite.api.packages import BuildsChromeRequest
-from PB.chromite.api.packages import HasChromePrebuiltRequest
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
@@ -132,7 +130,8 @@ def RunSteps(api, properties):
 
       install_packages = build_config.build.install_packages
       if api.cros_infra_config.should_run(install_packages):
-        if build_chrome_from_source(api, build_target):
+        if api.chrome.build_chrome_from_source(build_target,
+                                               api.cros_sdk.chroot):
           chrome_root = api.path['start_dir'].join('chrome')
           api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
                           build_config.chrome.internal)
@@ -198,25 +197,6 @@ def RunSteps(api, properties):
             build_target, build_config.id.type,
             build_config.artifacts.prebuilts_gs_bucket,
             private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
-
-def build_chrome_from_source(api, build_target):
-  """Returns whether this run should build chrome from source.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    build_target (chromiumos.BuildTarget): Build target of the build.
-
-  Returns:
-    bool: Whether or not this run needs to build chrome from sourc.
-  """
-  if not api.cros_build_api.PackageService.BuildsChrome(
-      BuildsChromeRequest(
-          build_target=build_target,
-          chroot=api.cros_sdk.chroot)).builds_chrome:
-    return False
-  return not api.cros_build_api.PackageService.HasChromePrebuilt(
-      HasChromePrebuiltRequest(build_target=build_target,
-                               chroot=api.cros_sdk.chroot)).has_prebuilt
 
 def get_packages(api, build_config):
   """Returns the packages that should be built for this invocation.

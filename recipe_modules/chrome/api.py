@@ -6,6 +6,8 @@
 from recipe_engine import recipe_api
 
 from PB.chromite.api import packages
+from PB.chromite.api.packages import BuildsChromeRequest
+from PB.chromite.api.packages import HasChromePrebuiltRequest
 
 CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 
@@ -96,3 +98,22 @@ class ChromeApi(recipe_api.RecipeApi):
                         self.m.depot_tools.root.join('gclient.py'),
                         sync_cmd,
                         infra_step=True)
+
+  def build_chrome_from_source(self, build_target, chroot):
+    """Returns whether this run should build chrome from source.
+
+    Args:
+      build_target (chromiumos.BuildTarget): Build target of the build.
+      chroot (chromiumos.Chroot): Information on the chroot for the build.
+
+    Returns:
+      bool: Whether or not this run needs to build chrome from sourc.
+    """
+    if not self.m.cros_build_api.PackageService.BuildsChrome(
+        BuildsChromeRequest(
+            build_target=build_target,
+            chroot=chroot)).builds_chrome:
+      return False
+    return not self.m.cros_build_api.PackageService.HasChromePrebuilt(
+        HasChromePrebuiltRequest(build_target=build_target,
+                                 chroot=chroot)).has_prebuilt
