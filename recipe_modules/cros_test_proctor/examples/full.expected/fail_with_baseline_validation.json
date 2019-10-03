@@ -777,112 +777,8 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.schedule autotest vm tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"target-autotest-vm\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"suite:autotest-suite\"], \"name\": \"vtarget.vm.auto\", \"testHarness\": \"AUTOTEST\"}, \"requestId\": \"0-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-autotest-vm\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514002\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-autotest-vm\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"critical\": \"NO\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"id\": \"deadbeef\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"buildPayload\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"artifactsGsBucket\": \"gs://chromeos-image-archive\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"filesByArtifact\": {@@@",
-      "@@@STEP_LOG_LINE@request@              \"ARTIFACT_TYPES_UNSPECIFIED\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"artifact_types_unspecified.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"AUTOTEST_FILES\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"autotest_files.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"CHROMEOS_CONFIG\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"chromeos_config.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"CPE_REPORT\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"cpe_report.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"EBUILD_LOGS\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"ebuild_logs.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"FIRMWARE\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"firmware.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"IMAGE_ARCHIVES\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"image_archives.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"IMAGE_ZIP\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"image_zip.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"PINNED_GUEST_IMAGES\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"pinned_guest_images.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"TAST_FILES\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"tast_files.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"TEST_UPDATE_PAYLOAD\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"test_update_payload.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ]@@@",
-      "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"expressions\": [@@@",
-      "@@@STEP_LOG_LINE@request@            \"suite:autotest-suite\"@@@",
-      "@@@STEP_LOG_LINE@request@          ], @@@",
-      "@@@STEP_LOG_LINE@request@          \"name\": \"vtarget.vm.auto\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"testHarness\": \"AUTOTEST\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-00000000133d\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@target-autotest-vm@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
     "name": "run tests.schedule tests.schedule tast vm tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"target-tast-vm\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"exampe.Pass\"], \"name\": \"ttarget.tast.sweet\", \"testHarness\": \"TAST\"}, \"requestId\": \"0-00000000-0000-0000-0000-000000001340\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"target-tast-vm\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"exampe.Pass\"], \"name\": \"ttarget.tast.sweet\", \"testHarness\": \"TAST\"}, \"requestId\": \"0-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -892,7 +788,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-vm\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514003\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514002\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -962,7 +858,7 @@
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast.sweet\", @@@",
       "@@@STEP_LOG_LINE@request@          \"testHarness\": \"TAST\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001340\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-00000000133d\", @@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
@@ -974,7 +870,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@target-tast-vm@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+      "@@@STEP_LINK@target-tast-vm@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {
@@ -986,7 +882,7 @@
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.schedule moblab vm tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"moblab-vm-test\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"name\": \"mtarget.moblab.vm\"}, \"requestId\": \"0-00000000-0000-0000-0000-000000001343\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"moblab-vm-test\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"name\": \"mtarget.moblab.vm\"}, \"requestId\": \"0-00000000-0000-0000-0000-000000001340\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -996,7 +892,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"moblab-vm-test\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514004\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514003\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -1059,7 +955,7 @@
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"mtarget.moblab.vm\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001343\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001340\", @@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
@@ -1071,7 +967,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@moblab-vm-test@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LINK@moblab-vm-test@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
     ]
   },
   {
@@ -1504,76 +1400,6 @@
   },
   {
     "cmd": [],
-    "name": "run tests.collect tests.collect autotest vm tests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "collect",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-interval",
-      "60s",
-      "8922054662172514002"
-    ],
-    "infra_step": true,
-    "name": "run tests.collect tests.collect autotest vm tests.wait",
-    "timeout": 14400,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
-    "name": "run tests.collect tests.collect autotest vm tests.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514002\"}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"name\": \"vm-test\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"name\": \"vm-test\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514002\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/0@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run tests.collect tests.collect tast vm tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1587,7 +1413,7 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "8922054662172514003"
+      "8922054662172514002"
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect tast vm tests.wait",
@@ -1605,7 +1431,7 @@
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect tast vm tests.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514003\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514002\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -1615,7 +1441,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514003\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514002\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
@@ -1638,7 +1464,7 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "8922054662172514004"
+      "8922054662172514003"
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect moblab vm tests.wait",
@@ -1656,7 +1482,7 @@
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect moblab vm tests.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514004\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514003\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1684,7 +1510,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514004\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514003\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
@@ -2146,7 +1972,7 @@
     "name": "run baseline tests.schedule baseline tests.schedule hardware tests.schedule htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
+      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
     ]
   },
   {
@@ -2158,7 +1984,7 @@
     ],
     "infra_step": true,
     "name": "run baseline tests.schedule baseline tests.schedule hardware tests.schedule htarget.hw.bvt-cq.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\"}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"request\": {\"params\": {\"decorations\": {\"tags\": [\"priority:140\", \"suite:bvt-cq\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:DUT_POOL_QUOTA\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"testMetadataUrl\": \"gs://gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5}, \"scheduling\": {\"priority\": \"140\", \"quotaAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}], \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001346\", \"tags\": [{\"key\": \"build\", \"value\": \"target-cq/R12-3.4.5-6789\"}, {\"key\": \"label-board\", \"value\": \"target\"}, {\"key\": \"label-pool\", \"value\": \"DUT_POOL_QUOTA\"}, {\"key\": \"priority\", \"value\": \"140\"}, {\"key\": \"suite\", \"value\": \"bvt-cq\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\"}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"request\": {\"params\": {\"decorations\": {\"tags\": [\"priority:140\", \"suite:bvt-cq\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:DUT_POOL_QUOTA\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"testMetadataUrl\": \"gs://gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5}, \"scheduling\": {\"priority\": \"140\", \"quotaAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}], \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001343\", \"tags\": [{\"key\": \"build\", \"value\": \"target-cq/R12-3.4.5-6789\"}, {\"key\": \"label-board\", \"value\": \"target\"}, {\"key\": \"label-pool\", \"value\": \"DUT_POOL_QUOTA\"}, {\"key\": \"priority\", \"value\": \"140\"}, {\"key\": \"suite\", \"value\": \"bvt-cq\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2169,7 +1995,7 @@
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"testplatform\", @@@",
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"cros_test_platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514005\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514004\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -2231,7 +2057,7 @@
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001346\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001343\", @@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"build\", @@@",
@@ -2263,7 +2089,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514005@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
+      "@@@STEP_LINK@8922054662172514004@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
     ]
   },
   {
@@ -2283,7 +2109,7 @@
     ],
     "infra_step": true,
     "name": "run baseline tests.schedule baseline tests.schedule hardware tests.schedule htarget.hw.bvt-inline.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\"}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"request\": {\"params\": {\"decorations\": {\"tags\": [\"priority:140\", \"suite:bvt-inline\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:DUT_POOL_QUOTA\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"testMetadataUrl\": \"gs://gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5}, \"scheduling\": {\"priority\": \"140\", \"quotaAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}], \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-inline\"}]}}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001349\", \"tags\": [{\"key\": \"build\", \"value\": \"target-cq/R12-3.4.5-6789\"}, {\"key\": \"label-board\", \"value\": \"target\"}, {\"key\": \"label-pool\", \"value\": \"DUT_POOL_QUOTA\"}, {\"key\": \"priority\", \"value\": \"140\"}, {\"key\": \"suite\", \"value\": \"bvt-inline\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\"}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"request\": {\"params\": {\"decorations\": {\"tags\": [\"priority:140\", \"suite:bvt-inline\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:DUT_POOL_QUOTA\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"testMetadataUrl\": \"gs://gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5}, \"scheduling\": {\"priority\": \"140\", \"quotaAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}], \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-inline\"}]}}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001346\", \"tags\": [{\"key\": \"build\", \"value\": \"target-cq/R12-3.4.5-6789\"}, {\"key\": \"label-board\", \"value\": \"target\"}, {\"key\": \"label-pool\", \"value\": \"DUT_POOL_QUOTA\"}, {\"key\": \"priority\", \"value\": \"140\"}, {\"key\": \"suite\", \"value\": \"bvt-inline\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2356,7 +2182,7 @@
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001349\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001346\", @@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"build\", @@@",
@@ -2399,112 +2225,8 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "run baseline tests.schedule baseline tests.schedule autotest vm tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"target-autotest-vm\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"suite:autotest-suite\"], \"name\": \"vtarget.vm.auto\", \"testHarness\": \"AUTOTEST\"}, \"requestId\": \"0-00000000-0000-0000-0000-00000000134c\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-autotest-vm\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514007\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-autotest-vm\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"critical\": \"NO\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"id\": \"deadbeef\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"buildPayload\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"artifactsGsBucket\": \"gs://chromeos-image-archive\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"filesByArtifact\": {@@@",
-      "@@@STEP_LOG_LINE@request@              \"ARTIFACT_TYPES_UNSPECIFIED\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"artifact_types_unspecified.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"AUTOTEST_FILES\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"autotest_files.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"CHROMEOS_CONFIG\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"chromeos_config.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"CPE_REPORT\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"cpe_report.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"EBUILD_LOGS\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"ebuild_logs.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"FIRMWARE\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"firmware.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"IMAGE_ARCHIVES\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"image_archives.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"IMAGE_ZIP\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"image_zip.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"PINNED_GUEST_IMAGES\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"pinned_guest_images.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"TAST_FILES\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"tast_files.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ], @@@",
-      "@@@STEP_LOG_LINE@request@              \"TEST_UPDATE_PAYLOAD\": [@@@",
-      "@@@STEP_LOG_LINE@request@                \"test_update_payload.txt\"@@@",
-      "@@@STEP_LOG_LINE@request@              ]@@@",
-      "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"expressions\": [@@@",
-      "@@@STEP_LOG_LINE@request@            \"suite:autotest-suite\"@@@",
-      "@@@STEP_LOG_LINE@request@          ], @@@",
-      "@@@STEP_LOG_LINE@request@          \"name\": \"vtarget.vm.auto\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"testHarness\": \"AUTOTEST\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-00000000134c\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@target-autotest-vm@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
     "name": "run baseline tests.schedule baseline tests.schedule tast vm tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"target-tast-vm\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"exampe.Pass\"], \"name\": \"ttarget.tast.sweet\", \"testHarness\": \"TAST\"}, \"requestId\": \"0-00000000-0000-0000-0000-00000000134f\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"target-tast-vm\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"exampe.Pass\"], \"name\": \"ttarget.tast.sweet\", \"testHarness\": \"TAST\"}, \"requestId\": \"0-00000000-0000-0000-0000-000000001349\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2514,7 +2236,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-vm\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514008\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514006\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -2584,7 +2306,7 @@
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast.sweet\", @@@",
       "@@@STEP_LOG_LINE@request@          \"testHarness\": \"TAST\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-00000000134f\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001349\", @@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
@@ -2596,7 +2318,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@target-tast-vm@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@"
+      "@@@STEP_LINK@target-tast-vm@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
     ]
   },
   {
@@ -2608,7 +2330,7 @@
     ],
     "infra_step": true,
     "name": "run baseline tests.schedule baseline tests.schedule moblab vm tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"moblab-vm-test\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"name\": \"mtarget.moblab.vm\"}, \"requestId\": \"0-00000000-0000-0000-0000-000000001352\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"moblab-vm-test\"}, \"critical\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"gs://chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"]}}, \"name\": \"mtarget.moblab.vm\"}, \"requestId\": \"0-00000000-0000-0000-0000-00000000134c\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2618,7 +2340,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"moblab-vm-test\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514009\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514007\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -2681,7 +2403,7 @@
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"mtarget.moblab.vm\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001352\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-00000000134c\", @@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
@@ -2693,7 +2415,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@moblab-vm-test@https://cr-buildbucket.appspot.com/build/8922054662172514009@@@"
+      "@@@STEP_LINK@moblab-vm-test@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
     ]
   },
   {
@@ -2875,7 +2597,7 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "8922054662172514005",
+      "8922054662172514004",
       "4321"
     ],
     "infra_step": true,
@@ -2894,7 +2616,7 @@
     ],
     "infra_step": true,
     "name": "run baseline tests.collect baseline tests.collect skylab tasks.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514005\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"4321\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514004\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"4321\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2933,7 +2655,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514005\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514004\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
@@ -2946,57 +2668,6 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@4321@https://cr-buildbucket.appspot.com/build/4321@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run baseline tests.collect baseline tests.collect autotest vm tests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "collect",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-interval",
-      "60s",
-      "8922054662172514007"
-    ],
-    "infra_step": true,
-    "name": "run baseline tests.collect baseline tests.collect autotest vm tests.wait",
-    "timeout": 14400,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
-    "name": "run baseline tests.collect baseline tests.collect autotest vm tests.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514007\"}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514007\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -3014,7 +2685,7 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "8922054662172514008"
+      "8922054662172514006"
     ],
     "infra_step": true,
     "name": "run baseline tests.collect baseline tests.collect tast vm tests.wait",
@@ -3032,7 +2703,7 @@
     ],
     "infra_step": true,
     "name": "run baseline tests.collect baseline tests.collect tast vm tests.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514008\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514006\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -3042,7 +2713,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514008\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514006\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
@@ -3065,7 +2736,7 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "8922054662172514009"
+      "8922054662172514007"
     ],
     "infra_step": true,
     "name": "run baseline tests.collect baseline tests.collect moblab vm tests.wait",
@@ -3083,14 +2754,14 @@
     ],
     "infra_step": true,
     "name": "run baseline tests.collect baseline tests.collect moblab vm tests.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514009\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514007\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514009\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514007\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -3102,13 +2773,13 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514009\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514007\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514009@https://cr-buildbucket.appspot.com/build/8922054662172514009@@@"
+      "@@@STEP_LINK@8922054662172514007@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
     ]
   },
   {
@@ -3123,7 +2794,7 @@
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"vm-test\", \"moblab-vm-test\"]@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"moblab-vm-test\"]@@@"
     ]
   },
   {
@@ -3262,14 +2933,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all vm tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check test results.vm test results.vm-test",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
