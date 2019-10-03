@@ -1105,7 +1105,7 @@ Returns:
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#100)(self, request):**
+&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#101)(self, request):**
 
 Execute work via `autotest-execute` subcommand.
 
@@ -1114,7 +1114,7 @@ Args:
 
 Returns: ExecuteResponse.
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#67)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#68)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -1125,16 +1125,16 @@ Returns: EnumerationResponse.
 
 &mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#23)(self):**
 
-&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#78)(self, request):**
+&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#79)(self, request):**
 
 Determine scheduler via `scheduler-traffic-split` subcommand.
 
 Args:
-  request: a SchedulerTrafficSplitRequest.
+  request: a SchedulerTrafficSplitRequests.
 
-Returns: SchedulerTrafficSplitResponse.
+Returns: SchedulerTrafficSplitResponses.
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#89)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#90)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 
@@ -3316,45 +3316,48 @@ Recipe for running Moblab VM tests.
 &mdash; **def [RunSteps](/recipes/test_moblab_vm.py#41)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#26): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#31): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#145)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#196)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#37)(api, request):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#42)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
 Args:
   * api (object): See RunSteps documentation.
-  * request: test_platform.Request instance.
+  * requests: {tag: test_platform.Request} dict.
 
-Returns: EnumerationResponse.
+Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#123)(api, request, enumeration, config, use_skylab):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#172)(api, requests, enumerations, config, use_skylab):**
 
 Execute request in the correct backend.
 
 Args:
-  request: test_platform.Request instance.
-  enumeration: EnumerationResponse instance.
+  requests: {tag: test_platform.Request} dict.
+  enumerations: {tag: EnumerationResponse} dict.
   config: test_platform.Config instance.
   use_skylab: bool indicating which backend to run in
               (True -> skylab, False -> autotest).
 
-&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#74)(api, request, config):**
+&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#86)(api, requests, config):**
 
 Determine which backend will execute the request.
 
 Args:
   * api (object): See RunSteps documentation.
-  * request: test_platform.Request instance.
+  * requests: {tag: test_platform.Request} dict.
   * config: test_platform.Config instance.
 
-Returns: (test_platform.Request, bool (skylab)) tuple.
+Returns: bool, [test_platform.Request]
+  * First item in the pair indicates whether this is a skylab request.
+  * Second item in the pair is {tag: test_platform.Request} dict of extracted
+        requests.
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#10): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

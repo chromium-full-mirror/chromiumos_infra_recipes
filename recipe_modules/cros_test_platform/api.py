@@ -8,10 +8,10 @@ from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 from PB.test_platform.steps.enumeration import \
-  EnumerationRequest, EnumerationResponse
+  EnumerationRequests, EnumerationResponses
 from PB.test_platform.steps.scheduler_traffic_split import \
-  SchedulerTrafficSplitRequest, SchedulerTrafficSplitResponse
-from PB.test_platform.steps.execution import ExecuteRequest, ExecuteResponse
+  SchedulerTrafficSplitRequests, SchedulerTrafficSplitResponses
+from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
 
 # This exit code is returned by cros_test_platform runs that had an error but
 # produced a response anyway.
@@ -46,6 +46,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       cmd = [
         self._cmd,
         subcommand,
+        '-multi_request',
         '-input_json',
         '/dev/stdin',
         '-output_json',
@@ -73,18 +74,18 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     Returns: EnumerationResponse.
     """
     return self._run('enumerate', request,
-        EnumerationRequest, EnumerationResponse)
+        EnumerationRequests, EnumerationResponses)
 
   def scheduler_traffic_split(self, request):
     """Determine scheduler via `scheduler-traffic-split` subcommand.
 
     Args:
-      request: a SchedulerTrafficSplitRequest.
+      request: a SchedulerTrafficSplitRequests.
 
-    Returns: SchedulerTrafficSplitResponse.
+    Returns: SchedulerTrafficSplitResponses.
     """
     return self._run('scheduler-traffic-split', request,
-        SchedulerTrafficSplitRequest, SchedulerTrafficSplitResponse)
+        SchedulerTrafficSplitRequests, SchedulerTrafficSplitResponses)
 
   def skylab_execute(self, request):
     """Execute work via `skylab-execute` subcommand.
@@ -95,7 +96,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     Returns: ExecuteResponse.
     """
     return self._run('skylab-execute', request,
-        ExecuteRequest, ExecuteResponse)
+        ExecuteRequests, ExecuteResponses)
 
   def autotest_execute(self, request):
     """Execute work via `autotest-execute` subcommand.
@@ -106,7 +107,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     Returns: ExecuteResponse.
     """
     return self._run('autotest-execute', request,
-        ExecuteRequest, ExecuteResponse)
+        ExecuteRequests, ExecuteResponses)
 
   def _ensure_cros_test_platform(self):
     """Ensure the cros_test_platform CLI is installed."""
