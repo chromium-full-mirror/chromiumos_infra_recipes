@@ -23,6 +23,7 @@ import os
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import Path
+from PB.chromiumos.common import UseFlag
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sysroot import SysrootCreateRequest
@@ -39,11 +40,13 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'chrome',
     'cros_build_api',
     'cros_sdk',
     'cros_source',
     'failures',
     'gerrit',
+    'goma',
 ]
 
 PROPERTIES = TestVmProperties
@@ -108,12 +111,35 @@ def RunSteps(api, properties):
             name='install toolchain').failed_packages
         api.failures.raise_failed_packages(failed_packages)
 
+        # TODO(crbug.com/1011011): sync and goma build chrome if needed
+        # because Autotest VM builders are rebuilding chrome.
+        if api.chrome.build_chrome_from_source(properties.build_target,
+                                               api.cros_sdk.chroot):
+          chrome_root = api.path['start_dir'].join('chrome')
+          # Internal or external chrome? In build_target.py we take this
+          # from build_config.chrome.internal.
+          chrome_internal = True
+          api.chrome.sync(chrome_root, api.cros_sdk.chroot,
+                          properties.build_target, chrome_internal)
+          api.cros_sdk.set_chrome_root(str(chrome_root))
+          api.cros_sdk.set_goma_config(str(api.goma.goma_dir),
+                                       str(api.goma.goma_client_json))
+
+        flags = InstallPackagesRequest.Flags(
+            compile_source=False,
+            use_goma=api.cros_sdk.has_goma_config())
+        packages = [PackageInfo(category='chromeos-base',
+                                package_name='autotest-all')]
+        # Matching chrome_internal = True above.
+        # In build_target.py we take this from build_config.build.use_flags.
+        use_flags = [UseFlag(flag='chrome_internal')]
         failed_packages = api.cros_build_api.SysrootService.InstallPackages(
             InstallPackagesRequest(
                 sysroot=sysroot,
+                flags=flags,
                 chroot=api.cros_sdk.chroot,
-                packages=[PackageInfo(category='chromeos-base',
-                                      package_name='autotest-all')]),
+                packages=packages,
+                use_flags=use_flags),
             name='install packages').failed_packages
         api.failures.raise_failed_packages(failed_packages)
 
