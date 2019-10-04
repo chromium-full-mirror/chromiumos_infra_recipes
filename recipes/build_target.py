@@ -107,9 +107,11 @@ def RunSteps(api, properties):
         if build_config.build.portage_profile.profile:
           profile = Profile(name=build_config.build.portage_profile.profile)
         create_sysroot_response = api.cros_build_api.SysrootService.Create(
-            SysrootCreateRequest(build_target=build_target,
-                                 profile=profile,
-                                 chroot=api.cros_sdk.chroot))
+            SysrootCreateRequest(
+                build_target=build_target,
+                profile=profile,
+                chroot=api.cros_sdk.chroot,
+                flags=SysrootCreateRequest.Flags(chroot_current=True)))
         sysroot = create_sysroot_response.sysroot
 
       if api.cros_relevance.is_build_pointless(
