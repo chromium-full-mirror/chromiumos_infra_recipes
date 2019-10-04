@@ -28,6 +28,8 @@ import json
 
 from google.protobuf import json_format
 
+from recipe_engine.post_process import GetBuildProperties
+
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/properties',
@@ -194,11 +196,7 @@ def execute(api, requests, enumerations, config, use_skylab):
 
 
 def RunSteps(api, properties):
-  # TODO(crbug.com/1008134) Also add a separate property for requests.
-  requests = {
-    'default': properties.request,
-  }
-
+  requests = _get_requests_from_properties(properties)
   # Traffic split failures can be due to malformed requests.
   skylab, requests = split(api, requests, properties.config)
 
@@ -209,24 +207,43 @@ def RunSteps(api, properties):
     enumerations = enumerate_tests(api, requests)
     responses = execute(api, requests, enumerations, properties.config, skylab)
 
-
-  response = responses['default']
   # Failures in summarization are non-infra related.
   with api.step.nest('summarize') as step:
     # TODO(crbug.com/1008134) Set responses property instead when applicable.
-    _set_response_property(step, response)
+    _set_output_properties(step, responses)
     for tag, response in responses.iteritems():
       with api.step.nest('%s task results' % tag):
         _log_task_results(api, response.task_results)
 
 
-def _set_response_property(step, response):
+def _get_requests_from_properties(properties):
+  if len(properties.requests) > 0:
+    if properties.HasField('request'):
+      raise ValueError('Must set only one of request and requests')
+    return properties.requests
+  if properties.HasField('request'):
+    return {
+      'default': properties.request,
+    }
+  raise ValueError('Must set at least one of request and requests')
+
+
+def _set_output_properties(step, responses):
   """Set the builder 'response' property from test_platform.ExecuteResponse."""
+  marshalled = {}
+  for tag, response in responses.iteritems():
+    marshalled[tag] = _marshal_response_to_json(response)
+  step.properties['responses'] = marshalled
+  if 'default' in marshalled:
+    step.properties['response'] = marshalled['default']
+
+
+def _marshal_response_to_json(response):
   # The `response` field of CrosTestPlatformProperties is a message of
   # type ExecuteResponse. However, the recipe-supported mechanism for setting
   # output properties supports only json-encodable python structures, not
   # protos, so roundtrip the actual ExecuteResponse proto through json.
-  step.properties['response'] = json.loads(json_format.MessageToJson(response))
+  return json.loads(json_format.MessageToJson(response))
 
 
 def _log_task_results(api, task_results):
@@ -276,6 +293,22 @@ def _emit_links(step, task_results):
 
 
 def GenTests(api):
+  # Missing request and requests should cause a recipe crash
+  yield (
+    api.test('no request or requests') + #
+    api.expect_exception("ValueError")
+  )
+
+  # Setting both request and requests should cause a recipe crash
+  yield (
+    api.test('both request and requests') + #
+    api.properties(CrosTestPlatformProperties(
+        request=Request(),
+        requests={'first': Request()},
+    )) + #
+    api.expect_exception("ValueError")
+  )
+
   # Traffic split with no traffic to either autotest or skylab
   # should cause recipe crash.
   no_traffic_split = SchedulerTrafficSplitResponses(responses=[
@@ -284,6 +317,7 @@ def GenTests(api):
   no_traffic_split_json = json_format.MessageToJson(no_traffic_split)
   yield (
     api.test('no traffic') + #
+    api.properties(CrosTestPlatformProperties(request=Request())) + #
     api.step_data('traffic split.call binary.scheduler-traffic-split',
     stdout=api.raw_io.output(no_traffic_split_json)) + #
     api.expect_exception("ValueError")
@@ -302,6 +336,7 @@ def GenTests(api):
   dual_traffic_split_json = json_format.MessageToJson(dual_traffic_split)
   yield (
     api.test('dual traffic') + #
+    api.properties(CrosTestPlatformProperties(request=Request())) + #
     api.step_data('traffic split.call binary.scheduler-traffic-split',
     stdout=api.raw_io.output(dual_traffic_split_json)) + #
     api.expect_exception("ValueError")
@@ -407,4 +442,27 @@ def GenTests(api):
                   stdout=api.raw_io.output(
                     json_format.MessageToJson(too_many_split_responses))) + #
     api.expect_exception("ValueError")
+  )
+
+  # TODO(pprabhu) Verify that responses is set.
+  e2e_multi_build_responses = {
+      'first': json_format.MessageToJson(e2e_execute_responses),
+  }
+  yield (
+    api.test('end-to-end multi-requests with skylab execution') + #
+    api.properties(CrosTestPlatformProperties(
+        requests={'first': e2e_request},
+        config=e2e_config,
+    )) + #
+    api.step_data('traffic split.call binary.scheduler-traffic-split',
+                  stdout=api.raw_io.output(
+                    json_format.MessageToJson(e2e_split_response_skylab))) + #
+    api.step_data('enumerate tests.call binary.enumerate',
+                  stdout=api.raw_io.output(e2e_enumeration_responses)) + #
+    api.step_data('execute.call binary.skylab-execute',
+                  stdout=api.raw_io.output(
+                    json_format.MessageToJson(e2e_execute_responses))) + #
+    # api.post_process(PropertyEquals, 'responses', e2e_multi_build_responses)
+    api.post_check(lambda check, steps: check(
+        len(GetBuildProperties(steps).get('responses', {})) > 0))
   )
