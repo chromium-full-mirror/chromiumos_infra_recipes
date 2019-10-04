@@ -1166,7 +1166,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#207)(self, test_tasks):**
+&mdash; **def [collect\_tests](/recipe_modules/cros_test_proctor/api.py#204)(self, test_tasks):**
 
 Collect on all tests from test_tasks.
 
@@ -1179,7 +1179,7 @@ Args:
 Returns:
   MetaTestTuple of lists of tests collected.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#241)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#238)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
