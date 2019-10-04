@@ -50,7 +50,7 @@
       "[START_DIR]/cipd/test_planner/build_plan_generator",
       "generate-plan",
       "--input_json",
-      "{\"builderConfigs\": [{\"general\": {\"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"name\": \"my little builder\"}}], \"gerritChanges\": [{\"serializedProto\": \"GHs=\"}, {\"serializedProto\": \"GMgD\"}]}",
+      "{\"builderConfigs\": [{\"general\": {\"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"name\": \"my little builder\"}}], \"gerritChanges\": [{\"serializedProto\": \"GHs=\"}, {\"serializedProto\": \"GMgD\"}], \"gitilesCommit\": {\"serializedProto\": \"GgVoZWxsbw==\"}, \"manifestCommit\": \"hello\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],

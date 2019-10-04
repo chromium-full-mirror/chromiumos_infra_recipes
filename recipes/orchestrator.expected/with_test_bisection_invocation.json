@@ -93,7 +93,7 @@
       "[START_DIR]/cipd/test_planner/build_plan_generator",
       "generate-plan",
       "--input_json",
-      "{\"builderConfigs\": [{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\", \"AUTOTEST_FILES\", \"TAST_FILES\", \"PINNED_GUEST_IMAGES\", \"EBUILD_LOGS\", \"TEST_UPDATE_PAYLOAD\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"PUBLIC\", \"prebuiltsGsBucket\": \"chromeos-prebuilt\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": \"RUN\"}, \"chrome\": {}, \"general\": {\"critical\": false}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-snapshot\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}], \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
+      "{\"builderConfigs\": [{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\", \"AUTOTEST_FILES\", \"TAST_FILES\", \"PINNED_GUEST_IMAGES\", \"EBUILD_LOGS\", \"TEST_UPDATE_PAYLOAD\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"PUBLIC\", \"prebuiltsGsBucket\": \"chromeos-prebuilt\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": \"RUN\"}, \"chrome\": {}, \"general\": {\"critical\": false}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-snapshot\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}], \"gitilesCommit\": {\"serializedProto\": \"ChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIRcmVmcy9oZWFkcy9tYXN0ZXI=\"}, \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
       "--output_json",
       "/path/to/tmp/json"
     ],

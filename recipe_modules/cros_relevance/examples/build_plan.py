@@ -19,31 +19,32 @@ PROPERTIES = {
         Property(kind=list, help='List of builder names', default=[])
 }
 
+
 def RunSteps(api, expected_builders):
-  gc = [bbcommon_pb2.GerritChange(change=123),
-        bbcommon_pb2.GerritChange(change=456)]
-  bc = [BuilderConfig(
-      id=BuilderConfig.Id(
-          name='my little builder',
-      ),
-      general=BuilderConfig.General(
-          run_when=BuilderConfig.General.RunWhen(
-              mode=BuilderConfig.General.RunWhen.ALWAYS_RUN,
-          ),
-      ),
-  )]
+  gc = [
+      bbcommon_pb2.GerritChange(change=123),
+      bbcommon_pb2.GerritChange(change=456)
+  ]
+  bc = [
+      BuilderConfig(
+          id=BuilderConfig.Id(name='my little builder',),
+          general=BuilderConfig.General(
+              run_when=BuilderConfig.General.RunWhen(
+                  mode=BuilderConfig.General.RunWhen.ALWAYS_RUN,),),
+      )
+  ]
   builders = api.cros_relevance.get_necessary_builders(
-      bc, gc, bbcommon_pb2.GitilesCommit())
+      bc, gc, bbcommon_pb2.GitilesCommit(id='hello'))
   api.assertions.assertItemsEqual(builders, expected_builders)
+
 
 def GenTests(api):
   builder = 'builder'
   build_config = [dict(build_target='build_target')]
   yield (api.test('skip_all_builds') +
-         api.cros_relevance.simulate_run_build_planner(
-             builder_ids=[]) +
+         api.cros_relevance.simulate_run_build_planner(builder_ids=[]) +
          api.properties(expected_builders=[]))
-  yield (api.test('keep_a_build') +
-         api.cros_relevance.simulate_run_build_planner(
-             builder_ids=[BuilderConfig.Id(name='my little builder')]) +
-         api.properties(expected_builders=['my little builder']))
+  yield (
+      api.test('keep_a_build') + api.cros_relevance.simulate_run_build_planner(
+          builder_ids=[BuilderConfig.Id(name='my little builder')]) +
+      api.properties(expected_builders=['my little builder']))

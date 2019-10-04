@@ -5,8 +5,10 @@
 # found in the LICENSE file.
 
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
+from PB.chromiumos.common import ProtoBytes as common_proto_bytes
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanRequest
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanResponse
+from PB.testplans.common import ProtoBytes as testplans_proto_bytes
 from PB.testplans.pointless_build import PointlessBuildCheckRequest
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -48,7 +50,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest(name or 'plan builds') as step_result:
       self._ensure_binaries()
-      request = GenerateBuildPlanRequest(manifest_commit=gitiles_commit.id,)
+      request = GenerateBuildPlanRequest(
+          gitiles_commit=common_proto_bytes(
+              serialized_proto=bbcommon_pb2.GitilesCommit.SerializeToString(
+                  gitiles_commit)), manifest_commit=gitiles_commit.id)
       request.builder_configs.extend(builder_configs)
       for gc in gerrit_changes:
         new_gc = request.gerrit_changes.add()
@@ -102,6 +107,9 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
       self._ensure_binaries()
       check_request = PointlessBuildCheckRequest(
+          gitiles_commit=testplans_proto_bytes(
+              serialized_proto=bbcommon_pb2.GitilesCommit.SerializeToString(
+                  gitiles_commit)),
           manifest_commit=gitiles_commit.id,
           dep_graph=dep_graph,
       )

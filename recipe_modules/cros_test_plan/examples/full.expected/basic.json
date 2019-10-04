@@ -5,6 +5,9 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"manifestCommit\": \"1234abcd\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"serializedProto\": \"GggxMjM0YWJjZA==\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@request@    {}@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
@@ -358,7 +361,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifestCommit\": \"1234abcd\", \n  \"buildbucketProtos\": [\n    {}\n  ], \n  \"gerritChanges\": [\n    {}\n  ]\n}",
+      "{\n  \"manifestCommit\": \"1234abcd\", \n  \"gitilesCommit\": {\n    \"serializedProto\": \"GggxMjM0YWJjZA==\"\n  }, \n  \"buildbucketProtos\": [\n    {}\n  ], \n  \"gerritChanges\": [\n    {}\n  ]\n}",
       "[CLEANUP]/test-plan-_tmp_1/input.json"
     ],
     "infra_step": true,
@@ -367,6 +370,9 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input.json@{@@@",
       "@@@STEP_LOG_LINE@input.json@  \"manifestCommit\": \"1234abcd\", @@@",
+      "@@@STEP_LOG_LINE@input.json@  \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@input.json@    \"serializedProto\": \"GggxMjM0YWJjZA==\"@@@",
+      "@@@STEP_LOG_LINE@input.json@  }, @@@",
       "@@@STEP_LOG_LINE@input.json@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@input.json@    {}@@@",
       "@@@STEP_LOG_LINE@input.json@  ], @@@",

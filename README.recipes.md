@@ -817,11 +817,11 @@ Args:
 
 [DEPS](/recipe_modules/cros_relevance/__init__.py#1): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#29)(self, builder_configs, gerrit_changes, gitiles_commit, name=None):**
+&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#31)(self, builder_configs, gerrit_changes, gitiles_commit, name=None):**
 
 Determines which builders must be run (and which can be skipped).
 
@@ -841,11 +841,11 @@ Args:
 Returns:
   list[str]: the names of the child builders that must be run.
 
-&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#24)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#26)(self):**
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#77)(self, gerrit_changes, gitiles_commit, build_target, name=None):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#82)(self, gerrit_changes, gitiles_commit, build_target, name=None):**
 
 Determines if build(s) can be terminated early.
 
@@ -1078,11 +1078,11 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#24)(self, builds, gerrit_changes, manifest_commit, name=None):**
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#25)(self, builds, gerrit_changes, manifest_commit, name=None):**
 
 Generate test plan.
 
@@ -1091,12 +1091,12 @@ Args:
   * builds (list[build_pb2.Build]): builds to test.
   * gerrit_changes (list[common_pb2.GerritChange]): changes that were inputs
       for these builds, or empty.
-  * manifest_commit (str): manifest-internal hash for the build.
+  * manifest_commit (common_pb2.GitilesCommit): manifest commit for build.
 
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#21)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#22)(self):**
 ### *recipe_modules* / [cros\_test\_platform](/recipe_modules/cros_test_platform)
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2819,7 +2819,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 [DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#11): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#22)(api, expected_builders):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#23)(api, expected_builders):**
 ### *recipes* / [cros\_relevance:examples/pointless\_builds](/recipe_modules/cros_relevance/examples/pointless_builds.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#10): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -2847,9 +2847,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#14)(api):**
 ### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_plan/examples/full.py#9): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_test_plan/examples/full.py#10): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#16)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

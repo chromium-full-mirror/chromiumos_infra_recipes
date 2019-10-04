@@ -15,10 +15,13 @@ DEPS = [
 
 def RunSteps(api):
   bt = BuildTarget(name='my_build_target')
-  gc = [bbcommon_pb2.GerritChange(change=123),
-        bbcommon_pb2.GerritChange(change=456)]
+  gc = [
+      bbcommon_pb2.GerritChange(change=123),
+      bbcommon_pb2.GerritChange(change=456)
+  ]
   api.cros_relevance.is_build_pointless(
-      gc, bbcommon_pb2.GitilesCommit(), build_target=bt)
+      gc, bbcommon_pb2.GitilesCommit(id='my hash'), build_target=bt)
+
 
 def GenTests(api):
   builder = 'builder'

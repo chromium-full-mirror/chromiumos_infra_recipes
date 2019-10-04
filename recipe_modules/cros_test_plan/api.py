@@ -10,6 +10,7 @@ from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
@@ -29,7 +30,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       * builds (list[build_pb2.Build]): builds to test.
       * gerrit_changes (list[common_pb2.GerritChange]): changes that were inputs
           for these builds, or empty.
-      * manifest_commit (str): manifest-internal hash for the build.
+      * manifest_commit (common_pb2.GitilesCommit): manifest commit for build.
 
     Returns:
       GenerateTestPlanResponse of test plan.
@@ -44,7 +45,10 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       output_file = messages_path.join('output.json')
 
       request_proto = GenerateTestPlanRequest(
-          manifest_commit=manifest_commit, gerrit_changes=[
+          manifest_commit=manifest_commit.id, gitiles_commit=ProtoBytes(
+              serialized_proto=GitilesCommit.SerializeToString(
+                  manifest_commit)),
+          gerrit_changes=[
               ProtoBytes(serialized_proto=GerritChange.SerializeToString(gc))
               for gc in gerrit_changes
           ], buildbucket_protos=[

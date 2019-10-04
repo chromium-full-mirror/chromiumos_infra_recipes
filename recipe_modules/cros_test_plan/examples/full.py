@@ -5,6 +5,7 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 DEPS = [
     'recipe_engine/assertions',
@@ -14,7 +15,7 @@ DEPS = [
 
 def RunSteps(api):
   test_plan = api.cros_test_plan.generate([Build()], [GerritChange()],
-                                          '1234abcd')
+                                          GitilesCommit(id='1234abcd'))
 
 
 def GenTests(api):
