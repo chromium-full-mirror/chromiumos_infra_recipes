@@ -124,7 +124,17 @@ def RunSteps(api, properties):
         step.presentation.text = 'some builds are running/pending'
     failures = api.failures.get_build_failures(completed_builds)
 
-  if not failures:
+  # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
+  # non-critical. Snapshot builds are always scheduled without the critical bit
+  # set to `NO` so this is also the only place that we will discover that.
+  api.cros_infra_config.force_reload()
+  fresh_builder_configs = api.cros_infra_config.safe_get_builder_configs(
+      [b.builder.builder for b in completed_builds])
+  failures = api.failures.update_non_critical_failures(
+      failures, fresh_builder_configs)
+  fatal_failures = [f for f in failures if f.fatal == True]
+
+  if not fatal_failures:
     # If we've made it this far, the child builders were successful
     # and we can update the build success manifest ref if it is specified.
     maybe_update_manifest_ref(api, properties.update_manifest_refs, 'build',
@@ -149,8 +159,8 @@ def RunSteps(api, properties):
                             snapshot)
 
   with api.step.nest('clean up orchestrator'):
-    # Recheck the BuilderConfigs at HEAD to see if any failed builders are now
-    # noncritical.
+    # Recheck the BuilderConfigs at HEAD, one last time, to see if any failed
+    # builders are now noncritical.
     api.cros_infra_config.force_reload()
     fresh_builder_configs = api.cros_infra_config.safe_get_builder_configs(
         [b.builder.builder for b in completed_builds])

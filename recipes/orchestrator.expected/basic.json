@@ -523,6 +523,37 @@
   },
   {
     "cmd": [],
+    "name": "read build config"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "read build config.fetch master:generated/builder_configs.cfg",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "non-critical build check",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@new non-critical builders@changed arm-generic-cq to non-critical@@@",
+      "@@@STEP_LOG_END@new non-critical builders@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
       "@@@STEP_TEXT@all tests passed. no need for baseline validation@@@"
@@ -2235,9 +2266,7 @@
     "cmd": [],
     "name": "clean up orchestrator.non-critical build check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@new non-critical builders@changed arm-generic-cq to non-critical@@@",
-      "@@@STEP_LOG_END@new non-critical builders@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
