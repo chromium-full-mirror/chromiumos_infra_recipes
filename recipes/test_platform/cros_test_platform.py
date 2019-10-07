@@ -144,11 +144,9 @@ def _get_backend_requests(split_responses):
   requests = [request]
   for response in split_responses[1:]:
     is_skylab, request = _get_backend_request(response)
-    # TODO(crbug.com/1008135) Enable this check once multiple requests are
-    # possible.
-    # if is_first_skylab != is_skylab:
-    # raise ValueError('Traffic splits contain both autotest and skylab'
-    #                  ' across requests; this is not supported.')
+    if is_first_skylab != is_skylab:
+      raise ValueError('Traffic splits contain both autotest and skylab'
+                       ' across requests; this is not supported.')
     requests.append(request)
   return is_first_skylab, requests
 
@@ -339,6 +337,27 @@ def GenTests(api):
     api.properties(CrosTestPlatformProperties(request=Request())) + #
     api.step_data('traffic split.call binary.scheduler-traffic-split',
     stdout=api.raw_io.output(dual_traffic_split_json)) + #
+    api.expect_exception("ValueError")
+  )
+
+  # Traffic split with traffic to both autotest and skylab in different requests
+  # should cause recipe crash.
+  dual_traffic_split_requests = SchedulerTrafficSplitResponses(responses=[
+      SchedulerTrafficSplitResponse(
+          autotest_request=Request(
+              test_plan=Request.TestPlan(suite=[Request.Suite(name="foo")]),),
+      ),
+      SchedulerTrafficSplitResponse(
+          skylab_request=Request(
+              test_plan=Request.TestPlan(suite=[Request.Suite(name="foo")]),),
+      )
+  ])
+  yield (
+    api.test('dual traffic across requests') + #
+    api.properties(CrosTestPlatformProperties(request=Request())) + #
+    api.step_data('traffic split.call binary.scheduler-traffic-split',
+    stdout=api.raw_io.output(
+      json_format.MessageToJson(dual_traffic_split_requests))) + #
     api.expect_exception("ValueError")
   )
 

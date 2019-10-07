@@ -3342,7 +3342,7 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#198)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#196)(api, properties):**
 
 &mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#44)(api, requests):**
 
@@ -3354,7 +3354,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#174)(api, requests, enumerations, config, use_skylab):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#172)(api, requests, enumerations, config, use_skylab):**
 
 Execute request in the correct backend.
 

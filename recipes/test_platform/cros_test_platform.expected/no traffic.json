@@ -91,13 +91,13 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 201, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 199, in RunSteps",
       "    skylab, requests = split(api, requests, properties.config)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 113, in split",
       "    is_skylab, requests = _get_backend_requests(split_resp.responses)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 143, in _get_backend_requests",
       "    is_first_skylab, request = _get_backend_request(split_responses[0])",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 164, in _get_backend_request",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 162, in _get_backend_request",
       "    raise ValueError('Traffic split contains no traffic for either autotest '",
       "ValueError: Traffic split contains no traffic for either autotest or skylab."
     ]
