@@ -27,6 +27,11 @@ def RunSteps(api, properties):
     api.assertions.assertItemsEqual(previous_builds, properties.output_builds)
 
 
+def _build_with_changes(build):
+  build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
+  return build
+
+
 def GenTests(api):
   yield (
       api.test('patch_without_history') +
@@ -40,23 +45,30 @@ def GenTests(api):
               input_target_patches=[common_pb2.GerritChange(change=2341)])))
 
   yield (
-      api.test('passed_builds_with_history') +
+      api.test('passed_builds_with_history') + api.buildbucket.build(
+          _build_with_changes(build_pb2.Build())) +
       api.buildbucket.simulated_search_results([
-          build_pb2.Build(id=123, builder=build_pb2.BuilderID(builder='betty'),
-                          status=common_pb2.SUCCESS),
-          build_pb2.Build(id=231, builder=build_pb2.BuilderID(builder='reef'),
-                          status=common_pb2.SUCCESS),
-          build_pb2.Build(id=312, builder=build_pb2.BuilderID(
-              builder='cq-orch'), status=common_pb2.SUCCESS),
+          _build_with_changes(
+              build_pb2.Build(id=123, builder=build_pb2.BuilderID(
+                  builder='betty'), status=common_pb2.SUCCESS)),
+          _build_with_changes(
+              build_pb2.Build(id=231, builder=build_pb2.BuilderID(
+                  builder='reef'), status=common_pb2.SUCCESS)),
+          _build_with_changes(
+              build_pb2.Build(id=312, builder=build_pb2.BuilderID(
+                  builder='cq-orch'), status=common_pb2.SUCCESS)),
       ], 'get change build history.buildbucket.search') + api.buildbucket.build(
-          build_pb2.Build(builder=build_pb2.BuilderID(builder='cq-orch'))) +
-      api.properties(
+          _build_with_changes(
+              build_pb2.Build(builder=build_pb2.BuilderID(builder='cq-orch'))))
+      + api.properties(
           GetPassedBuildsProperties(
               input_build_patches=[common_pb2.GerritChange(change=2341)])) +
       api.properties(
           GetPassedBuildsProperties(output_builds=[
-              build_pb2.Build(id=123, builder=build_pb2.BuilderID(
-                  builder='betty'), status=common_pb2.SUCCESS),
-              build_pb2.Build(id=231, builder=build_pb2.BuilderID(
-                  builder='reef'), status=common_pb2.SUCCESS)
+              _build_with_changes(
+                  build_pb2.Build(id=123, builder=build_pb2.BuilderID(
+                      builder='betty'), status=common_pb2.SUCCESS)),
+              _build_with_changes(
+                  build_pb2.Build(id=231, builder=build_pb2.BuilderID(
+                      builder='reef'), status=common_pb2.SUCCESS))
           ])))

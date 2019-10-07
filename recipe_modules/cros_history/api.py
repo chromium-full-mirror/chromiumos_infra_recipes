@@ -39,11 +39,12 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       list([build_pb2.Build]): Passed builds with at most one build per builder.
     """
     with self.m.step.nest('get change build history') as step:
+      build = self.m.buildbucket.build
       passed_builds = []
       # Start with cq-orchestrator so we don't add it to the result.
-      current_builder_id = self.m.buildbucket.build.builder
+      current_builder_id = build.builder
       passed_builders = set([current_builder_id.builder])
-      patches = self.m.buildbucket.build.input.gerrit_changes
+      patches = build.input.gerrit_changes
       # We don't want to specify the builder, but, we should specify the bucket
       builder_shell = build_pb2.BuilderID(project=current_builder_id.project,
                                           bucket=current_builder_id.bucket)
@@ -179,7 +180,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
     Returns: a dict(str, build_pb2.Build) of build_target names.
     """
-    build_targets = {cls.get_build_target(b):b for b in builds}
+    build_targets = {cls.get_build_target(b): b for b in builds}
     build_targets.pop(None, None)
     return build_targets
 
@@ -240,6 +241,14 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     if len(builds) == limit:
       raise RuntimeError("Number of buildbucket search results exceeds limit {}"
                          .format(limit))  # pragma: no cover
+
+    # Filter out builds that were run on a superset of the input patches.
+    # e.g. if we're trying to get the history for runs on [cl1#1], we aren't
+    # interested in historical runs on [cl1#1, cl2#1].
+    if patches:
+      builds = [
+          b for b in builds if len(patches) == len(b.input.gerrit_changes)
+      ]
 
     if statuses:
       return [build for build in builds if build.status in statuses]

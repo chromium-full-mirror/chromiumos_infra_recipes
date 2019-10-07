@@ -130,8 +130,8 @@ def RunSteps(api, properties):
   api.cros_infra_config.force_reload()
   fresh_builder_configs = api.cros_infra_config.safe_get_builder_configs(
       [b.builder.builder for b in completed_builds])
-  failures = api.failures.update_non_critical_failures(
-      failures, fresh_builder_configs)
+  failures = api.failures.update_non_critical_failures(failures,
+                                                       fresh_builder_configs)
   fatal_failures = [f for f in failures if f.fatal == True]
 
   if not fatal_failures:
@@ -501,6 +501,7 @@ def GenTests(api):
     """
     return build_pb2.Build.Input(
         properties=api.cros_history.build_target_property(build_target),
+        gerrit_changes=[common_pb2.GerritChange(change=1234)],
         gitiles_commit=snapshot)
 
   vm_tests = [
