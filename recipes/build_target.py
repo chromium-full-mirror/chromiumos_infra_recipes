@@ -128,10 +128,13 @@ def RunSteps(api, properties):
                                     flags=flags))
         api.failures.raise_failed_packages(response.failed_packages)
 
+      packages = get_packages(api, build_config)
       install_packages = build_config.build.install_packages
       if api.cros_infra_config.should_run(install_packages):
-        if api.chrome.build_chrome_from_source(build_target,
-                                               api.cros_sdk.chroot):
+        if api.chrome.build_chrome_from_source(
+            build_target=build_target,
+            chroot=api.cros_sdk.chroot,
+            packages=packages):
           chrome_root = api.path['start_dir'].join('chrome')
           api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
                           build_config.chrome.internal)
@@ -140,7 +143,6 @@ def RunSteps(api, properties):
                                        str(api.goma.goma_client_json))
 
         with api.step.nest('install packages'):
-          packages = get_packages(api, build_config)
           flags = InstallPackagesRequest.Flags(
               compile_source=False,
               use_goma=api.cros_sdk.has_goma_config())

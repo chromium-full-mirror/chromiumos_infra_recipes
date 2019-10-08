@@ -12,6 +12,7 @@ DEPS = [
 
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import PackageInfo
 
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
@@ -32,6 +33,9 @@ def RunSteps(api):
   )
 
   api.chrome.build_chrome_from_source(build_target, chroot)
+  api.chrome.build_chrome_from_source(
+      build_target, chroot,
+      [PackageInfo(package_name='pack', category='cat', version='1.01')])
 
 
 def GenTests(api):

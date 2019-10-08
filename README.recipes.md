@@ -256,13 +256,15 @@ Returns:
 
 #### **class [ChromeApi](/recipe_modules/chrome/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [build\_chrome\_from\_source](/recipe_modules/chrome/api.py#102)(self, build_target, chroot):**
+&mdash; **def [build\_chrome\_from\_source](/recipe_modules/chrome/api.py#102)(self, build_target, chroot, packages=None):**
 
 Returns whether this run should build chrome from source.
 
 Args:
   build_target (chromiumos.BuildTarget): Build target of the build.
   chroot (chromiumos.Chroot): Information on the chroot for the build.
+  packages (list[chromiumos.Chroot]): Packages that the builder needs
+      to build, or empty / None for default packages.
 
 Returns:
   bool: Whether or not this run needs to build chrome from sourc.
@@ -2674,7 +2676,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#60)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#201)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#203)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2693,7 +2695,7 @@ Returns:
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#19)(api):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)

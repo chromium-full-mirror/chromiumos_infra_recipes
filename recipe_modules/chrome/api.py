@@ -99,12 +99,14 @@ class ChromeApi(recipe_api.RecipeApi):
                         sync_cmd,
                         infra_step=True)
 
-  def build_chrome_from_source(self, build_target, chroot):
+  def build_chrome_from_source(self, build_target, chroot, packages=None):
     """Returns whether this run should build chrome from source.
 
     Args:
       build_target (chromiumos.BuildTarget): Build target of the build.
       chroot (chromiumos.Chroot): Information on the chroot for the build.
+      packages (list[chromiumos.PackageInfo]): Packages that the builder needs
+          to build, or empty / None for default packages.
 
     Returns:
       bool: Whether or not this run needs to build chrome from sourc.
@@ -112,7 +114,8 @@ class ChromeApi(recipe_api.RecipeApi):
     if not self.m.cros_build_api.PackageService.BuildsChrome(
         BuildsChromeRequest(
             build_target=build_target,
-            chroot=chroot)).builds_chrome:
+            chroot=chroot,
+            packages=packages)).builds_chrome:
       return False
     return not self.m.cros_build_api.PackageService.HasChromePrebuilt(
         HasChromePrebuiltRequest(build_target=build_target,
