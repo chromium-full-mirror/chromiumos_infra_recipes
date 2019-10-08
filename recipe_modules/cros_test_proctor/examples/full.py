@@ -187,6 +187,35 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           [], step_name='run tests.collect tests.collect moblab vm tests'))
 
+  multi_hw_tests = [
+      api.skylab.test_with_multi_response(id=1234, success=False),
+  ]
+
+  yield (
+      api.test('multi_req_per_cros_test_platform') +  #
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
+      api.properties(
+          **{
+              '$chromeos/cros_test_proctor':
+                  ProctorProperties(multi_request_ctp_full_enable=True)
+          }) +  #
+      api.properties(baseline_validation_percent=0) +  #
+      api.properties(baseline_validation_count=0) +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule skylab tests v2.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          multi_hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks v2.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
+
   hw_tests = [
       api.skylab.test_with_execute_response(id=1234, success=False),
       api.skylab.test_with_execute_response(id=4321, success=False),
@@ -222,8 +251,10 @@ def GenTests(api):
       api.test('pass_with_baseline_validation') +  #
       api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
       api.properties(
-           **{'$chromeos/cros_test_proctor': ProctorProperties(
-               baseline_validation_percent=100)}) + #
+          **{
+              '$chromeos/cros_test_proctor':
+                  ProctorProperties(baseline_validation_percent=100)
+          }) +  #
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
@@ -262,8 +293,10 @@ def GenTests(api):
       api.test('fail_with_baseline_validation') +  #
       api.properties(need_tests_builds_serialized=serialize_builds(builds)) +  #
       api.properties(
-           **{'$chromeos/cros_test_proctor': ProctorProperties(
-               baseline_validation_percent=100)}) + #
+          **{
+              '$chromeos/cros_test_proctor':
+                  ProctorProperties(baseline_validation_percent=100)
+          }) +  #
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
@@ -300,8 +333,10 @@ def GenTests(api):
       api.skylab.test_with_execute_response(id=1234, success=False),
   ]
 
-  builds = [api.buildbucket.ci_build_message(builder='amd64-generic-postsubmit',
-                                             status='SUCCESS')]
+  builds = [
+      api.buildbucket.ci_build_message(builder='amd64-generic-postsubmit',
+                                       status='SUCCESS')
+  ]
   api.cros_bisect.add_output_props(builds[0], 'amd64-generic')
 
   yield (

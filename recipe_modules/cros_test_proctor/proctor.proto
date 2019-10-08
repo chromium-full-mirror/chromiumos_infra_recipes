@@ -14,4 +14,13 @@ message ProctorProperties {
   // The threshold for the number of failed tests below which
   // baseline validation gets triggered.
   int32 baseline_validation_count = 2;
+
+  // Whether to fully enable new multiple-request per cros_test_platform
+  // code path.
+  bool multi_request_ctp_full_enable = 3;
+
+  // List of chromium (not chrome-internal) CL numbers whose inclusion
+  // in a CQ run means that multiple-request per cros_test_platform code should
+  // be enabled.
+  repeated int64 multi_request_ctp_cl_allowlist = 4;
 }

@@ -24,6 +24,7 @@ class SkylabApi(recipe_api.RecipeApi):
 
   SkylabTask = structs.SkylabTask
   SkylabResult = structs.SkylabResult
+  UnitHwTest = structs.UnitHwTest
 
   def __init__(self, properties, **kwargs):
     super(SkylabApi, self).__init__(**kwargs)
@@ -34,6 +35,62 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._skylab_timeout_mins = properties.skylab_timeout_mins or 7 * 60
     self._skylab_priority = properties.skylab_priority or 140
+
+  def schedule_suites(self, unit_hw_tests, name=None):
+    """Schedule HW test suites by invoking the cros_test_platform recipe.
+
+    Args:
+      tests (list[UnitHwTest]): Hardware test suites to execute
+      name (str): The step name. Defaults to 'schedule skylab tests v2'
+
+    Returns:
+      list[SkylabTask]: with buildbucket_id of the recipe launched.
+    """
+    name = name or 'schedule skylab tests v2'
+    with self.m.step.nest(name) as step:
+      # str -> (Request dict)
+      reqs = {}
+
+      for uht in unit_hw_tests:
+        req = Request()
+        req.params.hardware_attributes.model = ''
+        req.params.time.maximum_duration.seconds = self._skylab_timeout_mins * 60
+        image_path = uht.unit.common.build_payload.artifacts_gs_path
+        req.params.metadata.test_metadata_url = (
+            'gs://' + uht.unit.common.build_payload.artifacts_gs_bucket + '/' +
+            uht.unit.common.build_payload.artifacts_gs_path)
+        req.params.scheduling.priority = self._skylab_priority
+        sw_dep = req.params.software_dependencies.add()
+        sw_dep.chromeos_build = image_path
+        req.params.scheduling.quota_account = self._qs_account
+        req.params.software_attributes.build_target.name = uht.hw_test.skylab_board
+        suite_to_create = req.test_plan.suite.add()
+        suite_to_create.name = uht.hw_test.suite
+
+        tags = self._get_ctp_tags(uht.hw_test, uht.unit, self._skylab_priority,
+                                  image_path)
+        request_tags = [
+            '{}:{}'.format(key, value) for key, value in tags.items()
+        ]
+        req.params.decorations.tags.extend(request_tags)
+        self._enable_test_retries(req)
+        reqs[uht.hw_test.common.display_name] = json_format.MessageToDict(req)
+
+      bb_request = self.m.buildbucket.schedule_request(
+          'cros_test_platform', bucket='testplatform', properties={
+              'requests': reqs,
+          }, gerrit_changes=[])
+      build = self.m.buildbucket.schedule([bb_request])[0]
+
+      build_url = self.m.buildbucket.build_url(build_id=build.id)
+      step.presentation.links['suite link'] = build_url
+
+      tasks = []
+      for uht in unit_hw_tests:
+        tasks.append(
+            self.SkylabTask(id=build.id, url=build_url, test=uht.hw_test,
+                            unit=uht.unit))
+      return tasks
 
   def create_recipe(self, test, unit, name=None):
     """Schedule a HW test suite by invoking the cros_test_platform recipe.
@@ -63,12 +120,12 @@ class SkylabApi(recipe_api.RecipeApi):
       suite_to_create = req.test_plan.suite.add()
       suite_to_create.name = test.suite
 
-      tags = self._get_ctp_tags(
-          test, unit, self._skylab_priority, image_path)
-      request_tags = ['{}:{}'.format(key, value)
-                      for key, value in tags.items()]
-      bb_tags = [common_pb2.StringPair(key=key, value=value)
-                 for key, value in tags.items()]
+      tags = self._get_ctp_tags(test, unit, self._skylab_priority, image_path)
+      request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
+      bb_tags = [
+          common_pb2.StringPair(key=key, value=value)
+          for key, value in tags.items()
+      ]
       req.params.decorations.tags.extend(request_tags)
       self._enable_test_retries(req)
 
@@ -102,6 +159,52 @@ class SkylabApi(recipe_api.RecipeApi):
     """
     req.params.retry.max = 5
     req.params.retry.allow = True
+
+  def wait_on_suites(self, task):
+    """Wait for the single Skylab multi-request to finish and return the result
+
+    Args:
+      task (SkylabTask): the SkylabTask to wait on.
+
+    Returns:
+      list[SkylabResult]: The results for each suite.
+    """
+    with self.m.step.nest('collect skylab tasks v2') as step:
+      # Give 30 minutes grace period for recipes to time out.
+      timeout_seconds = (self._skylab_timeout_mins + 30) * 60
+      try:
+        hw_tests = self.m.buildbucket.collect_builds(
+            [task.id], timeout=timeout_seconds)[task.id]
+      except recipe_api.StepFailure as ex:  #pragma: no cover
+        # Mark the step as an INFRA_FAILURE and get the output
+        # properties of underlying recipes.
+        step.presentation.status = 'EXCEPTION'
+        hw_tests = self.m.buildbucket.get_multi(task.id)[task.id]
+
+      results = []
+      for result in self._get_multi_response(hw_tests):
+        success = result.state.verdict == TaskState.VERDICT_PASSED
+        results.append(
+            self.SkylabResult(task=task, success=success,
+                              child_results=result.task_results))
+
+      step.presentation.logs['return value'] = [str(x) for x in results]
+      return results
+
+  def _get_multi_response(self, build):
+    # ExecuteResponse is stored as a Struct in output.properties.
+    # This helper handles the re-casting and error catching.
+    responses = []
+    try:
+      for response_struct in build.output.properties['responses'].values:
+        response_json = json_format.MessageToJson(response_struct.struct_value)
+        response = ExecuteResponse()
+        json_format.Parse(response_json, response, ignore_unknown_fields=True)
+        responses.append(response)
+    except (ValueError, json_format.ParseError) as e:  #pragma: no cover
+      return [self._default_failed_response()]
+
+    return responses
 
   def wait_on_recipes(self, tasks):
     """Wait for all Skylab suites to finish and return the results.
@@ -145,7 +248,7 @@ class SkylabApi(recipe_api.RecipeApi):
       response_struct = build.output.properties['response']
       response_json = json_format.MessageToJson(response_struct)
       response = ExecuteResponse()
-      json_format.Parse(response_json, response)
+      json_format.Parse(response_json, response, ignore_unknown_fields=True)
     except (ValueError, json_format.ParseError) as e:  #pragma: no cover
       return self._default_failed_response()
 

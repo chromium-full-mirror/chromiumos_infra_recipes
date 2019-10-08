@@ -32,7 +32,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
           ),
       )
     if hw_tests is None:
-      hw_test_cfg = HwTestCfg(hw_test=[self.hw_test()]) # pragma: no cover
+      hw_test_cfg = HwTestCfg(hw_test=[self.hw_test()])  # pragma: no cover
     else:
       hw_test_cfg = HwTestCfg(hw_test=hw_tests)
     return HwTestUnit(common=common, hw_test_cfg=hw_test_cfg)
@@ -49,10 +49,10 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
 
   def skylab_task(self, id=None, url=None, test=None, unit=None):
     if test is None and unit is None:
-      unit = self.hw_test_unit() # pragma: no cover
-      test = unit.hw_test_cfg.hw_test[0] # pragma: no cover
+      unit = self.hw_test_unit()  # pragma: no cover
+      test = unit.hw_test_cfg.hw_test[0]  # pragma: no cover
     elif test is None:
-      test = unit.hw_test_cfg.hw_test[0] # pragma: no cover
+      test = unit.hw_test_cfg.hw_test[0]  # pragma: no cover
     else:
       unit = self.hw_test_unit(hw_tests=[test])
     return structs.SkylabTask(id=id or 1234, url=url or 'https://google.com',
@@ -93,3 +93,35 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
   def test_with_execute_response(self, id, success=False):
     return build_pb2.Build(
         id=id, output=build_pb2.Build.Output(properties=self.response(success)))
+
+  def multi_response(self, success=False):
+    json_string = """
+{
+  "responses": [
+    {
+      "state": {
+          "verdict": "%s",
+          "lifeCycle": "LIFE_CYCLE_COMPLETED"
+      },
+      "taskResults": [
+          {
+              "state": {
+                  "verdict": "VERDICT_PASSED",
+                  "lifeCycle": "LIFE_CYCLE_COMPLETED"
+              },
+              "taskUrl": "https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010",
+              "name": "cheets_NotificationTest",
+              "logUrl": "https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/"
+          }
+      ]
+    }
+  ]
+}"""
+    verdict = 'VERDICT_PASSED' if success else 'VERDICT_FAILED'
+    response_struct = struct_pb2.Struct()
+    return json_format.Parse(json_string % (verdict), response_struct)
+
+  def test_with_multi_response(self, id, success=False):
+    return build_pb2.Build(
+        id=id,
+        output=build_pb2.Build.Output(properties=self.multi_response(success)))

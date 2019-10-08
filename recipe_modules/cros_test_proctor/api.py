@@ -29,6 +29,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     super(CrosTestProctorApi, self).__init__(**kwargs)
     self._baseline_validation_percent = properties.baseline_validation_percent
     self._baseline_validation_count = properties.baseline_validation_count
+    self._multi_request_ctp_full_enable = (
+        properties.multi_request_ctp_full_enable)
+    self._multi_request_ctp_cl_allowlist = (
+        properties.multi_request_ctp_cl_allowlist)
 
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
                   enable_history):
@@ -49,6 +53,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns
       list[failures.Failure]: failures encountered running tests
     """
+    # Decide whether to bundle cros_test_platform requests.
+    multi_req_cls = [
+        gc for gc in gerrit_changes
+        if gc.change in self._multi_request_ctp_cl_allowlist
+    ]
+    multi_req = multi_req_cls or self._multi_request_ctp_full_enable
     with self.m.step.nest('run tests') as step:
       with self.m.step.nest('schedule tests'):
         test_plan = self._get_test_plan(need_tests_builds, gerrit_changes,
@@ -67,13 +77,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         test_to_build_target_map = {}
 
-        test_tasks = self.schedule_tests(test_plan, passed_tests,
-                                         test_to_build_target_map, snapshot,
-                                         dev=dev)
+        test_tasks = self._schedule_tests(test_plan, passed_tests,
+                                          test_to_build_target_map, snapshot,
+                                          multi_req=multi_req, dev=dev)
 
       passed_tests = []
       with self.m.step.nest('collect tests'):
-        test_results = self.collect_tests(test_tasks)
+        test_results = self._collect_tests(test_tasks, multi_req=multi_req)
         # Record test results.
         passed_tests = [
             self.m.naming.get_test_title(test_result)
@@ -124,11 +134,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           with self.m.step.nest('schedule baseline tests'):
             baseline_test_plan = self.m.cros_test_plan.generate(
                 baseline_builds, gerrit_changes, snapshot)
-            baseline_tasks = self.schedule_tests(
-                baseline_test_plan, passed_tests, snapshot=snapshot, dev=dev)
+            baseline_tasks = self._schedule_tests(
+                baseline_test_plan, passed_tests, snapshot=snapshot,
+                multi_req=multi_req, dev=dev)
 
           with self.m.step.nest('collect baseline tests'):
-            baseline_results = self.collect_tests(baseline_tasks)
+            baseline_results = self._collect_tests(baseline_tasks,
+                                                   multi_req=multi_req)
 
             # Add failures here to passed_tests.
             passed_tests.extend([
@@ -168,17 +180,17 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """Returns the tast builder name for the given build_target."""
     return build_target.name + '-tast-vm'
 
-  def schedule_tests(self, test_plan, passed_tests, test_to_build_map=None,
-                     snapshot=None, dev=False):
+  def _schedule_tests(self, test_plan, passed_tests, test_to_build_map=None,
+                      snapshot=None, dev=False, multi_req=False):
     """Schedule all tests from the test_plan.
 
     Args:
       test_plan (GenerateTestPlanResponse): A plan for all tests to
-        be scheduled.
+          be scheduled.
       passed_tests (list[string]): A list of names for the tests that
-        have passed before.
+          have passed before.
       test_to_build_map (dict{string->string}): Map of test names to
-        build_targets to be populated.
+          build_targets to be populated.
       snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
           the included builds were created.
       dev(boolean): Whether to use Skylab dev instance.
@@ -187,7 +199,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       MetaTestTuple of lists of the tests scheduled.
     """
     skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests,
-                                               test_to_build_map, dev=dev)
+                                               test_to_build_map, dev=dev,
+                                               multi_req=multi_req)
 
     autotest_vm_tests = self._schedule_autotest_vm_tests(
         test_plan, passed_tests, snapshot, test_to_build_map)
@@ -201,7 +214,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         skylab=skylab_tasks or [], autotest_vm=autotest_vm_tests or [],
         tast_vm=tast_vm_tests or [], moblab_vm=moblab_vm_tests or [])
 
-  def collect_tests(self, test_tasks):
+  def _collect_tests(self, test_tasks, multi_req=False):
     """Collect on all tests from test_tasks.
 
     The tests are collected in the order: skylab, autotest_vm,
@@ -209,13 +222,20 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     Args:
       test_tasks (MetaTestTuple): lists of tests to collect.
+      multi_req (bool): whether to use multi request cros_test_platform for
+          skylab requests.
 
     Returns:
       MetaTestTuple of lists of tests collected.
     """
     hw_results = []
     if test_tasks.skylab:
-      hw_results = self.m.skylab.wait_on_recipes(test_tasks.skylab)
+      if multi_req:
+        # All test requests are for the same task in this mode, so just take the
+        # first one.
+        hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab[0])
+      else:
+        hw_results = self.m.skylab.wait_on_recipes(test_tasks.skylab)
     autotest_vm_results = []
     if test_tasks.autotest_vm:
       autotest_vm_results = self.m.buildbucket.collect_builds(
@@ -243,7 +263,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       baseline_results: MetaTestTuple of the tests on the baseline images.
     Returns:
       list[Failure]: All failures discovered in the given runs filtered
-      by baseline failures.
+          by baseline failures.
     """
     failures = self.m.failures.get_hw_test_failures(test_results.skylab,
                                                     baseline_results.skylab)
@@ -255,17 +275,20 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return failures
 
   def _schedule_skylab_tests(self, test_plan, passed_tests,
-                             test_to_build_map=None, dev=False):
+                             test_to_build_map=None, dev=False,
+                             multi_req=False):
     """Schedule skylab tests from the test_plan.
 
     Args:
       test_plan (GenerateTestPlanResponse): A plan for all tests to
-        be scheduled.
+          be scheduled.
       passed_tests (list[string]): A list of names for the tests that
-        have passed before.
+          have passed before.
       test_to_build_map (dict{string->string}): Map of test names to
-        build_targets to be populated.
-        dev(boolean): Whether to use Skylab dev instance.
+          build_targets to be populated.
+      dev(boolean): Whether to use Skylab dev instance.
+      multi_req (bool): whether to use multi request cros_test_platform for
+          skylab requests.
 
     Returns:
       list[SkylabTask] of the tests scheduled.
@@ -273,14 +296,19 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     skylab_tasks = []
     test_to_build_map = {} if test_to_build_map is None else test_to_build_map
     with self.m.step.nest('schedule hardware tests'):
+      tests_to_run = []
       for unit in test_plan.hw_test_units:
         for test in unit.hw_test_cfg.hw_test:
           if test.common.display_name not in passed_tests:
             test_name = test.common.display_name
             build_target = unit.common.build_target
             test_to_build_map[test_name] = build_target.name
-            skylab_tasks.append(self.m.skylab.create_recipe(test, unit))
-
+            tests_to_run.append(
+                self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
+            if not multi_req:
+              skylab_tasks.append(self.m.skylab.create_recipe(test, unit))
+      if multi_req:
+        skylab_tasks.extend(self.m.skylab.schedule_suites(tests_to_run))
     return skylab_tasks
 
   def _schedule_autotest_vm_tests(self, test_plan, passed_tests, snapshot,
@@ -289,12 +317,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     Args:
       test_plan (GenerateTestPlanResponse): A plan for all tests to
-        be scheduled.
+          be scheduled.
       passed_tests (list[string]): A list of names for the tests that
-        have passed before.
+          have passed before.
       snapshot (GitilesCommit): Start ref to be supplied to the tests.
       test_to_build_map (dict{string->string}): Map of test names to
-        build_targets to be populated.
+          build_targets to be populated.
 
     Returns:
       list[Build] objects of the VM tests scheduled.
@@ -331,12 +359,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     Args:
       test_plan (GenerateTestPlanResponse): A plan for all tests to
-        be scheduled.
+          be scheduled.
       passed_tests (list[string]): A list of names for the tests that
-        have passed before.
+          have passed before.
       snapshot (GitilesCommit): Start ref to be supplied to the tests.
       test_to_build_map (dict{string->string}): Map of test names to
-        build_targets to be populated.
+          build_targets to be populated.
 
     Returns:
       list[Build] objects of the VM tests scheduled.
@@ -375,12 +403,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     Args:
       test_plan (GenerateTestPlanResponse): A plan for all tests to
-        be scheduled.
+          be scheduled.
       passed_tests (list[string]): A list of names for the tests that
-        have passed before.
+          have passed before.
       snapshot (GitilesCommit): Start ref to be supplied to the tests.
       test_to_build_map (dict{string->string}): Map of test names to
-        build_targets to be populated.
+          build_targets to be populated.
 
     Returns:
       list[Build] objects of the VM tests scheduled.
@@ -417,7 +445,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       test_plan (GenerateTestPlanResponse): test_plan of the orchestrator.
       percent_threshold (float): upper threshold for baseline validation.
       count_threshold (int): upper threshold of # of tests
-        for baseline validation.
+          for baseline validation.
 
     Returns:
       A boolean indicating whether we need to initiate baseline
@@ -470,11 +498,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     to a Buildbucket request.
 
     Args:
-        api (RecipeApi): See RunSteps documentation.
-        properties (dict): A dictionary of properties.
+      api (RecipeApi): See RunSteps documentation.
+      properties (dict): A dictionary of properties.
 
-    Return:
-        The merged dict.
+    Returns:
+      The merged dict.
     """
     properties.update(self.m.cq.props_for_child_build)
     return properties
