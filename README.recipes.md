@@ -263,7 +263,7 @@ Returns whether this run should build chrome from source.
 Args:
   build_target (chromiumos.BuildTarget): Build target of the build.
   chroot (chromiumos.Chroot): Information on the chroot for the build.
-  packages (list[chromiumos.Chroot]): Packages that the builder needs
+  packages (list[chromiumos.PackageInfo]): Packages that the builder needs
       to build, or empty / None for default packages.
 
 Returns:
