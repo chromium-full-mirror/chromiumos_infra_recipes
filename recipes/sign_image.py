@@ -168,7 +168,11 @@ def RunSteps(api, properties):
         'target = %s' % target,
     ]
     if target == 'NodeLocked':
+      insns.append(
+          'output_names = cr50_@VERSION@_@TARGET@-@DEVICE_ID@_@KEYSET@')
       insns.append('device_id = %s' % cr50.device_id)
+    else:
+      insns.append('output_names = cr50_@VERSION@_@TARGET@_@KEYSET@')
 
   with api.step.nest('upload cr50 instructions') as step:
     content = str('\n'.join(insns) + '\n')
