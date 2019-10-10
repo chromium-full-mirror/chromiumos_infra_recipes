@@ -231,9 +231,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     hw_results = []
     if test_tasks.skylab:
       if multi_req:
-        # All test requests are for the same task in this mode, so just take the
-        # first one.
-        hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab[0])
+        hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab)
       else:
         hw_results = self.m.skylab.wait_on_recipes(test_tasks.skylab)
     autotest_vm_results = []

@@ -189,6 +189,7 @@ def GenTests(api):
 
   multi_hw_tests = [
       api.skylab.test_with_multi_response(id=1234, success=False),
+      api.skylab.test_with_multi_response(id=4321, success=False),
   ]
 
   yield (

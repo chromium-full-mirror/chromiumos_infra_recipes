@@ -112,7 +112,7 @@
       "    arg_names, **additional_args)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in _invoke_with_properties",
       "    return callable_obj(*props, **additional_args)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/skylab/examples/wait_on_suites.py\", line 24, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/skylab/examples/wait_on_suites.py\", line 25, in RunSteps",
       "    api.assertions.assertEqual(actual.success, expected.success)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_modules/assertions/api.py\", in assertion_wrapper",
       "    raise AssertionError(e.message)",

@@ -98,7 +98,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
     json_string = """
 {
   "responses": {
-    "default": {
+    "target.hw.bvt-cq": {
       "state": {
           "verdict": "%s",
           "lifeCycle": "LIFE_CYCLE_COMPLETED"

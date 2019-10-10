@@ -147,6 +147,7 @@
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites)
   * [skylab:examples/wait_on_recipes](#recipes-skylab_examples_wait_on_recipes)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
+  * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
@@ -1170,7 +1171,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#258)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#256)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -2434,7 +2435,7 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#210)(self, tasks):**
+&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#222)(self, tasks):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -2444,15 +2445,15 @@ Args:
 Returns:
   list[SkylabResult]: The results for each suite.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#163)(self, task):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#163)(self, tasks):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
 Args:
-  task (SkylabTask): the SkylabTask to wait on.
+  tasks (list[SkylabTask]): The Skylab tasks to wait on.
 
 Returns:
-  list[SkylabResult]: The results for each suite.
+  list[SkylabResult]: The results for suites from provided tasks.
 ### *recipe_modules* / [skylab\_local\_state](/recipe_modules/skylab_local_state)
 
 [DEPS](/recipe_modules/skylab_local_state/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3287,6 +3288,11 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites.py#15)(api):**
+### *recipes* / [skylab:examples/wait\_on\_suites\_empty\_arg](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py)
+
+[DEPS](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#15)(api):**
 ### *recipes* / [skylab\_local\_state:examples/full](/recipe_modules/skylab_local_state/examples/full.py)
 
 [DEPS](/recipe_modules/skylab_local_state/examples/full.py#6): [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

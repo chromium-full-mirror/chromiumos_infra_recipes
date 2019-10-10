@@ -74,7 +74,7 @@ class SkylabApi(recipe_api.RecipeApi):
         ]
         req.params.decorations.tags.extend(request_tags)
         self._enable_test_retries(req)
-        reqs[uht.hw_test.common.display_name] = json_format.MessageToDict(req)
+        reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
 
       bb_request = self.m.buildbucket.schedule_request(
           'cros_test_platform', bucket='testplatform', properties={
@@ -160,51 +160,63 @@ class SkylabApi(recipe_api.RecipeApi):
     req.params.retry.max = 5
     req.params.retry.allow = True
 
-  def wait_on_suites(self, task):
+  def wait_on_suites(self, tasks):
     """Wait for the single Skylab multi-request to finish and return the result
 
     Args:
-      task (SkylabTask): the SkylabTask to wait on.
+      tasks (list[SkylabTask]): The Skylab tasks to wait on.
 
     Returns:
-      list[SkylabResult]: The results for each suite.
+      list[SkylabResult]: The results for suites from provided tasks.
     """
     with self.m.step.nest('collect skylab tasks v2') as step:
+      if not tasks:
+        return []
+
+      # All the tasks contain the same cros_test_platgorm build ID.
+      task_id = tasks[0].id
       # Give 30 minutes grace period for recipes to time out.
       timeout_seconds = (self._skylab_timeout_mins + 30) * 60
       try:
         hw_tests = self.m.buildbucket.collect_builds(
-            [task.id], timeout=timeout_seconds)[task.id]
+            [task_id], timeout=timeout_seconds)[task_id]
       except recipe_api.StepFailure as ex:  #pragma: no cover
         # Mark the step as an INFRA_FAILURE and get the output
         # properties of underlying recipes.
         step.presentation.status = 'EXCEPTION'
-        hw_tests = self.m.buildbucket.get_multi(task.id)[task.id]
+        hw_tests = self.m.buildbucket.get_multi(task_id)[task_id]
 
       results = []
-      for result in self._get_multi_response(hw_tests):
+      responses = self._get_multi_response(hw_tests)
+      for t in tasks:
+        result = responses.get(_request_tag(t.test),
+                               self._default_failed_response())
         success = result.state.verdict == TaskState.VERDICT_PASSED
         results.append(
-            self.SkylabResult(task=task, success=success,
-                              child_results=result.task_results))
+          self.SkylabResult(task=t, success=success,
+                            child_results=result.task_results))
 
-      step.presentation.logs['return value'] = [str(x) for x in results]
+      step.presentation.logs['return value'] = [str(r) for r in results]
       return results
 
   def _get_multi_response(self, build):
     # ExecuteResponse is stored as a Struct in output.properties.
     # This helper handles the re-casting and error catching.
-    responses = []
+    responses = {}
     try:
       responses_prop = build.output.properties['responses']
-      for response_struct in responses_prop.fields.itervalues():
-        response_json = json_format.MessageToJson(response_struct.struct_value)
-        response = ExecuteResponse()
-        json_format.Parse(response_json, response, ignore_unknown_fields=True)
-        responses.append(response)
-    except (ValueError, json_format.ParseError) as e:  #pragma: no cover
-      return [self._default_failed_response()]
+    except (KeyError, ValueError):
+      return responses
 
+    for tag, response_struct in responses_prop.fields.iteritems():
+      response = ExecuteResponse()
+      try:
+        response_json = json_format.MessageToJson(response_struct.struct_value)
+        json_format.Parse(response_json, response, ignore_unknown_fields=True)
+      except (ValueError, json_format.ParseError) as e:  #pragma: no cover
+        response = self._default_failed_response()
+      finally:
+        responses[tag] = response
     return responses
 
   def wait_on_recipes(self, tasks):
@@ -255,8 +267,13 @@ class SkylabApi(recipe_api.RecipeApi):
 
     return response
 
+
   def _default_failed_response(self):
     response = ExecuteResponse()
     response.state.verdict = TaskState.VERDICT_FAILED
     response.state.life_cycle = TaskState.LIFE_CYCLE_COMPLETED
     return response
+
+
+def _request_tag(hw_test):
+    return hw_test.common.display_name
