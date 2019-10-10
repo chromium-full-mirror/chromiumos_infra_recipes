@@ -196,7 +196,8 @@ class SkylabApi(recipe_api.RecipeApi):
     # This helper handles the re-casting and error catching.
     responses = []
     try:
-      for response_struct in build.output.properties['responses'].values:
+      responses_prop = build.output.properties['responses']
+      for response_struct in responses_prop.fields.itervalues():
         response_json = json_format.MessageToJson(response_struct.struct_value)
         response = ExecuteResponse()
         json_format.Parse(response_json, response, ignore_unknown_fields=True)

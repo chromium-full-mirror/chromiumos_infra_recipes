@@ -97,8 +97,8 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
   def multi_response(self, success=False):
     json_string = """
 {
-  "responses": [
-    {
+  "responses": {
+    "default": {
       "state": {
           "verdict": "%s",
           "lifeCycle": "LIFE_CYCLE_COMPLETED"
@@ -115,7 +115,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
           }
       ]
     }
-  ]
+  }
 }"""
     verdict = 'VERDICT_PASSED' if success else 'VERDICT_FAILED'
     response_struct = struct_pb2.Struct()
