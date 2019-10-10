@@ -78,7 +78,7 @@ class RepoApi(recipe_api.RecipeApi):
         'forall', '-c', 'find', '.git/', '-type', 'f', '-name', '*.lock',
         '-print', '-delete'
     ]
-    self._step(git_cmd, 'clear git locks')
+    self._step(git_cmd, 'clear git locks', ok_ret='any')
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
            groups=None, depth=None, repo_url=None):
