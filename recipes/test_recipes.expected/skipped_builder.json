@@ -10,7 +10,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
