@@ -334,6 +334,19 @@ class RepoApi(recipe_api.RecipeApi):
     ]
     self._step(cmd, name=name)
 
+  def _git_clean_checkout(self, root_path):
+    """Ensure the given repo does not contain untracked files or directories.
+
+    We're assuming that the root path provided has already been validated.
+
+    Args:
+      * root_path (Path): Path to the repo root.
+    """
+    with self.m.step.nest('ensure clean checkout'):
+      with self.m.context(cwd=root_path, infra_steps=True):
+        cmd = ['forall', '-c', 'git', 'clean', '-d', '-f']
+        self._step(cmd, stdout=self.m.raw_io.output(add_output_log=True))
+
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
                              sync_opts=None):
     """Ensure the given repo checkout exists and is synced.
@@ -354,6 +367,7 @@ class RepoApi(recipe_api.RecipeApi):
                              root_path.join('.repo', manifest_dir))
 
         self.m.repo.init(manifest_url, **(init_opts or {}))
+        self.m.repo._git_clean_checkout(root_path)
         self.m.repo.sync(**(sync_opts or {}))
 
       # Sanity check since `repo init` will happily reuse a repository in the
