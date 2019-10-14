@@ -66,62 +66,45 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
     )  # pragma: no cover
 
   def response(self, success=False):
-    json_string = """
-{
-  "response": {
-      "state": {
-          "verdict": "%s",
-          "lifeCycle": "LIFE_CYCLE_COMPLETED"
-      },
-      "taskResults": [
-          {
-              "state": {
-                  "verdict": "VERDICT_PASSED",
-                  "lifeCycle": "LIFE_CYCLE_COMPLETED"
-              },
-              "taskUrl": "https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010",
-              "name": "cheets_NotificationTest",
-              "logUrl": "https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/"
-          }
-      ]
-  }
-}"""
-    verdict = 'VERDICT_PASSED' if success else 'VERDICT_FAILED'
+    json_string = '{ "response": %s }' % self._response_json(success)
     response_struct = struct_pb2.Struct()
-    return json_format.Parse(json_string % verdict, response_struct)
+    return json_format.Parse(json_string, response_struct)
 
   def test_with_execute_response(self, id, success=False):
     return build_pb2.Build(
         id=id, output=build_pb2.Build.Output(properties=self.response(success)))
 
-  def multi_response(self, success=False):
-    json_string = """
-{
-  "responses": {
-    "target.hw.bvt-cq": {
-      "state": {
-          "verdict": "%s",
-          "lifeCycle": "LIFE_CYCLE_COMPLETED"
-      },
-      "taskResults": [
-          {
-              "state": {
-                  "verdict": "VERDICT_PASSED",
-                  "lifeCycle": "LIFE_CYCLE_COMPLETED"
-              },
-              "taskUrl": "https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010",
-              "name": "cheets_NotificationTest",
-              "logUrl": "https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/"
-          }
-      ]
-    }
-  }
-}"""
-    verdict = 'VERDICT_PASSED' if success else 'VERDICT_FAILED'
-    response_struct = struct_pb2.Struct()
-    return json_format.Parse(json_string % (verdict), response_struct)
-
-  def test_with_multi_response(self, id, success=False):
+  def test_with_multi_response(self, id, names, success=False):
     return build_pb2.Build(
-        id=id,
-        output=build_pb2.Build.Output(properties=self.multi_response(success)))
+        id=id, output=build_pb2.Build.Output(
+            properties=self._multi_response(names, success)))
+
+  def _multi_response(self, names, success):
+    json_template = '{ "responses": { "%(name)s": %(response_json)s } }'
+    responses = []
+    for name in names:
+      responses.append('"%s": %s' % (name, self._response_json(success)))
+    json_string = '{ "responses": { %s } }' % ', '.join(responses)
+    response_struct = struct_pb2.Struct()
+    return json_format.Parse(json_string, response_struct)
+
+  def _response_json(self, success):
+    verdict = 'VERDICT_PASSED' if success else 'VERDICT_FAILED'
+    return """{
+    "state": {
+        "verdict": "%s",
+        "lifeCycle": "LIFE_CYCLE_COMPLETED"
+    },
+    "taskResults": [
+        {
+            "state": {
+                "verdict": "VERDICT_PASSED",
+                "lifeCycle": "LIFE_CYCLE_COMPLETED"
+            },
+            "taskUrl": "https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010",
+            "name": "cheets_NotificationTest",
+            "logUrl": "https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/"
+        }
+    ]
+}
+""" % (verdict,)

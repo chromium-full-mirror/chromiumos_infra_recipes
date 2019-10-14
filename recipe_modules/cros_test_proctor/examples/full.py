@@ -188,8 +188,9 @@ def GenTests(api):
           [], step_name='run tests.collect tests.collect moblab vm tests'))
 
   multi_hw_tests = [
-      api.skylab.test_with_multi_response(id=1234, success=False),
-      api.skylab.test_with_multi_response(id=4321, success=False),
+      api.skylab.test_with_multi_response(
+          id=1234, names=['target.hw.bvt-cq', 'target.hw.bvt-inline'],
+          success=False),
   ]
 
   yield (

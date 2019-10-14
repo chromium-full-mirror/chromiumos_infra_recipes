@@ -189,12 +189,12 @@ class SkylabApi(recipe_api.RecipeApi):
       results = []
       responses = self._get_multi_response(hw_tests)
       for t in tasks:
-        result = responses.get(_request_tag(t.test),
-                               self._default_failed_response())
+        result = responses.get(
+            _request_tag(t.test), self._default_failed_response())
         success = result.state.verdict == TaskState.VERDICT_PASSED
         results.append(
-          self.SkylabResult(task=t, success=success,
-                            child_results=result.task_results))
+            self.SkylabResult(task=t, success=success,
+                              child_results=result.task_results))
 
       step.presentation.logs['return value'] = [str(r) for r in results]
       return results
@@ -267,7 +267,6 @@ class SkylabApi(recipe_api.RecipeApi):
 
     return response
 
-
   def _default_failed_response(self):
     response = ExecuteResponse()
     response.state.verdict = TaskState.VERDICT_FAILED
@@ -276,4 +275,4 @@ class SkylabApi(recipe_api.RecipeApi):
 
 
 def _request_tag(hw_test):
-    return hw_test.common.display_name
+  return hw_test.common.display_name

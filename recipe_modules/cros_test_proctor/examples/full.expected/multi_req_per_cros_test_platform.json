@@ -1237,19 +1237,8 @@
       "@@@STEP_LOG_LINE@json.output@                    \"taskUrl\": \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
       "@@@STEP_LOG_LINE@json.output@                  }@@@",
       "@@@STEP_LOG_LINE@json.output@                ]@@@",
-      "@@@STEP_LOG_LINE@json.output@              }@@@",
-      "@@@STEP_LOG_LINE@json.output@            }@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"4321\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"responses\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"target.hw.bvt-cq\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              }, @@@",
+      "@@@STEP_LOG_LINE@json.output@              \"target.hw.bvt-inline\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                  \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", @@@",
       "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_FAILED\"@@@",
@@ -1285,8 +1274,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@",
-      "@@@STEP_LINK@4321@https://cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {
