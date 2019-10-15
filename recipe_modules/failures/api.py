@@ -5,6 +5,7 @@
 
 """API for raising failures and presenting them in cute ways."""
 
+from PB.chromiumos.common import ImageType
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
@@ -186,6 +187,34 @@ class FailuresApi(recipe_api.RecipeApi):
       step.presentation.status = self.m.step.FAILURE
       step.presentation.logs['list of failed packages'] = map(
           self.m.naming.get_package_title, packages)
+      raise self.m.step.StepFailure(message)
+
+  def raise_failed_image_tests(self, failed_images):
+    """Display failed image tests and raise a failure.
+
+    Displays the images that failed tests and raises a failure if there
+    are failed image tests. If there are no failed image tests, a success
+    message is output.
+
+    Args:
+      failed_images: (list[chromite.image.Image]): The images that failed
+          tests.
+
+    Raises:
+      StepFailure: If failed_images is not empty.
+    """
+    with self.m.step.nest('image test results') as step:
+      if not failed_images:
+        step.presentation.step_text = 'all images passed'
+        return
+
+      message = '{} images failed'.format(len(failed_images))
+      step.presentation.step_text = message
+      step.presentation.status = self.m.step.FAILURE
+      failed_types = map(
+          lambda image: ImageType.Name(image.type),
+          failed_images)
+      step.presentation.logs['list of failed images'] = failed_types
       raise self.m.step.StepFailure(message)
 
   def aggregate_failures(self, failures):

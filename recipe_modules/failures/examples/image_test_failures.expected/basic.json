@@ -1,0 +1,22 @@
+[
+  {
+    "cmd": [],
+    "name": "image test results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all images passed@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "image test results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 images failed@@@",
+      "@@@STEP_LOG_LINE@list of failed images@TEST@@@",
+      "@@@STEP_LOG_END@list of failed images@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

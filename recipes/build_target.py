@@ -31,11 +31,12 @@ DEPS = [
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
-from PB.chromiumos.common import TEST
+from PB.chromiumos.common import BASE
 from PB.chromiumos.common import PackageInfo
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
+from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
@@ -164,7 +165,7 @@ def RunSteps(api, properties):
 
       image_types = build_config.build.image_types
       if image_types:
-        with api.step.nest('build image'):
+        with api.step.nest('build images'):
           response = api.cros_build_api.ImageService.Create(
               CreateImageRequest(
                   build_target=build_target, chroot=api.cros_sdk.chroot,
@@ -173,6 +174,18 @@ def RunSteps(api, properties):
                       build_target, build_config.id.type)),
               timeout=45 * 60)
           api.failures.raise_failed_packages(response.failed_packages)
+        with api.step.nest('test images'):
+          failed_images = []
+          # For now, as in legacy CQ, we only test base images.
+          for image in [i for i in response.images if i.type == BASE]:
+            result_dir = api.path.mkdtemp(prefix="image-test-result-")
+            if not api.cros_build_api.ImageService.Test(TestImageRequest(
+                image=image,
+                build_target=build_target,
+                result=TestImageRequest.Result(directory=str(result_dir)),
+                chroot=api.cros_sdk.chroot)).success:
+              failed_images.append(image)
+          api.failures.raise_failed_image_tests(failed_images)
 
       ebuilds_run_spec = build_config.unit_tests.ebuilds_run_spec
       if api.cros_infra_config.should_run(ebuilds_run_spec):
@@ -286,6 +299,16 @@ def GenTests(api):
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='post-sync pointless build check') +
          api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('fail-image-tests') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='amd64-generic-postsubmit') +  #
+         api.cros_relevance.simulate_run_pointless_build_checker(
+             name='post-sync pointless build check') +
+         api.properties(build_target={'name': 'amd64-generic'}) + #
+         api.step_data(
+             'test images.call chromite.api.ImageService/Test.read output file',
+             api.file.read_raw(content='{"success": false}')))
 
   yield (api.test('no-run-ebuild-tests') +  #
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
