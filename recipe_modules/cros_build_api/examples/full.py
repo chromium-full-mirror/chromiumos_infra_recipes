@@ -88,6 +88,7 @@ def RunSteps(api):
           'BuildsChrome': packages.BuildsChromeResponse,
           'GetBestVisible': packages.GetBestVisibleResponse,
           'GetChromeVersion': packages.GetChromeVersionResponse,
+          'GetTargetVersions': packages.GetTargetVersionsResponse,
           'HasChromePrebuilt': packages.HasChromePrebuiltResponse,
           'Uprev': packages.UprevPackagesResponse,
           'UprevVersionedPackage': packages.UprevVersionedPackageResponse,

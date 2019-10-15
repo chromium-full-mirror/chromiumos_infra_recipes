@@ -115,6 +115,15 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['GetChromeVersion'] = jsonify(
         version='version',
     )
+    responses['GetTargetVersions'] = jsonify(
+        android_version='android_version',
+        android_branch_version='android_branch_version',
+        android_target_version='android_target_version',
+        chrome_version='chrome_version',
+        full_version='full_version',
+        milestone_version='milestone_version',
+        platform_version='platform_version',
+    )
     responses['HasChromePrebuilt'] = jsonify(
         has_prebuilt=False,
     )
