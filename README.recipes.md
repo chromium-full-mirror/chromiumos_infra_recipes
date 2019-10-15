@@ -2698,9 +2698,9 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#61)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#64)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#227)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#233)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2715,6 +2715,21 @@ Args:
 
 Returns:
   list[PackageInfo] of packages to build
+
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#250)(api, build_target):**
+
+Returns 'target_versions' in dict form.
+
+Returns the 'target_versions' values for this build in a dict form
+suitable for output as a build property. Note that this cannot be
+called until after the creation of the sysroot is finished.
+
+Args:
+  api (RecipeApi): See RunSteps.
+  build_target (chromiumos.BuildTarget): The BuildTarget being built.
+
+Returns:
+  dict of target versions
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

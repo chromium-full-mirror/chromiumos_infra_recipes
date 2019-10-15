@@ -29,6 +29,8 @@ DEPS = [
     'portage',
 ]
 
+from google.protobuf import json_format as json_pb
+
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import BASE
@@ -37,6 +39,7 @@ from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
 from PB.chromite.api.image import TestImageRequest
+from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
@@ -116,6 +119,9 @@ def RunSteps(api, properties):
                 flags=SysrootCreateRequest.Flags(chroot_current=True,
                                                  replace=True)))
         sysroot = create_sysroot_response.sysroot
+
+      api.easy.set_property_step('target_versions',
+                                 get_target_versions(api, build_target))
 
       if api.cros_relevance.is_build_pointless(
           gerrit_changes,
@@ -240,6 +246,26 @@ def get_packages(api, build_config):
     list[PackageInfo] of packages to build
   """
   return api.cros_bisect.get_packages() or build_config.build.packages
+
+def get_target_versions(api, build_target):
+  """Returns 'target_versions' in dict form.
+
+  Returns the 'target_versions' values for this build in a dict form
+  suitable for output as a build property. Note that this cannot be
+  called until after the creation of the sysroot is finished.
+
+  Args:
+    api (RecipeApi): See RunSteps.
+    build_target (chromiumos.BuildTarget): The BuildTarget being built.
+
+  Returns:
+    dict of target versions
+  """
+  response = api.cros_build_api.PackageService.GetTargetVersions(
+      GetTargetVersionsRequest(
+          chroot=api.cros_sdk.chroot,
+          build_target=build_target))
+  return json_pb.MessageToDict(response)
 
 def GenTests(api):
   mock_CLs = [
