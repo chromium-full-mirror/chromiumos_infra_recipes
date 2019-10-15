@@ -391,12 +391,11 @@ def get_completed_builds(api, cq_orch_children):
       continue
 
     # A temporary hack to force rebuilding of particular builders.
-    # Currently this is mitigate: https://crbug/1012308
+    # Currently this is mitigate: https://crbug/1014542
     # We should later generalize this sort of filtering in config.
-    filtered_builds = ['bob', 'coral', 'eve', 'kevin',
-                       'mistral', 'nocturne', 'reef', 'scarlet']
+    filtered_builds = ['octopus']
     this_build = api.cros_history.get_build_target(build)
-    apply_hack_time = build.start_time.seconds < 1570557961  # GMT 10/8/19 6PM
+    apply_hack_time = build.start_time.seconds < 1571170101 # GMT 10/15/19 2PM
     if this_build in filtered_builds and apply_hack_time:  #pragma: no cover
       continue
 
