@@ -4,7 +4,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "http://manifest_url"
+      "http://manifest_url",
+      "--groups",
+      "all"
     ],
     "infra_step": true,
     "name": "repo init"
@@ -46,6 +48,8 @@
       "init",
       "--manifest-url",
       "http://manifest_url",
+      "--groups",
+      "all",
       "--manifest-branch",
       "mybranch",
       "--reference",
@@ -316,7 +320,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "http://manifest_url"
+      "http://manifest_url",
+      "--groups",
+      "all"
     ],
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,

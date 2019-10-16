@@ -93,7 +93,7 @@ class RepoApi(recipe_api.RecipeApi):
       * repo_url (str): URL of the repo repository.
     """
     assert _kwonly is (), 'init accepts only 1 positional arg'
-    cmd = ['init', '--manifest-url', manifest_url]
+    cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
     if repo_url is not None:
       cmd += ['--manifest-branch', manifest_branch]
     if reference is not None:
