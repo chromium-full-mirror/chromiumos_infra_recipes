@@ -160,6 +160,37 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "unlink chroot in checkout"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/checkout/chroot"
+    ],
+    "infra_step": true,
+    "name": "unlink chroot in checkout.remove original chroot link",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "a+rwX,-t",
+      "[CLEANUP]/test/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "changing permissions of [CLEANUP]/test/cros_chroot"
+  },
+  {
     "name": "$result"
   }
 ]

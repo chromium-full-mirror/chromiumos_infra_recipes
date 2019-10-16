@@ -891,6 +891,14 @@ Args:
 Returns:
   See 'step.__call__'.
 
+&mdash; **def [chmod\_chroot](/recipe_modules/cros_sdk/api.py#126)(self, checkout_path):**
+
+Chroot is deployed as root, therfore change permissions to
+   allow for Swarming cache uninstall/install.
+
+Args:
+  checkout_path (Path): Path to the checkout root.
+
 &emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#41)(self):**
 
 Return a chromiumos.common.Chroot.
@@ -919,7 +927,7 @@ Link the chroot to a chromiumos checkout.
 Args:
   checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#114)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#138)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -940,6 +948,13 @@ Returns:
 &mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#65)(self, goma_dir, goma_client_json):**
 
 &mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#72)(self, use_flags):**
+
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#114)(self, checkout_path):**
+
+Unlink the chroot from the chromiumos checkout.
+
+Args:
+  checkout_path (Path): Path to the checkout root.
 ### *recipe_modules* / [cros\_som](/recipe_modules/cros_som)
 
 [DEPS](/recipe_modules/cros_som/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
@@ -2685,7 +2700,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#61)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#218)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#226)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 

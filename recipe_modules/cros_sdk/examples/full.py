@@ -39,6 +39,9 @@ def RunSteps(api):
   # Link a second time to handle case where link exists.
   api.cros_sdk.link_chroot(api.path['cleanup'].join('checkout'))
 
+  api.cros_sdk.unlink_chroot(api.path['cleanup'].join('checkout'))
+  api.cros_sdk.chmod_chroot(workspace)
+
 
 def GenTests(api):
   yield api.test('basic')

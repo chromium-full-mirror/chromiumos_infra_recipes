@@ -111,6 +111,30 @@ class CrosSdkApi(recipe_api.RecipeApi):
       self.m.file.symlink('link %s to chroot' % checkout_basename,
                           self._chroot_path, chroot_link)
 
+  def unlink_chroot(self, checkout_path):
+    """Unlink the chroot from the chromiumos checkout.
+
+    Args:
+      checkout_path (Path): Path to the checkout root.
+    """
+    checkout_basename = self.m.path.basename(checkout_path)
+    with self.m.step.nest('unlink chroot in %s' % checkout_basename):
+      chroot_link = checkout_path.join('chroot')
+      if self.m.path.exists(chroot_link):
+        self.m.file.remove('remove original chroot link', chroot_link)
+
+  def chmod_chroot(self, checkout_path):
+    """Chroot is deployed as root, therfore change permissions to
+       allow for Swarming cache uninstall/install.
+
+    Args:
+      checkout_path (Path): Path to the checkout root.
+    """
+    if self.m.path.exists(self._chroot_path):
+      chmod_cmd = ['sudo', '-n', 'chmod', 'a+rwX,-t', self._chroot_path]
+      self.m.step('changing permissions of %s' % self._chroot_path, chmod_cmd,
+                  infra_step=True)
+
   def run(self, name, cmd, env=None, workspace=None, **kwargs):
     """Runs a command in a cros_sdk chroot.
 

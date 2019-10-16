@@ -87,6 +87,7 @@ def RunSteps(api, properties):
         response = api.cros_build_api.PackageService.Uprev(request)
 
       with api.step.nest('init sdk') as step:
+        api.cros_sdk.chmod_chroot(api.cros_source.workspace_path)
         response = api.cros_build_api.SdkService.Create(
             CreateSdkRequest(
                 flags=CreateSdkRequest.Flags(no_replace=True,
@@ -214,6 +215,13 @@ def RunSteps(api, properties):
             build_target, build_config.id.type,
             build_config.artifacts.prebuilts_gs_bucket,
             private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
+
+      with api.step.nest('cleanup chroot') as step:
+        # Cleanup the chroot link before we try to tear down the
+        # OverlayFS mounts
+        api.cros_sdk.unlink_chroot(api.cros_source.workspace_path)
+        api.cros_sdk.chmod_chroot(api.cros_source.workspace_path)
+
 
 def get_packages(api, build_config):
   """Returns the packages that should be built for this invocation.
