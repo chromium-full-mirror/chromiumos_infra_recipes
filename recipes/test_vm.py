@@ -102,7 +102,8 @@ def RunSteps(api, properties):
             SysrootCreateRequest(
                 build_target=properties.build_target,
                 chroot=api.cros_sdk.chroot,
-                flags=SysrootCreateRequest.Flags(chroot_current=True)),
+                flags=SysrootCreateRequest.Flags(chroot_current=True,
+                                                 replace=True)),
             name='create sysroot').sysroot
 
         failed_packages = api.cros_build_api.SysrootService.InstallToolchain(

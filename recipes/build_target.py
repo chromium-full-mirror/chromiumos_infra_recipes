@@ -113,7 +113,8 @@ def RunSteps(api, properties):
                 build_target=build_target,
                 profile=profile,
                 chroot=api.cros_sdk.chroot,
-                flags=SysrootCreateRequest.Flags(chroot_current=True)))
+                flags=SysrootCreateRequest.Flags(chroot_current=True,
+                                                 replace=True)))
         sysroot = create_sysroot_response.sysroot
 
       if api.cros_relevance.is_build_pointless(
