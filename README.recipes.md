@@ -2698,9 +2698,9 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#64)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#62)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#233)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#243)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 

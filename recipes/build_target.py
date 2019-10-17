@@ -42,6 +42,7 @@ from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
+from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sysroot import Profile
 from PB.chromite.api.sysroot import SysrootCreateRequest
@@ -90,22 +91,41 @@ def RunSteps(api, properties):
         response = api.cros_build_api.PackageService.Uprev(request)
 
       with api.step.nest('init sdk') as step:
-        api.cros_sdk.chmod_chroot(api.cros_source.workspace_path)
-        response = api.cros_build_api.SdkService.Create(
-            CreateSdkRequest(
-                flags=CreateSdkRequest.Flags(no_replace=True,
-                                             no_use_image=True),
-                chroot=api.cros_sdk.chroot))
-        step.presentation.logs['sdk version'] = [str(response.version.version)]
-        # TODO(crbug.com/949721): Currently, chromite depends on the chroot
-        # living within the source tree. As a workaround, link the external
-        # chroot the workspace to make it look legit. New chromite services
-        # should accept the chroot path as a parameter.
-        api.cros_sdk.link_chroot(api.cros_source.workspace_path)
+        try:
+          api.cros_sdk.chmod_chroot(api.cros_source.workspace_path)
+          response = api.cros_build_api.SdkService.Create(
+              CreateSdkRequest(
+                  flags=CreateSdkRequest.Flags(no_replace=True,
+                                               no_use_image=True),
+                  chroot=api.cros_sdk.chroot))
+          step.presentation.logs['sdk version'] = [
+              str(response.version.version)
+          ]
+          # TODO(crbug.com/949721): Currently, chromite depends on the chroot
+          # living within the source tree. As a workaround, link the external
+          # chroot the workspace to make it look legit. New chromite services
+          # should accept the chroot path as a parameter.
+          api.cros_sdk.link_chroot(api.cros_source.workspace_path)
+        except api.step.StepFailure as e:
+          # Invalidate the cache if the InitSDK call fails.
+          api.step.nest(
+              'InitSDK failure, deleting chroot',
+              api.cros_build_api.SdkService.Delete(
+                  DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
+          raise
 
-      api.cros_build_api.SdkService.Update(
-          UpdateSdkRequest(chroot=api.cros_sdk.chroot,
-                           toolchain_targets=[build_target]), name='update sdk')
+      with api.step.nest('update sdk'):
+        try:
+          api.cros_build_api.SdkService.Update(
+              UpdateSdkRequest(chroot=api.cros_sdk.chroot,
+                               toolchain_targets=[build_target]))
+        except api.step.StepFailure:
+          # Invalidate the cache if the UpdateSDK call fails.
+          api.step.nest(
+              'UpdateSDK failure, deleting chroot',
+              api.cros_build_api.SdkService.Delete(
+                  DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
+          raise
 
       with api.step.nest('create sysroot'):
         profile = None
@@ -313,7 +333,6 @@ def GenTests(api):
                                  'baz', 'cat2', '3'),
                          ]})
                  }))
-
   yield (
       api.test('with-gerrit-changes') +  #
       api.cros_relevance.simulate_run_pointless_build_checker(
@@ -373,3 +392,19 @@ def GenTests(api):
          api.cros_relevance.simulate_run_pointless_build_checker(
              name='post-sync pointless build check') +
          api.properties(build_target={'name': 'arm-generic'}))
+
+  yield (
+      api.test('initsdk-destroy-choot-tests') +  #
+      api.buildbucket.ci_build(project='chromeos', bucket='cq',
+                               builder='amd64-generic-cq') +  #
+      api.step_data(
+          'init sdk.call chromite.api.SdkService/Create.call build API script',
+          retcode=1))
+
+  yield (
+      api.test('updatesdk-destroy-choot-tests') +  #
+      api.buildbucket.ci_build(project='chromeos', bucket='cq',
+                               builder='amd64-generic-cq') +  #
+      api.step_data(
+          'update sdk.call chromite.api.SdkService/Update.call build API script',
+          retcode=1))
