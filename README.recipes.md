@@ -2698,9 +2698,9 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [RunSteps](/recipes/build_target.py#62)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#65)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#243)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#253)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2716,7 +2716,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#250)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#270)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3495,13 +3495,13 @@ Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#22)(api):**
 
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/5abb9b7c5d0c0a5f81f4a0da741680df9b9d128c/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/5abb9b7c5d0c0a5f81f4a0da741680df9b9d128c/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/5abb9b7c5d0c0a5f81f4a0da741680df9b9d128c/recipes/README.recipes.md#recipe_modules-gerrit
-[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/5abb9b7c5d0c0a5f81f4a0da741680df9b9d128c/recipes/README.recipes.md#recipe_modules-git_cl
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/5abb9b7c5d0c0a5f81f4a0da741680df9b9d128c/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/5abb9b7c5d0c0a5f81f4a0da741680df9b9d128c/recipes/README.recipes.md#recipe_modules-gsutil
-[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/5abb9b7c5d0c0a5f81f4a0da741680df9b9d128c/recipes/README.recipes.md#recipe_modules-tryserver
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-gerrit
+[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-git_cl
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-tryserver
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1ed55ef713b18458deaf7553399db7ff38cddeb2/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1ed55ef713b18458deaf7553399db7ff38cddeb2/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1ed55ef713b18458deaf7553399db7ff38cddeb2/README.recipes.md#recipe_modules-buildbucket
