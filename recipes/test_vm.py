@@ -124,7 +124,8 @@ def RunSteps(api, properties):
                           properties.build_target, chrome_internal)
           api.cros_sdk.set_chrome_root(str(chrome_root))
           api.cros_sdk.set_goma_config(str(api.goma.goma_dir),
-                                       str(api.goma.goma_client_json))
+                                       str(api.goma.goma_client_json),
+                                       api.goma.goma_approach)
 
         flags = InstallPackagesRequest.Flags(
             compile_source=False,

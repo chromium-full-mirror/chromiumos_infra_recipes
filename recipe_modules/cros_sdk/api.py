@@ -32,6 +32,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       self._chrome_root = None
       self._goma_dir = None
       self._goma_client_json = None
+      self._goma_approach = None
       self._use_flags = None
 
   @property
@@ -63,9 +64,10 @@ class CrosSdkApi(recipe_api.RecipeApi):
   def set_chrome_root(self, chrome_root):
     self._chrome_root = chrome_root
 
-  def set_goma_config(self, goma_dir, goma_client_json):
+  def set_goma_config(self, goma_dir, goma_client_json, goma_approach):
     self._goma_dir = goma_dir
     self._goma_client_json = goma_client_json
+    self._goma_approach = goma_approach
 
   def has_goma_config(self):
     return bool(self._goma_dir and self._goma_client_json)

@@ -162,8 +162,9 @@ def RunSteps(api, properties):
           api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
                           build_config.chrome.internal)
           api.cros_sdk.set_chrome_root(str(chrome_root))
-          api.cros_sdk.set_goma_config(
-              str(api.goma.goma_dir), str(api.goma.goma_client_json))
+          api.cros_sdk.set_goma_config(str(api.goma.goma_dir),
+                                       str(api.goma.goma_client_json),
+                                       api.goma.goma_approach)
 
         with api.step.nest('install packages'):
           flags = InstallPackagesRequest.Flags(

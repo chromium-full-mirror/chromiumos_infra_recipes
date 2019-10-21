@@ -21,7 +21,8 @@ def RunSteps(api):
 
     api.cros_sdk.build_chmod_chroot()
     api.cros_sdk.set_chrome_root('/chrome_dir')
-    api.cros_sdk.set_goma_config('/goma_dir', '/creds/goma.json')
+    api.cros_sdk.set_goma_config('/goma_dir', '/creds/goma.json',
+                                 common.GomaConfig.RBE_PROD)
     api.cros_sdk.set_use_flags([common.UseFlag(flag='goma')])
 
     chroot = api.cros_sdk.chroot

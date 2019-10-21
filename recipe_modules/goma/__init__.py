@@ -8,3 +8,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
 ]
+
+from PB.recipe_modules.chromeos.goma.goma import GomaProperties
+
+PROPERTIES = GomaProperties
