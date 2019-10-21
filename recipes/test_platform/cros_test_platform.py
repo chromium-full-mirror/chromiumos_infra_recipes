@@ -251,12 +251,14 @@ def _log_task_results(api, task_results):
   # retried" section.
   # TODO(akeshet): Handle task links for verdictless tasks (including
   # incomplete tasks and completed tasks which provide no verdict).
-  with api.step.nest('passed tests') as step:
-    _emit_links(step, _filter_successful_task_results(task_results))
-  with api.step.nest('failed or incomplete tests') as step:
-    unsuccessful_task_results = _filter_unsuccessful_task_results(task_results)
-    _emit_links(step, unsuccessful_task_results)
-    if unsuccessful_task_results:
+  passed = _filter_successful_task_results(task_results)
+  unsuccessful = _filter_unsuccessful_task_results(task_results)
+  if passed:
+    with api.step.nest('passed tests') as step:
+      _emit_links(step, passed)
+  if unsuccessful:
+    with api.step.nest('failed or incomplete tests') as step:
+      _emit_links(step, unsuccessful)
       raise api.step.StepFailure('tests failed')
 
 
