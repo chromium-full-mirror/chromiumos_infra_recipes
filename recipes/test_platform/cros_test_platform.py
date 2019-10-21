@@ -25,6 +25,7 @@ from PB.test_platform.taskstate import TaskState
 from PB.test_platform.config.config import Config
 
 import collections
+import contextlib
 import json
 
 from google.protobuf import json_format
@@ -250,16 +251,22 @@ def _log_task_results(api, task_results):
   # TODO(akeshet): Don't present failure if the underlying enumeration item
   # was retried and passed separately. Instead, include in a "failed but
   # retried" section.
-  # TODO(akeshet): Handle task links for verdictless tasks (including
-  # incomplete tasks and completed tasks which provide no verdict).
   classified_results = _classify_task_results(task_results)
   if classified_results.passed:
     with api.step.nest('passed tests') as step:
       _emit_links(step, classified_results.passed)
   if classified_results.unsuccessful:
-    with api.step.nest('failed or incomplete tests') as step:
+    with _failing_substep(api, 'failed or incomplete tests') as step:
       _emit_links(step, classified_results.unsuccessful)
-      raise api.step.StepFailure('tests failed')
+  if classified_results.rejected:
+    with _failing_substep(api, 'tests rejected due to invalid request') as step:
+      _emit_links(step, classified_results.rejected)
+  if classified_results.other:  # pragma: no cover
+    with _failing_substep(api, 'unclassified tests') as step:
+      _emit_links(step, classified_results.other)
+
+  if _contains_unsuccessful_results(classified_results):
+    raise api.step.StepFailure('Some tests were unsuccessful')
 
 
 _ClassifiedTaskResults = collections.namedtuple(
@@ -275,12 +282,29 @@ def _classify_task_results(task_results):
     # The order of these guard clauses is significant
     if tr.state.verdict == TaskState.VERDICT_PASSED:
       classified.passed.append(tr)
+    elif tr.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED:
+      classified.rejected.append(tr)
     elif tr.state.verdict in (TaskState.VERDICT_FAILED,
                               TaskState.VERDICT_UNSPECIFIED):
       classified.unsuccessful.append(tr)
     else:  # pragma: no cover
       classified.other.append(tr)
   return classified
+
+
+def _contains_unsuccessful_results(classified_results):
+  return (classified_results.unsuccessful or classified_results.rejected or
+          classified_results.other)
+
+
+@contextlib.contextmanager
+def _failing_substep(api, tag):
+  try:
+    with api.step.nest(tag) as step:
+      yield step
+      raise api.step.StepFailure(tag)
+  except api.step.StepFailure:
+    pass
 
 
 def _emit_links(step, task_results):
@@ -410,6 +434,12 @@ def GenTests(api):
                   log_url='logs://bar/baz',
                   name='foo-failed',
                   state=TaskState(verdict="VERDICT_FAILED"),
+              ),
+              ExecuteResponse.TaskResult(
+                  task_url='foo://bar/baz',
+                  log_url='logs://bar/baz',
+                  name='foo-rejected',
+                  state=TaskState(life_cycle="LIFE_CYCLE_REJECTED"),
               ),
           ],
       )
