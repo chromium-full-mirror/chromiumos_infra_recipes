@@ -55,7 +55,6 @@
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
       "enumerate",
-      "-multi_request",
       "-input_json",
       "/dev/stdin",
       "-output_json",
@@ -88,7 +87,6 @@
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
       "scheduler-traffic-split",
-      "-multi_request",
       "-input_json",
       "/dev/stdin",
       "-output_json",
@@ -121,7 +119,6 @@
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
       "skylab-execute",
-      "-multi_request",
       "-input_json",
       "/dev/stdin",
       "-output_json",
@@ -154,7 +151,6 @@
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
       "autotest-execute",
-      "-multi_request",
       "-input_json",
       "/dev/stdin",
       "-output_json",

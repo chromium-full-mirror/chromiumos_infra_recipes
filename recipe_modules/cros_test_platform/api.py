@@ -46,7 +46,6 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       cmd = [
         self._cmd,
         subcommand,
-        '-multi_request',
         '-input_json',
         '/dev/stdin',
         '-output_json',

@@ -88,7 +88,6 @@
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
       "scheduler-traffic-split",
-      "-multi_request",
       "-input_json",
       "/dev/stdin",
       "-output_json",
