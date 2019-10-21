@@ -24,6 +24,7 @@ from PB.test_platform.request import Request
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.config.config import Config
 
+import collections
 import json
 
 from google.protobuf import json_format
@@ -251,30 +252,35 @@ def _log_task_results(api, task_results):
   # retried" section.
   # TODO(akeshet): Handle task links for verdictless tasks (including
   # incomplete tasks and completed tasks which provide no verdict).
-  passed = _filter_successful_task_results(task_results)
-  unsuccessful = _filter_unsuccessful_task_results(task_results)
-  if passed:
+  classified_results = _classify_task_results(task_results)
+  if classified_results.passed:
     with api.step.nest('passed tests') as step:
-      _emit_links(step, passed)
-  if unsuccessful:
+      _emit_links(step, classified_results.passed)
+  if classified_results.unsuccessful:
     with api.step.nest('failed or incomplete tests') as step:
-      _emit_links(step, unsuccessful)
+      _emit_links(step, classified_results.unsuccessful)
       raise api.step.StepFailure('tests failed')
 
 
-def _filter_successful_task_results(task_results):
-  return [x for x in task_results
-          if x.state.verdict == TaskState.VERDICT_PASSED]
-
-
-_UNSUCCESSFUL_VERDICTS = (
-  TaskState.VERDICT_FAILED,
-  TaskState.VERDICT_UNSPECIFIED,
+_ClassifiedTaskResults = collections.namedtuple(
+    '_ClassifiedTaskResults',
+    ['passed', 'unsuccessful', 'rejected', 'other'],
 )
 
 
-def _filter_unsuccessful_task_results(task_results):
-  return [x for x in task_results if x.state.verdict in _UNSUCCESSFUL_VERDICTS]
+def _classify_task_results(task_results):
+  classified = _ClassifiedTaskResults(passed=[], unsuccessful=[], rejected=[],
+                                      other=[])
+  for tr in task_results:
+    # The order of these guard clauses is significant
+    if tr.state.verdict == TaskState.VERDICT_PASSED:
+      classified.passed.append(tr)
+    elif tr.state.verdict in (TaskState.VERDICT_FAILED,
+                              TaskState.VERDICT_UNSPECIFIED):
+      classified.unsuccessful.append(tr)
+    else:  # pragma: no cover
+      classified.other.append(tr)
+  return classified
 
 
 def _emit_links(step, task_results):
