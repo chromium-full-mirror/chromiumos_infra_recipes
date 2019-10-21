@@ -45,6 +45,17 @@
   },
   {
     "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "u=rwx,g=rx,o=rx,-t",
+      "[CLEANUP]/test/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "changing permissions of [CLEANUP]/test/cros_chroot"
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--nouse-image",
       "--chroot",
@@ -67,7 +78,7 @@
   },
   {
     "cmd": [],
-    "name": "link chroot in checkout"
+    "name": "link chroot in workspace"
   },
   {
     "cmd": [
@@ -79,10 +90,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/checkout"
+      "[CLEANUP]/workspace"
     ],
     "infra_step": true,
-    "name": "link chroot in checkout.ensure checkout",
+    "name": "link chroot in workspace.ensure workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -96,17 +107,17 @@
       "/path/to/tmp/json",
       "symlink",
       "[CLEANUP]/test/cros_chroot",
-      "[CLEANUP]/checkout/chroot"
+      "[CLEANUP]/workspace/chroot"
     ],
     "infra_step": true,
-    "name": "link chroot in checkout.link checkout to chroot",
+    "name": "link chroot in workspace.link workspace to chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "link chroot in checkout (2)"
+    "name": "link chroot in workspace (2)"
   },
   {
     "cmd": [
@@ -118,10 +129,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/checkout"
+      "[CLEANUP]/workspace"
     ],
     "infra_step": true,
-    "name": "link chroot in checkout (2).ensure checkout",
+    "name": "link chroot in workspace (2).ensure workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -134,10 +145,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "remove",
-      "[CLEANUP]/checkout/chroot"
+      "[CLEANUP]/workspace/chroot"
     ],
     "infra_step": true,
-    "name": "link chroot in checkout (2).remove original chroot link",
+    "name": "link chroot in workspace (2).remove original chroot link",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -151,17 +162,17 @@
       "/path/to/tmp/json",
       "symlink",
       "[CLEANUP]/test/cros_chroot",
-      "[CLEANUP]/checkout/chroot"
+      "[CLEANUP]/workspace/chroot"
     ],
     "infra_step": true,
-    "name": "link chroot in checkout (2).link checkout to chroot",
+    "name": "link chroot in workspace (2).link workspace to chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "unlink chroot in checkout"
+    "name": "unlink chroot in workspace"
   },
   {
     "cmd": [
@@ -171,10 +182,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "remove",
-      "[CLEANUP]/checkout/chroot"
+      "[CLEANUP]/workspace/chroot"
     ],
     "infra_step": true,
-    "name": "unlink chroot in checkout.remove original chroot link",
+    "name": "unlink chroot in workspace.remove original chroot link",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -188,7 +199,32 @@
       "[CLEANUP]/test/cros_chroot"
     ],
     "infra_step": true,
-    "name": "changing permissions of [CLEANUP]/test/cros_chroot"
+    "name": "changing permissions of [CLEANUP]/test/cros_chroot (2)"
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot"
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.unlink chroot in workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "a+rwX,-t",
+      "[CLEANUP]/test/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.changing permissions of [CLEANUP]/test/cros_chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "name": "$result"

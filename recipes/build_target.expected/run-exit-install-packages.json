@@ -635,7 +635,7 @@
       "sudo",
       "-n",
       "chmod",
-      "a+rwX,-t",
+      "u=rwx,g=rx,o=rx,-t",
       "[CACHE]/cros_chroot"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2154,6 +2154,47 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all packages installed successfully@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot"
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[START_DIR]/chromiumos_workspace/chroot"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace.remove original chroot link",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "a+rwX,-t",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

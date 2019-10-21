@@ -892,7 +892,7 @@
       "sudo",
       "-n",
       "chmod",
-      "a+rwX,-t",
+      "u=rwx,g=rx,o=rx,-t",
       "[CACHE]/cros_chroot"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2718,11 +2718,11 @@
   },
   {
     "cmd": [],
-    "name": "cleanup chroot"
+    "name": "clean up SDK chroot"
   },
   {
     "cmd": [],
-    "name": "cleanup chroot.unlink chroot in chromiumos_workspace",
+    "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2737,9 +2737,8 @@
       "remove",
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "cleanup chroot.unlink chroot in chromiumos_workspace.remove original chroot link",
+    "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace.remove original chroot link",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2752,9 +2751,8 @@
       "a+rwX,-t",
       "[CACHE]/cros_chroot"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "cleanup chroot.changing permissions of [CACHE]/cros_chroot",
+    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

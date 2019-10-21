@@ -5,6 +5,7 @@
 
 """API for interacting with cros_sdk, the interface to the CrOS SDK."""
 
+import contextlib
 import os
 
 from recipe_engine import recipe_api
@@ -93,6 +94,11 @@ class CrosSdkApi(recipe_api.RecipeApi):
     cmd += args
     return self.m.step(name, cmd, **kwargs)
 
+
+  # TODO(crbug.com/949721): Currently, chromite depends on the chroot
+  # living within the source tree. As a workaround, link the external
+  # chroot the workspace to make it look legit. New chromite services
+  # should accept the chroot path as a parameter.
   def link_chroot(self, checkout_path):
     """Link the chroot to a chromiumos checkout.
 
@@ -111,10 +117,20 @@ class CrosSdkApi(recipe_api.RecipeApi):
       self.m.file.symlink('link %s to chroot' % checkout_basename,
                           self._chroot_path, chroot_link)
 
+  @contextlib.contextmanager
+  def cleanup_context(self, checkout_path):
+    """Returns a context that cleans the SDK chroot named cache."""
+    try:
+      yield
+    finally:
+      with self.m.step.nest('clean up SDK chroot'):
+        self.unlink_chroot(checkout_path)
+        self.swarming_chmod_chroot()
+
   def unlink_chroot(self, checkout_path):
     """Unlink the chroot from the chromiumos checkout.
 
-    Args:
+     Args:
       checkout_path (Path): Path to the checkout root.
     """
     checkout_basename = self.m.path.basename(checkout_path)
@@ -123,15 +139,21 @@ class CrosSdkApi(recipe_api.RecipeApi):
       if self.m.path.exists(chroot_link):
         self.m.file.remove('remove original chroot link', chroot_link)
 
-  def chmod_chroot(self, checkout_path):
+  def swarming_chmod_chroot(self):
     """Chroot is deployed as root, therfore change permissions to
        allow for Swarming cache uninstall/install.
-
-    Args:
-      checkout_path (Path): Path to the checkout root.
     """
     if self.m.path.exists(self._chroot_path):
       chmod_cmd = ['sudo', '-n', 'chmod', 'a+rwX,-t', self._chroot_path]
+      self.m.step('changing permissions of %s' % self._chroot_path, chmod_cmd,
+                  infra_step=True)
+
+  def build_chmod_chroot(self):
+    """Chroot needs to be tightened to 755 for the build process."""
+    if self.m.path.exists(self._chroot_path):
+      chmod_cmd = [
+          'sudo', '-n', 'chmod', 'u=rwx,g=rx,o=rx,-t', self._chroot_path
+      ]
       self.m.step('changing permissions of %s' % self._chroot_path, chmod_cmd,
                   infra_step=True)
 

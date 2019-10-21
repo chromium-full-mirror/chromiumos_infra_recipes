@@ -74,7 +74,9 @@ def RunSteps(api, properties):
 
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
-  with api.cros_source.checkout_overlays_context():
+  with api.cros_source.checkout_overlays_context(), \
+    api.cros_sdk.cleanup_context(
+        checkout_path=api.cros_source.workspace_path):
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.sync_gitiles_snapshot(gitiles_commit)
 
@@ -92,7 +94,7 @@ def RunSteps(api, properties):
 
       with api.step.nest('init sdk') as step:
         try:
-          api.cros_sdk.chmod_chroot(api.cros_source.workspace_path)
+          api.cros_sdk.build_chmod_chroot()
           response = api.cros_build_api.SdkService.Create(
               CreateSdkRequest(
                   flags=CreateSdkRequest.Flags(no_replace=True,
@@ -101,10 +103,6 @@ def RunSteps(api, properties):
           step.presentation.logs['sdk version'] = [
               str(response.version.version)
           ]
-          # TODO(crbug.com/949721): Currently, chromite depends on the chroot
-          # living within the source tree. As a workaround, link the external
-          # chroot the workspace to make it look legit. New chromite services
-          # should accept the chroot path as a parameter.
           api.cros_sdk.link_chroot(api.cros_source.workspace_path)
         except api.step.StepFailure as e:
           # Invalidate the cache if the InitSDK call fails.
@@ -133,20 +131,16 @@ def RunSteps(api, properties):
           profile = Profile(name=build_config.build.portage_profile.profile)
         create_sysroot_response = api.cros_build_api.SysrootService.Create(
             SysrootCreateRequest(
-                build_target=build_target,
-                profile=profile,
-                chroot=api.cros_sdk.chroot,
-                flags=SysrootCreateRequest.Flags(chroot_current=True,
-                                                 replace=True)))
+                build_target=build_target, profile=profile,
+                chroot=api.cros_sdk.chroot, flags=SysrootCreateRequest.Flags(
+                    chroot_current=True, replace=True)))
         sysroot = create_sysroot_response.sysroot
 
       api.easy.set_property_step('target_versions',
                                  get_target_versions(api, build_target))
 
       if api.cros_relevance.is_build_pointless(
-          gerrit_changes,
-          gitiles_commit,
-          build_target=build_target,
+          gerrit_changes, gitiles_commit, build_target=build_target,
           name='post-sync pointless build check'):
         return
 
@@ -154,32 +148,28 @@ def RunSteps(api, properties):
         flags = InstallToolchainRequest.Flags(
             compile_source=build_config.build.compile_toolchain)
         response = api.cros_build_api.SysrootService.InstallToolchain(
-            InstallToolchainRequest(sysroot=sysroot,
-                                    chroot=api.cros_sdk.chroot,
+            InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
                                     flags=flags))
         api.failures.raise_failed_packages(response.failed_packages)
 
       packages = get_packages(api, build_config)
       install_packages = build_config.build.install_packages
       if api.cros_infra_config.should_run(install_packages):
-        if api.chrome.build_chrome_from_source(
-            build_target=build_target,
-            chroot=api.cros_sdk.chroot,
-            packages=packages):
+        if api.chrome.build_chrome_from_source(build_target=build_target,
+                                               chroot=api.cros_sdk.chroot,
+                                               packages=packages):
           chrome_root = api.path['start_dir'].join('chrome')
           api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
                           build_config.chrome.internal)
           api.cros_sdk.set_chrome_root(str(chrome_root))
-          api.cros_sdk.set_goma_config(str(api.goma.goma_dir),
-                                       str(api.goma.goma_client_json))
+          api.cros_sdk.set_goma_config(
+              str(api.goma.goma_dir), str(api.goma.goma_client_json))
 
         with api.step.nest('install packages'):
           flags = InstallPackagesRequest.Flags(
-              compile_source=False,
-              use_goma=api.cros_sdk.has_goma_config())
+              compile_source=False, use_goma=api.cros_sdk.has_goma_config())
           response = api.cros_build_api.SysrootService.InstallPackages(
-              InstallPackagesRequest(sysroot=sysroot,
-                                     flags=flags,
+              InstallPackagesRequest(sysroot=sysroot, flags=flags,
                                      packages=packages,
                                      chroot=api.cros_sdk.chroot,
                                      use_flags=build_config.build.use_flags))
@@ -199,19 +189,18 @@ def RunSteps(api, properties):
                   build_target=build_target, chroot=api.cros_sdk.chroot,
                   image_types=image_types,
                   builder_path=api.cros_artifacts.artifacts_gs_path(
-                      build_target, build_config.id.type)),
-              timeout=45 * 60)
+                      build_target, build_config.id.type)), timeout=45 * 60)
           api.failures.raise_failed_packages(response.failed_packages)
         with api.step.nest('test images'):
           failed_images = []
           # For now, as in legacy CQ, we only test base images.
           for image in [i for i in response.images if i.type == BASE]:
             result_dir = api.path.mkdtemp(prefix="image-test-result-")
-            if not api.cros_build_api.ImageService.Test(TestImageRequest(
-                image=image,
-                build_target=build_target,
-                result=TestImageRequest.Result(directory=str(result_dir)),
-                chroot=api.cros_sdk.chroot)).success:
+            if not api.cros_build_api.ImageService.Test(
+                TestImageRequest(
+                    image=image, build_target=build_target,
+                    result=TestImageRequest.Result(directory=str(result_dir)),
+                    chroot=api.cros_sdk.chroot)).success:
               failed_images.append(image)
           api.failures.raise_failed_image_tests(failed_images)
 
@@ -242,12 +231,6 @@ def RunSteps(api, properties):
             build_target, build_config.id.type,
             build_config.artifacts.prebuilts_gs_bucket,
             private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
-
-      with api.step.nest('cleanup chroot') as step:
-        # Cleanup the chroot link before we try to tear down the
-        # OverlayFS mounts
-        api.cros_sdk.unlink_chroot(api.cros_source.workspace_path)
-        api.cros_sdk.chmod_chroot(api.cros_source.workspace_path)
 
 
 def get_packages(api, build_config):
@@ -394,7 +377,7 @@ def GenTests(api):
          api.properties(build_target={'name': 'arm-generic'}))
 
   yield (
-      api.test('initsdk-destroy-choot-tests') +  #
+      api.test('initsdk-destroy-chroot-tests') +  #
       api.buildbucket.ci_build(project='chromeos', bucket='cq',
                                builder='amd64-generic-cq') +  #
       api.step_data(
@@ -402,7 +385,7 @@ def GenTests(api):
           retcode=1))
 
   yield (
-      api.test('updatesdk-destroy-choot-tests') +  #
+      api.test('updatesdk-destroy-chroot-tests') +  #
       api.buildbucket.ci_build(project='chromeos', bucket='cq',
                                builder='amd64-generic-cq') +  #
       api.step_data(
