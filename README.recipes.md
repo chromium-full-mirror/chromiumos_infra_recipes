@@ -2359,7 +2359,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#350)(self, root_path, manifest_url, init_opts=None, sync_opts=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#351)(self, root_path, manifest_url, init_opts=None, sync_opts=None):**
 
 Ensure the given repo checkout exists and is synced.
 
