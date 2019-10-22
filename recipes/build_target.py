@@ -75,164 +75,166 @@ def RunSteps(api, properties):
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context(), \
-    api.cros_sdk.cleanup_context(
-        checkout_path=api.cros_source.workspace_path):
-    with api.context(cwd=api.cros_source.workspace_path):
-      api.cros_source.sync_gitiles_snapshot(gitiles_commit)
+      api.cros_sdk.cleanup_context(
+          checkout_path=api.cros_source.workspace_path), \
+      api.context(cwd=api.cros_source.workspace_path):
+    DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes)
 
-      if gerrit_changes and build_config.build.apply_gerrit_changes:
-        with api.step.nest('cherry-pick gerrit changes'):
-          patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
-          api.cros_source.apply_gerrit_patch_sets(patch_sets)
+def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
+  api.cros_source.sync_gitiles_snapshot(gitiles_commit)
 
-      with api.step.nest('uprev packages') as step:
-        request = UprevPackagesRequest(
-            chroot=api.cros_sdk.chroot,
-            build_targets=[BuildTarget(name=build_target.name)],
-            overlay_type=OVERLAYTYPE_BOTH)
-        response = api.cros_build_api.PackageService.Uprev(request)
+  if gerrit_changes and build_config.build.apply_gerrit_changes:
+    with api.step.nest('cherry-pick gerrit changes'):
+      patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
+      api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-      with api.step.nest('init sdk') as step:
-        try:
-          api.cros_sdk.build_chmod_chroot()
-          response = api.cros_build_api.SdkService.Create(
-              CreateSdkRequest(
-                  flags=CreateSdkRequest.Flags(no_replace=True,
-                                               no_use_image=True),
-                  chroot=api.cros_sdk.chroot))
-          step.presentation.logs['sdk version'] = [
-              str(response.version.version)
-          ]
-          api.cros_sdk.link_chroot(api.cros_source.workspace_path)
-        except api.step.StepFailure as e:
-          # Invalidate the cache if the InitSDK call fails.
-          api.step.nest(
-              'InitSDK failure, deleting chroot',
-              api.cros_build_api.SdkService.Delete(
-                  DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-          raise
+  with api.step.nest('uprev packages') as step:
+    request = UprevPackagesRequest(
+        chroot=api.cros_sdk.chroot,
+        build_targets=[BuildTarget(name=build_target.name)],
+        overlay_type=OVERLAYTYPE_BOTH)
+    response = api.cros_build_api.PackageService.Uprev(request)
 
-      with api.step.nest('update sdk'):
-        try:
-          api.cros_build_api.SdkService.Update(
-              UpdateSdkRequest(chroot=api.cros_sdk.chroot,
-                               toolchain_targets=[build_target]))
-        except api.step.StepFailure:
-          # Invalidate the cache if the UpdateSDK call fails.
-          api.step.nest(
-              'UpdateSDK failure, deleting chroot',
-              api.cros_build_api.SdkService.Delete(
-                  DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-          raise
+  with api.step.nest('init sdk') as step:
+    try:
+      api.cros_sdk.build_chmod_chroot()
+      response = api.cros_build_api.SdkService.Create(
+          CreateSdkRequest(
+              flags=CreateSdkRequest.Flags(no_replace=True,
+                                           no_use_image=True),
+              chroot=api.cros_sdk.chroot))
+      step.presentation.logs['sdk version'] = [
+          str(response.version.version)
+      ]
+      api.cros_sdk.link_chroot(api.cros_source.workspace_path)
+    except api.step.StepFailure as e:
+      # Invalidate the cache if the InitSDK call fails.
+      api.step.nest(
+          'InitSDK failure, deleting chroot',
+          api.cros_build_api.SdkService.Delete(
+              DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
+      raise
 
-      with api.step.nest('create sysroot'):
-        profile = None
-        if build_config.build.portage_profile.profile:
-          profile = Profile(name=build_config.build.portage_profile.profile)
-        create_sysroot_response = api.cros_build_api.SysrootService.Create(
-            SysrootCreateRequest(
-                build_target=build_target, profile=profile,
-                chroot=api.cros_sdk.chroot, flags=SysrootCreateRequest.Flags(
-                    chroot_current=True, replace=True)))
-        sysroot = create_sysroot_response.sysroot
+  with api.step.nest('update sdk'):
+    try:
+      api.cros_build_api.SdkService.Update(
+          UpdateSdkRequest(chroot=api.cros_sdk.chroot,
+                           toolchain_targets=[build_target]))
+    except api.step.StepFailure:
+      # Invalidate the cache if the UpdateSDK call fails.
+      api.step.nest(
+          'UpdateSDK failure, deleting chroot',
+          api.cros_build_api.SdkService.Delete(
+              DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
+      raise
 
-      api.easy.set_property_step('target_versions',
-                                 get_target_versions(api, build_target))
+  with api.step.nest('create sysroot'):
+    profile = None
+    if build_config.build.portage_profile.profile:
+      profile = Profile(name=build_config.build.portage_profile.profile)
+    create_sysroot_response = api.cros_build_api.SysrootService.Create(
+        SysrootCreateRequest(
+            build_target=build_target, profile=profile,
+            chroot=api.cros_sdk.chroot, flags=SysrootCreateRequest.Flags(
+                chroot_current=True, replace=True)))
+    sysroot = create_sysroot_response.sysroot
 
-      if api.cros_relevance.is_build_pointless(
-          gerrit_changes, gitiles_commit, build_target=build_target,
-          name='post-sync pointless build check'):
-        return
+  api.easy.set_property_step('target_versions',
+                             get_target_versions(api, build_target))
 
-      with api.step.nest('install toolchain'):
-        flags = InstallToolchainRequest.Flags(
-            compile_source=build_config.build.compile_toolchain)
-        response = api.cros_build_api.SysrootService.InstallToolchain(
-            InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
-                                    flags=flags))
-        api.failures.raise_failed_packages(response.failed_packages)
+  if api.cros_relevance.is_build_pointless(
+      gerrit_changes, gitiles_commit, build_target=build_target,
+      name='post-sync pointless build check'):
+    return
 
-      packages = get_packages(api, build_config)
-      install_packages = build_config.build.install_packages
-      if api.cros_infra_config.should_run(install_packages):
-        if api.chrome.build_chrome_from_source(build_target=build_target,
-                                               chroot=api.cros_sdk.chroot,
-                                               packages=packages):
-          chrome_root = api.path['start_dir'].join('chrome')
-          api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
-                          build_config.chrome.internal)
-          api.cros_sdk.set_chrome_root(str(chrome_root))
-          api.cros_sdk.set_goma_config(str(api.goma.goma_dir),
-                                       str(api.goma.goma_client_json),
-                                       api.goma.goma_approach)
+  with api.step.nest('install toolchain'):
+    flags = InstallToolchainRequest.Flags(
+        compile_source=build_config.build.compile_toolchain)
+    response = api.cros_build_api.SysrootService.InstallToolchain(
+        InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
+                                flags=flags))
+    api.failures.raise_failed_packages(response.failed_packages)
 
-        with api.step.nest('install packages'):
-          flags = InstallPackagesRequest.Flags(
-              compile_source=False, use_goma=api.cros_sdk.has_goma_config())
-          response = api.cros_build_api.SysrootService.InstallPackages(
-              InstallPackagesRequest(sysroot=sysroot, flags=flags,
-                                     packages=packages,
-                                     chroot=api.cros_sdk.chroot,
-                                     use_flags=build_config.build.use_flags))
-          api.cros_bisect.set_compile_failures(response.failed_packages)
-          api.failures.raise_failed_packages(response.failed_packages)
-        if api.cros_infra_config.should_exit(install_packages):
-          return
+  packages = get_packages(api, build_config)
+  install_packages = build_config.build.install_packages
+  if api.cros_infra_config.should_run(install_packages):
+    if api.chrome.build_chrome_from_source(build_target=build_target,
+                                           chroot=api.cros_sdk.chroot,
+                                           packages=packages):
+      chrome_root = api.path['start_dir'].join('chrome')
+      api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
+                      build_config.chrome.internal)
+      api.cros_sdk.set_chrome_root(str(chrome_root))
+      api.cros_sdk.set_goma_config(str(api.goma.goma_dir),
+                                   str(api.goma.goma_client_json),
+                                   api.goma.goma_approach)
 
-      version = api.cros_version.read_workspace_version()
-      api.easy.set_property_step('chromeos_version', str(version))
+    with api.step.nest('install packages'):
+      flags = InstallPackagesRequest.Flags(
+          compile_source=False, use_goma=api.cros_sdk.has_goma_config())
+      response = api.cros_build_api.SysrootService.InstallPackages(
+          InstallPackagesRequest(sysroot=sysroot, flags=flags,
+                                 packages=packages,
+                                 chroot=api.cros_sdk.chroot,
+                                 use_flags=build_config.build.use_flags))
+      api.cros_bisect.set_compile_failures(response.failed_packages)
+      api.failures.raise_failed_packages(response.failed_packages)
+    if api.cros_infra_config.should_exit(install_packages):
+      return
 
-      image_types = build_config.build.image_types
-      if image_types:
-        with api.step.nest('build images'):
-          response = api.cros_build_api.ImageService.Create(
-              CreateImageRequest(
-                  build_target=build_target, chroot=api.cros_sdk.chroot,
-                  image_types=image_types,
-                  builder_path=api.cros_artifacts.artifacts_gs_path(
-                      build_target, build_config.id.type)), timeout=45 * 60)
-          api.failures.raise_failed_packages(response.failed_packages)
-        with api.step.nest('test images'):
-          failed_images = []
-          # For now, as in legacy CQ, we only test base images.
-          for image in [i for i in response.images if i.type == BASE]:
-            result_dir = api.path.mkdtemp(prefix="image-test-result-")
-            if not api.cros_build_api.ImageService.Test(
-                TestImageRequest(
-                    image=image, build_target=build_target,
-                    result=TestImageRequest.Result(directory=str(result_dir)),
-                    chroot=api.cros_sdk.chroot)).success:
-              failed_images.append(image)
-          api.failures.raise_failed_image_tests(failed_images)
+  version = api.cros_version.read_workspace_version()
+  api.easy.set_property_step('chromeos_version', str(version))
 
-      ebuilds_run_spec = build_config.unit_tests.ebuilds_run_spec
-      if api.cros_infra_config.should_run(ebuilds_run_spec):
-        with api.step.nest('run ebuild tests'):
-          flags = BuildTargetUnitTestRequest.Flags(
-              empty_sysroot=build_config.unit_tests.empty_sysroot)
-          response = api.cros_build_api.TestService.BuildTargetUnitTest(
-              BuildTargetUnitTestRequest(
-                  build_target=build_target, chroot=api.cros_sdk.chroot,
-                  result_path=str(api.path.mkdtemp()),
-                  package_blacklist=build_config.unit_tests.package_blacklist,
-                  flags=flags))
-          api.failures.raise_failed_packages(response.failed_packages)
-        if api.cros_infra_config.should_exit(ebuilds_run_spec):
-          return
+  image_types = build_config.build.image_types
+  if image_types:
+    with api.step.nest('build images'):
+      response = api.cros_build_api.ImageService.Create(
+          CreateImageRequest(
+              build_target=build_target, chroot=api.cros_sdk.chroot,
+              image_types=image_types,
+              builder_path=api.cros_artifacts.artifacts_gs_path(
+                  build_target, build_config.id.type)), timeout=45 * 60)
+      api.failures.raise_failed_packages(response.failed_packages)
+    with api.step.nest('test images'):
+      failed_images = []
+      # For now, as in legacy CQ, we only test base images.
+      for image in [i for i in response.images if i.type == BASE]:
+        result_dir = api.path.mkdtemp(prefix="image-test-result-")
+        if not api.cros_build_api.ImageService.Test(
+            TestImageRequest(
+                image=image, build_target=build_target,
+                result=TestImageRequest.Result(directory=str(result_dir)),
+                chroot=api.cros_sdk.chroot)).success:
+          failed_images.append(image)
+      api.failures.raise_failed_image_tests(failed_images)
 
-      artifact_types = build_config.artifacts.artifact_types
-      if artifact_types:
-        api.cros_artifacts.upload_artifacts(
-            build_target, build_config.id.type,
-            build_config.artifacts.artifacts_gs_bucket, artifact_types)
+  ebuilds_run_spec = build_config.unit_tests.ebuilds_run_spec
+  if api.cros_infra_config.should_run(ebuilds_run_spec):
+    with api.step.nest('run ebuild tests'):
+      flags = BuildTargetUnitTestRequest.Flags(
+          empty_sysroot=build_config.unit_tests.empty_sysroot)
+      response = api.cros_build_api.TestService.BuildTargetUnitTest(
+          BuildTargetUnitTestRequest(
+              build_target=build_target, chroot=api.cros_sdk.chroot,
+              result_path=str(api.path.mkdtemp()),
+              package_blacklist=build_config.unit_tests.package_blacklist,
+              flags=flags))
+      api.failures.raise_failed_packages(response.failed_packages)
+    if api.cros_infra_config.should_exit(ebuilds_run_spec):
+      return
 
-      prebuilts = build_config.artifacts.prebuilts
-      if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
-        api.cros_prebuilts.upload_target_prebuilts(
-            build_target, build_config.id.type,
-            build_config.artifacts.prebuilts_gs_bucket,
-            private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
+  artifact_types = build_config.artifacts.artifact_types
+  if artifact_types:
+    api.cros_artifacts.upload_artifacts(
+        build_target, build_config.id.type,
+        build_config.artifacts.artifacts_gs_bucket, artifact_types)
 
+  prebuilts = build_config.artifacts.prebuilts
+  if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
+    api.cros_prebuilts.upload_target_prebuilts(
+        build_target, build_config.id.type,
+        build_config.artifacts.prebuilts_gs_bucket,
+        private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
 def get_packages(api, build_config):
   """Returns the packages that should be built for this invocation.
