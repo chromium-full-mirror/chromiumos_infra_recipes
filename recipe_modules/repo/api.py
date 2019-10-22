@@ -74,11 +74,12 @@ class RepoApi(recipe_api.RecipeApi):
         'find', '.repo/', '-type', 'f', '-name', '*.lock', '-print', '-delete'
     ]
     self.m.step('clear repo locks', repo_cmd, infra_step=True)
+
     git_cmd = [
-        'forall', '-c', 'find', '.git/', '-type', 'f', '-name', '*.lock',
-        '-print', '-delete'
+        'forall', '--ignore-missing', '-j', '32', '-c', 'find', '.git/',
+        '-type', 'f', '-name', '*.lock', '-print', '-delete'
     ]
-    self._step(git_cmd, 'clear git locks', ok_ret='any')
+    self._step(git_cmd, 'clear git locks')
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
            groups=None, depth=None, repo_url=None):
@@ -344,9 +345,9 @@ class RepoApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('ensure clean checkout'):
       with self.m.context(cwd=root_path, infra_steps=True):
-        cmd = ['forall', '-c', 'git', 'clean', '-d', '-f']
-        self._step(cmd, stdout=self.m.raw_io.output(add_output_log=True),
-                   ok_ret='any')
+        cmd = ['forall', '--ignore-missing', '-j', '32', '-c', 'git', 'clean',
+               '-d', '-f']
+        self._step(cmd, stdout=self.m.raw_io.output(add_output_log=True))
 
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
                              sync_opts=None):

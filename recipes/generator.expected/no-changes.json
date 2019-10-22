@@ -140,6 +140,9 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
       "-c",
       "find",
       ".git/",
@@ -168,6 +171,9 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
       "-c",
       "git",
       "clean",
