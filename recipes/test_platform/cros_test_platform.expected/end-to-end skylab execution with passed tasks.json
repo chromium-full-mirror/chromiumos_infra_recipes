@@ -118,8 +118,8 @@
     "cmd": [],
     "name": "enumerate tests",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@autotest tests for first@foo-test@@@",
-      "@@@STEP_LOG_END@autotest tests for first@@@"
+      "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
+      "@@@STEP_LOG_END@autotest tests for default@@@"
     ]
   },
   {
@@ -260,19 +260,20 @@
     "cmd": [],
     "name": "summarize",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@responses@{\"first\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@",
+      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "summarize.first task results",
+    "name": "summarize.default task results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "summarize.first task results.passed tests",
+    "name": "summarize.default task results.passed tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@(log)   foo-passed@logs://bar/baz@@@",

@@ -232,22 +232,6 @@
       "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@response@          \"name\": \"foo-passed\"@@@",
-      "@@@STEP_LOG_LINE@response@        }, @@@",
-      "@@@STEP_LOG_LINE@response@        {@@@",
-      "@@@STEP_LOG_LINE@response@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_FAILED\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-failed\"@@@",
-      "@@@STEP_LOG_LINE@response@        }, @@@",
-      "@@@STEP_LOG_LINE@response@        {@@@",
-      "@@@STEP_LOG_LINE@response@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"lifeCycle\": \"LIFE_CYCLE_REJECTED\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-rejected\"@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
       "@@@STEP_LOG_LINE@response@      ]@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
@@ -276,17 +260,15 @@
     "cmd": [],
     "name": "summarize",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-rejected\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@",
-      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-rejected\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@",
+      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "summarize.default task results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -299,30 +281,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "summarize.default task results.failed or incomplete tests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(log)   foo-failed@logs://bar/baz@@@",
-      "@@@STEP_LINK@(task)  foo-failed@foo://bar/baz@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "summarize.default task results.tests rejected due to invalid request",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(log)   foo-rejected@logs://bar/baz@@@",
-      "@@@STEP_LINK@(task)  foo-rejected@foo://bar/baz@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "failure": {
-      "failure": {},
-      "humanReason": "Some tests were unsuccessful"
-    },
     "name": "$result"
   }
 ]
