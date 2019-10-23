@@ -305,7 +305,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                 self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
             if not multi_req:
               skylab_tasks.append(self.m.skylab.create_recipe(test, unit))
-      if multi_req:
+      if multi_req and tests_to_run:
         skylab_tasks.extend(self.m.skylab.schedule_suites(tests_to_run))
     return skylab_tasks
 
