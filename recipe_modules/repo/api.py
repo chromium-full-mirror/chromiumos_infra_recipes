@@ -370,8 +370,20 @@ class RepoApi(recipe_api.RecipeApi):
 
         self.m.repo.init(manifest_url, **(init_opts or {}))
         self.m.repo._git_clean_checkout(root_path)
+        self.m.repo._binary_selfupdate(root_path)
         self.m.repo.sync(**(sync_opts or {}))
 
       # Sanity check since `repo init` will happily reuse a repository in the
       # cwd's ancestor directories.
       assert self.m.path.exists(root_path.join('.repo')), '.repo not created!'
+
+  def _binary_selfupdate(self, root_path):
+    """Issues a repo selfupdate to update the binary.
+
+    Args"
+      * root_path (Path): Path to the repo root.
+    """
+    with self.m.step.nest('repo binary update'):
+      with self.m.context(cwd=root_path, infra_steps=True):
+        cmd = ['selfupdate']
+        self._step(cmd, ok_ret='any')
