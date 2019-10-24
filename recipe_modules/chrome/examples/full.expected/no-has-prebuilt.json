@@ -1,0 +1,766 @@
+[
+  {
+    "cmd": [],
+    "name": "sync chrome"
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"version\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "chromite.api.PackageService/GetChromeVersion"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
+      "@@@STEP_LOG_LINE@published event@  }@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCU3N5bmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBh\\nY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgAS\\nAIoDCQoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chrome"
+    ],
+    "infra_step": true,
+    "name": "sync chrome.ensure chrome root",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "config",
+      "--spec",
+      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome.gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sed",
+      "-i",
+      "$ a\\target_os = [\"chromeos\"]",
+      ".gclient"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "sync chrome.adjust gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "sync",
+      "--verbose",
+      "--nohooks",
+      "-j72",
+      "--reset",
+      "--force",
+      "--upstream",
+      "--no-nag-max",
+      "--with_branch_heads",
+      "--with_tags",
+      "--delete_unversioned_trees",
+      "--revision",
+      "src@version"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome.gclient sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome (2)"
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"version\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "chromite.api.PackageService/GetChromeVersion"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"sync chrome (2)|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:24.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:26Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
+      "@@@STEP_LOG_LINE@published event@  }@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "infra_step": true,
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCV3N5bmMgY2hyb21lICgyKXxjYWxsIGNocm9taXRlLmFw\\naS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIID\\nBAoAEgCKAwkKB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chrome"
+    ],
+    "infra_step": true,
+    "name": "sync chrome (2).ensure chrome root",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "config",
+      "--spec",
+      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': False}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome (2).gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sed",
+      "-i",
+      "$ a\\target_os = [\"chromeos\"]",
+      ".gclient"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "sync chrome (2).adjust gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "sync",
+      "--verbose",
+      "--nohooks",
+      "-j72",
+      "--reset",
+      "--force",
+      "--upstream",
+      "--no-nag-max",
+      "--with_branch_heads",
+      "--with_tags",
+      "--delete_unversioned_trees",
+      "--revision",
+      "src@version"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome (2).gclient sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/BuildsChrome",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"builds_chrome\": true}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/BuildsChrome.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "chromite.api.PackageService/BuildsChrome"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.PackageService/BuildsChrome.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/BuildsChrome.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/HasChromePrebuilt",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"has_prebuilt\": false}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/HasChromePrebuilt.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "chromite.api.PackageService/HasChromePrebuilt"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.PackageService/HasChromePrebuilt.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/HasChromePrebuilt.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/BuildsChrome (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"packages\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"category\": \"cat\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"packageName\": \"pack\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"version\": \"1.01\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"builds_chrome\": true}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}, \n  \"packages\": [\n    {\n      \"category\": \"cat\", \n      \"packageName\": \"pack\", \n      \"version\": \"1.01\"\n    }\n  ]\n}",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/BuildsChrome (2).write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"packages\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"category\": \"cat\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"packageName\": \"pack\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"version\": \"1.01\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "chromite.api.PackageService/BuildsChrome"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.PackageService/BuildsChrome (2).call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/BuildsChrome (2).read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/HasChromePrebuilt (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"has_prebuilt\": false}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/HasChromePrebuilt (2).write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "chromite.api.PackageService/HasChromePrebuilt"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.PackageService/HasChromePrebuilt (2).call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/HasChromePrebuilt (2).read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -260,7 +260,7 @@ Returns:
 
 #### **class [ChromeApi](/recipe_modules/chrome/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [build\_chrome\_from\_source](/recipe_modules/chrome/api.py#102)(self, build_target, chroot, packages=None):**
+&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#102)(self, build_target, chroot, packages=None):**
 
 Returns whether this run should build chrome from source.
 
@@ -271,7 +271,23 @@ Args:
       to build, or empty / None for default packages.
 
 Returns:
-  bool: Whether or not this run needs to build chrome from sourc.
+  bool: Whether or not this run needs to build chrome from source.
+
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#120)(self, build_target, chroot, packages=None):**
+
+Returns whether or not this run needs chrome.
+
+Returns whether or n ot this run needs chrome, that is, will require a
+prebuilt, or will need to build it from source.
+
+Args:
+  build_target (chromiumos.BuildTarget): Build target of the build.
+  chroot (chromiumos.Chroot): Information on the chroot for the build.
+  packages (list[chromiumos.PackageInfo]): Packages that the builder needs
+      to build, or empty / None for default packages.
+
+Returns:
+  bool: Whether or not this run needs chrome.
 
 &mdash; **def [sync](/recipe_modules/chrome/api.py#23)(self, chrome_root, chroot, build_target, internal):**
 

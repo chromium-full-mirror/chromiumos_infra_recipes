@@ -32,8 +32,8 @@ def RunSteps(api):
       internal=False,
   )
 
-  api.chrome.build_chrome_from_source(build_target, chroot)
-  api.chrome.build_chrome_from_source(
+  api.chrome.builds_chrome_from_source(build_target, chroot)
+  api.chrome.builds_chrome_from_source(
       build_target, chroot,
       [PackageInfo(package_name='pack', category='cat', version='1.01')])
 
@@ -47,7 +47,13 @@ def GenTests(api):
              ChromeProperties(parallel_sync_jobs=42)
          }))
 
-  yield (api.test('no-build-chrome') + #
+  yield (api.test('no-needs-chrome') + #
          api.step_data(
              'call chromite.api.PackageService/BuildsChrome.read output file',
              api.file.read_raw(content='{"builds_chrome": false}')))
+
+  yield (api.test('no-has-prebuilt') + #
+         api.step_data(
+             'call chromite.api.PackageService/HasChromePrebuilt'
+             '.read output file',
+             api.file.read_raw(content='{"has_prebuilt": false}')))
