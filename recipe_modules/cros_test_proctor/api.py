@@ -172,7 +172,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       return test_plan
     return self.m.cros_test_plan.generate(builds, gerrit_changes, snapshot)
 
-  def _autotest_vm_test(self, build_target):  # pragma: no cover
+  def _autotest_vm_test(self, build_target):
     """Returns the autotest builder name for the given build_target."""
     return build_target.name + '-autotest-vm'
 
@@ -201,10 +201,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests,
                                                test_to_build_map, dev=dev,
                                                multi_req=multi_req)
-    # TODO(crbug/1012992): re-enable autotests
-    # autotest_vm_tests = self._schedule_autotest_vm_tests(
-    #    test_plan, passed_tests, snapshot, test_to_build_map)
-    autotest_vm_tests = []
+    autotest_vm_tests = self._schedule_autotest_vm_tests(
+       test_plan, passed_tests, snapshot, test_to_build_map)
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
                                                  snapshot, test_to_build_map)
 
@@ -235,7 +233,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       else:
         hw_results = self.m.skylab.wait_on_recipes(test_tasks.skylab)
     autotest_vm_results = []
-    if test_tasks.autotest_vm:  # pragma: no cover
+    if test_tasks.autotest_vm:
       autotest_vm_results = self.m.buildbucket.collect_builds(
           [vt.id for vt in test_tasks.autotest_vm],
           step_name='collect autotest vm tests', timeout=60 * 60 * 4).values()
@@ -310,7 +308,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return skylab_tasks
 
   def _schedule_autotest_vm_tests(self, test_plan, passed_tests, snapshot,
-                                  test_to_build_map=None):  # pragma: no cover
+                                  test_to_build_map=None):
     """Schedule Autotest VM Tests from the test_plan.
 
     Args:

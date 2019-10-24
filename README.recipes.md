@@ -277,7 +277,7 @@ Returns:
 
 Returns whether or not this run needs chrome.
 
-Returns whether or n ot this run needs chrome, that is, will require a
+Returns whether or not this run needs chrome, that is, will require a
 prebuilt, or will need to build it from source.
 
 Args:
@@ -1208,7 +1208,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#256)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#254)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
