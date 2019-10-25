@@ -1,0 +1,15 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.lab_platform.sync_stable_version;
+
+message SyncStableVersionProperties {
+  // The string Google Storage path of omaha json file.
+  string omaha_gs_paths = 1;
+
+  // The stable version config path.
+  string stable_version_config_path = 2;
+}

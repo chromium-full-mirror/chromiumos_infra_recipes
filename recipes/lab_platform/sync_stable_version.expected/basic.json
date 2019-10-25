@@ -1,0 +1,21 @@
+[
+  {
+    "cmd": [],
+    "name": "fetch omaha stable versions"
+  },
+  {
+    "cmd": [],
+    "name": "fetch git stable versions"
+  },
+  {
+    "cmd": [],
+    "name": "compare stable versions"
+  },
+  {
+    "cmd": [],
+    "name": "commit new stable versions"
+  },
+  {
+    "name": "$result"
+  }
+]

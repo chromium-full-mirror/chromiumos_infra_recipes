@@ -133,6 +133,7 @@
   * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs)
   * [ipc:examples/full](#recipes-ipc_examples_full)
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
+  * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
@@ -3185,6 +3186,43 @@ Test git_footers calls.
 [DEPS](/recipe_modules/ipc/examples/no_attrs.py#6): [ipc](#recipe_modules-ipc)
 
 &mdash; **def [RunSteps](/recipe_modules/ipc/examples/no_attrs.py#10)(api):**
+### *recipes* / [lab\_platform/sync\_stable\_version](/recipes/lab_platform/sync_stable_version.py)
+
+[DEPS](/recipes/lab_platform/sync_stable_version.py#10): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for sync stable vesrion for ChromeOS build targets & models.
+
+&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#56)(api, properties):**
+
+&mdash; **def [commit\_diff](/recipes/lab_platform/sync_stable_version.py#47)(api, properties, difference):**
+
+Commit the diff to stable version file on git.
+
+Returns:
+  TODO(xixuan): A string URL refering to the committed CL.
+
+&mdash; **def [compare\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#38)(api, omaha_versions, git_versions):**
+
+Compare stable_versions between omaha & git.
+
+Returns:
+  TODO(xixuan): A dict contains the different stable_versions.
+
+&mdash; **def [fetch\_git\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#28)(api, properties):**
+
+Fetch existing stable versions from git file.
+
+Returns:
+  TODO(xixuan): A dict contains mapping from (build_target, model) to version
+      for all stable_version types.
+
+&mdash; **def [fetch\_omaha\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#18)(api, properties):**
+
+Fetch stable versions based on omama status file.
+
+Returns:
+  TODO(xixuan): A dict contains mapping from (build_target, model) to version
+      for all stable_version types (cros, faft, firmware).
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
