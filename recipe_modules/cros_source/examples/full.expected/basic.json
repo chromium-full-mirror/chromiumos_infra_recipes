@@ -632,7 +632,9 @@
     "infra_step": true,
     "name": "checkout project commits archive.metadata.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@metadata.json@{\"project_paths\": [\"a/b\", \"a/b/c\"]}@@@",
+      "@@@STEP_LOG_END@metadata.json@@@"
     ]
   },
   {

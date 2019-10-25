@@ -818,7 +818,8 @@
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.read binhost conf",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@BINHOST.conf@@@"
     ]
   },
   {
@@ -1591,7 +1592,8 @@
     "infra_step": true,
     "name": "upload prebuilts (2).update binhost conf file.read binhost conf",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@BINHOST.conf@@@"
     ]
   },
   {
