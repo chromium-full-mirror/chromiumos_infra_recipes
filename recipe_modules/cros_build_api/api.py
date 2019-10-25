@@ -160,10 +160,27 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
         request_time = timestamp_pb2.Timestamp()
         request_time.FromDatetime(self.m.time.utcnow())
 
-        # For Build API retcode 2 indicates that the invocation failed in some
-        # way but a consumable response has been produced.
-        result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
-                             infra_step=infra_step, timeout=timeout)
+        output_proto = reflection.MakeClass(output_type)()
+
+        try:
+          # For Build API retcode 2 indicates that the invocation failed in some
+          # way but a consumable response has been produced.
+          result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
+                               infra_step=infra_step, timeout=timeout)
+        except self.m.step.StepFailure as e:
+          # If the Build API call failed, still publish information to
+          # analysis_service. There is some code duplication with the success
+          # case, e.g. setting response time.
+          response_time = timestamp_pb2.Timestamp()
+          response_time.FromDatetime(self.m.time.utcnow())
+
+          if self.m.analysis_service.can_publish_event(input_proto,
+                                                       output_proto):
+            self.m.analysis_service.publish_event(input_proto, output_proto,
+                                                  request_time, response_time,
+                                                  e.result)
+          raise e
+
         if result.exc_result.retcode != 0:
           result.presentation.status = self.m.step.FAILURE
 
@@ -178,7 +195,6 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       output_json = self.m.file.read_raw('read output file', output_path,
                                          test_data=test_output_data)
       step.presentation.logs['response'] = [output_json]
-      output_proto = reflection.MakeClass(output_type)()
       json_format.Parse(output_json, output_proto, ignore_unknown_fields=True)
 
       # Publish Build API responses on Cloud Pub/Sub if they are registered.
