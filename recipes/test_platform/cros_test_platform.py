@@ -255,6 +255,9 @@ def _log_task_results(api, task_results):
   if classified_results.passed:
     with api.step.nest('passed tests') as step:
       _emit_links(step, classified_results.passed)
+  if classified_results.passed_on_retry:
+    with api.step.nest('failed attempts that later passed') as step:
+      _emit_links(step, classified_results.passed_on_retry)
   if classified_results.unsuccessful:
     with _failing_substep(api, 'failed or incomplete tests') as step:
       _emit_links(step, classified_results.unsuccessful)
@@ -271,24 +274,35 @@ def _log_task_results(api, task_results):
 
 _ClassifiedTaskResults = collections.namedtuple(
     '_ClassifiedTaskResults',
-    ['passed', 'unsuccessful', 'rejected', 'other'],
+    ['passed', 'passed_on_retry', 'unsuccessful', 'rejected', 'other'],
 )
 
 
 def _classify_task_results(task_results):
-  classified = _ClassifiedTaskResults(passed=[], unsuccessful=[], rejected=[],
-                                      other=[])
+  classified = _ClassifiedTaskResults(passed=[], passed_on_retry=[],
+                                      unsuccessful=[], rejected=[], other=[])
+  d = collections.defaultdict(bool)
+  failed_tasks = []
   for tr in task_results:
     # The order of these guard clauses is significant
-    if tr.state.verdict == TaskState.VERDICT_PASSED:
+    if (tr.state.verdict == TaskState.VERDICT_PASSED or
+        tr.state.verdict == TaskState.VERDICT_PASSED_ON_RETRY):
+      d[tr.name] = (tr.state.verdict == TaskState.VERDICT_PASSED_ON_RETRY)
       classified.passed.append(tr)
     elif tr.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED:
       classified.rejected.append(tr)
     elif tr.state.verdict in (TaskState.VERDICT_FAILED,
                               TaskState.VERDICT_UNSPECIFIED):
-      classified.unsuccessful.append(tr)
+      failed_tasks.append(tr)
     else:  # pragma: no cover
       classified.other.append(tr)
+
+  for tr in failed_tasks:
+    if d[tr.name]:
+      classified.passed_on_retry.append(tr)
+    else:
+      classified.unsuccessful.append(tr)
+
   return classified
 
 
@@ -318,8 +332,14 @@ def _emit_links(step, task_results):
   # task results with the same name. This will involve a proto change that
   # includes attempt number in the result.
   for t in task_results:
-    step.links['(log)   ' + t.name] = t.log_url
-    step.links['(task)  ' + t.name] = t.task_url
+    suffix = ''
+    if t.attempt > 0:
+      suffix = ' attempt #%s' % str(t.attempt)
+      if (t.state.verdict == TaskState.VERDICT_PASSED_ON_RETRY or
+          t.state.verdict == TaskState.VERDICT_PASSED):
+        suffix = suffix + ' passed on retry'
+    step.links['(log)   ' + t.name + suffix] = t.log_url
+    step.links['(task)  ' + t.name + suffix] = t.task_url
 
 
 def GenTests(api):
@@ -467,6 +487,13 @@ def GenTests(api):
                   name='foo-failed',
                   state=TaskState(verdict="VERDICT_FAILED"),
               ),
+              ExecuteResponse.TaskResult(
+                  task_url='foo://bar/baz1',
+                  log_url='logs://bar/baz1',
+                  name='foo-failed',
+                  attempt=1,
+                  state=TaskState(verdict="VERDICT_FAILED"),
+              ),
           ],
       )
   ])
@@ -484,12 +511,47 @@ def GenTests(api):
                     json_format.MessageToJson(e2e_execute_responses_failed)))
   )
 
+  e2e_execute_responses_retried = ExecuteResponses(responses=[
+      ExecuteResponse(
+          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                          verdict='VERDICT_PASSED_ON_RETRY'),
+          task_results=[
+              ExecuteResponse.TaskResult(
+                  task_url='foo://bar/baz',
+                  log_url='logs://bar/baz',
+                  name='foo-retried',
+                  state=TaskState(verdict="VERDICT_FAILED"),
+              ),
+              ExecuteResponse.TaskResult(
+                  task_url='foo://bar/baz1',
+                  log_url='logs://bar/baz1',
+                  name='foo-retried',
+                  attempt=1,
+                  state=TaskState(verdict="VERDICT_PASSED_ON_RETRY"),
+              ),
+          ],
+      )
+  ])
+  yield (api.test('end-to-end skylab execution with retried tasks') +  #
+         api.properties(
+             CrosTestPlatformProperties(request=e2e_request, config=e2e_config))
+         +  #
+         api.step_data(
+             'traffic split.call binary.scheduler-traffic-split',
+             stdout=api.raw_io.output(
+                 json_format.MessageToJson(e2e_split_response_skylab))) +  #
+         api.step_data('enumerate tests.call binary.enumerate',
+                       stdout=api.raw_io.output(e2e_enumeration_responses)) +  #
+         api.step_data(
+             'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+                 json_format.MessageToJson(e2e_execute_responses_retried))))
+
   e2e_execute_responses_rejected = ExecuteResponses(responses=[
       ExecuteResponse(
           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                           verdict='VERDICT_FAILED'),
           task_results=[
-             ExecuteResponse.TaskResult(
+              ExecuteResponse.TaskResult(
                   task_url='foo://bar/baz',
                   log_url='logs://bar/baz',
                   name='foo-rejected',

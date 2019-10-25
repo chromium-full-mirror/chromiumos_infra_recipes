@@ -221,7 +221,7 @@
       "@@@STEP_LOG_LINE@response@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
       "@@@STEP_LOG_LINE@response@      \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_FAILED\", @@@",
+      "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_PASSED_ON_RETRY\", @@@",
       "@@@STEP_LOG_LINE@response@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
       "@@@STEP_LOG_LINE@response@      }, @@@",
       "@@@STEP_LOG_LINE@response@      \"taskResults\": [@@@",
@@ -231,16 +231,16 @@
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-failed\"@@@",
+      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-retried\"@@@",
       "@@@STEP_LOG_LINE@response@        }, @@@",
       "@@@STEP_LOG_LINE@response@        {@@@",
       "@@@STEP_LOG_LINE@response@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_FAILED\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_PASSED_ON_RETRY\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz1\", @@@",
       "@@@STEP_LOG_LINE@response@          \"attempt\": 1, @@@",
       "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz1\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-failed\"@@@",
+      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-retried\"@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
       "@@@STEP_LOG_LINE@response@      ]@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
@@ -269,36 +269,36 @@
     "cmd": [],
     "name": "summarize",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"attempt\": 1, \"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-failed\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz1\"}]}@@@",
-      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"attempt\": 1, \"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-failed\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz1\"}]}}@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-retried\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"attempt\": 1, \"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-retried\", \"state\": {\"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskUrl\": \"foo://bar/baz1\"}]}@@@",
+      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-retried\", \"state\": {\"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"attempt\": 1, \"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-retried\", \"state\": {\"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskUrl\": \"foo://bar/baz1\"}]}}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "summarize.default task results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.failed or incomplete tests",
+    "name": "summarize.default task results.passed tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(log)   foo-failed@logs://bar/baz@@@",
-      "@@@STEP_LINK@(task)  foo-failed@foo://bar/baz@@@",
-      "@@@STEP_LINK@(log)   foo-failed attempt #1@logs://bar/baz1@@@",
-      "@@@STEP_LINK@(task)  foo-failed attempt #1@foo://bar/baz1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@(log)   foo-retried attempt #1 passed on retry@logs://bar/baz1@@@",
+      "@@@STEP_LINK@(task)  foo-retried attempt #1 passed on retry@foo://bar/baz1@@@"
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "Some tests were unsuccessful"
-    },
+    "cmd": [],
+    "name": "summarize.default task results.failed attempts that later passed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@(log)   foo-retried@logs://bar/baz@@@",
+      "@@@STEP_LINK@(task)  foo-retried@foo://bar/baz@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
