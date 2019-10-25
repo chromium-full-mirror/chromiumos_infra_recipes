@@ -169,9 +169,9 @@
 
 [DEPS](/recipe_modules/analysis_service/__init__.py#5): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#38)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#115)(self, request, response):**
+&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#139)(self, request, response):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -192,7 +192,7 @@ Args:
 Return:
   bool
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#139)(self, request, response, request_time, response_time, step_data):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#163)(self, request, response, request_time, response_time, step_data):**
 
 Publish request and response on Cloud Pub/Sub.
 

@@ -54,6 +54,23 @@ def RunSteps(api):
       request_time=request_time, response_time=response_time,
       step_data=test_step_data)
 
+  # Publish a step with non-zero retcode
+  try:
+    api.step('A test step with retcode', cmd=['echo', 'hello world'])
+  except api.step.StepFailure as e:
+    api.analysis_service.publish_event(
+        request=install_packages_request, response=install_packages_response,
+        request_time=request_time, response_time=response_time,
+        step_data=e.result)
+
+  try:
+    api.step('A test step with timeout', cmd=['echo', 'hello world'], timeout=1)
+  except api.step.StepFailure as e:
+    api.analysis_service.publish_event(
+        request=install_packages_request, response=install_packages_response,
+        request_time=request_time, response_time=response_time,
+        step_data=e.result)
+
   # Pass in the request and response backwards, shouldn't work in this case
   # because the types are wrong.
   api.assertions.assertFalse(
@@ -74,6 +91,8 @@ def RunSteps(api):
       request_time=request_time, response_time=response_time,
       step_data=test_step_data)
 
-
 def GenTests(api):
-  yield api.test('basic') + api.buildbucket.ci_build()
+  yield (api.test('basic') +  #
+         api.buildbucket.ci_build() +  #
+         api.step_data('A test step with retcode', retcode=5) +  #
+         api.step_data('A test step with timeout', times_out_after=5))

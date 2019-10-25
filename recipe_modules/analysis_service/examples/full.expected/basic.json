@@ -103,15 +103,136 @@
     ]
   },
   {
+    "cmd": [
+      "echo",
+      "hello world"
+    ],
+    "name": "A test step with retcode",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "publish event (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepExecutionResult\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"retcode\": 5@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"1970-01-01T00:01:40Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"A test step with retcode\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"/a/b/c\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"failedPackages\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"packageName\": \"A package\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ]@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"1970-01-01T00:03:20Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish event (2).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "infra_step": true,
+    "name": "publish event (2).publish message.publish-message",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhhBIHRlc3Qg\\nc3RlcCB3aXRoIHJldGNvZGWiAwIIBQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "echo",
+      "hello world"
+    ],
+    "name": "A test step with timeout",
+    "timeout": 1,
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish event (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepExecutionResult\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"hadTimeout\": true@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"1970-01-01T00:01:40Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"A test step with timeout\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"/a/b/c\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"failedPackages\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"packageName\": \"A package\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ]@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"1970-01-01T00:03:20Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish event (3).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "infra_step": true,
+    "name": "publish event (3).publish message.publish-message",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhhBIHRlc3Qg\\nc3RlcCB3aXRoIHRpbWVvdXSiAwIQAQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish event (4)",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "publish event (3)",
+    "name": "publish event (5)",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]

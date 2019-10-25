@@ -10,6 +10,30 @@ from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 
+def _set_step_execution_result_fields(analysis_service_event, step_data):
+  """Set the StepExecutionResult fields on an AnalysisServiceEvent.
+
+  Args:
+    analysis_sevice_event (AnalysisServiceEvent): The AnalysisServiceEvent to be
+      modified
+    step_data (recipe_engine.StepData): Data from the step being logged.
+  """
+  src = step_data.exc_result
+  dst = analysis_service_event.step_execution_result
+
+  if src.retcode:
+    dst.retcode = src.retcode
+
+  if src.had_exception:  # pragma: nocover, no way to simulate "had_exception" in tests.
+    dst.had_exception = src.had_exception
+
+  if src.had_timeout:
+    dst.had_timeout = src.had_timeout
+
+  if src.was_cancelled:  # pragma: nocover, no way to simulate "was_cancelled" in tests.
+    dst.was_cancelled = src.was_cancelled
+
+
 # TODO(crbug.com/964444): Rename to cros_analysis_service.
 class AnalysisServiceApi(recipe_api.RecipeApi):
 
@@ -167,6 +191,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
 
       analysis_service_event.build_id = self.m.buildbucket.build.id
       analysis_service_event.step_name = step_data.name
+
+      _set_step_execution_result_fields(analysis_service_event, step_data)
 
       self._set_oneof_by_matching_type(analysis_service_event,
                                        oneof_name='request', message=request)
