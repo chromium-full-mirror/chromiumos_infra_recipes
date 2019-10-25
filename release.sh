@@ -5,33 +5,39 @@
 
 # Releases a CrOS infra recipe bundle to prod.
 # Will release either the latest recipe bundle or the bundle indicated
-# by a -i instanceid argument.
+# by a -i instanceid argument. The script will prompt before doing
+# the release unless provided the -f argument.
 
 function usage() {
-  echo "Usage: $0 [-i instanceid]" >&2
+  echo "Usage: $0 [-i instanceid] [-f]" >&2
+  echo "-f bypasses the prompt" >&2
   exit 1
 }
 
 instance_id=""
+prompt="yes"
 
-while getopts "i:" opt; do
+while getopts "fi:" opt; do
   case $opt in
+    f) prompt="no";;
     i) instance_id=$OPTARG;;
     *) usage;;
   esac
 done
 
-if [ -z "${instance_id}" ]; then
+if [[ -z "${instance_id}" ]]; then
   instance_id=$(cipd resolve -version refs/heads/master \
     infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes |\
     sed 's/^[^:]*://g' |\
     awk NF)
 fi
 
-read -p "Release version ${instance_id}? (Yy) " answer
+if [[ "${prompt}" == "yes" ]]; then
+  read -p "Release version ${instance_id}? (Yy) " answer
 
-if [[  ${answer^^} != 'Y' ]]; then
-  exit 0
+  if [[ "${answer^^}" != "Y" ]]; then
+    exit 0
+  fi
 fi
 
 cipd set-ref \
