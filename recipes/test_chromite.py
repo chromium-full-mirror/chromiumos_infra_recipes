@@ -31,7 +31,7 @@ def RunSteps(api):
     api.cros_sdk.cleanup_context(
         checkout_path=api.cros_source.workspace_path):
     with api.context(cwd=api.cros_source.workspace_path):
-      api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
+      api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
 
       gerrit_changes = api.buildbucket.build.input.gerrit_changes
       if gerrit_changes:

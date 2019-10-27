@@ -81,7 +81,7 @@ def RunSteps(api, properties):
     DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes)
 
 def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
-  api.cros_source.sync_gitiles_snapshot(gitiles_commit)
+  api.cros_source.sync_snapshot(gitiles_commit)
 
   if gerrit_changes and build_config.build.apply_gerrit_changes:
     with api.step.nest('cherry-pick gerrit changes'):

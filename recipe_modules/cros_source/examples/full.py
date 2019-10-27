@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'depot_tools/gitiles',
     'cros_source',
@@ -14,6 +15,8 @@ DEPS = [
     'gerrit',
 ]
 
+from PB.recipe_modules.chromeos.cros_source.cros_source import (
+    CrosSourceProperties)
 
 def RunSteps(api):
   _ = api.cros_source.master_path
@@ -26,7 +29,7 @@ def RunSteps(api):
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
-      api.cros_source.sync_gitiles_snapshot(api.buildbucket.gitiles_commit)
+      api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
 
   # Monkey-pack merge to return a StepFailure to test cherry-pick path
   def merge_fail(_a, _b, infra_step=False):
@@ -44,3 +47,15 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic') + api.buildbucket.ci_build()
+
+  yield (api.test('with-custom-snapshot') +  #
+         api.properties(
+             **{'$chromeos/cros_source':
+                CrosSourceProperties(
+                    snapshot_xml=
+                    '<?xml version="1.0" encoding="UTF-8"?>'
+                    '<manifest>'
+                    '  <project name="n" path="p" revision="r" upstream="u"/>'
+                    '</manifest>',
+                )})
+         )

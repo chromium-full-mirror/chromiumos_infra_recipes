@@ -33,6 +33,10 @@ class CrosSourceApi(recipe_api.RecipeApi):
   EXTERNAL_MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
   INTERNAL_MANIFEST_URL = 'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
 
+  def __init__(self, properties, *args, **kwargs):
+    super(CrosSourceApi, self).__init__(*args, **kwargs)
+    self._snapshot_xml = str(properties.snapshot_xml)
+
   @property
   def cache_path(self):
     """The cached checkout path.
@@ -139,20 +143,33 @@ class CrosSourceApi(recipe_api.RecipeApi):
       return new_commits
 
   @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
-  def sync_gitiles_snapshot(self, gitiles_commit):
-    """Sync a checkout to the snapshot in |gitiles_commit|."""
+  def sync_snapshot(self, gitiles_commit):
+    """Sync a checkout to the snapshot."""
     with self.m.step.nest('sync to snapshot'):
-      gitiles_url = 'https://%s/%s' % (gitiles_commit.host,
-                                       gitiles_commit.project)
-
-      step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file('<manifest></manifest>')
-      snapshot_xml = self.m.gitiles.download_file(
-          gitiles_url, 'snapshot.xml', branch=gitiles_commit.id,
-          step_test_data=step_test_data,
-          timeout=self.test_api.gitiles_timeout_seconds)
-
+      snapshot_xml = self._get_snapshot(gitiles_commit)
       self.m.repo.sync_manifest(manifest_data=snapshot_xml, detach=True,
                                 optimized_fetch=True)
+
+  def _get_snapshot(self, gitiles_commit):
+    """Returns the snapshot to use.
+
+    Returns the snapshot to use. If a custom snapshot has been provided
+    via an input property, that will be used. Otherwise it will fall back
+    to the typical syncing to the gitiles_commit.
+    """
+    if self._snapshot_xml:
+      return self._snapshot_xml
+
+    gitiles_url = 'https://%s/%s' % (gitiles_commit.host,
+                                     gitiles_commit.project)
+
+    step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file(
+        '<manifest></manifest>')
+
+    return self.m.gitiles.download_file(
+        gitiles_url, 'snapshot.xml', branch=gitiles_commit.id,
+        step_test_data=step_test_data,
+        timeout=self.test_api.gitiles_timeout_seconds)
 
   def create_project_commits_archive(self, archive_path, project_commits):
     """Creates an archive with the given project commits from the workspace.
