@@ -5,13 +5,20 @@
 
 DEPS = [
     'recipe_engine/assertions', 'recipe_engine/buildbucket',
-    'recipe_engine/step', 'analysis_service'
+    'recipe_engine/properties', 'recipe_engine/raw_io', 'recipe_engine/step',
+    'analysis_service'
 ]
 
 from PB.chromite.api.sysroot import InstallPackagesRequest, InstallPackagesResponse
+from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
+    AnalysisServiceProperties)
 
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
+
+from recipe_engine.recipe_api import Property
+
+PROPERTIES = AnalysisServiceProperties
 
 # Test JSON protos.
 INSTALL_PACKAGES_REQUEST = """
@@ -33,8 +40,11 @@ INSTALL_PACKAGES_RESPONSE = """
 """
 
 
-def RunSteps(api):
-  test_step_data = api.step('A test step', cmd=['echo', 'hello world'])
+def RunSteps(api, properties):
+  test_step_data = api.step('basic_with_stdout',
+                            cmd=['echo', 'hello world'],
+                            stdout=api.raw_io.output(),
+                            stderr=api.raw_io.output())
 
   install_packages_request = json_format.Parse(INSTALL_PACKAGES_REQUEST,
                                                InstallPackagesRequest())
@@ -95,4 +105,33 @@ def GenTests(api):
   yield (api.test('basic') +  #
          api.buildbucket.ci_build() +  #
          api.step_data('A test step with retcode', retcode=5) +  #
-         api.step_data('A test step with timeout', times_out_after=5))
+         api.step_data('A test step with timeout', times_out_after=5) +  #
+         api.step_data('basic_with_stdout',
+           stdout=api.raw_io.output('Test output'),
+           stderr=api.raw_io.output('Errors')) +  #
+         api.properties(**{
+             '$chromeos/analysis_service':
+             AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
+         })
+  )
+  yield (api.test('basic-nonascii') +  #
+         api.buildbucket.ci_build() +  #
+         api.step_data('basic_with_stdout',
+           # coding: utf8
+           stdout=api.raw_io.output('國華'),
+           stderr=api.raw_io.output('Errors')) +  #
+         api.properties(**{
+             '$chromeos/analysis_service':
+             AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
+         })
+  )
+  yield (api.test('basic-truncated') +  #
+         api.buildbucket.ci_build() +  #
+         api.step_data('basic_with_stdout',
+           stdout=api.raw_io.output('Test output'),
+           stderr=api.raw_io.output('Errors')) +  #
+         api.properties(**{
+             '$chromeos/analysis_service':
+             AnalysisServiceProperties(max_stdout_stderr_bytes=4)
+         })
+  )

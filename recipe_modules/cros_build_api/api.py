@@ -166,7 +166,9 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
           # For Build API retcode 2 indicates that the invocation failed in some
           # way but a consumable response has been produced.
           result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
-                               infra_step=infra_step, timeout=timeout)
+                               infra_step=infra_step, timeout=timeout,
+                               stdout=self.m.raw_io.output(add_output_log=True),
+                               stderr=self.m.raw_io.output(add_output_log=True))
         except self.m.step.StepFailure as e:
           # If the Build API call failed, still publish information to
           # analysis_service. There is some code duplication with the success

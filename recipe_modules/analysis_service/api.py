@@ -10,6 +10,27 @@ from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 
+def _truncate_output(full_output, max_output_bytes):
+  """Truncate full_output if needed for sending/storing/querying.
+
+  When truncating full_output, the last |max_output_bytes| are kept rather
+  than the first.
+
+  Args:
+    full_output (str): The full output captured from a step.
+    max_output_bytes (int): Max number of bytes in returned string.
+  Return:
+    A tuple of truncated string, bytes removed.
+  """
+  # In python2, len returns the number of bytes needed to represent a string.
+  # See recipe_modules/analysis_service/examples/full.py
+  # api.test('basic-nonascii') for an example of non-ascii characters.
+  output_length = len(full_output)
+  if output_length <= max_output_bytes:
+    return full_output, 0
+  return full_output[-max_output_bytes:], output_length - max_output_bytes
+
+
 def _set_step_execution_result_fields(analysis_service_event, step_data):
   """Set the StepExecutionResult fields on an AnalysisServiceEvent.
 
@@ -42,6 +63,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     self._pubsub_project_id = properties.pubsub_project_id or "chromeos-bot"
     self._pubsub_topic_id = (properties.pubsub_topic_id or
                              "analysis-service-events")
+    self._max_stdout_stderr_bytes = properties.max_stdout_stderr_bytes
 
   def _get_field_name_by_matching_type(self, oneof_name, message):
     """Get the field on AnalysisServiceEvent for 'oneof_name' and 'message'.
@@ -136,6 +158,40 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     assert analysis_service_event.WhichOneof(
         oneof_name) is not None, 'Expected {} to be set.'.format(oneof_name)
 
+  def _set_stdout_and_stderr(self, analysis_service_event, step_data):
+    """Set the step_data to store stdout and stderr information.
+
+    Args:
+      analysis_sevice_event (AnalysisServiceEvent): The AnalysisServiceEvent to
+        be modified.
+      step_data (recipe_engine.StepData): Data from the step being logged.
+    """
+    step = self.m.step.active_result
+    if step_data.stdout:
+      truncated_stdout, bytes_removed = _truncate_output(
+         step_data.stdout, self._max_stdout_stderr_bytes)
+      analysis_service_event.stdout = truncated_stdout
+      if bytes_removed == 0:
+        step.presentation.logs['stdout_truncation'] = [
+            'Full stdout output is {} bytes, no truncation'.format(
+                len(step_data.stdout))]
+      else:
+        step.presentation.logs['stdout_truncation'] = [
+            'Full stdout output is {} bytes, truncated to {} bytes'.format(
+                len(step_data.stdout), self._max_stdout_stderr_bytes)]
+    if step_data.stderr:
+      truncated_stderr, bytes_removed = _truncate_output(
+          step_data.stderr, self._max_stdout_stderr_bytes)
+      analysis_service_event.stderr = truncated_stderr
+      if bytes_removed == 0:
+        step.presentation.logs['stderr_truncation'] = [
+            'Full stderr output is {} bytes, no truncation'.format(
+                len(step_data.stderr))]
+      else:
+        step.presentation.logs['stderr_truncation'] = [
+            'Full stderr output is {} bytes, truncated to {} bytes'.format(
+                len(step_data.stderr), self._max_stdout_stderr_bytes)]
+
   def can_publish_event(self, request, response):
     """Return whether 'request' and 'response' can be published.
 
@@ -191,6 +247,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
 
       analysis_service_event.build_id = self.m.buildbucket.build.id
       analysis_service_event.step_name = step_data.name
+      if self._max_stdout_stderr_bytes > 0:
+        self._set_stdout_and_stderr(analysis_service_event, step_data)
 
       _set_step_execution_result_fields(analysis_service_event, step_data)
 

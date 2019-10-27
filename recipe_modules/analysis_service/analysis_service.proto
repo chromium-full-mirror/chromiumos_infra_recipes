@@ -12,4 +12,9 @@ message AnalysisServiceProperties {
 
   // The Cloud Pub/Sub topic to publish events to.
   string pubsub_topic_id = 2;
+
+  // Max bytes to include from stdout/stderr of each step as part of the event.
+  // This limit applies to stdout and stderr individually, a step may include
+  // up to max_stdout_stderr_bytes for each one.
+  int64 max_stdout_stderr_bytes = 3;
 }
