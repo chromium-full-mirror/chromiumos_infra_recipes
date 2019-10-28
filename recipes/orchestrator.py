@@ -368,7 +368,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
           api.buildbucket.schedule_request(
               gitiles_commit=snapshot, builder=child, bucket=bucket,
               critical=critical, properties=api.cq.props_for_child_build,
-              tags=tags))
+              tags=tags, swarming_parent_run_id=api.swarming.task_id))
     step.presentation.logs['filter log'] = filter_log
 
   return completed_builds, filtered_snapshot_builds, new_build_requests
