@@ -184,7 +184,7 @@ class SkylabApi(recipe_api.RecipeApi):
         # Mark the step as an INFRA_FAILURE and get the output
         # properties of underlying recipes.
         step.presentation.status = 'EXCEPTION'
-        hw_tests = self.m.buildbucket.get_multi(task_id)[task_id]
+        hw_tests = self.m.buildbucket.get_multi([task_id])[task_id]
 
       results = []
       responses = self._get_multi_response(hw_tests)
