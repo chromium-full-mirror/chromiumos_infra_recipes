@@ -393,9 +393,9 @@ def get_completed_builds(api, cq_orch_children):
     # A temporary hack to force rebuilding of particular builders.
     # Currently this is to mitigate the cl 1824642.
     # We should later generalize this sort of filtering in config.
-    filtered_builds = ['octopus', 'atlas', 'eve', 'nocturne']
+    filtered_builds = ['grunt', 'hana']
     this_build = api.cros_history.get_build_target(build)
-    apply_hack_time = build.start_time.seconds < 1571259985  # GMT 10/16/19 3PM
+    apply_hack_time = build.start_time.seconds < 1572156000  # 2019-10-27
     if this_build in filtered_builds and apply_hack_time:  #pragma: no cover
       continue
 
