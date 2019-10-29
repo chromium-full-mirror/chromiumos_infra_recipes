@@ -139,8 +139,12 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
                 chroot_current=True, replace=True)))
     sysroot = create_sysroot_response.sysroot
 
-  api.easy.set_property_step('target_versions',
-                             get_target_versions(api, build_target))
+  try:
+    api.easy.set_property_step('target_versions',
+                               get_target_versions(api, build_target))
+  except:  # pragma: no cover
+    # Failing on kernel buildtest builders, see https://crbug.com/1017583.
+    pass
 
   if api.cros_relevance.is_build_pointless(
       gerrit_changes, gitiles_commit, build_target=build_target,
