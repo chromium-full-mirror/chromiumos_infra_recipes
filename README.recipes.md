@@ -3253,7 +3253,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#438)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#441)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3277,7 +3277,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#427)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#430)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3285,7 +3285,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#413)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#416)(refs):**
 
 Assert the given refs start with refs/heads.
 

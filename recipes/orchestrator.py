@@ -391,11 +391,14 @@ def get_completed_builds(api, cq_orch_children):
       continue
 
     # A temporary hack to force rebuilding of particular builders.
-    # Currently this is to mitigate the cl 1824642.
+    # Currently this is to mitigate https://crbug.com/1019411.
     # We should later generalize this sort of filtering in config.
-    filtered_builds = ['cyan', 'grunt', 'hana']
+    filtered_builds = ['amd64-generic']
     this_build = api.cros_history.get_build_target(build)
-    apply_hack_time = build.start_time.seconds < 1572156000  # 2019-10-27
+    apply_hack_time = (build.start_time.seconds < 1572448823  # 2019-10-30
+                       # secondary time here needed because amd64-generic is
+                       # used in the orchestrator's tests :S.
+                       and build.start_time.seconds > 1570469999) # 2019-10-07
     if this_build in filtered_builds and apply_hack_time:  #pragma: no cover
       continue
 
