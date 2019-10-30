@@ -171,7 +171,7 @@
 
 #### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#59)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#196)(self, request, response):**
+&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#195)(self, request, response):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -192,7 +192,7 @@ Args:
 Return:
   bool
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#220)(self, request, response, request_time, response_time, step_data):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#219)(self, request, response, request_time, response_time, step_data):**
 
 Publish request and response on Cloud Pub/Sub.
 
@@ -3520,32 +3520,32 @@ Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#22)(api):**
 
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-gerrit
-[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-git_cl
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-gsutil
-[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/acf922ce48cfd1ecf88582d9dbecf14e8d1fe369/recipes/README.recipes.md#recipe_modules-tryserver
-[recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-archive
-[recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-assertions
-[recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-buildbucket
-[recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-cipd
-[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-context
-[recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-cq
-[recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-file
-[recipe_engine/recipe_modules/isolated]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-isolated
-[recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-json
-[recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-led
-[recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-path
-[recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-properties
-[recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-python
-[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-raw_io
-[recipe_engine/recipe_modules/runtime]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-runtime
-[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-scheduler
-[recipe_engine/recipe_modules/service_account]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-service_account
-[recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-step
-[recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-swarming
-[recipe_engine/recipe_modules/time]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-time
-[recipe_engine/recipe_modules/url]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/README.recipes.md#recipe_modules-url
-[recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/1485ed120ff670c0b32905d28c824e7af6f32aa6/recipe_engine/recipe_api.py#871
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1e4dbf3f6432b8bf0a06877b8ae0ddd92a311197/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1e4dbf3f6432b8bf0a06877b8ae0ddd92a311197/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1e4dbf3f6432b8bf0a06877b8ae0ddd92a311197/recipes/README.recipes.md#recipe_modules-gerrit
+[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1e4dbf3f6432b8bf0a06877b8ae0ddd92a311197/recipes/README.recipes.md#recipe_modules-git_cl
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1e4dbf3f6432b8bf0a06877b8ae0ddd92a311197/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1e4dbf3f6432b8bf0a06877b8ae0ddd92a311197/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1e4dbf3f6432b8bf0a06877b8ae0ddd92a311197/recipes/README.recipes.md#recipe_modules-tryserver
+[recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-archive
+[recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-assertions
+[recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-buildbucket
+[recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-cipd
+[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-context
+[recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-cq
+[recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-file
+[recipe_engine/recipe_modules/isolated]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-isolated
+[recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-json
+[recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-led
+[recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-path
+[recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-properties
+[recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-python
+[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-raw_io
+[recipe_engine/recipe_modules/runtime]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-runtime
+[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-scheduler
+[recipe_engine/recipe_modules/service_account]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-service_account
+[recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-step
+[recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-swarming
+[recipe_engine/recipe_modules/time]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-time
+[recipe_engine/recipe_modules/url]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/README.recipes.md#recipe_modules-url
+[recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/fa1af6362953b8c5c24e3082b0081e688f2be32d/recipe_engine/recipe_api.py#871
