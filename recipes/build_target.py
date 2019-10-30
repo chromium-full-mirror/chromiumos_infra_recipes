@@ -141,7 +141,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
 
   if api.cros_relevance.is_build_pointless(
       gerrit_changes, gitiles_commit, build_target=build_target,
-      name='post-sync pointless build check'):
+      chroot=api.cros_sdk.chroot, name='post-sync pointless build check'):
     return
 
   try:

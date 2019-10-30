@@ -6,6 +6,7 @@
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Chroot
 
 DEPS = [
     'cros_relevance',
@@ -15,12 +16,14 @@ DEPS = [
 
 def RunSteps(api):
   bt = BuildTarget(name='my_build_target')
+  chroot = Chroot()
   gc = [
       bbcommon_pb2.GerritChange(change=123),
       bbcommon_pb2.GerritChange(change=456)
   ]
   api.cros_relevance.is_build_pointless(
-      gc, bbcommon_pb2.GitilesCommit(id='my hash'), build_target=bt)
+      gc, bbcommon_pb2.GitilesCommit(id='my hash'), build_target=bt,
+      chroot=chroot)
 
 
 def GenTests(api):

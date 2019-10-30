@@ -80,7 +80,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       return [b.name for b in result.builds_to_run]
 
   def is_build_pointless(self, gerrit_changes, gitiles_commit, build_target,
-                         name=None):
+                         chroot, name=None):
     """Determines if build(s) can be terminated early.
 
     If build_target is set, then the chromiumos workspace must have been
@@ -93,6 +93,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
           snapshot Gitiles commit.
       build_target (chromiumos.BuildTarget): The BuildTarget being built.
+      chroot (chromiumos.Chroot): The chroot it is being run in.
       name (str): The step name.
 
     Returns:
@@ -102,7 +103,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       dep_graph = None
       if build_target:
         resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
-            GetBuildDependencyGraphRequest(build_target=build_target,))
+            GetBuildDependencyGraphRequest(build_target=build_target,
+                                           chroot=chroot))
         dep_graph = resp.dep_graph
 
       self._ensure_binaries()
