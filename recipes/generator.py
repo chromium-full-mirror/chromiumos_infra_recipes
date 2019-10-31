@@ -14,6 +14,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 import collections
 import itertools
+import re
 import urlparse
 
 from PB.chromiumos.common import PackageInfo
@@ -42,6 +43,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_build_api',
     'cros_cq_depends',
+    'depot_tools/gitiles',
     'gerrit',
     'cros_sdk',
     'cros_source',
@@ -68,6 +70,9 @@ def RunSteps(api, properties):
 
     step.presentation.step_text = 'all properties good'
 
+  package = properties.package_info
+  cpv = api.naming.get_package_title(package)
+
   triggers = api.scheduler.triggers
   with api.step.nest('validate triggers') as step:
     if not triggers:
@@ -77,12 +82,15 @@ def RunSteps(api, properties):
       if not trigger.HasField('gitiles'):
         raise ValueError('found non-gitiles trigger: %r', trigger)
 
-    step.presentation.step_text = 'all {} triggers good'.format(len(triggers))
+    triggers = filter_triggers(api, package, triggers)
+
+    step.presentation.step_text = 'found {} good triggers'.format(len(triggers))
     step.presentation.logs['list of triggers'] = map(json_format.MessageToJson,
                                                      triggers)
 
-  package = properties.package_info
-  cpv = api.naming.get_package_title(package)
+  if not triggers:
+    # All were filtered out, nothing to process.
+    return
 
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
@@ -256,6 +264,38 @@ def RunSteps(api, properties):
         if labels is not None:
           api.gerrit.set_change_labels(change, labels)
 
+# TODO(crbug.com/1018796): Remove when chrome uprev PUpr invocations
+# fire only for chromeos targeted tags.
+def filter_triggers(api, package, triggers):
+  """Returns a filtered list of triggers that should be processed.
+
+  Args:
+    api (RecipeApi): See RunSteps.
+    package (chromiumos.PackageInfo): package generating CLs for.
+    triggers (list[triggers_pb2.Trigger]): list of triggers to filter.
+
+  Returns:
+    list[triggers_pb2.Trigger] of triggers to process.
+  """
+  # This is temporary special filtering for the triggers sent for
+  # chromeos-base/chromeos-chrome. Later a custom mechanism will be
+  # used to launch this recipe, the standard gitiles poller will not
+  # be used, and this custom filtering will be unnecessary.
+  if (package.category != 'chromeos-base'
+      or package.package_name != 'chromeos-chrome'):
+    return triggers
+
+  filtered_triggers = []
+  for trigger in triggers:
+    deps_content = api.gitiles.download_file(trigger.gitiles.repo, 'DEPS',
+                                             trigger.gitiles.ref)
+    platforms_search = re.search(r'buildspec_platforms.*', deps_content)
+    if platforms_search:
+      platforms = platforms_search.group()
+      if 'chromeos' in platforms or 'all' in platforms:
+        filtered_triggers.append(trigger)
+  return filtered_triggers
+
 def response_has_changes(api, response):
   """Returns whether the given `UprevPackagesResponse` contains changes."""
   for ebuild in response.modified_ebuilds:
@@ -334,5 +374,73 @@ def GenTests(api):
              '.read output file', api.file.read_raw(content='{}')))
 
   yield (api.test('no-changes') + api.properties(**properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(False)
-)
+         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(False))
+
+  # Set up for testing chromeos-base/chromeos-chrome trigger filtering.
+  package = PackageInfo(category='chromeos-base',
+                        package_name='chromeos-chrome')
+  properties = json_format.MessageToDict(
+      GeneratorProperties(
+          package_info=package,
+          reviewers=[
+              Reviewer(email='dburger@chromium.org'),
+          ],
+          build_targets=[
+            BuildTarget(name='build_target'),
+          ],
+      ),)
+  gitiles_triggers = [
+      triggers_pb2.Trigger(
+          id='123',
+          gitiles=triggers_pb2.GitilesTrigger(
+              repo='https://chromium.googlesource.com/chromium/src',
+              ref='refs/tags/79.0.3945.20',
+              revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
+          ),
+      ),
+      triggers_pb2.Trigger(
+          id='456',
+          gitiles=triggers_pb2.GitilesTrigger(
+              repo='https://chromium.googlesource.com/chromium/src',
+              ref='refs/tags/78.0.3904.88',
+              revision='90f293ef4ac440371bc6ff57933eac24cc9de0e4',
+          ),
+      ),
+  ]
+
+  MATCHES_DEPS="""
+# Some leading stuff
+vars = {
+  "buildspec_platforms": "android, chromeos",
+  # some comments
+  'build_with_chromium': True,
+}
+"""
+
+  # DEPS with no match.
+  NO_MATCHES_DEPS="""
+# Some leading stuff
+vars = {
+  "buildspec_platforms": "win64",
+  # some comments
+  'build_with_chromium': True,
+}
+"""
+
+  # One of the two triggers gets filtered out.
+  yield (api.test('chrome-one-trigger-filtered') +
+         api.properties(**properties) +
+         api.scheduler(triggers=gitiles_triggers) +
+         api.step_data('validate triggers.fetch refs/tags/79.0.3945.20:DEPS',
+                       api.gitiles.make_encoded_file(MATCHES_DEPS)) +
+         api.step_data('validate triggers.fetch refs/tags/78.0.3904.88:DEPS',
+                       api.gitiles.make_encoded_file(NO_MATCHES_DEPS)))
+
+  # Both of the two triggers get filtered out.
+  yield (api.test('chrome-all-triggers-filtered') +
+         api.properties(**properties) +
+         api.scheduler(triggers=gitiles_triggers) +
+         api.step_data('validate triggers.fetch refs/tags/79.0.3945.20:DEPS',
+                       api.gitiles.make_encoded_file(NO_MATCHES_DEPS)) +
+         api.step_data('validate triggers.fetch refs/tags/78.0.3904.88:DEPS',
+                       api.gitiles.make_encoded_file(NO_MATCHES_DEPS)))

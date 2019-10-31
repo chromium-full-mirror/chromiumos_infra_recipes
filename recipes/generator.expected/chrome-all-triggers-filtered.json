@@ -1,0 +1,76 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.ensure chroot directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate properties",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all properties good@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate triggers",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found 0 good triggers@@@",
+      "@@@STEP_LOG_END@list of triggers@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chromium.googlesource.com/chromium/src/+/refs/tags/79.0.3945.20/DEPS",
+      "--format",
+      "text"
+    ],
+    "name": "validate triggers.fetch refs/tags/79.0.3945.20:DEPS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chromium.googlesource.com/chromium/src/+/refs/tags/78.0.3904.88/DEPS",
+      "--format",
+      "text"
+    ],
+    "name": "validate triggers.fetch refs/tags/78.0.3904.88:DEPS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
