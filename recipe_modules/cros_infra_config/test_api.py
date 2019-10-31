@@ -231,7 +231,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "type": "CQ"
                   },
                   "general": {
-                    "critical": true
+                    "critical": true,
+                    "broken_before": "2019-11-01T00:00:00Z"
                   },
                   "artifacts": {
                     "prebuilts": "NONE",

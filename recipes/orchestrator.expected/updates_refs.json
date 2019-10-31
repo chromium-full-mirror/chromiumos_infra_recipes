@@ -451,7 +451,8 @@
       "@@@STEP_LOG_LINE@json.output@            }@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"STARTED\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"startTime\": \"2019-07-07T04:54:05Z\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -491,7 +492,7 @@
     "name": "check build results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@2 builds failed, 1 succeeded, 0 failures silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 2 succeeded, 0 failures silenced@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -587,19 +588,18 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.atlas-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "check build results.build results.amd64-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check build results.build results.atlas-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {
@@ -660,6 +660,9 @@
       "@@@STEP_LOG_LINE@request@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"serializedProto\": \"CNCtpKubruDoexISGhBhbWQ2NC1nZW5lcmljLWNxYAx6NAotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljGgMY0gk=\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"serializedProto\": \"CNKtpKubruDoexIKGghhdGxhcy1jcToGCO31hekFYAx6LAolCiMKDGJ1aWxkX3RhcmdldBITKhEKDwoEbmFtZRIHGgVhdGxhcxoDGNIJ\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -1009,7 +1012,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \n  \"gitilesCommit\": {\n    \"serializedProto\": \"ChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIRcmVmcy9oZWFkcy9tYXN0ZXI=\"\n  }, \n  \"buildbucketProtos\": [\n    {\n      \"serializedProto\": \"CNCtpKubruDoexISGhBhbWQ2NC1nZW5lcmljLWNxYAx6NAotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljGgMY0gk=\"\n    }\n  ]\n}",
+      "{\n  \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \n  \"gitilesCommit\": {\n    \"serializedProto\": \"ChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIRcmVmcy9oZWFkcy9tYXN0ZXI=\"\n  }, \n  \"buildbucketProtos\": [\n    {\n      \"serializedProto\": \"CNCtpKubruDoexISGhBhbWQ2NC1nZW5lcmljLWNxYAx6NAotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljGgMY0gk=\"\n    }, \n    {\n      \"serializedProto\": \"CNKtpKubruDoexIKGghhdGxhcy1jcToGCO31hekFYAx6LAolCiMKDGJ1aWxkX3RhcmdldBITKhEKDwoEbmFtZRIHGgVhdGxhcxoDGNIJ\"\n    }\n  ]\n}",
       "[CLEANUP]/test-plan-_tmp_2/input.json"
     ],
     "infra_step": true,
@@ -1024,6 +1027,9 @@
       "@@@STEP_LOG_LINE@input.json@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@input.json@    {@@@",
       "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"CNCtpKubruDoexISGhBhbWQ2NC1nZW5lcmljLWNxYAx6NAotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljGgMY0gk=\"@@@",
+      "@@@STEP_LOG_LINE@input.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input.json@    {@@@",
+      "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"CNKtpKubruDoexIKGghhdGxhcy1jcToGCO31hekFYAx6LAolCiMKDGJ1aWxkX3RhcmdldBITKhEKDwoEbmFtZRIHGgVhdGxhcxoDGNIJ\"@@@",
       "@@@STEP_LOG_LINE@input.json@    }@@@",
       "@@@STEP_LOG_LINE@input.json@  ]@@@",
       "@@@STEP_LOG_LINE@input.json@}@@@",
@@ -2367,10 +2373,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "1 build failed\n\n- atlas-cq: [build page](https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002)"
-    },
     "name": "$result"
   }
 ]

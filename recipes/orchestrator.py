@@ -46,8 +46,10 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
 
 from google.protobuf import json_format
 from google.protobuf import struct_pb2
+from google.protobuf import timestamp_pb2
 
 from collections import defaultdict
+from datetime import datetime
 
 PROPERTIES = OrchestratorProperties
 
@@ -382,35 +384,33 @@ def get_completed_builds(api, cq_orch_children):
     latest successful child builds with the same patches as the current
     cq orchestrator with refreshed critical values.
   """
-  completed_builds = []
-  passed_builds = api.cros_history.get_passed_builds()
-  for build in passed_builds:
-    # Filter out non-child builds like vm_test, dry run orchestrator or
-    # hw_tests in the future.
-    if build.builder.builder not in cq_orch_children:  #pragma: no cover
-      continue
+  with api.step.nest("get completed builds") as step:
+    completed_builds = []
+    passed_builds = api.cros_history.get_passed_builds()
+    skip_log = []
+    for build in passed_builds:
+      # Filter out non-child builds like vm_test, dry run orchestrator or
+      # hw_tests in the future.
+      if build.builder.builder not in cq_orch_children:  #pragma: no cover
+        continue
 
-    # A temporary hack to force rebuilding of particular builders.
-    # Currently this is to mitigate https://crbug.com/1019411.
-    # We should later generalize this sort of filtering in config.
-    filtered_builds = ['amd64-generic']
-    this_build = api.cros_history.get_build_target(build)
-    apply_hack_time = (build.start_time.seconds < 1572448823  # 2019-10-30
-                       # secondary time here needed because amd64-generic is
-                       # used in the orchestrator's tests :S.
-                       and build.start_time.seconds > 1570469999) # 2019-10-07
-    if this_build in filtered_builds and apply_hack_time:  #pragma: no cover
-      continue
+      builder_config = api.cros_infra_config.get_builder_config(
+          build.builder.builder)
+      # If the build ran before a known bug was fixed, don't reuse it.
+      if build.start_time.seconds < builder_config.general.broken_before.seconds:
+        skip_log.append('{} is skipped because it was broken till {}UTC'.format(
+            build.builder.builder,
+            datetime.utcfromtimestamp(
+                builder_config.general.broken_before.seconds)))
+        continue
+      # Refresh the criticality of the builders.
+      build.critical = (
+          common_pb2.YES
+          if builder_config.general.critical.value else common_pb2.NO)
+      completed_builds.append(build)
 
-    builder_config = api.cros_infra_config.get_builder_config(
-        build.builder.builder)
-    # Refresh the criticality of the builders.
-    build.critical = (
-        common_pb2.YES
-        if builder_config.general.critical.value else common_pb2.NO)
-    completed_builds.append(build)
-
-  return completed_builds
+    step.presentation.logs['skip log'] = skip_log
+    return completed_builds
 
 
 def validate_refs(refs):
@@ -537,7 +537,8 @@ def GenTests(api):
           'builder': 'arm-generic-cq'
       }, status=common_pb2.STARTED, input=input_proto(None, 'arm-generic')),
       build_pb2.Build(id=8922054662172514002, builder={'builder': 'atlas-cq'},
-                      status=common_pb2.STARTED, input=input_proto(
+                      start_time=timestamp_pb2.Timestamp(seconds=1562475245),
+                      status=common_pb2.SUCCESS, input=input_proto(
                           None, 'atlas')),
   ]
 
@@ -600,7 +601,8 @@ def GenTests(api):
              ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_search_results(
              builds, 'run builds.get build history for changes.'
-             'get change build history.buildbucket.search') +  #
+             'get completed builds.get change build history.'
+             'buildbucket.search') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_schedule_output(
@@ -613,8 +615,8 @@ def GenTests(api):
              hw_tests, 'run tests.collect tests.'
              'collect skylab tasks.buildbucket.collect') +  #
          api.buildbucket.simulated_collect_output(
-            vm_tests,
-            step_name='run tests.collect tests.collect autotest vm tests') +
+             vm_tests,
+             step_name='run tests.collect tests.collect autotest vm tests') +
          api.buildbucket.simulated_collect_output(
              [], step_name='run tests.collect tests.collect tast vm tests') +
          api.buildbucket.simulated_collect_output(
