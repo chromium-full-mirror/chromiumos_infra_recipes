@@ -48,8 +48,7 @@
     },
     "name": "call chromite.api.TestApiService/InputOutputMethod.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -118,8 +117,7 @@
     },
     "name": "call chromite.api.TestApiService/InputOutputMethod (2).call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -192,8 +190,7 @@
     },
     "name": "call chromite.api.ArtifactsService/BundleFirmware.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

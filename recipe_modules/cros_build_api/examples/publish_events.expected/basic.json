@@ -56,8 +56,7 @@
     },
     "name": "call chromite.api.SysrootService/InstallPackages.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

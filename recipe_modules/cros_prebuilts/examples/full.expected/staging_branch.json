@@ -58,8 +58,7 @@
     "infra_step": true,
     "name": "upload prebuilts.read gs acls.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -318,8 +317,7 @@
     "infra_step": true,
     "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -520,8 +518,7 @@
     "infra_step": true,
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -741,8 +738,7 @@
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1103,8 +1099,7 @@
     "infra_step": true,
     "name": "upload prebuilts (2).get binhosts.call chromite.api.BinhostService/Get.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1304,8 +1299,7 @@
     "infra_step": true,
     "name": "upload prebuilts (2).prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1519,8 +1513,7 @@
     "infra_step": true,
     "name": "upload prebuilts (2).update binhost conf file.call chromite.api.BinhostService/SetBinhost.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

@@ -54,7 +54,6 @@
     "name": "call chromite.api.ArtifactsService/BundleFirmware.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
