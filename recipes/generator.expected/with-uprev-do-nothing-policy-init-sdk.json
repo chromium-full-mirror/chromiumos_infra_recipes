@@ -450,7 +450,9 @@
     },
     "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
+      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
     ]
   },
   {
@@ -710,7 +712,9 @@
     },
     "name": "try uprev chromeos-base/chromite.uprev versioned package.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
+      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
     ]
   },
   {
