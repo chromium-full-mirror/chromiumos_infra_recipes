@@ -20,6 +20,7 @@ import collections
 import urlparse
 
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
+from PB.chromite.api.binhost import RegenBuildCacheRequest
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.annealing import AnnealingProperties
@@ -148,6 +149,28 @@ def RunSteps(api, properties):
             project = projects[0]
             push(project.remote, 'HEAD:refs/for/' + project.branch + '%submit',
                  dry_run=not properties.publish_uprevs)
+
+    with api.step.nest('update metadata'), api.context(
+        cwd=api.cros_source.workspace_path):
+      overlays = api.cros_build_api.BinhostService.RegenBuildCache(
+          RegenBuildCacheRequest(overlay_type=OVERLAYTYPE_BOTH,
+                                 chroot=api.cros_sdk.chroot)).modified_overlays
+      if overlays:
+        overlay_dirs = [overlay.path for overlay in overlays]
+        with api.step.nest('commit metadata'):
+          for overlay_dir in overlay_dirs:
+            with api.context(cwd=api.path.abs_to_path(overlay_dir)):
+              api.git.add(['.'])
+              api.git.commit('Update Metadata Cache')
+
+        with api.step.nest('push metadata'):
+          push = util.exponential_retry(retries=3)(api.git.push)
+          for overlay_dir in overlay_dirs:
+            with api.context(cwd=api.path.abs_to_path(overlay_dir)):
+              project = api.repo.project_infos(projects=[overlay_dir])[0]
+              push(project.remote,
+                   'HEAD:refs/for/' + project.branch + '%submit',
+                   dry_run=not properties.publish_uprevs)
 
     if properties.child_builders:
       with api.step.nest('schedule child builds'):

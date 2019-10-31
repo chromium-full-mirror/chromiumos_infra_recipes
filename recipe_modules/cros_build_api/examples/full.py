@@ -76,6 +76,7 @@ def RunSteps(api):
           'SetBinhost': binhost.SetBinhostResponse,
           'Get': binhost.BinhostGetResponse,
           'GetPrivatePrebuiltAclArgs': binhost.AclArgsResponse,
+          'RegenBuildCache': binhost.RegenBuildCacheResponse,
       },
       'DependencyService': {
           'GetBuildDependencyGraph': depgraph.GetBuildDependencyGraphResponse,
