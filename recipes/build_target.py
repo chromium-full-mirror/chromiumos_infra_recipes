@@ -176,13 +176,21 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
     with api.step.nest('install packages'):
       flags = InstallPackagesRequest.Flags(
           compile_source=False, use_goma=api.cros_sdk.has_goma_config())
-      response = api.cros_build_api.SysrootService.InstallPackages(
-          InstallPackagesRequest(sysroot=sysroot, flags=flags,
-                                 packages=packages,
-                                 chroot=api.cros_sdk.chroot,
-                                 use_flags=build_config.build.use_flags))
-      api.cros_bisect.set_compile_failures(response.failed_packages)
-      api.failures.raise_failed_packages(response.failed_packages)
+      try:
+        response = api.cros_build_api.SysrootService.InstallPackages(
+            InstallPackagesRequest(sysroot=sysroot, flags=flags,
+                                   packages=packages,
+                                   chroot=api.cros_sdk.chroot,
+                                   use_flags=build_config.build.use_flags))
+        api.cros_bisect.set_compile_failures(response.failed_packages)
+        api.failures.raise_failed_packages(response.failed_packages)
+      except api.step.StepFailure as e:  # pragma: no cover
+        # Invalidate the cache if the InstallPackages call fails.
+        api.step.nest(
+            'InstallPackages failure, deleting chroot',
+            api.cros_build_api.SdkService.Delete(
+                DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
+        raise
     if api.cros_infra_config.should_exit(install_packages):
       return
 
