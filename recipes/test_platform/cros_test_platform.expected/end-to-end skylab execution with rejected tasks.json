@@ -278,8 +278,7 @@
     "name": "summarize.default task results.tests rejected due to invalid request",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(log)   foo-rejected@logs://bar/baz@@@",
-      "@@@STEP_LINK@(task)  foo-rejected@foo://bar/baz@@@",
+      "@@@STEP_LINK@(task)  foo-rejected did not run@foo://bar/baz@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

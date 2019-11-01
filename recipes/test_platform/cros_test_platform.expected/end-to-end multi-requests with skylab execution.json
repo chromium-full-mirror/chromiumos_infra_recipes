@@ -227,7 +227,8 @@
       "@@@STEP_LOG_LINE@response@      \"taskResults\": [@@@",
       "@@@STEP_LOG_LINE@response@        {@@@",
       "@@@STEP_LOG_LINE@response@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_PASSED\", @@@",
+      "@@@STEP_LOG_LINE@response@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
@@ -260,7 +261,7 @@
     "cmd": [],
     "name": "summarize",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@responses@{\"first\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@responses@{\"first\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@"
     ]
   },
   {

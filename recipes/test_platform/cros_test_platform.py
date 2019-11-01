@@ -332,6 +332,11 @@ def _emit_links(step, task_results):
   # task results with the same name. This will involve a proto change that
   # includes attempt number in the result.
   for t in task_results:
+    if t.state.life_cycle not in [
+        TaskState.LIFE_CYCLE_COMPLETED, TaskState.LIFE_CYCLE_RUNNING
+    ]:
+      step.links['(task)  ' + t.name + ' did not run'] = t.task_url
+      continue
     suffix = ''
     if t.attempt > 0:
       suffix = ' attempt #%s' % str(t.attempt)
@@ -457,7 +462,8 @@ def GenTests(api):
                   task_url='foo://bar/baz',
                   log_url='logs://bar/baz',
                   name='foo-passed',
-                  state=TaskState(verdict="VERDICT_PASSED"),
+                  state=TaskState(verdict="VERDICT_PASSED",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
               ),
           ],
       )
@@ -485,14 +491,16 @@ def GenTests(api):
                   task_url='foo://bar/baz',
                   log_url='logs://bar/baz',
                   name='foo-failed',
-                  state=TaskState(verdict="VERDICT_FAILED"),
+                  state=TaskState(verdict="VERDICT_FAILED",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
               ),
               ExecuteResponse.TaskResult(
                   task_url='foo://bar/baz1',
                   log_url='logs://bar/baz1',
                   name='foo-failed',
                   attempt=1,
-                  state=TaskState(verdict="VERDICT_FAILED"),
+                  state=TaskState(verdict="VERDICT_FAILED",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
               ),
           ],
       )
@@ -520,14 +528,16 @@ def GenTests(api):
                   task_url='foo://bar/baz',
                   log_url='logs://bar/baz',
                   name='foo-retried',
-                  state=TaskState(verdict="VERDICT_FAILED"),
+                  state=TaskState(verdict="VERDICT_FAILED",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
               ),
               ExecuteResponse.TaskResult(
                   task_url='foo://bar/baz1',
                   log_url='logs://bar/baz1',
                   name='foo-retried',
                   attempt=1,
-                  state=TaskState(verdict="VERDICT_PASSED_ON_RETRY"),
+                  state=TaskState(verdict="VERDICT_PASSED_ON_RETRY",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
               ),
           ],
       )
@@ -573,6 +583,34 @@ def GenTests(api):
                   stdout=api.raw_io.output(
                     json_format.MessageToJson(e2e_execute_responses_rejected)))
   )
+
+  e2e_execute_responses_pending = ExecuteResponses(responses=[
+      ExecuteResponse(
+          state=TaskState(life_cycle='LIFE_CYCLE_PENDING',
+                          verdict='VERDICT_FAILED'),
+          task_results=[
+              ExecuteResponse.TaskResult(
+                  task_url=None,
+                  log_url=None,
+                  name='foo-pending',
+                  state=TaskState(life_cycle="LIFE_CYCLE_PENDING"),
+              ),
+          ],
+      )
+  ])
+  yield (api.test('end-to-end skylab execution with pending tasks') +  #
+         api.properties(
+             CrosTestPlatformProperties(request=e2e_request, config=e2e_config))
+         +  #
+         api.step_data(
+             'traffic split.call binary.scheduler-traffic-split',
+             stdout=api.raw_io.output(
+                 json_format.MessageToJson(e2e_split_response_skylab))) +  #
+         api.step_data('enumerate tests.call binary.enumerate',
+                       stdout=api.raw_io.output(e2e_enumeration_responses)) +  #
+         api.step_data(
+             'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+                 json_format.MessageToJson(e2e_execute_responses_pending))))
 
   # An end-to-end run with traffic splitting to autotest.
   e2e_split_response_autotest = SchedulerTrafficSplitResponses(responses=[
