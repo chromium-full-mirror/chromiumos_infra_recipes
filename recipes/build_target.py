@@ -64,10 +64,16 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 
 def RunSteps(api, properties):
   build_target = properties.build_target
-  build_config = api.cros_infra_config.get_builder_config(
-      api.buildbucket.build.builder.builder)
   gitiles_commit = api.buildbucket.gitiles_commit
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
+
+  with api.step.nest('read builder config') as step:
+    try:
+      build_config = api.cros_infra_config.get_builder_config(
+          api.buildbucket.build.builder.builder)
+    except LookupError:
+      step.presentation.step_text = 'config not found, assuming deleted'
+      return
 
   api.cros_bisect.set_bisect_builder(build_target.name)
   api.cros_sdk.set_use_flags(build_config.build.use_flags)
@@ -291,10 +297,10 @@ def GenTests(api):
       common_pb2.GerritChange(change=2341),
   ]
 
-  def cq_build_with_gerrit_change():
+  def cq_build_with_gerrit_change(builder='amd64-generic-cq'):
     """Generate a test build proto with no gitiles commit project."""
     build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                             builder='amd64-generic-cq')
+                                             builder=builder)
     build.input.gerrit_changes.extend(mock_CLs)
     return api.buildbucket.build(build)
 
@@ -417,3 +423,6 @@ def GenTests(api):
       api.step_data(
           'update sdk.call chromite.api.SdkService/Update.call build API script',
           retcode=1))
+
+  yield (api.test('builder-no-longer-exists') +  #
+         cq_build_with_gerrit_change('no-exist-builder'))

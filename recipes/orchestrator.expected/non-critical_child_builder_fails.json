@@ -17,7 +17,7 @@
   },
   {
     "cmd": [],
-    "name": "run builds.read build config",
+    "name": "run builds.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -35,7 +35,7 @@
       "text"
     ],
     "infra_step": true,
-    "name": "run builds.read build config.fetch master:generated/builder_configs.cfg",
+    "name": "run builds.read builder configs.fetch master:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -484,7 +484,7 @@
   },
   {
     "cmd": [],
-    "name": "read build config"
+    "name": "read builder configs"
   },
   {
     "cmd": [
@@ -499,7 +499,7 @@
       "text"
     ],
     "infra_step": true,
-    "name": "read build config.fetch master:generated/builder_configs.cfg",
+    "name": "read builder configs.fetch master:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2211,7 +2211,7 @@
   },
   {
     "cmd": [],
-    "name": "clean up orchestrator.read build config",
+    "name": "clean up orchestrator.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2229,7 +2229,7 @@
       "text"
     ],
     "infra_step": true,
-    "name": "clean up orchestrator.read build config.fetch master:generated/builder_configs.cfg",
+    "name": "clean up orchestrator.read builder configs.fetch master:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

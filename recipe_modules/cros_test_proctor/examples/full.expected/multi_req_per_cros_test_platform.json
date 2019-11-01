@@ -446,7 +446,7 @@
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.read build config",
+    "name": "run tests.schedule tests.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -464,7 +464,7 @@
       "text"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.read build config.fetch master:generated/builder_configs.cfg",
+    "name": "run tests.schedule tests.read builder configs.fetch master:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"

@@ -46,7 +46,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       name_to_builder_config = {}
       # Step nesting needs to happen here or it shows up many times in Milo,
       # once for each builder.
-      with self.m.step.nest('read build config'), self.m.context(
+      with self.m.step.nest('read builder configs'), self.m.context(
           infra_steps=True):
         builder_configs_file = self._fetch_builder_configs()
       # Ignore unknown fields, as this repo may not be using the newest version
