@@ -146,9 +146,12 @@ def RunSteps(api, properties):
   if api.cq.state == api.cq.DRY:
     return api.failures.aggregate_failures(failures)
 
-  # Otherwise, we have to run tests.
+  # Otherwise, run tests for builds that weren't build failures and that
+  # still exist as builders.
   need_tests_builds = [
-      b for b in completed_builds if not api.failures.is_build_failure(b)
+      b for b in completed_builds
+      if not api.failures.is_build_failure(b)
+      and fresh_builder_configs.get(b.builder.builder)
   ]
 
   test_failures = api.cros_test_proctor.run_proctor(
