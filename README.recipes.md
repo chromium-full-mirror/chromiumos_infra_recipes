@@ -400,7 +400,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#129)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#132)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -410,7 +410,7 @@ empty list if this run was not invoked as a bisection build.
 Returns:
   list[PackageInfo]: list of packages to build as specified by FindIt
 
-&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#140)(self):**
+&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#143)(self):**
 
 Returns the child builders as specified by FindIt or empty list.
 
@@ -421,7 +421,7 @@ build.
 Returns:
   list[str]: sorted list of child builders to run.
 
-&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#156)(self, builds):**
+&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#159)(self, builds):**
 
 Returns the test plan as specified by FindIt or None.
 
@@ -447,7 +447,7 @@ should invoke if the build fails and bisection is required.
 Args:
   build_target_name (str): build target name to set the bisect builder for.
 
-&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#75)(self, failed_packages):**
+&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#78)(self, failed_packages):**
 
 Outputs the failed packages, if any, for FindIt consumption.
 
@@ -467,7 +467,7 @@ Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the postsubmit-orchestrator encounters hardware test
 failures.
 
-&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#91)(self, hw_results, needs_bisection):**
+&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#94)(self, hw_results, needs_bisection):**
 
 Outputs the failed hardware tests, if any, for FindIt consumption.
 

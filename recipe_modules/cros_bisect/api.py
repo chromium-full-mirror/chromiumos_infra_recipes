@@ -61,9 +61,12 @@ class CrosBisectApi(recipe_api.RecipeApi):
     """
     failures = []
     for pkg in failed_packages:
+      # Strip version off PackageInfo, breaks bisect invoked install packages.
       failures.append({
           'rule': 'emerge',
-          'output_targets': [jsonpb.MessageToJson(pkg)]
+          'output_targets': [jsonpb.MessageToJson(
+              PackageInfo(category=pkg.category, package_name=pkg.package_name)
+          )],
       })
     # TODO: share the constant 'install packages|installation results'
     # with build_target.py?
