@@ -12,6 +12,8 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 See go/pupr and go/pupr-generator for rationale and design decisions.
 """
 
+from google.protobuf import json_format
+
 import collections
 import itertools
 import re
@@ -73,7 +75,7 @@ def RunSteps(api, properties):
   package = properties.package_info
   cpv = api.naming.get_package_title(package)
 
-  triggers = api.scheduler.triggers
+  triggers = properties.triggers or api.scheduler.triggers
   with api.step.nest('validate triggers') as step:
     if not triggers:
       raise ValueError('found no scheduler triggers')
@@ -442,5 +444,16 @@ vars = {
          api.scheduler(triggers=gitiles_triggers) +
          api.step_data('validate triggers.fetch refs/tags/79.0.3945.20:DEPS',
                        api.gitiles.make_encoded_file(NO_MATCHES_DEPS)) +
+         api.step_data('validate triggers.fetch refs/tags/78.0.3904.88:DEPS',
+                       api.gitiles.make_encoded_file(NO_MATCHES_DEPS)))
+
+  # Testing direct invocation, that is, not invoked with properties from
+  # a gitiles poller through api.scheduler.
+  yield (api.test('invoked-directly') +
+         api.properties(**properties) +
+         api.properties(triggers=[json_format.MessageToDict(t)
+                                  for t in gitiles_triggers]) +
+         api.step_data('validate triggers.fetch refs/tags/79.0.3945.20:DEPS',
+                       api.gitiles.make_encoded_file(MATCHES_DEPS)) +
          api.step_data('validate triggers.fetch refs/tags/78.0.3904.88:DEPS',
                        api.gitiles.make_encoded_file(NO_MATCHES_DEPS)))

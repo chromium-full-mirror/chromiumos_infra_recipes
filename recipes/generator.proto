@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipes.chromeos.generator;
 
 import "chromiumos/common.proto";
+import "go.chromium.org/luci/scheduler/api/scheduler/v1/triggers.proto";
 
 message G3OncallRotation {
   // The name of the oncall rotation, e.g. chromeos-sheriffs-west.
@@ -69,4 +70,8 @@ message GeneratorProperties {
   // invoking the uprevving endpoint. As the init takes a bit of time,
   // it should be avoided unless it is required.
   bool init_sdk = 7;
+
+  // Triggers if invoked directly rather than through a gitiles poller.
+  // Note that the recipe only processes the Trigger.GitilesTrigger fields.
+  repeated scheduler.Trigger triggers = 8;
 }

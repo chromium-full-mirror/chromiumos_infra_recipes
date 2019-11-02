@@ -3034,7 +3034,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
 ### *recipes* / [generator](/recipes/generator.py)
 
-[DEPS](/recipes/generator.py#36): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/generator.py#38): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the PUpr generator.
 
@@ -3044,9 +3044,9 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#59)(api, properties):**
+&mdash; **def [RunSteps](/recipes/generator.py#61)(api, properties):**
 
-&mdash; **def [filter\_triggers](/recipes/generator.py#269)(api, package, triggers):**
+&mdash; **def [filter\_triggers](/recipes/generator.py#271)(api, package, triggers):**
 
 Returns a filtered list of triggers that should be processed.
 
@@ -3058,7 +3058,7 @@ Args:
 Returns:
   list[triggers_pb2.Trigger] of triggers to process.
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#299)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#301)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
