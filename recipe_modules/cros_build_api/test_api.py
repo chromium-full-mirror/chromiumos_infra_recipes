@@ -65,9 +65,6 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         {'arg': 'arg1', 'value': 'value1'},
         {'arg': 'arg2', 'value': 'value2'},
     ])
-    responses['RegenBuildCache'] = jsonify(modified_overlays=[{
-        'path': self.path('chromiumos/src/overlay')
-    }])
     return responses
 
   @property
