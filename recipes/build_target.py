@@ -145,10 +145,19 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
                 chroot_current=True, replace=True)))
     sysroot = create_sysroot_response.sysroot
 
-  if api.cros_relevance.is_build_pointless(
-      gerrit_changes, gitiles_commit, build_target=build_target,
-      chroot=api.cros_sdk.chroot, name='post-sync pointless build check'):
-    return
+  try:
+    if api.cros_relevance.is_build_pointless(
+        gerrit_changes, gitiles_commit, build_target=build_target,
+        chroot=api.cros_sdk.chroot, name='post-sync pointless build check'):
+      return
+  except api.step.StepFailure as e:  # pragma: no cover
+    # Invalidate the cache if the InstallPackages call fails.
+    api.step.nest(
+        'InstallPackages failure, deleting chroot',
+        api.cros_build_api.SdkService.Delete(
+            DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
+    raise
+
 
   try:
     api.easy.set_property_step('target_versions',
