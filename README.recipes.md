@@ -3188,27 +3188,27 @@ Test git_footers calls.
 &mdash; **def [RunSteps](/recipe_modules/ipc/examples/no_attrs.py#10)(api):**
 ### *recipes* / [lab\_platform/sync\_stable\_version](/recipes/lab_platform/sync_stable_version.py)
 
-[DEPS](/recipes/lab_platform/sync_stable_version.py#10): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/lab_platform/sync_stable_version.py#11): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for sync stable vesrion for ChromeOS build targets & models.
 
-&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#56)(api, properties):**
+&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#57)(api, properties):**
 
-&mdash; **def [commit\_diff](/recipes/lab_platform/sync_stable_version.py#47)(api, properties, difference):**
+&mdash; **def [commit\_diff](/recipes/lab_platform/sync_stable_version.py#48)(api, properties, difference):**
 
 Commit the diff to stable version file on git.
 
 Returns:
   TODO(xixuan): A string URL refering to the committed CL.
 
-&mdash; **def [compare\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#38)(api, omaha_versions, git_versions):**
+&mdash; **def [compare\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#39)(api, omaha_versions, git_versions):**
 
 Compare stable_versions between omaha & git.
 
 Returns:
   TODO(xixuan): A dict contains the different stable_versions.
 
-&mdash; **def [fetch\_git\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#28)(api, properties):**
+&mdash; **def [fetch\_git\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#29)(api, properties):**
 
 Fetch existing stable versions from git file.
 
@@ -3216,7 +3216,7 @@ Returns:
   TODO(xixuan): A dict contains mapping from (build_target, model) to version
       for all stable_version types.
 
-&mdash; **def [fetch\_omaha\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#18)(api, properties):**
+&mdash; **def [fetch\_omaha\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#19)(api, properties):**
 
 Fetch stable versions based on omama status file.
 
@@ -3571,13 +3571,13 @@ Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#22)(api):**
 
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/23247b99321549c24e62ad45200409419423695d/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/23247b99321549c24e62ad45200409419423695d/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/23247b99321549c24e62ad45200409419423695d/recipes/README.recipes.md#recipe_modules-gerrit
-[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/23247b99321549c24e62ad45200409419423695d/recipes/README.recipes.md#recipe_modules-git_cl
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/23247b99321549c24e62ad45200409419423695d/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/23247b99321549c24e62ad45200409419423695d/recipes/README.recipes.md#recipe_modules-gsutil
-[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/23247b99321549c24e62ad45200409419423695d/recipes/README.recipes.md#recipe_modules-tryserver
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9ab047e78be34f3345b00c3d71cbfcbbe110ab3b/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9ab047e78be34f3345b00c3d71cbfcbbe110ab3b/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9ab047e78be34f3345b00c3d71cbfcbbe110ab3b/recipes/README.recipes.md#recipe_modules-gerrit
+[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9ab047e78be34f3345b00c3d71cbfcbbe110ab3b/recipes/README.recipes.md#recipe_modules-git_cl
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9ab047e78be34f3345b00c3d71cbfcbbe110ab3b/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9ab047e78be34f3345b00c3d71cbfcbbe110ab3b/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9ab047e78be34f3345b00c3d71cbfcbbe110ab3b/recipes/README.recipes.md#recipe_modules-tryserver
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce6248afeab2c85d8e9eebc934339c26d048d0fb/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce6248afeab2c85d8e9eebc934339c26d048d0fb/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce6248afeab2c85d8e9eebc934339c26d048d0fb/README.recipes.md#recipe_modules-buildbucket
