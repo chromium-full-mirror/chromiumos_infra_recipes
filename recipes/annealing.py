@@ -20,7 +20,10 @@ import collections
 import urlparse
 
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
+from PB.chromite.api.binhost import RegenBuildCacheRequest
 from PB.chromite.api.packages import UprevPackagesRequest
+from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
+from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.annealing import AnnealingProperties
 from PB.recipes.chromeos.annealing import SnapshotGerritChanges
@@ -64,44 +67,46 @@ def RunSteps(api, properties):
     raise ValueError('must set manifest ref')
 
   api.cros_source.ensure_synced_cache()
-  with api.cros_source.checkout_overlays_context():
-    with api.context(
-        cwd=api.cros_source.workspace_path.join('manifest-internal')):
-      snapshot_xml = api.repo.manifest_snapshot()
-      manifest_diffs = api.repo.diff_remote_and_local_manifests(
-          api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
+  with api.cros_source.checkout_overlays_context(), \
+      api.cros_sdk.cleanup_context(
+          checkout_path=api.cros_source.workspace_path), \
+      api.context(
+          cwd=api.cros_source.workspace_path.join('manifest-internal')):
+    snapshot_xml = api.repo.manifest_snapshot()
+    manifest_diffs = api.repo.diff_remote_and_local_manifests(
+        api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
 
-      # TODO(athilenius): It would be nice to set the 'Info' column here.
-      gerrit_commits = []
-      if manifest_diffs is not None:
-        # If there are zero diffs (empty array) then there is nothing
-        # interesting to be done.
-        if len(manifest_diffs) == 0:
-          return
+    # TODO(athilenius): It would be nice to set the 'Info' column here.
+    gerrit_commits = []
+    if manifest_diffs is not None:
+      # If there are zero diffs (empty array) then there is nothing
+      # interesting to be done.
+      if len(manifest_diffs) == 0:
+        return
 
-        # Otherwise we need to ensure all of those diffs have fulfilled deps.
-        api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
+      # Otherwise we need to ensure all of those diffs have fulfilled deps.
+      api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
-        # Then, record the diffs. We are specifically interested in what
-        # gerrit changes have landed.
-        gerrit_commits = record_gerrit_changes(api, manifest_diffs)
+      # Then, record the diffs. We are specifically interested in what
+      # gerrit changes have landed.
+      gerrit_commits = record_gerrit_changes(api, manifest_diffs)
 
-      with api.step.nest('publish snapshot') as step:
-        snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
-        api.git.fetch_ref(snapshot_repo_url, manifest_ref)
-        api.git.checkout('FETCH_HEAD')
-        snapshot_commit_message = make_message(
-            api, manifest_ref, gerrit_commits,
-            properties.disable_gerrit_commits_in_commit_message)
-        api.git_txn.update_ref_write_file(
-            snapshot_repo_url, manifest_ref, snapshot_commit_message,
-            api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
-            snapshot_xml)
+    with api.step.nest('publish snapshot') as step:
+      snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
+      api.git.fetch_ref(snapshot_repo_url, manifest_ref)
+      api.git.checkout('FETCH_HEAD')
+      snapshot_commit_message = make_message(
+          api, manifest_ref, gerrit_commits,
+          properties.disable_gerrit_commits_in_commit_message)
+      api.git_txn.update_ref_write_file(
+          snapshot_repo_url, manifest_ref, snapshot_commit_message,
+          api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
+          snapshot_xml)
 
-        # Use the newly created snapshot commit as the build output.
-        snapshot_commit = make_gitiles_commit(api, snapshot_repo_url,
-                                              api.git.head_commit())
-        api.buildbucket.set_output_gitiles_commit(snapshot_commit)
+      # Use the newly created snapshot commit as the build output.
+      snapshot_commit = make_gitiles_commit(api, snapshot_repo_url,
+                                            api.git.head_commit())
+      api.buildbucket.set_output_gitiles_commit(snapshot_commit)
 
     # It may seem weird that we publish uprevs after publishing the snapshot.
     # Unfortunately, publishing uprevs takes ~10 minutes, in which time it is
@@ -148,6 +153,40 @@ def RunSteps(api, properties):
             project = projects[0]
             push(project.remote, 'HEAD:refs/for/' + project.branch + '%submit',
                  dry_run=not properties.publish_uprevs)
+
+    with api.step.nest('init sdk') as step:
+      api.cros_sdk.build_chmod_chroot()
+      response = api.cros_build_api.SdkService.Create(
+          CreateSdkRequest(
+              flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
+              chroot=api.cros_sdk.chroot))
+      step.presentation.logs['sdk version'] = [str(response.version.version)]
+      api.cros_sdk.link_chroot(api.cros_source.workspace_path)
+
+    with api.step.nest('update sdk') as step:
+      api.cros_build_api.SdkService.Update(
+          UpdateSdkRequest(chroot=api.cros_sdk.chroot))
+
+    with api.step.nest('update metadata'), api.context(
+        cwd=api.cros_source.workspace_path):
+      overlays = api.cros_build_api.BinhostService.RegenBuildCache(
+          RegenBuildCacheRequest(overlay_type=OVERLAYTYPE_BOTH,
+                                 chroot=api.cros_sdk.chroot)).modified_overlays
+      if overlays:
+        overlay_dirs = [overlay.path for overlay in overlays]
+        with api.step.nest('commit metadata'):
+          for overlay_dir in overlay_dirs:
+            with api.context(cwd=api.path.abs_to_path(overlay_dir)):
+              api.git.add(['.'])
+              api.git.commit('Update Metadata Cache')
+        with api.step.nest('push metadata'):
+          push = util.exponential_retry(retries=3)(api.git.push)
+          for overlay_dir in overlay_dirs:
+            with api.context(cwd=api.path.abs_to_path(overlay_dir)):
+              project = api.repo.project_infos(projects=[overlay_dir])[0]
+              push(project.remote,
+                   'HEAD:refs/for/' + project.branch + '%submit',
+                   dry_run=not properties.publish_uprevs)
 
     if properties.child_builders:
       with api.step.nest('schedule child builds'):
