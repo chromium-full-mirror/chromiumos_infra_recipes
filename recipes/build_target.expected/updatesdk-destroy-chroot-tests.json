@@ -1048,9 +1048,8 @@
   },
   {
     "cmd": [],
-    "name": "update sdk.call chromite.api.SdkService/Delete",
+    "name": "call chromite.api.SdkService/Delete",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
@@ -1079,11 +1078,10 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "update sdk.call chromite.api.SdkService/Delete.write input file",
+    "name": "call chromite.api.SdkService/Delete.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
@@ -1108,15 +1106,14 @@
       "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "chromite.api.SdkService/Delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "update sdk.call chromite.api.SdkService/Delete.call build API script",
+    "name": "call chromite.api.SdkService/Delete.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
       "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
     ]
@@ -1132,11 +1129,10 @@
       "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "update sdk.call chromite.api.SdkService/Delete.read output file",
+    "name": "call chromite.api.SdkService/Delete.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

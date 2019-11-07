@@ -11,6 +11,7 @@ import os
 from recipe_engine import recipe_api
 
 from PB.chromiumos import common
+from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 
 
 class CrosSdkApi(recipe_api.RecipeApi):
@@ -124,6 +125,12 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """Returns a context that cleans the SDK chroot named cache."""
     try:
       yield
+    except self.m.step.StepFailure:
+      self.m.step.nest(
+          'Invalidating SDK due to build failure',
+          self.m.cros_build_api.SdkService.Delete(
+              DeleteSdkRequest(chroot=self.m.cros_sdk.chroot)))
+      raise
     finally:
       with self.m.step.nest('clean up SDK chroot'):
         self.unlink_chroot(checkout_path)

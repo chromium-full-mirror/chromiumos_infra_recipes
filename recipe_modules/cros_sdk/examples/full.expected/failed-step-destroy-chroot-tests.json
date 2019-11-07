@@ -1,0 +1,235 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.ensure chroot directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure chroot path (2)"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/test/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path (2).ensure chroot directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "u=rwx,g=rx,o=rx,-t",
+      "[CLEANUP]/test/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "changing permissions of [CLEANUP]/test/cros_chroot"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[CLEANUP]/test/cros_chroot",
+      "--help"
+    ],
+    "name": "get cros_sdk help"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--nouse-image",
+      "--chroot",
+      "[CLEANUP]/test/cros_chroot",
+      "PATH=/bin",
+      "--",
+      "ls"
+    ],
+    "name": "ls in chroot"
+  },
+  {
+    "cmd": [],
+    "name": "link chroot in workspace",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/workspace"
+    ],
+    "infra_step": true,
+    "name": "link chroot in workspace.ensure workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.SdkService/Delete",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/test/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"/chrome_dir\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"goma\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"gomaClientJson\": \"/creds/goma.json\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"gomaDir\": \"/goma_dir\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"flag\": \"goma\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot\", \n    \"chromeDir\": \"/chrome_dir\", \n    \"goma\": {\n      \"gomaClientJson\": \"/creds/goma.json\", \n      \"gomaDir\": \"/goma_dir\"\n    }, \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"goma\"\n        }\n      ]\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.SdkService/Delete.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CLEANUP]/test/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"/chrome_dir\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"goma\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"gomaClientJson\": \"/creds/goma.json\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"gomaDir\": \"/goma_dir\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"flag\": \"goma\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "chromite.api.SdkService/Delete"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.SdkService/Delete.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
+      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.SdkService/Delete.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot"
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.unlink chroot in workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "a+rwX,-t",
+      "[CLEANUP]/test/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.changing permissions of [CLEANUP]/test/cros_chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Infra Failure: Step('link chroot in workspace.ensure workspace') (retcode: 1)"
+    },
+    "name": "$result"
+  }
+]

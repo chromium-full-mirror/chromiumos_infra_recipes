@@ -48,3 +48,6 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic')
+
+  yield (api.test('failed-step-destroy-chroot-tests') +  #
+         api.step_data('link chroot in workspace.ensure workspace', retcode=1))

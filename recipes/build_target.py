@@ -102,37 +102,18 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
     response = api.cros_build_api.PackageService.Uprev(request)
 
   with api.step.nest('init sdk') as step:
-    try:
-      api.cros_sdk.build_chmod_chroot()
-      response = api.cros_build_api.SdkService.Create(
-          CreateSdkRequest(
-              flags=CreateSdkRequest.Flags(no_replace=True,
-                                           no_use_image=True),
-              chroot=api.cros_sdk.chroot))
-      step.presentation.logs['sdk version'] = [
-          str(response.version.version)
-      ]
-      api.cros_sdk.link_chroot(api.cros_source.workspace_path)
-    except api.step.StepFailure as e:
-      # Invalidate the cache if the InitSDK call fails.
-      api.step.nest(
-          'InitSDK failure, deleting chroot',
-          api.cros_build_api.SdkService.Delete(
-              DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-      raise
+    api.cros_sdk.build_chmod_chroot()
+    response = api.cros_build_api.SdkService.Create(
+        CreateSdkRequest(
+            flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
+            chroot=api.cros_sdk.chroot))
+    step.presentation.logs['sdk version'] = [str(response.version.version)]
+    api.cros_sdk.link_chroot(api.cros_source.workspace_path)
 
   with api.step.nest('update sdk'):
-    try:
-      api.cros_build_api.SdkService.Update(
-          UpdateSdkRequest(chroot=api.cros_sdk.chroot,
-                           toolchain_targets=[build_target]))
-    except api.step.StepFailure:
-      # Invalidate the cache if the UpdateSDK call fails.
-      api.step.nest(
-          'UpdateSDK failure, deleting chroot',
-          api.cros_build_api.SdkService.Delete(
-              DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-      raise
+    api.cros_build_api.SdkService.Update(
+        UpdateSdkRequest(chroot=api.cros_sdk.chroot,
+                         toolchain_targets=[build_target]))
 
   with api.step.nest('create sysroot'):
     profile = None
@@ -145,19 +126,10 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
                 chroot_current=True, replace=True)))
     sysroot = create_sysroot_response.sysroot
 
-  try:
-    if api.cros_relevance.is_build_pointless(
-        gerrit_changes, gitiles_commit, build_target=build_target,
-        chroot=api.cros_sdk.chroot, name='post-sync pointless build check'):
-      return
-  except api.step.StepFailure as e:  # pragma: no cover
-    # Invalidate the cache if the InstallPackages call fails.
-    api.step.nest(
-        'InstallPackages failure, deleting chroot',
-        api.cros_build_api.SdkService.Delete(
-            DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-    raise
-
+  if api.cros_relevance.is_build_pointless(
+      gerrit_changes, gitiles_commit, build_target=build_target,
+      chroot=api.cros_sdk.chroot, name='post-sync pointless build check'):
+    return
 
   try:
     api.easy.set_property_step('target_versions',
@@ -191,21 +163,12 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
     with api.step.nest('install packages'):
       flags = InstallPackagesRequest.Flags(
           compile_source=False, use_goma=api.cros_sdk.has_goma_config())
-      try:
-        response = api.cros_build_api.SysrootService.InstallPackages(
-            InstallPackagesRequest(sysroot=sysroot, flags=flags,
-                                   packages=packages,
-                                   chroot=api.cros_sdk.chroot,
-                                   use_flags=build_config.build.use_flags))
-        api.cros_bisect.set_compile_failures(response.failed_packages)
-        api.failures.raise_failed_packages(response.failed_packages)
-      except api.step.StepFailure as e:  # pragma: no cover
-        # Invalidate the cache if the InstallPackages call fails.
-        api.step.nest(
-            'InstallPackages failure, deleting chroot',
-            api.cros_build_api.SdkService.Delete(
-                DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-        raise
+      response = api.cros_build_api.SysrootService.InstallPackages(
+          InstallPackagesRequest(sysroot=sysroot, flags=flags,
+                                 packages=packages, chroot=api.cros_sdk.chroot,
+                                 use_flags=build_config.build.use_flags))
+      api.cros_bisect.set_compile_failures(response.failed_packages)
+      api.failures.raise_failed_packages(response.failed_packages)
     if api.cros_infra_config.should_exit(install_packages):
       return
 
@@ -432,6 +395,14 @@ def GenTests(api):
       api.step_data(
           'update sdk.call chromite.api.SdkService/Update.call build API script',
           retcode=1))
+
+  yield (
+      api.test('destroy-chroot-failed-step-tests') +  #
+      api.buildbucket.ci_build(project='chromeos', bucket='cq',
+                               builder='amd64-generic-cq') +  #
+      api.step_data(
+          'post-sync pointless build check.call chromite.api.DependencyService/'
+          'GetBuildDependencyGraph.write input file', retcode=1))
 
   yield (api.test('builder-no-longer-exists') +  #
          cq_build_with_gerrit_change('no-exist-builder'))
