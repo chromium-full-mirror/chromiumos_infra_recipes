@@ -45,6 +45,7 @@
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [skylab](#recipe_modules-skylab)
   * [skylab_local_state](#recipe_modules-skylab_local_state)
+  * [stable_version](#recipe_modules-stable_version)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
 
@@ -156,6 +157,7 @@
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
+  * [stable_version:examples/full](#recipes-stable_version_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_config](#recipes-test_config) &mdash; Compares Parallel CQ and Legacy cbuildbot configs.
@@ -2573,6 +2575,21 @@ Update the DUT state file via `save` command.
 
 Args:
   request: a SaveRequest.
+### *recipe_modules* / [stable\_version](/recipe_modules/stable_version)
+
+[DEPS](/recipe_modules/stable_version/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [StableVersionApi](/recipe_modules/stable_version/api.py#8)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for issuing stable_version commands
+
+&mdash; **def [fetch\_and\_commit](/recipe_modules/stable_version/api.py#15)(self):**
+
+Fetch up-to-date stable version and commit them.
+
+Returns: response: raw string as the stdout data.
+
+&mdash; **def [initialize](/recipe_modules/stable_version/api.py#11)(self):**
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3233,41 +3250,18 @@ Test git_footers calls.
 &mdash; **def [RunSteps](/recipe_modules/ipc/examples/no_attrs.py#10)(api):**
 ### *recipes* / [lab\_platform/sync\_stable\_version](/recipes/lab_platform/sync_stable_version.py)
 
-[DEPS](/recipes/lab_platform/sync_stable_version.py#11): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/lab_platform/sync_stable_version.py#11): [stable\_version](#recipe_modules-stable_version), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for sync stable vesrion for ChromeOS build targets & models.
 
-&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#57)(api, properties):**
+&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#30)(api, properties):**
 
-&mdash; **def [commit\_diff](/recipes/lab_platform/sync_stable_version.py#48)(api, properties, difference):**
+&mdash; **def [fetch\_and\_commit](/recipes/lab_platform/sync_stable_version.py#20)(api):**
 
-Commit the diff to stable version file on git.
-
-Returns:
-  TODO(xixuan): A string URL refering to the committed CL.
-
-&mdash; **def [compare\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#39)(api, omaha_versions, git_versions):**
-
-Compare stable_versions between omaha & git.
+Fetch the newest stable version and commit it to config file on git.
 
 Returns:
-  TODO(xixuan): A dict contains the different stable_versions.
-
-&mdash; **def [fetch\_git\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#29)(api, properties):**
-
-Fetch existing stable versions from git file.
-
-Returns:
-  TODO(xixuan): A dict contains mapping from (build_target, model) to version
-      for all stable_version types.
-
-&mdash; **def [fetch\_omaha\_stable\_versions](/recipes/lab_platform/sync_stable_version.py#19)(api, properties):**
-
-Fetch stable versions based on omama status file.
-
-Returns:
-  TODO(xixuan): A dict contains mapping from (build_target, model) to version
-      for all stable_version types (cros, faft, firmware).
+  A string gerrit CL link.
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -3478,6 +3472,11 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/skylab_local_state/examples/full.py#6): [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/skylab_local_state/examples/full.py#14)(api):**
+### *recipes* / [stable\_version:examples/full](/recipe_modules/stable_version/examples/full.py)
+
+[DEPS](/recipe_modules/stable_version/examples/full.py#6): [stable\_version](#recipe_modules-stable_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/stable_version/examples/full.py#12)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]

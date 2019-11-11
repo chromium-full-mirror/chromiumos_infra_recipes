@@ -10,55 +10,33 @@ from PB.recipes.chromeos.lab_platform.sync_stable_version import \
 
 DEPS = [
     'recipe_engine/properties',
-    'recipe_engine/step'
+    'recipe_engine/raw_io',
+    'recipe_engine/step',
+    'stable_version',
 ]
 
 PROPERTIES = SyncStableVersionProperties
 
-
-def fetch_omaha_stable_versions(api, properties):
-  """Fetch stable versions based on omama status file.
-
-  Returns:
-    TODO(xixuan): A dict contains mapping from (build_target, model) to version
-        for all stable_version types (cros, faft, firmware).
-  """
-  with api.step.nest('fetch omaha stable versions'):
-    return {}
-
-def fetch_git_stable_versions(api, properties):
-  """Fetch existing stable versions from git file.
+def fetch_and_commit(api):
+  """Fetch the newest stable version and commit it to config file on git.
 
   Returns:
-    TODO(xixuan): A dict contains mapping from (build_target, model) to version
-        for all stable_version types.
+    A string gerrit CL link.
   """
-  with api.step.nest("fetch git stable versions"):
-    return {}
+  with api.step.nest('fetch and commit') as step:
+    api.stable_version.fetch_and_commit()
 
-def compare_stable_versions(api, omaha_versions, git_versions):
-  """Compare stable_versions between omaha & git.
-
-  Returns:
-    TODO(xixuan): A dict contains the different stable_versions.
-  """
-  with api.step.nest("compare stable versions"):
-    return {}
-
-def commit_diff(api, properties, difference):
-  """Commit the diff to stable version file on git.
-
-  Returns:
-    TODO(xixuan): A string URL refering to the committed CL.
-  """
-  with api.step.nest("commit new stable versions"):
-    return ""
 
 def RunSteps(api, properties):
-  omaha_versions = fetch_omaha_stable_versions(api, properties)
-  git_versions = fetch_git_stable_versions(api, properties)
-  difference = compare_stable_versions(api, omaha_versions, git_versions)
-  commit_diff(api, properties, difference)
+  # TODO(xixuan): Re-consider the whole processes:
+  #   1. log the CL link of automatic stable version update.
+  #   2. pass in the real parameters.
+  #   3. separate the whole process to individual steps.
+  fetch_and_commit(api)
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (
+    api.test('fetch and commit') + #
+    api.step_data('fetch and commit.call stable_version2.update-with-omaha',
+                  stdout=api.raw_io.output_text('http://CL/123'))
+  )
