@@ -56,6 +56,7 @@
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
+  * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [config_drift](#recipes-config_drift) &mdash; Compares Parallel CQ and Legacy cbuildbot configs.
@@ -2757,6 +2758,13 @@ Args:
 
 Returns:
   dict of target versions
+### *recipes* / [cache\_generate](/recipes/cache_generate.py)
+
+[DEPS](/recipes/cache_generate.py#8): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for generating ChromeOS cache payloads.
+
+&mdash; **def [RunSteps](/recipes/cache_generate.py#15)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
