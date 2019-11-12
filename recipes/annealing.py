@@ -26,18 +26,12 @@ from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.annealing import AnnealingProperties
-from PB.recipes.chromeos.annealing import SnapshotGerritChanges
-
-from google.protobuf import json_format
 
 from recipe_engine import util
 
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/file',
-    'recipe_engine/isolated',
-    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -47,13 +41,11 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'cros_tags',
-    'easy',
     'gerrit',
     'git',
     'git_footers',
     'git_txn',
     'naming',
-    'portage',
     'repo',
 ]
 
@@ -87,9 +79,9 @@ def RunSteps(api, properties):
       # Otherwise we need to ensure all of those diffs have fulfilled deps.
       api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
-      # Then, record the diffs. We are specifically interested in what
+      # Then, get the diffs. We are specifically interested in what
       # gerrit changes have landed.
-      gerrit_commits = record_gerrit_changes(api, manifest_diffs)
+      gerrit_commits = get_gerrit_changes(api, manifest_diffs)
 
     with api.step.nest('publish snapshot') as step:
       snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
@@ -200,7 +192,7 @@ def RunSteps(api, properties):
         api.buildbucket.schedule(requests)
 
 
-def record_gerrit_changes(api, manifest_diffs):
+def get_gerrit_changes(api, manifest_diffs):
   """Find all Gerrit changes that landed since the last snapshot.
 
   Args:
@@ -228,21 +220,6 @@ def record_gerrit_changes(api, manifest_diffs):
             step.presentation.links[gerrit_change_title] = gerrit_change_url
             gerrit_changes.append(gerrit_change)
             gerrit_commits.append(commit)
-
-    output_dir = api.path.mkdtemp(prefix='snapshot-gerrit-changes-')
-    output_file = output_dir.join('snapshot_gerrit_changes.json')
-    output_proto = SnapshotGerritChanges(gerrit_changes=gerrit_changes)
-    output_json = json_format.MessageToJson(output_proto)
-    api.file.write_raw('write gerrit changes json', output_file, output_json)
-
-    isolated = api.isolated.isolated(output_dir)
-    isolated.add_file(output_file)
-    # TODO(evanhernandez): Re-enable upload after isolated is fixed.
-    isolated_hash = None
-    # isolated_hash = isolated.archive('upload gerrit changes to isolate')
-
-    api.easy.set_property_step('snapshot_gerrit_changes', isolated_hash,
-                               step_name='output isolate id')
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.
     # Stop this once the Milo blame list accepts Gerrit changes as input.

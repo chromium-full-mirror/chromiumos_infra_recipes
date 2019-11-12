@@ -480,34 +480,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{}",
-      "[CLEANUP]/snapshot-gerrit-changes-_tmp_1/snapshot_gerrit_changes.json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "record new gerrit changes.write gerrit changes json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@snapshot_gerrit_changes.json@{}@@@",
-      "@@@STEP_LOG_END@snapshot_gerrit_changes.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "record new gerrit changes.output isolate id",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_gerrit_changes@null@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "publish snapshot"
   },
@@ -745,7 +717,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"overlayType\": \"OVERLAYTYPE_BOTH\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -765,9 +737,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "chromite.api.PackageService/Uprev"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -789,7 +761,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -958,15 +930,15 @@
       "/path/to/tmp/json",
       "copy",
       "Marking set of ebuilds as stable",
-      "[CLEANUP]/commit_msg_tmp_3"
+      "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[START_DIR]/chromiumos/src/private-overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Marking set of ebuilds as stable@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
   },
   {
@@ -974,7 +946,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_3",
+      "[CLEANUP]/commit_msg_tmp_2",
       "--",
       "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild"
     ],
@@ -1007,15 +979,15 @@
       "/path/to/tmp/json",
       "copy",
       "Marking set of ebuilds as stable",
-      "[CLEANUP]/commit_msg_tmp_4"
+      "[CLEANUP]/commit_msg_tmp_3"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.write commit message (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Marking set of ebuilds as stable@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_4@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
     ]
   },
   {
@@ -1023,7 +995,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_4",
+      "[CLEANUP]/commit_msg_tmp_3",
       "--",
       "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
     ],
@@ -1156,7 +1128,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"flags\": {\n    \"noReplace\": true, \n    \"noUseImage\": true\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -1179,9 +1151,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "chromite.api.SdkService/Create"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
@@ -1203,7 +1175,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
@@ -1335,7 +1307,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -1354,9 +1326,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "chromite.api.SdkService/Update"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
@@ -1378,7 +1350,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
@@ -1463,7 +1435,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"overlayType\": \"OVERLAYTYPE_BOTH\", \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1483,9 +1455,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "chromite.api.BinhostService/RegenBuildCache"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1507,7 +1479,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1595,15 +1567,15 @@
       "/path/to/tmp/json",
       "copy",
       "Update Metadata Cache",
-      "[CLEANUP]/commit_msg_tmp_8"
+      "[CLEANUP]/commit_msg_tmp_7"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
     "infra_step": true,
     "name": "update metadata.commit metadata.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Update Metadata Cache@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_8@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_7@Update Metadata Cache@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_7@@@"
     ]
   },
   {
@@ -1611,7 +1583,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_8"
+      "[CLEANUP]/commit_msg_tmp_7"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
     "infra_step": true,
