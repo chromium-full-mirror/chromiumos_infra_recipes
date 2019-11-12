@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_test_proctor;
 
+import "google/protobuf/duration.proto";
+
 message ProctorProperties {
   // The threshold for the ratio of failed tests to total tests
   // below which baseline validation gets triggered.
@@ -23,4 +25,7 @@ message ProctorProperties {
   // in a CQ run means that multiple-request per cros_test_platform code should
   // be enabled.
   repeated int64 multi_request_ctp_cl_allowlist = 4;
+
+  // Timeout for the proctor execution.
+  google.protobuf.Duration timeout = 5;
 }

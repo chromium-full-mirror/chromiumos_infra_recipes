@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 from google.protobuf import json_format
+from google.protobuf import duration_pb2
 
 from recipe_engine import recipe_api
 
@@ -33,6 +34,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         properties.multi_request_ctp_full_enable)
     self._multi_request_ctp_cl_allowlist = (
         properties.multi_request_ctp_cl_allowlist)
+    self._timeout = (properties.timeout or
+                     duration_pb2.Duration(seconds=7 * 60 * 60))
 
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
                   enable_history):
@@ -78,12 +81,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         test_to_build_target_map = {}
 
         test_tasks = self._schedule_tests(test_plan, passed_tests,
+                                          self._timeout,
                                           test_to_build_target_map, snapshot,
                                           multi_req=multi_req, dev=dev)
 
       passed_tests = []
       with self.m.step.nest('collect tests'):
-        test_results = self._collect_tests(test_tasks, multi_req=multi_req)
+        test_results = self._collect_tests(
+            test_tasks, timeout=self._timeout, multi_req=multi_req)
         # Record test results.
         passed_tests = [
             self.m.naming.get_test_title(test_result)
@@ -135,11 +140,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             baseline_test_plan = self.m.cros_test_plan.generate(
                 baseline_builds, gerrit_changes, snapshot)
             baseline_tasks = self._schedule_tests(
-                baseline_test_plan, passed_tests, snapshot=snapshot,
-                multi_req=multi_req, dev=dev)
+                baseline_test_plan, passed_tests, self._timeout,
+                snapshot=snapshot, multi_req=multi_req, dev=dev)
 
           with self.m.step.nest('collect baseline tests'):
             baseline_results = self._collect_tests(baseline_tasks,
+                                                   timeout=self._timeout,
                                                    multi_req=multi_req)
 
             # Add failures here to passed_tests.
@@ -180,8 +186,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """Returns the tast builder name for the given build_target."""
     return build_target.name + '-tast-vm'
 
-  def _schedule_tests(self, test_plan, passed_tests, test_to_build_map=None,
-                      snapshot=None, dev=False, multi_req=False):
+  def _schedule_tests(self, test_plan, passed_tests, timeout,
+                      test_to_build_map=None, snapshot=None,
+                      dev=False, multi_req=False):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -189,6 +196,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           be scheduled.
       passed_tests (list[string]): A list of names for the tests that
           have passed before.
+      timeout (Duration): Timeout in duration_pb2.Duration.
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
       snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
@@ -199,8 +207,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       MetaTestTuple of lists of the tests scheduled.
     """
     skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests,
-                                               test_to_build_map, dev=dev,
-                                               multi_req=multi_req)
+                                               timeout,test_to_build_map,
+                                               dev=dev, multi_req=multi_req)
     autotest_vm_tests = self._schedule_autotest_vm_tests(
        test_plan, passed_tests, snapshot, test_to_build_map)
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
@@ -212,7 +220,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         skylab=skylab_tasks or [], autotest_vm=autotest_vm_tests or [],
         tast_vm=tast_vm_tests or [], moblab_vm=moblab_vm_tests or [])
 
-  def _collect_tests(self, test_tasks, multi_req=False):
+  def _collect_tests(self, test_tasks, timeout, multi_req=False):
     """Collect on all tests from test_tasks.
 
     The tests are collected in the order: skylab, autotest_vm,
@@ -220,6 +228,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     Args:
       test_tasks (MetaTestTuple): lists of tests to collect.
+      timeout (Duration): Timeout in duration_pb2.Duration.
       multi_req (bool): whether to use multi request cros_test_platform for
           skylab requests.
 
@@ -229,24 +238,24 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     hw_results = []
     if test_tasks.skylab:
       if multi_req:
-        hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab)
+        hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab, timeout)
       else:
-        hw_results = self.m.skylab.wait_on_recipes(test_tasks.skylab)
+        hw_results = self.m.skylab.wait_on_recipes(test_tasks.skylab, timeout)
     autotest_vm_results = []
     if test_tasks.autotest_vm:
       autotest_vm_results = self.m.buildbucket.collect_builds(
           [vt.id for vt in test_tasks.autotest_vm],
-          step_name='collect autotest vm tests', timeout=60 * 60 * 4).values()
+          step_name='collect autotest vm tests', timeout=timeout.seconds).values()
     tast_vm_results = []
     if test_tasks.tast_vm:
       tast_vm_results = self.m.buildbucket.collect_builds(
           [vt.id for vt in test_tasks.tast_vm],
-          step_name='collect tast vm tests', timeout=60 * 60 * 4).values()
+          step_name='collect tast vm tests', timeout=timeout.seconds).values()
     moblab_vm_results = []
     if test_tasks.moblab_vm:
       moblab_vm_results = self.m.buildbucket.collect_builds(
           [mvt.id for mvt in test_tasks.moblab_vm],
-          step_name='collect moblab vm tests', timeout=60 * 60 * 4).values()
+          step_name='collect moblab vm tests', timeout=timeout.seconds).values()
     return self.MetaTestTuple(
         skylab=hw_results, autotest_vm=autotest_vm_results,
         tast_vm=tast_vm_results, moblab_vm=moblab_vm_results)
@@ -270,7 +279,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     # TODO(evanhernandez): Include Moblab VM tests here once stable.
     return failures
 
-  def _schedule_skylab_tests(self, test_plan, passed_tests,
+  def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
                              test_to_build_map=None, dev=False,
                              multi_req=False):
     """Schedule skylab tests from the test_plan.
@@ -280,6 +289,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           be scheduled.
       passed_tests (list[string]): A list of names for the tests that
           have passed before.
+      timeout (Duration): Timeout in duration_pb2.Duration.
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
       dev(boolean): Whether to use Skylab dev instance.
@@ -302,9 +312,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             tests_to_run.append(
                 self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
             if not multi_req:
-              skylab_tasks.append(self.m.skylab.create_recipe(test, unit))
+              skylab_tasks.append(self.m.skylab.create_recipe(
+                  test, unit, timeout))
       if multi_req and tests_to_run:
-        skylab_tasks.extend(self.m.skylab.schedule_suites(tests_to_run))
+        skylab_tasks.extend(self.m.skylab.schedule_suites(
+            tests_to_run, timeout))
     return skylab_tasks
 
   def _schedule_autotest_vm_tests(self, test_plan, passed_tests, snapshot,
