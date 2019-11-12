@@ -57,5 +57,14 @@ def GenTests(api):
                     '<manifest>'
                     '  <project name="n" path="p" revision="r" upstream="u"/>'
                     '</manifest>',
-                )})
-         )
+                )}))
+
+  yield (api.test('with-custom-snapshot-isolate') +  #
+         api.properties(
+             **{'$chromeos/cros_source':
+                CrosSourceProperties(
+                    snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+                        isolated_hash='xxx',
+                        isolate_server='http://server.com',
+                    ),
+                )}))

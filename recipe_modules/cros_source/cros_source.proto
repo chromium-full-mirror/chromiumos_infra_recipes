@@ -7,6 +7,20 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_source;
 
 message CrosSourceProperties {
-  // Used to specify a custom manifest snapshot to sync to.
-  string snapshot_xml = 1;
+
+  message SnapshotIsolate {
+    string isolated_hash = 1;
+    string isolate_server = 2;
+  }
+
+  oneof snapshot_inputs {
+    // TODO: this seems to result in a command line that is too large for
+    // swarming to kick off the task. Remove me.
+    // Used to specify a custom manifest snapshot to sync to.
+    string snapshot_xml = 1;
+
+    // Used to specify a custom manifest snapshot to sync to as a
+    // snapshot.xml file residing in the isolate.
+    SnapshotIsolate snapshot_isolate = 2;
+  }
 }

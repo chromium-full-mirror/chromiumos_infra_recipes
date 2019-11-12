@@ -36,6 +36,9 @@ class CrosSourceApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(CrosSourceApi, self).__init__(*args, **kwargs)
     self._snapshot_xml = str(properties.snapshot_xml)
+    self._snapshot_isolate = (properties.snapshot_isolate
+                              if properties.HasField('snapshot_isolate')
+                              else None)
 
   @property
   def cache_path(self):
@@ -159,7 +162,24 @@ class CrosSourceApi(recipe_api.RecipeApi):
     """
     if self._snapshot_xml:
       return self._snapshot_xml
+    elif self._snapshot_isolate:
+      return self._get_snapshot_from_isolate()
+    return self._get_snapshot_from_gitiles(gitiles_commit)
 
+  def _get_snapshot_from_isolate(self):
+    """Returns the snapshot to use from isolate"""
+    si = self._snapshot_isolate
+    snapshot_dir = self.m.path.mkdtemp('snapshot')
+    self.m.isolated.download('download snapshot.xml from isolate',
+                             isolated_hash=si.isolated_hash,
+                             isolate_server=si.isolate_server,
+                             output_dir=snapshot_dir)
+    return self.m.file.read_text('read snapshot.xml',
+                                 snapshot_dir.join('snapshot.xml'),
+                                 test_data='<manifest></manifest>')
+
+  def _get_snapshot_from_gitiles(self, gitiles_commit):
+    """Returns the snapshot to use from gitiles."""
     gitiles_url = 'https://%s/%s' % (gitiles_commit.host,
                                      gitiles_commit.project)
 
