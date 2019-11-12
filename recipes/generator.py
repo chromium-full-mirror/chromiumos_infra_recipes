@@ -16,7 +16,6 @@ from google.protobuf import json_format
 
 import collections
 import itertools
-import re
 import urlparse
 
 from PB.chromiumos.common import PackageInfo
@@ -84,15 +83,9 @@ def RunSteps(api, properties):
       if not trigger.HasField('gitiles'):
         raise ValueError('found non-gitiles trigger: %r', trigger)
 
-    triggers = filter_triggers(api, package, triggers)
-
     step.presentation.step_text = 'found {} good triggers'.format(len(triggers))
     step.presentation.logs['list of triggers'] = map(json_format.MessageToJson,
                                                      triggers)
-
-  if not triggers:
-    # All were filtered out, nothing to process.
-    return
 
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
@@ -266,38 +259,6 @@ def RunSteps(api, properties):
         if labels is not None:
           api.gerrit.set_change_labels(change, labels)
 
-# TODO(crbug.com/1018796): Remove when chrome uprev PUpr invocations
-# fire only for chromeos targeted tags.
-def filter_triggers(api, package, triggers):
-  """Returns a filtered list of triggers that should be processed.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    package (chromiumos.PackageInfo): package generating CLs for.
-    triggers (list[triggers_pb2.Trigger]): list of triggers to filter.
-
-  Returns:
-    list[triggers_pb2.Trigger] of triggers to process.
-  """
-  # This is temporary special filtering for the triggers sent for
-  # chromeos-base/chromeos-chrome. Later a custom mechanism will be
-  # used to launch this recipe, the standard gitiles poller will not
-  # be used, and this custom filtering will be unnecessary.
-  if (package.category != 'chromeos-base'
-      or package.package_name != 'chromeos-chrome'):
-    return triggers
-
-  filtered_triggers = []
-  for trigger in triggers:
-    deps_content = api.gitiles.download_file(trigger.gitiles.repo, 'DEPS',
-                                             trigger.gitiles.ref)
-    platforms_search = re.search(r'buildspec_platforms.*', deps_content)
-    if platforms_search:
-      platforms = platforms_search.group()
-      if 'chromeos' in platforms or 'all' in platforms:
-        filtered_triggers.append(trigger)
-  return filtered_triggers
-
 def response_has_changes(api, response):
   """Returns whether the given `UprevPackagesResponse` contains changes."""
   for ebuild in response.modified_ebuilds:
@@ -429,31 +390,9 @@ vars = {
 }
 """
 
-  # One of the two triggers gets filtered out.
-  yield (api.test('chrome-one-trigger-filtered') +
-         api.properties(**properties) +
-         api.scheduler(triggers=gitiles_triggers) +
-         api.step_data('validate triggers.fetch refs/tags/79.0.3945.20:DEPS',
-                       api.gitiles.make_encoded_file(MATCHES_DEPS)) +
-         api.step_data('validate triggers.fetch refs/tags/78.0.3904.88:DEPS',
-                       api.gitiles.make_encoded_file(NO_MATCHES_DEPS)))
-
-  # Both of the two triggers get filtered out.
-  yield (api.test('chrome-all-triggers-filtered') +
-         api.properties(**properties) +
-         api.scheduler(triggers=gitiles_triggers) +
-         api.step_data('validate triggers.fetch refs/tags/79.0.3945.20:DEPS',
-                       api.gitiles.make_encoded_file(NO_MATCHES_DEPS)) +
-         api.step_data('validate triggers.fetch refs/tags/78.0.3904.88:DEPS',
-                       api.gitiles.make_encoded_file(NO_MATCHES_DEPS)))
-
   # Testing direct invocation, that is, not invoked with properties from
   # a gitiles poller through api.scheduler.
   yield (api.test('invoked-directly') +
          api.properties(**properties) +
          api.properties(triggers=[json_format.MessageToDict(t)
-                                  for t in gitiles_triggers]) +
-         api.step_data('validate triggers.fetch refs/tags/79.0.3945.20:DEPS',
-                       api.gitiles.make_encoded_file(MATCHES_DEPS)) +
-         api.step_data('validate triggers.fetch refs/tags/78.0.3904.88:DEPS',
-                       api.gitiles.make_encoded_file(NO_MATCHES_DEPS)))
+                                  for t in gitiles_triggers]))

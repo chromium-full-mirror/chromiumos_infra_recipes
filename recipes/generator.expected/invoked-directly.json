@@ -32,7 +32,7 @@
     "cmd": [],
     "name": "validate triggers",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 1 good triggers@@@",
+      "@@@STEP_TEXT@found 2 good triggers@@@",
       "@@@STEP_LOG_LINE@list of triggers@{@@@",
       "@@@STEP_LOG_LINE@list of triggers@  \"gitiles\": {@@@",
       "@@@STEP_LOG_LINE@list of triggers@    \"repo\": \"https://chromium.googlesource.com/chromium/src\", @@@",
@@ -41,41 +41,15 @@
       "@@@STEP_LOG_LINE@list of triggers@  }, @@@",
       "@@@STEP_LOG_LINE@list of triggers@  \"id\": \"123\"@@@",
       "@@@STEP_LOG_LINE@list of triggers@}@@@",
+      "@@@STEP_LOG_LINE@list of triggers@{@@@",
+      "@@@STEP_LOG_LINE@list of triggers@  \"gitiles\": {@@@",
+      "@@@STEP_LOG_LINE@list of triggers@    \"repo\": \"https://chromium.googlesource.com/chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@list of triggers@    \"ref\": \"refs/tags/78.0.3904.88\", @@@",
+      "@@@STEP_LOG_LINE@list of triggers@    \"revision\": \"90f293ef4ac440371bc6ff57933eac24cc9de0e4\"@@@",
+      "@@@STEP_LOG_LINE@list of triggers@  }, @@@",
+      "@@@STEP_LOG_LINE@list of triggers@  \"id\": \"456\"@@@",
+      "@@@STEP_LOG_LINE@list of triggers@}@@@",
       "@@@STEP_LOG_END@list of triggers@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chromium.googlesource.com/chromium/src/+/refs/tags/79.0.3945.20/DEPS",
-      "--format",
-      "text"
-    ],
-    "name": "validate triggers.fetch refs/tags/79.0.3945.20:DEPS",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chromium.googlesource.com/chromium/src/+/refs/tags/78.0.3904.88/DEPS",
-      "--format",
-      "text"
-    ],
-    "name": "validate triggers.fetch refs/tags/78.0.3904.88:DEPS",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -430,6 +404,11 @@
       "@@@STEP_LOG_LINE@request@      \"ref\": \"refs/tags/79.0.3945.20\", @@@",
       "@@@STEP_LOG_LINE@request@      \"repository\": \"/chromium/src\", @@@",
       "@@@STEP_LOG_LINE@request@      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"ref\": \"refs/tags/78.0.3904.88\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"repository\": \"/chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"revision\": \"90f293ef4ac440371bc6ff57933eac24cc9de0e4\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -458,7 +437,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"versions\": [\n    {\n      \"ref\": \"refs/tags/79.0.3945.20\", \n      \"repository\": \"/chromium/src\", \n      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ], \n  \"packageInfo\": {\n    \"category\": \"chromeos-base\", \n    \"packageName\": \"chromeos-chrome\"\n  }\n}",
+      "{\n  \"versions\": [\n    {\n      \"ref\": \"refs/tags/79.0.3945.20\", \n      \"repository\": \"/chromium/src\", \n      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"\n    }, \n    {\n      \"ref\": \"refs/tags/78.0.3904.88\", \n      \"repository\": \"/chromium/src\", \n      \"revision\": \"90f293ef4ac440371bc6ff57933eac24cc9de0e4\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ], \n  \"packageInfo\": {\n    \"category\": \"chromeos-base\", \n    \"packageName\": \"chromeos-chrome\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -471,6 +450,11 @@
       "@@@STEP_LOG_LINE@input_proto.json@      \"ref\": \"refs/tags/79.0.3945.20\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"repository\": \"/chromium/src\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"ref\": \"refs/tags/78.0.3904.88\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"repository\": \"/chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"revision\": \"90f293ef4ac440371bc6ff57933eac24cc9de0e4\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
