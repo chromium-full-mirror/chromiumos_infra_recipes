@@ -208,7 +208,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
               build_target=build_target, chroot=api.cros_sdk.chroot,
               result_path=str(api.path.mkdtemp()),
               package_blacklist=build_config.unit_tests.package_blacklist,
-              flags=flags))
+              flags=flags), timeout=2 * 60 * 60)
       api.failures.raise_failed_packages(response.failed_packages)
     if api.cros_infra_config.should_exit(ebuilds_run_spec):
       return
