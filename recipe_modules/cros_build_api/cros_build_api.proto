@@ -1,0 +1,17 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_build_api;
+
+message CrosBuildApiProperties {
+  // If true, capture output from Build API steps into a Placeholder object
+  // and send to Analysis Service. Note that this currently has some drawbacks/
+  // behavior changes:
+  // * Stdout/err appear as separate links in Milo.
+  // * Stdout/err only appear in Milo after the step is complete.
+  // * Stdout/err will not appear in Milo if the build is cancelled.
+  bool capture_stdout_stderr = 1;
+}

@@ -824,9 +824,7 @@
     },
     "name": "uprev packages.call chromite.api.PackageService/Uprev.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1014,9 +1012,7 @@
     },
     "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1223,9 +1219,7 @@
     },
     "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1393,9 +1387,7 @@
     },
     "name": "create sysroot.call chromite.api.SysrootService/Create.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1566,9 +1558,7 @@
     },
     "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1785,9 +1775,7 @@
     },
     "name": "call chromite.api.PackageService/GetTargetVersions.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1903,9 +1891,7 @@
     },
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2066,9 +2052,7 @@
     },
     "name": "call chromite.api.PackageService/BuildsChrome.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2164,9 +2148,7 @@
     },
     "name": "call chromite.api.PackageService/HasChromePrebuilt.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2268,9 +2250,7 @@
     "infra_step": true,
     "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2580,9 +2560,7 @@
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2868,9 +2846,7 @@
     "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call build API script",
     "timeout": 7200,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -3037,9 +3013,7 @@
     "infra_step": true,
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

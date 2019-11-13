@@ -67,9 +67,7 @@
     "infra_step": true,
     "name": "upload ebuild logs.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -358,9 +356,7 @@
     "infra_step": true,
     "name": "upload firmware archive.bundle FIRMWARE for upload.call chromite.api.ArtifactsService/BundleFirmware.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -600,9 +596,7 @@
     "infra_step": true,
     "name": "upload test artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -734,9 +728,7 @@
     "infra_step": true,
     "name": "upload test artifacts.bundle AUTOTEST_FILES for upload.call chromite.api.ArtifactsService/BundleAutotestFiles.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -868,9 +860,7 @@
     "infra_step": true,
     "name": "upload test artifacts.bundle TAST_FILES for upload.call chromite.api.ArtifactsService/BundleTastFiles.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1002,9 +992,7 @@
     "infra_step": true,
     "name": "upload test artifacts.bundle PINNED_GUEST_IMAGES for upload.call chromite.api.ArtifactsService/BundlePinnedGuestImages.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1136,9 +1124,7 @@
     "infra_step": true,
     "name": "upload test artifacts.bundle TEST_UPDATE_PAYLOAD for upload.call chromite.api.ArtifactsService/BundleTestUpdatePayloads.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

@@ -683,9 +683,7 @@
     },
     "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -861,9 +859,7 @@
     },
     "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1048,9 +1044,7 @@
     },
     "name": "build autotest packages.create sysroot.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1192,9 +1186,7 @@
     },
     "name": "build autotest packages.install toolchain.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1330,9 +1322,7 @@
     },
     "name": "build autotest packages.call chromite.api.PackageService/BuildsChrome.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1412,9 +1402,7 @@
     },
     "name": "build autotest packages.call chromite.api.PackageService/HasChromePrebuilt.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1502,9 +1490,7 @@
     "infra_step": true,
     "name": "build autotest packages.sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1798,9 +1784,7 @@
     },
     "name": "build autotest packages.install packages.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1996,9 +1980,7 @@
     },
     "name": "run autotest vm tests.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

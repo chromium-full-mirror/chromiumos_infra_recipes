@@ -561,7 +561,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#116)(self, endpoint, input_proto, output_type, test_output_data=None, name=None, infra_step=False, timeout=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#120)(self, endpoint, input_proto, output_type, test_output_data=None, name=None, infra_step=False, timeout=None):**
 
 Call the build API with the given input proto.
 
@@ -2833,9 +2833,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/bad_retcodes.py#16)(api):**
 ### *recipes* / [cros\_build\_api:examples/full](/recipe_modules/cros_build_api/examples/full.py)
 
-[DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#27)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#30)(api):**
 ### *recipes* / [cros\_build\_api:examples/ok\_retcodes](/recipe_modules/cros_build_api/examples/ok_retcodes.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/ok_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

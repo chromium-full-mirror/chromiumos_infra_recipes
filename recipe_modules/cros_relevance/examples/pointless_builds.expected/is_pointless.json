@@ -67,9 +67,7 @@
     },
     "name": "pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

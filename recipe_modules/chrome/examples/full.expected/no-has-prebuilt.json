@@ -56,9 +56,7 @@
     "infra_step": true,
     "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -314,9 +312,7 @@
     "infra_step": true,
     "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -517,9 +513,7 @@
     },
     "name": "call chromite.api.PackageService/BuildsChrome.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -590,9 +584,7 @@
     },
     "name": "call chromite.api.PackageService/HasChromePrebuilt.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -677,9 +669,7 @@
     },
     "name": "call chromite.api.PackageService/BuildsChrome (2).call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -750,9 +740,7 @@
     },
     "name": "call chromite.api.PackageService/HasChromePrebuilt (2).call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

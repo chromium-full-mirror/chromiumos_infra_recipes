@@ -113,6 +113,10 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
     for stub in stubs:
       setattr(self, stub.__name__, stub(self))
 
+  def __init__(self, properties, *args, **kwargs):
+    super(CrosBuildApiApi, self).__init__(*args, **kwargs)
+    self._capture_stdout_stderr = properties.capture_stdout_stderr
+
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                name=None, infra_step=False, timeout=None):
     """Call the build API with the given input proto.
@@ -162,15 +166,21 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
 
         output_proto = reflection.MakeClass(output_type)()
 
+        if self._capture_stdout_stderr:
+          stdout_placeholder = self.m.raw_io.output(
+                                   add_output_log=True, name='stdout')
+          stderr_placeholder = self.m.raw_io.output(
+                                   add_output_log=True, name='stderr')
+        else:
+          stdout_placeholder = None
+          stderr_placeholder = None
         try:
           # For Build API retcode 2 indicates that the invocation failed in some
           # way but a consumable response has been produced.
           result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
                                infra_step=infra_step, timeout=timeout,
-                               stdout=self.m.raw_io.output(
-                                   add_output_log=True, name='stdout'),
-                               stderr=self.m.raw_io.output(
-                                   add_output_log=True, name='stderr'))
+                               stdout=stdout_placeholder,
+                               stderr=stderr_placeholder)
         except self.m.step.StepFailure as e:
           # If the Build API call failed, still publish information to
           # analysis_service. There is some code duplication with the success

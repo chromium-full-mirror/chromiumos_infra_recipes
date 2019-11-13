@@ -13,3 +13,8 @@ DEPS = [
     'analysis_service',
     'cros_source',
 ]
+
+from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
+    CrosBuildApiProperties)
+
+PROPERTIES = CrosBuildApiProperties

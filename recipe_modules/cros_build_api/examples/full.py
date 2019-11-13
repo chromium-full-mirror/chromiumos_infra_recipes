@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'cros_build_api',
 ]
 
@@ -23,6 +24,8 @@ from PB.chromite.api import test
 from PB.chromite.api import build_api_test
 from PB.chromiumos.common import BuildTarget
 
+from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
+    CrosBuildApiProperties)
 
 def RunSteps(api):
   # Check dumb build API call works.
@@ -131,4 +134,12 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic'))
+
+  yield (api.test('basic_with_output') +  #
+         api.properties(**{
+             '$chromeos/cros_build_api':
+             CrosBuildApiProperties(capture_stdout_stderr=True)
+         })
+  )
+
