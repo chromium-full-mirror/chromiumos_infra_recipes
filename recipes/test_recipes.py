@@ -39,8 +39,9 @@ PROJECT = 'chromeos'
 # Bucket to test in. Only the staging environment should be used.
 BUCKET = 'staging'
 
-DEFAULT_BUILDERS = ['staging-Annealing',
-                    'staging-amd64-generic-postsubmit',
+# TODO(crbug.com/1024286): Re-enable Annealing when duplicate slice bug is
+# resolved.
+DEFAULT_BUILDERS = ['staging-amd64-generic-postsubmit',
                     'staging-chromite-postsubmit',
                     'staging-test-manifest']
 
