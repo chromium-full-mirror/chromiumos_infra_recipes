@@ -126,13 +126,10 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
                 chroot_current=True, replace=True)))
     sysroot = create_sysroot_response.sysroot
 
-  # Skip the pointless build check for kernel builders due to dep service bug.
-  # TODO(https://crbug.com/1019562): bring the check back for all builders.
-  if '-kernel-v' not in api.buildbucket.build.builder.builder:
-    if api.cros_relevance.is_build_pointless(
-        gerrit_changes, gitiles_commit, build_target=build_target,
-        chroot=api.cros_sdk.chroot, name='post-sync pointless build check'):
-      return
+  if api.cros_relevance.is_build_pointless(
+      gerrit_changes, gitiles_commit, build_target=build_target,
+      chroot=api.cros_sdk.chroot, name='post-sync pointless build check'):
+    return
 
   try:
     api.easy.set_property_step('target_versions',
