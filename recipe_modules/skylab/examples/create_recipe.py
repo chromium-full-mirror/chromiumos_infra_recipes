@@ -10,15 +10,13 @@ DEPS = [
     'skylab',
 ]
 
-from google.protobuf import duration_pb2
 
 def RunSteps(api):
   hw_test_unit = api.cros_test_plan.test_api.hw_test_unit
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.common.display_name = 'my_little_hw_test'
 
-  task = api.skylab.create_recipe(hw_test, hw_test_unit,
-                                  timeout=duration_pb2.Duration(seconds=3600))
+  task = api.skylab.create_recipe(hw_test, hw_test_unit)
   api.assertions.assertEqual(task.test, hw_test)
 
 

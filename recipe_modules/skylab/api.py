@@ -33,14 +33,14 @@ class SkylabApi(recipe_api.RecipeApi):
     # instead of the "latest" tag.
     self._version = str(properties.skylab_version) or 'latest'
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
+    self._skylab_timeout_mins = properties.skylab_timeout_mins or 7 * 60
     self._skylab_priority = properties.skylab_priority or 140
 
-  def schedule_suites(self, unit_hw_tests, timeout, name=None):
+  def schedule_suites(self, unit_hw_tests, name=None):
     """Schedule HW test suites by invoking the cros_test_platform recipe.
 
     Args:
       tests (list[UnitHwTest]): Hardware test suites to execute
-      timeout (Duration): Timeout in timestamp_pb2.Duration.
       name (str): The step name. Defaults to 'schedule skylab tests v2'
 
     Returns:
@@ -54,7 +54,7 @@ class SkylabApi(recipe_api.RecipeApi):
       for uht in unit_hw_tests:
         req = Request()
         req.params.hardware_attributes.model = ''
-        req.params.time.maximum_duration.seconds = timeout.seconds
+        req.params.time.maximum_duration.seconds = self._skylab_timeout_mins * 60
         image_path = uht.unit.common.build_payload.artifacts_gs_path
         req.params.metadata.test_metadata_url = (
             'gs://' + uht.unit.common.build_payload.artifacts_gs_bucket + '/' +
@@ -92,13 +92,12 @@ class SkylabApi(recipe_api.RecipeApi):
                             unit=uht.unit))
       return tasks
 
-  def create_recipe(self, test, unit, timeout, name=None):
+  def create_recipe(self, test, unit, name=None):
     """Schedule a HW test suite by invoking the cros_test_platform recipe.
 
     Args:
       test (HwTest): A hardware test config.
       unit (HwTestUnit): The unit the test was defined in.
-      timeout (Duration): Timeout in timestamp_pb2.Duration.
       name (str): The step name. Defaults to 'schedule <test title>'
 
     Returns:
@@ -108,7 +107,7 @@ class SkylabApi(recipe_api.RecipeApi):
     with self.m.step.nest(name) as step:
       req = Request()
       req.params.hardware_attributes.model = ""
-      req.params.time.maximum_duration.seconds = timeout.seconds
+      req.params.time.maximum_duration.seconds = self._skylab_timeout_mins * 60
       image_path = unit.common.build_payload.artifacts_gs_path
       req.params.metadata.test_metadata_url = (
           'gs://' + unit.common.build_payload.artifacts_gs_bucket + '/' +
@@ -161,12 +160,11 @@ class SkylabApi(recipe_api.RecipeApi):
     req.params.retry.max = 5
     req.params.retry.allow = True
 
-  def wait_on_suites(self, tasks, timeout):
+  def wait_on_suites(self, tasks):
     """Wait for the single Skylab multi-request to finish and return the result
 
     Args:
       tasks (list[SkylabTask]): The Skylab tasks to wait on.
-      timeout (Duration): Timeout in timestamp_pb2.Duration.
 
     Returns:
       list[SkylabResult]: The results for suites from provided tasks.
@@ -178,7 +176,7 @@ class SkylabApi(recipe_api.RecipeApi):
       # All the tasks contain the same cros_test_platgorm build ID.
       task_id = tasks[0].id
       # Give 30 minutes grace period for recipes to time out.
-      timeout_seconds = int(timeout.seconds + 30 * 60)
+      timeout_seconds = (self._skylab_timeout_mins + 30) * 60
       try:
         hw_tests = self.m.buildbucket.collect_builds(
             [task_id], timeout=timeout_seconds)[task_id]
@@ -221,12 +219,11 @@ class SkylabApi(recipe_api.RecipeApi):
         responses[tag] = response
     return responses
 
-  def wait_on_recipes(self, tasks, timeout):
+  def wait_on_recipes(self, tasks):
     """Wait for all Skylab suites to finish and return the results.
 
     Args:
       tasks (list[SkylabTask]): The Skylab tasks to wait on.
-      timeout (Duration): Timeout in timestamp_pb2.Duration.
 
     Returns:
       list[SkylabResult]: The results for each suite.
@@ -236,7 +233,7 @@ class SkylabApi(recipe_api.RecipeApi):
     with self.m.step.nest('collect skylab tasks') as step:
       task_ids = [task.id for task in tasks]
       # Give 30 minutes grace period for recipes to time out.
-      timeout_seconds = int(timeout.seconds + 30 * 60)
+      timeout_seconds = (self._skylab_timeout_mins + 30) * 60
       try:
         all_hw_tests = self.m.buildbucket.collect_builds(
             task_ids, timeout=timeout_seconds)
