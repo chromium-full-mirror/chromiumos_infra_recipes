@@ -54,7 +54,7 @@ class SkylabApi(recipe_api.RecipeApi):
       for uht in unit_hw_tests:
         req = Request()
         req.params.hardware_attributes.model = ''
-        # req.params.time.maximum_duration.seconds = timeout.seconds
+        req.params.time.maximum_duration.seconds = timeout.seconds
         image_path = uht.unit.common.build_payload.artifacts_gs_path
         req.params.metadata.test_metadata_url = (
             'gs://' + uht.unit.common.build_payload.artifacts_gs_bucket + '/' +
