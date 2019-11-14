@@ -10,14 +10,15 @@ DEPS = [
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-
+from google.protobuf import duration_pb2
 
 def RunSteps(api):
 
   hw_test = api.skylab.test_api.hw_test()
   task = api.skylab.test_api.skylab_task(id=1234, url='https://google.com',
                                          test=hw_test)
-  actual = api.skylab.wait_on_recipes([task])[0]
+  actual = api.skylab.wait_on_recipes(
+      [task], timeout=duration_pb2.Duration(seconds=3600))[0]
   expected = api.skylab.SkylabResult(task=task, success=True, child_results=[])
   api.assertions.assertEqual(actual.task, expected.task)
   api.assertions.assertEqual(actual.success, expected.success)

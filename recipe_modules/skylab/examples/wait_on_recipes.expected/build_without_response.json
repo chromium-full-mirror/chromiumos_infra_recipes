@@ -55,7 +55,7 @@
     ],
     "infra_step": true,
     "name": "collect skylab tasks.buildbucket.collect.wait",
-    "timeout": 27000,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -112,7 +112,7 @@
       "    arg_names, **additional_args)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in _invoke_with_properties",
       "    return callable_obj(*props, **additional_args)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/skylab/examples/wait_on_recipes.py\", line 23, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/skylab/examples/wait_on_recipes.py\", line 24, in RunSteps",
       "    api.assertions.assertEqual(actual.success, expected.success)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_modules/assertions/api.py\", in assertion_wrapper",
       "    raise AssertionError(e.message)",

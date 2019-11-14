@@ -2488,7 +2488,7 @@
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect autotest vm tests.wait",
-    "timeout": 14400,
+    "timeout": 25200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2553,7 +2553,7 @@
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect tast vm tests.wait",
-    "timeout": 14400,
+    "timeout": 25200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2604,7 +2604,7 @@
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect moblab vm tests.wait",
-    "timeout": 14400,
+    "timeout": 25200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

@@ -11,7 +11,7 @@ DEPS = [
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-
+from google.protobuf import duration_pb2
 
 def RunSteps(api):
   hw_test_unit = api.cros_test_plan.test_api.hw_test_unit
@@ -33,7 +33,8 @@ def RunSteps(api):
       unit=another_hw_test_unit,
   )
 
-  responses = api.skylab.wait_on_suites([task, another_task])
+  responses = api.skylab.wait_on_suites([task, another_task],
+                                        timeout=duration_pb2.Duration(seconds=3600))
   api.assertions.assertEqual(len(responses), 2)
 
   expected_tasks = [r.task for r in responses]
