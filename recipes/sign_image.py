@@ -15,6 +15,7 @@
 # sign the image, instead of uploading instructions files.
 
 import os
+import string
 
 from PB.chromiumos import sign_image as sign_image_os
 from PB.chromiumos import common as common_os
@@ -30,6 +31,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/step',
 ]
@@ -176,8 +178,11 @@ def RunSteps(api, properties):
 
   with api.step.nest('upload cr50 instructions') as step:
     content = str('\n'.join(insns) + '\n')
-    insn_basename = 'ChromeOS-%s-%s-%s.instructions' % (
-        image_type_name, versionrev, properties.keyset)
+    # crbug.com/1025023: Don't clobber other pending instructions files.
+    random_suffix = ''.join(api.random.choice(string.ascii_letters)
+                            for n in range(8))
+    insn_basename = 'ChromeOS-%s-%s-%s-%s.instructions' % (
+        image_type_name, versionrev, properties.keyset, random_suffix)
     local_insn = local_dir.join(insn_basename)
     insn_path = os.path.join(os.path.dirname(archive), insn_basename)
     rel_insn_path = gs.rel_path(insn_path)
