@@ -6,6 +6,7 @@
 import os
 
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import CrosTestPostprocessRequest, TestResult
+from PB.test_platform.common.task import TaskLogData
 
 DEPS = [
     'breakpad',
@@ -27,10 +28,10 @@ def _download_test_result_files(api, remote_test_results):
 
   with api.step.nest('download test results'):
     for test_result in remote_test_results:
-      with api.step.nest('download {}'.format(test_result.path)):
-        gs_path = test_result.path
+      gs_path = test_result.log_data.gs_url
+      with api.step.nest('download {}'.format(gs_path)):
         test_result_local_path = api.path.mkdtemp(prefix='test_result')
-        step = api.gsutil.download_url(test_result.path,
+        step = api.gsutil.download_url(gs_path,
                                        test_result_local_path, ['-r'],
                                        multithreaded=True)
         step.presentation.links[gs_path] = api.urls.get_gs_path_url(gs_path)
@@ -54,19 +55,19 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   # Test of symbolicate dumps.
+  tr = TestResult(log_data=TaskLogData(gs_url=TEST_RESULT_PATH))
+  req = CrosTestPostprocessRequest(
+      image_archive_path='gs://chromeos-image-archive/foox-release/R10-11.0.0',
+      test_results=[tr],
+  )
   yield (api.test('basic') +  #
-         api.properties(
-             image_archive_path=
-             'gs://chromeos-image-archive/test-board-release/R10-11.0.0',
-             test_results=[{
-                 'path': TEST_RESULT_PATH
-             }]) +  #
+         api.properties(req) +  #
          api.breakpad.find_dmp_files_test_data(
-             test_result=TestResult(path=TEST_RESULT_PATH),
+             test_result=tr,
              filenames=['./a/b/c.dmp', './a/b/d.dmp']) +  #
          api.breakpad.minidump_stackwalk_test_data(
-             test_result=TestResult(path=TEST_RESULT_PATH),
+             test_result=tr,
              filename='./a/b/c.dmp') +  #
          api.breakpad.minidump_stackwalk_test_data(
-             test_result=TestResult(path=TEST_RESULT_PATH),
+             test_result=tr,
              filename='./a/b/d.dmp'))

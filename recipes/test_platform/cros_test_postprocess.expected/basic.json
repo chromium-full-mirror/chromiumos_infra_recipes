@@ -78,14 +78,14 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/test-board-release/R10-11.0.0/debug_breakpad.tar.xz",
+      "gs://chromeos-image-archive/foox-release/R10-11.0.0/debug_breakpad.tar.xz",
       "[CLEANUP]/image_archive_tmp_2/debug_breakpad.tar.xz"
     ],
     "infra_step": true,
     "name": "symbolicate dump.gsutil download_url",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs://chromeos-image-archive/test-board-release/R10-11.0.0/debug_breakpad.tar.xz@https://storage.cloud.google.com/chromeos-image-archive/test-board-release/R10-11.0.0/debug_breakpad.tar.xz@@@"
+      "@@@STEP_LINK@gs://chromeos-image-archive/foox-release/R10-11.0.0/debug_breakpad.tar.xz@https://storage.cloud.google.com/chromeos-image-archive/foox-release/R10-11.0.0/debug_breakpad.tar.xz@@@"
     ]
   },
   {

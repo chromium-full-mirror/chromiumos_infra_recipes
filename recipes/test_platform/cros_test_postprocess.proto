@@ -6,10 +6,13 @@ syntax = "proto3";
 
 package recipes.chromeos.test_platform.cros_test_postprocess;
 
+import "test_platform/common/task.proto";
+
 message TestResult {
-  // A Google Storage path to the test results. For example,
-  // "gs://chromeos-autotest-results/swarming-454a1ea44d1d2910".
-  string path = 1;
+  string path = 1 [deprecated=true];
+
+  // LogData specifies the location of the logs of a test.
+  .test_platform.common.TaskLogData log_data = 2;
 }
 
 message CrosTestPostprocessRequest {
