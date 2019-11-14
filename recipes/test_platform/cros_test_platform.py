@@ -223,8 +223,8 @@ def RunSteps(api, properties):
 
 def _some_response_contains_unsuccessful_results(responses):
   return any([
-    _contains_unsuccessful_results(_classify_task_results(r.task_results))
-    for r in responses.itervalues()
+      _contains_unsuccessful_results(_classify_task_results(r.task_results))
+      for r in responses.itervalues()
   ])
 
 def _get_requests_from_properties(properties):
@@ -292,13 +292,11 @@ _ClassifiedTaskResults = collections.namedtuple(
 def _classify_task_results(task_results):
   classified = _ClassifiedTaskResults(passed=[], passed_on_retry=[],
                                       unsuccessful=[], rejected=[], other=[])
-  d = collections.defaultdict(bool)
   failed_tasks = []
   for tr in task_results:
     # The order of these guard clauses is significant
     if (tr.state.verdict == TaskState.VERDICT_PASSED or
         tr.state.verdict == TaskState.VERDICT_PASSED_ON_RETRY):
-      d[tr.name] = (tr.state.verdict == TaskState.VERDICT_PASSED_ON_RETRY)
       classified.passed.append(tr)
     elif tr.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED:
       classified.rejected.append(tr)
@@ -308,8 +306,9 @@ def _classify_task_results(task_results):
     else:  # pragma: no cover
       classified.other.append(tr)
 
+  passed_set = set([x.name for x in classified.passed])
   for tr in failed_tasks:
-    if d[tr.name]:
+    if tr.name in passed_set:
       classified.passed_on_retry.append(tr)
     else:
       classified.unsuccessful.append(tr)
@@ -529,6 +528,45 @@ def GenTests(api):
                   stdout=api.raw_io.output(
                     json_format.MessageToJson(e2e_execute_responses_failed)))
   )
+
+  e2e_execute_responses_failed_then_passed = ExecuteResponses(responses=[
+      ExecuteResponse(
+          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                          verdict='VERDICT_PASSED_ON_RETRY'),
+          task_results=[
+              ExecuteResponse.TaskResult(
+                  task_url='foo://bar/baz',
+                  log_url='logs://bar/baz',
+                  name='foo-retried',
+                  state=TaskState(verdict="VERDICT_FAILED",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
+              ),
+              ExecuteResponse.TaskResult(
+                  task_url='foo://bar/baz1',
+                  log_url='logs://bar/baz1',
+                  name='foo-retried',
+                  attempt=1,
+                  state=TaskState(verdict="VERDICT_PASSED",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
+              ),
+          ],
+      )
+  ])
+  yield (
+      api.test('end-to-end skylab execution with failed then passed tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(request=e2e_request,
+                                     config=e2e_config)) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(e2e_split_response_skylab))) +  #
+      api.step_data('enumerate tests.call binary.enumerate',
+                    stdout=api.raw_io.output(e2e_enumeration_responses)) +  #
+      api.step_data(
+          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  e2e_execute_responses_failed_then_passed))))
 
   e2e_execute_responses_retried = ExecuteResponses(responses=[
       ExecuteResponse(
