@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "upload ebuild logs"
+    "name": "upload ebuild logs",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-0@@@"
+    ]
   },
   {
     "cmd": [],
@@ -290,7 +293,10 @@
   },
   {
     "cmd": [],
-    "name": "upload firmware archive"
+    "name": "upload firmware archive",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-0@@@"
+    ]
   },
   {
     "cmd": [],
@@ -530,7 +536,10 @@
   },
   {
     "cmd": [],
-    "name": "upload test artifacts"
+    "name": "upload test artifacts",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/artifacts_gs_bucket/target-cq/R99-1234.56.0-101-0@@@"
+    ]
   },
   {
     "cmd": [],

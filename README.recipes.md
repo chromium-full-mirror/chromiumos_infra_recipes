@@ -345,7 +345,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#144)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#147)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -359,7 +359,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#176)(self, build_payload, artifacts, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#179)(self, build_payload, artifacts, name=None):**
 
 Download the given artifacts from the given build payload.
 

@@ -112,7 +112,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           to upload. See build config for options.
       name (str): The step name. Defaults to 'upload artifacts'.
     """
-    with self.m.step.nest(name or 'upload artifacts'):
+    with self.m.step.nest(name or 'upload artifacts') as step:
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
 
       files_by_artifact = {}
@@ -121,6 +121,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         files_by_artifact[name] = files
 
       gs_path = self.artifacts_gs_path(target, kind)
+      step.presentation.links['gs upload dir'] = (
+        'https://console.cloud.google.com/storage/browser/%s/%s' %
+        (gs_bucket, gs_path))
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
       for retries in range(3):
         try:
