@@ -213,8 +213,19 @@ def RunSteps(api, properties):
     _set_output_properties(step, responses)
     for tag, response in responses.iteritems():
       with api.step.nest('%s task results' % tag):
-        _log_task_results(api, response.task_results)
+        try:
+          _log_task_results(api, response.task_results)
+        except api.step.StepFailure:
+          pass
+    if _some_response_contains_unsuccessful_results(responses):
+      raise api.step.StepFailure('Some tests were unsuccessful')
 
+
+def _some_response_contains_unsuccessful_results(responses):
+  return any([
+    _contains_unsuccessful_results(_classify_task_results(r.task_results))
+    for r in responses.itervalues()
+  ])
 
 def _get_requests_from_properties(properties):
   if len(properties.requests) > 0:
