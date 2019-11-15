@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "traffic split",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@selected backend: autotest@@@",
+      "@@@STEP_SUMMARY_TEXT@selected backend: skylab@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -42,7 +42,7 @@
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"autotestRequest\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
       "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
@@ -61,7 +61,7 @@
       "@@@STEP_LOG_LINE@response@      }@@@",
       "@@@STEP_LOG_LINE@response@    }, @@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"autotestRequest\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
       "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",

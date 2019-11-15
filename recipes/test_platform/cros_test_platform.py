@@ -641,19 +641,81 @@ def GenTests(api):
                     json_format.MessageToJson(e2e_execute_responses_passed)))
   )
 
-  too_many_split_responses =  SchedulerTrafficSplitResponses(responses=[
-      SchedulerTrafficSplitResponse(autotest_request=e2e_request),
-      SchedulerTrafficSplitResponse(autotest_request=e2e_request)
+  split_responses_with_two_requests = SchedulerTrafficSplitResponses(responses=[
+      SchedulerTrafficSplitResponse(skylab_request=e2e_request),
+      SchedulerTrafficSplitResponse(skylab_request=e2e_request)
   ])
-  yield (
-    api.test('too many traffic splitter responses') + #
-    api.properties(CrosTestPlatformProperties(request=e2e_request,
-                                              config=e2e_config)) + #
-    api.step_data('traffic split.call binary.scheduler-traffic-split',
-                  stdout=api.raw_io.output(
-                    json_format.MessageToJson(too_many_split_responses))) + #
-    api.expect_exception("ValueError")
-  )
+  yield (api.test('too many traffic splitter responses') +  #
+         api.properties(
+             CrosTestPlatformProperties(request=e2e_request,
+                                        config=e2e_config)) +  #
+         api.step_data(
+             'traffic split.call binary.scheduler-traffic-split',
+             stdout=api.raw_io.output(
+                 json_format.MessageToJson(split_responses_with_two_requests)))
+         +  #
+         api.expect_exception("ValueError"))
+
+  # Note: using raw JSON here to avoid needing to import the chromite
+  # protos.
+  enumeration_responses_with_two_invocations = """
+  {
+    "responses": [
+      {
+        "autotest_invocations": [{"test": {"name": "foo-test"}}]
+      },
+      {
+        "autotest_invocations": [{"test": {"name": "baz-test"}}]
+      }
+    ]
+  }"""
+  execute_responses_failed_two_invocations = ExecuteResponses(responses=[
+      ExecuteResponse(
+          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                          verdict='VERDICT_FAILED'),
+          task_results=[
+              ExecuteResponse.TaskResult(
+                  task_url='foo://bar/baz',
+                  log_url='logs://bar/baz',
+                  name='foo-failed',
+                  state=TaskState(verdict="VERDICT_FAILED",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
+              ),
+          ],
+      ),
+      ExecuteResponse(
+          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                          verdict='VERDICT_FAILED'),
+          task_results=[
+              ExecuteResponse.TaskResult(
+                  task_url='foo://bar/baz',
+                  log_url='logs://bar/baz',
+                  name='baz-failed',
+                  state=TaskState(verdict="VERDICT_FAILED",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
+              ),
+          ],
+      ),
+  ])
+  yield (api.test('skylab execution with two failed invocations') +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 requests={
+                     'first': e2e_request,
+                     'second': e2e_request
+                 }, config=e2e_config),) +  #
+         api.step_data(
+             'traffic split.call binary.scheduler-traffic-split',
+             stdout=api.raw_io.output(
+                 json_format.MessageToJson(split_responses_with_two_requests)))
+         +  #
+         api.step_data(
+             'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+                 enumeration_responses_with_two_invocations)) +  #
+         api.step_data(
+             'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+                 json_format.MessageToJson(
+                     execute_responses_failed_two_invocations))))
 
   # TODO(pprabhu) Verify that responses is set.
   e2e_multi_build_responses = {
