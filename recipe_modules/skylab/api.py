@@ -79,7 +79,7 @@ class SkylabApi(recipe_api.RecipeApi):
       bb_request = self.m.buildbucket.schedule_request(
           'cros_test_platform', bucket='testplatform', properties={
               'requests': reqs,
-          }, gerrit_changes=[])
+          }, gerrit_changes=[], swarming_parent_run_id=self.m.swarming.task_id)
       build = self.m.buildbucket.schedule([bb_request])[0]
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
@@ -134,7 +134,8 @@ class SkylabApi(recipe_api.RecipeApi):
       bb_request = self.m.buildbucket.schedule_request(
           'cros_test_platform', bucket='testplatform', properties={
               'request': request_dict,
-          }, tags=bb_tags, gerrit_changes=[])
+          }, tags=bb_tags, gerrit_changes=[],
+          swarming_parent_run_id=self.m.swarming.task_id)
       build = self.m.buildbucket.schedule([bb_request])[0]
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
