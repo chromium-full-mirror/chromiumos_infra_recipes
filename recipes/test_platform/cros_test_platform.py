@@ -182,11 +182,12 @@ def execute(api, requests, enumerations, config, use_skylab):
                 (True -> skylab, False -> autotest).
   """
   with api.step.nest('execute'):
-    tags, requests = _unzip_dict(requests)
-    _, enumerations = _unzip_dict(enumerations)
+    tags = requests.keys()
     exec_reqs = ExecuteRequests(requests=[
-        ExecuteRequest(request_params=r.params, enumeration=e, config=config)
-        for r, e in zip(requests, enumerations)
+        ExecuteRequest(request_params=requests[tag].params,
+                       enumeration=enumerations[tag],
+                       config=config)
+        for tag in tags
     ])
     if use_skylab:
       responses = api.cros_test_platform.skylab_execute(exec_reqs)

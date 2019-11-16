@@ -146,7 +146,7 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 201, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 202, in RunSteps",
       "    skylab, requests = split(api, requests, properties.config)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 118, in split",
       "    return is_skylab, _zip_to_dict(tags, requests)",

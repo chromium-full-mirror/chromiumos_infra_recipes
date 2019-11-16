@@ -3469,7 +3469,7 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#198)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#199)(api, properties):**
 
 &mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#46)(api, requests):**
 
