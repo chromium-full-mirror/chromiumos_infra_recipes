@@ -356,7 +356,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
 
       tags = api.cros_tags.make_schedule_tags(snapshot)
 
-      # Technically per current appraoches a bisecting orchestrator doing hw
+      # Technically per current approaches a bisecting orchestrator doing hw
       # test bisection should find all builds already completed or in flight
       # as *-snapshot builds. If it does need to schedule such a build, those
       # builders run in the postsubmit bucket.
