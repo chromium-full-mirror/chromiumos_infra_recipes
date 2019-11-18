@@ -13,7 +13,10 @@
   },
   {
     "cmd": [],
-    "name": "run builds"
+    "name": "run builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@need 1 new build, reusing 0 older builds@@@"
+    ]
   },
   {
     "cmd": [],

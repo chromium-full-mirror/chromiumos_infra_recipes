@@ -113,9 +113,9 @@ def RunSteps(api, properties):
           step.presentation.step_text = 'found no inflight run'
 
   child_builders = []
-  with api.step.nest('run builds'):
+  with api.step.nest('run builds') as step:
     child_builders = get_child_builders(api)
-    completed_builds = filter_schedule_wait_builds(api, child_builders,
+    completed_builds = filter_schedule_wait_builds(api, step, child_builders,
                                                    properties.enable_history,
                                                    snapshot, gerrit_changes)
 
@@ -190,14 +190,15 @@ def get_child_builders(api):
       api.buildbucket.build.builder.builder).orchestrator.children
 
 
-def filter_schedule_wait_builds(api, child_builders, enable_history, snapshot,
-                                gerrit_changes):
+def filter_schedule_wait_builds(api, parent_step, child_builders, enable_history,
+                                snapshot, gerrit_changes):
   """Find the builds you need, filter those already started, run, and collect.
 
   Most of the heavy lifting is done in get_build_plan.
 
   Args:
     api (RecipeApi): See RunSteps documentation.
+    parent_step (Step): the calling step, to be used for presentation purposes.
     child_builders (list(string)): A list of builders.
     enable_history (bool): Enables history lookup in cq orchestrator.
     snapshot (GitilesCommit): Start ref to be supplied to the child builds.
@@ -209,6 +210,12 @@ def filter_schedule_wait_builds(api, child_builders, enable_history, snapshot,
   completed_builds, existing_builds, new_build_requests = get_build_plan(
       api, child_builders=child_builders, enable_history=enable_history,
       gerrit_changes=gerrit_changes, snapshot=snapshot)
+  parent_step.presentation.step_text = (
+      'need {} new build{}, reusing {} older build{}'.format(
+          len(new_build_requests),
+          's' if len(new_build_requests) != 1 else '',
+          len(completed_builds)+len(existing_builds),
+          's' if len(completed_builds)+len(existing_builds) != 1 else ''))
 
   # request new builds and add to total existing.
   existing_builds += api.buildbucket.schedule(
