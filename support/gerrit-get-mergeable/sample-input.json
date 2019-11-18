@@ -1,8 +1,0 @@
-{
-  "mergeable_input": {
-    "host": "chromium-review.googlesource.com",
-    "change_number": 1618205,
-    "mergeable_strategy": "RESOLVE",
-    "revision_id": "current"
-  }
-}
