@@ -280,7 +280,7 @@
     ],
     "infra_step": true,
     "name": "upload artifacts.gsutil rsync",
-    "timeout": 360,
+    "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
@@ -303,7 +303,7 @@
     ],
     "infra_step": true,
     "name": "upload artifacts.gsutil rsync (2)",
-    "timeout": 360,
+    "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
@@ -326,7 +326,7 @@
     ],
     "infra_step": true,
     "name": "upload artifacts.gsutil rsync (3)",
-    "timeout": 360,
+    "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
