@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"support/internal/shared"
 	"sync"
 	"time"
+
+	gerrit2 "go.chromium.org/luci/common/proto/gerrit"
+	"support/internal/shared"
 
 	"go.chromium.org/luci/common/api/gerrit"
 	"support/internal/cli"
@@ -70,33 +72,33 @@ func changesToQueryParams(changes Changes, options Options) gerrit.ChangeQueryPa
 	}
 }
 
-func updateChangeFromResults(change *Change, results []*gerrit.Change) {
+func (c *Change) updateChangeFromResults(results []*gerrit.Change) {
 	for _, candidate := range results {
-		if candidate.ChangeNumber == change.Number {
-			change.Info = candidate
+		if candidate.ChangeNumber == c.Number {
+			c.Info = candidate
 			break
 		}
 	}
-	if change.Info == nil {
+	if c.Info == nil {
 		return
 	}
 
 	var foundRev string
-	if change.PatchSet == -1 {
-		foundRev = change.Info.CurrentRevision
-	} else if change.PatchSet != 0 {
-		for rev, revInfo := range change.Info.Revisions {
-			if revInfo.PatchSetNumber == change.PatchSet {
+	if c.PatchSet == -1 {
+		foundRev = c.Info.CurrentRevision
+	} else if c.PatchSet != 0 {
+		for rev, revInfo := range c.Info.Revisions {
+			if revInfo.PatchSetNumber == c.PatchSet {
 				foundRev = rev
 				break
 			}
 		}
 	}
-	if revInfo, ok := change.Info.Revisions[foundRev]; ok {
-		change.PatchSetRevision = foundRev
-		change.RevisionInfo = &revInfo
+	if revInfo, ok := c.Info.Revisions[foundRev]; ok {
+		c.PatchSetRevision = foundRev
+		c.RevisionInfo = &revInfo
 	}
-	change.Info.Revisions = nil
+	c.Info.Revisions = nil
 }
 
 func fetchHostChanges(
@@ -108,7 +110,8 @@ func fetchHostChanges(
 		return err
 	}
 	queryParams := changesToQueryParams(changes, options)
-	ctx, _ = context.WithTimeout(ctx, 5*time.Minute)
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
+	defer cancel()
 	ch := make(chan []*gerrit.Change, 1)
 	shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
 		results, more, err := client.ChangeQuery(ctx, queryParams)
@@ -124,7 +127,39 @@ func fetchHostChanges(
 	})
 	results := <-ch
 	for _, c := range changes {
-		updateChangeFromResults(c, results)
+		c.updateChangeFromResults(results)
+		// In some cases (e.g. merge commit), GetChange doesn't return a file list.
+		// We thus call into the ListFiles endpoint instead.
+		if options.IncludeFiles && len(c.RevisionInfo.Files) == 0 {
+			c.fetchFileList(ctx, httpClient)
+		}
+	}
+	return nil
+}
+
+func (c *Change) fetchFileList(ctx context.Context, httpClient *http.Client) error {
+	rest, err := gerrit.NewRESTClient(httpClient, c.Host, true)
+	if err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
+	defer cancel()
+	ch := make(chan *gerrit2.ListFilesResponse, 1)
+	shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
+		// The "Parent: 1" is what makes ListFiles able to get file lists for merge commits.
+		// It's a 1-indexed way to reference parent commits, and we always want a value of 1
+		// in order to get the target branch ref.
+		resp, err := rest.ListFiles(ctx, &gerrit2.ListFilesRequest{Number: int64(c.Number), RevisionId: "current", Parent: 1})
+		if err != nil {
+			return err
+		}
+		ch <- resp
+		return nil
+	})
+	results := <-ch
+	c.RevisionInfo.Files = make(map[string]gerrit.FileInfo)
+	for filename, _ := range results.Files {
+		c.RevisionInfo.Files[filename] = gerrit.FileInfo{}
 	}
 	return nil
 }

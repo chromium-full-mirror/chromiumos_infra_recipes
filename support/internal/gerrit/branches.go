@@ -38,12 +38,14 @@ func MustFetchBranch(ctx context.Context, httpClient *http.Client, branch Branch
 		log.Fatalf("error creating Gitiles client: %v", err)
 	}
 	ref := "refs/heads/" + branch.Branch
-	ctx, _ = context.WithTimeout(ctx, 5*time.Minute)
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
+	defer cancel()
 	ch := make(chan *gitilespb.RefsResponse, 1)
 	err = shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
 		// This sets the deadline for the individual API call, while the outer context sets
 		// an overall timeout for all attempts.
-		innerCtx, _ := context.WithTimeout(ctx, 30*time.Second)
+		innerCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+		defer cancel()
 		resp, err := client.Refs(innerCtx, &gitilespb.RefsRequest{Project: branch.Project, RefsPath: ref})
 		if err != nil {
 			return err

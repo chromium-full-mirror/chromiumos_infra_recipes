@@ -6,7 +6,7 @@ import (
 	"support/internal/cli"
 	"support/internal/pubsub"
 
-	luciPubsub "github.com/luci/luci-go/common/gcloud/pubsub"
+	luciPubsub "go.chromium.org/luci/common/gcloud/pubsub"
 	"google.golang.org/api/option"
 )
 
