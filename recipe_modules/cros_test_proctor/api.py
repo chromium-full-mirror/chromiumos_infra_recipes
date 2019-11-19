@@ -119,6 +119,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             'all tests passed. no need for baseline validation')
       else:
         step.presentation.step_text = ('no tests were necessary')
+        step.presentation.properties['no_tests_needed'] = True
 
     with self.m.failures.ignore_exceptions():
       if gerrit_changes and needs_baseline_validation:

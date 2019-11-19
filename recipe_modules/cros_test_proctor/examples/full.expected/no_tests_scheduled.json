@@ -3,7 +3,8 @@
     "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no tests were necessary@@@"
+      "@@@STEP_TEXT@no tests were necessary@@@",
+      "@@@SET_BUILD_PROPERTY@no_tests_needed@true@@@"
     ]
   },
   {
