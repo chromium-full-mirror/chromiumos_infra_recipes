@@ -358,7 +358,7 @@ class RepoApi(recipe_api.RecipeApi):
           cmd = ['forall', '--ignore-missing', '-j', '32', '-c', 'git', 'clean',
                  '-d', '-f']
           self._step(cmd, stdout=self.m.raw_io.output(add_output_log=True))
-        except api.step.StepFailure: #pragma: nocover
+        except self.m.step.StepFailure: # pragma: nocover
           # try again without the --ignore-missing
           cmd = ['forall', '-j', '32', '-c', 'git', 'clean',
                  '-d', '-f']
