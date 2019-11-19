@@ -182,7 +182,7 @@
     "name": "run builds.plan builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@will run 2 and skip 0 builds@@@",
+      "@@@STEP_TEXT@2 relevant, 0 irrelevant builder configs@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"amd64-generic-postsubmit\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",

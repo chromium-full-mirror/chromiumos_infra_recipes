@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "plan builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@will run 0 and skip 0 builds@@@",
+      "@@@STEP_TEXT@0 relevant, 0 irrelevant builder configs@@@",
       "@@@STEP_LOG_LINE@planner_output@@@@",
       "@@@STEP_LOG_END@planner_output@@@"
     ]

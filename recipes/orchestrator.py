@@ -303,10 +303,14 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       builder_configs, gerrit_changes, snapshot)
 
   if enable_history and gerrit_changes:
-    with api.step.nest('get build history for changes'):
+    with api.step.nest('get build history') as step:
       is_retry = len(
           api.cros_history.get_matching_builds(api.buildbucket.build)) > 1
       completed_builds = get_completed_builds(api, child_builders)
+      step.presentation.step_text = (
+          'found {} build{} to recycle'.format(
+              len(completed_builds),
+              '' if len(completed_builds) == 1 else 's'))
 
   snapshot_builds = api.cros_history.get_snapshot_builds(
       snapshot, [],
@@ -610,7 +614,7 @@ def GenTests(api):
                  BuilderConfig.Id(name=b.builder.builder) for b in builds
              ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_search_results(
-             builds, 'run builds.get build history for changes.'
+             builds, 'run builds.get build history.'
              'get completed builds.get change build history.'
              'buildbucket.search') +  #
          api.buildbucket.simulated_collect_output(
@@ -850,7 +854,7 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
-             builds, step_name='run builds.get build history for changes'
+             builds, step_name='run builds.get build history'
              '.find matching builds.buildbucket.search') +
          api.cros_relevance.simulate_run_build_planner(
              builder_ids=[

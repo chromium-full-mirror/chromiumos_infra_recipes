@@ -73,7 +73,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                                 ignore_unknown_fields=True)
       step_result.presentation.logs['planner_output'] = [str(result)]
       step_result.presentation.step_text = (
-          'will run {} and skip {} builds'.format(
+          '{} relevant, {} irrelevant builder configs'.format(
               len(result.builds_to_run),
               len(result.skip_for_global_build_irrelevance) + len(
                   result.skip_for_run_when_rules)))
