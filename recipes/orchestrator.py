@@ -211,11 +211,9 @@ def filter_schedule_wait_builds(api, parent_step, child_builders, enable_history
       api, child_builders=child_builders, enable_history=enable_history,
       gerrit_changes=gerrit_changes, snapshot=snapshot)
   parent_step.presentation.step_text = (
-      'need {} new build{}, reusing {} older build{}'.format(
+      '{} new, {} recycled'.format(
           len(new_build_requests),
-          's' if len(new_build_requests) != 1 else '',
-          len(completed_builds)+len(existing_builds),
-          's' if len(completed_builds)+len(existing_builds) != 1 else ''))
+          len(completed_builds)+len(existing_builds)))
 
   # request new builds and add to total existing.
   existing_builds += api.buildbucket.schedule(

@@ -84,7 +84,7 @@
     "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@need 2 new builds, reusing 1 older build@@@"
+      "@@@STEP_TEXT@2 new, 1 recycled@@@"
     ]
   },
   {
