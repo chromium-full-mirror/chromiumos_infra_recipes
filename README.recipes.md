@@ -3506,6 +3506,8 @@ Returns: bool, [test_platform.Request]
   * First item in the pair indicates whether this is a skylab request.
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
+
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#212)(api, responses):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#11): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

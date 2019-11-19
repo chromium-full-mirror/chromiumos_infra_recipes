@@ -200,14 +200,16 @@ def RunSteps(api, properties):
   requests = _get_requests_from_properties(properties)
   # Traffic split failures can be due to malformed requests.
   skylab, requests = split(api, requests, properties.config)
-
   # Enumeration or execution failures are all infra failures
   # TODO(akeshet) (with the possible exception of certain kinds of execution
   # timeouts; needs revisiting).
   with api.context(infra_steps=True):
     enumerations = enumerate_tests(api, requests)
     responses = execute(api, requests, enumerations, properties.config, skylab)
+  summarize(api, responses)
 
+
+def summarize(api, responses):
   # Failures in summarization are non-infra related.
   with api.step.nest('summarize') as step:
     # TODO(crbug.com/1008134) Set responses property instead when applicable.
