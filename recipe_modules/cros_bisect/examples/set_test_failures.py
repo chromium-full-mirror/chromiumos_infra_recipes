@@ -9,13 +9,19 @@ DEPS = [
     'skylab',
 ]
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
+
 def RunSteps(api):
   skylab_success = api.skylab.test_api.skylab_result()
   skylab_failure = api.skylab.test_api.skylab_result(
       task=api.skylab.test_api.skylab_task(
-          test=api.skylab.test_api.hw_test(critical=False)), success=False)
-  skylab_critical_failure1 = api.skylab.test_api.skylab_result(success=False)
-  skylab_critical_failure2 = api.skylab.test_api.skylab_result(success=False)
+          test=api.skylab.test_api.hw_test(critical=False)),
+      status=common_pb2.FAILURE)
+  skylab_critical_failure1 = api.skylab.test_api.skylab_result(
+      status=common_pb2.FAILURE)
+  skylab_critical_failure2 = api.skylab.test_api.skylab_result(
+      status=common_pb2.FAILURE)
 
   # Doesn't output, nothing to report.
   api.cros_bisect.set_test_failures([], False)

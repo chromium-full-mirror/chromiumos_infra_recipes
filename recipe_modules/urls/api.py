@@ -6,6 +6,7 @@
 """API for creating task URLs out of complex data structures."""
 
 from recipe_engine import recipe_api
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
 
 
@@ -57,7 +58,8 @@ class UrlsApi(recipe_api.RecipeApi):
       str->str map: title to URL to the skylab swarming task page
       if the suite succeeded or entries of just the failed tests.
     """
-    if skylab_result.success or not skylab_result.child_results:
+    if (skylab_result.status == common_pb2.SUCCESS or
+        not skylab_result.child_results):
       link_url = self.get_skylab_task_url(skylab_result.task)
       return {'suite page': link_url}
     else:

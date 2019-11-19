@@ -11,6 +11,7 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import (
     ProctorProperties)
+from PB.test_platform.taskstate import TaskState
 from recipe_engine.recipe_api import Property
 
 from google.protobuf import json_format
@@ -101,8 +102,8 @@ def GenTests(api):
       responses=[dict(schedule_build=cros_test_platforms[1])])
 
   hw_tests = [
-      api.skylab.test_with_execute_response(id=1234, success=True),
-      api.skylab.test_with_execute_response(id=4321, success=True),
+      api.skylab.test_with_execute_response(id=1234),
+      api.skylab.test_with_execute_response(id=4321),
   ]
 
   builds = [
@@ -189,8 +190,7 @@ def GenTests(api):
 
   multi_hw_tests = [
       api.skylab.test_with_multi_response(
-          id=1234, names=['target.hw.bvt-cq', 'target.hw.bvt-inline'],
-          success=False),
+          id=1234, names=['target.hw.bvt-cq', 'target.hw.bvt-inline']),
   ]
 
   yield (
@@ -219,8 +219,10 @@ def GenTests(api):
           step_name='run tests.collect tests.collect moblab vm tests'))
 
   hw_tests = [
-      api.skylab.test_with_execute_response(id=1234, success=False),
-      api.skylab.test_with_execute_response(id=4321, success=False),
+      api.skylab.test_with_execute_response(
+          id=1234, task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
+      api.skylab.test_with_execute_response(
+          id=4321, task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
 
   yield (
@@ -247,7 +249,8 @@ def GenTests(api):
           step_name='run tests.collect tests.collect moblab vm tests'))
 
   baseline_results_failure = [
-      api.skylab.test_with_execute_response(id=4321, success=False),
+      api.skylab.test_with_execute_response(
+          id=4321, task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
   yield (
       api.test('pass_with_baseline_validation') +  #
@@ -289,7 +292,7 @@ def GenTests(api):
           'collect skylab tasks.buildbucket.collect'))
 
   baseline_results_success = [
-      api.skylab.test_with_execute_response(id=4321, success=True),
+      api.skylab.test_with_execute_response(id=4321),
   ]
   yield (
       api.test('fail_with_baseline_validation') +  #
@@ -332,7 +335,8 @@ def GenTests(api):
 
   hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
   hw_tests = [
-      api.skylab.test_with_execute_response(id=1234, success=False),
+      api.skylab.test_with_execute_response(
+          id=1234, task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
 
   builds = [

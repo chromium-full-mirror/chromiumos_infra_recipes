@@ -475,7 +475,7 @@
     "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 test(s) failed@@@"
+      "@@@STEP_TEXT@all tests passed. no need for baseline validation@@@"
     ]
   },
   {
@@ -695,7 +695,7 @@
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), success=False, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
+      "@@@STEP_LOG_LINE@return value@), status=12, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
       "@@@STEP_LOG_LINE@return value@state {@@@",
       "@@@STEP_LOG_LINE@return value@  life_cycle: LIFE_CYCLE_COMPLETED@@@",
       "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
@@ -751,8 +751,8 @@
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"response\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"state\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@                \"verdict\": \"VERDICT_FAILED\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"lifeCycle\": \"0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@                \"verdict\": \"1\"@@@",
       "@@@STEP_LOG_LINE@json.output@              }, @@@",
       "@@@STEP_LOG_LINE@json.output@              \"taskResults\": [@@@",
       "@@@STEP_LOG_LINE@json.output@                {@@@",
@@ -789,25 +789,14 @@
   },
   {
     "cmd": [],
-    "name": "check test results",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "check test results"
   },
   {
     "cmd": [],
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check test results.set test_failures",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@test_failures@{\"hw_test_failures\": [{\"failed_step\": \"check test results|hw test results|kip.hw.bvt-cq\", \"suite\": \"bvt-cq\", \"test_spec\": \"{\\n  \\\"hwTestCfg\\\": {\\n    \\\"hwTest\\\": [\\n      {\\n        \\\"suite\\\": \\\"bvt-cq\\\", \\n        \\\"common\\\": {\\n          \\\"critical\\\": true, \\n          \\\"displayName\\\": \\\"kip.hw.bvt-cq\\\"\\n        }, \\n        \\\"skylabBoard\\\": \\\"amd64-generic\\\"\\n      }\\n    ]\\n  }, \\n  \\\"common\\\": {\\n    \\\"buildTarget\\\": {\\n      \\\"name\\\": \\\"amd64-generic\\\"\\n    }, \\n    \\\"buildPayload\\\": {\\n      \\\"artifactsGsBucket\\\": \\\"bucket\\\", \\n      \\\"artifactsGsPath\\\": \\\"path\\\", \\n      \\\"filesByArtifact\\\": {\\n        \\\"TAST_FILES\\\": [\\n          \\\"tast1.zip\\\", \\n          \\\"tast2.zip\\\"\\n        ], \\n        \\\"IMAGE_ZIP\\\": [\\n          \\\"image.zip\\\"\\n        ]\\n      }\\n    }\\n  }\\n}\"}], \"needs_bisection\": false}@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"kip.hw.bvt-cq\"]@@@"
     ]
   },
   {
@@ -815,8 +804,7 @@
     "name": "check test results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@1 hw tests failed, 0 succeeded, 0 failures silenced@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@all hw tests succeeded@@@"
     ]
   },
   {
@@ -824,7 +812,7 @@
     "name": "check test results.hw test results.kip.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@suite page@https://beefy-dot-cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {
@@ -881,10 +869,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "1 hw test failed\n\n- kip.hw.bvt-cq:"
-    },
     "name": "$result"
   }
 ]

@@ -9,11 +9,13 @@ from recipe_engine import recipe_test_api
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
+from PB.test_platform.taskstate import TaskState
 
 from google.protobuf import struct_pb2
 from google.protobuf import json_format
@@ -58,42 +60,45 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
     return structs.SkylabTask(id=id or 1234, url=url or 'https://google.com',
                               test=test, unit=unit)
 
-  def skylab_result(self, task=None, success=True, child_results=None):
+  def skylab_result(self, task=None, status=common_pb2.SUCCESS,
+                    child_results=None):
     return structs.SkylabResult(
         task=task or self.skylab_task(),
-        success=success,
+        status=status,
         child_results=child_results or [],
     )  # pragma: no cover
 
-  def response(self, success=False):
-    json_string = '{ "response": %s }' % self._response_json(success)
+  def response(self, task_state=TaskState(verdict=TaskState.VERDICT_PASSED)):
+    json_string = '{ "response": %s }' % self._response_json(task_state)
     response_struct = struct_pb2.Struct()
     return json_format.Parse(json_string, response_struct)
 
-  def test_with_execute_response(self, id, success=False):
+  def test_with_execute_response(
+      self, id, task_state=TaskState(verdict=TaskState.VERDICT_PASSED)):
     return build_pb2.Build(
-        id=id, output=build_pb2.Build.Output(properties=self.response(success)))
+        id=id,
+        output=build_pb2.Build.Output(properties=self.response(task_state)))
 
-  def test_with_multi_response(self, id, names, success=False):
+  def test_with_multi_response(
+      self, id, names, task_state=TaskState(verdict=TaskState.VERDICT_PASSED)):
     return build_pb2.Build(
         id=id, output=build_pb2.Build.Output(
-            properties=self._multi_response(names, success)))
+            properties=self._multi_response(names, task_state)))
 
-  def _multi_response(self, names, success):
+  def _multi_response(self, names, task_state):
     json_template = '{ "responses": { "%(name)s": %(response_json)s } }'
     responses = []
     for name in names:
-      responses.append('"%s": %s' % (name, self._response_json(success)))
+      responses.append('"%s": %s' % (name, self._response_json(task_state)))
     json_string = '{ "responses": { %s } }' % ', '.join(responses)
     response_struct = struct_pb2.Struct()
     return json_format.Parse(json_string, response_struct)
 
-  def _response_json(self, success):
-    verdict = 'VERDICT_PASSED' if success else 'VERDICT_FAILED'
+  def _response_json(self, task_state):
     return """{
     "state": {
         "verdict": "%s",
-        "lifeCycle": "LIFE_CYCLE_COMPLETED"
+        "lifeCycle": "%s"
     },
     "taskResults": [
         {
@@ -107,4 +112,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         }
     ]
 }
-""" % (verdict,)
+""" % (
+        task_state.verdict,
+        task_state.life_cycle,
+    )

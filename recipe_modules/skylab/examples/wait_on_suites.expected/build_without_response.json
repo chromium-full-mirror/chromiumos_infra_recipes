@@ -32,7 +32,7 @@
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), success=False, child_results=[])@@@",
+      "@@@STEP_LOG_LINE@return value@), status=20, child_results=[])@@@",
       "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=1234, url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b8899866335707109280', test=suite: \"bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
@@ -62,7 +62,7 @@
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), success=False, child_results=[])@@@",
+      "@@@STEP_LOG_LINE@return value@), status=20, child_results=[])@@@",
       "@@@STEP_LOG_END@return value@@@"
     ]
   },
@@ -127,39 +127,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
-      "    raw_result = recipe_obj.run_steps(api, engine)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
-      "    properties_def, api=api)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in invoke_with_properties",
-      "    arg_names, **additional_args)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in _invoke_with_properties",
-      "    return callable_obj(*props, **additional_args)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/skylab/examples/wait_on_suites.py\", line 43, in RunSteps",
-      "    api.assertions.assertEqual(expected_successes, [True, True])",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_modules/assertions/api.py\", in assertion_wrapper",
-      "    raise AssertionError(e.message)",
-      "AssertionError: Lists differ: [False, False] != [True, True]",
-      "",
-      "First differing element 0:",
-      "False",
-      "True",
-      "",
-      "- [False, False]",
-      "+ [True, True]"
-    ]
-  },
-  {
-    "failure": {
-      "humanReason": "Uncaught Exception: AssertionError('Lists differ: [False, False] != [True, True]\\n\\nFirst differing element 0:\\nFalse\\nTrue\\n\\n- [False, False]\\n+ [True, True]',)"
-    },
     "name": "$result"
   }
 ]

@@ -176,7 +176,7 @@ class SkylabApi(recipe_api.RecipeApi):
       if not tasks:
         return []
 
-      # All the tasks contain the same cros_test_platgorm build ID.
+      # All the tasks contain the same cros_test_platform build ID.
       task_id = tasks[0].id
       # Give 30 minutes grace period for recipes to time out.
       timeout_seconds = int(timeout.seconds + 30 * 60)
@@ -194,9 +194,17 @@ class SkylabApi(recipe_api.RecipeApi):
       for t in tasks:
         result = responses.get(
             _request_tag(t.test), self._default_failed_response())
-        success = result.state.verdict == TaskState.VERDICT_PASSED
+        if result.state.verdict == TaskState.VERDICT_PASSED:
+          status = common_pb2.SUCCESS
+        elif result.state.life_cycle in (TaskState.LIFE_CYCLE_CANCELLED,
+                                         TaskState.LIFE_CYCLE_PENDING,
+                                         TaskState.LIFE_CYCLE_ABORTED,
+                                         TaskState.LIFE_CYCLE_REJECTED):
+          status = common_pb2.INFRA_FAILURE
+        else:
+          status = common_pb2.FAILURE
         results.append(
-            self.SkylabResult(task=t, success=success,
+            self.SkylabResult(task=t, status=status,
                               child_results=result.task_results))
 
       step.presentation.logs['return value'] = [str(r) for r in results]
@@ -250,9 +258,17 @@ class SkylabApi(recipe_api.RecipeApi):
       results = []
       for test_id, test in all_hw_tests.items():
         test_response = self._get_execute_response(test)
-        success = test_response.state.verdict == TaskState.VERDICT_PASSED
+        if test_response.state.verdict == TaskState.VERDICT_PASSED:
+          status = common_pb2.SUCCESS
+        elif test_response.state.life_cycle in (TaskState.LIFE_CYCLE_CANCELLED,
+                                                TaskState.LIFE_CYCLE_PENDING,
+                                                TaskState.LIFE_CYCLE_ABORTED,
+                                                TaskState.LIFE_CYCLE_REJECTED):
+          status = common_pb2.INFRA_FAILURE
+        else:
+          status = common_pb2.FAILURE
         results.append(
-            self.SkylabResult(task=tasks_by_id[test_id], success=success,
+            self.SkylabResult(task=tasks_by_id[test_id], status=status,
                               child_results=test_response.task_results))
 
       step.presentation.logs['return value'] = [str(x) for x in results]

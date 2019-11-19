@@ -2494,7 +2494,7 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#225)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#233)(self, tasks, timeout):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -2574,11 +2574,11 @@ Ensure the CIPD support package is installed.
 
 API for creating task URLs out of complex data structures.
 
-#### **class [UrlsApi](/recipe_modules/urls/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [UrlsApi](/recipe_modules/urls/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for creating links to tasks.
 
-&mdash; **def [get\_build\_link\_map](/recipe_modules/urls/api.py#15)(self, build):**
+&mdash; **def [get\_build\_link\_map](/recipe_modules/urls/api.py#16)(self, build):**
 
 Returns the title->URL to the given buildbucket build.
 
@@ -2588,7 +2588,7 @@ Args:
 Returns:
   str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#72)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#74)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -2599,7 +2599,7 @@ Returns:
   str: URL pointing to the Cloud Storage Browser page for the
     object.
 
-&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#50)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#51)(self, skylab_result):**
 
 Returns the URL to the given skylab result page.
 
@@ -2610,7 +2610,7 @@ Returns:
   str->str map: title to URL to the skylab swarming task page
   if the suite succeeded or entries of just the failed tests.
 
-&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#39)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#40)(self, skylab_task):**
 
 Returns the URL to the given skylab task.
 
@@ -2620,7 +2620,7 @@ Args:
 Returns:
   str: URL pointing to the skylab swarming task page.
 
-&mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#27)(self, vm_test):**
+&mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#28)(self, vm_test):**
 
 Returns the title->URL to the given vm test.
 
@@ -2819,7 +2819,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 [DEPS](/recipe_modules/cros_bisect/examples/set_test_failures.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/set_test_failures.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/set_test_failures.py#15)(api):**
 ### *recipes* / [cros\_bisect:examples/test\_plan\_processing](/recipe_modules/cros_bisect/examples/test_plan_processing.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/test_plan_processing.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -2952,9 +2952,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_postprocess/examples/full.py#12)(api):**
 ### *recipes* / [cros\_test\_proctor:examples/full](/recipe_modules/cros_test_proctor/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_proctor/examples/full.py#19): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_test_proctor/examples/full.py#20): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#39)(api, need_tests_builds_serialized):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#40)(api, need_tests_builds_serialized):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
@@ -2998,7 +2998,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 
 [DEPS](/recipe_modules/failures/examples/hw_test_failures.py#6): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/hw_test_failures.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/hw_test_failures.py#17)(api):**
 ### *recipes* / [failures:examples/ignore\_exceptions](/recipe_modules/failures/examples/ignore_exceptions.py)
 
 [DEPS](/recipe_modules/failures/examples/ignore_exceptions.py#6): [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3410,12 +3410,12 @@ Recipe for signing ChromeOS images.
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_recipes.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_recipes.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_recipes.py#17)(api):**
 ### *recipes* / [skylab:examples/wait\_on\_suites](/recipe_modules/skylab/examples/wait_on_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites.py#18)(api):**
 ### *recipes* / [skylab:examples/wait\_on\_suites\_empty\_arg](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py)
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -3572,11 +3572,11 @@ The steps specific to VM testing are:
 &mdash; **def [RunSteps](/recipes/test_vm.py#60)(api, properties):**
 ### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
 
-[DEPS](/recipe_modules/urls/examples/full.py#15): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/urls/examples/full.py#16): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 Basic tests for the urls recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#23)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/639872c8ef6e80e5c964ed67192c26eaa358929e/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/639872c8ef6e80e5c964ed67192c26eaa358929e/recipes/README.recipes.md#recipe_modules-gclient

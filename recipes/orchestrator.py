@@ -539,8 +539,8 @@ def GenTests(api):
       responses=[dict(schedule_build=cros_test_platforms[1])])
 
   hw_tests = [
-      api.skylab.test_with_execute_response(id=1234, success=True),
-      api.skylab.test_with_execute_response(id=4321, success=True),
+      api.skylab.test_with_execute_response(id=1234),
+      api.skylab.test_with_execute_response(id=4321),
   ]
 
   builds = [
@@ -955,7 +955,7 @@ def GenTests(api):
 
   hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
   hw_tests = [
-      api.skylab.test_with_execute_response(id=1234, success=False),
+      api.skylab.test_with_execute_response(id=1234),
   ]
 
   builds = [

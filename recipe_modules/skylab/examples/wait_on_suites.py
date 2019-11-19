@@ -11,6 +11,8 @@ DEPS = [
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.test_platform.taskstate import TaskState
 from google.protobuf import duration_pb2
 
 def RunSteps(api):
@@ -38,9 +40,8 @@ def RunSteps(api):
   api.assertions.assertEqual(len(responses), 2)
 
   expected_tasks = [r.task for r in responses]
-  expected_successes = [r.success for r in responses]
+  expected_statuses = [r.status for r in responses]
   api.assertions.assertEqual(expected_tasks, [task, another_task])
-  api.assertions.assertEqual(expected_successes, [True, True])
 
 
 def GenTests(api):
@@ -48,10 +49,18 @@ def GenTests(api):
          api.buildbucket.simulated_collect_output([
              api.skylab.test_with_multi_response(
                  1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
-                 success=True),
+                 task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
          ], step_name='collect skylab tasks v2.buildbucket.collect'))
 
+  yield (
+      api.test('infra_failure') +  #
+      api.buildbucket.simulated_collect_output([
+          api.skylab.test_with_multi_response(
+              1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
+              task_state=TaskState(life_cycle=TaskState.LIFE_CYCLE_CANCELLED)),
+      ], step_name='collect skylab tasks v2.buildbucket.collect'))
+
   yield (api.test('build_without_response') +  #
-         api.buildbucket.simulated_collect_output([build_pb2.Build(
-             id=1234)], step_name='collect skylab tasks v2.buildbucket.collect')
-         + api.expect_exception('AssertionError'))
+         api.buildbucket.simulated_collect_output(
+             [build_pb2.Build(id=1234)],
+             step_name='collect skylab tasks v2.buildbucket.collect'))

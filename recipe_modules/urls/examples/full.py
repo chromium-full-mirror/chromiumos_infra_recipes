@@ -9,6 +9,7 @@ import json
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
@@ -53,7 +54,8 @@ def RunSteps(api):
       'second test': 'newlink.com',
   }
   skylab_result = api.skylab.test_api.skylab_result(
-      task=skylab_task, success=False, child_results=response.task_results)
+      task=skylab_task, status=common_pb2.FAILURE,
+      child_results=response.task_results)
   api.assertions.assertEqual(
       api.urls.get_skylab_result_link_map(skylab_result), expected_map)
 

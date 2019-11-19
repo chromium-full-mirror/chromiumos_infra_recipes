@@ -388,7 +388,7 @@ class FailuresApi(recipe_api.RecipeApi):
     Returns:
       bool: True if the test failed.
     """
-    return not hw_test.success
+    return hw_test.status != common_pb2.SUCCESS
 
   def is_vm_test_failure(self, vm_test):
     """Determine if the VM test failed.
