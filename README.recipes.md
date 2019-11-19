@@ -3493,6 +3493,10 @@ Args:
   use_skylab: bool indicating which backend to run in
               (True -> skylab, False -> autotest).
 
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#245)(api, responses):**
+
+Set the output properties that are part of the cros_test_platform API.
+
 &mdash; **def [split](/recipes/test_platform/cros_test_platform.py#90)(api, requests, config):**
 
 Determine which backend will execute the request.
@@ -3507,7 +3511,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#212)(api, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#214)(api, responses):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#11): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -256,10 +256,16 @@
   },
   {
     "cmd": [],
-    "name": "summarize",
+    "name": "set output properties",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"name\": \"foo-pending\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\"}}]}@@@",
-      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"name\": \"foo-pending\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\"}}]}}@@@",
+      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"name\": \"foo-pending\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\"}}]}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize",
+    "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
   },

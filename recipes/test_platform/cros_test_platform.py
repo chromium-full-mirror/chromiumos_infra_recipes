@@ -206,14 +206,14 @@ def RunSteps(api, properties):
   with api.context(infra_steps=True):
     enumerations = enumerate_tests(api, requests)
     responses = execute(api, requests, enumerations, properties.config, skylab)
+    set_output_properties(api, responses)
   summarize(api, responses)
+
 
 
 def summarize(api, responses):
   # Failures in summarization are non-infra related.
   with api.step.nest('summarize') as step:
-    # TODO(crbug.com/1008134) Set responses property instead when applicable.
-    _set_output_properties(step, responses)
     for tag, response in responses.iteritems():
       with api.step.nest('%s task results' % tag):
         try:
@@ -242,14 +242,15 @@ def _get_requests_from_properties(properties):
   raise ValueError('Must set at least one of request and requests')
 
 
-def _set_output_properties(step, responses):
-  """Set the builder 'response' property from test_platform.ExecuteResponse."""
-  marshalled = {}
-  for tag, response in responses.iteritems():
-    marshalled[tag] = _marshal_response_to_json(response)
-  step.properties['responses'] = marshalled
-  if 'default' in marshalled:
-    step.properties['response'] = marshalled['default']
+def set_output_properties(api, responses):
+  """Set the output properties that are part of the cros_test_platform API."""
+  with api.step.nest('set output properties') as step:
+    marshalled = {}
+    for tag, response in responses.iteritems():
+      marshalled[tag] = _marshal_response_to_json(response)
+    step.properties['responses'] = marshalled
+    if 'default' in marshalled:
+      step.properties['response'] = marshalled['default']
 
 
 def _marshal_response_to_json(response):

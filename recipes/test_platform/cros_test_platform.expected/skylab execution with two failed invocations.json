@@ -367,9 +367,15 @@
   },
   {
     "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@responses@{\"first\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"baz-failed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}]}, \"second\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "summarize",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@responses@{\"first\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"baz-failed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}]}, \"second\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
