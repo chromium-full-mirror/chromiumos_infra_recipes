@@ -360,7 +360,8 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
 
       # Don't retry non-critical builds.
       if not critical and is_retry:
-        filter_log.append('{} is non-critical and already ran'.format(child))
+        filter_log.append(
+            '{} is non-critical and this is a CQ rerun'.format(child))
         continue
 
       tags = api.cros_tags.make_schedule_tags(snapshot)
@@ -381,6 +382,13 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
               critical=critical, properties=api.cq.props_for_child_build,
               tags=tags))
     step.presentation.logs['filter log'] = filter_log
+    # Don't include irrelevant builder configs or snapshot builds in this
+    # count for display, as they're mentioned in steps above.
+    step.presentation.step_text = (
+        'need {} new build{} (filtered {})'.format(
+            len(new_build_requests),
+            '' if len(new_build_requests)==1 else 's',
+            len(child_builders)-len(new_build_requests)))
 
   return completed_builds, filtered_snapshot_builds, new_build_requests
 
