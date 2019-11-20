@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "vm test results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all vm tests succeeded@@@"
+      "@@@STEP_TEXT@all critical vm tests succeeded@@@"
     ]
   },
   {
@@ -99,7 +99,7 @@
     "cmd": [],
     "name": "vm test results (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all vm tests succeeded@@@"
+      "@@@STEP_TEXT@all critical vm tests succeeded@@@"
     ]
   },
   {
@@ -107,7 +107,8 @@
     "name": "vm test results (2).target.vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

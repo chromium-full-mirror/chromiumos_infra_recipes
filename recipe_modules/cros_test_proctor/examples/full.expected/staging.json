@@ -1596,7 +1596,7 @@
     "name": "check test results.vm test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all vm tests succeeded@@@"
+      "@@@STEP_TEXT@all critical vm tests succeeded@@@"
     ]
   },
   {
@@ -1612,7 +1612,7 @@
     "name": "check test results.vm test results (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all vm tests succeeded@@@"
+      "@@@STEP_TEXT@all critical vm tests succeeded@@@"
     ]
   },
   {
