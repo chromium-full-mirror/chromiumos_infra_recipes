@@ -101,21 +101,19 @@ def split(api, requests, config):
           requests.
   """
   with api.step.nest('traffic split') as step:
-    tags, requests = _unzip_dict(requests)
     split_req = SchedulerTrafficSplitRequests(
-      requests=[
-        SchedulerTrafficSplitRequest(
-          request=r,
-          config=config.scheduler_migration,
-        )
-        for r in requests
-      ],
-    )
+        tagged_requests={
+            tag: SchedulerTrafficSplitRequest(
+                request=r,
+                config=config.scheduler_migration,
+            ) for tag, r in requests.iteritems()
+        })
     split_resp = api.cros_test_platform.scheduler_traffic_split(split_req)
-    is_skylab, requests = _get_backend_requests(split_resp.responses)
+    is_skylab, tagged_requests = _get_backend_requests(
+        split_resp.tagged_responses)
     env_name = 'skylab' if is_skylab else 'autotest'
     step.presentation.step_summary_text = 'selected backend: ' + env_name
-    return is_skylab, _zip_to_dict(tags, requests)
+    return is_skylab, tagged_requests
 
 
 def _unzip_dict(d):
@@ -126,7 +124,7 @@ def _unzip_dict(d):
 
 def _zip_to_dict(ks, vs):
   """Zips two equal sized lists to a dict."""
-  if len(ks) != len(vs):
+  if len(ks) != len(vs):  # pragma: no cover
     raise ValueError("Got %d values for %d keys"
                      % (len(vs), len(ks)))
   return {k: v for k, v in  zip(ks, vs)}
@@ -142,15 +140,16 @@ def _get_backend_requests(split_responses):
     * First item in the pair indicates whether this is a skylab request.
     * Second item in the pair is the list of extracted requests.
   """
-  is_first_skylab, request = _get_backend_request(split_responses[0])
-  requests = [request]
-  for response in split_responses[1:]:
+  skylab_chosen = []
+  tagged_requests = {}
+  for tag, response in split_responses.iteritems():
     is_skylab, request = _get_backend_request(response)
-    if is_first_skylab != is_skylab:
-      raise ValueError('Traffic splits contain both autotest and skylab'
-                       ' across requests; this is not supported.')
-    requests.append(request)
-  return is_first_skylab, requests
+    skylab_chosen.append(is_skylab)
+    tagged_requests[tag] = request
+  if len(set(skylab_chosen)) > 1:
+    raise ValueError('Traffic splits contain both autotest and skylab'
+                     ' across requests; this is not supported.')
+  return skylab_chosen[0], tagged_requests
 
 
 def _get_backend_request(split_resp):
@@ -416,49 +415,62 @@ def GenTests(api):
              'traffic split.call binary.scheduler-traffic-split',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(
-                         responses=[SchedulerTrafficSplitResponse()])))) +  #
+                     SchedulerTrafficSplitResponses(tagged_responses={
+                         'default': SchedulerTrafficSplitResponse()
+                     })))) +  #
          api.expect_exception("ValueError"))
 
   # Traffic split with traffic to both autotest and skylab
   # should cause recipe crash.
-  yield (api.test('dual traffic') +  #
-         api.properties(CrosTestPlatformProperties(request=Request())) +  #
-         api.step_data(
-             'traffic split.call binary.scheduler-traffic-split',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(responses=[
-                         SchedulerTrafficSplitResponse(
-                             autotest_request=Request(
-                                 test_plan=Request.TestPlan(
-                                     suite=[Request.Suite(name="foo")]),),
-                             skylab_request=Request(
-                                 test_plan=Request.TestPlan(
-                                     suite=[Request.Suite(name="foo")]),),
-                         )
-                     ])))) +  #
-         api.expect_exception("ValueError"))
+  yield (
+      api.test('dual traffic') +  #
+      api.properties(CrosTestPlatformProperties(request=Request())) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  autotest_request=Request(
+                                      test_plan=Request.TestPlan(
+                                          suite=[Request.Suite(name="foo")]),),
+                                  skylab_request=Request(
+                                      test_plan=Request.TestPlan(
+                                          suite=[Request.Suite(name="foo")]),),
+                              )
+                      })))) +  #
+      api.expect_exception("ValueError"))
 
   # Traffic split with traffic to both autotest and skylab in different requests
   # should cause recipe crash.
-  yield (api.test('dual traffic across requests') +  #
-         api.properties(CrosTestPlatformProperties(request=Request())) +  #
-         api.step_data(
-             'traffic split.call binary.scheduler-traffic-split',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(responses=[
-                         SchedulerTrafficSplitResponse(
-                             autotest_request=Request(
-                                 test_plan=Request.TestPlan(
-                                     suite=[Request.Suite(name="foo")]),),),
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=Request(
-                                 test_plan=Request.TestPlan(
-                                     suite=[Request.Suite(name="foo")]),),)
-                     ])))) +  #
-         api.expect_exception("ValueError"))
+  yield (
+      api.test('dual traffic across requests') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={
+              'first': Request(),
+              'second': Request(),
+          })) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'first':
+                              SchedulerTrafficSplitResponse(
+                                  autotest_request=Request(
+                                      test_plan=Request.TestPlan(
+                                          suite=[Request.Suite(
+                                              name="foo")]),),),
+                          'second':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=Request(
+                                      test_plan=Request.TestPlan(
+                                          suite=[Request.Suite(name="foo")]),),)
+                      })))) +  #
+      api.expect_exception("ValueError"))
 
   # An end-to-end run with traffic splitting to skylab.
   yield (api.test('end-to-end skylab execution with passed tasks') +  #
@@ -469,10 +481,12 @@ def GenTests(api):
              'traffic split.call binary.scheduler-traffic-split',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(responses=[
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                     ])))) +  #
+                     SchedulerTrafficSplitResponses(
+                         tagged_responses={
+                             'default':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request('foo'))
+                         })))) +  #
          api.step_data(
              'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
                  _test_single_enumeration('foo'))) +  #
@@ -504,10 +518,12 @@ def GenTests(api):
              'traffic split.call binary.scheduler-traffic-split',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(responses=[
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                     ])))) +  #
+                     SchedulerTrafficSplitResponses(
+                         tagged_responses={
+                             'default':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request('foo'))
+                         })))) +  #
          api.step_data(
              'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
                  _test_single_enumeration('foo'))) +  #
@@ -549,10 +565,12 @@ def GenTests(api):
           'traffic split.call binary.scheduler-traffic-split',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  SchedulerTrafficSplitResponses(responses=[
-                      SchedulerTrafficSplitResponse(
-                          skylab_request=_test_request('foo'))
-                  ])))) +  #
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
       api.step_data(
           'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
               _test_single_enumeration('foo'))) +  #
@@ -593,10 +611,12 @@ def GenTests(api):
              'traffic split.call binary.scheduler-traffic-split',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(responses=[
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                     ])))) +  #
+                     SchedulerTrafficSplitResponses(
+                         tagged_responses={
+                             'default':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request('foo'))
+                         })))) +  #
          api.step_data(
              'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
                  _test_single_enumeration('foo'))) +  #
@@ -637,10 +657,12 @@ def GenTests(api):
              'traffic split.call binary.scheduler-traffic-split',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(responses=[
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                     ])))) +  #
+                     SchedulerTrafficSplitResponses(
+                         tagged_responses={
+                             'default':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request('foo'))
+                         })))) +  #
          api.step_data(
              'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
                  _test_single_enumeration('foo'))) +  #
@@ -671,10 +693,12 @@ def GenTests(api):
              'traffic split.call binary.scheduler-traffic-split',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(responses=[
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                     ])))) +  #
+                     SchedulerTrafficSplitResponses(
+                         tagged_responses={
+                             'default':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request('foo'))
+                         })))) +  #
          api.step_data(
              'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
                  _test_single_enumeration('foo'))) +  #
@@ -705,10 +729,12 @@ def GenTests(api):
              'traffic split.call binary.scheduler-traffic-split',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(responses=[
-                         SchedulerTrafficSplitResponse(
-                             autotest_request=_test_request('foo'))
-                     ])))) +  #
+                     SchedulerTrafficSplitResponses(
+                         tagged_responses={
+                             'default':
+                                 SchedulerTrafficSplitResponse(
+                                     autotest_request=_test_request('foo'))
+                         })))) +  #
          api.step_data(
              'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
                  _test_single_enumeration('foo'))) +  #
@@ -740,12 +766,15 @@ def GenTests(api):
              'traffic split.call binary.scheduler-traffic-split',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(responses=[
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo')),
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                     ])))) +  #
+                     SchedulerTrafficSplitResponses(
+                         tagged_responses={
+                             'default':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request('foo')),
+                             'one_too_many':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request('foo'))
+                         })))) +  #
          api.expect_exception("ValueError"))
 
   yield (
@@ -760,12 +789,15 @@ def GenTests(api):
           'traffic split.call binary.scheduler-traffic-split',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  SchedulerTrafficSplitResponses(responses=[
-                      SchedulerTrafficSplitResponse(
-                          skylab_request=_test_request('foo')),
-                      SchedulerTrafficSplitResponse(
-                          skylab_request=_test_request('foo'))
-                  ])))) +  #
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'first':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo')),
+                          'second':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
       api.step_data(
           'enumerate tests.call binary.enumerate', stdout=api.raw_io.output('''
   {
@@ -820,9 +852,9 @@ def GenTests(api):
     )) + #
     api.step_data('traffic split.call binary.scheduler-traffic-split',
                   stdout=api.raw_io.output(
-                    json_format.MessageToJson(SchedulerTrafficSplitResponses(responses=[
-      SchedulerTrafficSplitResponse(skylab_request=_test_request('foo'))
-                    ])))) + #
+                    json_format.MessageToJson(SchedulerTrafficSplitResponses(tagged_responses={
+      'first': SchedulerTrafficSplitResponse(skylab_request=_test_request('foo'))
+                    })))) + #
     api.step_data('enumerate tests.call binary.enumerate',
                   stdout=api.raw_io.output(_test_single_enumeration('foo'))) + #
     api.step_data(

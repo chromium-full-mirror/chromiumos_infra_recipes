@@ -12,17 +12,17 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"config\": {}, @@@",
       "@@@STEP_LOG_LINE@request@      \"request\": {}@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"testPlan\": {@@@",
       "@@@STEP_LOG_LINE@response@          \"suite\": [@@@",
@@ -42,7 +42,7 @@
       "@@@STEP_LOG_LINE@response@        }@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -89,10 +89,11 @@
       "-input_json",
       "/dev/stdin",
       "-output_json",
-      "/dev/stdout"
+      "/dev/stdout",
+      "-tagged"
     ],
     "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"requests\": [\n    {\n      \"config\": {}, \n      \"request\": {}\n    }\n  ]\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"config\": {}, \n      \"request\": {}\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -109,13 +110,13 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 202, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 201, in RunSteps",
       "    skylab, requests = split(api, requests, properties.config)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 115, in split",
-      "    is_skylab, requests = _get_backend_requests(split_resp.responses)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 145, in _get_backend_requests",
-      "    is_first_skylab, request = _get_backend_request(split_responses[0])",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 161, in _get_backend_request",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 113, in split",
+      "    split_resp.tagged_responses)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 146, in _get_backend_requests",
+      "    is_skylab, request = _get_backend_request(response)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 160, in _get_backend_request",
       "    raise ValueError('Traffic splits contains both autotest and skylab '",
       "ValueError: Traffic splits contains both autotest and skylab components; this is not supported."
     ]

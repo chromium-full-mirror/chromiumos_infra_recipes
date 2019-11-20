@@ -1179,11 +1179,11 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#100)(self, request):**
+&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#106)(self, request):**
 
 Execute work via `autotest-execute` subcommand.
 
@@ -1192,7 +1192,7 @@ Args:
 
 Returns: ExecuteResponse.
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#67)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#72)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -1201,9 +1201,9 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#23)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#24)(self):**
 
-&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#78)(self, request):**
+&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#83)(self, request):**
 
 Determine scheduler via `scheduler-traffic-split` subcommand.
 
@@ -1212,7 +1212,7 @@ Args:
 
 Returns: SchedulerTrafficSplitResponses.
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#89)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#95)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 
@@ -3522,7 +3522,7 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#199)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#198)(api, properties):**
 
 &mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#46)(api, requests):**
 
@@ -3534,7 +3534,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#174)(api, requests, enumerations, config, use_skylab):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#173)(api, requests, enumerations, config, use_skylab):**
 
 Execute request in the correct backend.
 
@@ -3545,7 +3545,7 @@ Args:
   use_skylab: bool indicating which backend to run in
               (True -> skylab, False -> autotest).
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#245)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#244)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
@@ -3563,7 +3563,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#214)(api, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#213)(api, responses):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#11): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

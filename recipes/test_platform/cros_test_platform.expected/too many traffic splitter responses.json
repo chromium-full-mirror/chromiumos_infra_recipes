@@ -3,8 +3,7 @@
     "cmd": [],
     "name": "traffic split",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@selected backend: skylab@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_SUMMARY_TEXT@selected backend: skylab@@@"
     ]
   },
   {
@@ -13,8 +12,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesHost\": \"foo gitiles host\"@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
@@ -36,12 +35,12 @@
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
       "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
@@ -60,7 +59,7 @@
       "@@@STEP_LOG_LINE@response@        }@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
       "@@@STEP_LOG_LINE@response@    }, @@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@    \"one_too_many\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
       "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
@@ -79,7 +78,7 @@
       "@@@STEP_LOG_LINE@response@        }@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -126,10 +125,72 @@
       "-input_json",
       "/dev/stdin",
       "-output_json",
-      "/dev/stdout"
+      "/dev/stdout",
+      "-tagged"
     ],
     "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"requests\": [\n    {\n      \"config\": {\n        \"gitilesHost\": \"foo gitiles host\"\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  ]\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"config\": {\n        \"gitilesHost\": \"foo gitiles host\"\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"name\": \"foo-suite\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"name\": \"foo-suite\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
+      "enumerate",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "name": "enumerate tests.call binary.enumerate",
+    "stdin": "{\n  \"requests\": [\n    {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\"\n      }\n    }, \n    {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\"\n      }\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -146,18 +207,18 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 202, in RunSteps",
-      "    skylab, requests = split(api, requests, properties.config)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 118, in split",
-      "    return is_skylab, _zip_to_dict(tags, requests)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 131, in _zip_to_dict",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 206, in RunSteps",
+      "    enumerations = enumerate_tests(api, requests)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 65, in enumerate_tests",
+      "    responses = _zip_to_dict(tags, responses.responses)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 129, in _zip_to_dict",
       "    % (len(vs), len(ks)))",
-      "ValueError: Got 2 values for 1 keys"
+      "ValueError: Got 0 values for 2 keys"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('Got 2 values for 1 keys',)"
+      "humanReason": "Uncaught Exception: ValueError('Got 0 values for 2 keys',)"
     },
     "name": "$result"
   }

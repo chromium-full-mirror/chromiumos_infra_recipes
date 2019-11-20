@@ -17,6 +17,7 @@ from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
 # produced a response anyway.
 _RETCODE_PARTIAL_RESPONSE = 2
 
+
 class CrosTestPlatformCommand(recipe_api.RecipeApi):
   """Module for issuing cros_test_platform commands"""
 
@@ -24,7 +25,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     self._cmd = None
     self._version = 'latest'
 
-  def _run(self, subcommand, request, request_type, response_type):
+  def _run(self, subcommand, request, request_type, response_type,
+           tagged=False):
     """Generic subcommand runner for cros_test_platform.
 
     All cros_test_platform subcommands take the same basic commandline
@@ -35,6 +37,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       request: proto input request to subcommand.
       request_type: request must be of this type.
       response_type: response type proto.
+      tagged: (bool) If True, use tagged requests.
 
     Returns:
       Response, of type response_type.
@@ -51,6 +54,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
         '-output_json',
         '/dev/stdout',
       ]
+      if tagged:
+        cmd.append('-tagged')
       s.presentation.logs['request'] = [json_format.MessageToJson(request)]
       response = self.m.easy.stdout_jsonpb_step(
           subcommand,
@@ -84,7 +89,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     Returns: SchedulerTrafficSplitResponses.
     """
     return self._run('scheduler-traffic-split', request,
-        SchedulerTrafficSplitRequests, SchedulerTrafficSplitResponses)
+                     SchedulerTrafficSplitRequests,
+                     SchedulerTrafficSplitResponses, tagged=True)
 
   def skylab_execute(self, request):
     """Execute work via `skylab-execute` subcommand.
