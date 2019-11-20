@@ -1,78 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "repo checkout"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all"
-    ],
-    "infra_step": true,
-    "name": "repo checkout.repo init",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "infra_step": true,
-    "name": "repo checkout.clear repo locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".git/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "infra_step": true,
-    "name": "repo checkout.clear git locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--jobs",
-      "32"
-    ],
-    "infra_step": true,
-    "name": "repo checkout.repo sync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "mount overlay master"
   },
   {
@@ -225,14 +153,9 @@
   },
   {
     "cmd": [],
-    "name": "package source"
-  },
-  {
-    "cmd": [],
-    "name": "package source.tar up source repo checkout",
+    "name": "tar up source repo checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@archive file: chromiumos_repo-1337000001500.bz2@@@"
+      "@@@STEP_TEXT@archive file: test_file.bz2@@@"
     ]
   },
   {
@@ -243,15 +166,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "chromiumos_repo-1337000001500.bz2",
+      "test_file.bz2",
       "[CLEANUP]/source_cache_tmp_1/version.txt"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "package source.tar up source repo checkout.write version file",
+    "name": "tar up source repo checkout.write version file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@version.txt@chromiumos_repo-1337000001500.bz2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@version.txt@test_file.bz2@@@",
       "@@@STEP_LOG_END@version.txt@@@"
     ]
   },
@@ -259,19 +182,15 @@
     "cmd": [
       "tar",
       "-cjf",
-      "[CLEANUP]/source_cache_tmp_1/chromiumos_repo-1337000001500.bz2",
+      "[CLEANUP]/source_cache_tmp_1/test_file.bz2",
       "."
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "package source.tar up source repo checkout.packaging via ['tar', '-cjf', Path([CLEANUP], 'source_cache_tmp_1', 'chromiumos_repo-1337000001500.bz2'), '.'] for cache",
+    "name": "tar up source repo checkout.packaging via ['tar', '-cjf', Path([CLEANUP], 'source_cache_tmp_1', 'test_file.bz2'), '.'] for cache",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "upload cache"
   },
   {
     "cmd": [
@@ -282,20 +201,53 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_1/chromiumos_repo-1337000001500.bz2",
-      "gs://chromeos-bot-cache/chromeos-ci"
+      "[CLEANUP]/source_cache_tmp_1/test_file.bz2",
+      "gs://test cache upload/chromeos-ci"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload cache.gsutil cp",
+    "name": "gsutil cp",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "update version"
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/source_cache_tmp_1/test_file.bz2",
+      "gs://test cache upload/chromeos-ci"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "gsutil cp (2)",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/source_cache_tmp_1/test_file.bz2",
+      "gs://test cache upload/chromeos-ci"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "gsutil cp (3)",
+    "timeout": 180
   },
   {
     "cmd": [
@@ -307,15 +259,12 @@
       "----",
       "cp",
       "[CLEANUP]/source_cache_tmp_1/version.txt",
-      "gs://chromeos-bot-cache/chromeos-ci"
+      "gs://test cache version/chromeos-ci"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "update version.gsutil cp",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "gsutil cp (4)",
+    "timeout": 180
   },
   {
     "cmd": [],

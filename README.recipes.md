@@ -12,6 +12,7 @@
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
+  * [cros_cache](#recipe_modules-cros_cache) &mdash; API for working with CrOS cache.
   * [cros_cq_depends](#recipe_modules-cros_cq_depends) &mdash; APIs for interacting with Cq-Depends.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
@@ -72,6 +73,8 @@
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
   * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events)
+  * [cros_cache:examples/full](#recipes-cros_cache_examples_full)
+  * [cros_cache:examples/missing_source_dir](#recipes-cros_cache_examples_missing_source_dir)
   * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings)
   * [cros_cq_depends:examples/ensure_manifest_cq_depends_fulfilled](#recipes-cros_cq_depends_examples_ensure_manifest_cq_depends_fulfilled)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
@@ -587,6 +590,35 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#110)(self):**
 
 Expose all client stubs defined in this module.
+### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
+
+[DEPS](/recipe_modules/cros_cache/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for working with CrOS cache.
+
+#### **class [CrosCacheApi](/recipe_modules/cros_cache/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for CrOS-specific cache steps.
+
+&mdash; **def [package\_source](/recipe_modules/cros_cache/api.py#25)(self, filename, source_path):**
+
+Packages up the current checkout of source to a tar file for cache usage.
+
+Args:
+  filename (str): Base filename to create.
+  source_path (Path):  Location of the repo checkout to package.
+
+Returns:
+  archive_file (Path): Path to the created archive file.
+  version_file (Path): Path to the created version file.
+
+&mdash; **def [upload\_artifact](/recipe_modules/cros_cache/api.py#50)(self, gs_bucket, upload_file):**
+
+Uploads cache and version file to Google Storage.
+
+Args:
+  gs_bucket (str): Target Google Storage bucket.
+  upload_file (Path):  Location of cache artifact file to upload.
 ### *recipe_modules* / [cros\_cq\_depends](/recipe_modules/cros_cq_depends)
 
 [DEPS](/recipe_modules/cros_cq_depends/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2764,11 +2796,11 @@ Returns:
   dict of target versions
 ### *recipes* / [cache\_generate](/recipes/cache_generate.py)
 
-[DEPS](/recipes/cache_generate.py#8): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/cache_generate.py#8): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe for generating ChromeOS cache payloads.
 
-&mdash; **def [RunSteps](/recipes/cache_generate.py#15)(api):**
+&mdash; **def [RunSteps](/recipes/cache_generate.py#18)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -2850,6 +2882,18 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_build_api/examples/publish_events.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/publish_events.py#14)(api):**
+### *recipes* / [cros\_cache:examples/full](/recipe_modules/cros_cache/examples/full.py)
+
+[DEPS](/recipe_modules/cros_cache/examples/full.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_cache/examples/full.py#12)(api):**
+
+&mdash; **def [attempt\_upload\_file](/recipe_modules/cros_cache/examples/full.py#21)(api, attempt):**
+### *recipes* / [cros\_cache:examples/missing\_source\_dir](/recipe_modules/cros_cache/examples/missing_source_dir.py)
+
+[DEPS](/recipe_modules/cros_cache/examples/missing_source_dir.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_cache/examples/missing_source_dir.py#13)(api):**
 ### *recipes* / [cros\_cq\_depends:examples/cq\_depend\_strings](/recipe_modules/cros_cq_depends/examples/cq_depend_strings.py)
 
 [DEPS](/recipe_modules/cros_cq_depends/examples/cq_depend_strings.py#8): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
