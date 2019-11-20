@@ -369,14 +369,13 @@ def GenTests(api):
   )
 
   # Setting both request and requests should cause a recipe crash
-  yield (
-    api.test('both request and requests') + #
-    api.properties(CrosTestPlatformProperties(
-        request=Request(),
-        requests={'first': Request()},
-    )) + #
-    api.expect_exception("ValueError")
-  )
+  yield (api.test('both request and requests') +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=Request(),
+                 requests={'first': Request()},
+             )) +  #
+         api.expect_exception("ValueError"))
 
   # Traffic split with no traffic to either autotest or skylab
   # should cause recipe crash.
