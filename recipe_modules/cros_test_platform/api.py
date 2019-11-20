@@ -100,8 +100,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
     Returns: ExecuteResponse.
     """
-    return self._run('skylab-execute', request,
-        ExecuteRequests, ExecuteResponses)
+    return self._run('skylab-execute', request, ExecuteRequests,
+                     ExecuteResponses, tagged=True)
 
   def autotest_execute(self, request):
     """Execute work via `autotest-execute` subcommand.
@@ -111,8 +111,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
     Returns: ExecuteResponse.
     """
-    return self._run('autotest-execute', request,
-        ExecuteRequests, ExecuteResponses)
+    return self._run('autotest-execute', request, ExecuteRequests,
+                     ExecuteResponses, tagged=True)
 
   def _ensure_cros_test_platform(self):
     """Ensure the cros_test_platform CLI is installed."""

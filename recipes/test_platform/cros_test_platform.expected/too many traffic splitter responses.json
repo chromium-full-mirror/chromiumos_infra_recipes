@@ -202,74 +202,6 @@
   },
   {
     "cmd": [],
-    "name": "execute.call binary",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"requestParams\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"testMetadataUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"skylabWorker\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"luciProject\": \"foo luci project\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"schedulerMigration\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"gitilesHost\": \"foo gitiles host\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"enumeration\": {}@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"requestParams\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"testMetadataUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"skylabWorker\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"luciProject\": \"foo luci project\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"schedulerMigration\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"gitilesHost\": \"foo gitiles host\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"enumeration\": {}@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "skylab-execute",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout"
-    ],
-    "infra_step": true,
-    "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"requests\": [\n    {\n      \"requestParams\": {\n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }, \n        \"schedulerMigration\": {\n          \"gitilesHost\": \"foo gitiles host\"\n        }\n      }, \n      \"enumeration\": {}\n    }, \n    {\n      \"requestParams\": {\n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }, \n        \"schedulerMigration\": {\n          \"gitilesHost\": \"foo gitiles host\"\n        }\n      }, \n      \"enumeration\": {}\n    }\n  ]\n}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "RECIPE CRASH (Uncaught exception)",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@",
@@ -280,18 +212,18 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 199, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 197, in RunSteps",
       "    responses = execute(api, requests, enumerations, properties.config, skylab)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 187, in execute",
-      "    return _zip_to_dict(tags, responses.responses)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 121, in _zip_to_dict",
-      "    % (len(vs), len(ks)))",
-      "ValueError: Got 0 values for 2 keys"
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 168, in execute",
+      "    _ensure_all_requests_enumerated(requests, enumerations)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 185, in _ensure_all_requests_enumerated",
+      "    raise ValueError('No enumerations for requests tagged %s' % missing)",
+      "ValueError: No enumerations for requests tagged set([u'default', u'one_too_many'])"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('Got 0 values for 2 keys',)"
+      "humanReason": "Uncaught Exception: ValueError(\"No enumerations for requests tagged set([u'default', u'one_too_many'])\",)"
     },
     "name": "$result"
   }

@@ -188,8 +188,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"requestParams\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"model\": \"foo-model\"@@@",
@@ -216,12 +216,12 @@
       "@@@STEP_LOG_LINE@request@        ]@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"state\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_FAILED\", @@@",
       "@@@STEP_LOG_LINE@response@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
@@ -248,7 +248,7 @@
       "@@@STEP_LOG_LINE@response@        }@@@",
       "@@@STEP_LOG_LINE@response@      ]@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -260,11 +260,12 @@
       "-input_json",
       "/dev/stdin",
       "-output_json",
-      "/dev/stdout"
+      "/dev/stdout",
+      "-tagged"
     ],
     "infra_step": true,
     "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"requests\": [\n    {\n      \"requestParams\": {\n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }, \n        \"schedulerMigration\": {\n          \"gitilesHost\": \"foo gitiles host\"\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  ]\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }, \n        \"schedulerMigration\": {\n          \"gitilesHost\": \"foo gitiles host\"\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

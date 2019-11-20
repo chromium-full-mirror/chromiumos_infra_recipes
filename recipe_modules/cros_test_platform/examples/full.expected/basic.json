@@ -124,7 +124,8 @@
       "-input_json",
       "/dev/stdin",
       "-output_json",
-      "/dev/stdout"
+      "/dev/stdout",
+      "-tagged"
     ],
     "name": "call binary (6).skylab-execute",
     "stdin": "{}",
@@ -156,7 +157,8 @@
       "-input_json",
       "/dev/stdin",
       "-output_json",
-      "/dev/stdout"
+      "/dev/stdout",
+      "-tagged"
     ],
     "name": "call binary (8).autotest-execute",
     "stdin": "{}",

@@ -114,14 +114,6 @@ def split(api, requests, config):
     return is_skylab, tagged_requests
 
 
-def _zip_to_dict(ks, vs):
-  """Zips two equal sized lists to a dict."""
-  if len(ks) != len(vs):  # pragma: no cover
-    raise ValueError("Got %d values for %d keys"
-                     % (len(vs), len(ks)))
-  return {k: v for k, v in  zip(ks, vs)}
-
-
 def _get_backend_requests(split_responses):
   """Extract the backend request from traffic splitter response.
 
@@ -173,18 +165,24 @@ def execute(api, requests, enumerations, config, use_skylab):
                 (True -> skylab, False -> autotest).
   """
   with api.step.nest('execute'):
-    tags = requests.keys()
-    exec_reqs = ExecuteRequests(requests=[
-        ExecuteRequest(request_params=requests[tag].params,
-                       enumeration=enumerations[tag],
-                       config=config)
-        for tag in tags
-    ])
+    _ensure_all_requests_enumerated(requests, enumerations)
+    exec_reqs = ExecuteRequests(
+        tagged_requests={
+            t: ExecuteRequest(request_params=r.params,
+                              enumeration=enumerations[t], config=config)
+            for t, r in requests.iteritems()
+        })
     if use_skylab:
       responses = api.cros_test_platform.skylab_execute(exec_reqs)
     else:
       responses = api.cros_test_platform.autotest_execute(exec_reqs)
-    return _zip_to_dict(tags, responses.responses)
+    return responses.tagged_responses
+
+
+def _ensure_all_requests_enumerated(requests, enumerations):
+  missing = set(requests.keys()) - set(enumerations.keys())
+  if missing:
+    raise ValueError('No enumerations for requests tagged %s' % missing)
 
 
 def RunSteps(api, properties):
@@ -465,88 +463,99 @@ def GenTests(api):
       api.expect_exception("ValueError"))
 
   # An end-to-end run with traffic splitting to skylab.
-  yield (api.test('end-to-end skylab execution with passed tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.step_data(
-             'traffic split.call binary.scheduler-traffic-split',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(
-                         tagged_responses={
-                             'default':
-                                 SchedulerTrafficSplitResponse(
-                                     skylab_request=_test_request('foo'))
-                         })))) +  #
-         api.step_data(
-             'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-                 _test_single_enumeration('foo'))) +  #
-         api.step_data(
-             'execute.call binary.skylab-execute', stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     ExecuteResponses(responses=[
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_PASSED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-passed',
-                                     state=TaskState(
-                                         verdict="VERDICT_PASSED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                     ])))))
+  yield (
+      api.test('end-to-end skylab execution with passed tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo'))) +  #
+      api.step_data(
+          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
+                                  state=TaskState(
+                                      life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_PASSED'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz',
+                                          log_url='logs://bar/baz',
+                                          name='foo-passed',
+                                          state=TaskState(
+                                              verdict="VERDICT_PASSED",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                  ],
+                              )
+                      })))))
 
-  yield (api.test('end-to-end skylab execution with failed tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.step_data(
-             'traffic split.call binary.scheduler-traffic-split',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(
-                         tagged_responses={
-                             'default':
-                                 SchedulerTrafficSplitResponse(
-                                     skylab_request=_test_request('foo'))
-                         })))) +  #
-         api.step_data(
-             'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-                 _test_single_enumeration('foo'))) +  #
-         api.step_data(
-             'execute.call binary.skylab-execute', stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     ExecuteResponses(responses=[
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_FAILED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-failed',
-                                     state=TaskState(
-                                         verdict="VERDICT_FAILED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz1',
-                                     log_url='logs://bar/baz1',
-                                     name='foo-failed',
-                                     attempt=1,
-                                     state=TaskState(
-                                         verdict="VERDICT_FAILED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                     ])))))
+  yield (
+      api.test('end-to-end skylab execution with failed tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo'))) +  #
+      api.step_data(
+          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
+                                  state=TaskState(
+                                      life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_FAILED'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz',
+                                          log_url='logs://bar/baz',
+                                          name='foo-failed',
+                                          state=TaskState(
+                                              verdict="VERDICT_FAILED",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz1',
+                                          log_url='logs://bar/baz1',
+                                          name='foo-failed',
+                                          attempt=1,
+                                          state=TaskState(
+                                              verdict="VERDICT_FAILED",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                  ],
+                              )
+                      })))))
 
   yield (
       api.test('end-to-end skylab execution with failed then passed tasks') +  #
@@ -569,186 +578,210 @@ def GenTests(api):
       api.step_data(
           'execute.call binary.skylab-execute', stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  ExecuteResponses(responses=[
-                      ExecuteResponse(
-                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                          verdict='VERDICT_PASSED_ON_RETRY'),
-                          task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
-                                  log_url='logs://bar/baz',
-                                  name='foo-retried',
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
                                   state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz1',
-                                  log_url='logs://bar/baz1',
-                                  name='foo-retried',
-                                  attempt=1,
+                                      life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_PASSED_ON_RETRY'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz',
+                                          log_url='logs://bar/baz',
+                                          name='foo-retried',
+                                          state=TaskState(
+                                              verdict="VERDICT_FAILED",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz1',
+                                          log_url='logs://bar/baz1',
+                                          name='foo-retried',
+                                          attempt=1,
+                                          state=TaskState(
+                                              verdict="VERDICT_PASSED",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                  ],
+                              )
+                      })))))
+
+  yield (
+      api.test('end-to-end skylab execution with retried tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo'))) +  #
+      api.step_data(
+          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
                                   state=TaskState(
-                                      verdict="VERDICT_PASSED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                          ],
-                      )
-                  ])))))
+                                      life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_PASSED_ON_RETRY'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz',
+                                          log_url='logs://bar/baz',
+                                          name='foo-retried',
+                                          state=TaskState(
+                                              verdict="VERDICT_FAILED",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz1',
+                                          log_url='logs://bar/baz1',
+                                          name='foo-retried',
+                                          attempt=1,
+                                          state=TaskState(
+                                              verdict="VERDICT_PASSED_ON_RETRY",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                  ],
+                              )
+                      })))))
 
-  yield (api.test('end-to-end skylab execution with retried tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.step_data(
-             'traffic split.call binary.scheduler-traffic-split',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(
-                         tagged_responses={
-                             'default':
-                                 SchedulerTrafficSplitResponse(
-                                     skylab_request=_test_request('foo'))
-                         })))) +  #
-         api.step_data(
-             'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-                 _test_single_enumeration('foo'))) +  #
-         api.step_data(
-             'execute.call binary.skylab-execute', stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     ExecuteResponses(responses=[
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_PASSED_ON_RETRY'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-retried',
-                                     state=TaskState(
-                                         verdict="VERDICT_FAILED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz1',
-                                     log_url='logs://bar/baz1',
-                                     name='foo-retried',
-                                     attempt=1,
-                                     state=TaskState(
-                                         verdict="VERDICT_PASSED_ON_RETRY",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                     ])))))
+  yield (
+      api.test('end-to-end skylab execution with rejected tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo'))) +  #
+      api.step_data(
+          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
+                                  state=TaskState(
+                                      life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_FAILED'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz',
+                                          log_url='logs://bar/baz',
+                                          name='foo-rejected',
+                                          state=TaskState(
+                                              life_cycle="LIFE_CYCLE_REJECTED"),
+                                      ),
+                                  ],
+                              )
+                      })))))
 
-  yield (api.test('end-to-end skylab execution with rejected tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.step_data(
-             'traffic split.call binary.scheduler-traffic-split',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(
-                         tagged_responses={
-                             'default':
-                                 SchedulerTrafficSplitResponse(
-                                     skylab_request=_test_request('foo'))
-                         })))) +  #
-         api.step_data(
-             'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-                 _test_single_enumeration('foo'))) +  #
-         api.step_data(
-             'execute.call binary.skylab-execute', stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     ExecuteResponses(responses=[
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_FAILED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-rejected',
-                                     state=TaskState(
-                                         life_cycle="LIFE_CYCLE_REJECTED"),
-                                 ),
-                             ],
-                         )
-                     ])))))
+  yield (
+      api.test('end-to-end skylab execution with pending tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo'))) +  #
+      api.step_data(
+          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
+                                  state=TaskState(
+                                      life_cycle='LIFE_CYCLE_PENDING',
+                                      verdict='VERDICT_FAILED'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url=None,
+                                          log_url=None,
+                                          name='foo-pending',
+                                          state=TaskState(
+                                              life_cycle="LIFE_CYCLE_PENDING"),
+                                      ),
+                                  ],
+                              )
+                      })))))
 
-  yield (api.test('end-to-end skylab execution with pending tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.step_data(
-             'traffic split.call binary.scheduler-traffic-split',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(
-                         tagged_responses={
-                             'default':
-                                 SchedulerTrafficSplitResponse(
-                                     skylab_request=_test_request('foo'))
-                         })))) +  #
-         api.step_data(
-             'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-                 _test_single_enumeration('foo'))) +  #
-         api.step_data(
-             'execute.call binary.skylab-execute', stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     ExecuteResponses(responses=[
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_PENDING',
-                                             verdict='VERDICT_FAILED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url=None,
-                                     log_url=None,
-                                     name='foo-pending',
-                                     state=TaskState(
-                                         life_cycle="LIFE_CYCLE_PENDING"),
-                                 ),
-                             ],
-                         )
-                     ])))))
-
-  yield (api.test('end-to-end with autotest execution') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.step_data(
-             'traffic split.call binary.scheduler-traffic-split',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     SchedulerTrafficSplitResponses(
-                         tagged_responses={
-                             'default':
-                                 SchedulerTrafficSplitResponse(
-                                     autotest_request=_test_request('foo'))
-                         })))) +  #
-         api.step_data(
-             'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-                 _test_single_enumeration('foo'))) +  #
-         api.step_data(
-             'execute.call binary.autotest-execute', stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     ExecuteResponses(responses=[
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_PASSED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-passed',
-                                     state=TaskState(
-                                         verdict="VERDICT_PASSED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                     ])))))
+  yield (
+      api.test('end-to-end with autotest execution') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  autotest_request=_test_request('foo'))
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo'))) +  #
+      api.step_data(
+          'execute.call binary.autotest-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
+                                  state=TaskState(
+                                      life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_PASSED'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz',
+                                          log_url='logs://bar/baz',
+                                          name='foo-passed',
+                                          state=TaskState(
+                                              verdict="VERDICT_PASSED",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                  ],
+                              )
+                      })))))
 
   yield (api.test('too many traffic splitter responses') +  #
          api.properties(
@@ -805,36 +838,43 @@ def GenTests(api):
       api.step_data(
           'execute.call binary.skylab-execute', stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  ExecuteResponses(responses=[
-                      ExecuteResponse(
-                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                          verdict='VERDICT_FAILED'),
-                          task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
-                                  log_url='logs://bar/baz',
-                                  name='foo-failed',
+                  ExecuteResponses(
+                      tagged_responses={
+                          'first':
+                              ExecuteResponse(
                                   state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                                      life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_FAILED'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz',
+                                          log_url='logs://bar/baz',
+                                          name='foo-failed',
+                                          state=TaskState(
+                                              verdict="VERDICT_FAILED",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                  ],
                               ),
-                          ],
-                      ),
-                      ExecuteResponse(
-                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                          verdict='VERDICT_FAILED'),
-                          task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
-                                  log_url='logs://bar/baz',
-                                  name='baz-failed',
+                          'second':
+                              ExecuteResponse(
                                   state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                                      life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_FAILED'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url='foo://bar/baz',
+                                          log_url='logs://bar/baz',
+                                          name='baz-failed',
+                                          state=TaskState(
+                                              verdict="VERDICT_FAILED",
+                                              life_cycle='LIFE_CYCLE_COMPLETED'
+                                          ),
+                                      ),
+                                  ],
                               ),
-                          ],
-                      ),
-                  ])))))
+                      })))))
 
   yield (
     api.test('end-to-end multi-requests with skylab execution') + #
@@ -844,16 +884,25 @@ def GenTests(api):
     )) + #
     api.step_data('traffic split.call binary.scheduler-traffic-split',
                   stdout=api.raw_io.output(
-                    json_format.MessageToJson(SchedulerTrafficSplitResponses(tagged_responses={
-      'first': SchedulerTrafficSplitResponse(skylab_request=_test_request('foo'))
+                    json_format.MessageToJson(SchedulerTrafficSplitResponses(
+                        tagged_responses={
+      'first': SchedulerTrafficSplitResponse(
+          skylab_request=_test_request('foo'))
                     })))) + #
     api.step_data('enumerate tests.call binary.enumerate',
-                  stdout=api.raw_io.output(_test_single_enumeration('foo'))) + #
+                  stdout=api.raw_io.output('''
+  {
+    "tagged_responses": {
+      "first": {
+        "autotest_invocations": [{"test": {"name": "foo-test"}}]
+      }
+    }
+  }''')) + #
     api.step_data(
       'execute.call binary.skylab-execute',
       stdout=api.raw_io.output(
-          json_format.MessageToJson(ExecuteResponses(responses=[
-            ExecuteResponse(
+          json_format.MessageToJson(ExecuteResponses(tagged_responses={
+            'first': ExecuteResponse(
                 state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                 verdict='VERDICT_PASSED'),
                 task_results=[
@@ -866,7 +915,7 @@ def GenTests(api):
                     ),
                 ],
             )
-          ])))) + #
+          })))) + #
     api.post_check(lambda check, steps: check(
         len(GetBuildProperties(steps).get('responses', {})) > 0))
   )
