@@ -419,31 +419,6 @@
   },
   {
     "cmd": [],
-    "name": "clean up SDK chroot"
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "chmod",
-      "a+rwX,-t",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {

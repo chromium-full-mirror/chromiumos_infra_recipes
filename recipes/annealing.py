@@ -59,8 +59,6 @@ def RunSteps(api, properties):
 
   api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context(), \
-      api.cros_sdk.cleanup_context(
-          checkout_path=api.cros_source.workspace_path), \
       api.context(
           cwd=api.cros_source.workspace_path.join('manifest-internal')):
     snapshot_xml = api.repo.manifest_snapshot()
