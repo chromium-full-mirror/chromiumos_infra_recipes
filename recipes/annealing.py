@@ -20,7 +20,6 @@ import collections
 import urlparse
 
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
-from PB.chromite.api.binhost import RegenBuildCacheRequest
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
@@ -145,40 +144,6 @@ def RunSteps(api, properties):
             project = projects[0]
             push(project.remote, 'HEAD:refs/for/' + project.branch + '%submit',
                  dry_run=not properties.publish_uprevs)
-
-    with api.step.nest('init sdk') as step:
-      api.cros_sdk.build_chmod_chroot()
-      response = api.cros_build_api.SdkService.Create(
-          CreateSdkRequest(
-              flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
-              chroot=api.cros_sdk.chroot))
-      step.presentation.logs['sdk version'] = [str(response.version.version)]
-      api.cros_sdk.link_chroot(api.cros_source.workspace_path)
-
-    with api.step.nest('update sdk') as step:
-      api.cros_build_api.SdkService.Update(
-          UpdateSdkRequest(chroot=api.cros_sdk.chroot))
-
-    with api.step.nest('update metadata'), api.context(
-        cwd=api.cros_source.workspace_path):
-      overlays = api.cros_build_api.BinhostService.RegenBuildCache(
-          RegenBuildCacheRequest(overlay_type=OVERLAYTYPE_BOTH,
-                                 chroot=api.cros_sdk.chroot)).modified_overlays
-      if overlays:
-        overlay_dirs = [overlay.path for overlay in overlays]
-        with api.step.nest('commit metadata'):
-          for overlay_dir in overlay_dirs:
-            with api.context(cwd=api.path.abs_to_path(overlay_dir)):
-              api.git.add(['.'])
-              api.git.commit('Update Metadata Cache')
-        with api.step.nest('push metadata'):
-          push = util.exponential_retry(retries=3)(api.git.push)
-          for overlay_dir in overlay_dirs:
-            with api.context(cwd=api.path.abs_to_path(overlay_dir)):
-              project = api.repo.project_infos(projects=[overlay_dir])[0]
-              push(project.remote,
-                   'HEAD:refs/for/' + project.branch + '%submit',
-                   dry_run=not properties.publish_uprevs)
 
     if properties.child_builders:
       with api.step.nest('schedule child builds'):
