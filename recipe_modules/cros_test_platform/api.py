@@ -77,8 +77,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
     Returns: EnumerationResponse.
     """
-    return self._run('enumerate', request,
-        EnumerationRequests, EnumerationResponses)
+    return self._run('enumerate', request, EnumerationRequests,
+                     EnumerationResponses, tagged=True)
 
   def scheduler_traffic_split(self, request):
     """Determine scheduler via `scheduler-traffic-split` subcommand.

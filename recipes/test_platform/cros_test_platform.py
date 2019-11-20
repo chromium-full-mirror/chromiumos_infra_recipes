@@ -53,20 +53,18 @@ def enumerate_tests(api, requests):
   Returns: {tag: EnumerationResponse} dict.
   """
   with api.step.nest('enumerate tests') as step:
-    tags, requests = _unzip_dict(requests)
-    enum_requests = EnumerationRequests(requests=[
-        EnumerationRequest(
-            metadata=r.params.metadata,
-            test_plan=r.test_plan,
-        )
-        for r in requests
-    ])
-    responses = api.cros_test_platform.enumerate(enum_requests)
-    responses = _zip_to_dict(tags, responses.responses)
-    for tag, response in responses.iteritems():
+    enum_requests = EnumerationRequests(
+        tagged_requests={
+            t: EnumerationRequest(
+                metadata=r.params.metadata,
+                test_plan=r.test_plan,
+            ) for t, r in requests.iteritems()
+        })
+    enum_responses = api.cros_test_platform.enumerate(enum_requests)
+    for tag, response in enum_responses.tagged_responses.iteritems():
       name = 'autotest tests for %s' % tag
       step.presentation.logs[name] = _enumeration_log(response)
-    return responses
+    return enum_responses.tagged_responses
 
 
 def _enumeration_log(response):
@@ -114,12 +112,6 @@ def split(api, requests, config):
     env_name = 'skylab' if is_skylab else 'autotest'
     step.presentation.step_summary_text = 'selected backend: ' + env_name
     return is_skylab, tagged_requests
-
-
-def _unzip_dict(d):
-  """Unzips given dict two equal sized lists."""
-  pairs = [(k, v) for k, v in d.iteritems()]
-  return zip(*pairs)
 
 
 def _zip_to_dict(ks, vs):
@@ -383,11 +375,11 @@ def _test_single_enumeration(tag):
   # protos.
   return '''
   {
-    "responses": [
-      {
+    "tagged_responses": {
+      "default": {
         "autotest_invocations": [{"test": {"name": "%s-test"}}]
       }
-    ]
+    }
   }''' % tag
 
 
@@ -801,14 +793,14 @@ def GenTests(api):
       api.step_data(
           'enumerate tests.call binary.enumerate', stdout=api.raw_io.output('''
   {
-    "responses": [
-      {
+    "tagged_responses": {
+      "first": {
         "autotest_invocations": [{"test": {"name": "foo-test"}}]
       },
-      {
+      "second": {
         "autotest_invocations": [{"test": {"name": "baz-test"}}]
       }
-    ]
+    }
   }''')) +  #
       api.step_data(
           'execute.call binary.skylab-execute', stdout=api.raw_io.output(
