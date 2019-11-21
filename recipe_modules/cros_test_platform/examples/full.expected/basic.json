@@ -92,7 +92,8 @@
       "/dev/stdin",
       "-output_json",
       "/dev/stdout",
-      "-tagged"
+      "-tagged",
+      "-rip-cautotest"
     ],
     "name": "call binary (4).scheduler-traffic-split",
     "stdin": "{}",

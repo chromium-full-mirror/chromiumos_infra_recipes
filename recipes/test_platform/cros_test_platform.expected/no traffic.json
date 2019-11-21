@@ -71,7 +71,8 @@
       "/dev/stdin",
       "-output_json",
       "/dev/stdout",
-      "-tagged"
+      "-tagged",
+      "-rip-cautotest"
     ],
     "name": "traffic split.call binary.scheduler-traffic-split",
     "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"config\": {}, \n      \"request\": {}\n    }\n  }\n}",

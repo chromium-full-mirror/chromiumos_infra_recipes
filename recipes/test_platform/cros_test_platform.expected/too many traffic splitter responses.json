@@ -126,7 +126,8 @@
       "/dev/stdin",
       "-output_json",
       "/dev/stdout",
-      "-tagged"
+      "-tagged",
+      "-rip-cautotest"
     ],
     "name": "traffic split.call binary.scheduler-traffic-split",
     "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"config\": {\n        \"gitilesHost\": \"foo gitiles host\"\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",

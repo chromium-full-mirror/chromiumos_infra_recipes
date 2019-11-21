@@ -25,8 +25,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     self._cmd = None
     self._version = 'latest'
 
-  def _run(self, subcommand, request, request_type, response_type,
-           tagged=False):
+  def _run(self, subcommand, request, request_type, response_type, tagged=False,
+           extra_args=None):
     """Generic subcommand runner for cros_test_platform.
 
     All cros_test_platform subcommands take the same basic commandline
@@ -38,6 +38,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       request_type: request must be of this type.
       response_type: response type proto.
       tagged: (bool) If True, use tagged requests.
+      extra_args: [str] list of extra arguments to the command.
 
     Returns:
       Response, of type response_type.
@@ -56,6 +57,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       ]
       if tagged:
         cmd.append('-tagged')
+      if extra_args:
+        cmd += extra_args
       s.presentation.logs['request'] = [json_format.MessageToJson(request)]
       response = self.m.easy.stdout_jsonpb_step(
           subcommand,
@@ -90,7 +93,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     """
     return self._run('scheduler-traffic-split', request,
                      SchedulerTrafficSplitRequests,
-                     SchedulerTrafficSplitResponses, tagged=True)
+                     SchedulerTrafficSplitResponses, tagged=True,
+                     extra_args=['-rip-cautotest'])
 
   def skylab_execute(self, request):
     """Execute work via `skylab-execute` subcommand.
