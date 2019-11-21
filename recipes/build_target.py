@@ -129,6 +129,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
   if api.cros_relevance.is_build_pointless(
       gerrit_changes, gitiles_commit, build_target=build_target,
       chroot=api.cros_sdk.chroot, name='post-sync pointless build check'):
+    # TODO: When it becomes possible to add tags from the build itself set:
+    # "hide-in-gerrit": "pointless"
+    # See https://crrev.com/c/1913895.
     return
 
   try:

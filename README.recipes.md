@@ -2765,7 +2765,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#65)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#229)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#232)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2781,7 +2781,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#246)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#249)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
