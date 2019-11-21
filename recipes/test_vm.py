@@ -20,10 +20,12 @@ The steps specific to VM testing are:
 
 import os
 
+from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import Path
 from PB.chromiumos.common import UseFlag
+from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
@@ -92,6 +94,13 @@ def RunSteps(api, properties):
               api.cros_build_api.SdkService.Delete(
                   DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
           raise
+
+      with api.step.nest('uprev packages') as step:
+        request = UprevPackagesRequest(
+            chroot=api.cros_sdk.chroot,
+            build_targets=[BuildTarget(name=properties.build_target.name)],
+            overlay_type=OVERLAYTYPE_BOTH)
+        response = api.cros_build_api.PackageService.Uprev(request)
 
       with api.step.nest('update sdk'):
         try:
