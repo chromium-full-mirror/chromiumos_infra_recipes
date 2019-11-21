@@ -165,7 +165,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes):
 
     with api.step.nest('install packages'):
       flags = InstallPackagesRequest.Flags(
-          compile_source=False, use_goma=api.cros_sdk.has_goma_config())
+          compile_source=build_config.build.compile_source,
+          use_goma=api.cros_sdk.has_goma_config())
       response = api.cros_build_api.SysrootService.InstallPackages(
           InstallPackagesRequest(sysroot=sysroot, flags=flags,
                                  packages=packages, chroot=api.cros_sdk.chroot,
