@@ -660,8 +660,6 @@
       "value1",
       "arg2",
       "value2",
-      "-u",
-      "chromeos.bot@gmail.com:READ",
       "gs://prebuilts_gs_bucket/board/target/postsubmit-R99-1234.56.0-101-0/packages"
     ],
     "infra_step": true,

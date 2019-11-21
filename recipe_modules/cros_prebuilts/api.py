@@ -212,9 +212,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     for acl in acls:
       cmd.append(acl.arg)
       cmd.append(acl.value)
-    # Temporary measure. Add the old bots as readers.
-    # TODO(saklein): Remove this when the legacy builders are turned off.
-    cmd.extend(['-u', 'chromeos.bot@gmail.com:READ'])
 
   def upload_target_prebuilts(self, target, kind, gs_bucket, private=True):
     """Upload binary prebuilts for the build target to Google Storage.
