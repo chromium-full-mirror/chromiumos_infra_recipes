@@ -13,6 +13,8 @@ from PB.test_platform.steps.enumeration import \
 from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitRequests, SchedulerTrafficSplitResponses
 from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
+from PB.test_platform.steps.compute_backfill import \
+  ComputeBackfillRequests, ComputeBackfillResponses
 
 
 def RunSteps(api):
@@ -41,6 +43,12 @@ def RunSteps(api):
   exec_req = ExecuteRequests()
   exec_resp = api.cros_test_platform.autotest_execute(exec_req)
   api.assertions.assertEqual(exec_resp, ExecuteResponses())
+
+  with api.assertions.assertRaises(ValueError):
+    api.cros_test_platform.compute_backfill(None)
+  req = ComputeBackfillRequests()
+  resp = api.cros_test_platform.compute_backfill(req)
+  api.assertions.assertEqual(resp, ComputeBackfillResponses())
 
 
 def GenTests(api):

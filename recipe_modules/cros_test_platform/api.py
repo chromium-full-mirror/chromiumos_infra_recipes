@@ -12,6 +12,8 @@ from PB.test_platform.steps.enumeration import \
 from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitRequests, SchedulerTrafficSplitResponses
 from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
+from PB.test_platform.steps.compute_backfill import \
+  ComputeBackfillRequests, ComputeBackfillResponses
 
 # This exit code is returned by cros_test_platform runs that had an error but
 # produced a response anyway.
@@ -117,6 +119,17 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     """
     return self._run('autotest-execute', request, ExecuteRequests,
                      ExecuteResponses, tagged=True)
+
+  def compute_backfill(self, request):
+    """Compute the backfill request for this build
+
+    Args:
+      request: a ComputeBackfillRequests.
+
+    Returns: ComputeBackfillResponses.
+    """
+    return self._run('compute-backfill', request, ComputeBackfillRequests,
+                     ComputeBackfillResponses)
 
   def _ensure_cros_test_platform(self):
     """Ensure the cros_test_platform CLI is installed."""

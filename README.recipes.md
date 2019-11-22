@@ -1181,11 +1181,11 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#110)(self, request):**
+&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#112)(self, request):**
 
 Execute work via `autotest-execute` subcommand.
 
@@ -1194,7 +1194,16 @@ Args:
 
 Returns: ExecuteResponse.
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#75)(self, request):**
+&mdash; **def [compute\_backfill](/recipe_modules/cros_test_platform/api.py#123)(self, request):**
+
+Compute the backfill request for this build
+
+Args:
+  request: a ComputeBackfillRequests.
+
+Returns: ComputeBackfillResponses.
+
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#77)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -1203,9 +1212,9 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#24)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#26)(self):**
 
-&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#86)(self, request):**
+&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#88)(self, request):**
 
 Determine scheduler via `scheduler-traffic-split` subcommand.
 
@@ -1214,7 +1223,7 @@ Args:
 
 Returns: SchedulerTrafficSplitResponses.
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#99)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#101)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 
@@ -3016,7 +3025,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#20)(api):**
 ### *recipes* / [cros\_test\_postprocess:examples/full](/recipe_modules/cros_test_postprocess/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_postprocess/examples/full.py#6): [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -3525,15 +3534,24 @@ Recipe for running Moblab VM tests.
 &mdash; **def [RunSteps](/recipes/test_moblab_vm.py#42)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#35): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#39): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#188)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#213)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#46)(api, requests):**
+&mdash; **def [compute\_backfills](/recipes/test_platform/cros_test_platform.py#192)(api, requests, enumerations, responses):**
+
+Compute backfill requests for this build.
+
+Args:
+requests: {tag: test_platform.Request} dict.
+enumerations: {tag: EnumerationResponse} dict.
+responses: {tag: ExecuteResponse} dict.
+
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#50)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -3543,7 +3561,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#157)(api, requests, enumerations, config, use_skylab):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#161)(api, requests, enumerations, config, use_skylab):**
 
 Execute request in the correct backend.
 
@@ -3554,11 +3572,11 @@ Args:
   use_skylab: bool indicating which backend to run in
               (True -> skylab, False -> autotest).
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#234)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#259)(api, responses, backfills):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#88)(api, requests, config):**
+&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#92)(api, requests, config):**
 
 Determine which backend will execute the request.
 
@@ -3572,7 +3590,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#203)(api, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#228)(api, responses):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#11): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

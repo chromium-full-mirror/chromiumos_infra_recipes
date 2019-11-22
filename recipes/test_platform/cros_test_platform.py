@@ -20,6 +20,10 @@ from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitResponse, SchedulerTrafficSplitResponses
 from PB.test_platform.steps.execution import ExecuteRequest, ExecuteRequests
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
+from PB.test_platform.steps.compute_backfill import \
+    ComputeBackfillRequest, ComputeBackfillRequests
+from PB.test_platform.steps.compute_backfill import \
+    ComputeBackfillResponse, ComputeBackfillResponses
 from PB.test_platform.request import Request
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.config.config import Config
@@ -185,6 +189,27 @@ def _ensure_all_requests_enumerated(requests, enumerations):
     raise ValueError('No enumerations for requests tagged %s' % missing)
 
 
+def compute_backfills(api, requests, enumerations, responses):
+  """Compute backfill requests for this build.
+
+  Args:
+  requests: {tag: test_platform.Request} dict.
+  enumerations: {tag: EnumerationResponse} dict.
+  responses: {tag: ExecuteResponse} dict.
+  """
+  with api.step.nest('compute backfill'):
+    reqs = ComputeBackfillRequests(
+        tagged_requests={
+            t: ComputeBackfillRequest(
+                request=r,
+                enumeration=enumerations[t],
+                execution=responses.get(t, ExecuteResponse()),
+            ) for t, r in requests.iteritems()
+        })
+    backfill = api.cros_test_platform.compute_backfill(reqs)
+    return backfill.tagged_responses
+
+
 def RunSteps(api, properties):
   requests = _get_requests_from_properties(properties)
   # Traffic split failures can be due to malformed requests.
@@ -195,9 +220,9 @@ def RunSteps(api, properties):
   with api.context(infra_steps=True):
     enumerations = enumerate_tests(api, requests)
     responses = execute(api, requests, enumerations, properties.config, skylab)
-    set_output_properties(api, responses)
+    backfills = compute_backfills(api, requests, enumerations, responses)
+    set_output_properties(api, responses, backfills)
   summarize(api, responses)
-
 
 
 def summarize(api, responses):
@@ -231,22 +256,27 @@ def _get_requests_from_properties(properties):
   raise ValueError('Must set at least one of request and requests')
 
 
-def set_output_properties(api, responses):
+def set_output_properties(api, responses, backfills):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
     marshalled = {}
     for tag, response in responses.iteritems():
-      marshalled[tag] = _marshal_response_to_json(response)
+      marshalled[tag] = _marshal_proto_to_json(response)
     step.properties['responses'] = marshalled
     if 'default' in marshalled:
       step.properties['response'] = marshalled['default']
 
+    marshalled = {}
+    for tag, backfill in backfills.iteritems():
+      marshalled[tag] = _marshal_proto_to_json(backfill.request)
+    step.properties['backfills'] = marshalled
 
-def _marshal_response_to_json(response):
-  # The `response` field of CrosTestPlatformProperties is a message of
-  # type ExecuteResponse. However, the recipe-supported mechanism for setting
-  # output properties supports only json-encodable python structures, not
-  # protos, so roundtrip the actual ExecuteResponse proto through json.
+
+def _marshal_proto_to_json(response):
+  # The fields of CrosTestPlatformProperties are protobufs.
+  # However, the recipe-supported mechanism for setting output properties
+  # supports only json-encodable python structures, not protobufs, so roundtrip
+  # through json.
   return json.loads(json_format.MessageToJson(response))
 
 
@@ -555,7 +585,14 @@ def GenTests(api):
                                       ),
                                   ],
                               )
-                      })))))
+                      })))) +  #
+      api.step_data(
+          'compute backfill.call binary.compute-backfill',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ComputeBackfillResponses(tagged_responses={
+                      'default': ComputeBackfillResponse(request=Request(),)
+                  })))))
 
   yield (
       api.test('end-to-end skylab execution with failed then passed tasks') +  #
