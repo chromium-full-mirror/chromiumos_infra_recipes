@@ -35,6 +35,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       self._goma_client_json = None
       self._goma_approach = None
       self._use_flags = None
+      self._sdk_is_dirty = False
 
   @property
   def cros_sdk_path(self):
@@ -75,6 +76,9 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
   def set_use_flags(self, use_flags):
     self._use_flags = use_flags
+
+  def mark_sdk_as_dirty(self):
+    self._sdk_is_dirty = True
 
   def __call__(self, name, args, **kwargs):
     """Executes 'cros_sdk' with the supplied arguments.
@@ -126,12 +130,15 @@ class CrosSdkApi(recipe_api.RecipeApi):
     try:
       yield
     except self.m.step.StepFailure:
-      self.m.step.nest(
-          'Invalidating SDK due to build failure',
-          self.m.cros_build_api.SdkService.Delete(
-              DeleteSdkRequest(chroot=self.m.cros_sdk.chroot)))
+      self.mark_sdk_as_dirty()
       raise
     finally:
+      if self._sdk_is_dirty:
+        self.m.step.nest(
+            'Invalidating SDK due to dirty state',
+            self.m.cros_build_api.SdkService.Delete(
+                DeleteSdkRequest(chroot=self.m.cros_sdk.chroot)))
+
       with self.m.step.nest('clean up SDK chroot'):
         self.unlink_chroot(checkout_path)
         self.swarming_chmod_chroot()

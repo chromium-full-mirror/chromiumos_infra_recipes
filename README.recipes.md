@@ -879,6 +879,20 @@ Args:
 
 A module for determining if a build is unnecessary.
 
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#184)(self, build_target, chroot):**
+
+Calculates the dependency graph for the build target & SDK
+
+Args:
+  build_target (chromiumos.BuildTarget): The BuildTarget being built.
+  chroot (chromiumos.Chroot): The chroot it is being run in.
+
+Returns:
+  (chromite.api.DepGraph, chromite.api.DepGraph): A tuple of opaque
+      dependency graph objects, with the first element being the dependency
+      graph for the target and the second element the graph for the
+      SDK/chroot.
+
 &mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#31)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=[]):**
 
 Determines which builders must be run (and which can be skipped).
@@ -904,7 +918,7 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#95)(self, gerrit_changes, gitiles_commit, build_target, chroot, name=None, test_is_pointless=False):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#95)(self, gerrit_changes, gitiles_commit, dep_graph, test_is_pointless=False):**
 
 Determines if build(s) can be terminated early.
 
@@ -917,13 +931,29 @@ Args:
       applied for the build, if any.
   gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
       snapshot Gitiles commit.
-  build_target (chromiumos.BuildTarget): The BuildTarget being built.
-  chroot (chromiumos.Chroot): The chroot it is being run in.
-  name (str): The step name.
+  dep_graph (chromite.api.DepGraph): The dependency graph to compare the
+      Gerrit changes against to test for build relevancy.
   test_is_pointless (bool): test override; sets whether build is pointless.
 
 Returns:
   bool: Whether the build can be terminated early.
+
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#126)(self, gerrit_changes, gitiles_commit, dep_graph, name=None, test_is_pointless=False):**
+
+Determines if a Gerrit Change affects a given dependency graph.
+
+Args:
+  gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+      applied for the build, if any.
+  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+      snapshot Gitiles commit.
+  dep_graph (chromite.api.DepGraph): The dependency graph to compare the
+      Gerrit changes against to test for build relevancy.
+  name (str): The step name to display, defaults to 'depgraph relevance
+      check'.
+
+Returns:
+  bool: Whether the given Gerrit Change affects the given dependency graph.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#1): [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -934,7 +964,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#79)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#83)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -946,15 +976,15 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#160)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#167)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#44)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#45)(self):**
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#123)(self, checkout_path):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#127)(self, checkout_path):**
 
 Returns a context that cleans the SDK chroot named cache.
 
@@ -965,24 +995,26 @@ Configure CrosSdkApi.
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#39)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#40)(self):**
 
 Returns a Path to the cros_sdk script.
 
-&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#73)(self):**
+&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#74)(self):**
 
 &mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#20)(self):**
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#105)(self, checkout_path):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#109)(self, checkout_path):**
 
 Link the chroot to a chromiumos checkout.
 
 Args:
   checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#169)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#80)(self):**
+
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#176)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -998,18 +1030,18 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#65)(self, chrome_root):**
+&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#66)(self, chrome_root):**
 
-&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#68)(self, goma_dir, goma_client_json, goma_approach):**
+&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#69)(self, goma_dir, goma_client_json, goma_approach):**
 
-&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#76)(self, use_flags):**
+&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#77)(self, use_flags):**
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#151)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#158)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#139)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#146)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
@@ -2813,7 +2845,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#65)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#242)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#250)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2829,7 +2861,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#260)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#268)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

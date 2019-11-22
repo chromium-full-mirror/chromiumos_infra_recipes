@@ -92,8 +92,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                   result.skip_for_run_when_rules)))
       return [b.name for b in result.builds_to_run]
 
-  def is_build_pointless(self, gerrit_changes, gitiles_commit, build_target,
-                         chroot, name=None, test_is_pointless=False):
+  def is_build_pointless(self, gerrit_changes, gitiles_commit, dep_graph,
+                         test_is_pointless=False):
     """Determines if build(s) can be terminated early.
 
     If build_target is set, then the chromiumos workspace must have been
@@ -105,22 +105,42 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           applied for the build, if any.
       gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
           snapshot Gitiles commit.
-      build_target (chromiumos.BuildTarget): The BuildTarget being built.
-      chroot (chromiumos.Chroot): The chroot it is being run in.
-      name (str): The step name.
+      dep_graph (chromite.api.DepGraph): The dependency graph to compare the
+          Gerrit changes against to test for build relevancy.
       test_is_pointless (bool): test override; sets whether build is pointless.
 
     Returns:
       bool: Whether the build can be terminated early.
     """
-    with self.m.step.nest(name or 'pointless build check') as step_result:
-      dep_graph = None
-      if build_target:
-        resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
-            GetBuildDependencyGraphRequest(build_target=build_target,
-                                           chroot=chroot))
-        dep_graph = resp.dep_graph
+    with self.m.step.nest('pointless build check') as step_result:
+      pointless_build = not self.is_depgraph_affected(
+          gerrit_changes, gitiles_commit, dep_graph,
+          test_is_pointless=test_is_pointless)
+      if pointless_build:
+        step_result.presentation.step_text = ('build is irrelevant')
+        step_result.presentation.properties['pointless_build'] = True
+      else:
+        step_result.presentation.step_text = ('build is relevant')
+      return pointless_build
 
+  def is_depgraph_affected(self, gerrit_changes, gitiles_commit, dep_graph,
+                           name=None, test_is_pointless=False):
+    """Determines if a Gerrit Change affects a given dependency graph.
+
+    Args:
+      gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+          applied for the build, if any.
+      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+          snapshot Gitiles commit.
+      dep_graph (chromite.api.DepGraph): The dependency graph to compare the
+          Gerrit changes against to test for build relevancy.
+      name (str): The step name to display, defaults to 'depgraph relevance
+          check'.
+
+    Returns:
+      bool: Whether the given Gerrit Change affects the given dependency graph.
+    """
+    with self.m.step.nest(name or 'depgraph relevance check') as step_result:
       self._ensure_binaries()
       check_request = PointlessBuildCheckRequest(
           gitiles_commit=testplans_proto_bytes(
@@ -159,12 +179,26 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       result.ParseFromString(response_bin)
 
       step_result.presentation.logs['relevance_output'] = [str(result)]
-      if result.build_is_pointless.value:
-        step_result.presentation.step_text = ('build is irrelevant')
-        step_result.presentation.properties['pointless_build'] = True
-      else:
-        step_result.presentation.step_text = ('build is relevant')
-      return result.build_is_pointless.value
+      return not bool(result.build_is_pointless.value)
+
+  def get_dependency_graph(self, build_target, chroot):
+    """Calculates the dependency graph for the build target & SDK
+
+    Args:
+      build_target (chromiumos.BuildTarget): The BuildTarget being built.
+      chroot (chromiumos.Chroot): The chroot it is being run in.
+
+    Returns:
+      (chromite.api.DepGraph, chromite.api.DepGraph): A tuple of opaque
+          dependency graph objects, with the first element being the dependency
+          graph for the target and the second element the graph for the
+          SDK/chroot.
+    """
+    with self.m.step.nest('dependency graph calculation'):
+      resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
+          GetBuildDependencyGraphRequest(build_target=build_target,
+                                         chroot=chroot))
+      return resp.dep_graph, resp.sdk_dep_graph
 
   def _ensure_binaries(self):
     """Ensure this module's binaries are installed."""

@@ -19,16 +19,18 @@ def RunSteps(api):
   bt = BuildTarget(name='my_build_target')
   build_config = [dict(build_target=bt.name)]
   chroot = Chroot()
+  dep_graph = {}
   gc = [
       bbcommon_pb2.GerritChange(change=123),
       bbcommon_pb2.GerritChange(change=456)
   ]
   api.cros_relevance.is_build_pointless(
-      gc, bbcommon_pb2.GitilesCommit(id='my hash'), build_target=bt,
-      chroot=chroot, test_is_pointless=False)
+      gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph,
+      test_is_pointless=False)
   api.cros_relevance.is_build_pointless(
-      gc, bbcommon_pb2.GitilesCommit(id='my hash'), build_target=bt,
-      chroot=chroot, test_is_pointless=True)
+      gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph,
+      test_is_pointless=True)
+  api.cros_relevance.get_dependency_graph(bt, chroot)
 
 
 def GenTests(api):

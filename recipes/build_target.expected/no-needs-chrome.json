@@ -1477,17 +1477,11 @@
   },
   {
     "cmd": [],
-    "name": "post-sync pointless build check",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@build is relevant@@@",
-      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
-      "@@@STEP_LOG_LINE@relevance_output@}@@@",
-      "@@@STEP_LOG_END@relevance_output@@@"
-    ]
+    "name": "dependency graph calculation"
   },
   {
     "cmd": [],
-    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph",
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -1523,7 +1517,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
@@ -1559,7 +1553,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1577,14 +1571,14 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.read output file",
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event",
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
@@ -1617,7 +1611,7 @@
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"post-sync pointless build check|call chromite.api.DependencyService/GetBuildDependencyGraph|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"dependency graph calculation|call chromite.api.DependencyService/GetBuildDependencyGraph|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:33.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:35Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
@@ -1626,7 +1620,7 @@
   },
   {
     "cmd": [],
-    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message",
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1637,8 +1631,8 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BJIBPQoPCg1hbWQ2NC1nZW5lcmljEioKE1tDQUNIRV0vY3Jv\\nc19jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWyaARcKFRITGhEKD3NvbWUvc291cmNlL2RpctAC\\n0OyA2a7xtZJ82gJxcG9zdC1zeW5jIHBvaW50bGVzcyBidWlsZCBjaGVja3xjYWxsIGNocm9taXRl\\nLmFwaS5EZXBlbmRlbmN5U2VydmljZS9HZXRCdWlsZERlcGVuZGVuY3lHcmFwaHxjYWxsIGJ1aWxk\\nIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BJIBPQoPCg1hbWQ2NC1nZW5lcmljEioKE1tDQUNIRV0vY3Jv\\nc19jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWyaARcKFRITGhEKD3NvbWUvc291cmNlL2RpctAC\\n0OyA2a7xtZJ82gJuZGVwZW5kZW5jeSBncmFwaCBjYWxjdWxhdGlvbnxjYWxsIGNocm9taXRlLmFw\\naS5EZXBlbmRlbmN5U2VydmljZS9HZXRCdWlsZERlcGVuZGVuY3lHcmFwaHxjYWxsIGJ1aWxkIEFQ\\nSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1649,9 +1643,26 @@
   },
   {
     "cmd": [],
-    "name": "post-sync pointless build check.ensure binaries",
+    "name": "pointless build check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_TEXT@build is relevant@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "pointless build check.depgraph relevance check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
+      "@@@STEP_LOG_LINE@relevance_output@}@@@",
+      "@@@STEP_LOG_END@relevance_output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "pointless build check.depgraph relevance check.ensure binaries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1667,9 +1678,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "post-sync pointless build check.ensure binaries.ensure_installed",
+    "name": "pointless build check.depgraph relevance check.ensure binaries.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -1696,9 +1707,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "post-sync pointless build check.write input binaryproto",
+    "name": "pointless build check.depgraph relevance check.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@*\u0015\u0012\u0013\u001a\u0011@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u000fsome/source/dir2(2d72510e447ab60a9728aeea2362d8be2cbd7789:\u0005@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\t:\u0005@@@",
@@ -1719,9 +1730,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "post-sync pointless build check.run check",
+    "name": "pointless build check.depgraph relevance check.run check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1737,9 +1748,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "post-sync pointless build check.read output file",
+    "name": "pointless build check.depgraph relevance check.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2822,6 +2833,165 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"\", \"gs_path\": \"amd64-generic-cq/R99-1234.56.0-101-8945511751514863184\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate SDK reuse"
+  },
+  {
+    "cmd": [],
+    "name": "validate SDK reuse.depgraph relevance check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
+      "@@@STEP_LOG_LINE@relevance_output@}@@@",
+      "@@@STEP_LOG_END@relevance_output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "*\u00002(2d72510e447ab60a9728aeea2362d8be2cbd7789:\u0005\n\u0003\u0018\ufffd\t:\u0005\n\u0003\u0018\ufffd\u0012Bd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
+      "[CLEANUP]/pointless-build-_tmp_16/input.binaryproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "validate SDK reuse.depgraph relevance check.write input binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@*\u00002(2d72510e447ab60a9728aeea2362d8be2cbd7789:\u0005@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\t:\u0005@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\u0012Bd@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@b@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/pointless_build_checker",
+      "check-build",
+      "--input_binary_pb",
+      "[CLEANUP]/pointless-build-_tmp_16/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/pointless-build-_tmp_16/output.binaryproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "validate SDK reuse.depgraph relevance check.run check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/pointless-build-_tmp_16/output.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "validate SDK reuse.depgraph relevance check.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.SdkService/Delete",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.SdkService/Delete.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "chromite.api.SdkService/Delete"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.SdkService/Delete.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.SdkService/Delete.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

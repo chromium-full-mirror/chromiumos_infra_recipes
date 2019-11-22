@@ -1223,14 +1223,14 @@
   },
   {
     "cmd": [],
-    "name": "post-sync pointless build check",
+    "name": "dependency graph calculation",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph",
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
@@ -1249,7 +1249,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_EXCEPTION@@@"
@@ -1413,7 +1413,7 @@
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('post-sync pointless build check.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file') (retcode: 1)"
+      "humanReason": "Infra Failure: Step('dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file') (retcode: 1)"
     },
     "name": "$result"
   }

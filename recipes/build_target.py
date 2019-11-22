@@ -129,14 +129,17 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     create_sysroot_response = api.cros_build_api.SysrootService.Create(
         SysrootCreateRequest(
             build_target=build_target, profile=profile,
-            chroot=api.cros_sdk.chroot, flags=SysrootCreateRequest.Flags(
-                chroot_current=True, replace=True)))
+            chroot=api.cros_sdk.chroot,
+            flags=SysrootCreateRequest.Flags(chroot_current=True,
+                                             replace=True)))
     sysroot = create_sysroot_response.sysroot
 
-  if api.cros_relevance.is_build_pointless(
-      gerrit_changes, gitiles_commit, build_target=build_target,
-      chroot=api.cros_sdk.chroot, name='post-sync pointless build check',
-      test_is_pointless=test_pointless):
+  target_graph, sdk_graph = api.cros_relevance.get_dependency_graph(
+      build_target=build_target, chroot=api.cros_sdk.chroot)
+
+  if api.cros_relevance.is_build_pointless(gerrit_changes, gitiles_commit,
+                                           dep_graph=target_graph,
+                                           test_is_pointless=test_pointless):
     # TODO: When it becomes possible to add tags from the build itself set:
     # "hide-in-gerrit": "pointless"
     # See https://crrev.com/c/1913895.
@@ -237,6 +240,11 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
         build_target, build_config.id.type,
         build_config.artifacts.prebuilts_gs_bucket,
         private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
+
+  with api.step.nest('validate SDK reuse'):
+    if api.cros_relevance.is_depgraph_affected(gerrit_changes, gitiles_commit,
+                                               dep_graph=sdk_graph):
+      api.cros_sdk.mark_sdk_as_dirty()
 
 
 def get_packages(api, build_config):
@@ -390,13 +398,12 @@ def GenTests(api):
           'update sdk.call chromite.api.SdkService/Update.call build API script',
           retcode=1))
 
-  yield (
-      api.test('destroy-chroot-failed-step-tests') +  #
-      api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                               builder='amd64-generic-cq') +  #
-      api.step_data(
-          'post-sync pointless build check.call chromite.api.DependencyService/'
-          'GetBuildDependencyGraph.write input file', retcode=1))
+  yield (api.test('destroy-chroot-failed-step-tests') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='cq',
+                                  builder='amd64-generic-cq') +  #
+         api.step_data(
+             'dependency graph calculation.call chromite.api.DependencyService/'
+             'GetBuildDependencyGraph.write input file', retcode=1))
 
   yield (api.test('builder-no-longer-exists') +  #
          cq_build_with_gerrit_change('no-exist-builder'))
