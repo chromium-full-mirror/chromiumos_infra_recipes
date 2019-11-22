@@ -40,6 +40,7 @@
   * [ipc](#recipe_modules-ipc)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
+  * [phosphorus](#recipe_modules-phosphorus)
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
@@ -144,6 +145,7 @@
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [paygen](#recipes-paygen) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
+  * [phosphorus:examples/full](#recipes-phosphorus_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
@@ -2334,6 +2336,36 @@ Unmount an OverlayFS.
 Args:
   * name (str): The name used for |mount|.
   * mount_path (Path): Path to unmount the OverlayFS from.
+### *recipe_modules* / [phosphorus](/recipe_modules/phosphorus)
+
+[DEPS](/recipe_modules/phosphorus/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for issuing Phosphorus commands
+
+&mdash; **def [initialize](/recipe_modules/phosphorus/api.py#17)(self):**
+
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#45)(self, request):**
+
+Run a prejob or a provision via `prejob` subcommand.
+
+Args:
+  request: a PrejobRequest.
+
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#53)(self, request):**
+
+Run a test via `run-test` subcommand.
+
+Args:
+  request: a RunTestRequest.
+
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#61)(self, request):**
+
+Upload test results to TKO via `upload-to-tko` subcommand.
+
+Args:
+  request: an UploadToTkoRequest.
 ### *recipe_modules* / [portage](/recipe_modules/portage)
 
 [DEPS](/recipe_modules/portage/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3417,6 +3449,11 @@ Raises:
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
 &mdash; **def [RunSteps](/recipes/paygen.py#13)(api):**
+### *recipes* / [phosphorus:examples/full](/recipe_modules/phosphorus/examples/full.py)
+
+[DEPS](/recipe_modules/phosphorus/examples/full.py#6): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/phosphorus/examples/full.py#15)(api):**
 ### *recipes* / [portage:examples/full](/recipe_modules/portage/examples/full.py)
 
 [DEPS](/recipe_modules/portage/examples/full.py#6): [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
