@@ -489,7 +489,14 @@
   },
   {
     "cmd": [],
-    "name": "read builder configs"
+    "name": "non-critical build check"
+  },
+  {
+    "cmd": [],
+    "name": "non-critical build check.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -504,15 +511,11 @@
       "text"
     ],
     "infra_step": true,
-    "name": "read builder configs.fetch master:generated/builder_configs.cfg",
+    "name": "non-critical build check.read builder configs.fetch master:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "non-critical build check"
   },
   {
     "cmd": [],
@@ -2552,13 +2555,6 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up orchestrator.non-critical build check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -471,11 +471,12 @@ class FailuresApi(recipe_api.RecipeApi):
     """
     return self.is_critical_build_failure(moblab_vm_test)
 
-  def update_non_critical_failures(self, failures, fresh_builder_configs):
+  def update_non_critical_failures(self, step, failures, fresh_builder_configs):
     """
 
     Args:
       failures (list[Failure]): All failures encountered during execution.
+      step (recipe Step): parent step.
       fresh_builder_configs (dict(str, BuilderConfig)): name to builder config
           for all BuilderConfigs that should have criticality checked.
 
@@ -483,20 +484,20 @@ class FailuresApi(recipe_api.RecipeApi):
       list[Failure]: the updated list of builders with 'fatal' statuses
           possibly updated.
     """
-    with self.m.step.nest('non-critical build check') as step:
-      new_failures = []
-      presentation_log = []
-      for f in failures:
-        fatal = f.fatal
-        if f.kind == 'build':
-          if f.id in fresh_builder_configs:
-            cfg = fresh_builder_configs[f.id]
-            if cfg.general.critical and not cfg.general.critical.value and f.fatal:
-              presentation_log.append('changed {} to non-critical'.format(f.id))
-              fatal = False
-        new_failures.append(
-            self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
-                         fatal=fatal, id=f.id))
-      if presentation_log:
-        step.presentation.logs['new non-critical builders'] = presentation_log
-      return new_failures
+    new_failures = []
+    presentation_log = []
+    for f in failures:
+      fatal = f.fatal
+      if f.kind == 'build':
+        if f.id in fresh_builder_configs:
+          cfg = fresh_builder_configs[f.id]
+          non_critical = cfg.general.critical and not cfg.general.critical.value
+          if f.fatal and non_critical:
+            presentation_log.append('changed {} to non-critical'.format(f.id))
+            fatal = False
+      new_failures.append(
+          self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
+                        fatal=fatal, id=f.id))
+    if presentation_log:
+      step.presentation.logs['new non-critical builders'] = presentation_log
+    return new_failures
