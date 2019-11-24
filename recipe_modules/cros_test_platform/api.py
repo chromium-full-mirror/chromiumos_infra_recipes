@@ -27,7 +27,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     self._cmd = None
     self._version = 'latest'
 
-  def _run(self, subcommand, request, request_type, response_type, tagged=False,
+  def _run(self, subcommand, request, request_type, response_type,
            extra_args=None):
     """Generic subcommand runner for cros_test_platform.
 
@@ -39,7 +39,6 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       request: proto input request to subcommand.
       request_type: request must be of this type.
       response_type: response type proto.
-      tagged: (bool) If True, use tagged requests.
       extra_args: [str] list of extra arguments to the command.
 
     Returns:
@@ -57,8 +56,6 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
         '-output_json',
         '/dev/stdout',
       ]
-      if tagged:
-        cmd.append('-tagged')
       if extra_args:
         cmd += extra_args
       s.presentation.logs['request'] = [json_format.MessageToJson(request)]
@@ -83,7 +80,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     Returns: EnumerationResponse.
     """
     return self._run('enumerate', request, EnumerationRequests,
-                     EnumerationResponses, tagged=True)
+                     EnumerationResponses)
 
   def scheduler_traffic_split(self, request):
     """Determine scheduler via `scheduler-traffic-split` subcommand.
@@ -93,10 +90,9 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
     Returns: SchedulerTrafficSplitResponses.
     """
-    return self._run('scheduler-traffic-split', request,
-                     SchedulerTrafficSplitRequests,
-                     SchedulerTrafficSplitResponses, tagged=True,
-                     extra_args=['-rip-cautotest'])
+    return self._run(
+        'scheduler-traffic-split', request, SchedulerTrafficSplitRequests,
+        SchedulerTrafficSplitResponses, extra_args=['-rip-cautotest'])
 
   def skylab_execute(self, request):
     """Execute work via `skylab-execute` subcommand.
@@ -107,7 +103,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     Returns: ExecuteResponse.
     """
     return self._run('skylab-execute', request, ExecuteRequests,
-                     ExecuteResponses, tagged=True)
+                     ExecuteResponses)
 
   def autotest_execute(self, request):
     """Execute work via `autotest-execute` subcommand.
@@ -118,7 +114,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     Returns: ExecuteResponse.
     """
     return self._run('autotest-execute', request, ExecuteRequests,
-                     ExecuteResponses, tagged=True)
+                     ExecuteResponses)
 
   def compute_backfill(self, request):
     """Compute the backfill request for this build

@@ -58,8 +58,7 @@
       "-input_json",
       "/dev/stdin",
       "-output_json",
-      "/dev/stdout",
-      "-tagged"
+      "/dev/stdout"
     ],
     "name": "call binary (2).enumerate",
     "stdin": "{}",
@@ -92,7 +91,6 @@
       "/dev/stdin",
       "-output_json",
       "/dev/stdout",
-      "-tagged",
       "-rip-cautotest"
     ],
     "name": "call binary (4).scheduler-traffic-split",
@@ -125,8 +123,7 @@
       "-input_json",
       "/dev/stdin",
       "-output_json",
-      "/dev/stdout",
-      "-tagged"
+      "/dev/stdout"
     ],
     "name": "call binary (6).skylab-execute",
     "stdin": "{}",
@@ -158,8 +155,7 @@
       "-input_json",
       "/dev/stdin",
       "-output_json",
-      "/dev/stdout",
-      "-tagged"
+      "/dev/stdout"
     ],
     "name": "call binary (8).autotest-execute",
     "stdin": "{}",
