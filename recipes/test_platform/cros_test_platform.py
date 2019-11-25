@@ -261,7 +261,7 @@ def set_output_properties(api, responses, backfills):
   with api.step.nest('set output properties') as step:
     marshalled = {}
     for tag, response in responses.iteritems():
-      marshalled[tag] = _marshal_proto_to_json(response)
+      marshalled[tag] = json_format.MessageToDict(response)
     step.properties['responses'] = marshalled
     if 'default' in marshalled:
       step.properties['response'] = marshalled['default']
@@ -273,15 +273,6 @@ def set_output_properties(api, responses, backfills):
     # for tag, backfill in backfills.iteritems():
     #   marshalled[tag] = _marshal_proto_to_json(backfill.request)
     # step.properties['backfills'] = marshalled
-
-
-def _marshal_proto_to_json(response):
-  # The fields of CrosTestPlatformProperties are protobufs.
-  # However, the recipe-supported mechanism for setting output properties
-  # supports only json-encodable python structures, not protobufs, so roundtrip
-  # through json.
-  return json.loads(json_format.MessageToJson(response))
-
 
 def _log_task_results(api, task_results):
   """Report task results for a request on the UI."""
