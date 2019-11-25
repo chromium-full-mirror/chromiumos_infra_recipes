@@ -3,7 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import datetime
 import os
+
+from util import exponential_retry
 
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import CrosTestPostprocessRequest, TestResult
 from PB.test_platform.common.task import TaskLogData
@@ -29,6 +32,7 @@ def _download_test_result_files(api, remote_test_results):
   with api.step.nest('download test results'):
     for test_result in remote_test_results:
       gs_path = test_result.log_data.gs_url
+      _wait(api, gs_path)
       with api.step.nest('download {}'.format(gs_path)):
         test_result_local_path = api.path.mkdtemp(prefix='test_result')
         step = api.gsutil.download_url(gs_path,
@@ -41,6 +45,27 @@ def _download_test_result_files(api, remote_test_results):
                 gs_path, test_result_local_path))
 
   return downloaded_test_results
+
+def _wait(api, gs_path):
+  with api.step.nest('wait'):
+    try:
+      # Note: This noop step is provided only to allow a test of the failure
+      # pathway that sidesteps the exponential backoff and sleep of
+      # _wait_for_marker_file.
+      api.step('noop', [':'])
+      with api.step.nest('poll gs'):
+        _wait_for_marker_file(api, gs_path)
+    except:
+        raise api.step.StepFailure(
+            'timed out or failed waiting offload-finished marker to appear')
+
+# With these parameters, polling will wait for (2 + 4 + 8) = 14 minutes before
+# giving up.
+@exponential_retry(retries=4, delay=datetime.timedelta(minutes=2))
+def _wait_for_marker_file(api, gs_path):
+  """Poll gs until the offload-finished marker appears for it."""
+  completed_marker = os.path.join(gs_path, '.finished_offload')
+  api.gsutil.cat(completed_marker)
 
 
 def RunSteps(api, properties):
@@ -60,6 +85,8 @@ def GenTests(api):
       image_archive_path='gs://chromeos-image-archive/foox-release/R10-11.0.0',
       test_results=[tr],
   )
+  dl_step = ('download test results.'
+             'download gs://chromeos-autotest-results/swarming-1234')
   yield (api.test('basic') +  #
          api.properties(req) +  #
          api.breakpad.find_dmp_files_test_data(
@@ -70,4 +97,14 @@ def GenTests(api):
              filename='./a/b/c.dmp') +  #
          api.breakpad.minidump_stackwalk_test_data(
              test_result=tr,
-             filename='./a/b/d.dmp'))
+             filename='./a/b/d.dmp') + #
+         # A download step should exist; contrast this with the never-offloaded
+         # testcase below.
+         api.post_check(lambda check, steps: check(dl_step in steps)))
+
+  yield (api.test('never-offloaded') + #
+         api.properties(req) + #
+         api.step_data('download test results.wait.noop', retcode=1) + #
+         # Failure when waiting for offload means we should not attempt
+         # download.
+         api.post_check(lambda check, steps: check(dl_step not in steps)))

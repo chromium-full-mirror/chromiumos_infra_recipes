@@ -5,6 +5,46 @@
   },
   {
     "cmd": [],
+    "name": "download test results.wait",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      ":"
+    ],
+    "name": "download test results.wait.noop",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "download test results.wait.poll gs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-autotest-results/swarming-1234/.finished_offload"
+    ],
+    "infra_step": true,
+    "name": "download test results.wait.poll gs.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "download test results.download gs://chromeos-autotest-results/swarming-1234",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

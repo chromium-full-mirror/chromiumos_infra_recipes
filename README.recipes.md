@@ -3594,9 +3594,9 @@ Returns: bool, [test_platform.Request]
 &mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#228)(api, responses):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
-[DEPS](/recipes/test_platform/cros_test_postprocess.py#11): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_postprocess.py#14): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#46)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#71)(api, properties):**
 ### *recipes* / [test\_platform/multi\_bot/follower](/recipes/test_platform/multi_bot/follower.py)
 
 [DEPS](/recipes/test_platform/multi_bot/follower.py#11): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
