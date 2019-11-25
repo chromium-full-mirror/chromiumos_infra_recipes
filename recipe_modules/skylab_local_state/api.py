@@ -26,9 +26,10 @@ class SkylabLocalStateCommand(recipe_api.RecipeApi):
 
     Returns: LoadResponse.
     """
-    with self.m.step.nest('call `skylab_local_state`'):
+    with self.m.step.nest('call `skylab_local_state`') as s:
       if not isinstance(request, LoadRequest):
         raise ValueError('request is not of type %s' % LoadRequest)
+      s.presentation.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_skylab_local_state()
       cmd = [
           self._cmd,
@@ -38,12 +39,14 @@ class SkylabLocalStateCommand(recipe_api.RecipeApi):
           '-output_json',
           '/dev/stdout',
       ]
-      return self.m.easy.stdout_jsonpb_step(
+      response =  self.m.easy.stdout_jsonpb_step(
           'load',
           cmd,
           LoadResponse,
           stdin_data=json_format.MessageToJson(request),
           test_output=LoadResponse())
+      s.presentation.logs['response'] = [json_format.MessageToJson(response)]
+      return response
 
   def save(self, request):
     """Update the DUT state file via `save` command.
@@ -51,9 +54,10 @@ class SkylabLocalStateCommand(recipe_api.RecipeApi):
     Args:
       request: a SaveRequest.
     """
-    with self.m.step.nest('call `skylab_local_state`'):
+    with self.m.step.nest('call `skylab_local_state`') as s:
       if not isinstance(request, SaveRequest):
         raise ValueError('request is not of type %s' % SaveRequest)
+      s.presentation.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_skylab_local_state()
       cmd = [
           self._cmd,

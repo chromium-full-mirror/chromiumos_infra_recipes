@@ -2632,7 +2632,7 @@ Args:
 
 Returns: LoadResponse.
 
-&mdash; **def [save](/recipe_modules/skylab_local_state/api.py#48)(self, request):**
+&mdash; **def [save](/recipe_modules/skylab_local_state/api.py#51)(self, request):**
 
 Update the DUT state file via `save` command.
 
@@ -3659,21 +3659,111 @@ Returns: bool, [test_platform.Request]
 &mdash; **def [RunSteps](/recipes/test_platform/multi_bot/leader.py#20)(api, properties):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#10): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/test_runner.py#19): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [phosphorus](#recipe_modules-phosphorus), [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#30)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#265)(api, properties, envvars):**
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#17)(api, properties):**
+&mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#156)(api, result):**
 
-Validate the CrosTfeProperties.
+Display test cases as recipe substeps.
 
 Args:
-  * api (object): See RunSteps documentation.
-  * properties (TestRunnerProperties): The input request.
+  * result: skylab_test_runner.Result instance.
 
-Raises: An exception if there are invalid properties.
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#140)(api, results_dir=''):**
+
+Parse test results.
+
+Args:
+  * results_dir: Directory containing test results to be parsed.
+
+Returns: skylab_test_runner.Result.
+
+Raises:
+  * InfraFailure if binary call fails.
+
+&mdash; **def [load\_state](/recipes/test_platform/test_runner.py#47)(api, config=None, dut_hostname='', run_id=''):**
+
+Create a host info file.
+
+Args:
+  * config: skylab_test_runner.Config instance.
+  * dut_hostname: DUT hostname string (e.g. 'chromeos8-row8-rack8-host8').
+  * run_id: Swarming task run ID string.
+
+Returns: LoadStateResponse.
+
+Raises:
+  * InfraFailure if binary call fails.
+
+&mdash; **def [prejob](/recipes/test_platform/test_runner.py#73)(api, config=None, request=None, dut_hostname='', load_response=None):**
+
+Run a prejob (e.g. provision) against the DUT via `autoserv`.
+
+Args:
+  * config: phosphorus.Config instance.
+  * request: skylab_test_runner.Request instance.
+  * dut_hostname: DUT hostname string.
+  * load_response: LoadStateResponse instance.
+
+Raises:
+  * InfraFailure if prejob fails.
+
+&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#97)(api, config=None, request=None, dut_hostname=''):**
+
+Run a test against the DUT via `autoserv`.
+
+Args:
+  * config: phosphorus.Config instance.
+  * request: skylab_test_runner.Request instance.
+  * dut_hostname: DUT hostname string.
+
+Raises:
+  * StepFailure if test crashes.
+    (No exception is raised if test fails without a crash.)
+
+&mdash; **def [save\_state](/recipes/test_platform/test_runner.py#177)(api, config=None, results_dir='', dut_hostname='', dut_id='', dut_state=''):**
+
+Update the local DUT state file.
+
+Args:
+  * config: skylab_test_runner.Config instance.
+  * results_dir: The root directory of test results.
+  * dut_hostname: DUT hostname string (e.g. 'chromeos8-row8-rack8-host8').
+  * dut_id: DUT ID string (e.g. 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee').
+  * dut_state: DUT state string (e.g. 'ready').
+
+Raises:
+  * InfraFailure if binary call fails.
+
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#207)(api, result=None):**
+
+Set the output properties that are part of the test_runner API.
+
+Args:
+  * result: skylab_test_runner.Result instance.
+
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#125)(api, config=None):**
+
+Upload test results to TKO via `tko/parse`.
+
+Args:
+  * config: phosphorus.Config instance.
+
+Raises:
+  * InfraFailure if binary call fails.
+
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#33)(api, properties):**
+
+Validate the TestRunnerProperties.
+
+Args:
+  * properties: TestRunnerProperties instance.
+
+Raises:
+  * ValueError if there are invalid properties.
 ### *recipes* / [test\_recipes](/recipes/test_recipes.py)
 
 [DEPS](/recipes/test_recipes.py#14): [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [recipe\_analyze](#recipe_modules-recipe_analyze), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

@@ -6,6 +6,7 @@ syntax = "proto3";
 
 package recipes.chromeos.test_platform.test_runner;
 
+import "test_platform/skylab_test_runner/config.proto";
 import "test_platform/skylab_test_runner/request.proto";
 import "test_platform/skylab_test_runner/result.proto";
 
@@ -17,4 +18,15 @@ message TestRunnerProperties {
   // results describes the output of a test_runner recipe; is set by the recipe
   // execution, not the caller.
   .test_platform.skylab_test_runner.Result result = 2;
+
+  // config describes configuration information for the cros_test_platform
+  // recipe; is set by the builder proterties, not the caller.
+  .test_platform.skylab_test_runner.Config config = 3;
+}
+
+
+message TestRunnerEnvProperties {
+  string SWARMING_BOT_ID = 1;
+  string SWARMING_TASK_ID = 2;
+  string SKYLAB_DUT_ID = 3;
 }

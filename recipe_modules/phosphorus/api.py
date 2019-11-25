@@ -26,9 +26,10 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       request: proto input request to subcommand.
       request_type: request must be of this type.
     """
-    with self.m.step.nest('call binary') as s:
+    with self.m.step.nest('call `phosphorus`') as s:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
+      s.presentation.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_phosphorus()
       cmd = [
         self._cmd,
@@ -36,7 +37,6 @@ class PhosphorusCommand(recipe_api.RecipeApi):
         '-input_json',
         '/dev/stdin',
       ]
-      s.presentation.logs['request'] = [json_format.MessageToJson(request)]
       self.m.easy.step(
           subcommand,
           cmd,

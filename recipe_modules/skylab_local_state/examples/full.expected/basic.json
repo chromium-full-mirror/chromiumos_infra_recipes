@@ -8,7 +8,13 @@
   },
   {
     "cmd": [],
-    "name": "call `skylab_local_state` (2)"
+    "name": "call `skylab_local_state` (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
   },
   {
     "cmd": [],
@@ -69,7 +75,11 @@
   },
   {
     "cmd": [],
-    "name": "call `skylab_local_state` (4)"
+    "name": "call `skylab_local_state` (4)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
   },
   {
     "cmd": [
