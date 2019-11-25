@@ -23,7 +23,8 @@
       "@@@STEP_LOG_LINE@request@            \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"testMetadataUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"testPlan\": {@@@",
@@ -47,7 +48,8 @@
       "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"testMetadataUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@response@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        }, @@@",
       "@@@STEP_LOG_LINE@response@        \"testPlan\": {@@@",
@@ -110,7 +112,7 @@
       "-rip-cautotest"
     ],
     "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"config\": {\n        \"gitilesHost\": \"foo gitiles host\"\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"config\": {\n        \"gitilesHost\": \"foo gitiles host\"\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -139,7 +141,8 @@
       "@@@STEP_LOG_LINE@request@        ]@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
@@ -172,7 +175,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -194,7 +197,8 @@
       "@@@STEP_LOG_LINE@request@          \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"testMetadataUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"testMetadataUrl\": \"foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"config\": {@@@",
@@ -263,7 +267,7 @@
     ],
     "infra_step": true,
     "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }, \n        \"schedulerMigration\": {\n          \"gitilesHost\": \"foo gitiles host\"\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }, \n        \"schedulerMigration\": {\n          \"gitilesHost\": \"foo gitiles host\"\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -313,7 +317,8 @@
       "@@@STEP_LOG_LINE@request@            \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"testMetadataUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"testPlan\": {@@@",
@@ -352,7 +357,7 @@
     ],
     "infra_step": true,
     "name": "compute backfill.call binary.compute-backfill",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"execution\": {\n        \"state\": {\n          \"verdict\": \"VERDICT_PASSED_ON_RETRY\", \n          \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n        }, \n        \"taskResults\": [\n          {\n            \"state\": {\n              \"verdict\": \"VERDICT_FAILED\", \n              \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n            }, \n            \"logUrl\": \"logs://bar/baz\", \n            \"taskUrl\": \"foo://bar/baz\", \n            \"name\": \"foo-retried\"\n          }, \n          {\n            \"state\": {\n              \"verdict\": \"VERDICT_PASSED_ON_RETRY\", \n              \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n            }, \n            \"logUrl\": \"logs://bar/baz1\", \n            \"attempt\": 1, \n            \"taskUrl\": \"foo://bar/baz1\", \n            \"name\": \"foo-retried\"\n          }\n        ]\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"execution\": {\n        \"state\": {\n          \"verdict\": \"VERDICT_PASSED_ON_RETRY\", \n          \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n        }, \n        \"taskResults\": [\n          {\n            \"state\": {\n              \"verdict\": \"VERDICT_FAILED\", \n              \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n            }, \n            \"logUrl\": \"logs://bar/baz\", \n            \"taskUrl\": \"foo://bar/baz\", \n            \"name\": \"foo-retried\"\n          }, \n          {\n            \"state\": {\n              \"verdict\": \"VERDICT_PASSED_ON_RETRY\", \n              \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n            }, \n            \"logUrl\": \"logs://bar/baz1\", \n            \"attempt\": 1, \n            \"taskUrl\": \"foo://bar/baz1\", \n            \"name\": \"foo-retried\"\n          }\n        ]\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -364,6 +369,10 @@
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"attempt\": 1, \"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskUrl\": \"foo://bar/baz1\"}]}@@@",
       "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"attempt\": 1, \"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskUrl\": \"foo://bar/baz1\"}]}}@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "postprocess"
   },
   {
     "cmd": [],

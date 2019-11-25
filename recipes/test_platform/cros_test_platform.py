@@ -10,6 +10,10 @@ TODO: Migrate to a recipes repo owned by the test team.
 
 from PB.recipes.chromeos.test_platform.cros_test_platform import \
   CrosTestPlatformProperties
+from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
+  CrosTestPostprocessRequest
+from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
+  TestResult as PostProcessTestResult
 from PB.test_platform.steps.enumeration import \
   EnumerationRequest, EnumerationRequests
 from PB.test_platform.steps.enumeration import \
@@ -31,6 +35,7 @@ from PB.test_platform.config.config import Config
 import collections
 import contextlib
 import json
+import logging
 
 from google.protobuf import json_format
 
@@ -222,7 +227,39 @@ def RunSteps(api, properties):
     responses = execute(api, requests, enumerations, properties.config, skylab)
     backfills = compute_backfills(api, requests, enumerations, responses)
     set_output_properties(api, responses, backfills)
+    postprocess(api, requests, responses)
   summarize(api, responses)
+
+
+def postprocess(api, requests, responses):
+  with api.step.nest('postprocess'):
+    for tag, response in responses.iteritems():
+      request = requests[tag]
+      if not request.params.metadata.debug_symbols_archive_url:
+        continue # pragma: no cover
+
+      test_results = []
+      # TODO(akeshet): Iterate through response.consolidated_results instead of
+      # task_results, which is going to be deprecated.
+      # Why not do this already? Because consolidated_results population is not
+      # yet implemented in the rest of this recipe; in particular, all of the
+      # test expectations currently do not set it, so to use it now would
+      # result in 0 test coverage within this loop.
+      for result in response.task_results:
+        if result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED:
+          test_results.append(PostProcessTestResult(log_data=result.log_data))
+      if not test_results:
+        continue
+
+      pp_request = CrosTestPostprocessRequest(
+          debug_symbols_archive_url=
+              request.params.metadata.debug_symbols_archive_url,
+          test_results=test_results,
+      )
+      # TODO(akeshet): Send a bb request for the postprocess builder, using
+      # pp_request as input properties.
+      logging.debug('would have emitted postprocess request %s',
+                    json_format.MessageToJson(pp_request))
 
 
 def summarize(api, responses):
@@ -378,8 +415,11 @@ def _test_request(tag):
   return Request(
       params=Request.Params(
           hardware_attributes=Request.Params.HardwareAttributes(
-              model='%s-model' % tag), metadata=Request.Params.Metadata(
-                  test_metadata_url='%s-metadata-url' % tag)),
+              model='%s-model' % tag),
+          metadata=Request.Params.Metadata(
+              test_metadata_url='%s-metadata-url' % tag,
+              debug_symbols_archive_url='%s-metadata-url' % tag)
+      ),
       test_plan=Request.TestPlan(suite=[Request.Suite(name='%s-suite' % tag)]),
   )
 
