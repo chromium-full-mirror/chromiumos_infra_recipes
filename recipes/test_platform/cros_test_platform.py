@@ -266,10 +266,13 @@ def set_output_properties(api, responses, backfills):
     if 'default' in marshalled:
       step.properties['response'] = marshalled['default']
 
-    marshalled = {}
-    for tag, backfill in backfills.iteritems():
-      marshalled[tag] = _marshal_proto_to_json(backfill.request)
-    step.properties['backfills'] = marshalled
+    # TODO(crbug.com/1028420) Re-enable once a mitigation has landed on
+    # buildbucket to bump up the limitation on output properties size.
+    #
+    # marshalled = {}
+    # for tag, backfill in backfills.iteritems():
+    #   marshalled[tag] = _marshal_proto_to_json(backfill.request)
+    # step.properties['backfills'] = marshalled
 
 
 def _marshal_proto_to_json(response):
