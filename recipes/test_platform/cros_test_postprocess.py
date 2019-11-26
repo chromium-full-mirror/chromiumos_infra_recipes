@@ -72,7 +72,7 @@ def RunSteps(api, properties):
   downloaded_test_results = _download_test_result_files(
       api, properties.test_results)
 
-  api.breakpad.symbolicate_dump(properties.image_archive_path,
+  api.breakpad.symbolicate_dump(properties.debug_symbols_archive_url,
                                 downloaded_test_results)
 
   # TODO (guocb): add more postprocessing, e.g. gen provision events, etc.
@@ -82,7 +82,8 @@ def GenTests(api):
   # Test of symbolicate dumps.
   tr = TestResult(log_data=TaskLogData(gs_url=TEST_RESULT_PATH))
   req = CrosTestPostprocessRequest(
-      image_archive_path='gs://chromeos-image-archive/foox-release/R10-11.0.0',
+      debug_symbols_archive_url=
+          'gs://chromeos-image-archive/foox-release/R10-11.0.0',
       test_results=[tr],
   )
   dl_step = ('download test results.'

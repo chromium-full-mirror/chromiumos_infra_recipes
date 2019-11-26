@@ -16,10 +16,14 @@ message TestResult {
 }
 
 message CrosTestPostprocessRequest {
-  // A Google Storage path to the image archive. For example,
-  // "gs://chromeos-image-archive/arkham-release/R57-9202.10.11".
-  string image_archive_path = 1;
+  string image_archive_path = 1 [deprecated=true];
 
   // TestResults to process.
   repeated TestResult test_results = 2;
+
+  // A Google Storage path to the location of image archive in which to find
+  // debug symbols to be used in post-process symbolication of crashes. For
+  // example:
+  // "gs://chromeos-image-archive/arkham-release/R57-9202.10.11".
+  string debug_symbols_archive_url = 3;
 }
