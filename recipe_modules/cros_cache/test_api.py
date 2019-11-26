@@ -10,4 +10,4 @@ class CrosCacheTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the cros_cache module."""
 
   # Number of seconds to wait on gsutil rsync.
-  gsutil_timeout_seconds = 15 * 60
+  gsutil_timeout_seconds = 11 * 60

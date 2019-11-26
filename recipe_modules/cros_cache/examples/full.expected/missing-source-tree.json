@@ -166,7 +166,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "test_file.bz2",
+      "test_file.tar.gz",
       "[CLEANUP]/source_cache_tmp_1/version.txt"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

@@ -13,7 +13,7 @@ def RunSteps(api):
   with api.cros_source.checkout_overlays_context(), \
       api.context(cwd=api.cros_source.workspace_path):
     cache_file, version_file = api.cros_cache.package_source(
-        'test_file.bz2', api.cros_source.workspace_path)
+        'test_file.tar.gz', api.cros_source.workspace_path)
     api.cros_cache.upload_artifact('test cache upload', cache_file)
     api.cros_cache.upload_artifact('test cache version', version_file)
 

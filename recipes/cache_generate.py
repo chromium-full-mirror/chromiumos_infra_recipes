@@ -23,7 +23,8 @@ def RunSteps(api):
   with api.cros_source.checkout_overlays_context(), \
       api.context(cwd=api.cros_source.workspace_path):
     with api.step.nest('package source'):
-      cache_version = 'chromiumos_repo-{}.bz2'.format(api.time.ms_since_epoch())
+      cache_version = 'chromiumos_repo-{}.tar.gz'.format(
+          api.time.ms_since_epoch())
       cache_file, version_file = api.cros_cache.package_source(
           cache_version, source_path=api.cros_source.workspace_path)
     with api.step.nest('upload cache'):

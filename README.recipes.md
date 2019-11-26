@@ -615,7 +615,7 @@ Returns:
   archive_file (Path): Path to the created archive file.
   version_file (Path): Path to the created version file.
 
-&mdash; **def [upload\_artifact](/recipe_modules/cros_cache/api.py#50)(self, gs_bucket, upload_file):**
+&mdash; **def [upload\_artifact](/recipe_modules/cros_cache/api.py#52)(self, gs_bucket, upload_file):**
 
 Uploads cache and version file to Google Storage.
 

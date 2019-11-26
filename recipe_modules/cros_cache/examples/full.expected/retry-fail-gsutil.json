@@ -155,7 +155,7 @@
     "cmd": [],
     "name": "tar up source repo checkout",
     "~followup_annotations": [
-      "@@@STEP_TEXT@archive file: test_file.bz2@@@"
+      "@@@STEP_TEXT@archive file: test_file.tar.gz@@@"
     ]
   },
   {
@@ -166,7 +166,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "test_file.bz2",
+      "test_file.tar.gz",
       "[CLEANUP]/source_cache_tmp_1/version.txt"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -174,20 +174,21 @@
     "name": "tar up source repo checkout.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@version.txt@test_file.bz2@@@",
+      "@@@STEP_LOG_LINE@version.txt@test_file.tar.gz@@@",
       "@@@STEP_LOG_END@version.txt@@@"
     ]
   },
   {
     "cmd": [
       "tar",
-      "-cjf",
-      "[CLEANUP]/source_cache_tmp_1/test_file.bz2",
+      "--use-compress-program=pigz",
+      "-cf",
+      "[CLEANUP]/source_cache_tmp_1/test_file.tar.gz",
       "."
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "tar up source repo checkout.packaging via ['tar', '-cjf', Path([CLEANUP], 'source_cache_tmp_1', 'test_file.bz2'), '.'] for cache",
+    "name": "tar up source repo checkout.packaging via ['tar', '--use-compress-program=pigz', '-cf', Path([CLEANUP], 'source_cache_tmp_1', 'test_file.tar.gz'), '.'] for cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -201,13 +202,13 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_1/test_file.bz2",
+      "[CLEANUP]/source_cache_tmp_1/test_file.tar.gz",
       "gs://test cache upload/chromeos-ci"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "gsutil cp",
-    "timeout": 180,
+    "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]
@@ -221,13 +222,13 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_1/test_file.bz2",
+      "[CLEANUP]/source_cache_tmp_1/test_file.tar.gz",
       "gs://test cache upload/chromeos-ci"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "gsutil cp (2)",
-    "timeout": 180,
+    "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]
@@ -241,13 +242,13 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_1/test_file.bz2",
+      "[CLEANUP]/source_cache_tmp_1/test_file.tar.gz",
       "gs://test cache upload/chromeos-ci"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "gsutil cp (3)",
-    "timeout": 180,
+    "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]

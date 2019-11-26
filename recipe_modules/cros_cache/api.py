@@ -13,7 +13,7 @@ from recipe_engine import recipe_api
 from util import exponential_retry
 
 # Number of seconds to wait on gsutil rsync.
-gsutil_timeout_seconds = 3 * 60
+gsutil_timeout_seconds = 10 * 60
 
 
 class CrosCacheApi(recipe_api.RecipeApi):
@@ -40,7 +40,9 @@ class CrosCacheApi(recipe_api.RecipeApi):
         self.m.file.write_raw('write version file', version_file, filename)
         archive_file = archive_path.join(filename)
         step.presentation.step_text = ('archive file: %s' % filename)
-        archive_cmd = ['tar', '-cjf', archive_file, '.']
+        archive_cmd = [
+            'tar', '--use-compress-program=pigz', '-cf', archive_file, '.'
+        ]
         self.m.step('packaging via %s for cache' % archive_cmd, archive_cmd,
                     infra_step=True)
       else:
