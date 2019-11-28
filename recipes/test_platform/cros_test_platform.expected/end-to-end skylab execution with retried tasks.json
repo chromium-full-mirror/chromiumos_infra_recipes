@@ -372,7 +372,21 @@
   },
   {
     "cmd": [],
-    "name": "postprocess"
+    "name": "postprocess",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@postprocess request for default@{@@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@    {@@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@      \"logData\": {}@@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@    }, @@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@    {@@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@      \"logData\": {}@@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@    }@@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@  ], @@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@  \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@postprocess request for default@}@@@",
+      "@@@STEP_LOG_END@postprocess request for default@@@"
+    ]
   },
   {
     "cmd": [],

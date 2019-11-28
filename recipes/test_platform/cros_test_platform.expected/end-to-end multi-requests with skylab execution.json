@@ -351,7 +351,18 @@
   },
   {
     "cmd": [],
-    "name": "postprocess"
+    "name": "postprocess",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@postprocess request for first@{@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@    {@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@      \"logData\": {}@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@    }@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@  ], @@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@  \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@}@@@",
+      "@@@STEP_LOG_END@postprocess request for first@@@"
+    ]
   },
   {
     "cmd": [],

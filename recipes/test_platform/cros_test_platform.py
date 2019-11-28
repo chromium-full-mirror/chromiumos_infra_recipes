@@ -35,7 +35,6 @@ from PB.test_platform.config.config import Config
 import collections
 import contextlib
 import json
-import logging
 
 from google.protobuf import json_format
 
@@ -232,7 +231,7 @@ def RunSteps(api, properties):
 
 
 def postprocess(api, requests, responses):
-  with api.step.nest('postprocess'):
+  with api.step.nest('postprocess') as step:
     for tag, response in responses.iteritems():
       request = requests[tag]
       if not request.params.metadata.debug_symbols_archive_url:
@@ -256,10 +255,10 @@ def postprocess(api, requests, responses):
               request.params.metadata.debug_symbols_archive_url,
           test_results=test_results,
       )
+      name = 'postprocess request for %s' % tag
       # TODO(akeshet): Send a bb request for the postprocess builder, using
       # pp_request as input properties.
-      logging.debug('would have emitted postprocess request %s',
-                    json_format.MessageToJson(pp_request))
+      step.presentation.logs[name] = json_format.MessageToJson(pp_request)
 
 
 def summarize(api, responses):

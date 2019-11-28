@@ -509,7 +509,27 @@
   },
   {
     "cmd": [],
-    "name": "postprocess"
+    "name": "postprocess",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@postprocess request for second@{@@@",
+      "@@@STEP_LOG_LINE@postprocess request for second@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@postprocess request for second@    {@@@",
+      "@@@STEP_LOG_LINE@postprocess request for second@      \"logData\": {}@@@",
+      "@@@STEP_LOG_LINE@postprocess request for second@    }@@@",
+      "@@@STEP_LOG_LINE@postprocess request for second@  ], @@@",
+      "@@@STEP_LOG_LINE@postprocess request for second@  \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@postprocess request for second@}@@@",
+      "@@@STEP_LOG_END@postprocess request for second@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@{@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@    {@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@      \"logData\": {}@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@    }@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@  ], @@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@  \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@postprocess request for first@}@@@",
+      "@@@STEP_LOG_END@postprocess request for first@@@"
+    ]
   },
   {
     "cmd": [],
