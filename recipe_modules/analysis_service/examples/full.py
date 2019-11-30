@@ -62,7 +62,8 @@ def RunSteps(api, properties):
   api.analysis_service.publish_event(
       request=install_packages_request, response=install_packages_response,
       request_time=request_time, response_time=response_time,
-      step_data=test_step_data)
+      step_data=test_step_data,
+      step_output=test_step_data.stdout)
 
   # Publish a step with non-zero retcode
   try:

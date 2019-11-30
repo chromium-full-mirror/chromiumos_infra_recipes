@@ -118,7 +118,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
     self._capture_stdout_stderr = properties.capture_stdout_stderr
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
-               name=None, infra_step=False, timeout=None):
+               test_teelog_data=None, name=None, infra_step=False,
+               timeout=None):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -132,6 +133,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       input_proto (google.protobuf): The input proto object.
       output_type (google.protobuf.descriptor): The output proto type.
       test_output_data (str): JSON to use as a response during testing.
+      test_teelog_data (str): Text to use as tee-log contents during testing.
       name (str): Name for the step. Generated automatically if not specified.
       infra_step (bool): Whether this build API call should be treated as an
           infrastructure step.
@@ -144,6 +146,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
       input_path = messages_path.join('input_proto.json')
       output_path = messages_path.join('output_proto.json')
+      logfile_path = messages_path.join('build_log.txt')
 
       # Write the input proto JSON to a temp file (which is how it's passed to
       # the build API) and record it to the step logs for debugging.
@@ -153,8 +156,12 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
 
       cmd = [
           self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
-          '--input-json', input_path, '--output-json', output_path, endpoint
+          '--input-json', input_path, '--output-json', output_path
       ]
+      if self._capture_stdout_stderr:
+        cmd.extend(['--tee-log', logfile_path])
+      cmd.append(endpoint)
+      file_contents = None
 
       # build_api needs to invoke other chromite/bin binaries, hence this dir
       # needs to be on the PATH.
@@ -166,21 +173,15 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
 
         output_proto = reflection.MakeClass(output_type)()
 
-        if self._capture_stdout_stderr:
-          stdout_placeholder = self.m.raw_io.output(
-                                   add_output_log=True, name='stdout')
-          stderr_placeholder = self.m.raw_io.output(
-                                   add_output_log=True, name='stderr')
-        else:
-          stdout_placeholder = None
-          stderr_placeholder = None
         try:
           # For Build API retcode 2 indicates that the invocation failed in some
           # way but a consumable response has been produced.
           result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
-                               infra_step=infra_step, timeout=timeout,
-                               stdout=stdout_placeholder,
-                               stderr=stderr_placeholder)
+                               infra_step=infra_step, timeout=timeout)
+          if self._capture_stdout_stderr:
+            file_contents = self.m.file.read_raw('read tee output file',
+                                                 logfile_path,
+                                                 test_data=test_teelog_data)
         except self.m.step.StepFailure as e:
           # If the Build API call failed, still publish information to
           # analysis_service. There is some code duplication with the success
@@ -188,11 +189,15 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
           response_time = timestamp_pb2.Timestamp()
           response_time.FromDatetime(self.m.time.utcnow())
 
+          if self._capture_stdout_stderr:
+            file_contents = self.m.file.read_raw('read tee output on failure',
+                                                 logfile_path,
+                                                 test_data=test_teelog_data)
           if self.m.analysis_service.can_publish_event(input_proto,
                                                        output_proto):
             self.m.analysis_service.publish_event(input_proto, output_proto,
                                                   request_time, response_time,
-                                                  e.result)
+                                                  e.result, file_contents)
           raise e
 
         if result.exc_result.retcode != 0:
@@ -214,6 +219,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # Publish Build API responses on Cloud Pub/Sub if they are registered.
       if self.m.analysis_service.can_publish_event(input_proto, output_proto):
         self.m.analysis_service.publish_event(
-            input_proto, output_proto, request_time, response_time, result)
+            input_proto, output_proto, request_time, response_time, result,
+            file_contents)
 
       return output_proto

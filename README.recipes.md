@@ -181,7 +181,7 @@
 
 #### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#59)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#195)(self, request, response):**
+&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#183)(self, request, response):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -202,7 +202,7 @@ Args:
 Return:
   bool
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#219)(self, request, response, request_time, response_time, step_data):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#207)(self, request, response, request_time, response_time, step_data, step_output=None):**
 
 Publish request and response on Cloud Pub/Sub.
 
@@ -223,6 +223,7 @@ Args:
   response_time (google.protobuf.timestamp_pb2.Timestamp): The time the
     response was received by the caller.
   step_data (recipe_engine.StepData): Data from the step that sent the request.
+  step_output (str): Output for the step.
 ### *recipe_modules* / [autotest\_status\_parser](/recipe_modules/autotest_status_parser)
 
 [DEPS](/recipe_modules/autotest_status_parser/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -569,7 +570,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#120)(self, endpoint, input_proto, output_type, test_output_data=None, name=None, infra_step=False, timeout=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#120)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None):**
 
 Call the build API with the given input proto.
 
@@ -584,6 +585,7 @@ Args:
   input_proto (google.protobuf): The input proto object.
   output_type (google.protobuf.descriptor): The output proto type.
   test_output_data (str): JSON to use as a response during testing.
+  test_teelog_data (str): Text to use as tee-log contents during testing.
   name (str): Name for the step. Generated automatically if not specified.
   infra_step (bool): Whether this build API call should be treated as an
       infrastructure step.
@@ -2945,14 +2947,14 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_branch/examples/full.py#16)(api):**
 ### *recipes* / [cros\_build\_api:examples/bad\_retcodes](/recipe_modules/cros_build_api/examples/bad_retcodes.py)
 
-[DEPS](/recipe_modules/cros_build_api/examples/bad_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_build_api/examples/bad_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/bad_retcodes.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/bad_retcodes.py#19)(api):**
 ### *recipes* / [cros\_build\_api:examples/full](/recipe_modules/cros_build_api/examples/full.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#30)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#32)(api):**
 ### *recipes* / [cros\_build\_api:examples/ok\_retcodes](/recipe_modules/cros_build_api/examples/ok_retcodes.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/ok_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'cros_build_api',
 ]
@@ -12,6 +13,8 @@ DEPS = [
 from PB.chromite.api import artifacts
 from PB.chromiumos.common import BuildTarget
 
+from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
+    CrosBuildApiProperties)
 
 def RunSteps(api):
   input_proto = artifacts.BundleRequest(build_target=BuildTarget(name='target'))
@@ -28,6 +31,9 @@ def GenTests(api):
 
   # Build API unrecoverable.
   yield (api.test('retcode-one-bad') +  #
+         api.properties(**{
+             '$chromeos/cros_build_api':
+             CrosBuildApiProperties(capture_stdout_stderr=True)}) + #
          api.step_data('call chromite.api.ArtifactsService/'
                        'BundleFirmware.call build API script', retcode=1))
 

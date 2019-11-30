@@ -158,39 +158,27 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     assert analysis_service_event.WhichOneof(
         oneof_name) is not None, 'Expected {} to be set.'.format(oneof_name)
 
-  def _set_stdout_and_stderr(self, analysis_service_event, step_data):
+  def _set_step_output(self, analysis_service_event, step_output):
     """Set the step_data to store stdout and stderr information.
 
     Args:
       analysis_sevice_event (AnalysisServiceEvent): The AnalysisServiceEvent to
         be modified.
-      step_data (recipe_engine.StepData): Data from the step being logged.
+      step_output (str): Log output of the step being logged.
     """
     step = self.m.step.active_result
-    if step_data.stdout:
+    if step_output:
       truncated_stdout, bytes_removed = _truncate_output(
-         step_data.stdout, self._max_stdout_stderr_bytes)
+         step_output, self._max_stdout_stderr_bytes)
       analysis_service_event.stdout = truncated_stdout
       if bytes_removed == 0:
         step.presentation.logs['stdout_truncation'] = [
-            'Full stdout output is {} bytes, no truncation'.format(
-                len(step_data.stdout))]
+            'Full step output is {} bytes, no truncation'.format(
+                len(step_output))]
       else:
         step.presentation.logs['stdout_truncation'] = [
-            'Full stdout output is {} bytes, truncated to {} bytes'.format(
-                len(step_data.stdout), self._max_stdout_stderr_bytes)]
-    if step_data.stderr:
-      truncated_stderr, bytes_removed = _truncate_output(
-          step_data.stderr, self._max_stdout_stderr_bytes)
-      analysis_service_event.stderr = truncated_stderr
-      if bytes_removed == 0:
-        step.presentation.logs['stderr_truncation'] = [
-            'Full stderr output is {} bytes, no truncation'.format(
-                len(step_data.stderr))]
-      else:
-        step.presentation.logs['stderr_truncation'] = [
-            'Full stderr output is {} bytes, truncated to {} bytes'.format(
-                len(step_data.stderr), self._max_stdout_stderr_bytes)]
+            'Full step output is {} bytes, truncated to {} bytes'.format(
+                len(step_output), self._max_stdout_stderr_bytes)]
 
   def can_publish_event(self, request, response):
     """Return whether 'request' and 'response' can be published.
@@ -217,7 +205,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
             'response', response)
 
   def publish_event(self, request, response, request_time, response_time,
-                    step_data):
+                    step_data, step_output=None):
     """Publish request and response on Cloud Pub/Sub.
 
     Wraps request and response in a AnalysisServiceEvent. 'can_publish_event'
@@ -237,6 +225,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       response_time (google.protobuf.timestamp_pb2.Timestamp): The time the
         response was received by the caller.
       step_data (recipe_engine.StepData): Data from the step that sent the request.
+      step_output (str): Output for the step.
     """
     with self.m.step.nest('publish event') as step:
       if not self.can_publish_event(request, response):
@@ -247,8 +236,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
 
       analysis_service_event.build_id = self.m.buildbucket.build.id
       analysis_service_event.step_name = step_data.name
-      if self._max_stdout_stderr_bytes > 0:
-        self._set_stdout_and_stderr(analysis_service_event, step_data)
+      if self._max_stdout_stderr_bytes > 0 and step_output:
+        self._set_step_output(analysis_service_event, step_output)
 
       _set_step_execution_result_fields(analysis_service_event, step_data)
 

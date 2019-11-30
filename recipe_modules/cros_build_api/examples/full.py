@@ -24,17 +24,23 @@ from PB.chromite.api import test
 from PB.chromite.api import build_api_test
 from PB.chromiumos.common import BuildTarget
 
+from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
+    AnalysisServiceProperties)
 from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
     CrosBuildApiProperties)
 
 def RunSteps(api):
-  # Check dumb build API call works.
-  input_proto = build_api_test.TestRequestMessage(id='MYD')
-  output_type = build_api_test.TestResultMessage.DESCRIPTOR
+  # Check dumb build API call works. Use protos defined in
+  # chromiumos_infra_proto/src/analysis_service/analysis_service.proto so that
+  # the analysis_service will write an event for the result.
+  input_proto = binhost.PrepareBinhostUploadsRequest(
+      build_target=BuildTarget(name='target'))
+  output_type = binhost.PrepareBinhostUploadsResponse.DESCRIPTOR
   output_proto = api.cros_build_api(
-      'chromite.api.TestApiService/InputOutputMethod', input_proto, output_type,
-      test_output_data='{"result": "good"}')
-  api.assertions.assertEqual(output_proto.result, 'good')
+      'chromite.api.BinhostService/PrepareBinhostsUploads', input_proto,
+      output_type, test_output_data='{"uploads_dir": "/binhosts/path"}',
+      test_teelog_data='Logfile contents for build_cmd.')
+  api.assertions.assertEqual(output_proto.uploads_dir, '/binhosts/path')
 
   # Check ignores unknown fields.
   unknown_field = 'ye_unknown_field'
@@ -43,7 +49,8 @@ def RunSteps(api):
       [f.name for f in build_api_test.TestResultMessage.DESCRIPTOR.fields])
   output_proto = api.cros_build_api(
       'chromite.api.TestApiService/InputOutputMethod', input_proto, output_type,
-      test_output_data='{"result": "good", "%s": "foobar"}' % unknown_field)
+      test_output_data='{"result": "good", "%s": "foobar"}' % unknown_field,
+      test_teelog_data='Logfile contents for failing case of build_cmd.')
 
   # Check stubs work.
   input_proto = artifacts.BundleRequest(build_target=BuildTarget(name='target'))
@@ -138,8 +145,12 @@ def GenTests(api):
 
   yield (api.test('basic_with_output') +  #
          api.properties(**{
+             # This property is needed to capture tee_log output of build_api.
              '$chromeos/cros_build_api':
-             CrosBuildApiProperties(capture_stdout_stderr=True)
+             CrosBuildApiProperties(capture_stdout_stderr=True),
+             # This property is needed to attach build api output to event.
+             '$chromeos/analysis_service':
+             AnalysisServiceProperties(max_stdout_stderr_bytes=64)
          })
   )
 

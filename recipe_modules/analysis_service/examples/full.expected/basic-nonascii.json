@@ -10,13 +10,10 @@
     "cmd": [],
     "name": "publish event",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@stdout_truncation@Full stdout output is 6 bytes, no truncation@@@",
+      "@@@STEP_LOG_LINE@stdout_truncation@Full step output is 6 bytes, no truncation@@@",
       "@@@STEP_LOG_END@stdout_truncation@@@",
-      "@@@STEP_LOG_LINE@stderr_truncation@Full stderr output is 6 bytes, no truncation@@@",
-      "@@@STEP_LOG_END@stderr_truncation@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"1970-01-01T00:01:40Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stderr\": \"Errors\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stdout\": \"\\u570b\\u83ef\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"basic_with_stdout\", @@@",
@@ -99,7 +96,7 @@
     ],
     "infra_step": true,
     "name": "publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193\\naXRoX3N0ZG91dJIDBuWci+iPr5oDBkVycm9ycw==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193\\naXRoX3N0ZG91dJIDBuWci+iPrw==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -134,10 +131,6 @@
     "cmd": [],
     "name": "publish event (3)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@stdout_truncation@Full stdout output is 6 bytes, no truncation@@@",
-      "@@@STEP_LOG_END@stdout_truncation@@@",
-      "@@@STEP_LOG_LINE@stderr_truncation@Full stderr output is 6 bytes, no truncation@@@",
-      "@@@STEP_LOG_END@stderr_truncation@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
