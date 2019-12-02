@@ -66,12 +66,35 @@ def RunSteps(api, properties):
     snapshot = api.buildbucket.gitiles_commit
     if not snapshot.project:
       with api.step.nest('fetch snapshot ref'):
-        snapshot_sha1 = api.gitiles.fetch_revision(
-            'chrome-internal', 'chromeos/manifest-internal', 'snapshot')
-        snapshot = common_pb2.GitilesCommit(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/manifest-internal', ref='refs/heads/snapshot',
-            id=snapshot_sha1)
+        orchestrator_config = api.cros_infra_config.get_builder_config(
+          api.buildbucket.build.builder.builder).orchestrator
+        # No gitiles_commit from buildbucket: use the default.
+        if orchestrator_config.gitiles_commit.project:
+          # If we are using the defauilt gitiles_commit, then also use the
+          # default CL list.  To override the default CL list, the user must
+          # specify a gitiles commit.  We need to convert from our copies of the
+          # buildbucket types.
+          def ConvertPB(inpb, typ):
+            """Convert |inpb| to |typ|."""
+            outpb = typ();
+            outpb.ParseFromString(inpb.SerializeToString());
+            return outpb
+
+          snapshot = ConvertPB(orchestrator_config.gitiles_commit,
+                               common_pb2.GitilesCommit)
+          gerrit_changes = [ConvertPB(x, common_pb2.GerritChange)
+                            for x in orchestrator_config.gerrit_changes]
+        else:
+          # No default was found in the builder config.  Use a fall-back,
+          # hard-coded default.
+          snapshot = common_pb2.GitilesCommit(
+              host='chrome-internal.googlesource.com',
+              project='chromeos/manifest-internal', ref='refs/heads/snapshot')
+        # Builder config may not specify an ID.  If there is not one, go get it.
+        if not snapshot.id:
+          gitiles_id = api.gitiles.fetch_revision(
+              snapshot.host, snapshot.project, snapshot.ref)
+          snapshot.id = gitiles_id
 
     # Point start ref to the input snapshot if specified.
     maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
@@ -380,6 +403,7 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       new_build_requests.append(
           api.buildbucket.schedule_request(
               gitiles_commit=snapshot, builder=child, bucket=bucket,
+              gerrit_changes=gerrit_changes,
               critical=critical, properties=api.cq.props_for_child_build,
               tags=tags))
     step.presentation.logs['filter log'] = filter_log
@@ -496,6 +520,14 @@ def GenTests(api):
     build = api.buildbucket.ci_build_message(project='chromeos',
                                              bucket='postsubmit',
                                              builder='postsubmit-orchestrator')
+    build.input.gitiles_commit.Clear()
+    return api.buildbucket.build(build)
+
+  def toolchain_orchestrator_build_with_no_gitiles():
+    """Generate a test build proto with no gitiles commit project."""
+    build = api.buildbucket.ci_build_message(project='chromeos',
+                                             bucket='toolchain',
+                                             builder='toolchain-orchestrator')
     build.input.gitiles_commit.Clear()
     return api.buildbucket.build(build)
 
@@ -817,6 +849,31 @@ def GenTests(api):
           ], name='run builds.plan builds') +  #
       api.buildbucket.simulated_collect_output(
           builds, step_name='run builds.collect') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
+
+  yield (api.test('missing_gitiles_commit_with_defaults') +  #
+         toolchain_orchestrator_build_with_no_gitiles() + #
+      api.cros_relevance.simulate_run_build_planner(
+          builder_ids=[
+              BuilderConfig.Id(name=n)
+              for n in ['amd64-generic-toolchain', 'arm-generic-toolchain']
+          ], name='run builds.plan builds') +  #
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
