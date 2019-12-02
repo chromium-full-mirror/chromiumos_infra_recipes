@@ -13,6 +13,7 @@ seanabraham@chromium.org
 # Chrome OS test platform team
 # Test-related CLs should go to this group.
 akeshet@chromium.org
+pprabhu@chromium.org
 
 # Service accounts
 recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
