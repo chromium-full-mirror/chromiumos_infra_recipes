@@ -339,7 +339,8 @@
     "cmd": [],
     "name": "analyze and launch builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@launched 1 / 1 builders@@@"
+      "@@@STEP_TEXT@launched 1 / 1 builders@@@",
+      "@@@STEP_LINK@staging-Annealing@https://chromium-swarm.appspot.com/task?id=deadbeeeeef@@@"
     ]
   },
   {

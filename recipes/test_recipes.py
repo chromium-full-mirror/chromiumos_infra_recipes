@@ -175,9 +175,12 @@ def _launch_builders(api, builders):
 
         recipe = recipe_names.pop()
         if api.recipe_analyze.is_recipe_affected(affected_files, recipe):
-          results.append(
-              intermediate_result.then('edit-recipe-bundle').then('launch')
-              .result)
+          result = intermediate_result.then(
+              'edit-recipe-bundle').then('launch').result
+          url = 'https://{}/task?id={}'.format(
+              result['swarming']['host_name'], result['swarming']['task_id'])
+          launch_step.presentation.links[builder] = url
+          results.append(result)
         else:
           builder_step.presentation.step_text = (
               'builder {} (recipe {}) not affected'.format(builder, recipe))
