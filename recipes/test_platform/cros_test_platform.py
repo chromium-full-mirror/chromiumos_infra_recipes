@@ -41,6 +41,7 @@ from google.protobuf import json_format
 from recipe_engine.post_process import GetBuildProperties
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -250,15 +251,18 @@ def postprocess(api, requests, responses):
       if not test_results:
         continue
 
-      pp_request = CrosTestPostprocessRequest(
-          debug_symbols_archive_url=
-              request.params.metadata.debug_symbols_archive_url,
-          test_results=test_results,
-      )
-      name = 'postprocess request for %s' % tag
-      # TODO(akeshet): Send a bb request for the postprocess builder, using
-      # pp_request as input properties.
-      step.presentation.logs[name] = json_format.MessageToJson(pp_request)
+      with api.step.nest(tag) as step:
+        pp_request = CrosTestPostprocessRequest(
+            debug_symbols_archive_url=
+                request.params.metadata.debug_symbols_archive_url,
+            test_results=test_results,
+        )
+        bb_request = api.buildbucket.schedule_request(
+              bucket='testplatform',
+              builder='cros_test_postprocess',
+              properties=json_format.MessageToDict(pp_request),
+        )
+        api.buildbucket.schedule([bb_request])
 
 
 def summarize(api, responses):
