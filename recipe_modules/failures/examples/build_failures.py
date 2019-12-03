@@ -23,14 +23,12 @@ def build(**kwargs):
 def RunSteps(api):
   build_success = build(status=common_pb2.SUCCESS)
   build_failure = build(status=common_pb2.FAILURE, critical=common_pb2.NO)
-  build_critical_failure = build(status=common_pb2.FAILURE)
+  build_critical_failure = build(status=common_pb2.FAILURE,
+                                 critical=common_pb2.YES)
+  build_infra_failure = build(status=common_pb2.INFRA_FAILURE,
+                              critical=common_pb2.NO)
 
   # Check boolean functions.
-  api.assertions.assertFalse(api.failures.is_build_failure(build_success))
-  api.assertions.assertTrue(api.failures.is_build_failure(build_failure))
-  api.assertions.assertTrue(
-      api.failures.is_build_failure(build_critical_failure))
-
   api.assertions.assertFalse(
       api.failures.is_critical_build_failure(build_success))
   api.assertions.assertFalse(
@@ -48,6 +46,8 @@ def RunSteps(api):
               api.urls.get_build_link_map(build_critical_failure), True,
               'builder')
       ])
+  api.assertions.assertFalse(
+      api.failures.get_build_failures([build_infra_failure]))
 
 
 def GenTests(api):

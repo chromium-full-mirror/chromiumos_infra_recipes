@@ -1392,7 +1392,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#222)(self, failures):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#245)(self, failures):**
 
 Returns a recipe result based on the given failures.
 
@@ -1404,7 +1404,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#287)(self, builds):**
+&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#310)(self, builds):**
 
 Verify all builds completed successfully.
 
@@ -1414,7 +1414,17 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#301)(self, hw_tests, baseline_hw_tests=None):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#380)(self, build):**
+
+Retrieve the status of the build.
+
+Args:
+  build (Build): The buildbucket Build in question.
+
+Returns:
+  status (common_pb2.Status) of the build.
+
+&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#324)(self, hw_tests, baseline_hw_tests=None):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -1427,7 +1437,17 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#337)(self, moblab_vm_tests, baseline_moblab_vm_tests=None):**
+&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#407)(self, hw_test):**
+
+Get the status of the hw_test.
+
+Args:
+  hw_test (SkylabResult): The hardware test result in question.
+
+Returns:
+  status (common_pb2.STATUS) of the test.
+
+&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#360)(self, moblab_vm_tests, baseline_moblab_vm_tests=None):**
 
 Logs Moblab VM test status to UI, but does not rais on failed tests.
 
@@ -1440,7 +1460,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#319)(self, vm_tests, baseline_vm_tests=None):**
+&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#342)(self, vm_tests, baseline_vm_tests=None):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -1453,24 +1473,14 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#156)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#179)(self):**
 
 Catches exceptions and logs them instead.
 
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_build\_failure](/recipe_modules/failures/api.py#357)(self, build):**
-
-Determine if the build failed.
-
-Args:
-  build (Build): The buildbucket Build in question.
-
-Returns:
-  bool: True if the build failed.
-
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#428)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#429)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -1480,7 +1490,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#440)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#441)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1490,7 +1500,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#463)(self, moblab_vm_test):**
+&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#464)(self, moblab_vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1500,7 +1510,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#368)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#391)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -1510,7 +1520,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#452)(self, vm_test):**
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#453)(self, vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1520,7 +1530,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#395)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#418)(self, hw_test):**
 
 Determine if the vm test was critical.
 
@@ -1530,37 +1540,7 @@ Args:
 Returns:
   bool: True if the test was critical.
 
-&mdash; **def [is\_hw\_test\_failure](/recipe_modules/failures/api.py#384)(self, hw_test):**
-
-Determine if the hardware test failed.
-
-Args:
-  hw_test (SkylabResult): The hardware test result in question.
-
-Returns:
-  bool: True if the test failed.
-
-&mdash; **def [is\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#417)(self, moblab_vm_test):**
-
-Determine if the VM test failed.
-
-Args:
-  moblab_vm_test (Build): The buildbucket build for the Moblab VM test.
-
-Returns:
-  bool: True if the test failed.
-
-&mdash; **def [is\_vm\_test\_failure](/recipe_modules/failures/api.py#406)(self, vm_test):**
-
-Determine if the VM test failed.
-
-Args:
-  vm_test (Build): The buildbucket build for the VM test.
-
-Returns:
-  bool: True if the test failed.
-
-&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#194)(self, failed_images):**
+&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#217)(self, failed_images):**
 
 Display failed image tests and raise a failure.
 
@@ -1575,7 +1555,7 @@ Args:
 Raises:
   StepFailure: If failed_images is not empty.
 
-&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#169)(self, packages):**
+&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#192)(self, packages):**
 
 Display failed packages and raise a failure.
 
@@ -1587,7 +1567,7 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [update\_non\_critical\_failures](/recipe_modules/failures/api.py#474)(self, step, failures, fresh_builder_configs):**
+&mdash; **def [update\_non\_critical\_failures](/recipe_modules/failures/api.py#475)(self, step, failures, fresh_builder_configs):**
 
 Args:
   failures (list[Failure]): All failures encountered during execution.
@@ -3334,7 +3314,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#57)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#194)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#193)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3351,7 +3331,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#275)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#274)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -3372,7 +3352,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#178)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#177)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -3382,7 +3362,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#397)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#396)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -3396,7 +3376,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#464)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#463)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3407,7 +3387,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#236)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#235)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3420,7 +3400,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#453)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#452)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3428,7 +3408,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#439)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#438)(refs):**
 
 Assert the given refs start with refs/heads.
 

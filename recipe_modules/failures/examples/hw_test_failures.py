@@ -26,11 +26,6 @@ def RunSteps(api):
       skylab_critical_failure)
 
   # Check boolean functions first.
-  api.assertions.assertFalse(api.failures.is_hw_test_failure(skylab_success))
-  api.assertions.assertTrue(api.failures.is_hw_test_failure(skylab_failure))
-  api.assertions.assertTrue(
-      api.failures.is_hw_test_failure(skylab_critical_failure))
-
   api.assertions.assertFalse(
       api.failures.is_critical_hw_test_failure(skylab_success))
   api.assertions.assertFalse(

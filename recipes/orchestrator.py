@@ -150,9 +150,8 @@ def RunSteps(api, properties):
   # Otherwise, run tests for builds that weren't build failures and that
   # still exist as builders.
   need_tests_builds = [
-      b for b in completed_builds
-      if not api.failures.is_build_failure(b)
-      and fresh_builder_configs.get(b.builder.builder)
+      b for b in completed_builds if b.status == common_pb2.SUCCESS and
+      fresh_builder_configs.get(b.builder.builder)
   ]
 
   test_failures = api.cros_test_proctor.run_proctor(

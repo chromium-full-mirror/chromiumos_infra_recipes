@@ -60,9 +60,25 @@ class FailuresApi(recipe_api.RecipeApi):
 
       return self.m.cros_som.get_silence_reason(annotation)
 
+  def _proto_to_step_status(self, proto_status):
+    """Convert from common_pb2.Status to api.step status.
+
+    Args:
+      status (common_pb2.Status): status of the step.
+
+    Returns:
+      str representing status as listed in step/api.py.
+    """
+    if proto_status == common_pb2.SUCCESS:
+      return self.m.step.SUCCESS
+    elif proto_status == common_pb2.INFRA_FAILURE:
+      return self.m.step.EXCEPTION
+    else:
+      return self.m.step.FAILURE
+
   def _present_run(self, title, link_map, status):
     with self.m.step.nest(title) as step:
-      step.presentation.status = status
+      step.presentation.status = self._proto_to_step_status(status)
       for link_text, link_url in link_map.items():
         step.presentation.links[link_text] = link_url
 
@@ -79,19 +95,22 @@ class FailuresApi(recipe_api.RecipeApi):
 
       return silence_reason is not None
 
-  def _get_failures(self, kind, runs, is_failure, is_critical, get_title,
+  def _get_failures(self, kind, runs, get_status, is_critical, get_title,
                     get_link_map, get_id):
     with self.m.step.nest('{} results'.format(kind)) as results_step:
       critical_failures = []
-      failed_runs = filter(is_failure, runs)
+      failed_runs = [
+          run for run in runs if get_status(run) != common_pb2.SUCCESS
+      ]
       silenced_failure_count = 0
 
       for failed_run in sorted(failed_runs, key=get_title):
         title = get_title(failed_run)
         link_map = get_link_map(failed_run)
         fail_id = get_id(failed_run)
+        status = get_status(failed_run)
 
-        silenced = self._present_run(title, link_map, self.m.step.FAILURE)
+        silenced = self._present_run(title, link_map, status)
         if silenced:
           silenced_failure_count += 1
 
@@ -100,12 +119,13 @@ class FailuresApi(recipe_api.RecipeApi):
               self.Failure(kind=kind, title=title, link_map=link_map,
                            fatal=not silenced, id=fail_id))
 
-      success_runs = [run for run in runs if not is_failure(run)]
+      success_runs = [run for run in runs if run not in failed_runs]
       for success_run in sorted(success_runs, key=get_title):
         title = get_title(success_run)
         link_map = get_link_map(success_run)
+        status = get_status(success_run)
 
-        self._present_run(title, link_map, self.m.step.SUCCESS)
+        self._present_run(title, link_map, status)
 
       success_count = len(success_runs)
 
@@ -126,7 +146,7 @@ class FailuresApi(recipe_api.RecipeApi):
       return critical_failures
 
   def _get_baseline_validated_failures(self, kind, runs, baseline_runs,
-                                       is_failure, is_critical, get_title,
+                                       get_status, is_critical, get_title,
                                        get_link_map, get_id):
     """Wraps _get_failures() to enable baseline filtering.
 
@@ -135,21 +155,24 @@ class FailuresApi(recipe_api.RecipeApi):
       runs(list[SkylabResult|Build]): List of results.
       baseline_runs(list[SkylabResult|Build]): List of results
         from baseline runs.
-      is_failure(func): A func(run->bool) returns the status of the run.
+      get_status(func): A func(run->STATUS) returns the status of the run.
       is_critical(func): A func(run->bool) returns the criticality of the run.
       get_title(func): A func(run->str) returns the name of the run.
       get_link_map(func): A func(run->map) returns the link map of the run.
       get_id(func): A func (run->str) returns the id of the run.
     """
-    failed_baseline_run_names = set(
-        [get_title(run) for run in baseline_runs if is_failure(run)])
+    failed_baseline_run_names = set([
+        get_title(run)
+        for run in baseline_runs
+        if get_status(run) != common_pb2.SUCCESS
+    ])
     filtered_runs = [
         run for run in runs if get_title(run) not in failed_baseline_run_names
     ]
-    failures = self._get_failures(kind, filtered_runs, is_failure, is_critical,
+    failures = self._get_failures(kind, filtered_runs, get_status, is_critical,
                                   get_title, get_link_map, get_id)
     if baseline_runs:
-      self._get_failures('baseline ' + kind, baseline_runs, is_failure,
+      self._get_failures('baseline ' + kind, baseline_runs, get_status,
                          lambda x: True, get_title, get_link_map, get_id)
     return failures
 
@@ -295,7 +318,7 @@ class FailuresApi(recipe_api.RecipeApi):
     """
     get_id = lambda b: b.builder.builder
     return self._get_failures(
-        'build', builds, self.is_build_failure, self.m.buildbucket.is_critical,
+        'build', builds, self.get_build_status, self.m.buildbucket.is_critical,
         self.m.naming.get_build_title, self.m.urls.get_build_link_map, get_id)
 
   def get_hw_test_failures(self, hw_tests, baseline_hw_tests=None):
@@ -312,7 +335,7 @@ class FailuresApi(recipe_api.RecipeApi):
     """
     get_id = self.m.naming.get_skylab_result_title
     return self._get_baseline_validated_failures(
-        'hw test', hw_tests, baseline_hw_tests or [], self.is_hw_test_failure,
+        'hw test', hw_tests, baseline_hw_tests or [], self.get_hwtest_status,
         self.is_hw_test_critical, self.m.naming.get_skylab_result_title,
         self.m.urls.get_skylab_result_link_map, get_id)
 
@@ -330,7 +353,7 @@ class FailuresApi(recipe_api.RecipeApi):
     """
     get_id = self.m.naming.get_vm_test_title
     return self._get_baseline_validated_failures(
-        'vm test', vm_tests, baseline_vm_tests or [], self.is_build_failure,
+        'vm test', vm_tests, baseline_vm_tests or [], self.get_build_status,
         self.m.buildbucket.is_critical, self.m.naming.get_vm_test_title,
         self.m.urls.get_vm_test_link_map, get_id)
 
@@ -350,20 +373,20 @@ class FailuresApi(recipe_api.RecipeApi):
     get_id = self.m.naming.get_moblab_vm_test_title
     return self._get_baseline_validated_failures(
         'moblab vm test', moblab_vm_tests, baseline_moblab_vm_tests or [],
-        self.is_build_failure, self.m.buildbucket.is_critical,
+        self.get_build_status, self.m.buildbucket.is_critical,
         self.m.naming.get_moblab_vm_test_title,
         self.m.urls.get_vm_test_link_map, get_id)
 
-  def is_build_failure(self, build):
-    """Determine if the build failed.
+  def get_build_status(self, build):
+    """Retrieve the status of the build.
 
     Args:
       build (Build): The buildbucket Build in question.
 
     Returns:
-      bool: True if the build failed.
+      status (common_pb2.Status) of the build.
     """
-    return build.status != common_pb2.SUCCESS
+    return build.status
 
   def is_critical_test_failure(self, test):
     """Determine if the test is critical and has failed.
@@ -381,16 +404,16 @@ class FailuresApi(recipe_api.RecipeApi):
     else:
       raise TypeError('expected Build or SkylabResult,' 'got %s' % type(test))
 
-  def is_hw_test_failure(self, hw_test):
-    """Determine if the hardware test failed.
+  def get_hwtest_status(self, hw_test):
+    """Get the status of the hw_test.
 
     Args:
       hw_test (SkylabResult): The hardware test result in question.
 
     Returns:
-      bool: True if the test failed.
+      status (common_pb2.STATUS) of the test.
     """
-    return hw_test.status != common_pb2.SUCCESS
+    return hw_test.status
 
   def is_hw_test_critical(self, hw_test):
     """Determine if the vm test was critical.
@@ -403,28 +426,6 @@ class FailuresApi(recipe_api.RecipeApi):
     """
     return hw_test.task.test.common.critical.value
 
-  def is_vm_test_failure(self, vm_test):
-    """Determine if the VM test failed.
-
-    Args:
-      vm_test (Build): The buildbucket build for the VM test.
-
-    Returns:
-      bool: True if the test failed.
-    """
-    return self.is_build_failure(vm_test)
-
-  def is_moblab_vm_test_failure(self, moblab_vm_test):
-    """Determine if the VM test failed.
-
-    Args:
-      moblab_vm_test (Build): The buildbucket build for the Moblab VM test.
-
-    Returns:
-      bool: True if the test failed.
-    """
-    return self.is_build_failure(moblab_vm_test)
-
   def is_critical_build_failure(self, build):
     """Determine in the build failed and was critical.
 
@@ -434,7 +435,7 @@ class FailuresApi(recipe_api.RecipeApi):
     Returns:
       bool: True if the build failed and was critical.
     """
-    return (self.is_build_failure(build) and
+    return (self.get_build_status(build) != common_pb2.SUCCESS and
             self.m.buildbucket.is_critical(build))
 
   def is_critical_hw_test_failure(self, hw_test):
@@ -446,7 +447,7 @@ class FailuresApi(recipe_api.RecipeApi):
     Returns:
       bool: True if the test failed and was critical.
     """
-    return (self.is_hw_test_failure(hw_test) and
+    return (self.get_hwtest_status(hw_test) != common_pb2.SUCCESS and
             hw_test.task.test.common.critical.value)
 
   def is_critical_vm_test_failure(self, vm_test):

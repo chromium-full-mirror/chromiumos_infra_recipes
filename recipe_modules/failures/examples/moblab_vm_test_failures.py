@@ -28,13 +28,6 @@ def RunSteps(api):
 
   # Check boolean functions.
   api.assertions.assertFalse(
-      api.failures.is_moblab_vm_test_failure(moblab_vm_success))
-  api.assertions.assertTrue(
-      api.failures.is_moblab_vm_test_failure(moblab_vm_failure))
-  api.assertions.assertTrue(
-      api.failures.is_moblab_vm_test_failure(moblab_vm_critical_failure))
-
-  api.assertions.assertFalse(
       api.failures.is_critical_moblab_vm_test_failure(moblab_vm_success))
   api.assertions.assertFalse(
       api.failures.is_critical_moblab_vm_test_failure(moblab_vm_failure))
