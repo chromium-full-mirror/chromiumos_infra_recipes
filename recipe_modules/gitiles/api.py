@@ -24,6 +24,10 @@ class GitilesApi(recipe_api.RecipeApi):
     """
     if test_output_data is None:
       test_output_data = self.test_api.test_fetch_revision_output()
+    # Allow the caller to pass in a ref to the branch, instead of the branch
+    # name.
+    if branch.startswith('refs/heads/'):
+      branch = branch[len('refs/heads/'):]
     input = {
         'branch': {
             'host': host,

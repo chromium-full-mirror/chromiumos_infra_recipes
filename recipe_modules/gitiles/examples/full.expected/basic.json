@@ -61,6 +61,22 @@
     ]
   },
   {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
+    ],
+    "infra_step": true,
+    "name": "gitiles-fetch-ref (2)",
+    "stdin": "{\"branch\": {\"branch\": \"master\", \"host\": \"testgerrit\", \"project\": \"my/project\"}}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"abcd1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

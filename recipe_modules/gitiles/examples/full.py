@@ -10,6 +10,7 @@ DEPS = [
 
 def RunSteps(api):
   api.gitiles.fetch_revision('testgerrit', 'my/project', 'master')
+  api.gitiles.fetch_revision('testgerrit', 'my/project', 'refs/heads/master')
 
 
 def GenTests(api):
