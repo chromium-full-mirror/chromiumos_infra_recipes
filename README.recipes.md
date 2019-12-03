@@ -876,7 +876,7 @@ Args:
   private (bool): Whether or not the target prebuilts are private.
 ### *recipe_modules* / [cros\_relevance](/recipe_modules/cros_relevance)
 
-[DEPS](/recipe_modules/cros_relevance/__init__.py#1): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_relevance/__init__.py#1): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -906,7 +906,7 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#82)(self, gerrit_changes, gitiles_commit, build_target, chroot, name=None):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#82)(self, gerrit_changes, gitiles_commit, build_target, chroot, name=None, test_is_pointless=False):**
 
 Determines if build(s) can be terminated early.
 
@@ -2810,11 +2810,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#89)(api, build_target, build_config, gitiles_commit, gerrit_changes):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#91)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#65)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#233)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#237)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2830,7 +2830,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#250)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#254)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

@@ -14,23 +14,6 @@ from recipe_engine import recipe_test_api
 class CrosRelevanceTestApi(recipe_test_api.RecipeTestApi):
   """Module that aids in testing CrosRelevanceApi."""
 
-  def simulate_run_pointless_build_checker(
-      self, name=None, build_is_pointless=False):
-    """Mocks running of the pointless build checker binary.
-
-    Args:
-      build_is_pointless (bool): whether the build can be terminated early.
-      name (str): the step name.
-
-    Returns:
-      step_data
-    """
-    resp = PointlessBuildCheckResponse()
-    resp.build_is_pointless.value = build_is_pointless
-    return self.step_data(
-        '{}.run check'.format(name or 'pointless build check'),
-        self.m.json.output(MessageToDict(resp)))
-
   def simulate_run_build_planner(self, builder_ids, name=None):
     """Mocks running of the build planner binary.
 

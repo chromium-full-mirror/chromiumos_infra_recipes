@@ -80,7 +80,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       return [b.name for b in result.builds_to_run]
 
   def is_build_pointless(self, gerrit_changes, gitiles_commit, build_target,
-                         chroot, name=None):
+                         chroot, name=None, test_is_pointless=False):
     """Determines if build(s) can be terminated early.
 
     If build_target is set, then the chromiumos workspace must have been
@@ -95,6 +95,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       build_target (chromiumos.BuildTarget): The BuildTarget being built.
       chroot (chromiumos.Chroot): The chroot it is being run in.
       name (str): The step name.
+      test_is_pointless (bool): test override; sets whether build is pointless.
 
     Returns:
       bool: Whether the build can be terminated early.
@@ -119,18 +120,31 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         new_gc = check_request.gerrit_changes.add()
         new_gc.serialized_proto = (
             bbcommon_pb2.GerritChange.SerializeToString(gc))
+
+      messages_path = self.m.path.mkdtemp(prefix='pointless-build-')
+      input_bin_file = messages_path.join('input.binaryproto')
+      output_bin_file = messages_path.join('output.binaryproto')
+      self.m.file.write_raw('write input binaryproto', input_bin_file,
+                            check_request.SerializeToString())
+
       cmd = [
           self._pointless_build_checker_path,
           'check-build',
-          '--input_json',
-          self.m.json.input(jsonpb.MessageToDict(check_request)),
-          '--output_json',
-          self.m.json.output(),
+          '--input_binary_pb',
+          input_bin_file,
+          '--output_binary_pb',
+          output_bin_file,
       ]
       test_plan_res = self.m.step('run check', cmd, infra_step=True)
-      output = test_plan_res.json.output
-      result = jsonpb.ParseDict(output, PointlessBuildCheckResponse(),
-                                ignore_unknown_fields=True)
+
+      test_resp = PointlessBuildCheckResponse()
+      test_resp.build_is_pointless.value = test_is_pointless
+      response_bin = self.m.file.read_raw(
+          'read output file', output_bin_file,
+          test_data=test_resp.SerializeToString())
+      result = PointlessBuildCheckResponse()
+      result.ParseFromString(response_bin)
+
       step_result.presentation.logs['relevance_output'] = [str(result)]
       if result.build_is_pointless.value:
         step_result.presentation.step_text = ('build is irrelevant')

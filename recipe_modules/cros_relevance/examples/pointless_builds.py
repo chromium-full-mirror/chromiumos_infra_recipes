@@ -15,7 +15,9 @@ DEPS = [
 
 
 def RunSteps(api):
+  builder = 'builder'
   bt = BuildTarget(name='my_build_target')
+  build_config = [dict(build_target=bt.name)]
   chroot = Chroot()
   gc = [
       bbcommon_pb2.GerritChange(change=123),
@@ -23,15 +25,11 @@ def RunSteps(api):
   ]
   api.cros_relevance.is_build_pointless(
       gc, bbcommon_pb2.GitilesCommit(id='my hash'), build_target=bt,
-      chroot=chroot)
+      chroot=chroot, test_is_pointless=False)
+  api.cros_relevance.is_build_pointless(
+      gc, bbcommon_pb2.GitilesCommit(id='my hash'), build_target=bt,
+      chroot=chroot, test_is_pointless=True)
 
 
 def GenTests(api):
-  builder = 'builder'
-  build_config = [dict(build_target='build_target')]
-  yield (api.test('not_pointless') +
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             build_is_pointless=False))
-  yield (api.test('is_pointless') +
-         api.cros_relevance.simulate_run_pointless_build_checker(
-             build_is_pointless=True))
+  yield (api.test('pointless_check'))
