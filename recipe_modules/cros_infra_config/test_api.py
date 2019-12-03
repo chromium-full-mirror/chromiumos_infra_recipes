@@ -150,6 +150,33 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "arm-generic-pointless-cq",
+                    "branch": "master",
+                    "type": "CQ"
+                  },
+                  "general": {
+                    "critical": false
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE"
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "install_packages": "RUN"
+                  },
+                  "unit_tests": {
+                    "package_blacklist": [{
+                      "package_name": "chromite",
+                      "category": "chromeos-base",
+                      "version": ""
+                    }],
+                    "ebuilds_run_spec": "RUN"
+                  }
+                },
+                {
+                  "id": {
                     "name": "staging-arm-generic-cq",
                     "branch": "master",
                     "type": "CQ"
@@ -359,6 +386,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "children": [
                       "amd64-generic-cq",
                       "arm-generic-cq",
+                      "arm-generic-pointless-cq",
                       "atlas-cq"
                     ]
                   }

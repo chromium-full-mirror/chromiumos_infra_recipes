@@ -29,7 +29,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     self._build_planner_path = None
 
   def get_necessary_builders(self, builder_configs, gerrit_changes,
-                             gitiles_commit, name=None):
+                             gitiles_commit, name=None, test_builder_ids=[]):
     """Determines which builders must be run (and which can be skipped).
 
     This filters on preconfigured RunWhen rules, as well as on rules allowing
@@ -44,6 +44,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
           snapshot Gitiles commit.
       name (str): The step name.
+      test_builder_ids (list[BuilderConfig.Id]): test override
 
     Returns:
       list[str]: the names of the child builders that must be run.
@@ -59,18 +60,30 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         new_gc = request.gerrit_changes.add()
         new_gc.serialized_proto = (
             bbcommon_pb2.GerritChange.SerializeToString(gc))
+
+      messages_path = self.m.path.mkdtemp(prefix='build-plan-')
+      input_bin_file = messages_path.join('input.binaryproto')
+      output_bin_file = messages_path.join('output.binaryproto')
+      self.m.file.write_raw('write input binaryproto', input_bin_file,
+                            request.SerializeToString())
+
       cmd = [
           self._build_planner_path,
           'generate-plan',
-          '--input_json',
-          self.m.json.input(jsonpb.MessageToDict(request)),
-          '--output_json',
-          self.m.json.output(),
+          '--input_binary_pb',
+          input_bin_file,
+          '--output_binary_pb',
+          output_bin_file,
       ]
-      test_plan_res = self.m.step('run planner', cmd, infra_step=True)
-      output = test_plan_res.json.output
-      result = jsonpb.ParseDict(output, GenerateBuildPlanResponse(),
-                                ignore_unknown_fields=True)
+      self.m.step('run planner', cmd, infra_step=True)
+
+      test_resp = GenerateBuildPlanResponse(builds_to_run=test_builder_ids,)
+      response_bin = self.m.file.read_raw(
+          'read output file', output_bin_file,
+          test_data=test_resp.SerializeToString())
+      result = GenerateBuildPlanResponse()
+      result.ParseFromString(response_bin)
+
       step_result.presentation.logs['planner_output'] = [str(result)]
       step_result.presentation.step_text = (
           '{} relevant, {} irrelevant builder configs'.format(

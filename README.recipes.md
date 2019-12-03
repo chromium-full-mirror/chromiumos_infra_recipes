@@ -882,7 +882,7 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#31)(self, builder_configs, gerrit_changes, gitiles_commit, name=None):**
+&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#31)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=[]):**
 
 Determines which builders must be run (and which can be skipped).
 
@@ -898,6 +898,7 @@ Args:
   gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
       snapshot Gitiles commit.
   name (str): The step name.
+  test_builder_ids (list[BuilderConfig.Id]): test override
 
 Returns:
   list[str]: the names of the child builders that must be run.
@@ -906,7 +907,7 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#82)(self, gerrit_changes, gitiles_commit, build_target, chroot, name=None, test_is_pointless=False):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#95)(self, gerrit_changes, gitiles_commit, build_target, chroot, name=None, test_is_pointless=False):**
 
 Determines if build(s) can be terminated early.
 
@@ -922,6 +923,7 @@ Args:
   build_target (chromiumos.BuildTarget): The BuildTarget being built.
   chroot (chromiumos.Chroot): The chroot it is being run in.
   name (str): The step name.
+  test_is_pointless (bool): test override; sets whether build is pointless.
 
 Returns:
   bool: Whether the build can be terminated early.
@@ -2810,11 +2812,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#91)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#92)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#65)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#237)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#239)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2830,7 +2832,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#254)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#257)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3003,7 +3005,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 [DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#11): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#23)(api, expected_builders):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#18)(api):**
 ### *recipes* / [cros\_relevance:examples/pointless\_builds](/recipe_modules/cros_relevance/examples/pointless_builds.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#11): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -3331,7 +3333,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#299)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#298)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -3362,7 +3364,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#422)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#418)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -3376,7 +3378,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#489)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#485)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3387,7 +3389,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#260)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#259)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3400,7 +3402,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#478)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#474)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3408,7 +3410,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#464)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#460)(refs):**
 
 Assert the given refs start with refs/heads.
 

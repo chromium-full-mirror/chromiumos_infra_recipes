@@ -14,13 +14,8 @@ DEPS = [
     'recipe_engine/properties',
 ]
 
-PROPERTIES = {
-    'expected_builders':
-        Property(kind=list, help='List of builder names', default=[])
-}
 
-
-def RunSteps(api, expected_builders):
+def RunSteps(api):
   gc = [
       bbcommon_pb2.GerritChange(change=123),
       bbcommon_pb2.GerritChange(change=456)
@@ -34,17 +29,13 @@ def RunSteps(api, expected_builders):
       )
   ]
   builders = api.cros_relevance.get_necessary_builders(
-      bc, gc, bbcommon_pb2.GitilesCommit(id='hello'))
-  api.assertions.assertItemsEqual(builders, expected_builders)
+      bc, gc, bbcommon_pb2.GitilesCommit(id='hello'), test_builder_ids=[])
+  api.assertions.assertItemsEqual(builders, [])
+  builders = api.cros_relevance.get_necessary_builders(
+      bc, gc, bbcommon_pb2.GitilesCommit(id='hello'),
+      test_builder_ids=[BuilderConfig.Id(name='my little builder')])
+  api.assertions.assertItemsEqual(builders, ['my little builder'])
 
 
 def GenTests(api):
-  builder = 'builder'
-  build_config = [dict(build_target='build_target')]
-  yield (api.test('skip_all_builds') +
-         api.cros_relevance.simulate_run_build_planner(builder_ids=[]) +
-         api.properties(expected_builders=[]))
-  yield (
-      api.test('keep_a_build') + api.cros_relevance.simulate_run_build_planner(
-          builder_ids=[BuilderConfig.Id(name='my little builder')]) +
-      api.properties(expected_builders=['my little builder']))
+  yield (api.test('build_plan'))

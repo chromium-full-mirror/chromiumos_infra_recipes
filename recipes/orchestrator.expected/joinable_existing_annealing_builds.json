@@ -121,12 +121,18 @@
       "@@@STEP_TEXT@3 relevant, 0 irrelevant builder configs@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"amd64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  type: CQ@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"arm-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  type: CQ@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"atlas-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  type: CQ@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_END@planner_output@@@"
     ]
@@ -168,31 +174,79 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n\u0005\n\u0003\u0018\ufffd\t\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001ag\n\u001c\n\u0010amd64-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0004\n\u0002\b\u0001\"\u0005\b\u0003\u0012\u0001\u0001*\u0002\b\u00012\u0017\n\u0011\n\u000fchrome_internal \u00020\u0001:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001aK\n\u001a\n\u000earm-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0002\n\u0000\"\u0002\b\u0003*\u0002\b\u00012\u0002 \u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001aU\n$\n\u0018arm-generic-pointless-cq\u0012\u0006master\u0018\u0001\u0012\u0002\n\u0000\"\u0002\b\u0003*\u0002\b\u00012\u0002 \u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001aT\n\u0014\n\batlas-cq\u0012\u0006master\u0018\u0001\u0012\f\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u0005\"\u0005\b\u0003\u0012\u0001\u0001*\u0002\b\u00012\u0004 \u00020\u0001:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\"d\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "run builds.plan builds.write input binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0005@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\t\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001ag@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u001c@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0010amd64-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0004@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\b\u0001\"\u0005\b\u0003\u0012\u0001\u0001*\u0002\b\u00012\u0017@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0011@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000fchrome_internal \u00020\u0001:\u001d\"\u0019@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\bchromite\u0012@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@chromeos-base(\u0002\u001aK@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u001a@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000earm-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0002@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0000\"\u0002\b\u0003*\u0002\b\u00012\u0002 \u0002:\u001d\"\u0019@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\bchromite\u0012@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@chromeos-base(\u0002\u001aU@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@$@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0018arm-generic-pointless-cq\u0012\u0006master\u0018\u0001\u0012\u0002@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0000\"\u0002\b\u0003*\u0002\b\u00012\u0002 \u0002:\u001d\"\u0019@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\bchromite\u0012@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@chromeos-base(\u0002\u001aT@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0014@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\batlas-cq\u0012\u0006master\u0018\u0001\u0012\f@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u0005\"\u0005\b\u0003\u0012\u0001\u0001*\u0002\b\u00012\u0004 \u00020\u0001:\u001d\"\u0019@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\bchromite\u0012@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@chromeos-base(\u0002\"d@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@b@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
+    ]
+  },
+  {
+    "cmd": [
       "[START_DIR]/cipd/test_planner/build_plan_generator",
       "generate-plan",
-      "--input_json",
-      "{\"builderConfigs\": [{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": \"RUN\", \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}, {\"artifacts\": {\"prebuilts\": \"NONE\"}, \"build\": {\"installPackages\": \"RUN\"}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false}, \"id\": {\"branch\": \"master\", \"name\": \"arm-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}, {\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": \"RUN\"}, \"chrome\": {\"internal\": true}, \"general\": {\"brokenBefore\": \"2019-11-01T00:00:00Z\", \"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"atlas-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}], \"gerritChanges\": [{\"serializedProto\": \"GNIJ\"}], \"gitilesCommit\": {\"serializedProto\": \"ChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIRcmVmcy9oZWFkcy9tYXN0ZXI=\"}, \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}",
-      "--output_json",
-      "/path/to/tmp/json"
+      "--input_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.run planner",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"buildsToRun\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"amd64-generic-cq\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"arm-generic-cq\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"atlas-cq\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run builds.plan builds.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -447,9 +501,10 @@
     "name": "run builds.filter builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@need 2 new builds (filtered 1)@@@",
+      "@@@STEP_TEXT@need 2 new builds (filtered 2)@@@",
       "@@@STEP_LOG_LINE@filter log@from 3 -> 1 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_LINE@filter log@amd64-generic exists, will join on it@@@",
+      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },
@@ -1368,7 +1423,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifestCommit\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \n  \"gitilesCommit\": {\n    \"serializedProto\": \"ChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEghjaHJvbWVvcxooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIRcmVmcy9oZWFkcy9tYXN0ZXI=\"\n  }, \n  \"buildbucketProtos\": [\n    {\n      \"serializedProto\": \"CNCtpKubruDoexISGhBhbWQ2NC1nZW5lcmljLWNxYAx6NAotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljGgMY0gk=\"\n    }, \n    {\n      \"serializedProto\": \"CNKtpKubruDoexIKGghhdGxhcy1jcToGCO31hekFYAx6LAolCiMKDGJ1aWxkX3RhcmdldBITKhEKDwoEbmFtZRIHGgVhdGxhcxoDGNIJ\"\n    }\n  ], \n  \"gerritChanges\": [\n    {\n      \"serializedProto\": \"GNIJ\"\n    }\n  ]\n}",
-      "[CLEANUP]/test-plan-_tmp_1/input.json"
+      "[CLEANUP]/test-plan-_tmp_2/input.json"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.write input json",
@@ -1401,9 +1456,9 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_json",
-      "[CLEANUP]/test-plan-_tmp_1/input.json",
+      "[CLEANUP]/test-plan-_tmp_2/input.json",
       "--output_json",
-      "[CLEANUP]/test-plan-_tmp_1/output.json"
+      "[CLEANUP]/test-plan-_tmp_2/output.json"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
@@ -1419,7 +1474,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_1/output.json",
+      "[CLEANUP]/test-plan-_tmp_2/output.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,

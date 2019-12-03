@@ -158,8 +158,8 @@ def RunSteps(api, properties):
     api.cros_infra_config.force_reload()
     fresh_builder_configs = api.cros_infra_config.safe_get_builder_configs(
         [b.builder.builder for b in completed_builds])
-    failures = api.failures.update_non_critical_failures(step, failures,
-                                                         fresh_builder_configs)
+    failures = api.failures.update_non_critical_failures(
+        step, failures, fresh_builder_configs)
   fatal_failures = [f for f in failures if f.fatal == True]
 
   if not fatal_failures:
@@ -215,8 +215,8 @@ def get_child_builders(api):
       api.buildbucket.build.builder.builder).orchestrator.children
 
 
-def filter_schedule_wait_builds(api, parent_step, child_builders, enable_history,
-                                snapshot, gerrit_changes):
+def filter_schedule_wait_builds(api, parent_step, child_builders,
+                                enable_history, snapshot, gerrit_changes):
   """Find the builds you need, filter those already started, run, and collect.
 
   Most of the heavy lifting is done in get_build_plan.
@@ -235,10 +235,9 @@ def filter_schedule_wait_builds(api, parent_step, child_builders, enable_history
   completed_builds, existing_builds, new_build_requests = get_build_plan(
       api, child_builders=child_builders, enable_history=enable_history,
       gerrit_changes=gerrit_changes, snapshot=snapshot)
-  parent_step.presentation.step_text = (
-      '{} new, {} recycled'.format(
-          len(new_build_requests),
-          len(completed_builds)+len(existing_builds)))
+  parent_step.presentation.step_text = ('{} new, {} recycled'.format(
+      len(new_build_requests),
+      len(completed_builds) + len(existing_builds)))
 
   # request new builds and add to total existing.
   existing_builds += api.buildbucket.schedule(
@@ -325,17 +324,16 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
       api.cros_infra_config.get_builder_config(b) for b in child_builders
   ]
   necessary_builders = api.cros_relevance.get_necessary_builders(
-      builder_configs, gerrit_changes, snapshot)
+      builder_configs, gerrit_changes, snapshot,
+      test_builder_ids=[b.id for b in builder_configs if 'pointless' not in b.id.name])
 
   if enable_history and gerrit_changes:
     with api.step.nest('get build history') as step:
       is_retry = len(
           api.cros_history.get_matching_builds(api.buildbucket.build)) > 1
       completed_builds = get_completed_builds(api, child_builders)
-      step.presentation.step_text = (
-          'found {} build{} to recycle'.format(
-              len(completed_builds),
-              '' if len(completed_builds) == 1 else 's'))
+      step.presentation.step_text = ('found {} build{} to recycle'.format(
+          len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
   snapshot_builds = api.cros_history.get_snapshot_builds(
       snapshot, [],
@@ -410,11 +408,9 @@ def get_build_plan(api, child_builders, enable_history, gerrit_changes,
     step.presentation.logs['filter log'] = filter_log
     # Don't include irrelevant builder configs or snapshot builds in this
     # count for display, as they're mentioned in steps above.
-    step.presentation.step_text = (
-        'need {} new build{} (filtered {})'.format(
-            len(new_build_requests),
-            '' if len(new_build_requests)==1 else 's',
-            len(child_builders)-len(new_build_requests)))
+    step.presentation.step_text = ('need {} new build{} (filtered {})'.format(
+        len(new_build_requests), '' if len(new_build_requests) == 1 else 's',
+        len(child_builders) - len(new_build_requests)))
 
   return completed_builds, filtered_snapshot_builds, new_build_requests
 
@@ -616,12 +612,7 @@ def GenTests(api):
   ]
 
   yield (
-      api.test('basic') + postsubmit_orchestrator_build() +
-      api.cros_relevance.simulate_run_build_planner(
-          builder_ids=[
-              BuilderConfig.Id(name=n)
-              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
-          ], name='run builds.plan builds') +  #
+      api.test('basic') + postsubmit_orchestrator_build() + #
       api.buildbucket.simulated_collect_output(
           builds, step_name='run builds.collect') +  #
       api.buildbucket.simulated_schedule_output(
@@ -651,10 +642,6 @@ def GenTests(api):
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
-         api.cros_relevance.simulate_run_build_planner(
-             builder_ids=[
-                 BuilderConfig.Id(name=b.builder.builder) for b in builds
-             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_search_results(
              builds, 'run builds.get build history.'
              'get completed builds.get change build history.'
@@ -683,10 +670,6 @@ def GenTests(api):
          cq_orchestrator_build_with_gerrit_change() +  #
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
-         api.cros_relevance.simulate_run_build_planner(
-             # In this case, only one of the three builds is needed.
-             builder_ids=[BuilderConfig.Id(name='arm-generic-cq')],
-             name='run builds.plan builds') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_schedule_output(
@@ -714,10 +697,6 @@ def GenTests(api):
          api.buildbucket.simulated_search_results(
              existing_annealing_builds, 'run builds.get snapshot builds'
              '.buildbucket.search') +  #
-         api.cros_relevance.simulate_run_build_planner(
-             builder_ids=[
-                 BuilderConfig.Id(name=b.builder.builder) for b in builds
-             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_schedule_output(
@@ -743,10 +722,6 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
-         api.cros_relevance.simulate_run_build_planner(
-             builder_ids=[
-                 BuilderConfig.Id(name=b.builder.builder) for b in builds
-             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_search_results(
              builds, step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search') +  #
@@ -777,10 +752,6 @@ def GenTests(api):
          api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.properties(assert_singleton=True) +  #
-         api.cros_relevance.simulate_run_build_planner(
-             builder_ids=[
-                 BuilderConfig.Id(name=b.builder.builder) for b in builds
-             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_search_results(
              [], step_name='find inflight orchestrator.'
              'find matching builds.buildbucket.search') +
@@ -811,11 +782,6 @@ def GenTests(api):
           'start': 'refs/heads/foo',
           'success': 'refs/heads/bar'
       }) +  #
-      api.cros_relevance.simulate_run_build_planner(
-          builder_ids=[
-              BuilderConfig.Id(name=n)
-              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
-          ], name='run builds.plan builds') +  #
       api.buildbucket.simulated_collect_output(
           builds, step_name='run builds.collect') +  #
       api.buildbucket.simulated_schedule_output(
@@ -843,11 +809,6 @@ def GenTests(api):
           'start': 'refs/heads/foo',
           'success': 'refs/heads/bar'
       }) +  #
-      api.cros_relevance.simulate_run_build_planner(
-          builder_ids=[
-              BuilderConfig.Id(name=n)
-              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
-          ], name='run builds.plan builds') +  #
       api.buildbucket.simulated_collect_output(
           builds, step_name='run builds.collect') +  #
       api.buildbucket.simulated_schedule_output(
@@ -870,11 +831,6 @@ def GenTests(api):
 
   yield (api.test('missing_gitiles_commit_with_defaults') +  #
          toolchain_orchestrator_build_with_no_gitiles() + #
-      api.cros_relevance.simulate_run_build_planner(
-          builder_ids=[
-              BuilderConfig.Id(name=n)
-              for n in ['amd64-generic-toolchain', 'arm-generic-toolchain']
-          ], name='run builds.plan builds') +  #
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
@@ -899,10 +855,6 @@ def GenTests(api):
 
   yield (api.test('dry_run') +  #
          cq_orchestrator_build_with_gerrit_change() +  #
-         api.cros_relevance.simulate_run_build_planner(
-             builder_ids=[
-                 BuilderConfig.Id(name=b.builder.builder) for b in builds
-             ], name='run builds.plan builds') +  #
          api.cq(dry_run=True))
 
   builds = [
@@ -922,12 +874,7 @@ def GenTests(api):
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
              builds, step_name='run builds.get build history'
-             '.find matching builds.buildbucket.search') +
-         api.cros_relevance.simulate_run_build_planner(
-             builder_ids=[
-                 BuilderConfig.Id(name=n)
-                 for n in ['amd64-generic-cq', 'arm-generic-cq', 'atlas-cq']
-             ], name='run builds.plan builds') +  #
+             '.find matching builds.buildbucket.search') + #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.buildbucket.simulated_schedule_output(
@@ -959,11 +906,6 @@ def GenTests(api):
   yield (
       api.test('critical_child_builder_fails') +  #
       postsubmit_orchestrator_build() +  #
-      api.cros_relevance.simulate_run_build_planner(
-          builder_ids=[
-              BuilderConfig.Id(name=n)
-              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
-          ], name='run builds.plan builds') +  #
       api.buildbucket.simulated_collect_output(
           builds, step_name='run builds.collect') +  #
       api.buildbucket.simulated_schedule_output(
@@ -995,11 +937,6 @@ def GenTests(api):
   yield (
       api.test('non-critical_child_builder_fails') +  #
       postsubmit_orchestrator_build() +  #
-      api.cros_relevance.simulate_run_build_planner(
-          builder_ids=[
-              BuilderConfig.Id(name=n)
-              for n in ['amd64-generic-postsubmit', 'arm-generic-postsubmit']
-          ], name='run builds.plan builds') +  #
       api.buildbucket.simulated_collect_output(
           builds, step_name='run builds.collect') +  #
       api.buildbucket.simulated_schedule_output(
@@ -1033,10 +970,6 @@ def GenTests(api):
 
   yield (api.test('with_test_bisection_invocation') +  #
          bisecting_orchestrator_build() +  #
-         api.cros_relevance.simulate_run_build_planner(
-             builder_ids=[
-                 BuilderConfig.Id(name=n) for n in ['amd64-generic-snapshot']
-             ], name='run builds.plan builds') +  #
          api.buildbucket.simulated_collect_output(
              builds, step_name='run builds.collect') +  #
          api.properties(

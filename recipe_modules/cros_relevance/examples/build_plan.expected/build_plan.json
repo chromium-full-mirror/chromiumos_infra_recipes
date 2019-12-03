@@ -1,0 +1,176 @@
+[
+  {
+    "cmd": [],
+    "name": "plan builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@0 relevant, 0 irrelevant builder configs@@@",
+      "@@@STEP_LOG_LINE@planner_output@@@@",
+      "@@@STEP_LOG_END@planner_output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "plan builds.ensure binaries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/test_planner",
+      "-ensure-file",
+      "chromiumos/infra/test_planner latest",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "plan builds.ensure binaries.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_planner\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n\u0004\n\u0002\u0018{\n\u0005\n\u0003\u0018\ufffd\u0003\u0012\u0005hello\u001a\u001b\n\u0013\n\u0011my little builder\u0012\u0004\u001a\u0002\b\u0001\"\t\n\u0007\u001a\u0005hello",
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "plan builds.write input binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0004@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0018{@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0005@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\u0003\u0012\u0005hello\u001a\u001b@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0013@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0011my little builder\u0012\u0004\u001a\u0002\b\u0001\"\t@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0007\u001a\u0005hello@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/build_plan_generator",
+      "generate-plan",
+      "--input_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "plan builds.run planner",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "plan builds.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "plan builds (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 relevant, 0 irrelevant builder configs@@@",
+      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"my little builder\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_LOG_END@planner_output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n\u0004\n\u0002\u0018{\n\u0005\n\u0003\u0018\ufffd\u0003\u0012\u0005hello\u001a\u001b\n\u0013\n\u0011my little builder\u0012\u0004\u001a\u0002\b\u0001\"\t\n\u0007\u001a\u0005hello",
+      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "plan builds (2).write input binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0004@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0018{@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0005@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\u0003\u0012\u0005hello\u001a\u001b@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0013@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0011my little builder\u0012\u0004\u001a\u0002\b\u0001\"\t@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0007\u001a\u0005hello@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/build_plan_generator",
+      "generate-plan",
+      "--input_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "plan builds (2).run planner",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "plan builds (2).read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

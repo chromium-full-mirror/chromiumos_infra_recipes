@@ -142,13 +142,8 @@
     "name": "run builds.plan builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@2 relevant, 0 irrelevant builder configs@@@",
-      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
-      "@@@STEP_LOG_LINE@planner_output@  name: \"amd64-generic-toolchain\"@@@",
-      "@@@STEP_LOG_LINE@planner_output@}@@@",
-      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
-      "@@@STEP_LOG_LINE@planner_output@  name: \"arm-generic-toolchain\"@@@",
-      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_TEXT@0 relevant, 0 irrelevant builder configs@@@",
+      "@@@STEP_LOG_LINE@planner_output@@@@",
       "@@@STEP_LOG_END@planner_output@@@"
     ]
   },
@@ -189,28 +184,58 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n[\nY\n chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001\u0012\babcd1234\"N\nL\n\u000fchrome-internal\u0012\u001achromeos/manifest-internal\u001a\babcd1234\"\u0013refs/heads/snapshot",
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "run builds.plan builds.write input binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@[@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@Y@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001\u0012\babcd1234\"N@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@L@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000fchrome-internal\u0012\u001achromeos/manifest-internal\u001a\babcd1234\"\u0013refs/heads/snapshot@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
+    ]
+  },
+  {
+    "cmd": [
       "[START_DIR]/cipd/test_planner/build_plan_generator",
       "generate-plan",
-      "--input_json",
-      "{\"gerritChanges\": [{\"serializedProto\": \"CiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRImY2hyb21pdW1vcy9vdmVybGF5cy9jaHJvbWl1bW9zLW92ZXJsYXkYyYxVIP///////////wE=\"}], \"gitilesCommit\": {\"serializedProto\": \"Cg9jaHJvbWUtaW50ZXJuYWwSGmNocm9tZW9zL21hbmlmZXN0LWludGVybmFsGghhYmNkMTIzNCITcmVmcy9oZWFkcy9zbmFwc2hvdA==\"}, \"manifestCommit\": \"abcd1234\"}",
-      "--output_json",
-      "/path/to/tmp/json"
+      "--input_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.run planner",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"buildsToRun\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"amd64-generic-toolchain\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"arm-generic-toolchain\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run builds.plan builds.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -805,7 +830,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifestCommit\": \"abcd1234\", \n  \"gitilesCommit\": {\n    \"serializedProto\": \"Cg9jaHJvbWUtaW50ZXJuYWwSGmNocm9tZW9zL21hbmlmZXN0LWludGVybmFsGghhYmNkMTIzNCITcmVmcy9oZWFkcy9zbmFwc2hvdA==\"\n  }, \n  \"gerritChanges\": [\n    {\n      \"serializedProto\": \"CiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRImY2hyb21pdW1vcy9vdmVybGF5cy9jaHJvbWl1bW9zLW92ZXJsYXkYyYxVIP///////////wE=\"\n    }\n  ]\n}",
-      "[CLEANUP]/test-plan-_tmp_1/input.json"
+      "[CLEANUP]/test-plan-_tmp_2/input.json"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.write input json",
@@ -830,9 +855,9 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_json",
-      "[CLEANUP]/test-plan-_tmp_1/input.json",
+      "[CLEANUP]/test-plan-_tmp_2/input.json",
       "--output_json",
-      "[CLEANUP]/test-plan-_tmp_1/output.json"
+      "[CLEANUP]/test-plan-_tmp_2/output.json"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
@@ -848,7 +873,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_1/output.json",
+      "[CLEANUP]/test-plan-_tmp_2/output.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
