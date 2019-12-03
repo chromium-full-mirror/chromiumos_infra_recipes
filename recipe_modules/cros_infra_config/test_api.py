@@ -307,31 +307,6 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
-                    "name": "toolchain-orchestrator",
-                    "branch": "master",
-                    "type": "TOOLCHAIN"
-                  },
-                  "general": {
-                    "critical": true
-                  },
-                  "orchestrator": {
-                    "children": [
-                    ],
-                    "gitiles_commit": {
-                      "host": "chrome-internal",
-                      "project": "chromeos/manifest-internal",
-                      "ref": "refs/heads/snapshot"
-                    },
-                    "gerrit_changes": [{
-                      "host": "chromium-review.googlesource.com",
-                      "project": "chromiumos/overlays/chromiumos-overlay",
-                      "change": 1394249,
-                      "patchset": -1
-                    }]
-                  }
-                },
-                {
-                  "id": {
                     "name": "postsubmit-orchestrator",
                     "branch": "master",
                     "type": "POSTSUBMIT"
