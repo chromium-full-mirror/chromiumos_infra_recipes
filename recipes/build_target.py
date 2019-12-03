@@ -202,8 +202,15 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       api.failures.raise_failed_packages(response.failed_packages)
     with api.step.nest('test images'):
       failed_images = []
-      # For now, as in legacy CQ, we only test base images.
-      for image in [i for i in response.images if i.type == BASE]:
+
+      # For now, as in legacy CQ, we only test base images. Images created as a
+      # sideeffect (not explicitly requested in image_types) are not tested.
+      for image in response.images:
+        if image.type != BASE or image.type not in image_types:
+          # This continue statement is not correctly caught by coveragepy:
+          # https://bitbucket.org/ned/coveragepy/issues/198/continue-marked-as-not-covered
+          continue # pragma: no cover
+
         result_dir = api.path.mkdtemp(prefix="image-test-result-")
         if not api.cros_build_api.ImageService.Test(
             TestImageRequest(
