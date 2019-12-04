@@ -43,12 +43,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
       "--format",
       "text"
     ],
     "infra_step": true,
-    "name": "read builder config.read builder configs.fetch master:generated/builder_configs.cfg",
+    "name": "read builder config.read builder configs.fetch master:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

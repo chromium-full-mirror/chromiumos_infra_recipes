@@ -4,6 +4,9 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_test_api
+from google.protobuf import json_format as jsonpb
+
+from PB.chromiumos.builder_config import BuilderConfigs
 
 
 class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
@@ -13,21 +16,15 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
   gitiles_timeout_seconds = 3 * 60
 
   def builder_configs_step_test_data(self):
-    """A fn that can be passed to step_test_data to generate BuilderConfigs.
-
-    Note the field "newUnknownField", which tests the case where the proto in
-    chromeos/infra/config is using a proto version newer than the one in this
-    repo.
-    """
-    return self.m.gitiles.make_encoded_file("""
+    """A fn that can be passed to step_test_data to generate BuilderConfigs."""
+    builder_configs = """
             {
               "builderConfigs": [
                 {
                   "id": {
                     "name": "amd64-generic-postsubmit",
                     "branch": "master",
-                    "type": "POSTSUBMIT",
-                    "newUnknownField": "some-value"
+                    "type": "POSTSUBMIT"
                   },
                   "general": {
                     "critical": true
@@ -403,8 +400,13 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 }
               ]
             }
-          """)
+          """
+    configs = jsonpb.Parse(builder_configs, BuilderConfigs(),
+                           ignore_unknown_fields=True)
+    # Humans can edit the string above for test data, impl reads binary proto.
+    return self.m.gitiles.make_encoded_file(configs.SerializeToString())
 
   def test_config_file(self):
     """A step_test_data function to simulate test config download."""
-    return self.m.gitiles.make_encoded_file("")
+    configs = BuilderConfigs()
+    return self.m.gitiles.make_encoded_file(configs.SerializeToString())

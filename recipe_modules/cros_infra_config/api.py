@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
-from google.protobuf import json_format as jsonpb
 from util import exponential_retry
 
 from PB.chromiumos.builder_config import BuilderConfig
@@ -31,7 +30,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Step nesting needs to happen here or it shows up many times in Milo,
     # once for each builder.
     return self.m.gitiles.download_file(
-        REPO_URL, "generated/builder_configs.cfg",
+        REPO_URL, "generated/builder_configs.binaryproto",
         step_test_data=self.test_api.builder_configs_step_test_data,
         timeout=self.test_api.gitiles_timeout_seconds)
 
@@ -49,11 +48,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       with self.m.step.nest('read builder configs'), self.m.context(
           infra_steps=True):
         builder_configs_file = self._fetch_builder_configs()
-      # Ignore unknown fields, as this repo may not be using the newest version
-      # of the proto.
-      builder_configs = jsonpb.Parse(builder_configs_file, BuilderConfigs(),
-                                     ignore_unknown_fields=True).builder_configs
-      for config in builder_configs:
+      configs = BuilderConfigs.FromString(builder_configs_file)
+      for config in configs.builder_configs:
         name_to_builder_config[config.id.name] = config
       self._name_to_builder_config = name_to_builder_config
     return self._name_to_builder_config

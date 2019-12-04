@@ -33,12 +33,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
       "--format",
       "text"
     ],
     "infra_step": true,
-    "name": "run builds.read builder configs.fetch master:generated/builder_configs.cfg",
+    "name": "run builds.read builder configs.fetch master:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -499,12 +499,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
       "--format",
       "text"
     ],
     "infra_step": true,
-    "name": "non-critical build check.read builder configs.fetch master:generated/builder_configs.cfg",
+    "name": "non-critical build check.read builder configs.fetch master:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -889,12 +889,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.cfg",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
       "--format",
       "text"
     ],
     "infra_step": true,
-    "name": "clean up orchestrator.read builder configs.fetch master:generated/builder_configs.cfg",
+    "name": "clean up orchestrator.read builder configs.fetch master:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
