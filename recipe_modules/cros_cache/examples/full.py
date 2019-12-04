@@ -10,8 +10,9 @@ DEPS = [
 
 
 def RunSteps(api):
+  cache_dir = api.cros_cache.create_cache_dir('temp_cache')
   with api.cros_source.checkout_overlays_context(), \
-      api.context(cwd=api.cros_source.workspace_path):
+      api.context(cwd=cache_dir):
     cache_file, version_file = api.cros_cache.package_source(
         'test_file.tar.gz', api.cros_source.workspace_path)
     api.cros_cache.upload_artifact('test cache upload', cache_file)

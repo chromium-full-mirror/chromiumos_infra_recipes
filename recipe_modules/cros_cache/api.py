@@ -13,7 +13,7 @@ from recipe_engine import recipe_api
 from util import exponential_retry
 
 # Number of seconds to wait on gsutil rsync.
-gsutil_timeout_seconds = 10 * 60
+gsutil_timeout_seconds = 30 * 60
 
 
 class CrosCacheApi(recipe_api.RecipeApi):
@@ -21,6 +21,14 @@ class CrosCacheApi(recipe_api.RecipeApi):
 
   def __init__(self, *args, **kwargs):
     super(CrosCacheApi, self).__init__(*args, **kwargs)
+
+  def create_cache_dir(self, directory):
+    """Creates a working directory outside of recipe structure.
+
+    Args:
+      directory (Path):  Full path to directory to create.
+    """
+    return self.m.path.mkdtemp(prefix=directory)
 
   def package_source(self, filename, source_path):
     """Packages up the current checkout of source to a tar file for cache usage.

@@ -605,7 +605,14 @@ API for working with CrOS cache.
 
 A module for CrOS-specific cache steps.
 
-&mdash; **def [package\_source](/recipe_modules/cros_cache/api.py#25)(self, filename, source_path):**
+&mdash; **def [create\_cache\_dir](/recipe_modules/cros_cache/api.py#25)(self, directory):**
+
+Creates a working directory outside of recipe structure.
+
+Args:
+  directory (Path):  Full path to directory to create.
+
+&mdash; **def [package\_source](/recipe_modules/cros_cache/api.py#33)(self, filename, source_path):**
 
 Packages up the current checkout of source to a tar file for cache usage.
 
@@ -617,7 +624,7 @@ Returns:
   archive_file (Path): Path to the created archive file.
   version_file (Path): Path to the created version file.
 
-&mdash; **def [upload\_artifact](/recipe_modules/cros_cache/api.py#52)(self, gs_bucket, upload_file):**
+&mdash; **def [upload\_artifact](/recipe_modules/cros_cache/api.py#60)(self, gs_bucket, upload_file):**
 
 Uploads cache and version file to Google Storage.
 
@@ -2848,11 +2855,11 @@ Returns:
   dict of target versions
 ### *recipes* / [cache\_generate](/recipes/cache_generate.py)
 
-[DEPS](/recipes/cache_generate.py#8): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/cache_generate.py#8): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe for generating ChromeOS cache payloads.
 
-&mdash; **def [RunSteps](/recipes/cache_generate.py#18)(api):**
+&mdash; **def [RunSteps](/recipes/cache_generate.py#21)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -2940,7 +2947,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 &mdash; **def [RunSteps](/recipe_modules/cros_cache/examples/full.py#12)(api):**
 
-&mdash; **def [attempt\_upload\_file](/recipe_modules/cros_cache/examples/full.py#21)(api, attempt):**
+&mdash; **def [attempt\_upload\_file](/recipe_modules/cros_cache/examples/full.py#22)(api, attempt):**
 ### *recipes* / [cros\_cache:examples/missing\_source\_dir](/recipe_modules/cros_cache/examples/missing_source_dir.py)
 
 [DEPS](/recipe_modules/cros_cache/examples/missing_source_dir.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
