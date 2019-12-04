@@ -802,7 +802,7 @@ Generate start time in seconds.
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#126)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#105)(self):**
 
 Force a reload of the config map from ToT.
 
@@ -828,16 +828,6 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [get\_test\_config](/recipe_modules/cros_infra_config/api.py#105)(self, config_name):**
-
-Gets Path of most recent test config.
-
-Args:
-  * config_name (str): Config filename.
-
-Returns:
-  Path pointing to specified config file.
-
 &mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#18)(self):**
 
 Init the InfraConfigApi module.
@@ -856,9 +846,9 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#133)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#112)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#130)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#109)(self, run_spec):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]

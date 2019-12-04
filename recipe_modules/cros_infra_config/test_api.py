@@ -405,8 +405,3 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                            ignore_unknown_fields=True)
     # Humans can edit the string above for test data, impl reads binary proto.
     return self.m.gitiles.make_encoded_file(configs.SerializeToString())
-
-  def test_config_file(self):
-    """A step_test_data function to simulate test config download."""
-    configs = BuilderConfigs()
-    return self.m.gitiles.make_encoded_file(configs.SerializeToString())

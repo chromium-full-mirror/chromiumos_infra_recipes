@@ -102,27 +102,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         pass
     return builder_configs
 
-  def get_test_config(self, config_name):
-    """Gets Path of most recent test config.
-
-    Args:
-      * config_name (str): Config filename.
-
-    Returns:
-      Path pointing to specified config file.
-    """
-    with self.m.step.nest('read test config'), self.m.context(infra_steps=True):
-      conf_contents = self.m.gitiles.download_file(
-          REPO_URL, "testingconfig/generated/%s" % config_name,
-          step_test_data=self.test_api.test_config_file)
-
-      outdir = self.m.path['cleanup'].join('testconfig')
-      self.m.file.ensure_directory('make testconfig', outdir)
-      path = outdir.join(config_name)
-
-      self.m.file.write_raw('save %s' % config_name, path, conf_contents)
-      return path
-
   def force_reload(self):
     """Force a reload of the config map from ToT."""
     self._get_name_to_builder_config(force_reload=True)

@@ -26,8 +26,6 @@ def RunSteps(api):
   api.assertions.assertEqual(children[0], "amd64-generic-postsubmit")
   api.assertions.assertEqual(children[1], "arm-generic-postsubmit")
 
-  api.cros_infra_config.get_test_config('config_name.cfg')
-
   api.assertions.assertFalse(
       api.cros_infra_config.should_run(BuilderConfig.NO_RUN))
   api.assertions.assertTrue(api.cros_infra_config.should_run(BuilderConfig.RUN))

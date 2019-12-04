@@ -46,64 +46,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "read test config"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/config_name.cfg",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "name": "read test config.fetch master:testingconfig/generated/config_name.cfg",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/testconfig"
-    ],
-    "infra_step": true,
-    "name": "read test config.make testconfig",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "",
-      "[CLEANUP]/testconfig/config_name.cfg"
-    ],
-    "infra_step": true,
-    "name": "read test config.save config_name.cfg",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@config_name.cfg@@@"
-    ]
-  },
-  {
     "name": "$result"
   }
 ]
