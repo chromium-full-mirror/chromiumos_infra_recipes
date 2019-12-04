@@ -40,9 +40,6 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
 
       if not gerrit_changes:
         gerrit_changes = []  # pragma: nocover
-      messages_path = self.m.path.mkdtemp(prefix='test-plan-')
-      input_file = messages_path.join('input.json')
-      output_file = messages_path.join('output.json')
 
       request_proto = GenerateTestPlanRequest(
           manifest_commit=manifest_commit.id, gitiles_commit=ProtoBytes(
@@ -57,22 +54,28 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           ])
       request_json = json_format.MessageToJson(request_proto)
       step.presentation.logs['request'] = [request_json]
-      self.m.file.write_raw('write input json', input_file, request_json)
+
+      messages_path = self.m.path.mkdtemp(prefix='test-plan-')
+      input_bin_file = messages_path.join('input.binaryproto')
+      output_bin_file = messages_path.join('output.binaryproto')
+      self.m.file.write_raw('write input binaryproto', input_bin_file,
+                            request_proto.SerializeToString())
 
       cmd = [
-          self._test_planner_path, 'gen-test-plan', '--input_json', input_file,
-          '--output_json', output_file
+          self._test_planner_path, 'gen-test-plan', '--input_binary_pb',
+          input_bin_file, '--output_binary_pb', output_bin_file
       ]
       self.m.step('call test_planner', cmd, infra_step=True)
 
-      test_data = json_format.MessageToJson(
-          self.test_api.generate_test_plan_response)
-      response_json = self.m.file.read_raw('read output json', output_file,
-                                           test_data=test_data)
-      step.presentation.logs['response'] = [response_json]
-      response_proto = json_format.Parse(response_json,
-                                         GenerateTestPlanResponse(),
-                                         ignore_unknown_fields=True)
+      response_bin = self.m.file.read_raw(
+          'read output file', output_bin_file, test_data=self.test_api
+          .generate_test_plan_response.SerializeToString())
+      response_proto = GenerateTestPlanResponse()
+      response_proto.ParseFromString(response_bin)
+
+      step.presentation.logs['response'] = [
+          json_format.MessageToJson(response_proto)
+      ]
       return response_proto
 
   def _ensure_test_planner(self):

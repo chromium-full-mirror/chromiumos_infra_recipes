@@ -488,43 +488,41 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifestCommit\": \"deadbeef\", \n  \"gitilesCommit\": {\n    \"serializedProto\": \"CiBjaHJvbWUtaW50ZXJuYWwuZ29vZ2xlc291cmNlLmNvbRIaY2hyb21lb3MvbWFuaWZlc3QtaW50ZXJuYWwaCGRlYWRiZWVmIhNyZWZzL2hlYWRzL3NuYXBzaG90\"\n  }, \n  \"buildbucketProtos\": [\n    {\n      \"serializedProto\": \"CNCtpKubruDoexIaGhhhbWQ2NC1nZW5lcmljLXBvc3RzdWJtaXRgDHozCi0KKwoMYnVpbGRfdGFyZ2V0EhsqGQoXCgRuYW1lEg8aDWFtZDY0LWdlbmVyaWMaAhh7qAEB\"\n    }, \n    {\n      \"serializedProto\": \"CNGtpKubruDoexIYGhZhcm0tZ2VuZXJpYy1wb3N0c3VibWl0YBR6LgomCiQKDGJ1aWxkX3RhcmdldBIUKhIKEAoEbmFtZRIIGgZ0YXJnZXQSABoCGHuoAQI=\"\n    }\n  ], \n  \"gerritChanges\": [\n    {\n      \"serializedProto\": \"GHs=\"\n    }\n  ]\n}",
-      "[CLEANUP]/test-plan-_tmp_1/input.json"
+      "*b\n`\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001a\u001a\u0018amd64-generic-postsubmit`\fz3\n-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a\u0002\u0018{\ufffd\u0001\u0001*[\nY\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\u001a\u0016arm-generic-postsubmit`\u0014z.\n&\n$\n\fbuild_target\u0012\u0014*\u0012\n\u0010\n\u0004name\u0012\b\u001a\u0006target\u0012\u0000\u001a\u0002\u0018{\ufffd\u0001\u0002:\bdeadbeefB\u0004\n\u0002\u0018{J_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.write input json",
+    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input.json@{@@@",
-      "@@@STEP_LOG_LINE@input.json@  \"manifestCommit\": \"deadbeef\", @@@",
-      "@@@STEP_LOG_LINE@input.json@  \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@    \"serializedProto\": \"CiBjaHJvbWUtaW50ZXJuYWwuZ29vZ2xlc291cmNlLmNvbRIaY2hyb21lb3MvbWFuaWZlc3QtaW50ZXJuYWwaCGRlYWRiZWVmIhNyZWZzL2hlYWRzL3NuYXBzaG90\"@@@",
-      "@@@STEP_LOG_LINE@input.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input.json@  \"buildbucketProtos\": [@@@",
-      "@@@STEP_LOG_LINE@input.json@    {@@@",
-      "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"CNCtpKubruDoexIaGhhhbWQ2NC1nZW5lcmljLXBvc3RzdWJtaXRgDHozCi0KKwoMYnVpbGRfdGFyZ2V0EhsqGQoXCgRuYW1lEg8aDWFtZDY0LWdlbmVyaWMaAhh7qAEB\"@@@",
-      "@@@STEP_LOG_LINE@input.json@    }, @@@",
-      "@@@STEP_LOG_LINE@input.json@    {@@@",
-      "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"CNGtpKubruDoexIYGhZhcm0tZ2VuZXJpYy1wb3N0c3VibWl0YBR6LgomCiQKDGJ1aWxkX3RhcmdldBIUKhIKEAoEbmFtZRIIGgZ0YXJnZXQSABoCGHuoAQI=\"@@@",
-      "@@@STEP_LOG_LINE@input.json@    }@@@",
-      "@@@STEP_LOG_LINE@input.json@  ], @@@",
-      "@@@STEP_LOG_LINE@input.json@  \"gerritChanges\": [@@@",
-      "@@@STEP_LOG_LINE@input.json@    {@@@",
-      "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"GHs=\"@@@",
-      "@@@STEP_LOG_LINE@input.json@    }@@@",
-      "@@@STEP_LOG_LINE@input.json@  ]@@@",
-      "@@@STEP_LOG_LINE@input.json@}@@@",
-      "@@@STEP_LOG_END@input.json@@@"
+      "@@@STEP_LOG_LINE@input.binaryproto@*b@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@`\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001a\u001a\u0018amd64-generic-postsubmit`\fz3@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@-@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@+@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\fbuild_target\u0012\u001b*\u0019@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0017@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0004name\u0012\u000f\u001a@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@amd64-generic\u001a\u0002\u0018{\ufffd\u0001\u0001*[@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@Y\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\u001a\u0016arm-generic-postsubmit`\u0014z.@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@&@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@$@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\fbuild_target\u0012\u0014*\u0012@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0010@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0004name\u0012\b\u001a\u0006target\u0012\u0000\u001a\u0002\u0018{\ufffd\u0001\u0002:\bdeadbeefB\u0004@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0018{J_@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@]@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },
   {
     "cmd": [
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
-      "--input_json",
-      "[CLEANUP]/test-plan-_tmp_1/input.json",
-      "--output_json",
-      "[CLEANUP]/test-plan-_tmp_1/output.json"
+      "--input_binary_pb",
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
@@ -540,11 +538,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_1/output.json",
+      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.read output json",
+    "name": "run tests.schedule tests.generate test plan.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

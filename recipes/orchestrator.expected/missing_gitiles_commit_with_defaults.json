@@ -829,35 +829,29 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifestCommit\": \"abcd1234\", \n  \"gitilesCommit\": {\n    \"serializedProto\": \"Cg9jaHJvbWUtaW50ZXJuYWwSGmNocm9tZW9zL21hbmlmZXN0LWludGVybmFsGghhYmNkMTIzNCITcmVmcy9oZWFkcy9zbmFwc2hvdA==\"\n  }, \n  \"gerritChanges\": [\n    {\n      \"serializedProto\": \"CiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRImY2hyb21pdW1vcy9vdmVybGF5cy9jaHJvbWl1bW9zLW92ZXJsYXkYyYxVIP///////////wE=\"\n    }\n  ]\n}",
-      "[CLEANUP]/test-plan-_tmp_2/input.json"
+      ":\babcd1234B[\nY\n chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001JN\nL\n\u000fchrome-internal\u0012\u001achromeos/manifest-internal\u001a\babcd1234\"\u0013refs/heads/snapshot",
+      "[CLEANUP]/test-plan-_tmp_2/input.binaryproto"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.write input json",
+    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input.json@{@@@",
-      "@@@STEP_LOG_LINE@input.json@  \"manifestCommit\": \"abcd1234\", @@@",
-      "@@@STEP_LOG_LINE@input.json@  \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@    \"serializedProto\": \"Cg9jaHJvbWUtaW50ZXJuYWwSGmNocm9tZW9zL21hbmlmZXN0LWludGVybmFsGghhYmNkMTIzNCITcmVmcy9oZWFkcy9zbmFwc2hvdA==\"@@@",
-      "@@@STEP_LOG_LINE@input.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input.json@  \"gerritChanges\": [@@@",
-      "@@@STEP_LOG_LINE@input.json@    {@@@",
-      "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"CiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRImY2hyb21pdW1vcy9vdmVybGF5cy9jaHJvbWl1bW9zLW92ZXJsYXkYyYxVIP///////////wE=\"@@@",
-      "@@@STEP_LOG_LINE@input.json@    }@@@",
-      "@@@STEP_LOG_LINE@input.json@  ]@@@",
-      "@@@STEP_LOG_LINE@input.json@}@@@",
-      "@@@STEP_LOG_END@input.json@@@"
+      "@@@STEP_LOG_LINE@input.binaryproto@:\babcd1234B[@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@Y@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001JN@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@L@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000fchrome-internal\u0012\u001achromeos/manifest-internal\u001a\babcd1234\"\u0013refs/heads/snapshot@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },
   {
     "cmd": [
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
-      "--input_json",
-      "[CLEANUP]/test-plan-_tmp_2/input.json",
-      "--output_json",
-      "[CLEANUP]/test-plan-_tmp_2/output.json"
+      "--input_binary_pb",
+      "[CLEANUP]/test-plan-_tmp_2/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/test-plan-_tmp_2/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
@@ -873,11 +867,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_2/output.json",
+      "[CLEANUP]/test-plan-_tmp_2/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.read output json",
+    "name": "run tests.schedule tests.generate test plan.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

@@ -485,40 +485,34 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifestCommit\": \"deadbeef\", \n  \"gitilesCommit\": {\n    \"serializedProto\": \"CiBjaHJvbWUtaW50ZXJuYWwuZ29vZ2xlc291cmNlLmNvbRIaY2hyb21lb3MvbWFuaWZlc3QtaW50ZXJuYWwaCGRlYWRiZWVmIhNyZWZzL2hlYWRzL3NuYXBzaG90\"\n  }, \n  \"buildbucketProtos\": [\n    {\n      \"serializedProto\": \"CHsSChoIYXRsYXMtY3F6BRoDGNIJggEvCi0KKwoMcGFzc2VkX3Rlc3RzEhsyGQoXGhVhcm0tZ2VuZXJpYy9ody9idnQtY3E=\"\n    }\n  ], \n  \"gerritChanges\": [\n    {\n      \"serializedProto\": \"GNIJ\"\n    }\n  ]\n}",
-      "[CLEANUP]/test-plan-_tmp_1/input.json"
+      "*I\nG\b{\u0012\n\u001a\batlas-cqz\u0005\u001a\u0003\u0018\ufffd\t\ufffd\u0001/\n-\n+\n\fpassed_tests\u0012\u001b2\u0019\n\u0017\u001a\u0015arm-generic/hw/bvt-cq:\bdeadbeefB\u0005\n\u0003\u0018\ufffd\tJ_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.write input json",
+    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input.json@{@@@",
-      "@@@STEP_LOG_LINE@input.json@  \"manifestCommit\": \"deadbeef\", @@@",
-      "@@@STEP_LOG_LINE@input.json@  \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@    \"serializedProto\": \"CiBjaHJvbWUtaW50ZXJuYWwuZ29vZ2xlc291cmNlLmNvbRIaY2hyb21lb3MvbWFuaWZlc3QtaW50ZXJuYWwaCGRlYWRiZWVmIhNyZWZzL2hlYWRzL3NuYXBzaG90\"@@@",
-      "@@@STEP_LOG_LINE@input.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input.json@  \"buildbucketProtos\": [@@@",
-      "@@@STEP_LOG_LINE@input.json@    {@@@",
-      "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"CHsSChoIYXRsYXMtY3F6BRoDGNIJggEvCi0KKwoMcGFzc2VkX3Rlc3RzEhsyGQoXGhVhcm0tZ2VuZXJpYy9ody9idnQtY3E=\"@@@",
-      "@@@STEP_LOG_LINE@input.json@    }@@@",
-      "@@@STEP_LOG_LINE@input.json@  ], @@@",
-      "@@@STEP_LOG_LINE@input.json@  \"gerritChanges\": [@@@",
-      "@@@STEP_LOG_LINE@input.json@    {@@@",
-      "@@@STEP_LOG_LINE@input.json@      \"serializedProto\": \"GNIJ\"@@@",
-      "@@@STEP_LOG_LINE@input.json@    }@@@",
-      "@@@STEP_LOG_LINE@input.json@  ]@@@",
-      "@@@STEP_LOG_LINE@input.json@}@@@",
-      "@@@STEP_LOG_END@input.json@@@"
+      "@@@STEP_LOG_LINE@input.binaryproto@*I@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@G\b{\u0012@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u001a\batlas-cqz\u0005\u001a\u0003\u0018\ufffd\t\ufffd\u0001/@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@-@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@+@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\fpassed_tests\u0012\u001b2\u0019@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0017\u001a\u0015arm-generic/hw/bvt-cq:\bdeadbeefB\u0005@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\tJ_@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@]@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },
   {
     "cmd": [
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
-      "--input_json",
-      "[CLEANUP]/test-plan-_tmp_1/input.json",
-      "--output_json",
-      "[CLEANUP]/test-plan-_tmp_1/output.json"
+      "--input_binary_pb",
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
@@ -534,11 +528,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_1/output.json",
+      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.read output json",
+    "name": "run tests.schedule tests.generate test plan.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
