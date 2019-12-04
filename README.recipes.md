@@ -1623,7 +1623,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#448)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#449)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -1631,7 +1631,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#372)(self, gerrit_change, comment):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#373)(self, gerrit_change, comment):**
 
 Add a comment to the given Gerrit change.
 
@@ -1652,7 +1652,7 @@ Args:
 Returns:
   bool: whether the changes are submittable
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#306)(self, project, reviewers=None, topic=None):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#307)(self, project, reviewers=None, topic=None):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -1682,7 +1682,7 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#394)(self, gerrit_change):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#395)(self, gerrit_change):**
 
 Get the description of the given Gerrit change.
 
@@ -1726,7 +1726,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#463)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#464)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -1739,7 +1739,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#426)(self, gerrit_change, description):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#427)(self, gerrit_change, description):**
 
 Set the description of the given Gerrit change.
 
@@ -1748,7 +1748,7 @@ Args:
   description (str): The new description, in full. Be sure this still
       includes the Change-Id and other essential metadata.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#340)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#341)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
 

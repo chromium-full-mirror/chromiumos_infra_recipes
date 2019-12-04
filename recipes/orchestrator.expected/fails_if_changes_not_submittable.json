@@ -18,6 +18,7 @@
       "@@@STEP_TEXT@unable to cherry-pick changes@@@",
       "@@@STEP_LOG_LINE@cherry-pick-failures@some cherry pick error@@@",
       "@@@STEP_LOG_END@cherry-pick-failures@@@",
+      "@@@SET_BUILD_PROPERTY@merge_conflict@true@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

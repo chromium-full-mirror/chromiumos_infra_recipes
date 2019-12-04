@@ -299,6 +299,7 @@ class GerritApi(recipe_api.RecipeApi):
         step.presentation.step_text = 'unable to cherry-pick changes'
         step.presentation.logs['cherry-pick-failures'] = result['errors']
         step.presentation.status = 'FAILURE'
+        step.presentation.properties['merge_conflict'] = True
         return False
       step.presentation.step_text = 'confirmed no merge conflicts'
       return True
