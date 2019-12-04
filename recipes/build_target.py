@@ -115,9 +115,12 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     api.cros_sdk.link_chroot(api.cros_source.workspace_path)
 
   with api.step.nest('update sdk'):
+    flags = UpdateSdkRequest.Flags(
+        build_source=build_config.build.compile_toolchain)
     api.cros_build_api.SdkService.Update(
         UpdateSdkRequest(chroot=api.cros_sdk.chroot,
-                         toolchain_targets=[build_target]))
+                         toolchain_targets=[build_target],
+                         flags=flags))
 
   with api.step.nest('create sysroot'):
     profile = None
