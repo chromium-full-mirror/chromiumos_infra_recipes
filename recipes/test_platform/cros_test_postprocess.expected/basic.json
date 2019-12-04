@@ -12,7 +12,8 @@
   },
   {
     "cmd": [
-      ":"
+      "cat",
+      "/dev/null"
     ],
     "name": "download test results.wait.noop",
     "~followup_annotations": [

@@ -52,7 +52,7 @@ def _wait(api, gs_path):
       # Note: This noop step is provided only to allow a test of the failure
       # pathway that sidesteps the exponential backoff and sleep of
       # _wait_for_marker_file.
-      api.step('noop', [':'])
+      api.step('noop', ['cat', '/dev/null'])
       with api.step.nest('poll gs'):
         _wait_for_marker_file(api, gs_path)
     except:
