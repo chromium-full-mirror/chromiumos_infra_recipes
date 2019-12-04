@@ -227,18 +227,8 @@
       "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"state\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_FAILED\", @@@",
-      "@@@STEP_LOG_LINE@response@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"taskResults\": [@@@",
-      "@@@STEP_LOG_LINE@response@        {@@@",
-      "@@@STEP_LOG_LINE@response@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"lifeCycle\": \"LIFE_CYCLE_REJECTED\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-rejected\"@@@",
-      "@@@STEP_LOG_LINE@response@        }@@@",
-      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@        \"lifeCycle\": \"LIFE_CYCLE_ABORTED\"@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
@@ -276,18 +266,8 @@
       "@@@STEP_LOG_LINE@request@      \"execution\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"state\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"verdict\": \"VERDICT_FAILED\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"taskResults\": [@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"state\": {@@@",
-      "@@@STEP_LOG_LINE@request@              \"lifeCycle\": \"LIFE_CYCLE_REJECTED\"@@@",
-      "@@@STEP_LOG_LINE@request@            }, @@@",
-      "@@@STEP_LOG_LINE@request@            \"logUrl\": \"logs://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"taskUrl\": \"foo://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"name\": \"foo-rejected\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@          \"lifeCycle\": \"LIFE_CYCLE_ABORTED\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"params\": {@@@",
@@ -335,7 +315,7 @@
     ],
     "infra_step": true,
     "name": "compute backfill.call binary.compute-backfill",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"execution\": {\n        \"state\": {\n          \"verdict\": \"VERDICT_FAILED\", \n          \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n        }, \n        \"taskResults\": [\n          {\n            \"state\": {\n              \"lifeCycle\": \"LIFE_CYCLE_REJECTED\"\n            }, \n            \"logUrl\": \"logs://bar/baz\", \n            \"taskUrl\": \"foo://bar/baz\", \n            \"name\": \"foo-rejected\"\n          }\n        ]\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"execution\": {\n        \"state\": {\n          \"verdict\": \"VERDICT_FAILED\", \n          \"lifeCycle\": \"LIFE_CYCLE_ABORTED\"\n        }\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -344,8 +324,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-rejected\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@",
-      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-rejected\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_ABORTED\", \"verdict\": \"VERDICT_FAILED\"}}@@@",
+      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_ABORTED\", \"verdict\": \"VERDICT_FAILED\"}}}@@@"
     ]
   },
   {
@@ -354,33 +334,16 @@
   },
   {
     "cmd": [],
-    "name": "summarize",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "summarize"
   },
   {
     "cmd": [],
     "name": "summarize.default task results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "summarize.default task results.did not run due to DUT shortage",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(task)  foo-rejected did not run@foo://bar/baz@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "failure": {
-      "failure": {},
-      "humanReason": "Some tests were unsuccessful"
-    },
     "name": "$result"
   }
 ]

@@ -272,6 +272,8 @@ def summarize(api, responses):
       with api.step.nest('%s task results' % tag):
         try:
           _log_task_results(api, response.task_results)
+          if response.state.verdict not in [TaskState.VERDICT_PASSED]:
+            raise api.step.StepFailure('%s task results' % tag)
         except api.step.StepFailure:
           pass
     if _some_response_contains_unsuccessful_results(responses):
@@ -330,7 +332,7 @@ def _log_task_results(api, task_results):
     with _failing_substep(api, 'failed or incomplete tests') as step:
       _emit_links(step, classified_results.unsuccessful)
   if classified_results.rejected:
-    with _failing_substep(api, 'tests rejected due to invalid request') as step:
+    with _failing_substep(api, 'did not run due to DUT shortage') as step:
       _emit_links(step, classified_results.rejected)
   if classified_results.other:  # pragma: no cover
     with _failing_substep(api, 'unclassified tests') as step:
@@ -571,6 +573,35 @@ def GenTests(api):
                                   ],
                               )
                       })))))
+
+  yield (api.test('end-to-end skylab execution with empty response') +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=_test_request('foo'), config=_test_config('foo'))) +  #
+         api.step_data(
+             'traffic split.call binary.scheduler-traffic-split',
+             stdout=api.raw_io.output(
+                 json_format.MessageToJson(
+                     SchedulerTrafficSplitResponses(
+                         tagged_responses={
+                             'default':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request('foo'))
+                         })))) +  #
+         api.step_data(
+             'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+                 _test_single_enumeration('foo'))) +  #
+         api.step_data(
+             'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+                 json_format.MessageToJson(
+                     ExecuteResponses(
+                         tagged_responses={
+                             'default':
+                                 ExecuteResponse(
+                                     state=TaskState(
+                                         life_cycle='LIFE_CYCLE_ABORTED',
+                                         verdict='VERDICT_FAILED'),)
+                         })))))
 
   yield (
       api.test('end-to-end skylab execution with failed tasks') +  #
