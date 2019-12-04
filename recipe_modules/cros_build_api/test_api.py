@@ -96,6 +96,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                 'path': self.path('cros/src/build/images/base.bin'),
                 'type': 'BASE'
             },
+            {
+                'path': self.path('cros/src/build/images/test.bin'),
+                'type': 'TEST'
+            },
         ],
         failed_packages=[],
     )

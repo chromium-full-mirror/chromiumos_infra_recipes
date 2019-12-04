@@ -45,7 +45,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "portage_profile": {
                       "profile": "generic_build"
                     },
-                    "image_types": ["TEST"],
+                    "image_types": ["BASE", "TEST"],
                     "install_packages": "RUN",
                     "use_flags": [{"flag": "chrome_internal"}]
                   },
