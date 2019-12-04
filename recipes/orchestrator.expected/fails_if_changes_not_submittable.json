@@ -88,7 +88,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "failed to cherry-pick changes, please rebase and retry"
+      "humanReason": "Merge conflict detected! Please rebase and retry."
     },
     "name": "$result"
   }

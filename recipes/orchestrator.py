@@ -103,8 +103,8 @@ def RunSteps(api, properties):
                               snapshot)
 
   if gerrit_changes and not api.gerrit.changes_are_submittable(gerrit_changes):
-    raise api.step.StepFailure('failed to cherry-pick changes, '
-                               'please rebase and retry')
+    raise api.step.StepFailure('Merge conflict detected! '
+                               'Please rebase and retry.')
 
   if properties.enable_history and gerrit_changes:
     if properties.assert_singleton:
