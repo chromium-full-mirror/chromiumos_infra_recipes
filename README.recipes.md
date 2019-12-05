@@ -879,7 +879,7 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#184)(self, build_target, chroot):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#182)(self, build_target, chroot):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -918,7 +918,7 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#95)(self, gerrit_changes, gitiles_commit, dep_graph, test_is_pointless=False):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#94)(self, gerrit_changes, gitiles_commit, dep_graph, test_is_pointless=False):**
 
 Determines if build(s) can be terminated early.
 
@@ -938,7 +938,7 @@ Args:
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#126)(self, gerrit_changes, gitiles_commit, dep_graph, name=None, test_is_pointless=False):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#125)(self, gerrit_changes, gitiles_commit, dep_graph, name=None, test_is_pointless=False):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 

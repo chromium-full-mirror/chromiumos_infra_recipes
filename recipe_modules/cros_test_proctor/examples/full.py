@@ -44,11 +44,7 @@ def RunSteps(api, need_tests_builds_serialized):
   # Deserialized Build protos. The serialization is to get around the recipes
   # requirement that all properties be hashable, and proto messages are not
   # hashable.
-  need_tests_builds = []
-  for b_str in need_tests_builds_serialized:
-    b = Build()
-    b.ParseFromString(b_str)
-    need_tests_builds.append(b)
+  need_tests_builds = map(Build.FromString, need_tests_builds_serialized)
   gerrit_changes = []
   if need_tests_builds:
     gerrit_changes = need_tests_builds[0].input.gerrit_changes

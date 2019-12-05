@@ -81,8 +81,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       response_bin = self.m.file.read_raw(
           'read output file', output_bin_file,
           test_data=test_resp.SerializeToString())
-      result = GenerateBuildPlanResponse()
-      result.ParseFromString(response_bin)
+      result = GenerateBuildPlanResponse.FromString(response_bin)
 
       step_result.presentation.logs['planner_output'] = [str(result)]
       step_result.presentation.step_text = (
@@ -175,8 +174,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       response_bin = self.m.file.read_raw(
           'read output file', output_bin_file,
           test_data=test_resp.SerializeToString())
-      result = PointlessBuildCheckResponse()
-      result.ParseFromString(response_bin)
+      result = PointlessBuildCheckResponse.FromString(response_bin)
 
       step_result.presentation.logs['relevance_output'] = [str(result)]
       return not bool(result.build_is_pointless.value)

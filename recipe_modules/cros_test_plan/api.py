@@ -70,8 +70,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       response_bin = self.m.file.read_raw(
           'read output file', output_bin_file, test_data=self.test_api
           .generate_test_plan_response.SerializeToString())
-      response_proto = GenerateTestPlanResponse()
-      response_proto.ParseFromString(response_bin)
+      response_proto = GenerateTestPlanResponse.FromString(response_bin)
 
       step.presentation.logs['response'] = [
           json_format.MessageToJson(response_proto)
