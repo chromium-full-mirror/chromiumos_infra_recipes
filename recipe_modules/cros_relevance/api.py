@@ -64,6 +64,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='build-plan-')
       input_bin_file = messages_path.join('input.binaryproto')
       output_bin_file = messages_path.join('output.binaryproto')
+      step_result.presentation.logs['planner_input'] = [str(request)]
       self.m.file.write_raw('write input binaryproto', input_bin_file,
                             request.SerializeToString())
 
@@ -156,6 +157,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='pointless-build-')
       input_bin_file = messages_path.join('input.binaryproto')
       output_bin_file = messages_path.join('output.binaryproto')
+      step_result.presentation.logs['relevance_input'] = [str(check_request)]
       self.m.file.write_raw('write input binaryproto', input_bin_file,
                             check_request.SerializeToString())
 
