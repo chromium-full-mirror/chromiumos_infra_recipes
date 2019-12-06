@@ -76,9 +76,13 @@ class FailuresApi(recipe_api.RecipeApi):
     else:
       return self.m.step.FAILURE
 
-  def _present_run(self, title, link_map, status):
+  def _present_run(self, title, link_map, status, critical=True):
     with self.m.step.nest(title) as step:
-      step.presentation.status = self._proto_to_step_status(status)
+      if status != common_pb2.SUCCESS and not critical:
+        step.presentation.step_text = 'failed but is not critical'
+        step.presentation.status = self.m.step.SUCCESS
+      else:
+        step.presentation.status = self._proto_to_step_status(status)
       for link_text, link_url in link_map.items():
         step.presentation.links[link_text] = link_url
 
@@ -109,12 +113,13 @@ class FailuresApi(recipe_api.RecipeApi):
         link_map = get_link_map(failed_run)
         fail_id = get_id(failed_run)
         status = get_status(failed_run)
+        critical = is_critical(failed_run)
 
-        silenced = self._present_run(title, link_map, status)
+        silenced = self._present_run(title, link_map, status, critical)
         if silenced:
           silenced_failure_count += 1
 
-        if is_critical(failed_run):
+        if critical:
           critical_failures.append(
               self.Failure(kind=kind, title=title, link_map=link_map,
                            fatal=not silenced, id=fail_id))

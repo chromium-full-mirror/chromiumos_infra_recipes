@@ -107,8 +107,8 @@
     "name": "moblab vm test results (2).target.moblab-vm.suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@failed but is not critical@@@",
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
