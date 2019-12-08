@@ -3810,14 +3810,14 @@ The steps specific to VM testing are:
 &mdash; **def [RunSteps](/recipes/test_vm.py#62)(api, properties):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
-[DEPS](/recipes/uprev_guest_vm_pin.py#18): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/uprev_guest_vm_pin.py#18): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for Upreving Guest VM version pin files.
 
 This recipe copies a VM image artifact from the chromeos-image-archive to the
 localmirror and then modifies the Guest VM's version pin to match this version.
 
-&mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#33)(api, properties):**
 ### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
 
 [DEPS](/recipe_modules/urls/examples/full.py#16): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

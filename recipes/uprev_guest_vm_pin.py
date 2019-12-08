@@ -16,12 +16,19 @@ from PB.chromiumos.common import PackageInfo
 from PB.recipes.chromeos.uprev_guest_vm_pin import UprevGuestVmPinProperties
 
 DEPS = [
+    'depot_tools/gsutil',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
 ]
 
 PROPERTIES = UprevGuestVmPinProperties
 
+_image_archive_bucket = 'chromeos-image-archive'
+_latest_image_file = 'LATEST-master'
+
+def _get_gs_uri(bucket, suburl):
+  return 'gs://%s/%s' % (bucket, suburl)
 
 def RunSteps(api, properties):
   with api.step.nest('validate properties') as step:
@@ -36,6 +43,23 @@ def RunSteps(api, properties):
 
     step.presentation.step_text = 'all properties good'
 
+  version = ''
+  with api.step.nest('copy images to localmirror'):
+    src_bucket = _image_archive_bucket
+    version_suburl = '{}/{}-postsubmit/{}'.format(
+        src_bucket, properties.board, _latest_image_file)
+    version = api.gsutil.cat(
+        _get_gs_uri(src_bucket, version_suburl), stdout=api.raw_io.output()
+        ).stdout
+
+    src_suburl = '{0}/{1}-postsubmit/{1}'.format(src_bucket, properties.board)
+
+    dst_bucket =  properties.destination_bucket
+    dst_suburl = 'distfiles/{}/{}/'.format(properties.board, version)
+
+    api.gsutil(['rsync', _get_gs_uri(src_bucket, src_suburl),
+                         _get_gs_uri(dst_bucket, dst_suburl)])
+
 
 def GenTests(api):
   properties = json_format.MessageToDict(
@@ -46,7 +70,9 @@ def GenTests(api):
         destination_bucket='localmirror-private',
       ))
 
-  yield (api.test('uprev-sludge') + api.properties(**properties))
+  yield (api.test('uprev-sludge') + api.properties(**properties) +
+         api.step_data('copy images to localmirror.gsutil cat',
+          stdout=api.raw_io.output('1.2.3')))
 
   yield (api.test('no-version-file') + api.properties(**properties) +
          api.properties(versionFile='') + api.expect_exception('ValueError'))
