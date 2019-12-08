@@ -29,7 +29,7 @@ def RunSteps(api):
   infos = api.repo.project_infos()
   assert len(infos) == 3 and infos[0].path == 'src/a'
 
-  info = api.repo.project_info(projects=['foo', 'foo'])
+  info = api.repo.project_info(project='foo')
   assert info.name == 'foo'
 
   assert api.repo.manifest_snapshot() == "<manifest></manifest>"

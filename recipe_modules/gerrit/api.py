@@ -321,7 +321,7 @@ class GerritApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('create gerrit change for %s' % project) as step:
       with self.m.context(cwd=self.m.cros_source.workspace_path):
-        project_info = self.m.repo.project_info([project])
+        project_info = self.m.repo.project_info(project)
 
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
@@ -356,7 +356,7 @@ class GerritApi(recipe_api.RecipeApi):
           gerrit_change)
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
-        project_info = self.m.repo.project_info([gerrit_change.project])
+        project_info = self.m.repo.project_info(gerrit_change.project)
 
       branch = project_info.branch.split('/')[-1]
       ref = 'refs/for/%s%%%s' % (
@@ -386,7 +386,7 @@ class GerritApi(recipe_api.RecipeApi):
           gerrit_change)
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
-        project_info = self.m.repo.project_info([gerrit_change.project])
+        project_info = self.m.repo.project_info(gerrit_change.project)
 
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
@@ -407,7 +407,7 @@ class GerritApi(recipe_api.RecipeApi):
       step.presentation.links['link to change'] = gerrit_change_url
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
-        project_info = self.m.repo.project_info([gerrit_change.project])
+        project_info = self.m.repo.project_info(gerrit_change.project)
 
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
@@ -439,7 +439,7 @@ class GerritApi(recipe_api.RecipeApi):
       step.presentation.logs['description text'] = [description]
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
-        project_info = self.m.repo.project_info([gerrit_change.project])
+        project_info = self.m.repo.project_info(gerrit_change.project)
 
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):

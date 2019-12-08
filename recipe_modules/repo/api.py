@@ -219,7 +219,7 @@ class RepoApi(recipe_api.RecipeApi):
       infos.append(ProjectInfo(name, path, remote, branch))
     return infos
 
-  def project_info(self, projects):
+  def project_info(self, project):
     """Use 'repo forall' to gather project information for one project.
 
     Args:
@@ -228,7 +228,7 @@ class RepoApi(recipe_api.RecipeApi):
     Returns:
       ProjectInfo: The request project info.
     """
-    project_infos = self.project_infos(projects=projects)
+    project_infos = self.project_infos(projects=[project])
     assert len(set(project_infos)) == 1, 'expected one project'
     return project_infos[0]
 
