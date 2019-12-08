@@ -172,6 +172,7 @@
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
+  * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
 ## Recipe Modules
 
@@ -3807,6 +3808,16 @@ The steps specific to VM testing are:
   4. Call the build API to run VM tests.
 
 &mdash; **def [RunSteps](/recipes/test_vm.py#62)(api, properties):**
+### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
+
+[DEPS](/recipes/uprev_guest_vm_pin.py#18): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for Upreving Guest VM version pin files.
+
+This recipe copies a VM image artifact from the chromeos-image-archive to the
+localmirror and then modifies the Guest VM's version pin to match this version.
+
+&mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#26)(api, properties):**
 ### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
 
 [DEPS](/recipe_modules/urls/examples/full.py#16): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

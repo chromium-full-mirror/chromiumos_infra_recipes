@@ -1,0 +1,22 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.uprev_guest_vm_pin;
+
+message UprevGuestVmPinProperties {
+  // Path to the version file to update.
+  // Required
+  string version_file = 1;
+
+  // Name of the Chrome OS board that is used to generate the guest VM image.
+  // Required
+  string board = 2;
+
+  // Destination gs bucket where the guest VM image will be copied.
+  // Required
+  string destination_bucket = 3;
+}
+
