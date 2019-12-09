@@ -105,7 +105,10 @@ def RunSteps(api, properties):
       with api.step.nest('update sdk'):
         try:
           api.cros_build_api.SdkService.Update(
-              UpdateSdkRequest(chroot=api.cros_sdk.chroot))
+              UpdateSdkRequest(
+                  chroot=api.cros_sdk.chroot, toolchain_targets=[
+                      BuildTarget(name=properties.build_target.name)
+                  ]))
         except api.step.StepFailure:
           # Invalidate the cache if the UpdateSDK call fails.
           api.step.nest(
