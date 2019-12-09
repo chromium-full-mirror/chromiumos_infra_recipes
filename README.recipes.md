@@ -358,11 +358,11 @@ Args:
 
 API for uploading CrOS build artifacts to Google Storage.
 
-#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#43)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#79)(self, target, kind):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#228)(self, target, kind):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -376,7 +376,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#147)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#368)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -390,7 +390,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#179)(self, build_payload, artifacts, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#400)(self, build_payload, artifacts, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -405,7 +405,24 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#97)(self, target, kind, gs_bucket, artifacts, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#420)(self, artifact_types, chroot, sysroot, name=None):**
+
+Prepare the build for the given artifacts.
+
+This function calls the Build API to have it prepare to build artifacts of
+the given types.
+
+Args:
+  artifact_types (list[ArtifactTypes]): List of artifact_types
+      to prepare. See build config for options.
+  chroot (Chroot): chroot to use
+  sysroot (Sysroot): sysroot to use
+  name (str): The step name. Defaults to 'prepare artifacts'.
+
+Returns:
+  PrepareForToolchainBuildResponse.BuildRelevance
+
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#305)(self, target, kind, gs_bucket, artifacts, chroot=None, sysroot=None, publish_info=None, name=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -422,6 +439,9 @@ Args:
   gs_bucket (str): Google storage bucket to upload artifacts to.
   artifacts (list[ArtifactTypes]): List of artifacts
       to upload. See build config for options.
+  sysroot (Sysroot): sysroot to use
+  chroot (Chroot): chroot to use
+  publish_info (list[PublishInfo]): List of publishing information.
   name (str): The step name. Defaults to 'upload artifacts'.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
 
@@ -575,7 +595,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#93)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#97)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -592,7 +612,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#120)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#124)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None):**
 
 Call the build API with the given input proto.
 
@@ -616,7 +636,7 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#110)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#114)(self):**
 
 Expose all client stubs defined in this module.
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -2878,11 +2898,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#95)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#96)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#67)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#68)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#260)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#277)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2898,7 +2918,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#278)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#295)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -2948,23 +2968,25 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/download_artifacts.py#16)(api):**
 ### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts)
+[DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#17)(api):**
 ### *recipes* / [cros\_artifacts:examples/gsutil\_retry\_fail](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py#19)(api):**
 
-&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py#26)(api, attempt):**
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py#34)(api, attempt):**
+
+&mdash; **def [attempt\_publish\_file](/recipe_modules/cros_artifacts/examples/gsutil_retry_fail.py#43)(api, attempt):**
 ### *recipes* / [cros\_artifacts:examples/gsutil\_retry\_success](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py#17)(api):**
 
-&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py#23)(api, attempt):**
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/examples/gsutil_retry_success.py#29)(api, attempt):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -2994,7 +3016,7 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#32)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#33)(api):**
 ### *recipes* / [cros\_build\_api:examples/ok\_retcodes](/recipe_modules/cros_build_api/examples/ok_retcodes.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/ok_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

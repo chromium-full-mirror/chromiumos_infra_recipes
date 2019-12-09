@@ -5,6 +5,7 @@
 
 """API for uploading CrOS build artifacts to Google Storage."""
 
+import collections
 import os
 
 from google.protobuf import json_format
@@ -12,14 +13,20 @@ from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 from PB.chromite.api import artifacts
+from PB.chromite.api import toolchain
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import PrepareForBuildResponse
 
+# Legacy artifacts and their handling.
 ARTIFACTS_SERVICE = 'chromite.api.ArtifactsService'
+
+# TODO(crbug.com/1034529): Migrate these legacy artifacts to new endpoints in
+# the appropriate services.
 
 # Maps artifact type to corresponding build API endpoint.
 # Note for maintainers: this dictionary must be kept in sync
 # with the Starlark config.
-ENDPOINTS_BY_ARTIFACT = {
+_LEGACY_ENDPOINTS_BY_ARTIFACT = {
     BuilderConfig.Artifacts.IMAGE_ZIP: 'BundleImageZip',
     BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD: 'BundleTestUpdatePayloads',
     BuilderConfig.Artifacts.AUTOTEST_FILES: 'BundleAutotestFiles',
@@ -36,7 +43,7 @@ ENDPOINTS_BY_ARTIFACT = {
 class CrosArtifactsApi(recipe_api.RecipeApi):
   """A module for bundling and uploading build artifacts."""
 
-  def _get_endpoint(self, artifact):
+  def _get_legacy_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
 
     Args:
@@ -45,36 +52,178 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Returns:
       callable: The ArtifactsService endpoint.
     """
-    assert artifact in ENDPOINTS_BY_ARTIFACT, (
+    assert artifact in _LEGACY_ENDPOINTS_BY_ARTIFACT, (
         'Could not find build API endpoint for bundling artifact %s. '
         'You may need to sync the cros_artifacts recipe endpoint dictionary '
-        'with the current build config.' % artifact_name)
+        'with the current build config.' % (
+            BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)))
     return getattr(self.m.cros_build_api.ArtifactsService,
-                   ENDPOINTS_BY_ARTIFACT[artifact])
+                   _LEGACY_ENDPOINTS_BY_ARTIFACT[artifact])
 
-  def _bundle_artifact(self, artifact, target, path):
+  def _bundle_legacy_artifacts(self, chroot, sysroot, path, artifact_types):
+    """Bundle legacy artifacts.
+
+    Batch handler for legacy artifact types.
+
+    Args:
+      chroot (Chroot): The chroot to use.
+      sysroot (Sysroot): The sysroot to use.
+      path (Path): Path to write bundled artifacts to.
+      artifacts (list[ArtifactTypes]): Artifact types to bundle.
+
+    Returns:
+      dict(artifact_name: list(artifact paths)).  Paths are relative to |path|.
+    """
+    files_by_artifact = {}
+    for artifact in artifact_types:
+      name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
+      with self.m.step.nest('bundle %s for upload' % name):
+        endpoint = self._get_legacy_endpoint(artifact)
+        request = artifacts.BundleRequest(
+            chroot=chroot, sysroot=sysroot, build_target=sysroot.build_target,
+            output_dir=str(path))
+        response = endpoint(request, infra_step=True)
+
+        files_by_artifact[name] = [
+            os.path.relpath(art.path, str(path)) for art in response.artifacts
+        ]
+    return files_by_artifact
+
+  def _prepare_unknown(self, chroot, sysroot, artifact_types):
+    """Prepare for Build.
+
+    Use this prepare_for_build handler for any artifact type which has no
+    prepare step.  It simply returns "UNKNOWN".
+
+    Args:
+      chroot (Chroot): The chroot to use.
+      sysroot (Sysroot): The sysroot to use.
+      artifacts (list[ArtifactTypes]): Artifact types to bundle.
+
+    Returns:
+      (PrepareForBuildResponse.build_relevance) build relevance.
+    """
+    return PrepareForBuildResponse.UNKNOWN
+
+  def _prepare_toolchain(self, chroot, sysroot, artifact_types):
+    """Prepare for Build.
+
+    Call ToolchainService.PrepareForBuild to prepare for the build.
+
+    Args:
+      chroot (Chroot): The chroot to use.
+      sysroot (Sysroot): The sysroot to use.
+      artifacts (list[ArtifactTypes]): Artifact types to bundle.
+
+    Returns:
+      (PrepareForBuildResponse) whether build is necessary.
+    """
+    req = toolchain.PrepareForToolchainBuildRequest(
+        chroot=chroot, sysroot=sysroot, artifact_types=artifact_types)
+    resp = self.m.cros_build_api.ToolchainService.PrepareForBuild(
+        req, infra_step=True)
+    result = resp.build_relevance
+
+    if result == toolchain.PrepareForToolchainBuildResponse.NEEDED:
+      return PrepareForBuildResponse.NEEDED
+    elif result == toolchain.PrepareForToolchainBuildResponse.UNKNOWN:
+      return PrepareForBuildResponse.UNKNOWN
+    else:
+      return PrepareForBuildResponse.POINTLESS
+
+  def _bundle_toolchain(self, chroot, sysroot, path, artifact_types):
+    """Bundle toolchain artifacts.
+
+    Batch handler for toolchain artifact types.
+
+    Args:
+      chroot (Chroot): The chroot to use.
+      sysroot (Sysroot): The sysroot to use.
+      path (Path): Path to write bundled artifacts to.
+      artifacts (list[ArtifactTypes]): Artifact types to bundle.
+
+    Returns:
+      dict(artifact_name: list(artifact paths)).  Paths are relative to |path|.
+    """
+    req = toolchain.BundleToolchainRequest(
+        sysroot=sysroot, chroot=chroot, output_dir=str(path),
+        artifact_types=artifact_types)
+    resp = self.m.cros_build_api.ToolchainService.BundleArtifacts(
+        req, infra_step=True)
+    ret = {}
+    for art_info in resp.artifacts_info:
+      artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(
+          art_info.artifact_type)
+      artifact_files = [
+          os.path.relpath(art.path, str(path)) for art in art_info.artifacts
+      ]
+      ret[artifact_name] = artifact_files
+    return ret
+
+  def _partition_artifacts(self, artifact_types, func_dict):
+    """Partition the artifacts by handler.
+
+    Args:
+      artifact_types: (list[ArtifactTypes]): The artifacts to partition.
+      func_dict: (dict(artifact_type: function)) Function dictionary.
+
+    Returns:
+      dict(function: list[ArtifactTypes]): each function should be called with
+      the given list of artifact types.
+    """
+    ret = collections.defaultdict(list)
+    for art in artifact_types:
+      # Raises KeyError if there is an artifact not found in func_dict.
+      ret[func_dict[art]].append(art)
+    return ret
+
+  def _bundle_artifacts(self, artifact_types, target, path, sysroot, chroot):
     """Defer to the build API to bundle the given artifact.
 
     Args:
-      artifact (ArtifactTypes): The artifact to bundle.
+      artifact_types (list[ArtifactTypes]): The artifacts to bundle.
       target (BuildTarget): The build target to bundle artifacts for.
       path (Path): Path to output artifact bundles.
+      sysroot (Sysroot): sysroot to use
+      chroot (Chroot): chroot to use
 
     Returns:
-      tuple(str, list[str]): Artifact name, list of artifact file paths
+      dict(str: list[str]): Artifact name, list of artifact file paths
           relative to |path|.
     """
-    artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
-    with self.m.step.nest('bundle %s for upload' % artifact_name):
-      endpoint = self._get_endpoint(artifact)
-      request = artifacts.BundleRequest(build_target=target,
-                                        output_dir=str(path))
-      response = endpoint(request, infra_step=True)
+    _BUNDLE_FUNCS = {
+        BuilderConfig.Artifacts.IMAGE_ZIP: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD:
+            self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.AUTOTEST_FILES: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.TAST_FILES: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.PINNED_GUEST_IMAGES:
+            self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.FIRMWARE: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.EBUILD_LOGS: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.CHROMEOS_CONFIG: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.CPE_REPORT: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_ORDERING_FILE: self._bundle_toolchain,
+        BuilderConfig.Artifacts.CHROME_CLANG_WARNINGS_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.UNVERIFIED_LLVM_PGO_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_AFDO_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_CHROME_AFDO_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_KERNEL_AFDO_FILE:
+            self._bundle_toolchain,
+    }
 
-      artifact_files = [
-          os.path.relpath(art.path, str(path)) for art in response.artifacts
-      ]
-      return artifact_name, artifact_files
+    files_by_artifact = {}
+    funcs_to_call = self._partition_artifacts(artifact_types, _BUNDLE_FUNCS)
+    for func, types in funcs_to_call.items():
+      files_by_artifact.update(func(
+          chroot=chroot, sysroot=sysroot, path=path, artifact_types=types))
+    return files_by_artifact
 
   def artifacts_gs_path(self, target, kind):
     """Returns the GS path for artifacts of the given kind for the given target.
@@ -94,7 +243,68 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     build_id = self.m.buildbucket.build.id
     return '%s-%s/%s-%d' % (target.name, label, version, build_id)
 
-  def upload_artifacts(self, target, kind, gs_bucket, artifacts, name=None):
+  def _publish_artifacts(self, target, kind, publish_info, upload_uri,
+                         files_by_artifact, name=None):
+    """Publish the artifacts that were uploaded.
+
+    Some artifacts need to also be published in a better-known place than the
+    artifacts_gs_bucket.  (See chromite/scripts/pushimage.py for an example of
+    how release builders publish some of the artifacts for release.)
+
+    _publish_artifacts is called after upload_artifacts has copied everything to
+    GS, so we publish the artifacts by copying them between GS buckets.
+
+    When the publishing location for an artifact changes (such as toolchain
+    artifacts moving from gs://chromeos-prebuilt to
+    gs://chromeos-toolchain-artifact), there may be multiple publish_info
+    entries for a single artifact_type.  This is to allow consumers of the
+    artifact to transition seamlessly.
+
+    Args:
+      target (BuildTarget): The build target with artifacts of interest.
+      kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
+          e.g. POSTSUBMIT. This affects where the artifacts are placed in
+          Google Storage.
+      publish_info (list[PublishInfo]): List of publishing information.
+      upload_uri (string): gs path were the artifacts were uploaded.
+      files_by_artifact (dict(name: list(string))): artifact file dictionary.
+      name (str): The step name.  Defaults to 'publish artifacts'.
+    """
+    published = collections.defaultdict(list)
+    with self.m.step.nest(name or 'publish artifacts') as step:
+      for info in publish_info:
+        for artifact in info.publish_types:
+          artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
+          files = files_by_artifact.get(artifact_name, [])
+          if files:
+            gs_path = self.artifacts_gs_path(target, kind)
+            step.presentation.links['gs publish dir: %s' % artifact_name] = (
+              'https://console.cloud.google.com/storage/browser/%s/%s' %
+              (info.publish_gs_bucket, gs_path))
+            publish_uri = 'gs://%s/%s' % (info.publish_gs_bucket, gs_path)
+            cmd = ['cp'] + ['%s/%s' % (upload_uri, path) for path in files]
+            cmd.append(publish_uri)
+            for retries in range(3):
+              try:
+                self.m.gsutil(cmd, multithreaded=True,
+                              timeout=self.test_api.gsutil_timeout_seconds)
+                break
+              except recipe_api.StepFailure as ex:
+                if ex.had_timeout and retries < 2:
+                  continue
+                else:
+                  raise
+            published[artifact_name].append({
+                'gs_bucket': info.publish_gs_bucket,
+                'gs_path': gs_path,
+                'files': files})
+
+      self.m.easy.set_property_step(
+          'published', published, step_name='publish artifact GS paths')
+
+  def upload_artifacts(self, target, kind, gs_bucket, artifacts,
+                       chroot=None, sysroot=None,
+                       publish_info=None, name=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -110,15 +320,16 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       gs_bucket (str): Google storage bucket to upload artifacts to.
       artifacts (list[ArtifactTypes]): List of artifacts
           to upload. See build config for options.
+      sysroot (Sysroot): sysroot to use
+      chroot (Chroot): chroot to use
+      publish_info (list[PublishInfo]): List of publishing information.
       name (str): The step name. Defaults to 'upload artifacts'.
     """
     with self.m.step.nest(name or 'upload artifacts') as step:
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
 
-      files_by_artifact = {}
-      for artifact in artifacts:
-        name, files = self._bundle_artifact(artifact, target, staging_root)
-        files_by_artifact[name] = files
+      files_by_artifact = self._bundle_artifacts(
+          artifacts, target, staging_root, sysroot, chroot)
 
       gs_path = self.artifacts_gs_path(target, kind)
       step.presentation.links['gs upload dir'] = (
@@ -143,6 +354,16 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
               'gs_path': gs_path,
               'files_by_artifact': files_by_artifact,
           }, step_name='output artifact GS paths')
+
+      # Now publish any artifacts that have publishing information.  This is
+      # done here (rather than adding api.cros_artifacts.publish_artifacts)
+      # because we know that we just uploaded all of the artifacts to GS
+      # successfully, and can therefore copy them GS->GS, and avoid
+      # re-uploading. Publishing is intentionally nested under upload
+      # artifacts.
+      if publish_info:
+        self._publish_artifacts(
+            target, kind, publish_info, upload_uri, files_by_artifact)
 
   def download_artifact(self, build_payload, artifact, name=None):
     """Download the given artfiact from the given build payload.
@@ -195,3 +416,64 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           artifact: self.download_artifact(build_payload, artifact)
           for artifact in artifacts
       }
+
+  def prepare_for_build(self, artifact_types, chroot, sysroot, name=None):
+    """Prepare the build for the given artifacts.
+
+    This function calls the Build API to have it prepare to build artifacts of
+    the given types.
+
+    Args:
+      artifact_types (list[ArtifactTypes]): List of artifact_types
+          to prepare. See build config for options.
+      chroot (Chroot): chroot to use
+      sysroot (Sysroot): sysroot to use
+      name (str): The step name. Defaults to 'prepare artifacts'.
+
+    Returns:
+      PrepareForToolchainBuildResponse.BuildRelevance
+    """
+    _PREPARE_FUNCS = {
+        BuilderConfig.Artifacts.IMAGE_ZIP: self._prepare_unknown,
+        BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD: self._prepare_unknown,
+        BuilderConfig.Artifacts.AUTOTEST_FILES: self._prepare_unknown,
+        BuilderConfig.Artifacts.TAST_FILES: self._prepare_unknown,
+        BuilderConfig.Artifacts.PINNED_GUEST_IMAGES: self._prepare_unknown,
+        BuilderConfig.Artifacts.FIRMWARE: self._prepare_unknown,
+        BuilderConfig.Artifacts.EBUILD_LOGS: self._prepare_unknown,
+        BuilderConfig.Artifacts.CHROMEOS_CONFIG: self._prepare_unknown,
+        BuilderConfig.Artifacts.CPE_REPORT: self._prepare_unknown,
+        BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_ORDERING_FILE: self._prepare_toolchain,
+        BuilderConfig.Artifacts.CHROME_CLANG_WARNINGS_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.UNVERIFIED_LLVM_PGO_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_AFDO_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_CHROME_AFDO_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_KERNEL_AFDO_FILE:
+            self._prepare_toolchain,
+    }
+
+    with self.m.step.nest(name or 'prepare artifacts') as step:
+      target = sysroot.build_target
+      results = []
+
+      funcs_to_call = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
+      for func, types in funcs_to_call.items():
+        results.append(func(
+            chroot=chroot, sysroot=sysroot, artifact_types=types))
+
+      # Return an aggregate response.
+      if PrepareForBuildResponse.NEEDED in results:
+        step.presentation.text = "Build is NEEDED"
+        return PrepareForBuildResponse.NEEDED
+      if PrepareForBuildResponse.UNKNOWN in results:
+        step.presentation.text = "Build is UNKNOWN"
+        return PrepareForBuildResponse.UNKNOWN
+      else:
+        step.presentation.text = "Build is POINTLESS"
+        return PrepareForBuildResponse.POINTLESS

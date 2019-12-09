@@ -8,6 +8,8 @@ DEPS = [
     'cros_artifacts',
 ]
 
+from PB.chromite.api import sysroot
+
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 
@@ -17,7 +19,11 @@ def RunSteps(api):
   target.name = 'target'
   api.cros_artifacts.upload_artifacts(
       target, BuilderConfig.Id.POSTSUBMIT,
-      'artifacts_gs_bucket', [BuilderConfig.Artifacts.EBUILD_LOGS])
+      'artifacts_gs_bucket', [BuilderConfig.Artifacts.EBUILD_LOGS],
+      chroot=common.Chroot(path='/path/to/chroot'),
+      sysroot=sysroot.Sysroot(path='/build/board',
+                              build_target=common.BuildTarget(name='board')),
+  )
 
 
 def attempt_download_file(api, attempt):

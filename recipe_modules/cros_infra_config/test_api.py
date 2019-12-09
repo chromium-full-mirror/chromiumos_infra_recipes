@@ -430,7 +430,10 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     }
                   },
                   "artifacts": {
-                    "prebuilts": "NONE"
+                    "prebuilts": "NONE",
+                    "artifactTypes": [
+                      "UNVERIFIED_ORDERING_FILE"
+                    ]
                   },
                   "chrome": {
                     "internal": true

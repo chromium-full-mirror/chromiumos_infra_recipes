@@ -36,6 +36,7 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import BASE
 from PB.chromiumos.common import PackageInfo
+from PB.chromiumos.common import PrepareForBuildResponse
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import Image
@@ -177,6 +178,21 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           str(api.goma.goma_dir), str(api.goma.goma_client_json),
           api.goma.goma_approach)
 
+    # Prepare for the build.  If the build is pointless, we are done.
+    artifacts = build_config.artifacts
+    artifact_types = artifacts.artifact_types
+    if artifact_types:
+      relevance = api.cros_artifacts.prepare_for_build(
+          artifact_types, api.cros_sdk.chroot, sysroot)
+      # If the build is POINTLESS, then we are done.  This can only happen if
+      # all of the artifact_types for this build are handled by some
+      # PrepareForBuild endpoint, and indicate that the build is pointless.
+      #
+      # If there are any artifact_types with no PrepareForBuild endpoint
+      # defined, then the result will be UNKNOWN.
+      if relevance == PrepareForBuildResponse.POINTLESS:
+        return
+
     with api.step.nest('install packages'):
       flags = InstallPackagesRequest.Flags(
           compile_source=build_config.build.compile_source,
@@ -238,13 +254,14 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     if api.cros_infra_config.should_exit(ebuilds_run_spec):
       return
 
-  artifact_types = build_config.artifacts.artifact_types
   if artifact_types:
     api.cros_artifacts.upload_artifacts(
         build_target, build_config.id.type,
-        build_config.artifacts.artifacts_gs_bucket, artifact_types)
+        artifacts.artifacts_gs_bucket, artifact_types,
+        sysroot=sysroot, chroot=api.cros_sdk.chroot,
+        publish_info=artifacts.publish_artifacts)
 
-  prebuilts = build_config.artifacts.prebuilts
+  prebuilts = artifacts.prebuilts
   if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
     api.cros_prebuilts.upload_target_prebuilts(
         build_target, build_config.id.type,
@@ -308,6 +325,12 @@ def GenTests(api):
     build.input.gerrit_changes.extend(mock_CLs)
     return api.buildbucket.build(build)
 
+  def toolchain_build(builder='orderfile-generate-toolchain'):
+    """Generate a test build proto."""
+    build = api.buildbucket.ci_build_message(
+        project='chromeos', bucket='toolchain', builder=builder)
+    return api.buildbucket.build(build)
+
   yield (api.test('basic') +  #
          cq_build_with_gerrit_change() +  #
          api.properties(build_target={'name': 'amd64-generic'}))
@@ -334,6 +357,13 @@ def GenTests(api):
              '.read output file',
              api.file.read_raw(content='{"has_prebuilt": false}')) +  #
          api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('prepare-for-build') + #
+         toolchain_build() + #
+          api.step_data(
+              'prepare artifacts.call chromite.api.ToolchainService/'
+              'PrepareForBuild.read output file',
+              api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
 
   yield (api.test('with-findit-bisect') +  #
          cq_build_with_gerrit_change() +  #

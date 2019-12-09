@@ -21,6 +21,7 @@ from PB.chromite.api import packages
 from PB.chromite.api import sdk
 from PB.chromite.api import sysroot
 from PB.chromite.api import test
+from PB.chromite.api import toolchain
 from PB.chromite.api import build_api_test
 from PB.chromiumos.common import BuildTarget
 
@@ -120,6 +121,10 @@ def RunSteps(api):
           'DebugInfoTest': empty_pb2.Empty,
           'VmTest': empty_pb2.Empty,
           'MoblabVmTest': empty_pb2.Empty,
+      },
+      'ToolchainService': {
+          'PrepareForBuild': toolchain.PrepareForToolchainBuildResponse,
+          'BundleArtifacts': toolchain.BundleToolchainResponse,
       }
   }
   responses_by_service = api.cros_build_api.test_api.responses_by_service

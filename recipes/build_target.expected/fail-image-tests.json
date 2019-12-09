@@ -2322,6 +2322,10 @@
   },
   {
     "cmd": [],
+    "name": "prepare artifacts"
+  },
+  {
+    "cmd": [],
     "name": "install packages"
   },
   {

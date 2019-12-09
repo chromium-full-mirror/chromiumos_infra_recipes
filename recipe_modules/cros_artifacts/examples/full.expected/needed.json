@@ -23,7 +23,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"build_relevance\": \"UNKNOWN\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"build_relevance\": \"NEEDED\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

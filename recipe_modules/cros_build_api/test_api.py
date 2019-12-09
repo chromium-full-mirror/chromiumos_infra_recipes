@@ -195,6 +195,21 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def toolchain_service_responses(self):
+    """Generate responses for ToolchainService."""
+    responses = {}
+    responses['PrepareForBuild'] = jsonify(
+        build_relevance="UNKNOWN"
+    )
+    responses['BundleArtifacts'] = jsonify(artifacts_info=[
+        dict(
+            artifact_type="UNVERIFIED_ORDERING_FILE", artifacts=[
+                {'path': 'my_output_artifact'},
+        ])
+    ])
+    return responses
+
+  @property
   def responses_by_service(self):
     """Map service name to a dictionary of responses by method name."""
     return {
@@ -206,6 +221,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'SdkService': self.sdk_service_responses,
         'SysrootService': self.sysroot_service_responses,
         'TestService': self.test_service_responses,
+        'ToolchainService': self.toolchain_service_responses,
     }
 
   def response_for_endpoint(self, endpoint):
