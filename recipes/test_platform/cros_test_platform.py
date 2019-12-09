@@ -258,9 +258,10 @@ def postprocess(api, requests, responses):
             test_results=test_results,
         )
         bb_request = api.buildbucket.schedule_request(
-              bucket='testplatform',
-              builder='cros_test_postprocess',
-              properties=json_format.MessageToDict(pp_request),
+            bucket='testplatform',
+            builder='cros_test_postprocess',
+            properties=json_format.MessageToDict(pp_request),
+            inherit_buildsets=False,
         )
         api.buildbucket.schedule([bb_request])
 
