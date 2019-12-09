@@ -133,7 +133,7 @@
     "name": "build results (4)",
     "~followup_annotations": [
       "@@@STEP_TEXT@0 builds failed, 0 succeeded, 1 failures silenced@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {

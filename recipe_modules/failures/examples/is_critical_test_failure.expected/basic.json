@@ -19,7 +19,7 @@
       "    api.failures.is_critical_test_failure(1234)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
       "    return func(*a, **kw)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/failures/api.py\", line 410, in is_critical_test_failure",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/failures/api.py\", line 412, in is_critical_test_failure",
       "    raise TypeError('expected Build or SkylabResult,' 'got %s' % type(test))",
       "TypeError: expected Build or SkylabResult,got <type 'int'>"
     ]

@@ -107,6 +107,7 @@ class FailuresApi(recipe_api.RecipeApi):
           run for run in runs if get_status(run) != common_pb2.SUCCESS
       ]
       silenced_failure_count = 0
+      only_infra_failure = True
 
       for failed_run in sorted(failed_runs, key=get_title):
         title = get_title(failed_run)
@@ -118,6 +119,7 @@ class FailuresApi(recipe_api.RecipeApi):
         silenced = self._present_run(title, link_map, status, critical)
         if silenced:
           silenced_failure_count += 1
+        only_infra_failure &= (status == common_pb2.INFRA_FAILURE)
 
         if critical:
           critical_failures.append(
@@ -141,7 +143,7 @@ class FailuresApi(recipe_api.RecipeApi):
           step_text += ' ({} failures were silenced)'.format(
               silenced_failure_count)
       else:
-        status = self.m.step.FAILURE
+        status = self.m.step.EXCEPTION if only_infra_failure else self.m.step.FAILURE
         fail_count = len(failed_runs) - silenced_failure_count
         step_text = '{} {}s failed, {} succeeded, {} failures silenced'.format(
             fail_count, kind, success_count, silenced_failure_count)
