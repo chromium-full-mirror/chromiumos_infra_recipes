@@ -18,7 +18,7 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 36, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 40, in RunSteps",
       "    raise ValueError('must set version_file')",
       "ValueError: must set version_file"
     ]

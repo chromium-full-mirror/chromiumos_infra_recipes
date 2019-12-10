@@ -16,7 +16,11 @@ from PB.chromiumos.common import PackageInfo
 from PB.recipes.chromeos.uprev_guest_vm_pin import UprevGuestVmPinProperties
 
 DEPS = [
+    'cros_source',
+    'git',
     'depot_tools/gsutil',
+    'recipe_engine/file',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -60,6 +64,17 @@ def RunSteps(api, properties):
     api.gsutil(['rsync', _get_gs_uri(src_bucket, src_suburl),
                          _get_gs_uri(dst_bucket, dst_suburl)])
 
+  package = api.path.dirname(properties.version_file)
+  version_path = api.cros_source.workspace_path.join(properties.version_file)
+  with api.step.nest('try uprev version file') as step:
+    api.file.write_raw(name='version file',
+                       dest=version_path, data=version)
+
+    if not api.git.diff_check(version_path):
+      step.presentation.step_text = (
+          'skipping uprev for {}. version file unchanged').format(package)
+      return
+
 
 def GenTests(api):
   properties = json_format.MessageToDict(
@@ -72,7 +87,7 @@ def GenTests(api):
 
   yield (api.test('uprev-sludge') + api.properties(**properties) +
          api.step_data('copy images to localmirror.gsutil cat',
-          stdout=api.raw_io.output('1.2.3')))
+          stdout=api.raw_io.output('1.2.3')) + api.git.diff_check(True))
 
   yield (api.test('no-version-file') + api.properties(**properties) +
          api.properties(versionFile='') + api.expect_exception('ValueError'))
@@ -83,3 +98,6 @@ def GenTests(api):
   yield (api.test('no-destination-bucket') + api.properties(**properties) +
          api.properties(destination_bucket='') +
          api.expect_exception('ValueError'))
+
+  yield (api.test('no-version-diff') + api.properties(**properties) +
+         api.git.diff_check(False))
