@@ -13,16 +13,9 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.fetch snapshot ref",
+    "name": "set up orchestrator.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set up orchestrator.fetch snapshot ref.read builder configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -38,10 +31,17 @@
       "text"
     ],
     "infra_step": true,
-    "name": "set up orchestrator.fetch snapshot ref.read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "name": "set up orchestrator.read builder configs.fetch master:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.fetch snapshot ref",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

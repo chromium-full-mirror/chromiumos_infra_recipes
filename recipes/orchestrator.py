@@ -60,16 +60,16 @@ def RunSteps(api, properties):
   with api.step.nest('set up orchestrator'):
     validate_refs(properties.update_manifest_refs)
     api.cros_bisect.set_orchestrator_bisect_builder()
+    config = api.cros_infra_config.get_builder_config(
+        api.buildbucket.build.builder.builder)
 
     gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
     snapshot = api.buildbucket.gitiles_commit
     if not snapshot.project:
       with api.step.nest('fetch snapshot ref'):
-        orchestrator_config = api.cros_infra_config.get_builder_config(
-          api.buildbucket.build.builder.builder).orchestrator
         # No gitiles_commit from buildbucket: use the default.
-        if orchestrator_config.gitiles_commit.project:
+        if config.orchestrator.gitiles_commit.project:
           # If we are using the defauilt gitiles_commit, then also use the
           # default CL list.  To override the default CL list, the user must
           # specify a gitiles commit.  We need to convert from our copies of the
@@ -80,10 +80,10 @@ def RunSteps(api, properties):
             outpb.ParseFromString(inpb.SerializeToString());
             return outpb
 
-          snapshot = ConvertPB(orchestrator_config.gitiles_commit,
+          snapshot = ConvertPB(config.orchestrator.gitiles_commit,
                                common_pb2.GitilesCommit)
           gerrit_changes = [ConvertPB(x, common_pb2.GerritChange)
-                            for x in orchestrator_config.gerrit_changes]
+                            for x in config.orchestrator.gerrit_changes]
         else:
           # No default was found in the builder config.  Use a fall-back,
           # hard-coded default.
@@ -156,10 +156,10 @@ def RunSteps(api, properties):
   # set to `NO` so this is also the only place that we will discover that.
   with api.step.nest('non-critical build check') as step:
     api.cros_infra_config.force_reload()
-    fresh_builder_configs = api.cros_infra_config.safe_get_builder_configs(
+    child_builder_configs = api.cros_infra_config.safe_get_builder_configs(
         [b.builder.builder for b in completed_builds])
     failures = api.failures.update_non_critical_failures(
-        step, failures, fresh_builder_configs)
+        step, failures, child_builder_configs)
   fatal_failures = [f for f in failures if f.fatal == True]
 
   if not fatal_failures:
@@ -176,7 +176,7 @@ def RunSteps(api, properties):
   # still exist as builders.
   need_tests_builds = [
       b for b in completed_builds if b.status == common_pb2.SUCCESS and
-      fresh_builder_configs.get(b.builder.builder)
+      child_builder_configs.get(b.builder.builder)
   ]
 
   test_failures = api.cros_test_proctor.run_proctor(
@@ -188,15 +188,71 @@ def RunSteps(api, properties):
   maybe_update_manifest_ref(api, properties.update_manifest_refs, 'test',
                             snapshot)
 
+  # Launch any specified follow on orchestrator.
+  if config.orchestrator.follow_on_orchestrator.name:
+    with api.step.nest('run follow on orchestrator') as step:
+      completed_builds.extend(schedule_wait_follow_on(
+          api, step, config, properties.enable_history, snapshot,
+          gerrit_changes))
+
   with api.step.nest('clean up orchestrator') as step:
     # Recheck the BuilderConfigs at HEAD, one last time, to see if any failed
     # builders are now noncritical.
     api.cros_infra_config.force_reload()
-    fresh_builder_configs = api.cros_infra_config.safe_get_builder_configs(
+    child_builder_configs = api.cros_infra_config.safe_get_builder_configs(
         [b.builder.builder for b in completed_builds])
     failures = api.failures.update_non_critical_failures(
-        step, failures, fresh_builder_configs)
+        step, failures, child_builder_configs)
   return api.failures.aggregate_failures(failures)
+
+
+def schedule_wait_follow_on(api, parent_step, config,
+                            enable_history, snapshot, gerrit_changes):
+  """Run and collect any followon orchestrator.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    parent_step (Step): the calling step, to be used for presentation purposes.
+    config (BuilderConfig): the config for this orchestrator.
+    enable_history (bool): Enables history lookup in cq orchestrator.
+    snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+    gerrit_changes list(GerritChange): List of patches in the order that they
+      can be cherry-picked.
+
+  Returns: A list of build_pb2.Build objects with results.
+  """
+  completed_builds = []
+  follow_on = config.orchestrator.follow_on_orchestrator
+
+  # Schedule the follow on orchestrator.
+  tags = api.cros_tags.make_schedule_tags(snapshot)
+  # The follow on orchestrator may or may not be in the same bucket as us, and
+  # the gitiles_commit and gerrit_changes that we are using may have derived
+  # from our builder config, rather than buildbucket properties.  Pass the
+  # actual answers to schedule_request.
+  # Pass in empty properties until we determine that we need some.
+  bucket = api.buildbucket.build.builder.bucket
+  req = api.buildbucket.schedule_request(
+      gitiles_commit=snapshot, builder=follow_on.name, bucket=bucket,
+      gerrit_changes=gerrit_changes, critical=True,
+      properties={}, tags=tags)
+  title_fn = api.naming.get_build_title
+  [build] = api.buildbucket.schedule([req], url_title_fn=title_fn)
+  url = api.buildbucket.build_url(build_id=build.id)
+  parent_step.presentation.links[title_fn(build)] = url
+
+  # Are we supposed to wait?
+  if follow_on.await_completion:
+    try:
+      completed_builds += api.buildbucket.collect_builds(
+          [build.id], timeout=60 * 60 * 36,
+          step_name='collect', url_title_fn=title_fn).values()
+    except api.step.StepFailure:  #pragma: no cover
+      completed_builds += api.buildbucket.get_multi(
+          [b.id for b in existing_builds], step_name='get',
+          url_title_fn=api.naming.get_build_title).values()
+
+  return completed_builds
 
 
 def get_child_builders(api):
@@ -520,6 +576,13 @@ def GenTests(api):
     build.input.gitiles_commit.Clear()
     return api.buildbucket.build(build)
 
+  def orderfile_generate_orchestrator():
+    """Generate a test build proto with no gitiles commit project."""
+    build = api.buildbucket.ci_build_message(
+        project='chromeos', bucket='toolchain',
+        builder='orderfile-generate-orchestrator')
+    return api.buildbucket.build(build)
+
   def toolchain_orchestrator_build_with_no_gitiles():
     """Generate a test build proto with no gitiles commit project."""
     build = api.buildbucket.ci_build_message(project='chromeos',
@@ -610,6 +673,11 @@ def GenTests(api):
           'builder': 'amd64-generic-cq'
       }, status=common_pb2.SCHEDULED, input=input_proto(None, 'amd64-generic')),
   ]
+
+  followon_resp1 = rpc_pb2.BatchResponse(
+      responses=[dict(schedule_build=build_pb2.Build(
+          id=5555, builder={'builder': 'orderfile-verify-orchestrator'},
+          status=common_pb2.SUCCESS))])
 
   yield (
       api.test('basic') + postsubmit_orchestrator_build() + #
@@ -828,6 +896,30 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
           step_name='run tests.collect tests.collect moblab vm tests'))
+
+  yield (api.test('orchestrator_with_follow_on') +  #
+         orderfile_generate_orchestrator() + #
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests') + #
+      api.buildbucket.simulated_schedule_output(
+          followon_resp1, 'run follow on orchestrator.buildbucket.schedule'))
 
   yield (api.test('missing_gitiles_commit_with_defaults') +  #
          toolchain_orchestrator_build_with_no_gitiles() + #

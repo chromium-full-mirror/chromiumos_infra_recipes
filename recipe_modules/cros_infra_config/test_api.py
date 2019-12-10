@@ -202,6 +202,39 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "bisecting-orchestrator",
+                    "branch": "master",
+                    "type": "POSTSUBMIT"
+                  },
+                  "general": {
+                    "critical": true,
+                    "environment": "PRODUCTION",
+                    "runWhen": {
+                      "mode": "ALWAYS_RUN"
+                    }
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE"
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "useFlags": [
+                       {"flag": "chrome_internal"}
+                    ],
+                    "imageTypes": [
+                      "TEST",
+                      "BASE"
+                    ],
+                    "installPackages": "RUN"
+                  },
+                  "unitTests": {
+                    "ebuildsRunSpec": "RUN"
+                  }
+                },
+                {
+                  "id": {
                     "name": "amd64-generic-bisect",
                     "branch": "master",
                     "type": "POSTSUBMIT"
@@ -352,6 +385,72 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       "change": 1394249,
                       "patchset": -1
                     }]
+                  }
+                },
+                {
+                  "id": {
+                    "name": "orderfile-generate-orchestrator",
+                    "branch": "master",
+                    "type": "TOOLCHAIN"
+                  },
+                  "general": {
+                    "critical": true
+                  },
+                  "orchestrator": {
+                    "children": [
+                      "orderfile-generate-toolchain"
+                    ],
+                    "followOnOrchestrator": {
+                      "name": "orderfile-verify-orchestrator",
+                      "awaitCompletion": true
+                    },
+                    "gitiles_commit": {
+                      "host": "chrome-internal",
+                      "project": "chromeos/manifest-internal",
+                      "ref": "refs/heads/snapshot"
+                    },
+                    "gerrit_changes": [{
+                      "host": "chromium-review.googlesource.com",
+                      "project": "chromiumos/overlays/chromiumos-overlay",
+                      "change": 1394249,
+                      "patchset": -1
+                    }]
+                  }
+                },
+                {
+                  "id": {
+                    "name": "orderfile-generate-toolchain",
+                    "branch": "master",
+                    "type": "TOOLCHAIN"
+                  },
+                  "general": {
+                    "critical": false,
+                    "runWhen": {
+                      "mode": "ALWAYS_RUN"
+                    }
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE"
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "useFlags": [
+                      {"flag": "chrome_internal"},
+                      {"flag": "-cros-debug"},
+                      {"flag": "strict_toolchain_checks"},
+                      {"flag": "-orderfile_use"},
+                      {"flag": "orderfile_generate"},
+                      {"flag": "-strict_toolchain_checks"}
+                    ],
+                    "installPackages": "RUN",
+                          "compileToolchain": true,
+                          "applyGerritChanges": true,
+                          "compileSource": true
+                  },
+                  "unitTests": {
+                          "ebuildsRunSpec": "RUN"
                   }
                 },
                 {
