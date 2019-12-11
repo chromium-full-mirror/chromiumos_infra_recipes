@@ -75,6 +75,21 @@ class PatchSet(object):
     return 'https://%s/%d' % (self.host, self._change_info['_number'])
 
   @property
+  def created(self):
+    """Returns the date string with when PatchSet was created."""
+    return self._change_info['created']
+
+  @property
+  def updated(self):
+    """Returns the date string with when PatchSet was last updated."""
+    return self._change_info['updated']
+
+  @property
+  def submitted(self):
+    """Returns the date string with when PatchSet was submitted (merged)."""
+    return self._change_info['submitted']
+
+  @property
   def git_fetch_url(self):
     """Returns a URL where 'git fetch' can access this PatchSet."""
     url = self._rev_info.get('fetch', {}).get('http', {}).get('url')

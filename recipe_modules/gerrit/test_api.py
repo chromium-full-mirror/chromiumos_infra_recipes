@@ -1,4 +1,5 @@
-# Copyright 2018 The Chromium Authors. All rights reserved.
+# -*- coding: utf-8 -*-
+# Copyright 2018 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -15,6 +16,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         '_number': request['change_number'],
         'status': 'NEW',
         'created': '2017-01-30 13:11:20.000000000',
+        'updated': '2017-02-01 13:11:20.000000000',
+        'submitted': '2017-02-02 13:11:20.000000000',
         'change_id': 'Ideadbeef',
         'project': 'chromium/src',
         'has_review_started': False,
