@@ -171,6 +171,11 @@ def display_results_summary(api, result):
           step.presentation.status = api.step.FAILURE
         if tc.human_readable_summary:
           step.presentation.logs['summary'] = tc.human_readable_summary
+    if result.autotest_result.incomplete:
+      with api.step.nest("autoserv") as step:
+        step.presentation.status = api.step.FAILURE
+        step.presentation.logs['summary'] = ("autoserv crashed. The test list "
+            "is likely incomplete. Consult autoserv.ERROR for more details.")
 
 
 def save_state(api, config=None, results_dir='', dut_hostname='', dut_id='',
@@ -421,17 +426,18 @@ def GenTests(api):
                          prejob=Result.Prejob(
                              step=[
                                  Result.Prejob.Step(
-name='failing_prejob_step',
-human_readable_summary='a failing prejob step summary',
-verdict=Result.Prejob.Step.VERDICT_FAIL
-                            )]
-                        ),
-autotest_result=Result.Autotest(
-    test_cases=[Result.Autotest.TestCase(
-        name='failing_test_case',
-        human_readable_summary='a failing test case summary',
-        verdict=Result.Autotest.TestCase.VERDICT_FAIL
-    )]
-),
+                                     name='failing_prejob_step',
+                                     human_readable_summary='failed prejob',
+                                     verdict=Result.Prejob.Step.VERDICT_FAIL
+                             )]
+                         ),
+                         autotest_result=Result.Autotest(
+                             test_cases=[Result.Autotest.TestCase(
+                                 name='failing_test_case',
+                                 human_readable_summary='failing test case',
+                                 verdict=Result.Autotest.TestCase.VERDICT_FAIL
+                             )],
+                             incomplete=True
+                         ),
          ))))
         )

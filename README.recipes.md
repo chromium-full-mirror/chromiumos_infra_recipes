@@ -3681,7 +3681,7 @@ Returns: bool, [test_platform.Request]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#264)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#269)(api, properties, envvars):**
 
 &mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#155)(api, result):**
 
@@ -3742,7 +3742,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [save\_state](/recipes/test_platform/test_runner.py#176)(api, config=None, results_dir='', dut_hostname='', dut_id='', dut_state=''):**
+&mdash; **def [save\_state](/recipes/test_platform/test_runner.py#181)(api, config=None, results_dir='', dut_hostname='', dut_id='', dut_state=''):**
 
 Update the local DUT state file.
 
@@ -3756,7 +3756,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#206)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#211)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 

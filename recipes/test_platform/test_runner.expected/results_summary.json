@@ -230,16 +230,17 @@
       "@@@STEP_LOG_LINE@response@  \"autotestResult\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"testCases\": [@@@",
       "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"humanReadableSummary\": \"a failing test case summary\", @@@",
+      "@@@STEP_LOG_LINE@response@        \"humanReadableSummary\": \"failing test case\", @@@",
       "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_FAIL\", @@@",
       "@@@STEP_LOG_LINE@response@        \"name\": \"failing_test_case\"@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    ]@@@",
+      "@@@STEP_LOG_LINE@response@    ], @@@",
+      "@@@STEP_LOG_LINE@response@    \"incomplete\": true@@@",
       "@@@STEP_LOG_LINE@response@  }, @@@",
       "@@@STEP_LOG_LINE@response@  \"prejob\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"step\": [@@@",
       "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"humanReadableSummary\": \"a failing prejob step summary\", @@@",
+      "@@@STEP_LOG_LINE@response@        \"humanReadableSummary\": \"failed prejob\", @@@",
       "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_FAIL\", @@@",
       "@@@STEP_LOG_LINE@response@        \"name\": \"failing_prejob_step\"@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
@@ -308,7 +309,7 @@
     "name": "summarize test results.failing_prejob_step",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@summary@a failing prejob step summary@@@",
+      "@@@STEP_LOG_LINE@summary@failed prejob@@@",
       "@@@STEP_LOG_END@summary@@@",
       "@@@STEP_FAILURE@@@"
     ]
@@ -318,7 +319,17 @@
     "name": "summarize test results.failing_test_case",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@summary@a failing test case summary@@@",
+      "@@@STEP_LOG_LINE@summary@failing test case@@@",
+      "@@@STEP_LOG_END@summary@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize test results.autoserv",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@summary@autoserv crashed. The test list is likely incomplete. Consult autoserv.ERROR for more details.@@@",
       "@@@STEP_LOG_END@summary@@@",
       "@@@STEP_FAILURE@@@"
     ]
@@ -359,7 +370,7 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@result@{\"autotestResult\": {\"testCases\": [{\"humanReadableSummary\": \"a failing test case summary\", \"name\": \"failing_test_case\", \"verdict\": \"VERDICT_FAIL\"}]}, \"prejob\": {\"step\": [{\"humanReadableSummary\": \"a failing prejob step summary\", \"name\": \"failing_prejob_step\", \"verdict\": \"VERDICT_FAIL\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@result@{\"autotestResult\": {\"incomplete\": true, \"testCases\": [{\"humanReadableSummary\": \"failing test case\", \"name\": \"failing_test_case\", \"verdict\": \"VERDICT_FAIL\"}]}, \"prejob\": {\"step\": [{\"humanReadableSummary\": \"failed prejob\", \"name\": \"failing_prejob_step\", \"verdict\": \"VERDICT_FAIL\"}]}}@@@"
     ]
   },
   {
