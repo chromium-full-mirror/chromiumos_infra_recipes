@@ -188,13 +188,15 @@ def RunSteps(api, properties):
         repositories.extend(ebuilds_by_repository.keys())
 
     with api.step.nest('find existing uprev CLs') as step:
-      existing_changes = []
+      existing_changes, existing_patch_sets = [], []
       for host in ('chromium', 'chrome-internal'):
-        with api.step.nest('find cls from {} host'.format(host)):
+        with api.step.nest('find CLs from {} host'.format(host)):
           host_url = 'https://{}-review.googlesource.com'.format(host)
           existing_changes.extend(
               api.gerrit.query_changes(host_url, [('topic', topic),
                                                   ('status', 'open')]))
+          existing_patch_sets.extend(
+              api.gerrit.fetch_patch_sets(existing_changes))
 
     with api.step.nest('generate CLs') as step:
       repositories = map(api.path.abs_to_path, repositories)
@@ -218,6 +220,8 @@ def RunSteps(api, properties):
 
     existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
     no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
+    outdated_cls_policy = properties.outdated_cls_policy or DO_NOTHING
+
     send_to_cq_policy = (
         existing_cls_policy if existing_changes else no_existing_cls_policy)
 
@@ -262,6 +266,35 @@ def RunSteps(api, properties):
 
         if labels is not None:
           api.gerrit.set_change_labels(change, labels)
+
+    with api.step.nest('examine outdated CLs'):
+      # Even in the DO_NOTHING case, propose CLs that you _would_ abandon.
+      for host in ('chromium', 'chrome-internal'):
+        mrm_patch_set = None
+        with api.step.nest('merged CLs from {} host (within 30 days)'
+            .format(host)) as step:
+          host_url = 'https://{}-review.googlesource.com'.format(host)
+          merged_changes = api.gerrit.query_changes(
+              host_url, [('topic', topic), ('status', 'merged'),
+                         ('-age', '30d')])
+          if merged_changes:
+            merged_patch_sets = api.gerrit.fetch_patch_sets(merged_changes)
+            step.presentation.logs['merged CLs'] = [ps.display_url for ps in
+                                                    merged_patch_sets]
+            list.sort(merged_patch_sets,
+                      key=lambda ps: ps.submitted,
+                      reverse=True)
+            mrm_patch_set = merged_patch_sets[0]
+            step.presentation.text = 'most recently merged cl: {}'.format(
+              mrm_patch_set.display_id)
+        if mrm_patch_set:
+          # TODO(engeg): Do not actually abandon yet, just show results.
+          with api.step.nest('testing: list outdated CLs') as step:
+            open_cls_older_than_mrm = [p for p in existing_patch_sets
+                                      if p.created < mrm_patch_set.submitted]
+            step.presentation.logs['outdated CLs'] = [ps.display_url for ps in
+                                                      open_cls_older_than_mrm]
+
 
 def response_has_changes(api, response):
   """Returns whether the given `UprevPackagesResponse` contains changes."""
