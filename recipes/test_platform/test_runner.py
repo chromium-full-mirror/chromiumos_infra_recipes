@@ -113,10 +113,9 @@ def run_test(api, config=None, request=None, dut_hostname=''):
         autotest=phosphorus.runtest.RunTestRequest.Autotest(
             name=request.test.autotest.name,
             test_args=request.test.autotest.test_args,
-            display_name=request.test.autotest.name,
+            display_name=request.test.autotest.display_name,
             keyvals=request.test.autotest.keyvals,
-            # TODO(crbug/1031938): propagate is_client_test
-            is_client_test=True
+            is_client_test=request.test.autotest.is_client_test
         )
     )
     api.phosphorus.run_test(run_test_request)
