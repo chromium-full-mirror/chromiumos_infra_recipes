@@ -19,7 +19,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-image-archive/chromeos-image-archive/sludge-postsubmit/LATEST-master"
+      "gs://chromeos-image-archive/sludge-postsubmit/LATEST-master"
     ],
     "infra_step": true,
     "name": "copy images to localmirror.gsutil cat",
@@ -36,7 +36,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "rsync",
-      "gs://chromeos-image-archive/chromeos-image-archive/sludge-postsubmit/sludge",
+      "gs://chromeos-image-archive/sludge-postsubmit/sludge",
       "gs://localmirror-private/distfiles/sludge/1.2.3/"
     ],
     "infra_step": true,

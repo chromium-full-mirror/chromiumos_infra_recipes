@@ -50,13 +50,12 @@ def RunSteps(api, properties):
   version = ''
   with api.step.nest('copy images to localmirror'):
     src_bucket = _image_archive_bucket
-    version_suburl = '{}/{}-postsubmit/{}'.format(
-        src_bucket, properties.board, _latest_image_file)
-    version = api.gsutil.cat(
-        _get_gs_uri(src_bucket, version_suburl), stdout=api.raw_io.output()
-        ).stdout
+    version_suburl = '{}-postsubmit/{}'.format(properties.board,
+                                               _latest_image_file)
+    version = api.gsutil.cat(_get_gs_uri(src_bucket, version_suburl),
+                             stdout=api.raw_io.output()).stdout
 
-    src_suburl = '{0}/{1}-postsubmit/{1}'.format(src_bucket, properties.board)
+    src_suburl = '{0}-postsubmit/{0}'.format(properties.board)
 
     dst_bucket =  properties.destination_bucket
     dst_suburl = 'distfiles/{}/{}/'.format(properties.board, version)
@@ -100,4 +99,5 @@ def GenTests(api):
          api.expect_exception('ValueError'))
 
   yield (api.test('no-version-diff') + api.properties(**properties) +
-         api.git.diff_check(False))
+         api.step_data('copy images to localmirror.gsutil cat',
+          stdout=api.raw_io.output('1.2.3')) + api.git.diff_check(False))
