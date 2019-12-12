@@ -3,7 +3,7 @@
 cd "$(dirname "$0")"
 
 # Build all of the binaries and install them to cipd-bin/
-GOBIN=$(pwd)/cipd-bin
+export GOBIN=$(pwd)/cipd-bin
 go install ./...
 echo "Build the following"
 ls -l cipd-bin/

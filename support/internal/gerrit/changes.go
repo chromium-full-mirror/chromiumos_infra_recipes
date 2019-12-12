@@ -10,11 +10,13 @@ import (
 	"sync"
 	"time"
 
-	gerrit2 "go.chromium.org/luci/common/proto/gerrit"
 	"support/internal/shared"
 
-	"go.chromium.org/luci/common/api/gerrit"
+	gerrit2 "go.chromium.org/luci/common/proto/gerrit"
+
 	"support/internal/cli"
+
+	"go.chromium.org/luci/common/api/gerrit"
 )
 
 const (
@@ -26,7 +28,7 @@ type Change struct {
 	Host string `json:"host"`
 	// Change number requested.
 	Number int `json:"change_number"`
-	// Patch set number as requested. If -1, fetch "current" patch set.
+	// Patch set number as requested. If in (-1, 0), fetch "current" patch set.
 	PatchSet int `json:"patch_set"`
 
 	// Change info if found.
@@ -50,9 +52,9 @@ func changesToQueryParams(changes Changes, options Options) gerrit.ChangeQueryPa
 	)
 	for _, change := range changes {
 		queryOrs = append(queryOrs, fmt.Sprintf("change:{%d}", change.Number))
-		if change.PatchSet == -1 {
+		if change.PatchSet == -1 || change.PatchSet == 0 {
 			currentRevision = true
-		} else if change.PatchSet != 0 {
+		} else {
 			allRevisions = true
 		}
 	}
@@ -84,9 +86,9 @@ func (c *Change) updateChangeFromResults(results []*gerrit.Change) {
 	}
 
 	var foundRev string
-	if c.PatchSet == -1 {
+	if c.PatchSet == -1 || c.PatchSet == 0 {
 		foundRev = c.Info.CurrentRevision
-	} else if c.PatchSet != 0 {
+	} else {
 		for rev, revInfo := range c.Info.Revisions {
 			if revInfo.PatchSetNumber == c.PatchSet {
 				foundRev = rev
