@@ -882,13 +882,15 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#184)(self, build_target, chroot):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#184)(self, build_target, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
 Args:
   build_target (chromiumos.BuildTarget): The BuildTarget being built.
   chroot (chromiumos.Chroot): The chroot it is being run in.
+  packages (list[chromiumos.PackageInfo]): The packages for which to
+      generate the dependency graph.
 
 Returns:
   (chromite.api.DepGraph, chromite.api.DepGraph): A tuple of opaque

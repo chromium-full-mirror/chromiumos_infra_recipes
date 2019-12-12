@@ -181,12 +181,14 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       step_result.presentation.logs['relevance_output'] = [str(result)]
       return not bool(result.build_is_pointless.value)
 
-  def get_dependency_graph(self, build_target, chroot):
+  def get_dependency_graph(self, build_target, chroot, packages=None):
     """Calculates the dependency graph for the build target & SDK
 
     Args:
       build_target (chromiumos.BuildTarget): The BuildTarget being built.
       chroot (chromiumos.Chroot): The chroot it is being run in.
+      packages (list[chromiumos.PackageInfo]): The packages for which to
+          generate the dependency graph.
 
     Returns:
       (chromite.api.DepGraph, chromite.api.DepGraph): A tuple of opaque
@@ -197,7 +199,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     with self.m.step.nest('dependency graph calculation'):
       resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
           GetBuildDependencyGraphRequest(build_target=build_target,
-                                         chroot=chroot))
+                                         chroot=chroot, packages=packages))
       return resp.dep_graph, resp.sdk_dep_graph
 
   def _ensure_binaries(self):

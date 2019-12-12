@@ -135,8 +135,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                                              replace=True)))
     sysroot = create_sysroot_response.sysroot
 
+  packages = get_packages(api, build_config)
   target_graph, sdk_graph = api.cros_relevance.get_dependency_graph(
-      build_target=build_target, chroot=api.cros_sdk.chroot)
+      build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
   if api.cros_relevance.is_build_pointless(gerrit_changes, gitiles_commit,
                                            dep_graph=target_graph,
@@ -161,7 +162,6 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                                 flags=flags))
     api.failures.raise_failed_packages(response.failed_packages)
 
-  packages = get_packages(api, build_config)
   install_packages = build_config.build.install_packages
   if api.cros_infra_config.should_run(install_packages):
     if api.chrome.builds_chrome_from_source(build_target=build_target,
