@@ -9,6 +9,7 @@ This recipe copies a VM image artifact from the chromeos-image-archive to the
 localmirror and then modifies the Guest VM's version pin to match this version.
 
 """
+import os
 
 from google.protobuf import json_format
 
@@ -19,6 +20,8 @@ DEPS = [
     'cros_source',
     'git',
     'depot_tools/gsutil',
+    'recipe_engine/archive',
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -30,6 +33,8 @@ PROPERTIES = UprevGuestVmPinProperties
 
 _image_archive_bucket = 'chromeos-image-archive'
 _latest_image_file = 'LATEST-master'
+_base_vm_name = 'base-guest-vm'
+_test_vm_name = 'test-guest-vm'
 
 def _get_gs_uri(bucket, suburl):
   return 'gs://%s/%s' % (bucket, suburl)
@@ -55,13 +60,24 @@ def RunSteps(api, properties):
     version = api.gsutil.cat(_get_gs_uri(src_bucket, version_suburl),
                              stdout=api.raw_io.output()).stdout
 
-    src_suburl = '{0}-postsubmit/{0}'.format(properties.board)
+    tmp_dir = api.path.mkdtemp(prefix='archive-staging')
+    with api.context(cwd=tmp_dir):
+      src_suburl = '{}-postsubmit/{}/{}'.format(properties.board, version,
+                                                "image.zip")
+      api.gsutil.download(src_bucket, src_suburl, tmp_dir)
+      api.archive.extract('unzip image archive', 'image.zip', 'image',
+                          include_files=[_base_vm_name, _test_vm_name])
 
-    dst_bucket =  properties.destination_bucket
-    dst_suburl = 'distfiles/{}/{}/'.format(properties.board, version)
+      base_tar = (api.archive.package(api.context.cwd)
+                  .with_dir(api.context.cwd.join(_base_vm_name))
+                  .archive('archive base guest VM', tmp_dir, 'tbz'))
+      test_tar = (api.archive.package(api.context.cwd)
+                  .with_dir(api.context.cwd.join(_test_vm_name))
+                  .archive('archive test guest VM', tmp_dir, 'tbz'))
 
-    api.gsutil(['rsync', _get_gs_uri(src_bucket, src_suburl),
-                         _get_gs_uri(dst_bucket, dst_suburl)])
+      dst_bucket =  properties.destination_bucket
+      dst_suburl = 'distfiles/{}/{}/'.format(properties.board, version)
+      api.gsutil.upload("*.tbz", dst_bucket, dst_suburl)
 
   package = api.path.dirname(properties.version_file)
   version_path = api.cros_source.workspace_path.join(properties.version_file)

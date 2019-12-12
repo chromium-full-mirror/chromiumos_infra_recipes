@@ -35,14 +35,85 @@
       "--",
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
-      "rsync",
-      "gs://chromeos-image-archive/sludge-postsubmit/sludge",
-      "gs://localmirror-private/distfiles/sludge/1.2.3/"
+      "cp",
+      "gs://chromeos-image-archive/sludge-postsubmit/1.2.3/image.zip",
+      "[CLEANUP]/archive-staging_tmp_1"
     ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "infra_step": true,
-    "name": "copy images to localmirror.gsutil rsync",
+    "name": "copy images to localmirror.gsutil download",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
+      "--json-input",
+      "{\"archive_file\": \"image.zip\", \"include_files\": [\"base-guest-vm\", \"test-guest-vm\"], \"output\": \"image\", \"safe_mode\": true}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
+    "name": "copy images to localmirror.unzip image archive",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
+    "name": "copy images to localmirror.archive base guest VM",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/base-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1\", \"root\": \"[CLEANUP]/archive-staging_tmp_1\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
+    "name": "copy images to localmirror.archive test guest VM",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/test-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1\", \"root\": \"[CLEANUP]/archive-staging_tmp_1\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "*.tbz",
+      "gs://localmirror-private/distfiles/sludge/1.2.3/"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
+    "infra_step": true,
+    "name": "copy images to localmirror.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/localmirror-private/distfiles/sludge/1.2.3/@@@"
     ]
   },
   {
