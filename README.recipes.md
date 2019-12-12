@@ -969,7 +969,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#83)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#84)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -981,7 +981,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#167)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#168)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -989,7 +989,7 @@ Chroot needs to be tightened to 755 for the build process.
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#127)(self, checkout_path):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#128)(self, checkout_path):**
 
 Returns a context that cleans the SDK chroot named cache.
 
@@ -1004,22 +1004,22 @@ Args:
 
 Returns a Path to the cros_sdk script.
 
-&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#74)(self):**
+&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#75)(self):**
 
 &mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#20)(self):**
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#109)(self, checkout_path):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#110)(self, checkout_path):**
 
 Link the chroot to a chromiumos checkout.
 
 Args:
   checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#80)(self):**
+&mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#81)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#176)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#177)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1035,18 +1035,18 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#66)(self, chrome_root):**
+&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#67)(self, chrome_root):**
 
-&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#69)(self, goma_dir, goma_client_json, goma_approach):**
+&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#70)(self, goma_dir, goma_client_json, goma_approach):**
 
-&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#77)(self, use_flags):**
+&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#78)(self, use_flags):**
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#158)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#159)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#146)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#147)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
@@ -2859,11 +2859,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#93)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#95)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#65)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#67)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#258)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#260)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2879,7 +2879,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#276)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#278)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

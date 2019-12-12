@@ -31,6 +31,7 @@ DEPS = [
 
 from google.protobuf import json_format as json_pb
 
+from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import BASE
@@ -54,6 +55,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
+from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 
 PROPERTIES = BuildTargetProperties
 
@@ -309,6 +311,14 @@ def GenTests(api):
   yield (api.test('basic') +  #
          cq_build_with_gerrit_change() +  #
          api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('with-goma-props') +  #
+         cq_build_with_gerrit_change() +  #
+         api.properties(build_target={'name': 'amd64-generic'}) +  #
+         api.properties(**{'$chromeos/goma': GomaProperties(
+             client_version='staging',
+             goma_approach=common.GomaConfig.RBE_PROD,
+         )}))
 
   yield (api.test('no-needs-chrome') +  #
          cq_build_with_gerrit_change() +  #

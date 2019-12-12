@@ -55,6 +55,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       goma_config = common.GomaConfig(
           goma_dir=str(self._goma_dir),
           goma_client_json=str(self._goma_client_json),
+          goma_approach=self._goma_approach,
       )
     return common.Chroot(
         path=str(self._chroot_path),
