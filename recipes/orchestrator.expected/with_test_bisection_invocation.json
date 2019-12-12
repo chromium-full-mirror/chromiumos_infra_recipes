@@ -1,7 +1,41 @@
 [
   {
     "cmd": [],
-    "name": "set up orchestrator"
+    "name": "set up orchestrator",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@orchestrator config@id {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  name: \"bisecting-orchestrator\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  type: POSTSUBMIT@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@general {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  critical {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    value: true@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  environment: PRODUCTION@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  run_when {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    mode: ALWAYS_RUN@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@artifacts {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  prebuilts: NONE@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@chrome {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  internal: true@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@build {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  use_flags {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    flag: \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  image_types: TEST@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  image_types: BASE@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  install_packages: RUN@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@unit_tests {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  ebuilds_run_spec: RUN@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_END@orchestrator config@@@"
+    ]
   },
   {
     "cmd": [],

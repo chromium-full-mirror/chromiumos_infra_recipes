@@ -23,7 +23,27 @@
   },
   {
     "cmd": [],
-    "name": "read builder config"
+    "name": "read builder config",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@builder config@id {@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"arm-generic-v42-buildtest-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  type: POSTSUBMIT@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@general {@@@",
+      "@@@STEP_LOG_LINE@builder config@  critical {@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@build {@@@",
+      "@@@STEP_LOG_LINE@builder config@  install_packages: RUN_EXIT@@@",
+      "@@@STEP_LOG_LINE@builder config@  packages {@@@",
+      "@@@STEP_LOG_LINE@builder config@    package_name: \"chromeos-kernel\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    category: \"syskernel\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    version: \"4.19\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_END@builder config@@@"
+    ]
   },
   {
     "cmd": [],

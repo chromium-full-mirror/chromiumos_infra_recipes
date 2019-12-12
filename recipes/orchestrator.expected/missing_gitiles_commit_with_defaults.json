@@ -1,7 +1,33 @@
 [
   {
     "cmd": [],
-    "name": "set up orchestrator"
+    "name": "set up orchestrator",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@orchestrator config@id {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  name: \"toolchain-orchestrator\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  type: TOOLCHAIN@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@general {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  critical {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    value: true@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@orchestrator {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  gitiles_commit {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    host: \"chrome-internal\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    project: \"chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    ref: \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  gerrit_changes {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    host: \"chromium-review.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    project: \"chromiumos/overlays/chromiumos-overlay\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    change: 1394249@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    patchset: -1@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_END@orchestrator config@@@"
+    ]
   },
   {
     "cmd": [],

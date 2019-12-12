@@ -1,7 +1,24 @@
 [
   {
     "cmd": [],
-    "name": "set up orchestrator"
+    "name": "set up orchestrator",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@orchestrator config@id {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  name: \"postsubmit-orchestrator\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  type: POSTSUBMIT@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@general {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  critical {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    value: true@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@orchestrator {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  children: \"amd64-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  children: \"arm-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
+      "@@@STEP_LOG_END@orchestrator config@@@"
+    ]
   },
   {
     "cmd": [],

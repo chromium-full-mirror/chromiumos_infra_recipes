@@ -75,6 +75,7 @@ def RunSteps(api, properties):
     except LookupError:
       step.presentation.step_text = 'config not found, assuming deleted'
       return
+    step.presentation.logs['builder config'] = [str(build_config)]
 
   api.cros_bisect.set_bisect_builder(build_target.name)
   api.cros_sdk.set_use_flags(build_config.build.use_flags)

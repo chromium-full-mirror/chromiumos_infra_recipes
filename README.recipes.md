@@ -2844,11 +2844,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#92)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#93)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#65)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#257)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#258)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -2864,7 +2864,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#275)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#276)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3348,7 +3348,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#57)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#274)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#275)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3365,7 +3365,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#354)(api, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#355)(api, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -3386,7 +3386,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#258)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#259)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -3396,7 +3396,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#474)(api, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#475)(api, cq_orch_children):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -3410,7 +3410,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#541)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#542)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3421,7 +3421,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#315)(api, builds):**
+&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#316)(api, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3434,7 +3434,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#209)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#210)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -3449,7 +3449,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#530)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#531)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3457,7 +3457,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#516)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#517)(refs):**
 
 Assert the given refs start with refs/heads.
 

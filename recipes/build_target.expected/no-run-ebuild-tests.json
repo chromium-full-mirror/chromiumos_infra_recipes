@@ -23,7 +23,25 @@
   },
   {
     "cmd": [],
-    "name": "read builder config"
+    "name": "read builder config",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@builder config@id {@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"grunt-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  type: POSTSUBMIT@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@general {@@@",
+      "@@@STEP_LOG_LINE@builder config@  critical {@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@build {@@@",
+      "@@@STEP_LOG_LINE@builder config@  install_packages: RUN@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@unit_tests {@@@",
+      "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: NO_RUN@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_END@builder config@@@"
+    ]
   },
   {
     "cmd": [],

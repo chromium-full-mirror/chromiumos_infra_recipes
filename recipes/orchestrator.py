@@ -57,11 +57,12 @@ PROPERTIES = OrchestratorProperties
 def RunSteps(api, properties):
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
 
-  with api.step.nest('set up orchestrator'):
+  with api.step.nest('set up orchestrator') as step:
     validate_refs(properties.update_manifest_refs)
     api.cros_bisect.set_orchestrator_bisect_builder()
     config = api.cros_infra_config.get_builder_config(
         api.buildbucket.build.builder.builder)
+    step.presentation.logs['orchestrator config'] = [str(config)]
 
     gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
