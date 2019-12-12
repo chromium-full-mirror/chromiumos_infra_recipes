@@ -33,9 +33,10 @@ def RunSteps(api):
 
   # Monkey-pack merge to return a StepFailure to test cherry-pick path
   def merge_fail(_a, _b, infra_step=False):
-    raise api.step.StepFailure('mock; infra_step: {}'.format(infra_step))
+    # False means the merge failed
+    return False
 
-  api.git.merge = merge_fail
+  api.git.merge_silent_fail = merge_fail
   commits = api.cros_source.apply_gerrit_patch_sets(
       [api.gerrit.test_api.test_patch_set()])
 

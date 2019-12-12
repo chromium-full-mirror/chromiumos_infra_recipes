@@ -129,10 +129,9 @@ class CrosSourceApi(recipe_api.RecipeApi):
         with self.m.context(cwd=self.workspace_path.join(project_path)):
           commit_id = self.m.git.fetch_ref(patch_set.git_fetch_url,
                                            patch_set.git_fetch_ref)
-          try:
-            self.m.git.merge(commit_id, 'merge gerrit changes',
-                             infra_step=False)
-          except self.m.step.StepFailure:
+          merged = self.m.git.merge_silent_fail(
+              commit_id, 'merge gerrit changes', infra_step=False)
+          if not merged:
             self.m.git.merge_abort()
             presentation = self.m.step.active_result.presentation
             presentation.status = self.m.step.SUCCESS

@@ -18,6 +18,7 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.git.fetch_ref('remote', 'refs/heads/branch'), commit_id)
   api.git.checkout('master', force=True)
+  api.git.merge_silent_fail('branch', 'yeet')
   api.git.merge('branch', 'yeet')
   api.git.merge_abort()
   api.git.cherry_pick('branch')
