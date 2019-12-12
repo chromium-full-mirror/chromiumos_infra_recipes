@@ -86,8 +86,13 @@ class PatchSet(object):
 
   @property
   def submitted(self):
-    """Returns the date string with when PatchSet was submitted (merged)."""
-    return self._change_info['submitted']
+    """Returns the date string with when PatchSet was submitted (merged).
+
+    Returns None if the PatchSet hasn't been merged.
+
+    See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-info
+    """
+    return self._change_info.get('submitted', None)
 
   @property
   def git_fetch_url(self):

@@ -187,16 +187,14 @@ def RunSteps(api, properties):
 
         repositories.extend(ebuilds_by_repository.keys())
 
-    with api.step.nest('find existing uprev CLs') as step:
-      existing_changes, existing_patch_sets = [], []
+    with api.step.nest('find open uprev CLs') as step:
+      open_changes = []
       for host in ('chromium', 'chrome-internal'):
         with api.step.nest('find CLs from {} host'.format(host)):
           host_url = 'https://{}-review.googlesource.com'.format(host)
-          existing_changes.extend(
+          open_changes.extend(
               api.gerrit.query_changes(host_url, [('topic', topic),
                                                   ('status', 'open')]))
-          existing_patch_sets.extend(
-              api.gerrit.fetch_patch_sets(existing_changes))
 
     with api.step.nest('generate CLs') as step:
       repositories = map(api.path.abs_to_path, repositories)
@@ -223,15 +221,15 @@ def RunSteps(api, properties):
     outdated_cls_policy = properties.outdated_cls_policy or DO_NOTHING
 
     send_to_cq_policy = (
-        existing_cls_policy if existing_changes else no_existing_cls_policy)
+        existing_cls_policy if open_changes else no_existing_cls_policy)
 
     with api.step.nest('update CL labels'):
       for change in changes:
         # First post explanatory message.
         message_lines = [
             'Found {} open CL(s) for Gerrit topic {}:'.format(
-                len(existing_changes), topic), '\n'.join(
-                    map(api.gerrit.parse_gerrit_change_url, existing_changes)),
+                len(open_changes), topic), '\n'.join(
+                    map(api.gerrit.parse_gerrit_change_url, open_changes)),
             'Send-to-cq policy for this case is {}.'.format(
                 SendToCqPolicy.Name(send_to_cq_policy))
         ]
@@ -243,7 +241,7 @@ def RunSteps(api, properties):
         }.get(
             send_to_cq_policy,
             'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
-            'Reviewers may also want to abandon the existing CL(s).',
+            'Reviewers may also want to abandon the open CL(s).',
         ))
 
         message = '\n'.join(message_lines)
@@ -267,33 +265,42 @@ def RunSteps(api, properties):
         if labels is not None:
           api.gerrit.set_change_labels(change, labels)
 
-    with api.step.nest('examine outdated CLs'):
+
+    if open_changes:
       # Even in the DO_NOTHING case, propose CLs that you _would_ abandon.
-      for host in ('chromium', 'chrome-internal'):
-        mrm_patch_set = None
-        with api.step.nest('merged CLs from {} host (within 30 days)'
-            .format(host)) as step:
-          host_url = 'https://{}-review.googlesource.com'.format(host)
-          merged_changes = api.gerrit.query_changes(
-              host_url, [('topic', topic), ('status', 'merged'),
-                         ('-age', '30d')])
-          if merged_changes:
-            merged_patch_sets = api.gerrit.fetch_patch_sets(merged_changes)
-            step.presentation.logs['merged CLs'] = [ps.display_url for ps in
-                                                    merged_patch_sets]
-            list.sort(merged_patch_sets,
-                      key=lambda ps: ps.submitted,
-                      reverse=True)
-            mrm_patch_set = merged_patch_sets[0]
-            step.presentation.text = 'most recently merged cl: {}'.format(
-              mrm_patch_set.display_id)
-        if mrm_patch_set:
-          # TODO(engeg): Do not actually abandon yet, just show results.
-          with api.step.nest('testing: list outdated CLs') as step:
-            open_cls_older_than_mrm = [p for p in existing_patch_sets
-                                      if p.created < mrm_patch_set.submitted]
-            step.presentation.logs['outdated CLs'] = [ps.display_url for ps in
-                                                      open_cls_older_than_mrm]
+      with api.step.nest('examine outdated CLs'):
+        for host in ('chromium', 'chrome-internal'):
+          mrm = None  # Most recently merged CL.
+          with api.step.nest('merged CLs from {} host (within 30 days)'
+              .format(host)) as step:
+            host_url = 'https://{}-review.googlesource.com'.format(host)
+            merged_changes = api.gerrit.query_changes(
+                host_url, [('topic', topic), ('status', 'merged'),
+                          ('-age', '30d')])
+            if merged_changes:
+              step.presentation.logs['merged CLs'] = [
+                  api.gerrit.parse_gerrit_change_url(cl)
+                  for cl in merged_changes]
+
+              # Must fetch to get submitted times from the "PatchSets", which
+              # are really instances of ChangeInfo.
+              merged_ci = api.gerrit.fetch_patch_sets(merged_changes)
+              open_ci = api.gerrit.fetch_patch_sets(open_changes)
+              list.sort(merged_ci,
+                        key=lambda ci: ci.submitted,
+                        reverse=True)
+              mrm = open_ci[0]
+
+              step.presentation.text = 'most recently merged cl: {}'.format(
+                  mrm.display_id)
+          if mrm:
+            # TODO(engeg): Do not actually abandon yet, just show results.
+            with api.step.nest('testing: list outdated CLs') as step:
+              open_cls_older_than_mrm = [ci for ci in open_ci
+                                         if ci.created < mrm.submitted]
+              step.presentation.logs['outdated CLs'] = [
+                  ci.display_id
+                  for ci in open_cls_older_than_mrm]
 
 
 def response_has_changes(api, response):
