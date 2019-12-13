@@ -1,0 +1,30 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
+
+from recipe_engine import recipe_api
+
+
+class BuildbucketStatsApi(recipe_api.RecipeApi):
+  """A module to get statistics from buildbucket."""
+
+  def get_build_count(self, bucket, status):
+    """Return the number of builds in the bucket with a specific status.
+
+    Args:
+      bucket (str): Buildbucket Bucket to search on.
+      status (common_pb2.Status): The status of builds to search for.
+
+    Returns:
+      The number of builds (int) in the given bucket with given status.
+    """
+    builder = build_pb2.BuilderID(
+        project=self.m.buildbucket.build.builder.project, bucket=bucket)
+    build_predicate = rpc_pb2.BuildPredicate(builder=builder, status=status)
+    # Use a very small fields set to reduce the load on Buildbucket.
+    return len(self.m.buildbucket.search(build_predicate, fields=('id',)))

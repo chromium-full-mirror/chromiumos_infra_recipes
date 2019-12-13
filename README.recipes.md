@@ -6,6 +6,7 @@
   * [analysis_service](#recipe_modules-analysis_service)
   * [autotest_status_parser](#recipe_modules-autotest_status_parser)
   * [breakpad](#recipe_modules-breakpad)
+  * [buildbucket_stats](#recipe_modules-buildbucket_stats)
   * [chrome](#recipe_modules-chrome)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
@@ -59,6 +60,7 @@
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
+  * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
   * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
@@ -266,6 +268,24 @@ Args:
 
 Returns:
   A list[Path] of symbolicated files written.
+### *recipe_modules* / [buildbucket\_stats](/recipe_modules/buildbucket_stats)
+
+[DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to get statistics from buildbucket.
+
+&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#17)(self, bucket, status):**
+
+Return the number of builds in the bucket with a specific status.
+
+Args:
+  bucket (str): Buildbucket Bucket to search on.
+  status (common_pb2.Status): The status of builds to search for.
+
+Returns:
+  The number of builds (int) in the given bucket with given status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
 [DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [portage](#recipe_modules-portage), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2893,6 +2913,11 @@ Args:
 
 Returns:
   dict of target versions
+### *recipes* / [buildbucket\_stats:examples/get\_build\_count](/recipe_modules/buildbucket_stats/examples/get_build_count.py)
+
+[DEPS](/recipe_modules/buildbucket_stats/examples/get_build_count.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/examples/get_build_count.py#17)(api):**
 ### *recipes* / [cache\_generate](/recipes/cache_generate.py)
 
 [DEPS](/recipes/cache_generate.py#8): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
