@@ -162,9 +162,13 @@ def RunSteps(api, properties):
           api.chrome.sync(chrome_root, api.cros_sdk.chroot,
                           properties.build_target, chrome_internal)
           api.cros_sdk.set_chrome_root(str(chrome_root))
-          api.cros_sdk.set_goma_config(str(api.goma.goma_dir),
-                                       str(api.goma.goma_client_json),
-                                       api.goma.goma_approach)
+          api.cros_sdk.set_goma_config(
+              str(api.goma.goma_dir),
+              str(api.goma.goma_client_json),
+              api.goma.goma_approach,
+              str(api.path.mkdtemp(prefix="goma-logs-")),
+              'stats.bin',
+              'counterz.bin')
 
         flags = InstallPackagesRequest.Flags(
             compile_source=False,
