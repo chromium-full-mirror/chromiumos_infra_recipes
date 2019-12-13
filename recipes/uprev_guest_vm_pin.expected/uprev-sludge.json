@@ -147,6 +147,225 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "commit uprev"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "infra_step": true,
+    "name": "commit uprev.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "infra_step": true,
+    "name": "commit uprev.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|src/[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "uprev-guest-vm",
+      "[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm"
+    ],
+    "infra_step": true,
+    "name": "commit uprev.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/VERSION-PIN"
+    ],
+    "infra_step": true,
+    "name": "commit uprev.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm: updating version pin to latest - 1.2.3",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "commit uprev.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm: updating version pin to latest - 1.2.3@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "commit uprev.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate CL"
+  },
+  {
+    "cmd": [],
+    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|src/[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--topic",
+      "chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+      "--reviewers",
+      "tbegin@google.com",
+      "--send-mail"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate CL.set labels on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "generate CL.set labels on CL 1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|src/[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "infra_step": true,
+    "name": "generate CL.set labels on CL 1.git rebase",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "infra_step": true,
+    "name": "generate CL.set labels on CL 1.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
