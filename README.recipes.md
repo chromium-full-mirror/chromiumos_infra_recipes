@@ -581,7 +581,7 @@ This recipe module exposes client stubs for all build API services.
 To add a service endpoint, create a class INSIDE THIS MODULE extending Stub.
 Make sure the class name is the same as the service name.
 
-To call a service endpoint, simply call corresponding method on the stub. It
+To call a service endpoint, call the corresponding method on the stub. It
 will "magicly" know what to do and fail gracefully if it does not. Example:
 
     # Inside recipes/my_recipe.py...
