@@ -152,10 +152,12 @@ def RunSteps(api, properties):
         # TODO(crbug.com/1011011): sync and goma build chrome if needed
         # because Autotest VM builders are rebuilding chrome.
         if api.chrome.builds_chrome_from_source(properties.build_target,
-                                                api.cros_sdk.chroot):
+                                                api.cros_sdk.chroot,
+                                                internal=True):
           chrome_root = api.path['start_dir'].join('chrome')
           # Internal or external chrome? In build_target.py we take this
-          # from build_config.chrome.internal.
+          # from build_config.chrome.internal. Also forced True in the
+          # builds_chrome_from_source call above to match the force True here.
           chrome_internal = True
           api.chrome.sync(chrome_root, api.cros_sdk.chroot,
                           properties.build_target, chrome_internal)
