@@ -1237,13 +1237,13 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#22)(self):**
 ### *recipe_modules* / [cros\_test\_platform](/recipe_modules/cros_test_platform)
 
-[DEPS](/recipe_modules/cros_test_platform/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_platform/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#108)(self, request):**
+&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#111)(self, request):**
 
 Execute work via `autotest-execute` subcommand.
 
@@ -1252,7 +1252,7 @@ Args:
 
 Returns: ExecuteResponse.
 
-&mdash; **def [compute\_backfill](/recipe_modules/cros_test_platform/api.py#119)(self, request):**
+&mdash; **def [compute\_backfill](/recipe_modules/cros_test_platform/api.py#122)(self, request):**
 
 Compute the backfill request for this build
 
@@ -1261,7 +1261,7 @@ Args:
 
 Returns: ComputeBackfillResponses.
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#74)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#77)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -1270,9 +1270,7 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_platform/api.py#26)(self):**
-
-&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#85)(self, request):**
+&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#88)(self, request):**
 
 Determine scheduler via `scheduler-traffic-split` subcommand.
 
@@ -1281,7 +1279,7 @@ Args:
 
 Returns: SchedulerTrafficSplitResponses.
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#97)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#100)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 
@@ -3110,9 +3108,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#16)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#23)(api):**
 ### *recipes* / [cros\_test\_postprocess:examples/full](/recipe_modules/cros_test_postprocess/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_postprocess/examples/full.py#6): [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/path][recipe_engine/recipe_modules/path]

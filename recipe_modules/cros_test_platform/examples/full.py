@@ -5,9 +5,12 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'cros_test_platform',
 ]
 
+from PB.recipe_modules.chromeos.cros_test_platform.cros_test_platform import \
+  CrosTestPlatformModuleProperties
 from PB.test_platform.steps.enumeration import \
   EnumerationRequests, EnumerationResponses
 from PB.test_platform.steps.scheduler_traffic_split import \
@@ -52,4 +55,13 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  # TODO(crbug.com/1030538): Remove once the default label logic is removed.
+  yield api.test('default label')
+
+  yield (api.test('custom label') +  #
+         api.properties(
+             **{'$chromeos/cros_test_platform':
+                 CrosTestPlatformModuleProperties(
+                     version=CrosTestPlatformModuleProperties.Version(
+                         cipd_label='some-cipd-label',
+        ))}))

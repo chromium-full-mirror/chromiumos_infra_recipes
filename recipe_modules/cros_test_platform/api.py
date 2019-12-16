@@ -23,9 +23,12 @@ _RETCODE_PARTIAL_RESPONSE = 2
 class CrosTestPlatformCommand(recipe_api.RecipeApi):
   """Module for issuing cros_test_platform commands"""
 
-  def initialize(self):
+  def __init__(self, properties, **kwargs):
+    super(CrosTestPlatformCommand, self).__init__(**kwargs)
     self._cmd = None
-    self._version = 'latest'
+    # TODO(crbug.com/1030538): Remove the default once the label is populated
+    # from the config.
+    self._version = str(properties.version.cipd_label) or 'latest'
 
   def _run(self, subcommand, request, request_type, response_type,
            extra_args=None):

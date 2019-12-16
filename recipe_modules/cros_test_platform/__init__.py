@@ -2,6 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.cros_test_platform.cros_test_platform import \
+    CrosTestPlatformModuleProperties
+
 DEPS = [
     'recipe_engine/cipd',
     'recipe_engine/context',
@@ -10,3 +13,5 @@ DEPS = [
     'recipe_engine/step',
     'easy',
 ]
+
+PROPERTIES = CrosTestPlatformModuleProperties
