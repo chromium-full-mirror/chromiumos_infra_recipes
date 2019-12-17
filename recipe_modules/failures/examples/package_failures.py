@@ -17,6 +17,11 @@ def RunSteps(api):
   api.assertions.assertRaises(api.step.StepFailure,
                               api.failures.raise_failed_packages,
                               [PackageInfo(package_name='package')])
+  api.assertions.assertRaises(api.step.StepFailure,
+                              api.failures.raise_failed_packages, [
+                                  PackageInfo(package_name='package1'),
+                                  PackageInfo(package_name='package2')
+                              ])
 
 
 def GenTests(api):

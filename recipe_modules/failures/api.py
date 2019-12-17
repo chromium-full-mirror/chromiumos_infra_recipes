@@ -214,7 +214,11 @@ class FailuresApi(recipe_api.RecipeApi):
         step.presentation.step_text = 'all packages installed successfully'
         return
 
-      message = 'failed to install {} packages'.format(len(packages))
+      if len(packages) == 1:
+        message = 'failed to install {}'.format(
+            self.m.naming.get_package_title(packages[0]))
+      else:
+        message = 'failed to install {} packages'.format(len(packages))
       step.presentation.step_text = message
       step.presentation.status = self.m.step.FAILURE
       step.presentation.logs['list of failed packages'] = map(
@@ -243,9 +247,8 @@ class FailuresApi(recipe_api.RecipeApi):
       message = '{} images failed'.format(len(failed_images))
       step.presentation.step_text = message
       step.presentation.status = self.m.step.FAILURE
-      failed_types = map(
-          lambda image: ImageType.Name(image.type),
-          failed_images)
+      failed_types = map(lambda image: ImageType.Name(image.type),
+                         failed_images)
       step.presentation.logs['list of failed images'] = failed_types
       raise self.m.step.StepFailure(message)
 
@@ -505,7 +508,7 @@ class FailuresApi(recipe_api.RecipeApi):
             fatal = False
       new_failures.append(
           self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
-                        fatal=fatal, id=f.id))
+                       fatal=fatal, id=f.id))
     if presentation_log:
       step.presentation.logs['new non-critical builders'] = presentation_log
     return new_failures
