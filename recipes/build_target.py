@@ -56,6 +56,9 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
+from PB.recipe_modules.chromeos.cros_source.cros_source import (
+    CrosSourceProperties)
+
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 
 PROPERTIES = BuildTargetProperties
@@ -384,6 +387,22 @@ def GenTests(api):
                                      'baz', 'cat2', '3'),
                              ]
                          })
+             }))
+
+  yield (api.test('with-custom-snapshot') +  #
+         cq_build_with_gerrit_change() +  #
+         api.properties(
+             **{
+                 'build_target': {
+                     'name': 'amd64-generic'
+                 },
+                 '$chromeos/cros_source':
+                     CrosSourceProperties(
+                         snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+                             isolated_hash='foohash',
+                             isolate_server='server.com'
+                         ),
+                     )
              }))
 
   yield (api.test('with-gerrit-changes') +  #
