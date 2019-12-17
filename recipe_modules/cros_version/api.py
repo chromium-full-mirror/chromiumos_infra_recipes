@@ -57,7 +57,7 @@ class CrosVersionApi(recipe_api.RecipeApi):
     Raises:
       ValueError: if the version file had unexpected formatting.
     """
-    with self.m.step.nest('read chromeos version') as step:
+    with self.m.step.nest('read chromeos version') as read_version_step:
       version_path = self.m.cros_source.workspace_path.join(
           CHROMEOS_VERSION_PATH)
       contents = self.m.file.read_raw(
@@ -72,14 +72,23 @@ class CrosVersionApi(recipe_api.RecipeApi):
               'pattern %r did not match chromeos_version.sh' % regex.pattern)
         version_args[k] = int(m.group(1))
 
-      with self.m.step.nest('read snapshot number'):
-        with self.m.context(
-            cwd=self.m.cros_source.workspace_path.join('manifest-internal')):
-          snapshot = self.m.buildbucket.gitiles_commit.id
-          self.m.git.fetch_ref(self.m.cros_source.INTERNAL_MANIFEST_URL,
-                               snapshot)
-          version_args['snapshot'] = self.m.git_footers.position_num(snapshot)
+      with self.m.step.nest('read snapshot') as read_snapshot_step:
+        # If there is a snapshot isolate we are running against a custom
+        # manifest and there is no snapshot footer for us to read snapshot
+        # numbers from. In that case we replace this piece of the version
+        # with the isolate hash.
+        version_snapshot = self.m.cros_source.snapshot_isolated_hash
+        if version_snapshot:
+          read_snapshot_step.presentation.step_text = 'using snapshot isolate'
+        else:
+          with self.m.context(
+              cwd=self.m.cros_source.workspace_path.join('manifest-internal')):
+            snapshot = self.m.buildbucket.gitiles_commit.id
+            self.m.git.fetch_ref(self.m.cros_source.INTERNAL_MANIFEST_URL,
+                                 snapshot)
+            version_snapshot = self.m.git_footers.position_num(snapshot)
+        version_args['snapshot'] = version_snapshot
 
       version = Version(**version_args)
-      step.presentation.step_text = 'found version: %s' % version
+      read_version_step.presentation.step_text = 'found version: %s' % version
       return version

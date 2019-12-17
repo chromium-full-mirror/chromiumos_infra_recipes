@@ -1197,7 +1197,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#114)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#120)(self, patch_sets):**
 
 Apply Gerrit patch sets to the workspace.
 
@@ -1214,11 +1214,11 @@ The cached checkout path.
 This is the cached version of source, usually updated once at the beginning
 of a build and then mounted into the master and/or workspace paths.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#84)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#90)(self):**
 
 Returns a context where master and workspace overlays are mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#233)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#239)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -1231,7 +1231,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#190)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#196)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -1245,7 +1245,7 @@ Args:
   project_commits (List[ProjectCommit]): Commits to add to archive. Must be
     in patch application order.
 
-&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#70)(self, manifest_url=INTERNAL_MANIFEST_URL, init_opts=None, sync_opts=None):**
+&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#76)(self, manifest_url=INTERNAL_MANIFEST_URL, init_opts=None, sync_opts=None):**
 
 Ensure the configured repo cache exists and is synced.
 
@@ -1254,7 +1254,7 @@ Args:
   * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
 
-&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#94)(self, project, branch):**
+&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#100)(self, project, branch):**
 
 Find the source path for a given project in the workspace.
 
@@ -1273,7 +1273,11 @@ This is a recent version of the source which should not be modified (apart
 from incidental changes like caching) during a build. "Top of tree" logic
 will run from this checkout.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#146)(self, gitiles_commit):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_isolated\_hash](/recipe_modules/cros_source/api.py#70)(self):**
+
+Returns the snapshot isolate hash in use or None.
+
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#152)(self, gitiles_commit):**
 
 Sync a checkout to the snapshot.
 
@@ -3215,9 +3219,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_som/examples/full.py#12)(api):**
 ### *recipes* / [cros\_source:examples/full](/recipe_modules/cros_source/examples/full.py)
 
-[DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#26)(api, properties):**
 ### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
 
 [DEPS](/recipe_modules/cros_tags/examples/full.py#8): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -3245,9 +3249,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#40)(api, need_tests_builds_serialized):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
-[DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
+[DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#20)(api, properties):**
 ### *recipes* / [dupit](/recipes/dupit.py)
 
 [DEPS](/recipes/dupit.py#8): [cros\_dupit](#recipe_modules-cros_dupit)

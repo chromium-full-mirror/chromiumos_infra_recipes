@@ -2308,7 +2308,7 @@
   },
   {
     "cmd": [],
-    "name": "read chromeos version.read snapshot number",
+    "name": "read chromeos version.read snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2322,7 +2322,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "read chromeos version.read snapshot number.git fetch",
+    "name": "read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2335,7 +2335,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "read chromeos version.read snapshot number.git rev-parse",
+    "name": "read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2350,7 +2350,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "read chromeos version.read snapshot number.read git footers",
+    "name": "read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

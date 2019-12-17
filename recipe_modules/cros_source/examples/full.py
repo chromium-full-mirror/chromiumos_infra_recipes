@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/path',
@@ -17,8 +18,12 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties)
+from PB.recipe_modules.chromeos.cros_source.examples.test import (
+    TestInputProperties)
 
-def RunSteps(api):
+PROPERTIES = TestInputProperties
+
+def RunSteps(api, properties):
   _ = api.cros_source.master_path
 
   try:
@@ -45,9 +50,17 @@ def RunSteps(api):
   projects = api.cros_source.checkout_project_commits_archive(archive_path)
   assert set(projects) == {'a/b', 'a/b/c'}, projects
 
+  # The test.proto default for string is empty, the api returns a None
+  # when this is not set.
+  expected_hash = properties.expected_snapshot_isolated_hash or None
+  api.assertions.assertEqual(
+      api.cros_source.snapshot_isolated_hash,
+      expected_hash)
+
+
 
 def GenTests(api):
-  yield api.test('basic') + api.buildbucket.ci_build()
+  yield api.test('basic') +  api.buildbucket.ci_build()
 
   yield (api.test('with-custom-snapshot-isolate') +  #
          api.properties(
@@ -57,4 +70,6 @@ def GenTests(api):
                         isolated_hash='xxx',
                         isolate_server='http://server.com',
                     ),
-                )}))
+                )}) +  #
+         api.properties(
+             TestInputProperties(expected_snapshot_isolated_hash='xxx')))

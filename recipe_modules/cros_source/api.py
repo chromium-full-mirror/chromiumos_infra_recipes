@@ -67,6 +67,12 @@ class CrosSourceApi(recipe_api.RecipeApi):
     """
     return self.m.path['start_dir'].join('chromiumos_workspace')
 
+  @property
+  def snapshot_isolated_hash(self):
+    """Returns the snapshot isolate hash in use or None."""
+    return (self._snapshot_isolate.isolated_hash if self._snapshot_isolate
+            else None)
+
   def ensure_synced_cache(self, manifest_url=INTERNAL_MANIFEST_URL,
                           init_opts=None, sync_opts=None):
     """Ensure the configured repo cache exists and is synced.

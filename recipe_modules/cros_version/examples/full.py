@@ -5,18 +5,26 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'recipe_engine/file',
     'cros_version',
 ]
 
+from PB.recipe_modules.chromeos.cros_source.cros_source import (
+    CrosSourceProperties)
+from PB.recipe_modules.chromeos.cros_version.examples.test import (
+    TestInputProperties)
 
-def RunSteps(api):
+PROPERTIES = TestInputProperties
+
+def RunSteps(api, properties):
   v = api.cros_version.Version(99, 1234, 56, 1, 2)
   api.assertions.assertEqual(str(v), 'R99-1234.56.1-2')
   api.assertions.assertEqual(v.buildspec_filename, '99/1234.56.1.xml')
 
   v = api.cros_version.read_workspace_version()
-  api.assertions.assertEqual(str(v), 'R99-1234.56.0-101')
+  api.assertions.assertEqual(
+      str(v), 'R99-1234.56.0-' + properties.expected_version_snapshot)
 
   # The second read gets an empty file.
   api.assertions.assertRaises(ValueError,
@@ -26,4 +34,22 @@ def RunSteps(api):
 def GenTests(api):
   yield (api.test('basic') +  #
          api.step_data('read chromeos version (2).read chromeos_version.sh',
-                       api.file.read_raw('')))
+                       api.file.read_raw('')) +  #
+         api.properties(
+             TestInputProperties(expected_version_snapshot='101')))
+
+  yield (api.test('with-custom-snapshot') +  #
+         api.properties(
+             **{
+                 '$chromeos/cros_source':
+                     CrosSourceProperties(
+                         snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+                             isolated_hash='hash!!!',
+                             isolate_server='server.com'
+                         ),
+                     )
+             }) +  #
+         api.step_data('read chromeos version (2).read chromeos_version.sh',
+                       api.file.read_raw('')) +  #
+         api.properties(
+             TestInputProperties(expected_version_snapshot='hash!!!')))
