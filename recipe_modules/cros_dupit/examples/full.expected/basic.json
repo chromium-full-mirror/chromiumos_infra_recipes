@@ -6,17 +6,80 @@
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
       "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-o",
-      "GSUtil:parallel_composite_upload_threshold=50M",
-      "-m",
       "----",
-      "rsync",
+      "ls",
       "-r",
-      "gs://stark-trek/mini-cache/latest_distfiles/",
-      "[CACHE]/gentoo_distfiles"
+      "gs://stark-trek/the-ultimate-computer/distfiles/**"
     ],
     "infra_step": true,
-    "name": "gsutil download distfiles from gs://stark-trek/mini-cache/latest_distfiles/"
+    "name": "gsutil list distfiles in gs://stark-trek/the-ultimate-computer/distfiles/"
+  },
+  {
+    "cmd": [
+      "cut",
+      "-c49-",
+      "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
+    ],
+    "infra_step": true,
+    "name": "remove gs://... prefix"
+  },
+  {
+    "cmd": [
+      "sed",
+      "-i",
+      "/^distfiles\\//d;/^.dup-it\\//d",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "filter bad paths"
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "sort gs distfiles"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--list-only",
+      "--no-motd",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "rsync://mirrors.do.not.exists/distfiles/**"
+    ],
+    "infra_step": true,
+    "name": "list distfiles in rsync://mirrors.do.not.exists/distfiles"
+  },
+  {
+    "cmd": [
+      "awk",
+      "match($1, /^[^d]/) { print $5 }",
+      "[CLEANUP]/distfile_lists_tmp_1/gentoo.txt"
+    ],
+    "infra_step": true,
+    "name": "remove perms/size/timestamp prefix"
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "sort gentoo distfiles"
+  },
+  {
+    "cmd": [
+      "comm",
+      "-13",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_relative_sorted.txt",
+      "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative_sorted.txt"
+    ],
+    "infra_step": true,
+    "name": "get list of files in gentoo that are not in gs"
   },
   {
     "cmd": [
@@ -24,7 +87,6 @@
       "--recursive",
       "--links",
       "--safe-links",
-      "--delete",
       "--perms",
       "--times",
       "--compress",
@@ -33,31 +95,12 @@
       "--human-readable",
       "--timeout=180",
       "--bwlimit=1m",
-      "rsync://mirrors.do.not.exists/distfiles",
-      "[CACHE]/gentoo_distfiles"
+      "--files-from=[CLEANUP]/distfile_lists_tmp_1/new.txt",
+      "rsync://mirrors.do.not.exists/distfiles/",
+      "[CLEANUP]/distfiles_tmp_2"
     ],
     "infra_step": true,
-    "name": "sync distfiles from rsync://mirrors.do.not.exists/distfiles"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-o",
-      "GSUtil:parallel_composite_upload_threshold=50M",
-      "-m",
-      "----",
-      "rsync",
-      "-r",
-      "-d",
-      "[CACHE]/gentoo_distfiles",
-      "gs://stark-trek/mini-cache/latest_distfiles/"
-    ],
-    "infra_step": true,
-    "name": "gsutil sync latest distfiles to gs://stark-trek/mini-cache/latest_distfiles/"
+    "name": "rsync distfiles from rsync://mirrors.do.not.exists/distfiles"
   },
   {
     "cmd": [
@@ -73,8 +116,9 @@
       "cp",
       "-r",
       "-n",
-      "-p",
-      "[CACHE]/gentoo_distfiles/distfiles/*",
+      "-a",
+      "public-read",
+      "[CLEANUP]/distfiles_tmp_2/*",
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
     "infra_step": true,
