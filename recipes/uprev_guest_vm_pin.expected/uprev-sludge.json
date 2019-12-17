@@ -37,7 +37,7 @@
       "----",
       "cp",
       "gs://chromeos-image-archive/sludge-postsubmit/1.2.3/image.zip",
-      "[CLEANUP]/archive-staging_tmp_1"
+      "./"
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "infra_step": true,
