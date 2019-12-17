@@ -49,17 +49,6 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic') + api.buildbucket.ci_build()
 
-  yield (api.test('with-custom-snapshot') +  #
-         api.properties(
-             **{'$chromeos/cros_source':
-                CrosSourceProperties(
-                    snapshot_xml=
-                    '<?xml version="1.0" encoding="UTF-8"?>'
-                    '<manifest>'
-                    '  <project name="n" path="p" revision="r" upstream="u"/>'
-                    '</manifest>',
-                )}))
-
   yield (api.test('with-custom-snapshot-isolate') +  #
          api.properties(
              **{'$chromeos/cros_source':

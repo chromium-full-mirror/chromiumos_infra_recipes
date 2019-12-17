@@ -35,7 +35,6 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosSourceApi, self).__init__(*args, **kwargs)
-    self._snapshot_xml = str(properties.snapshot_xml)
     self._snapshot_isolate = (properties.snapshot_isolate
                               if properties.HasField('snapshot_isolate')
                               else None)
@@ -159,9 +158,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
     via an input property, that will be used. Otherwise it will fall back
     to the typical syncing to the gitiles_commit.
     """
-    if self._snapshot_xml:
-      return self._snapshot_xml
-    elif self._snapshot_isolate:
+    if self._snapshot_isolate:
       return self._get_snapshot_from_isolate()
     return self._get_snapshot_from_gitiles(gitiles_commit)
 
