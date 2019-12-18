@@ -52,7 +52,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"image.zip\", \"include_files\": [\"base-guest-vm\", \"test-guest-vm\"], \"output\": \"image\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_1/image.zip\", \"include_files\": [\"base-guest-vm\", \"test-guest-vm\"], \"output\": \"[CLEANUP]/archive-staging_tmp_1/image\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],

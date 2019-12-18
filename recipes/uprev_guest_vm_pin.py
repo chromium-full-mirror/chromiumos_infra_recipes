@@ -67,7 +67,9 @@ def RunSteps(api, properties):
       src_suburl = '{}-postsubmit/{}/{}'.format(properties.board, version,
                                                 "image.zip")
       api.gsutil.download(src_bucket, src_suburl, './')
-      api.archive.extract('unzip image archive', 'image.zip', 'image',
+      api.archive.extract('unzip image archive',
+                          api.context.cwd.join('image.zip'),
+                          api.context.cwd.join('image'),
                           include_files=[_base_vm_name, _test_vm_name])
 
       base_tar = (api.archive.package(api.context.cwd)
