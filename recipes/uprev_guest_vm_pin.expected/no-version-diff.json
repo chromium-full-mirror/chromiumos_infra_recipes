@@ -78,7 +78,7 @@
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "name": "copy images to localmirror.archive base guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/base-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1\", \"root\": \"[CLEANUP]/archive-staging_tmp_1\"}",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/base-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/base-guest-vm.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -91,7 +91,7 @@
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "name": "copy images to localmirror.archive test guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/test-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1\", \"root\": \"[CLEANUP]/archive-staging_tmp_1\"}",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/test-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/test-guest-vm.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
