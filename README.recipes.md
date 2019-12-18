@@ -6,6 +6,7 @@
   * [analysis_service](#recipe_modules-analysis_service)
   * [autotest_status_parser](#recipe_modules-autotest_status_parser)
   * [breakpad](#recipe_modules-breakpad)
+  * [build_plan](#recipe_modules-build_plan)
   * [buildbucket_stats](#recipe_modules-buildbucket_stats)
   * [chrome](#recipe_modules-chrome)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
@@ -59,6 +60,11 @@
   * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
+  * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan)
+  * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
+  * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
+  * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
+  * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
   * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
@@ -268,6 +274,60 @@ Args:
 
 Returns:
   A list[Path] of symbolicated files written.
+### *recipe_modules* / [build\_plan](/recipe_modules/build_plan)
+
+[DEPS](/recipe_modules/build_plan/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to plan the builds to be launched.
+
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#17)(self, child_builders, enable_history, gerrit_changes, snapshot):**
+
+Return a three-tuple of builds, completed, existing, and needed.
+
+This will be split into specialized functions for cq, release, others.
+
+Args:
+  child_builders (list[string]): List of builder names of the child
+    builders.
+  enable_history (bool): Enables history lookup in the orchestrator.
+  gerrit_changes list(GerritChange): List of patches in the order that they
+    can be cherry-picked.
+  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+
+Returns:
+  A tuple of three lists:
+    A list of Build objects of successful builds with refreshed criticality.
+    A list of -snapshot builds we don't need to schedule and can join.
+    A list of ScheduleBuildRequests that have to be scheduled.
+
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#138)(self, cq_orch_children):**
+
+Get the list of previously passed child builds with criticality refreshed.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  cq_orch_children list(str): List of child builders of cq-orchestrator.
+      e.g. [u'arkham-cq', u'reef-cq', ...]
+
+Returns:
+  A list of build_pb2.Build objects corresponding to the
+  latest successful child builds with the same patches as the current
+  cq orchestrator with refreshed critical values.
+
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#180)(self, builds):**
+
+Takes a list of builds and dedups, choosing a best build, dropping others.
+
+See build_orderer for the sort order. This is most useful if you have
+multiple, identical, builds and you want to choose a single one from each
+builder type to carry forward.
+
+Args:
+  builds ([build_pb2.Build]): Builds to dedupe and sort.
+
+Returns: A list of build_pb2.Build objects, deduped and prioritized.
 ### *recipe_modules* / [buildbucket\_stats](/recipe_modules/buildbucket_stats)
 
 [DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -2892,6 +2952,31 @@ Renames a branch using `cros branch rename`.
 [DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/breakpad/examples/full.py#19)(api):**
+### *recipes* / [build\_plan:examples/bisect\_build\_plan](/recipe_modules/build_plan/examples/bisect_build_plan.py)
+
+[DEPS](/recipe_modules/build_plan/examples/bisect_build_plan.py#10): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/bisect_build_plan.py#18)(api):**
+### *recipes* / [build\_plan:examples/cq\_build\_plan](/recipe_modules/build_plan/examples/cq_build_plan.py)
+
+[DEPS](/recipe_modules/build_plan/examples/cq_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#20)(api):**
+### *recipes* / [build\_plan:examples/get\_completed\_builds](/recipe_modules/build_plan/examples/get_completed_builds.py)
+
+[DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#12): [build\_plan](#recipe_modules-build_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#19)(api):**
+### *recipes* / [build\_plan:examples/postsubmit\_build\_plan](/recipe_modules/build_plan/examples/postsubmit_build_plan.py)
+
+[DEPS](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#20)(api):**
+### *recipes* / [build\_plan:examples/prioritize\_builds](/recipe_modules/build_plan/examples/prioritize_builds.py)
+
+[DEPS](/recipe_modules/build_plan/examples/prioritize_builds.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#20)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [portage](#recipe_modules-portage), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3401,15 +3486,15 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/orchestrator.py#11): [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#57)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#275)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#272)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3426,28 +3511,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_build\_plan](/recipes/orchestrator.py#355)(api, child_builders, enable_history, gerrit_changes, snapshot):**
-
-Return a three-tuple of builds, completed, existing, and needed.
-
-This is planned to be replaced by a Go binary.
-
-Args:
-  api (RecipeApi): See RunSteps documentation.
-  child_builders (list[string]): List of builder names of the child
-    builders.
-  enable_history (bool): Enables history lookup in cq orchestrator.
-  gerrit_changes list(GerritChange): List of patches in the order that they
-    can be cherry-picked.
-  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
-
-Returns:
-  A tuple of three lists:
-    A list of Build objects of successful builds with refreshed criticality.
-    A list of -snapshot builds we don't need to schedule and can join.
-    A list of ScheduleBuildRequests that have to be scheduled.
-
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#259)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#256)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -3457,21 +3521,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [get\_completed\_builds](/recipes/orchestrator.py#475)(api, cq_orch_children):**
-
-Get the list of previously passed child builds with criticality refreshed.
-
-Args:
-  api (RecipeApi): See RunSteps documentation.
-  cq_orch_children list(str): List of child builders of cq-orchestrator.
-      e.g. [u'arkham-cq', u'reef-cq', ...]
-
-Returns:
-  A list of build_pb2.Build objects corresponding to the
-  latest successful child builds with the same patches as the current
-  cq orchestrator with refreshed critical values.
-
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#542)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#338)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3482,20 +3532,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [prioritize\_builds](/recipes/orchestrator.py#316)(api, builds):**
-
-Takes a list of builds and dedups, choosing a best build, dropping others.
-
-See build_orderer for the sort order. This is most useful if you have
-multiple, identical, builds and you want to choose a single one from each
-builder type to carry forward.
-
-Args:
-  builds ([build_pb2.Build]): Builds to dedupe and sort.
-
-Returns: A list of build_pb2.Build objects, deduped and prioritized.
-
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#210)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#207)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -3510,7 +3547,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#531)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#327)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3518,7 +3555,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#517)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#313)(refs):**
 
 Assert the given refs start with refs/heads.
 
