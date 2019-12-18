@@ -1342,6 +1342,9 @@
       "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\010chromeos\\032(2d72510e447ab60a9728aeea2362d8be2cbd7789\\\"\\021refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  path: \"some/source/dir\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
@@ -1392,7 +1395,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\u0015\u0012\u0013\u001a\u0011\n\u000fsome/source/dir2(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
+      "*\u0015\u0012\u0013\u001a\u0011\n\u000fsome/source/dir2(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0011\n\u000fsome/source/dir",
       "[CLEANUP]/pointless-build-_tmp_7/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1403,7 +1406,8 @@
       "@@@STEP_LOG_LINE@input.binaryproto@*\u0015\u0012\u0013\u001a\u0011@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u000fsome/source/dir2(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@b@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0011@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000fsome/source/dir@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },

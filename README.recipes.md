@@ -1004,7 +1004,7 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#184)(self, build_target, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#191)(self, build_target, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 

@@ -149,6 +149,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           manifest_commit=gitiles_commit.id,
           dep_graph=dep_graph,
       )
+
+      # Take the union of the relevant paths for the entire dependency graph
+      # and pass it as a flat list of paths.
+      for source_path in _flatten_depgraph_paths(dep_graph): # pragma: nocover
+        relevant_path = check_request.relevant_paths.add()
+        relevant_path.path = source_path
+
       for gc in gerrit_changes:
         new_gc = check_request.gerrit_changes.add()
         new_gc.serialized_proto = (
@@ -218,3 +225,21 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         self._pointless_build_checker_path = (
             cipd_dir.join('pointless_build_checker'))
         self._build_planner_path = (cipd_dir.join('build_plan_generator'))
+
+
+def _flatten_depgraph_paths(depgraph):
+  """Returns the union of relevant paths of all packages in the depgraph.
+
+  Args:
+    depgraph (chromite.api.DepGraph)
+
+  Returns:
+    Set[str]: The union of the 'dependency_source_paths' fields for all
+      packages in the depgraph.
+  """
+  paths = set()
+  if depgraph: # pragma: nocover
+    for package in depgraph.package_deps:
+      for source_path in package.dependency_source_paths:
+        paths.add(source_path.path)
+  return paths
