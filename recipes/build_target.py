@@ -147,9 +147,19 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     step.presentation.logs['sdk version'] = [str(response.version.version)]
     api.cros_sdk.link_chroot(api.cros_source.workspace_path)
 
+  with api.step.nest('detect toolchain change') as step:
+    toolchain_changed = api.cros_relevance.check_for_toolchain_change(
+        gerrit_changes, gitiles_commit, chroot=api.cros_sdk.chroot)
+    if toolchain_changed:
+      api.cros_sdk.mark_sdk_as_dirty()
+      step.presentation.step_text = ('change detected')
+    else:
+      step.presentation.step_text = ('no change')
+
   with api.step.nest('update sdk'):
     flags = UpdateSdkRequest.Flags(
-        build_source=build_config.build.compile_update_sdk)
+        build_source=build_config.build.compile_update_sdk,
+        toolchain_changed=toolchain_changed)
     api.cros_build_api.SdkService.Update(
         UpdateSdkRequest(chroot=api.cros_sdk.chroot,
                          toolchain_targets=[build_target],
@@ -162,16 +172,16 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     create_sysroot_response = api.cros_build_api.SysrootService.Create(
         SysrootCreateRequest(
             build_target=build_target, profile=profile,
-            chroot=api.cros_sdk.chroot,
-            flags=SysrootCreateRequest.Flags(chroot_current=True,
-                                             replace=True)))
+            chroot=api.cros_sdk.chroot, flags=SysrootCreateRequest.Flags(
+                chroot_current=True, replace=True,
+                toolchain_changed=toolchain_changed)))
     sysroot = create_sysroot_response.sysroot
 
   packages = get_packages(api, build_config)
   target_graph, sdk_graph = api.cros_relevance.get_dependency_graph(
       build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
-  if (not force_relevant_build and
+  if (not force_relevant_build and not toolchain_changed and
       relevance != PrepareForBuildResponse.NEEDED and
       api.cros_relevance.is_build_pointless(
           gerrit_changes,
@@ -192,7 +202,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   with api.step.nest('install toolchain') as install_tc_step:
     flags = InstallToolchainRequest.Flags(
-        compile_source=build_config.build.compile_toolchain)
+        compile_source=build_config.build.compile_toolchain,
+        toolchain_changed=toolchain_changed)
     response = api.cros_build_api.SysrootService.InstallToolchain(
         InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
                                 flags=flags))
@@ -200,7 +211,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   install_packages = build_config.build.install_packages
   if api.cros_infra_config.should_run(install_packages):
-    if api.chrome.builds_chrome_from_source(
+    if toolchain_changed or api.chrome.builds_chrome_from_source(
         build_target=build_target, chroot=api.cros_sdk.chroot,
         packages=packages, ignore_prebuilts=build_config.build.compile_source):
       chrome_root = api.path['start_dir'].join('chrome')
@@ -226,8 +237,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
             artifacts.input_artifacts, name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
           compile_source=build_config.build.compile_source,
-          use_goma=api.cros_sdk.has_goma_config())
-
+          use_goma=api.cros_sdk.has_goma_config(),
+          toolchain_changed=toolchain_changed)
       response = api.cros_build_api.SysrootService.InstallPackages(
           InstallPackagesRequest(sysroot=sysroot, flags=flags,
                                  packages=packages, chroot=api.cros_sdk.chroot,
@@ -361,7 +372,7 @@ def GenTests(api):
     build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
                                              builder=builder)
     build.input.gerrit_changes.extend(mock_CLs)
-    return api.buildbucket.build(build)
+    return api.buildbucket.build(build) + no_toolchain_change()
 
   def toolchain_build(builder='orderfile-generate-toolchain'):
     """Generate a test build proto."""
@@ -384,6 +395,22 @@ def GenTests(api):
     serialized = resp.SerializeToString()
     return api.step_data(
         'pointless build check.depgraph relevance check.read output file',
+        api.file.read_raw(content=serialized))
+
+  def no_toolchain_change():
+    resp = PointlessBuildCheckResponse()
+    resp.build_is_pointless.value = True
+    serialized = resp.SerializeToString()
+    return api.step_data(
+        'detect toolchain change.path relevancy check.read output file',
+        api.file.read_raw(content=serialized))
+
+  def force_toolchain_change():
+    resp = PointlessBuildCheckResponse()
+    resp.build_is_pointless.value = False
+    serialized = resp.SerializeToString()
+    return api.step_data(
+        'detect toolchain change.path relevancy check.read output file',
         api.file.read_raw(content=serialized))
 
   yield (api.test('basic') +  #
@@ -522,8 +549,13 @@ def GenTests(api):
   yield (api.test('pointless-build-check') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
+         no_toolchain_change() +  #
          make_build_pointless() +  #
          api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('toolchain-change-test') +  #
+         cq_build_with_gerrit_change() +  #
+         force_toolchain_change())
 
   yield (api.test('with-builder-config-limited-packages') +  #
          api.buildbucket.try_build(
@@ -554,5 +586,4 @@ def GenTests(api):
              'dependency graph calculation.call chromite.api.DependencyService/'
              'GetBuildDependencyGraph.write input file', retcode=1))
 
-  yield (api.test('builder-no-longer-exists') +  #
-         cq_build_with_gerrit_change('no-exist-builder'))
+  yield (api.test('builder-no-longer-exists'))

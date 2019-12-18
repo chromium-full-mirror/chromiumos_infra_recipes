@@ -1219,6 +1219,13 @@
   },
   {
     "cmd": [],
+    "name": "detect toolchain change",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no change@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "update sdk"
   },
   {

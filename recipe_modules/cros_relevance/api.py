@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
+from PB.chromite.api.depgraph import GetToolchainPathsRequest
 from PB.chromiumos.common import ProtoBytes as common_proto_bytes
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanRequest
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanResponse
@@ -216,6 +217,20 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         relevant_paths,
         name=(name or 'depgraph relevance check'),
     )
+
+  def check_for_toolchain_change(self, gerrit_changes, gitiles_commit, chroot):
+    # If there are no Gerrit changes, then the toolchain hasn't changed.
+    if not gerrit_changes:
+      return False
+
+    with self.m.step.nest('determine toolchain paths'):
+      toolchain_paths_response = \
+        self.m.cros_build_api.DependencyService.GetToolchainPaths(
+          GetToolchainPathsRequest(chroot=chroot))
+
+    return self._are_paths_affected(
+        gerrit_changes, gitiles_commit,
+        relevant_paths=(x.path for x in toolchain_paths_response.paths))
 
   def get_dependency_graph(self, build_target, chroot, packages=None):
     """Calculates the dependency graph for the build target & SDK

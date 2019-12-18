@@ -104,6 +104,7 @@
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
   * [cros_relevance:examples/pointless_builds](#recipes-cros_relevance_examples_pointless_builds)
+  * [cros_relevance:examples/toolchain_change](#recipes-cros_relevance_examples_toolchain_change)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_som:examples/full](#recipes-cros_som_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
@@ -1063,11 +1064,13 @@ Args:
 
 [DEPS](/recipe_modules/cros_relevance/__init__.py#1): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#220)(self, build_target, chroot, packages=None):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#221)(self, gerrit_changes, gitiles_commit, chroot):**
+
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#235)(self, build_target, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -1083,7 +1086,7 @@ Returns:
       graph for the target and the second element the graph for the
       SDK/chroot.
 
-&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#31)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=[]):**
+&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#32)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=[]):**
 
 Determines which builders must be run (and which can be skipped).
 
@@ -1104,11 +1107,11 @@ Args:
 Returns:
   list[str]: the names of the child builders that must be run.
 
-&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#26)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#27)(self):**
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#95)(self, gerrit_changes, gitiles_commit, dep_graph):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#96)(self, gerrit_changes, gitiles_commit, dep_graph):**
 
 Determines if build(s) can be terminated early.
 
@@ -1127,7 +1130,7 @@ Args:
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#191)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#192)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -3088,7 +3091,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#68)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#315)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#326)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3104,7 +3107,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#333)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#344)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3305,6 +3308,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#13): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#20)(api):**
+### *recipes* / [cros\_relevance:examples/toolchain\_change](/recipe_modules/cros_relevance/examples/toolchain_change.py)
+
+[DEPS](/recipe_modules/cros_relevance/examples/toolchain_change.py#9): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/toolchain_change.py#15)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]

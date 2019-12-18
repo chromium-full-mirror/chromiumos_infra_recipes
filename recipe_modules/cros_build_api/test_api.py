@@ -83,6 +83,12 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
           }],
         },
     )
+    responses['GetToolchainPaths'] = jsonify(
+        paths=[
+            {
+                'path': 'some/other/dir'
+            },
+        ],)
     return responses
 
   @property
