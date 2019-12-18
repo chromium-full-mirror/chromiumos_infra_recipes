@@ -128,7 +128,7 @@ def GenTests(api):
         version_file=('chromiumos/src/private-overlays/project-wilco-private/'
                       'chromeos-base/chromeos-dtc-vm/VERSION-PIN'),
         board='sludge',
-        destination_bucket='localmirror-private',
+        destination_bucket='chromeos-localmirror-private',
       ))
 
   yield (api.test('uprev-sludge') + api.properties(**properties) +

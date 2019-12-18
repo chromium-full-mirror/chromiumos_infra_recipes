@@ -106,14 +106,14 @@
       "----",
       "cp",
       "*.tbz",
-      "gs://localmirror-private/distfiles/sludge/1.2.3/"
+      "gs://chromeos-localmirror-private/distfiles/sludge/1.2.3/"
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "infra_step": true,
     "name": "copy images to localmirror.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/localmirror-private/distfiles/sludge/1.2.3/@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-localmirror-private/distfiles/sludge/1.2.3/@@@"
     ]
   },
   {
