@@ -11,19 +11,6 @@
     "name": "traffic split.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"second\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"config\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@      \"request\": {}@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"first\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"config\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@      \"request\": {}@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"second\": {@@@",
@@ -86,6 +73,28 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "traffic split.call binary.pre-execution debug data",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform scheduler-traffic-split -input_json /dev/stdin -output_json /dev/stdout -rip-cautotest@@@",
+      "@@@STEP_LOG_END@cmd@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"second\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"config\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@      \"request\": {}@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"first\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"config\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@      \"request\": {}@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

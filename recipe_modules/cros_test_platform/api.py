@@ -61,7 +61,15 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       ]
       if extra_args:
         cmd += extra_args
-      s.presentation.logs['request'] = [json_format.MessageToJson(request)]
+
+      # Pre-execution logging is in a nested step so that the step closes before
+      # the (possibly long) command execution.
+      # This ensures that debugging information is not lost due to outer task
+      # failure during the command execution (e.g., due to a timeout).
+      with self.m.step.nest('pre-execution debug data') as ds:
+        ds.presentation.logs['cmd'] = [' '.join([str(c) for c in cmd])]
+        ds.presentation.logs['request'] = [json_format.MessageToJson(request)]
+
       response = self.m.easy.stdout_jsonpb_step(
           subcommand,
           cmd,
