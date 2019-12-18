@@ -35,23 +35,19 @@ from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import BASE
-from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import PrepareForBuildResponse
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.image import CreateImageRequest
-from PB.chromite.api.image import Image
 from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
-from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sysroot import Profile
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
-from PB.chromite.api.test import ChromiteUnitTestRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
@@ -156,7 +152,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   try:
     api.easy.set_property_step('target_versions',
                                get_target_versions(api, build_target))
-  except:  # pragma: no cover
+  except:  # pragma: no cover # pylint: disable=bare-except
     # Failing on kernel buildtest builders, see https://crbug.com/1017583.
     pass
 
@@ -363,10 +359,10 @@ def GenTests(api):
 
   yield (api.test('prepare-for-build') + #
          toolchain_build() + #
-          api.step_data(
-              'prepare artifacts.call chromite.api.ToolchainService/'
-              'PrepareForBuild.read output file',
-              api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
+         api.step_data(
+             'prepare artifacts.call chromite.api.ToolchainService/'
+             'PrepareForBuild.read output file',
+             api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
 
   yield (api.test('with-findit-bisect') +  #
          cq_build_with_gerrit_change() +  #
@@ -462,8 +458,8 @@ def GenTests(api):
       api.buildbucket.ci_build(project='chromeos', bucket='cq',
                                builder='amd64-generic-cq') +  #
       api.step_data(
-          'update sdk.call chromite.api.SdkService/Update.call build API script',
-          retcode=1))
+          'update sdk.call chromite.api.SdkService/'
+          'Update.call build API script', retcode=1))
 
   yield (api.test('destroy-chroot-failed-step-tests') +  #
          api.buildbucket.ci_build(project='chromeos', bucket='cq',

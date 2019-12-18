@@ -69,7 +69,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       chroot (Chroot): The chroot to use.
       sysroot (Sysroot): The sysroot to use.
       path (Path): Path to write bundled artifacts to.
-      artifacts (list[ArtifactTypes]): Artifact types to bundle.
+      artifact_types (list[ArtifactTypes]): Artifact types to bundle.
 
     Returns:
       dict(artifact_name: list(artifact paths)).  Paths are relative to |path|.
@@ -89,16 +89,16 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         ]
     return files_by_artifact
 
-  def _prepare_unknown(self, chroot, sysroot, artifact_types):
+  def _prepare_unknown(self, _chroot, _sysroot, _artifact_types):
     """Prepare for Build.
 
     Use this prepare_for_build handler for any artifact type which has no
     prepare step.  It simply returns "UNKNOWN".
 
     Args:
-      chroot (Chroot): The chroot to use.
-      sysroot (Sysroot): The sysroot to use.
-      artifacts (list[ArtifactTypes]): Artifact types to bundle.
+      _chroot (Chroot): The chroot to use.
+      _sysroot (Sysroot): The sysroot to use.
+      _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
 
     Returns:
       (PrepareForBuildResponse.build_relevance) build relevance.
@@ -113,7 +113,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Args:
       chroot (Chroot): The chroot to use.
       sysroot (Sysroot): The sysroot to use.
-      artifacts (list[ArtifactTypes]): Artifact types to bundle.
+      artifact_types (list[ArtifactTypes]): Artifact types to bundle.
 
     Returns:
       (PrepareForBuildResponse) whether build is necessary.
@@ -128,8 +128,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       return PrepareForBuildResponse.NEEDED
     elif result == toolchain.PrepareForToolchainBuildResponse.UNKNOWN:
       return PrepareForBuildResponse.UNKNOWN
-    else:
-      return PrepareForBuildResponse.POINTLESS
+    return PrepareForBuildResponse.POINTLESS
 
   def _bundle_toolchain(self, chroot, sysroot, path, artifact_types):
     """Bundle toolchain artifacts.
@@ -140,7 +139,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       chroot (Chroot): The chroot to use.
       sysroot (Sysroot): The sysroot to use.
       path (Path): Path to write bundled artifacts to.
-      artifacts (list[ArtifactTypes]): Artifact types to bundle.
+      artifact_types (list[ArtifactTypes]): Artifact types to bundle.
 
     Returns:
       dict(artifact_name: list(artifact paths)).  Paths are relative to |path|.
@@ -177,12 +176,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ret[func_dict[art]].append(art)
     return ret
 
-  def _bundle_artifacts(self, artifact_types, target, path, sysroot, chroot):
+  def _bundle_artifacts(self, artifact_types, path, sysroot, chroot):
     """Defer to the build API to bundle the given artifact.
 
     Args:
       artifact_types (list[ArtifactTypes]): The artifacts to bundle.
-      target (BuildTarget): The build target to bundle artifacts for.
       path (Path): Path to output artifact bundles.
       sysroot (Sysroot): sysroot to use
       chroot (Chroot): chroot to use
@@ -221,8 +219,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     files_by_artifact = {}
     funcs_to_call = self._partition_artifacts(artifact_types, _BUNDLE_FUNCS)
     for func, types in funcs_to_call.items():
-      files_by_artifact.update(func(
-          chroot=chroot, sysroot=sysroot, path=path, artifact_types=types))
+      files_by_artifact.update(func(chroot, sysroot, path, types))
     return files_by_artifact
 
   def artifacts_gs_path(self, target, kind):
@@ -267,7 +264,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           Google Storage.
       publish_info (list[PublishInfo]): List of publishing information.
       upload_uri (string): gs path were the artifacts were uploaded.
-      files_by_artifact (dict(name: list(string))): artifact file dictionary.
+      files_by_artifact (dict{name: list[string]}): artifact file dictionary.
       name (str): The step name.  Defaults to 'publish artifacts'.
     """
     published = collections.defaultdict(list)
@@ -279,8 +276,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           if files:
             gs_path = self.artifacts_gs_path(target, kind)
             step.presentation.links['gs publish dir: %s' % artifact_name] = (
-              'https://console.cloud.google.com/storage/browser/%s/%s' %
-              (info.publish_gs_bucket, gs_path))
+                'https://console.cloud.google.com/storage/browser/%s/%s' %
+                (info.publish_gs_bucket, gs_path))
             publish_uri = 'gs://%s/%s' % (info.publish_gs_bucket, gs_path)
             cmd = ['cp'] + ['%s/%s' % (upload_uri, path) for path in files]
             cmd.append(publish_uri)
@@ -302,7 +299,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       self.m.easy.set_property_step(
           'published', published, step_name='publish artifact GS paths')
 
-  def upload_artifacts(self, target, kind, gs_bucket, artifacts,
+  def upload_artifacts(self, target, kind, gs_bucket, artifact_types,
                        chroot=None, sysroot=None,
                        publish_info=None, name=None):
     """Bundle and upload the given artifacts for the given build target.
@@ -318,7 +315,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           e.g. POSTSUBMIT. This affects where the artifacts are placed in
           Google Storage.
       gs_bucket (str): Google storage bucket to upload artifacts to.
-      artifacts (list[ArtifactTypes]): List of artifacts
+      artifact_types (list[ArtifactTypes]): List of artifacts
           to upload. See build config for options.
       sysroot (Sysroot): sysroot to use
       chroot (Chroot): chroot to use
@@ -329,12 +326,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
 
       files_by_artifact = self._bundle_artifacts(
-          artifacts, target, staging_root, sysroot, chroot)
+          artifact_types, staging_root, sysroot, chroot)
 
       gs_path = self.artifacts_gs_path(target, kind)
       step.presentation.links['gs upload dir'] = (
-        'https://console.cloud.google.com/storage/browser/%s/%s' %
-        (gs_bucket, gs_path))
+          'https://console.cloud.google.com/storage/browser/%s/%s' %
+          (gs_bucket, gs_path))
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
       for retries in range(3):
         try:
@@ -371,6 +368,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Args:
       build_payload (BuildPayload): Describes where the artifact is on GS.
       artifact (ArtifactType): The artifact to download.
+      name (string): step name.  Defaults to 'download |artifact_name|'.
 
     Returns:
       list[Path]: Paths to the files downloaded from GS.
@@ -397,12 +395,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         download_paths.append(download_path)
       return download_paths
 
-  def download_artifacts(self, build_payload, artifacts, name=None):
+  def download_artifacts(self, build_payload, artifact_types, name=None):
     """Download the given artifacts from the given build payload.
 
     Args:
       build_payload (BuildPayload): Describes where build artifacts are on GS.
-      artifacts (list[ArtifactTypes]): The artifact types to download.
+      artifact_types (list[ArtifactTypes]): The artifact types to download.
       name (str): The step name. Defaults to 'download artifacts'.
 
     Returns:
@@ -414,7 +412,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     with self.m.step.nest(name or 'download artifacts'):
       return {
           artifact: self.download_artifact(build_payload, artifact)
-          for artifact in artifacts
+          for artifact in artifact_types
       }
 
   def prepare_for_build(self, artifact_types, chroot, sysroot, name=None):
@@ -463,8 +461,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       funcs_to_call = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
       for func, types in funcs_to_call.items():
-        results.append(func(
-            chroot=chroot, sysroot=sysroot, artifact_types=types))
+        results.append(func(chroot, sysroot, types))
 
       # Return an aggregate response.
       if PrepareForBuildResponse.NEEDED in results:
@@ -473,6 +470,5 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       if PrepareForBuildResponse.UNKNOWN in results:
         step.presentation.text = "Build is UNKNOWN"
         return PrepareForBuildResponse.UNKNOWN
-      else:
-        step.presentation.text = "Build is POINTLESS"
-        return PrepareForBuildResponse.POINTLESS
+      step.presentation.text = "Build is POINTLESS"
+      return PrepareForBuildResponse.POINTLESS

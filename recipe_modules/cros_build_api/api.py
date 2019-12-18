@@ -6,7 +6,6 @@
 """API for working with the protobuf-based Build API."""
 
 import functools
-import json
 
 from google.protobuf import descriptor_pool
 from google.protobuf import json_format
