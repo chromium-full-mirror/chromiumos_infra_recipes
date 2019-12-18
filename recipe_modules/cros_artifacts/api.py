@@ -459,7 +459,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     }
 
     with self.m.step.nest(name or 'prepare artifacts') as step:
-      target = sysroot.build_target
       results = []
 
       funcs_to_call = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
