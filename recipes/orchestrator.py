@@ -61,27 +61,41 @@ def RunSteps(api, properties):
         api.buildbucket.build.builder.builder)
     step.presentation.logs['orchestrator config'] = [str(config)]
 
+    # There are 3 use cases here:
+    # 1. No gitiles_commit, no gerrit_changes.
+    #    This job was launched by luci-scheduler (or a user).
+    #    Use the gitiles_commit and gerrit_changes from the builder_config,
+    #    with a hardcoded fallback if that is not specified.
+    # 2. No gitiles_commit, with gerrit_changes:
+    #    This build was launched by luci-cq (or a user).
+    #    Use the configured gitiles_commit, and the buildbucket-specified
+    #    gerrit_changes.
+    # 3. Gitiles_commit, with or without gerrit_changes:
+    #    This build was launched by a user.
+    #    Use the given information.
+    snapshot = api.buildbucket.gitiles_commit
     gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
-    snapshot = api.buildbucket.gitiles_commit
+    # Case 3 bypasses this entire if block.
     if not snapshot.project:
-      with api.step.nest('fetch snapshot ref'):
-        # No gitiles_commit from buildbucket: use the default.
-        if config.orchestrator.gitiles_commit.project:
-          # If we are using the defauilt gitiles_commit, then also use the
-          # default CL list.  To override the default CL list, the user must
-          # specify a gitiles commit.  We need to convert from our copies of the
-          # buildbucket types.
-          def ConvertPB(inpb, typ):
-            """Convert |inpb| to |typ|."""
-            outpb = typ();
-            outpb.ParseFromString(inpb.SerializeToString());
-            return outpb
+      def ConvertPB(inpb, typ):
+        """Convert |inpb| to |typ|."""
+        outpb = typ();
+        outpb.ParseFromString(inpb.SerializeToString());
+        return outpb
 
-          snapshot = ConvertPB(config.orchestrator.gitiles_commit,
-                               common_pb2.GitilesCommit)
+      # Case 1 or 2.
+      with api.step.nest('fetch snapshot ref'):
+        # If we did not get a list of gerrit changes, use the default list.
+        if not gerrit_changes:
           gerrit_changes = [ConvertPB(x, common_pb2.GerritChange)
                             for x in config.orchestrator.gerrit_changes]
+
+        # No gitiles_commit from buildbucket: use the default.
+        if config.orchestrator.gitiles_commit.project:
+          # If the configuration specifies a default gitiles_commit, use that.
+          snapshot = ConvertPB(config.orchestrator.gitiles_commit,
+                               common_pb2.GitilesCommit)
         else:
           # No default was found in the builder config.  Use a fall-back,
           # hard-coded default.
@@ -380,16 +394,19 @@ def GenTests(api):
         builder='orderfile-generate-orchestrator')
     return api.buildbucket.build(build)
 
-  def toolchain_orchestrator_build_with_no_gitiles():
-    """Generate a test build proto with no gitiles commit project."""
+  def toolchain_orchestrator_build(gitiles=True, changes=False):
+    """Generate a test build proto for toolchain builders"""
     build = api.buildbucket.ci_build_message(project='chromeos',
                                              bucket='toolchain',
                                              builder='toolchain-orchestrator')
-    build.input.gitiles_commit.Clear()
+    if not gitiles:
+      build.input.gitiles_commit.Clear()
+    if changes:
+      build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return api.buildbucket.build(build)
 
   def cq_orchestrator_build_with_gerrit_change():
-    """Generate a test build proto with no gitiles commit project."""
+    """Generate a test build proto with gerrit changes."""
     build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
                                              builder='cq-orchestrator')
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
@@ -719,7 +736,27 @@ def GenTests(api):
           followon_resp1, 'run follow on orchestrator.buildbucket.schedule'))
 
   yield (api.test('missing_gitiles_commit_with_defaults') +  #
-         toolchain_orchestrator_build_with_no_gitiles() + #
+         toolchain_orchestrator_build(gitiles=False) + #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect') +  #
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests') +
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests') +
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'))
+
+  yield (api.test('missing_gitiles_commit_with_changes') +  #
+         toolchain_orchestrator_build(gitiles=False, changes=True) + #
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
