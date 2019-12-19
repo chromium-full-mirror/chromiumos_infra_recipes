@@ -32,12 +32,19 @@ def RunSteps(api):
   api.assertions.assertEqual(patch.subject, 'Change title')
   api.assertions.assertEqual(patch.short_host, 'chromium')
   api.assertions.assertEqual(patch.display_id, 'chromium:91827')
+  api.assertions.assertEqual(patch.patch_set, 1)
   api.assertions.assertEqual(patch.display_url,
                              'https://chromium-review.googlesource.com/91827')
   api.assertions.assertEqual(patch.created, '2017-01-30 13:11:20.000000000')
   api.assertions.assertEqual(patch.updated, '2017-02-01 13:11:20.000000000')
   api.assertions.assertEqual(patch.submitted, '2017-02-02 13:11:20.000000000')
   api.assertions.assertIn('my/fake/file', patch.file_infos)
+  api.assertions.assertEqual(
+      patch.to_gerrit_change_proto(),
+      GerritChange(host='chromium-review.googlesource.com',
+                   change=91827,
+                   project='chromium/src',
+                   patchset=1))
 
   # Missing FetchInfo.
   del patch._rev_info['fetch']

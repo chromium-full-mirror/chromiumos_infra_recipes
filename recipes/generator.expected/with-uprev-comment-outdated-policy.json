@@ -1202,8 +1202,8 @@
       "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:@@@",
       "@@@STEP_LOG_LINE@comment text@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
       "@@@STEP_LOG_LINE@comment text@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is FULL_RUN.@@@",
-      "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+2@@@",
+      "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DO_NOTHING.@@@",
+      "@@@STEP_LOG_LINE@comment text@Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).@@@",
       "@@@STEP_LOG_END@comment text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1@@@"
     ]
@@ -1232,7 +1232,7 @@
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "comment",
       "-a",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is FULL_RUN.\nTherefore, marking CL as CQ+2"
+      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
@@ -1247,67 +1247,14 @@
   },
   {
     "cmd": [],
-    "name": "update CL labels.set labels on CL 1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos/src/private-overlay",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "update CL labels.set labels on CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/private-overlay|src/[START_DIR]/chromiumos/src/private-overlay|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
-    "infra_step": true,
-    "name": "update CL labels.set labels on CL 1.git rebase",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
-    "infra_step": true,
-    "name": "update CL labels.set labels on CL 1.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "update CL labels.comment on CL 1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:@@@",
       "@@@STEP_LOG_LINE@comment text@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
       "@@@STEP_LOG_LINE@comment text@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is FULL_RUN.@@@",
-      "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+2@@@",
+      "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DO_NOTHING.@@@",
+      "@@@STEP_LOG_LINE@comment text@Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).@@@",
       "@@@STEP_LOG_END@comment text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1@@@"
     ]
@@ -1336,7 +1283,7 @@
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "comment",
       "-a",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is FULL_RUN.\nTherefore, marking CL as CQ+2"
+      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
@@ -1345,59 +1292,6 @@
       ]
     },
     "name": "update CL labels.comment on CL 1 (2).git_cl comment",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update CL labels.set labels on CL 1 (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos/src/overlay",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "update CL labels.set labels on CL 1 (2).repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/overlay|src/[START_DIR]/chromiumos/src/overlay|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
-    "infra_step": true,
-    "name": "update CL labels.set labels on CL 1 (2).git rebase",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
-    "infra_step": true,
-    "name": "update CL labels.set labels on CL 1 (2).git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1891,7 +1785,203 @@
   },
   {
     "cmd": [],
-    "name": "act on outdated CLs with policy: OUTDATED_DO_NOTHING"
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT"
+  },
+  {
+    "cmd": [],
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@PUpr has been set to remind you that it likely should be abandoned.@@@",
+      "@@@STEP_LOG_END@comment text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromium/src",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "comment",
+      "-a",
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827.git_cl comment",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@PUpr has been set to remind you that it likely should be abandoned.@@@",
+      "@@@STEP_LOG_END@comment text@@@",
+      "@@@STEP_LINK@link to change@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromium/src",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (2).repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "comment",
+      "-a",
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (2).git_cl comment",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@PUpr has been set to remind you that it likely should be abandoned.@@@",
+      "@@@STEP_LOG_END@comment text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromium/src",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (3).repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "comment",
+      "-a",
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (3).git_cl comment",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@PUpr has been set to remind you that it likely should be abandoned.@@@",
+      "@@@STEP_LOG_END@comment text@@@",
+      "@@@STEP_LINK@link to change@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromium/src",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (4).repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "comment",
+      "-a",
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (4).git_cl comment",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
   },
   {
     "cmd": [],

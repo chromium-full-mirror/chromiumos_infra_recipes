@@ -65,14 +65,19 @@ class PatchSet(object):
     return self._change_info['subject']
 
   @property
+  def change_id(self):
+    """Returns the int Change Number."""
+    return self._change_info['_number']
+
+  @property
   def display_id(self):
     """Returns a unique ID for this PatchSet for UI purposes."""
-    return '%s:%d' % (self.short_host, self._change_info['_number'])
+    return '%s:%d' % (self.short_host, self.change_id)
 
   @property
   def display_url(self):
     """Returns a URL where this PatchSet can be viewed."""
-    return 'https://%s/%d' % (self.host, self._change_info['_number'])
+    return 'https://%s/%d' % (self.host, self.change_id)
 
   @property
   def created(self):
@@ -83,6 +88,12 @@ class PatchSet(object):
   def updated(self):
     """Returns the date string with when PatchSet was last updated."""
     return self._change_info['updated']
+
+  @property
+  def patch_set(self):
+    """Returns the int patch set number for this PatchSet."""
+    # 'refs/changes/27/91827/4' -> 4
+    return int(self.git_fetch_ref.split('/')[-1])
 
   @property
   def submitted(self):
@@ -122,6 +133,11 @@ class PatchSet(object):
     See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#file-info
     """
     return self._rev_info.get('files')
+
+  def to_gerrit_change_proto(self):
+    """Returns a GerritChange proto constructed from this patchset."""
+    return GerritChange(host=self.host, change=self.change_id,
+                        project=self.project, patchset=self.patch_set)
 
 
 class Label(enum.Enum):

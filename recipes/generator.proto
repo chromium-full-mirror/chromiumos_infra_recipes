@@ -49,7 +49,7 @@ enum SendToCqPolicy {
 
 // Describes what to do when PUpr finds CLs that are still open but
 // behind a merged version of the same target.
-enum OutdatedClPolicy {
+enum OutdatedClsPolicy {
   // Policy was not specified
   OUTDATED_UNSPECIFIED = 0;
 
@@ -92,5 +92,5 @@ message GeneratorProperties {
   repeated scheduler.Trigger triggers = 8;
 
   // Policy to follow when for CLs that are still open but behind a merge.
-  OutdatedClPolicy outdated_cls_policy =  9;
+  OutdatedClsPolicy outdated_cls_policy =  9;
 }

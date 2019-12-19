@@ -26,6 +26,10 @@ from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import DO_NOTHING
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
+from PB.recipes.chromeos.generator import OutdatedClsPolicy
+from PB.recipes.chromeos.generator import OUTDATED_DO_NOTHING
+from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
+from PB.recipes.chromeos.generator import OUTDATED_ABANDON
 from PB.recipes.chromeos.generator import GeneratorProperties
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SendToCqPolicy
@@ -218,7 +222,8 @@ def RunSteps(api, properties):
 
     existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
     no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
-    outdated_cls_policy = properties.outdated_cls_policy or DO_NOTHING
+    outdated_cls_policy = properties.outdated_cls_policy or OUTDATED_DO_NOTHING
+    outdated_cls_policy_str = OutdatedClsPolicy.Name(outdated_cls_policy)
 
     send_to_cq_policy = (
         existing_cls_policy if open_changes else no_existing_cls_policy)
@@ -266,8 +271,9 @@ def RunSteps(api, properties):
           api.gerrit.set_change_labels(change, labels)
 
 
+    outdated_cls = []
+    mrm = None  # Most recently merged uprev.
     if open_changes:
-      # Even in the DO_NOTHING case, propose CLs that you _would_ abandon.
       with api.step.nest('examine outdated CLs'):
         for host in ('chromium', 'chrome-internal'):
           mrm = None  # Most recently merged CL.
@@ -289,18 +295,33 @@ def RunSteps(api, properties):
               list.sort(merged_ci,
                         key=lambda ci: ci.submitted,
                         reverse=True)
-              mrm = open_ci[0]
-
-              step.presentation.text = 'most recently merged cl: {}'.format(
-                  mrm.display_id)
+              mrm = merged_ci[0] if merged_ci else None
+              step.presentation.logs['most recent merged cl'] = [mrm.display_id]
           if mrm:
-            # TODO(engeg): Do not actually abandon yet, just show results.
-            with api.step.nest('testing: list outdated CLs') as step:
-              open_cls_older_than_mrm = [ci for ci in open_ci
-                                         if ci.created < mrm.submitted]
+            with api.step.nest('outdated CLs') as step:
+              outdated_cls.extend([ci for ci in open_ci
+                                   if ci.created < mrm.submitted])
               step.presentation.logs['outdated CLs'] = [
                   ci.display_id
-                  for ci in open_cls_older_than_mrm]
+                  for ci in outdated_cls]
+
+    if outdated_cls:
+      with api.step.nest('act on outdated CLs with policy: {}'.format(
+                             outdated_cls_policy_str)) as step:
+        for outdated_cl in outdated_cls:
+          if outdated_cls_policy == OUTDATED_LEAVE_COMMENT:
+            outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                       'PUpr has been set to remind you that it'
+                                       ' likely should be abandoned.').format(
+                                           mrm.display_url)
+            api.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
+                                          outdated_comment_message)
+          if outdated_cls_policy == OUTDATED_ABANDON:
+            outated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                       'PUpr has been set to abandon.').format(
+                                           mrm.display_url)
+            api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
+                                      message=message)
 
 
 def response_has_changes(api, response):
@@ -355,6 +376,18 @@ def GenTests(api):
 
   yield (api.test('with-uprev-abandon-policy') + api.properties(
       existing_cls_policy=ABANDON, **properties) +
+         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+
+  yield (api.test('with-uprev-abandon-outdated-policy') + api.properties(
+      outdated_cls_policy=OUTDATED_ABANDON, **properties) +
+         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+
+  yield (api.test('with-uprev-abandon-no-nothing-policy') + api.properties(
+      outdated_cls_policy=OUTDATED_DO_NOTHING, **properties) +
+         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+
+  yield (api.test('with-uprev-comment-outdated-policy') + api.properties(
+      outdated_cls_policy=OUTDATED_LEAVE_COMMENT, **properties) +
          api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
 
   yield api.test('no-package-info') + api.expect_exception('ValueError')

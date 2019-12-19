@@ -1412,7 +1412,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@merged CLs@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_END@merged CLs@@@"
+      "@@@STEP_LOG_END@merged CLs@@@",
+      "@@@STEP_LOG_LINE@most recent merged cl@chromium:91827@@@",
+      "@@@STEP_LOG_END@most recent merged cl@@@"
     ]
   },
   {
@@ -1660,7 +1662,7 @@
   },
   {
     "cmd": [],
-    "name": "examine outdated CLs.testing: list outdated CLs",
+    "name": "examine outdated CLs.outdated CLs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@outdated CLs@chromium:91827@@@",
@@ -1674,7 +1676,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@merged CLs@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_END@merged CLs@@@"
+      "@@@STEP_LOG_END@merged CLs@@@",
+      "@@@STEP_LOG_LINE@most recent merged cl@chrome-internal:91827@@@",
+      "@@@STEP_LOG_END@most recent merged cl@@@"
     ]
   },
   {
@@ -1875,13 +1879,19 @@
   },
   {
     "cmd": [],
-    "name": "examine outdated CLs.testing: list outdated CLs (2)",
+    "name": "examine outdated CLs.outdated CLs (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@outdated CLs@chromium:91827@@@",
       "@@@STEP_LOG_LINE@outdated CLs@chrome-internal:91827@@@",
+      "@@@STEP_LOG_LINE@outdated CLs@chromium:91827@@@",
+      "@@@STEP_LOG_LINE@outdated CLs@chrome-internal:91827@@@",
       "@@@STEP_LOG_END@outdated CLs@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "act on outdated CLs with policy: OUTDATED_DO_NOTHING"
   },
   {
     "cmd": [],
