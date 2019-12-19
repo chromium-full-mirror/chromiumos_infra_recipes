@@ -70,7 +70,7 @@ class GitTxnApi(recipe_api.RecipeApi):
           dest_ref = ref
           if automerge:
             # See https://gerrit-review.googlesource.com/Documentation/user-upload.html#auto_merge
-            dest_ref = 'refs/for/%s%%submit' % dest_ref
+            dest_ref = 'refs/for/%s%%notify=NONE,submit' % dest_ref
           dest_ref = 'HEAD:%s' % dest_ref
           self.m.git.push(remote, dest_ref, capture_stdout=True)
           return True

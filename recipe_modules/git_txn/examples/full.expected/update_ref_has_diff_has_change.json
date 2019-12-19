@@ -47,7 +47,7 @@
       "push",
       "--porcelain",
       "remote",
-      "HEAD:refs/for/refs/heads/ref%submit"
+      "HEAD:refs/for/refs/heads/ref%notify=NONE,submit"
     ],
     "infra_step": true,
     "name": "git transaction.git push",
