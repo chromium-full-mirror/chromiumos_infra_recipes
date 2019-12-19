@@ -1231,6 +1231,8 @@
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "comment",
+      "-i",
+      "1",
       "-a",
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is FULL_RUN.\nTherefore, marking CL as CQ+2"
     ],
@@ -1335,6 +1337,8 @@
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "comment",
+      "-i",
+      "1",
       "-a",
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is FULL_RUN.\nTherefore, marking CL as CQ+2"
     ],

@@ -1231,6 +1231,8 @@
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "comment",
+      "-i",
+      "1",
       "-a",
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
     ],
@@ -1282,6 +1284,8 @@
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "comment",
+      "-i",
+      "1",
       "-a",
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
     ],
@@ -1808,7 +1812,7 @@
       "--json_file",
       "/path/to/tmp/json",
       "--message",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to abandon."
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -1861,7 +1865,7 @@
       "--json_file",
       "/path/to/tmp/json",
       "--message",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to abandon."
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -1914,7 +1918,7 @@
       "--json_file",
       "/path/to/tmp/json",
       "--message",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to abandon."
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -1967,7 +1971,7 @@
       "--json_file",
       "/path/to/tmp/json",
       "--message",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to abandon."
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"

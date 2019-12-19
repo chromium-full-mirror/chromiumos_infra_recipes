@@ -31,6 +31,8 @@
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "comment",
+      "-i",
+      "123",
       "-a",
       "my comment"
     ],

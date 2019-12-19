@@ -35,6 +35,7 @@ class PatchSet(object):
     self.host = change['host']
     self._change_info = change['info']
     self._rev_info = change['revision_info']
+    self._patch_set = change['patch_set']
 
   @property
   def short_host(self):
@@ -92,8 +93,7 @@ class PatchSet(object):
   @property
   def patch_set(self):
     """Returns the int patch set number for this PatchSet."""
-    # 'refs/changes/27/91827/4' -> 4
-    return int(self.git_fetch_ref.split('/')[-1])
+    return self._patch_set
 
   @property
   def submitted(self):
@@ -426,7 +426,7 @@ class GerritApi(recipe_api.RecipeApi):
 
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
-        self.m.git_cl('comment', ['-a', comment])
+        self.m.git_cl('comment', ['-i', gerrit_change.change, '-a', comment])
 
   def get_change_description(self, gerrit_change):
     """Get the description of the given Gerrit change.

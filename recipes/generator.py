@@ -276,7 +276,6 @@ def RunSteps(api, properties):
     if open_changes:
       with api.step.nest('examine outdated CLs'):
         for host in ('chromium', 'chrome-internal'):
-          mrm = None  # Most recently merged CL.
           with api.step.nest('merged CLs from {} host (within 30 days)'
               .format(host)) as step:
             host_url = 'https://{}-review.googlesource.com'.format(host)
@@ -317,11 +316,11 @@ def RunSteps(api, properties):
             api.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
                                           outdated_comment_message)
           if outdated_cls_policy == OUTDATED_ABANDON:
-            outated_comment_message = ('This CL has been obviated by: {}\n\n'
+            outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                        'PUpr has been set to abandon.').format(
                                            mrm.display_url)
             api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
-                                      message=message)
+                                      message=outdated_comment_message)
 
 
 def response_has_changes(api, response):
