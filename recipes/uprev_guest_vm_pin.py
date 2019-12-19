@@ -72,6 +72,12 @@ def RunSteps(api, properties):
                           api.context.cwd.join('image'),
                           include_files=[_base_vm_name, _test_vm_name])
 
+      # version_num removes the R prefix and converts the '- to ebuild
+      # compatible '.'
+      # e.g. R80-1234.0.1 -> 80.1234.0.1
+      version_num = version[1:]
+      version_num = version_num.replace('-', '.')
+
       base_tar = (api.archive.package(api.context.cwd)
                   .with_dir(api.context.cwd.join(_base_vm_name))
                   .archive('archive base guest VM',
@@ -82,14 +88,14 @@ def RunSteps(api, properties):
                            api.context.cwd.join(_test_vm_name+'.tbz'), 'tbz'))
 
       dst_bucket =  properties.destination_bucket
-      dst_suburl = 'distfiles/{}/{}/'.format(properties.board, version)
+      dst_suburl = 'distfiles/{}/{}/'.format(properties.board, version_num)
       api.gsutil.upload("*.tbz", dst_bucket, dst_suburl)
 
   package = api.path.dirname(properties.version_file)
   version_path = api.cros_source.workspace_path.join(properties.version_file)
   with api.step.nest('try uprev version file') as step:
     api.file.write_raw(name='version file',
-                       dest=version_path, data=version)
+                       dest=version_path, data=version_num)
 
     if not api.git.diff_check(version_path):
       step.presentation.step_text = (
@@ -103,7 +109,7 @@ def RunSteps(api, properties):
     api.repo.start('uprev-guest-vm', projects=[project.name])
 
     message = '{}: updating version pin to latest - {}'.format(package,
-                                                                version)
+                                                                version_num)
     api.git.add([properties.version_file])
     api.git.commit(message)
 
@@ -133,7 +139,7 @@ def GenTests(api):
 
   yield (api.test('uprev-sludge') + api.properties(**properties) +
          api.step_data('copy images to localmirror.gsutil cat',
-          stdout=api.raw_io.output('1.2.3')) + api.git.diff_check(True))
+          stdout=api.raw_io.output('R80-1.2.3')) + api.git.diff_check(True))
 
   yield (api.test('no-version-file') + api.properties(**properties) +
          api.properties(versionFile='') + api.expect_exception('ValueError'))
@@ -147,4 +153,4 @@ def GenTests(api):
 
   yield (api.test('no-version-diff') + api.properties(**properties) +
          api.step_data('copy images to localmirror.gsutil cat',
-          stdout=api.raw_io.output('1.2.3')) + api.git.diff_check(False))
+          stdout=api.raw_io.output('R80-1.2.3')) + api.git.diff_check(False))

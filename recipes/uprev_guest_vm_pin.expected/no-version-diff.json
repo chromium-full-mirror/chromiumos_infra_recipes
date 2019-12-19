@@ -36,7 +36,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/sludge-postsubmit/1.2.3/image.zip",
+      "gs://chromeos-image-archive/sludge-postsubmit/R80-1.2.3/image.zip",
       "./"
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_1",
@@ -106,14 +106,14 @@
       "----",
       "cp",
       "*.tbz",
-      "gs://chromeos-localmirror-private/distfiles/sludge/1.2.3/"
+      "gs://chromeos-localmirror-private/distfiles/sludge/80.1.2.3/"
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "infra_step": true,
     "name": "copy images to localmirror.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-localmirror-private/distfiles/sludge/1.2.3/@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-localmirror-private/distfiles/sludge/80.1.2.3/@@@"
     ]
   },
   {
@@ -131,14 +131,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "1.2.3",
+      "80.1.2.3",
       "[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/VERSION-PIN"
     ],
     "infra_step": true,
     "name": "try uprev version file.version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@1.2.3@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@80.1.2.3@@@",
       "@@@STEP_LOG_END@VERSION-PIN@@@"
     ]
   },
