@@ -270,8 +270,6 @@ def RunSteps(api, properties):
         if labels is not None:
           api.gerrit.set_change_labels(change, labels)
 
-
-    outdated_cls = []
     mrm = None  # Most recently merged uprev.
     if open_changes:
       with api.step.nest('examine outdated CLs'):
@@ -290,19 +288,21 @@ def RunSteps(api, properties):
               # Must fetch to get submitted times from the "PatchSets", which
               # are really instances of ChangeInfo.
               merged_ci = api.gerrit.fetch_patch_sets(merged_changes)
-              open_ci = api.gerrit.fetch_patch_sets(open_changes)
               list.sort(merged_ci,
                         key=lambda ci: ci.submitted,
                         reverse=True)
               mrm = merged_ci[0] if merged_ci else None
               step.presentation.logs['most recent merged cl'] = [mrm.display_id]
-          if mrm:
-            with api.step.nest('outdated CLs') as step:
-              outdated_cls.extend([ci for ci in open_ci
-                                   if ci.created < mrm.submitted])
-              step.presentation.logs['outdated CLs'] = [
-                  ci.display_id
-                  for ci in outdated_cls]
+
+    outdated_cls = []
+    if mrm:
+      open_ci = api.gerrit.fetch_patch_sets(open_changes)
+      with api.step.nest('outdated CLs') as step:
+        outdated_cls.extend([ci for ci in open_ci
+                             if ci.created < mrm.submitted])
+        step.presentation.logs['outdated CLs'] = [
+            ci.display_id
+            for ci in outdated_cls]
 
     if outdated_cls:
       with api.step.nest('act on outdated CLs with policy: {}'.format(
