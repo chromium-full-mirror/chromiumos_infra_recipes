@@ -33,7 +33,7 @@ if [[ -z "${instance_id}" ]]; then
 fi
 
 if [[ "${prompt}" == "yes" ]]; then
-  read -p "Release version ${instance_id}? (Yy) " answer
+  read -p "Release version ${instance_id}? (y/N) " answer
 
   if [[ "${answer^^}" != "Y" ]]; then
     exit 0
