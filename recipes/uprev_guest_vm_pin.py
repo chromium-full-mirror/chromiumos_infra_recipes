@@ -91,16 +91,20 @@ def RunSteps(api, properties):
       dst_suburl = 'distfiles/{}/{}/'.format(properties.board, version_num)
       api.gsutil.upload("*.tbz", dst_bucket, dst_suburl)
 
-  package = api.path.dirname(properties.version_file)
+  api.cros_source.ensure_synced_cache()
   version_path = api.cros_source.workspace_path.join(properties.version_file)
-  with api.step.nest('try uprev version file') as step:
-    api.file.write_raw(name='version file',
-                       dest=version_path, data=version_num)
+  package_path = api.path.dirname(version_path)
+  package = os.path.basename(package_path)
+  with api.cros_source.checkout_overlays_context():
+    with api.step.nest('try uprev version file') as step:
+      api.file.write_raw(name='version file',
+                        dest=version_path, data=version_num)
 
-    if not api.git.diff_check(version_path):
-      step.presentation.step_text = (
-          'skipping uprev for {}. version file unchanged').format(package)
-      return
+      with api.context(cwd=api.path.abs_to_path(package_path)):
+        if not api.git.diff_check(version_path):
+          step.presentation.step_text = (
+              'skipping uprev for {}. version unchanged').format(package)
+          return
 
   project = None
   with api.step.nest('commit uprev'):
