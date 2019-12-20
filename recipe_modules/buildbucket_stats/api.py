@@ -10,10 +10,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 
 from recipe_engine import recipe_api
 
-STATUSES = {
-  common_pb2.SCHEDULED: 'SCHEDULED',
-  common_pb2.STARTED: 'STARTED'
-}
+STATUSES = [common_pb2.SCHEDULED, common_pb2.STARTED]
+
 
 class BuildbucketStatsApi(recipe_api.RecipeApi):
   """A module to get statistics from buildbucket."""
@@ -44,5 +42,7 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
       Map (str->int) of status to number of builds with that status in the
       bucket.
     """
-    return {STATUSES[status]:self.get_build_count(bucket, status)
-            for status in STATUSES}
+    return {
+        common_pb2.Status.Name(status): self.get_build_count(bucket, status)
+        for status in STATUSES
+    }

@@ -334,11 +334,11 @@ Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
 [DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to get statistics from buildbucket.
 
-&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#37)(self, bucket):**
+&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#35)(self, bucket):**
 
 Return the number of builds in the bucket and their statuses.
 
@@ -349,7 +349,7 @@ Returns:
   Map (str->int) of status to number of builds with that status in the
   bucket.
 
-&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#21)(self, bucket, status):**
+&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#19)(self, bucket, status):**
 
 Return the number of builds in the bucket with a specific status.
 
