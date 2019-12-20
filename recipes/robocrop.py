@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+# Copyright 2018 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Recipe for scaling bots in the Chrome OS pool."""
+
+from PB.recipes.chromeos.robocrop import RoboCropProperties
+
+DEPS = [
+    'recipe_engine/step',
+    'buildbucket_stats',
+    'easy',
+]
+
+PROPERTIES = RoboCropProperties
+
+def RunSteps(api, properties):
+  pools = properties.pools or ['cq', 'postsubmit']
+
+  with api.step.nest('monitor bot pools'):
+    status_map = {}
+    for pool in pools:
+      status_map[pool] = api.buildbucket_stats.get_bucket_status(pool)
+
+    # Save this data to output.properties.
+    api.easy.set_property_step('current_bot_data', status_map)
+
+
+def GenTests(api):
+  yield (api.test('basic'))

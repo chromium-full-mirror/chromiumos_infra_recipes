@@ -66,6 +66,7 @@
   * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
   * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
+  * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
   * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
   * [chrome:examples/full](#recipes-chrome_examples_full)
@@ -158,6 +159,7 @@
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [repo:examples/full](#recipes-repo_examples_full)
+  * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in the Chrome OS pool.
   * [sign_image](#recipes-sign_image) &mdash; Recipe for signing ChromeOS images.
   * [sign_paygen](#recipes-sign_paygen) &mdash; Recipe for signing ChromeOS payloads (AU deltas etc).
   * [signing](#recipes-signing) &mdash; Recipe for signing ChromeOS images.
@@ -332,11 +334,22 @@ Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
 [DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to get statistics from buildbucket.
 
-&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#16)(self, bucket, status):**
+&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#37)(self, bucket):**
+
+Return the number of builds in the bucket and their statuses.
+
+Args:
+  bucket (str): Buildbucket bucket.
+
+Returns:
+  Map (str->int) of status to number of builds with that status in the
+  bucket.
+
+&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#21)(self, bucket, status):**
 
 Return the number of builds in the bucket with a specific status.
 
@@ -3018,6 +3031,11 @@ Args:
 
 Returns:
   dict of target versions
+### *recipes* / [buildbucket\_stats:examples/get\_bucket\_status](/recipe_modules/buildbucket_stats/examples/get_bucket_status.py)
+
+[DEPS](/recipe_modules/buildbucket_stats/examples/get_bucket_status.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/examples/get_bucket_status.py#17)(api):**
 ### *recipes* / [buildbucket\_stats:examples/get\_build\_count](/recipe_modules/buildbucket_stats/examples/get_build_count.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_build_count.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -3604,6 +3622,13 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
+### *recipes* / [robocrop](/recipes/robocrop.py)
+
+[DEPS](/recipes/robocrop.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for scaling bots in the Chrome OS pool.
+
+&mdash; **def [RunSteps](/recipes/robocrop.py#18)(api, properties):**
 ### *recipes* / [sign\_image](/recipes/sign_image.py)
 
 [DEPS](/recipes/sign_image.py#29): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
