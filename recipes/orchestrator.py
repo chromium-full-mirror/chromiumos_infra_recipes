@@ -201,7 +201,7 @@ def RunSteps(api, properties):
                             snapshot)
 
   # Launch any specified follow on orchestrator.
-  if config.orchestrator.follow_on_orchestrator.name:
+  if not fatal_failures and config.orchestrator.follow_on_orchestrator.name:
     with api.step.nest('run follow on orchestrator') as step:
       completed_builds.extend(schedule_wait_follow_on(
           api, step, config, properties.enable_history, snapshot,
