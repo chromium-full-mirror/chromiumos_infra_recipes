@@ -2,6 +2,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+
+from PB.recipe_modules.chromeos.skylab_local_state.skylab_local_state import \
+  SkylabLocalStateProperties
+
 DEPS = [
     'recipe_engine/cipd',
     'recipe_engine/context',
@@ -9,3 +13,5 @@ DEPS = [
     'recipe_engine/step',
     'easy',
 ]
+
+PROPERTIES = SkylabLocalStateProperties

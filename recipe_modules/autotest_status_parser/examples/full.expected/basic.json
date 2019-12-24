@@ -28,7 +28,7 @@
       "-root",
       "[START_DIR]/cipd/autotest_status_parser",
       "-ensure-file",
-      "chromiumos/infra/autotest_status_parser/${platform} latest",
+      "chromiumos/infra/autotest_status_parser/${platform} some-cipd-label",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -40,7 +40,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-some-cipd-label-\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/autotest_status_parser/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",

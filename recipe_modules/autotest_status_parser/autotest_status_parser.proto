@@ -1,0 +1,17 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.autotest_status_parser;
+
+message AutotestStatusParserProperties {
+    // Version describes which cros_test_platform binary version to use.
+    message Version {
+        // Use the CIPD version with this label.
+        string cipd_label = 1;
+    }
+
+    Version version = 1;
+}

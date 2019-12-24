@@ -13,8 +13,12 @@ from PB.test_platform.skylab_test_runner.result import Result
 class AutotestStatusParserCommand(recipe_api.RecipeApi):
   """Module for issuing autotest_status_parser commands."""
 
-  def initialize(self):
-    self._version = 'latest'
+  def __init__(self, properties, **kwargs):
+    super(AutotestStatusParserCommand, self).__init__(**kwargs)
+    self._version = str(properties.version.cipd_label)
+    if not self._version: # pragma: no cover
+      raise ValueError('No version label provided for '
+          'autotest_status_parser CIPD package.')
 
   def parse(self, results_dir):
     """Extract test results from an results directory.

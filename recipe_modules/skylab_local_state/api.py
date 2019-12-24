@@ -14,9 +14,13 @@ from PB.test_platform.skylab_local_state.save import SaveRequest
 class SkylabLocalStateCommand(recipe_api.RecipeApi):
   """Module for issuing skylab_local_state commands"""
 
-  def initialize(self):
+  def __init__(self, properties, **kwargs):
+    super(SkylabLocalStateCommand, self).__init__(**kwargs)
     self._cmd = None
-    self._version = 'latest'
+    self._version = str(properties.version.cipd_label)
+    if not self._version: # pragma: no cover
+      raise ValueError('No version label provided for '
+          'skylab_local_state CIPD package.')
 
   def load(self, request):
     """Create a host info file via `load` command.

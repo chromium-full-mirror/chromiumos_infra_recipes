@@ -5,9 +5,12 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'skylab_local_state',
 ]
 
+from PB.recipe_modules.chromeos.skylab_local_state.skylab_local_state import \
+  SkylabLocalStateProperties
 from PB.test_platform.skylab_local_state.load import LoadRequest, LoadResponse
 from PB.test_platform.skylab_local_state.save import SaveRequest
 
@@ -26,4 +29,10 @@ def RunSteps(api):
   api.skylab_local_state.save(save_req)
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic') +  #
+         api.properties(
+             **{'$chromeos/skylab_local_state':
+                 SkylabLocalStateProperties(
+                     version=SkylabLocalStateProperties.Version(
+                         cipd_label='some-cipd-label',
+        ))}))

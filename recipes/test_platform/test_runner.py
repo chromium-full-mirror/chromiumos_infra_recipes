@@ -7,6 +7,12 @@
 
 import os
 
+from PB.recipe_modules.chromeos.phosphorus.phosphorus \
+  import PhosphorusProperties
+from PB.recipe_modules.chromeos.autotest_status_parser.autotest_status_parser \
+  import AutotestStatusParserProperties
+from PB.recipe_modules.chromeos.skylab_local_state.skylab_local_state import \
+  SkylabLocalStateProperties
 from PB.recipes.chromeos.test_platform.test_runner import \
   TestRunnerProperties, TestRunnerEnvProperties
 from PB.test_platform import phosphorus
@@ -291,8 +297,8 @@ def RunSteps(api, properties, envvars):
   validate_request(api, properties)
   dut_hostname = _get_dut_hostname(api, envvars)
   load_response = load_state(api, config=properties.config,
-                              dut_hostname=dut_hostname,
-                              run_id=envvars.SWARMING_TASK_ID)
+                             dut_hostname=dut_hostname,
+                             run_id=envvars.SWARMING_TASK_ID)
   phosphorus_config = _get_phosphorus_config(properties.config,
                                              load_response)
 
@@ -334,148 +340,126 @@ def RunSteps(api, properties, envvars):
 
 
 def GenTests(api):
+  # Required for initial module set up.
+  def _misc_properties():
+    return (
+        api.properties(
+            TestRunnerProperties(
+                config={
+                    'lab': {
+                        'admin_service': 'foo-service'},
+                    'harness': {
+                        'autotest_dir': '/path/to/autotest'}}),
+            **{
+                '$chromeos/autotest_status_parser':
+                    AutotestStatusParserProperties(
+                        version=AutotestStatusParserProperties.Version(
+                            cipd_label='asp_prod')),
+                '$chromeos/skylab_local_state':
+                    SkylabLocalStateProperties(
+                        version=SkylabLocalStateProperties.Version(
+                            cipd_label='sls_prod')),
+                '$chromeos/phosphorus':
+                    PhosphorusProperties(
+                        version=PhosphorusProperties.Version(
+                            cipd_label='phosphorus_prod'))}) + #
+        api.properties.environ(TestRunnerEnvProperties(
+            SWARMING_BOT_ID='crossk-dummy',
+            SWARMING_TASK_ID='dummy-task-id',
+            SKYLAB_DUT_ID='dummy-dut-id')))
+
+  # An example request.
+  def _request_properties():
+    return (
+        api.properties(
+            TestRunnerProperties(
+                request={
+                    'prejob': {
+                        'provisionable_labels': {
+                            'label1': 'value1'}},
+                    'test': {
+                        'autotest': {
+                            'name': 'dummy_name',
+                            'test_args': 'foo=bar',
+                            'keyvals': {
+                                'key1': 'value1',
+                            },
+                            'is_client_test': True,
+                            'display_name': 'fancy_name'}}})))
+
+  # Required for steps following `skylab_local_state load`.
+  def _mock_load_step():
+    return (
+      api.step_data(
+      'load local DUT state.call `skylab_local_state`.load',
+      stdout=api.raw_io.output(
+          json_format.MessageToJson(
+              skylab_local_state.load.LoadResponse(
+              results_dir='dummy-results-dir')))))
+
   yield (api.test('test_name_missing') + #
-         api.properties(TestRunnerProperties(request={'test': {}})) + #
+         _misc_properties() + #
          api.expect_exception('ValueError'))
 
-  yield (api.test('minimal_end-to-end') + #
-         api.properties(TestRunnerProperties(request={
-             'test': {'autotest': {'name': 'dummy_name'}}})) + #
-         api.properties.environ(TestRunnerEnvProperties(
-             SWARMING_BOT_ID='crossk-dummy',
-             # TODO(zamorzaev): add a detailed end-to-end test
-             # SWARMING_TASK_ID='dummy-task-id',
-             # SKYLAB_DUT_ID='dummy-dut-id'
-         )) + #
-         api.step_data(
-             'load local DUT state.call `skylab_local_state`.load',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     skylab_local_state.load.LoadResponse(
-                         results_dir='dummy-results-dir')
-         )))
-        )
+  yield (api.test('success') + #
+         _misc_properties() + #
+         _request_properties() + #
+         _mock_load_step())
 
   yield (api.test('prejob_crash') + #
-         api.properties(TestRunnerProperties(request={
-             'test': {'autotest': {'name': 'dummy_name'}}})) + #
-         api.properties.environ(TestRunnerEnvProperties(
-             SWARMING_BOT_ID='crossk-dummy',
-         )) + #
-         api.step_data(
-           'load local DUT state.call `skylab_local_state`.load',
-           stdout=api.raw_io.output(
-               json_format.MessageToJson(
-                   skylab_local_state.load.LoadResponse(
-                   results_dir='dummy-results-dir')
-         ))) + #
+         _misc_properties() + #
+         _request_properties() + #
+         _mock_load_step() + #
          api.step_data(
              'run prejob.call `phosphorus`.prejob',
-             retcode=1
-         )
-        )
+             retcode=1))
 
   yield (api.test('run_test_crash') + #
-         api.properties(TestRunnerProperties(request={
-             'test': {'autotest': {'name': 'dummy_name'},
-                      }})) + #
-         api.properties.environ(TestRunnerEnvProperties(
-             SWARMING_BOT_ID='crossk-dummy',
-         )) + #
-         api.step_data(
-           'load local DUT state.call `skylab_local_state`.load',
-           stdout=api.raw_io.output(
-               json_format.MessageToJson(
-                   skylab_local_state.load.LoadResponse(
-                   results_dir='dummy-results-dir')
-         ))) + #
+         _misc_properties() + #
+         _request_properties() + #
+         _mock_load_step() + #
          api.step_data(
              'run test.call `phosphorus`.run-test',
-             retcode=1
-         )
-        )
+             retcode=1))
 
   yield (api.test('upload_to_tko_crash') + #
-         api.properties(TestRunnerProperties(request={
-             'test': {'autotest': {'name': 'dummy_name'},
-                      }})) + #
-         api.properties.environ(TestRunnerEnvProperties(
-             SWARMING_BOT_ID='crossk-dummy',
-         )) + #
-         api.step_data(
-           'load local DUT state.call `skylab_local_state`.load',
-           stdout=api.raw_io.output(
-               json_format.MessageToJson(
-                   skylab_local_state.load.LoadResponse(
-                   results_dir='dummy-results-dir')
-         ))) + #
+         _misc_properties() + #
+         _request_properties() + #
+         _mock_load_step() + #
          api.step_data(
              'upload to TKO.call `phosphorus`.upload-to-tko',
-             retcode=1
-         )
-        )
+             retcode=1))
+
   yield (api.test('upload_to_gs') + #
+         _misc_properties() + #
          api.properties(TestRunnerProperties(request={
              'test': {'autotest': {'name': 'dummy_name'},
                       'offload': {'synchronous_gs_enable': True},
                       }})) + #
-         api.properties.environ(TestRunnerEnvProperties(
-             SWARMING_BOT_ID='crossk-dummy',
-         )) + #
-         api.step_data(
-           'load local DUT state.call `skylab_local_state`.load',
-           stdout=api.raw_io.output(
-               json_format.MessageToJson(
-                   skylab_local_state.load.LoadResponse(
-                   results_dir='dummy-results-dir')
-         )))
-        )
-
-
+         _mock_load_step())
 
   yield (api.test('get_results_crash') + #
-         api.properties(TestRunnerProperties(request={
-             'test': {'autotest': {'name': 'dummy_name'}}})) + #
-         api.properties.environ(TestRunnerEnvProperties(
-             SWARMING_BOT_ID='crossk-dummy',
-         )) + #
-         api.step_data(
-           'load local DUT state.call `skylab_local_state`.load',
-           stdout=api.raw_io.output(
-               json_format.MessageToJson(
-                   skylab_local_state.load.LoadResponse(
-                   results_dir='dummy-results-dir')
-         ))) + #
+         _misc_properties() + #
+         _request_properties() + #
+         _mock_load_step() + #
          api.step_data(
              'get test results.call `autotest_status_parser`.parse',
-             retcode=1
-         )
-        )
+             retcode=1))
 
   yield (api.test('results_summary') + #
-         api.properties(TestRunnerProperties(request={
-             'test': {'autotest': {'name': 'dummy_name'}}})) + #
-         api.properties.environ(TestRunnerEnvProperties(
-             SWARMING_BOT_ID='crossk-dummy',
-         )) + #
-         api.step_data(
-             'load local DUT state.call `skylab_local_state`.load',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     skylab_local_state.load.LoadResponse(
-                         results_dir='dummy-results-dir')
-         ))) + #
+         _misc_properties() + #
+         _request_properties() + #
+         _mock_load_step() + #
          api.step_data(
              'get test results.call `autotest_status_parser`.parse',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
                      Result(
                          prejob=Result.Prejob(
-                             step=[
-                                 Result.Prejob.Step(
-                                     name='failing_prejob_step',
-                                     human_readable_summary='failed prejob',
-                                     verdict=Result.Prejob.Step.VERDICT_FAIL
+                             step=[Result.Prejob.Step(
+                                 name='failing_prejob_step',
+                                 human_readable_summary='failed prejob',
+                                 verdict=Result.Prejob.Step.VERDICT_FAIL
                              )]
                          ),
                          autotest_result=Result.Autotest(
@@ -484,7 +468,4 @@ def GenTests(api):
                                  human_readable_summary='failing test case',
                                  verdict=Result.Autotest.TestCase.VERDICT_FAIL
                              )],
-                             incomplete=True
-                         ),
-         ))))
-        )
+                             incomplete=True))))))

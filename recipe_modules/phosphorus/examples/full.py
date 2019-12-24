@@ -5,9 +5,12 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'phosphorus',
 ]
 
+from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
+  PhosphorusProperties
 from PB.test_platform.phosphorus.prejob import PrejobRequest
 from PB.test_platform.phosphorus.runtest import RunTestRequest
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
@@ -36,4 +39,10 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic') +  #
+         api.properties(
+             **{'$chromeos/phosphorus':
+                 PhosphorusProperties(
+                     version=PhosphorusProperties.Version(
+                         cipd_label='some-cipd-label',
+        ))}))

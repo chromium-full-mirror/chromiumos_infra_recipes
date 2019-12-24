@@ -2,6 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.autotest_status_parser.autotest_status_parser \
+  import AutotestStatusParserProperties
+
 DEPS = [
     'recipe_engine/cipd',
     'recipe_engine/context',
@@ -9,3 +12,5 @@ DEPS = [
     'recipe_engine/step',
     'easy',
 ]
+
+PROPERTIES = AutotestStatusParserProperties

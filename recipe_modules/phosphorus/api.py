@@ -15,9 +15,13 @@ from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
 class PhosphorusCommand(recipe_api.RecipeApi):
   """Module for issuing Phosphorus commands"""
 
-  def initialize(self):
+  def __init__(self, properties, **kwargs):
+    super(PhosphorusCommand, self).__init__(**kwargs)
     self._cmd = None
-    self._version = 'latest'
+    self._version = str(properties.version.cipd_label)
+    if not self._version: # pragma: no cover
+      raise ValueError('No version label provided for '
+          'phosphorus CIPD package.')
 
   def _run(self, subcommand, request, request_type):
     """Generic subcommand runner for phosphorus.
