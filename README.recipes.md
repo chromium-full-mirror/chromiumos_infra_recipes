@@ -2999,11 +2999,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#95)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#101)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#67)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#276)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#282)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3019,7 +3019,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#294)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#300)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

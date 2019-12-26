@@ -71,7 +71,8 @@
       "@@@STEP_LOG_LINE@builder config@unit_tests {@@@",
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_END@builder config@@@"
+      "@@@STEP_LOG_END@builder config@@@",
+      "@@@STEP_LINK@orchestrator link@https://ci.chromium.org/b/parent_id@@@"
     ]
   },
   {

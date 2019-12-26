@@ -78,6 +78,12 @@ def RunSteps(api, properties):
       step.presentation.step_text = 'config not found, assuming deleted'
       return
     step.presentation.logs['builder config'] = [str(build_config)]
+    parent_tag = [x.value
+                  for x in api.buildbucket.build.tags
+                  if x.key == 'parent_buildbucket_id']
+    if parent_tag:
+      step.presentation.links['orchestrator link'] = (
+          'https://ci.chromium.org/b/%s' % parent_tag[0])
 
   api.cros_bisect.set_bisect_builder(build_target.name)
   api.cros_sdk.set_use_flags(build_config.build.use_flags)
@@ -327,7 +333,8 @@ def GenTests(api):
   def toolchain_build(builder='orderfile-generate-toolchain'):
     """Generate a test build proto."""
     build = api.buildbucket.ci_build_message(
-        project='chromeos', bucket='toolchain', builder=builder)
+        project='chromeos', bucket='toolchain', builder=builder,
+        tags=[{'key': 'parent_buildbucket_id', 'value': 'parent_id'}])
     return api.buildbucket.build(build)
 
   yield (api.test('basic') +  #
