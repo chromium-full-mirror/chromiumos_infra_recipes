@@ -466,7 +466,7 @@
       "/path/to/tmp/json",
       "copy",
       "80.1.2.3",
-      "[START_DIR]/chromiumos_workspace/chromiumos/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/VERSION-PIN"
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/VERSION-PIN"
     ],
     "infra_step": true,
     "name": "try uprev version file.version file",

@@ -106,36 +106,36 @@ def RunSteps(api, properties):
               'skipping uprev for {}. version unchanged').format(package)
           return
 
-  project = None
-  with api.step.nest('commit uprev'):
-    with api.context(cwd=api.path.abs_to_path(api.path.dirname(version_path))):
+    project = None
+    with api.step.nest('commit uprev'), \
+         api.context(cwd=api.path.abs_to_path(package_path)):
       project = api.repo.project_info(project=api.git.repository_root())
-    api.repo.start('uprev-guest-vm', projects=[project.name])
+      api.repo.start('uprev-guest-vm', projects=[project.name])
 
-    message = '{}: updating version pin to latest - {}'.format(package,
-                                                                version_num)
-    api.git.add([properties.version_file])
-    api.git.commit(message)
+      message = '{}: updating version pin to latest - {}'.format(package,
+                                                                 version_num)
+      api.git.add([version_path])
+      api.git.commit(message)
 
-  with api.step.nest('generate CL'):
-    change = api.gerrit.create_change(
-      project=project.name,
-      reviewers=["tbegin@google.com"],
-      topic=package
-    )
+    with api.step.nest('generate CL'):
+      change = api.gerrit.create_change(
+        project=project.name,
+        reviewers=["tbegin@google.com"],
+        topic=package
+      )
 
-    # TODO(tbegin): Change label to COMMIT_QUEUE: 2 after initial testing
-    labels = {
-      api.gerrit.Label.BOT_COMMIT: 1,
-      api.gerrit.Label.COMMIT_QUEUE: 1,
-    }
-    api.gerrit.set_change_labels(change, labels)
+      # TODO(tbegin): Change label to COMMIT_QUEUE: 2 after initial testing
+      labels = {
+        api.gerrit.Label.BOT_COMMIT: 1,
+        api.gerrit.Label.COMMIT_QUEUE: 1,
+      }
+      api.gerrit.set_change_labels(change, labels)
 
 
 def GenTests(api):
   properties = json_format.MessageToDict(
       UprevGuestVmPinProperties(
-        version_file=('chromiumos/src/private-overlays/project-wilco-private/'
+        version_file=('src/private-overlays/project-wilco-private/'
                       'chromeos-base/chromeos-dtc-vm/VERSION-PIN'),
         board='sludge',
         destination_bucket='chromeos-localmirror-private',
