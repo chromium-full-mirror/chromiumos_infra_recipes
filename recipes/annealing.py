@@ -140,7 +140,8 @@ def RunSteps(api, properties):
             # broken, and length isn't the right thing to check.
             # assert len(projects) == 1, 'expected 1 project, got: %r' % projects
             project = projects[0]
-            push(project.remote, 'HEAD:refs/for/' + project.branch + '%submit',
+            push(project.remote,
+                 'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
                  dry_run=not properties.publish_uprevs)
 
     if properties.child_builders:

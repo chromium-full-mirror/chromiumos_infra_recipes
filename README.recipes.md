@@ -2897,7 +2897,7 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#55)(api, properties):**
 
-&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#158)(api, manifest_diffs):**
+&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#159)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 
@@ -2908,11 +2908,11 @@ Args:
 Returns:
   list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#192)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#193)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#202)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#203)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 

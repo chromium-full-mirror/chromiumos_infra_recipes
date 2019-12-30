@@ -65,7 +65,7 @@ def RunSteps(api):
             with api.context(cwd=api.path.abs_to_path(overlay_dir)):
               project = api.repo.project_infos(projects=[overlay_dir])[0]
               push(project.remote,
-                   'HEAD:refs/for/' + project.branch + '%submit')
+                   'HEAD:refs/for/' + project.branch + '%notify=NONE,submit')
 
 
 def GenTests(api):

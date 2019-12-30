@@ -950,7 +950,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/refs/heads/master%submit"
+      "HEAD:refs/for/refs/heads/master%notify=NONE,submit"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
     "infra_step": true,
