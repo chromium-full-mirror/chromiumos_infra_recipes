@@ -180,7 +180,8 @@ def RunSteps(api, properties):
                 flags=flags,
                 chroot=api.cros_sdk.chroot,
                 packages=packages,
-                use_flags=use_flags),
+                use_flags=use_flags,
+                goma_config=api.cros_sdk.goma_config()),
             name='install packages').failed_packages
         api.failures.raise_failed_packages(failed_packages)
 

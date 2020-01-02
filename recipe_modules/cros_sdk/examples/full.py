@@ -19,6 +19,8 @@ def RunSteps(api):
     api.assertions.assertTrue(
         api.cros_sdk.chroot.path.endswith('test/cros_chroot'))
 
+    api.assertions.assertIsNone(api.cros_sdk.goma_config())
+
     api.cros_sdk.build_chmod_chroot()
     api.cros_sdk.set_chrome_root('/chrome_dir')
     api.cros_sdk.set_goma_config('/goma_dir', '/creds/goma.json',
@@ -28,10 +30,15 @@ def RunSteps(api):
     chroot = api.cros_sdk.chroot
     api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
     api.assertions.assertTrue(api.cros_sdk.has_goma_config())
-    api.assertions.assertEqual(chroot.goma.goma_dir, '/goma_dir')
-    api.assertions.assertEqual(chroot.goma.goma_client_json, '/creds/goma.json')
+    # Specifying the GomaConfig no longer travels in the Chroot message,
+    # it has been moved to InstallPackagesRequest.
+    api.assertions.assertFalse(chroot.HasField('goma'))
     api.assertions.assertItemsEqual(chroot.env.use_flags,
                                     [common.UseFlag(flag='goma')])
+
+    goma = api.cros_sdk.goma_config()
+    api.assertions.assertEqual(goma.goma_dir, '/goma_dir')
+    api.assertions.assertEqual(goma.goma_client_json, '/creds/goma.json')
 
     api.cros_sdk('get cros_sdk help', ['--help'])
     api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},

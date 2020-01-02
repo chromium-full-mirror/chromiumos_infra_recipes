@@ -50,18 +50,10 @@ class CrosSdkApi(recipe_api.RecipeApi):
       env = common.Chroot.ChrootEnv(
           use_flags=self._use_flags
       )
-    goma_config = None
-    if self.has_goma_config():
-      goma_config = common.GomaConfig(
-          goma_dir=str(self._goma_dir),
-          goma_client_json=str(self._goma_client_json),
-          goma_approach=self._goma_approach,
-      )
     return common.Chroot(
         path=str(self._chroot_path),
         chrome_dir=self._chrome_root,
         env=env,
-        goma=goma_config,
     )
 
   def set_chrome_root(self, chrome_root):
@@ -74,6 +66,16 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
   def has_goma_config(self):
     return bool(self._goma_dir and self._goma_client_json)
+
+  def goma_config(self):
+    if not self.has_goma_config():
+      return None
+
+    return common.GomaConfig(
+        goma_dir=str(self._goma_dir),
+        goma_client_json=str(self._goma_client_json),
+        goma_approach=self._goma_approach,
+    )
 
   def set_use_flags(self, use_flags):
     self._use_flags = use_flags

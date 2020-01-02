@@ -205,7 +205,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       response = api.cros_build_api.SysrootService.InstallPackages(
           InstallPackagesRequest(sysroot=sysroot, flags=flags,
                                  packages=packages, chroot=api.cros_sdk.chroot,
-                                 use_flags=build_config.build.use_flags))
+                                 use_flags=build_config.build.use_flags,
+                                 goma_config=api.cros_sdk.goma_config()))
       api.cros_bisect.set_compile_failures(response.failed_packages)
       api.failures.raise_failed_packages(response.failed_packages)
     if api.cros_infra_config.should_exit(install_packages):
