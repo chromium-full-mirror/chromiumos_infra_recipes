@@ -419,20 +419,73 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
-                    "name": "orderfile-generate-toolchain",
+                    "name": "atlas-llvm-next",
                     "branch": "master",
                     "type": "TOOLCHAIN"
                   },
                   "general": {
-                    "critical": false,
+                    "critical": true,
+                    "environment": "PRODUCTION",
                     "runWhen": {
                       "mode": "ALWAYS_RUN"
                     }
                   },
                   "artifacts": {
                     "prebuilts": "NONE",
+                    "artifactsGsBucket": "chromeos-image-archive"
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "useFlags": [
+                      {"flag": "chrome_internal"},
+                      {"flag": "-cros-debug"},
+                      {"flag": "strict_toolchain_checks"},
+                      {"flag": "llvm-next"},
+                      {"flag": "thinlto"}
+                    ],
+                    "imageTypes": [
+                      "TEST",
+                      "BASE"
+                    ],
+                    "installPackages": "RUN",
+                    "compileToolchain": true,
+                    "applyGerritChanges": true,
+                    "compileSource": true,
+                    "compileUpdateSdk": true
+                  },
+                  "unitTests": {
+                    "ebuildsRunSpec": "RUN"
+                  }
+                },
+                {
+                  "id": {
+                    "name": "orderfile-generate-toolchain",
+                    "branch": "master",
+                    "type": "TOOLCHAIN"
+                  },
+                  "general": {
+                    "critical": false,
+                    "environment": "PRODUCTION",
+                    "runWhen": {
+                      "mode": "ALWAYS_RUN"
+                    }
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE",
+                    "artifactsGsBucket": "chromeos-image-archive",
                     "artifactTypes": [
                       "UNVERIFIED_ORDERING_FILE"
+                    ],
+                    "publishArtifacts": [
+                      {
+                        "publishGsBucket":
+                          "chromeos-toolchain-artifacts/orderfile/unvetted",
+                        "publishTypes": [
+                          "UNVERIFIED_ORDERING_FILE"
+                        ]
+                      }
                     ]
                   },
                   "chrome": {
@@ -448,12 +501,11 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       {"flag": "-strict_toolchain_checks"}
                     ],
                     "installPackages": "RUN",
-                          "compileToolchain": true,
-                          "applyGerritChanges": true,
-                          "compileSource": true
+                    "applyGerritChanges": true,
+                    "compileSource": true
                   },
                   "unitTests": {
-                          "ebuildsRunSpec": "RUN"
+                    "ebuildsRunSpec": "RUN"
                   }
                 },
                 {

@@ -125,7 +125,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   with api.step.nest('update sdk'):
     flags = UpdateSdkRequest.Flags(
-        build_source=build_config.build.compile_toolchain)
+        build_source=build_config.build.compile_update_sdk)
     api.cros_build_api.SdkService.Update(
         UpdateSdkRequest(chroot=api.cros_sdk.chroot,
                          toolchain_targets=[build_target],
@@ -371,6 +371,9 @@ def GenTests(api):
              'prepare artifacts.call chromite.api.ToolchainService/'
              'PrepareForBuild.read output file',
              api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
+
+  yield (api.test('compile-update-sdk') + #
+         toolchain_build(builder='atlas-llvm-next'))
 
   yield (api.test('with-findit-bisect') +  #
          cq_build_with_gerrit_change() +  #
