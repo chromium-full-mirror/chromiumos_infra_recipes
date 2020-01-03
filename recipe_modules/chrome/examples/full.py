@@ -36,6 +36,8 @@ def RunSteps(api):
   api.chrome.builds_chrome_from_source(
       build_target, chroot,
       [PackageInfo(package_name='pack', category='cat', version='1.01')])
+  api.chrome.builds_chrome_from_source(
+      build_target, chroot, ignore_prebuilts=True)
 
 
 def GenTests(api):

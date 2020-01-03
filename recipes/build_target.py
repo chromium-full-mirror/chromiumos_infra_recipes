@@ -166,9 +166,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   install_packages = build_config.build.install_packages
   if api.cros_infra_config.should_run(install_packages):
-    if api.chrome.builds_chrome_from_source(build_target=build_target,
-                                            chroot=api.cros_sdk.chroot,
-                                            packages=packages):
+    if api.chrome.builds_chrome_from_source(
+        build_target=build_target, chroot=api.cros_sdk.chroot,
+        packages=packages, ignore_prebuilts=build_config.build.compile_source):
       chrome_root = api.path['start_dir'].join('chrome')
       api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
                       build_config.chrome.internal)

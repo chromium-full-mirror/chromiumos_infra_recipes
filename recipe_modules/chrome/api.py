@@ -100,8 +100,8 @@ class ChromeApi(recipe_api.RecipeApi):
                         infra_step=True)
 
   def builds_chrome_from_source(self, build_target, chroot, packages=None,
-                                internal=False):
-    """Returns whether this run should build chrome from source.
+                                internal=False, ignore_prebuilts=False):
+    """Returns whether this run should build Chrome from source.
 
     Args:
       build_target (chromiumos.BuildTarget): Build target of the build.
@@ -109,12 +109,17 @@ class ChromeApi(recipe_api.RecipeApi):
       packages (list[chromiumos.PackageInfo]): Packages that the builder needs
           to build, or empty / None for default packages.
       internal (bool): Check for the internal version of chrome.
+      ignore_prebuilts (bool): Whether to ignore prebuilts.  Setting this to
+          true will cause Chrome to be built from source, rather than use a
+          prebuilt.
 
     Returns:
-      bool: Whether or not this run needs to build chrome from source.
+      bool: Whether or not this run needs to build Chrome from source.
     """
     if not self.needs_chrome(build_target, chroot, packages):
       return False
+    if ignore_prebuilts:
+      return True
     return not self.m.cros_build_api.PackageService.HasChromePrebuilt(
         HasChromePrebuiltRequest(build_target=build_target, chroot=chroot,
                                  chrome=internal)).has_prebuilt
