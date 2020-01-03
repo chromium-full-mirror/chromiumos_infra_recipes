@@ -196,7 +196,8 @@ def RunSteps(api, properties):
             test_harness=properties.test_harness, vm_tests=[
                 VmTestRequest.VmTest(pattern=exp)
                 for exp in properties.expressions
-            ]), name='run %s vm tests' % test_harness_name.lower())
+            ]), name='run %s vm tests' % test_harness_name.lower(),
+        timeout=90 * 60)
 
 
 def GenTests(api):

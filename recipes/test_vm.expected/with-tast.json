@@ -1231,6 +1231,7 @@
       ]
     },
     "name": "run tast vm tests.call build API script",
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
