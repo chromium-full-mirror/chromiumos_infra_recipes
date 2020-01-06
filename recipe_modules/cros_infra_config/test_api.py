@@ -510,6 +510,63 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "orderfile-verify-toolchain",
+                    "branch": "master",
+                    "type": "TOOLCHAIN"
+                  },
+                  "general": {
+                    "critical": false,
+                    "environment": "PRODUCTION",
+                    "runWhen": {
+                      "mode": "ALWAYS_RUN"
+                    }
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE",
+                    "artifactsGsBucket": "chromeos-image-archive",
+                    "artifactTypes": [
+                      "VERIFIED_ORDERING_FILE"
+                    ],
+                    "publishArtifacts": [
+                      {
+                        "publishGsBucket":
+                          "chromeos-toolchain-artifacts/orderfile/vetted",
+                        "publishTypes": [
+                          "VERIFIED_ORDERING_FILE"
+                        ]
+                      }
+                    ],
+                    "inputArtifacts": [
+                      {
+                        "inputArtifactType": "UNVERIFIED_ORDERING_FILE",
+                        "inputArtifactGsLocations": [
+                          "chromeos-toolchain-artifacts/orderfile/unvetted"
+                        ]
+                      }
+                    ]
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "useFlags": [
+                      {"flag": "chrome_internal"},
+                      {"flag": "-cros-debug"},
+                      {"flag": "strict_toolchain_checks"},
+                      {"flag": "-orderfile_use"},
+                      {"flag": "orderfile_verify"},
+                      {"flag": "-strict_toolchain_checks"}
+                    ],
+                    "installPackages": "RUN",
+                    "applyGerritChanges": true,
+                    "compileSource": true
+                  },
+                  "unitTests": {
+                    "ebuildsRunSpec": "RUN"
+                  }
+                },
+                {
+                  "id": {
                     "name": "postsubmit-orchestrator",
                     "branch": "master",
                     "type": "POSTSUBMIT"

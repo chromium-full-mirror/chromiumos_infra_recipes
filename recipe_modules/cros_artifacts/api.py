@@ -89,7 +89,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         ]
     return files_by_artifact
 
-  def _prepare_unknown(self, _chroot, _sysroot, _artifact_types):
+  def _prepare_unknown(
+      self, _chroot, _sysroot, _artifact_types, _input_artifacts):
     """Prepare for Build.
 
     Use this prepare_for_build handler for any artifact type which has no
@@ -99,13 +100,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       _chroot (Chroot): The chroot to use.
       _sysroot (Sysroot): The sysroot to use.
       _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
+      _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
 
     Returns:
       (PrepareForBuildResponse.build_relevance) build relevance.
     """
     return PrepareForBuildResponse.UNKNOWN
 
-  def _prepare_toolchain(self, chroot, sysroot, artifact_types):
+  def _prepare_toolchain(
+      self, chroot, sysroot, artifact_types, input_artifacts):
     """Prepare for Build.
 
     Call ToolchainService.PrepareForBuild to prepare for the build.
@@ -114,12 +117,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       chroot (Chroot): The chroot to use.
       sysroot (Sysroot): The sysroot to use.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
+      input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
 
     Returns:
       (PrepareForBuildResponse) whether build is necessary.
     """
     req = toolchain.PrepareForToolchainBuildRequest(
-        chroot=chroot, sysroot=sysroot, artifact_types=artifact_types)
+        chroot=chroot, sysroot=sysroot, artifact_types=artifact_types,
+        input_artifacts=input_artifacts)
     resp = self.m.cros_build_api.ToolchainService.PrepareForBuild(
         req, infra_step=True)
     result = resp.build_relevance
@@ -415,7 +420,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           for artifact in artifact_types
       }
 
-  def prepare_for_build(self, artifact_types, chroot, sysroot, name=None):
+  def prepare_for_build(
+      self, artifact_types, chroot, sysroot, input_artifacts, name=None):
     """Prepare the build for the given artifacts.
 
     This function calls the Build API to have it prepare to build artifacts of
@@ -426,6 +432,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           to prepare. See build config for options.
       chroot (Chroot): chroot to use
       sysroot (Sysroot): sysroot to use
+      input_artifacts (list[InputArtifactInfo]): where to seek input artifacts.
       name (str): The step name. Defaults to 'prepare artifacts'.
 
     Returns:
@@ -461,7 +468,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       funcs_to_call = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
       for func, types in funcs_to_call.items():
-        results.append(func(chroot, sysroot, types))
+        results.append(func(chroot, sysroot, types, input_artifacts))
 
       # Return an aggregate response.
       if PrepareForBuildResponse.NEEDED in results:

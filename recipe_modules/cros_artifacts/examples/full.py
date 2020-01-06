@@ -24,6 +24,12 @@ def RunSteps(api):
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
+      input_artifacts=[BuilderConfig.Artifacts.InputArtifactInfo(
+          input_artifact_type=BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE,
+          input_artifact_gs_locations=[
+              "chromeos-toolchain-artifacts/orderfile/unvetted"
+          ]),
+      ],
   )
 
   # An artifact with no prepare service.
@@ -32,6 +38,7 @@ def RunSteps(api):
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
+      input_artifacts=[],
   )
 
   api.cros_artifacts.upload_artifacts(

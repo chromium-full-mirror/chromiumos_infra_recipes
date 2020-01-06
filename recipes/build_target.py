@@ -188,7 +188,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     artifact_types = artifacts.artifact_types
     if artifact_types:
       relevance = api.cros_artifacts.prepare_for_build(
-          artifact_types, api.cros_sdk.chroot, sysroot)
+          artifact_types, api.cros_sdk.chroot, sysroot,
+          artifacts.input_artifacts)
       # If the build is POINTLESS, then we are done.  This can only happen if
       # all of the artifact_types for this build are handled by some
       # PrepareForBuild endpoint, and indicate that the build is pointless.
@@ -371,6 +372,13 @@ def GenTests(api):
              'prepare artifacts.call chromite.api.ToolchainService/'
              'PrepareForBuild.read output file',
              api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
+
+  yield (api.test('prepare-for-build-verify') + #
+         toolchain_build(builder='orderfile-verify-toolchain') + #
+         api.step_data(
+             'prepare artifacts.call chromite.api.ToolchainService/'
+             'PrepareForBuild.read output file',
+             api.file.read_raw(content='{"build_relevance": "NEEDED"}')))
 
   yield (api.test('compile-update-sdk') + #
          toolchain_build(builder='atlas-llvm-next'))
