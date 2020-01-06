@@ -338,7 +338,7 @@ Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
 A module to get statistics from buildbucket.
 
-&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#35)(self, bucket):**
+&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#36)(self, bucket):**
 
 Return the number of builds in the bucket and their statuses.
 

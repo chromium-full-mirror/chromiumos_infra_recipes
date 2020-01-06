@@ -30,7 +30,8 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         project=self.m.buildbucket.build.builder.project, bucket=bucket)
     build_predicate = rpc_pb2.BuildPredicate(builder=builder, status=status)
     # Use a very small fields set to reduce the load on Buildbucket.
-    return len(self.m.buildbucket.search(build_predicate, fields=('id',)))
+    return len(
+        self.m.buildbucket.search(build_predicate, fields=('id',), limit=10000))
 
   def get_bucket_status(self, bucket):
     """Return the number of builds in the bucket and their statuses.
