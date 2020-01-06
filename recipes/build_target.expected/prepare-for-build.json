@@ -2632,7 +2632,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"artifactTypes\": [\n    \"UNVERIFIED_ORDERING_FILE\"\n  ]\n}",
-      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2683,9 +2683,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
       "chromite.api.ToolchainService/PrepareForBuild"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2708,7 +2708,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

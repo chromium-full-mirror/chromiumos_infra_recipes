@@ -162,9 +162,13 @@ def RunSteps(api, properties):
           api.chrome.sync(chrome_root, api.cros_sdk.chroot,
                           properties.build_target, chrome_internal)
           api.cros_sdk.set_chrome_root(str(chrome_root))
-          api.cros_sdk.set_goma_config(str(api.goma.goma_dir),
-                                       str(api.goma.goma_client_json),
-                                       api.goma.goma_approach)
+          api.cros_sdk.set_goma_config(
+              str(api.goma.goma_dir),
+              str(api.goma.goma_client_json),
+              api.goma.goma_approach,
+              str(api.path.mkdtemp(prefix='goma-logs-')),
+              'stats.binaryproto',
+              'counterz.binaryproto')
 
         flags = InstallPackagesRequest.Flags(
             compile_source=False,
@@ -183,6 +187,7 @@ def RunSteps(api, properties):
                 use_flags=use_flags,
                 goma_config=api.cros_sdk.goma_config()),
             name='install packages').failed_packages
+        # TODO: if used goma, emit goma info, stats, counterz.
         api.failures.raise_failed_packages(failed_packages)
 
     # TODO(evanhernandez): Read and present the test results.

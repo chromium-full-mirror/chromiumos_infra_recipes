@@ -181,7 +181,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       api.cros_sdk.set_chrome_root(str(chrome_root))
       api.cros_sdk.set_goma_config(
           str(api.goma.goma_dir), str(api.goma.goma_client_json),
-          api.goma.goma_approach)
+          api.goma.goma_approach,
+          str(api.path.mkdtemp(prefix='goma-logs-')),
+          'stats.binaryproto', 'counterz.binaryproto')
 
     # Prepare for the build.  If the build is pointless, we are done.
     artifacts = build_config.artifacts
@@ -208,6 +210,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                                  packages=packages, chroot=api.cros_sdk.chroot,
                                  use_flags=build_config.build.use_flags,
                                  goma_config=api.cros_sdk.goma_config()))
+      # TODO: if used goma, emit goma info, stats, counterz.
       api.cros_bisect.set_compile_failures(response.failed_packages)
       api.failures.raise_failed_packages(response.failed_packages)
     if api.cros_infra_config.should_exit(install_packages):
