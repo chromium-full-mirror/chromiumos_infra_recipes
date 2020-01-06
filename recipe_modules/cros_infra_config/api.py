@@ -8,6 +8,7 @@ from util import exponential_retry
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.bot_scaling.bot_policy import BotPolicyCfg
 
 REPO_URL = "https://chrome-internal.googlesource.com/chromeos/infra/config"
 
@@ -111,3 +112,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   def should_exit(self, run_spec):
     return run_spec == BuilderConfig.RUN_EXIT
+
+  def get_bot_policies(self):
+    """Get BotPolicies as defined in infra/config.
+
+    Returns:
+      list(BotPolicy) as defined in the config repo.
+    """
+    bot_policy_file = self.m.gitiles.download_file(
+        REPO_URL, "bot_scaling/generated/bot_policy.binaryproto",
+        step_test_data=self.test_api.bot_policy_test_data,
+        timeout=self.test_api.gitiles_timeout_seconds)
+    bot_policy_config = BotPolicyCfg.FromString(bot_policy_file)
+    return bot_policy_config.bot_policies

@@ -7,6 +7,7 @@ from recipe_engine import recipe_test_api
 from google.protobuf import json_format as jsonpb
 
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.bot_scaling.bot_policy import BotPolicyCfg
 
 
 class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
@@ -615,4 +616,45 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     configs = jsonpb.Parse(builder_configs, BuilderConfigs(),
                            ignore_unknown_fields=True)
     # Humans can edit the string above for test data, impl reads binary proto.
+    return self.m.gitiles.make_encoded_file(configs.SerializeToString())
+
+  def bot_policy_test_data(self):
+    """A fn that can be passed to step_test_data to generate BotPolicies."""
+    bot_policy_config = """
+            {
+            	"botPolicies": [
+            		{
+            			"botGroup": "cq",
+            			"botType": {
+            				"botSize": "large",
+            				"coresPerBot": 32
+            			},
+            			"regionRestrictions": [
+            				{
+            					"region": "us-central1-b",
+            					"prefix": "chromeos-ci-cq-us-central1-b-x32",
+            					"weight": 0.245
+            				},
+            				{
+            					"region": "us-central2-d",
+            					"prefix": "chromeos-ci-cq-us-central2-d-x32",
+            					"weight": 0.31
+            				},
+            				{
+            					"region": "us-east1-d",
+            					"prefix": "chromeos-ci-cq-us-east1-d-x32",
+            					"weight": 0.245
+            				},
+            				{
+            					"region": "us-west1-b",
+            					"prefix": "chromeos-ci-cq-us-west1-b-x32",
+            					"weight": 0.2
+            				}
+            			]
+            		}
+            	]
+            }
+          """
+    configs = jsonpb.Parse(bot_policy_config, BotPolicyCfg(),
+                           ignore_unknown_fields=True)
     return self.m.gitiles.make_encoded_file(configs.SerializeToString())

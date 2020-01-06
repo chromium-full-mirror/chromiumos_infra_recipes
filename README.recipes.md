@@ -95,6 +95,7 @@
   * [cros_history:examples/get_snapshot_builds](#recipes-cros_history_examples_get_snapshot_builds)
   * [cros_history:examples/set_passed_tests](#recipes-cros_history_examples_set_passed_tests)
   * [cros_infra_config:examples/full](#recipes-cros_infra_config_examples_full)
+  * [cros_infra_config:examples/get_bot_policies](#recipes-cros_infra_config_examples_get_bot_policies)
   * [cros_infra_config:examples/no_builder_config](#recipes-cros_infra_config_examples_no_builder_config)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
@@ -915,15 +916,22 @@ Generate start time in seconds.
 
 [DEPS](/recipe_modules/cros_infra_config/__init__.py#6): [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#105)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#106)(self):**
 
 Force a reload of the config map from ToT.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#57)(self, builder_name):**
+&mdash; **def [get\_bot\_policies](/recipe_modules/cros_infra_config/api.py#116)(self):**
+
+Get BotPolicies as defined in infra/config.
+
+Returns:
+  list(BotPolicy) as defined in the config repo.
+
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#58)(self, builder_name):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -945,11 +953,11 @@ Returns:
 Raises:
   A LookupError if no BuilderConfig is found for the specified builder.
 
-&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#18)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#19)(self):**
 
 Init the InfraConfigApi module.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#83)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#84)(self, builder_names):**
 
 Gets the BuilderConfigs for the specified builder names from master.
 
@@ -963,9 +971,9 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#112)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#113)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#109)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#110)(self, run_spec):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3193,6 +3201,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_infra_config/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/full.py#15)(api):**
+### *recipes* / [cros\_infra\_config:examples/get\_bot\_policies](/recipe_modules/cros_infra_config/examples/get_bot_policies.py)
+
+[DEPS](/recipe_modules/cros_infra_config/examples/get_bot_policies.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/get_bot_policies.py#12)(api):**
 ### *recipes* / [cros\_infra\_config:examples/no\_builder\_config](/recipe_modules/cros_infra_config/examples/no_builder_config.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/no_builder_config.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -3629,11 +3642,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
-[DEPS](/recipes/robocrop.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/robocrop.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for scaling bots in the Chrome OS pool.
 
-&mdash; **def [RunSteps](/recipes/robocrop.py#18)(api, properties):**
+&mdash; **def [RunSteps](/recipes/robocrop.py#19)(api, properties):**
 ### *recipes* / [sign\_image](/recipes/sign_image.py)
 
 [DEPS](/recipes/sign_image.py#29): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

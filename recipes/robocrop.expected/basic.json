@@ -144,6 +144,35 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "scale bot pools"
+  },
+  {
+    "cmd": [],
+    "name": "scale bot pools.read bot policies",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/bot_scaling/generated/bot_policy.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "scale bot pools.read bot policies.fetch master:bot_scaling/generated/bot_policy.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
