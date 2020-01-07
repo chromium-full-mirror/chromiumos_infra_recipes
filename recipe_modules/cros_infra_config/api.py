@@ -6,9 +6,9 @@
 from recipe_engine import recipe_api
 from util import exponential_retry
 
+from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.builder_config import BuilderConfigs
-from PB.bot_scaling.bot_policy import BotPolicyCfg
 
 REPO_URL = "https://chrome-internal.googlesource.com/chromeos/infra/config"
 

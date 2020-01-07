@@ -6,8 +6,8 @@
 from recipe_engine import recipe_test_api
 from google.protobuf import json_format as jsonpb
 
+from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfigs
-from PB.bot_scaling.bot_policy import BotPolicyCfg
 
 
 class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):

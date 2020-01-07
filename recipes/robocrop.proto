@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipes.chromeos.robocrop;
 
-import "bot_scaling/bot_policy.proto";
-
 message RoboCropProperties {
     // The list of the buildbucket pools to monitor and scale.
     repeated string pools_to_monitor = 1;
