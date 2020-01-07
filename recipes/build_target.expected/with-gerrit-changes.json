@@ -2406,6 +2406,7 @@
     },
     "infra_step": true,
     "name": "sync chrome.gclient sync",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

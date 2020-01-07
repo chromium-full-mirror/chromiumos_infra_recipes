@@ -95,9 +95,8 @@ class ChromeApi(recipe_api.RecipeApi):
 
           # Finally, start the sync.
           self.m.python('gclient sync',
-                        self.m.depot_tools.root.join('gclient.py'),
-                        sync_cmd,
-                        infra_step=True)
+                        self.m.depot_tools.root.join('gclient.py'), sync_cmd,
+                        infra_step=True, timeout=60 * 60)
 
   def builds_chrome_from_source(self, build_target, chroot, packages=None,
                                 internal=False, ignore_prebuilts=False):
