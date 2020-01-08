@@ -109,7 +109,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "build": {
                     "install_packages": "RUN",
-                    "compile_tool_chain": false,
+                    "compile_toolchain": false,
                     "apply_gerrit_changes": true
                   },
                   "unit_tests": {
@@ -613,8 +613,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
               ]
             }
           """
-    configs = jsonpb.Parse(builder_configs, BuilderConfigs(),
-                           ignore_unknown_fields=True)
+    configs = jsonpb.Parse(builder_configs, BuilderConfigs())
     # Humans can edit the string above for test data, impl reads binary proto.
     return self.m.gitiles.make_encoded_file(configs.SerializeToString())
 
@@ -655,6 +654,5 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             	]
             }
           """
-    configs = jsonpb.Parse(bot_policy_config, BotPolicyCfg(),
-                           ignore_unknown_fields=True)
+    configs = jsonpb.Parse(bot_policy_config, BotPolicyCfg())
     return self.m.gitiles.make_encoded_file(configs.SerializeToString())
