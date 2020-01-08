@@ -94,7 +94,7 @@
       "--progress",
       "--human-readable",
       "--timeout=180",
-      "--bwlimit=1m",
+      "--bwlimit=0",
       "--files-from=[CLEANUP]/distfile_lists_tmp_1/new.txt",
       "rsync://mirrors.rit.edu/gentoo/distfiles/",
       "[CLEANUP]/distfiles_tmp_2"
