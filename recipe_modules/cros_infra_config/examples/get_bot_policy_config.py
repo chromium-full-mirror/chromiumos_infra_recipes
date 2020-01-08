@@ -10,7 +10,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  all_policies = api.cros_infra_config.get_bot_policies()
+  all_policies = api.cros_infra_config.get_bot_policy_config().bot_policies
   api.assertions.assertEqual(len(all_policies), 1)
   api.assertions.assertEqual(all_policies[0].bot_group, 'cq')
 

@@ -113,15 +113,14 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   def should_exit(self, run_spec):
     return run_spec == BuilderConfig.RUN_EXIT
 
-  def get_bot_policies(self):
+  def get_bot_policy_config(self):
     """Get BotPolicies as defined in infra/config.
 
     Returns:
-      list(BotPolicy) as defined in the config repo.
+      BotPolicyCfg as defined in the config repo.
     """
     bot_policy_file = self.m.gitiles.download_file(
         REPO_URL, "bot_scaling/generated/bot_policy.binaryproto",
         step_test_data=self.test_api.bot_policy_test_data,
         timeout=self.test_api.gitiles_timeout_seconds)
-    bot_policy_config = BotPolicyCfg.FromString(bot_policy_file)
-    return bot_policy_config.bot_policies
+    return BotPolicyCfg.FromString(bot_policy_file)
