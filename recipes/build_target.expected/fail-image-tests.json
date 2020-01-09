@@ -89,6 +89,14 @@
   },
   {
     "cmd": [],
+    "name": "read builder config.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"PRIVATE\", \"prebuiltsGsBucket\": \"chromeos-prebuilt\"}, \"build\": {\"imageTypes\": [\"BASE\", \"TEST\"], \"installPackages\": \"RUN\", \"portageProfile\": {\"profile\": \"generic_build\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-postsubmit\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-bisect\"@@@"

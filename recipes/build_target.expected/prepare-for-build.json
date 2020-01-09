@@ -108,6 +108,14 @@
   },
   {
     "cmd": [],
+    "name": "read builder config.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"UNVERIFIED_ORDERING_FILE\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"NONE\", \"publishArtifacts\": [{\"publishGsBucket\": \"chromeos-toolchain-artifacts/orderfile/unvetted\", \"publishTypes\": [\"UNVERIFIED_ORDERING_FILE\"]}]}, \"build\": {\"applyGerritChanges\": true, \"compileSource\": true, \"installPackages\": \"RUN\", \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"-orderfile_use\"}, {\"flag\": \"orderfile_generate\"}, {\"flag\": \"-strict_toolchain_checks\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"orderfile-generate-toolchain\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"-bisect\"@@@"

@@ -73,6 +73,14 @@
   },
   {
     "cmd": [],
+    "name": "read builder config.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackages\": \"RUN_EXIT\", \"packages\": [{\"category\": \"syskernel\", \"packageName\": \"chromeos-kernel\", \"version\": \"4.19\"}]}, \"general\": {\"critical\": false}, \"id\": {\"branch\": \"master\", \"name\": \"arm-generic-v42-buildtest-postsubmit\", \"type\": \"POSTSUBMIT\"}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"arm-generic-bisect\"@@@"

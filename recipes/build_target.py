@@ -78,6 +78,8 @@ def RunSteps(api, properties):
       step.presentation.step_text = 'config not found, assuming deleted'
       return
     step.presentation.logs['builder config'] = [str(build_config)]
+    api.easy.set_property_step('builder_config',
+                               json_pb.MessageToDict(build_config))
     parent_tag = [x.value
                   for x in api.buildbucket.build.tags
                   if x.key == 'parent_buildbucket_id']

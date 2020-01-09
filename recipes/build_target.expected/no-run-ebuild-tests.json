@@ -71,6 +71,14 @@
   },
   {
     "cmd": [],
+    "name": "read builder config.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackages\": \"RUN\"}, \"general\": {\"critical\": false}, \"id\": {\"branch\": \"master\", \"name\": \"grunt-postsubmit\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"NO_RUN\"}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"grunt-bisect\"@@@"
