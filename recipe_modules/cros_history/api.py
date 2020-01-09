@@ -153,6 +153,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Returns:
       list[Build] which meet the conditions ordered from latest to oldest.
     """
+    # TODO(crbug/1040552): compare builder_config.build attributes as part of
+    # declaring a match.
     with self.m.step.nest('find matching builds'):
       # This intentionally uses build.input.gerrit_changes, rather than
       # self.m.cq.ordered_gerrit_changes, because the buildbucket search

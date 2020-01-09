@@ -281,11 +281,11 @@ Returns:
 
 [DEPS](/recipe_modules/build_plan/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to plan the builds to be launched.
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#17)(self, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#16)(self, child_builders, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -841,7 +841,7 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#172)(cls, builds):**
+&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#174)(cls, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -852,7 +852,7 @@ Args:
 
 Returns: a dict(str, build_pb2.Build) of build_target names.
 
-&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#164)(cls, build):**
+&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#166)(cls, build):**
 
 Take a build_pb2 and get its build_target name or return None.
 

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2019 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
-# found in the LICENSE file
+# found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
@@ -46,19 +45,20 @@ class BuildPlanApi(recipe_api.RecipeApi):
             b.id for b in builder_configs if 'pointless' not in b.id.name
         ])
 
-    if enable_history and gerrit_changes:
-      with self.m.step.nest('get build history') as step:
-        is_retry = len(
-            self.m.cros_history.get_matching_builds(
-                self.m.buildbucket.build)) > 1
-        completed_builds = self.get_completed_builds(child_builders)
-        step.presentation.step_text = ('found {} build{} to recycle'.format(
-            len(completed_builds), '' if len(completed_builds) == 1 else 's'))
+    if enable_history:
+      if gerrit_changes:
+        with self.m.step.nest('get build history') as step:
+          is_retry = len(
+              self.m.cros_history.get_matching_builds(
+                  self.m.buildbucket.build)) > 1
+          completed_builds = self.get_completed_builds(child_builders)
+          step.presentation.step_text = ('found {} build{} to recycle'.format(
+              len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
-    snapshot_builds = self.m.cros_history.get_snapshot_builds(
-        snapshot, [],
-        [common_pb2.SUCCESS, common_pb2.SCHEDULED, common_pb2.STARTED],
-        patches=gerrit_changes)
+      snapshot_builds = self.m.cros_history.get_snapshot_builds(
+          snapshot, [],
+          [common_pb2.SUCCESS, common_pb2.SCHEDULED, common_pb2.STARTED],
+          patches=gerrit_changes)
 
     # Find number of builds, make set of builders, prioritize and log.
     initial_found_builds = len(snapshot_builds)
