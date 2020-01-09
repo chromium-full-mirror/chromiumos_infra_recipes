@@ -137,24 +137,13 @@ def _get_backend_requests(split_responses):
     is_skylab, request = _get_backend_request(response)
     skylab_chosen.append(is_skylab)
     tagged_requests[tag] = request
-  if len(set(skylab_chosen)) > 1:
-    raise ValueError('Traffic splits contain both autotest and skylab'
-                     ' across requests; this is not supported.')
   return skylab_chosen[0], tagged_requests
 
 
 def _get_backend_request(split_resp):
-  autotest = split_resp.autotest_request
-  skylab = split_resp.skylab_request
-  is_skylab = _is_non_empty_proto(skylab)
-  if is_skylab and _is_non_empty_proto(autotest):
-    raise ValueError('Traffic splits contains both autotest and skylab '
-                     'components; this is not supported.')
-  if not is_skylab and not _is_non_empty_proto(autotest):
-    raise ValueError('Traffic split contains no traffic for either autotest '
-                     'or skylab.')
-  request = skylab if is_skylab else autotest
-  return is_skylab, request
+  if not _is_non_empty_proto(split_resp.skylab_request):
+    raise ValueError('Traffic split contains no traffic for any backend.')
+  return True, split_resp.skylab_request
 
 
 def _is_non_empty_proto(p):
@@ -181,8 +170,6 @@ def execute(api, requests, enumerations, config, use_skylab):
         })
     if use_skylab:
       responses = api.cros_test_platform.skylab_execute(exec_reqs)
-    else:
-      responses = api.cros_test_platform.autotest_execute(exec_reqs)
     return responses.tagged_responses
 
 
@@ -475,58 +462,6 @@ def GenTests(api):
                          'default': SchedulerTrafficSplitResponse()
                      })))) +  #
          api.expect_exception("ValueError"))
-
-  # Traffic split with traffic to both autotest and skylab
-  # should cause recipe crash.
-  yield (
-      api.test('dual traffic') +  #
-      api.properties(CrosTestPlatformProperties(request=Request())) +  #
-      api.step_data(
-          'traffic split.call binary.scheduler-traffic-split',
-          stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  SchedulerTrafficSplitResponses(
-                      tagged_responses={
-                          'default':
-                              SchedulerTrafficSplitResponse(
-                                  autotest_request=Request(
-                                      test_plan=Request.TestPlan(
-                                          suite=[Request.Suite(name="foo")]),),
-                                  skylab_request=Request(
-                                      test_plan=Request.TestPlan(
-                                          suite=[Request.Suite(name="foo")]),),
-                              )
-                      })))) +  #
-      api.expect_exception("ValueError"))
-
-  # Traffic split with traffic to both autotest and skylab in different requests
-  # should cause recipe crash.
-  yield (
-      api.test('dual traffic across requests') +  #
-      api.properties(
-          CrosTestPlatformProperties(requests={
-              'first': Request(),
-              'second': Request(),
-          })) +  #
-      api.step_data(
-          'traffic split.call binary.scheduler-traffic-split',
-          stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  SchedulerTrafficSplitResponses(
-                      tagged_responses={
-                          'first':
-                              SchedulerTrafficSplitResponse(
-                                  autotest_request=Request(
-                                      test_plan=Request.TestPlan(
-                                          suite=[Request.Suite(
-                                              name="foo")]),),),
-                          'second':
-                              SchedulerTrafficSplitResponse(
-                                  skylab_request=Request(
-                                      test_plan=Request.TestPlan(
-                                          suite=[Request.Suite(name="foo")]),),)
-                      })))) +  #
-      api.expect_exception("ValueError"))
 
   # An end-to-end run with traffic splitting to skylab.
   yield (
@@ -838,48 +773,6 @@ def GenTests(api):
                                           name='foo-pending',
                                           state=TaskState(
                                               life_cycle="LIFE_CYCLE_PENDING"),
-                                      ),
-                                  ],
-                              )
-                      })))))
-
-  yield (
-      api.test('end-to-end with autotest execution') +  #
-      api.properties(
-          CrosTestPlatformProperties(
-              request=_test_request('foo'), config=_test_config('foo'))) +  #
-      api.step_data(
-          'traffic split.call binary.scheduler-traffic-split',
-          stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  SchedulerTrafficSplitResponses(
-                      tagged_responses={
-                          'default':
-                              SchedulerTrafficSplitResponse(
-                                  autotest_request=_test_request('foo'))
-                      })))) +  #
-      api.step_data(
-          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-              _test_single_enumeration('foo'))) +  #
-      api.step_data(
-          'execute.call binary.autotest-execute', stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  ExecuteResponses(
-                      tagged_responses={
-                          'default':
-                              ExecuteResponse(
-                                  state=TaskState(
-                                      life_cycle='LIFE_CYCLE_COMPLETED',
-                                      verdict='VERDICT_PASSED'),
-                                  task_results=[
-                                      ExecuteResponse.TaskResult(
-                                          task_url='foo://bar/baz',
-                                          log_url='logs://bar/baz',
-                                          name='foo-passed',
-                                          state=TaskState(
-                                              verdict="VERDICT_PASSED",
-                                              life_cycle='LIFE_CYCLE_COMPLETED'
-                                          ),
                                       ),
                                   ],
                               )
