@@ -3294,9 +3294,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#18)(api):**
 ### *recipes* / [cros\_relevance:examples/pointless\_builds](/recipe_modules/cros_relevance/examples/pointless_builds.py)
 
-[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#11): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#12): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#18)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]

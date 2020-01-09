@@ -152,7 +152,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
       # Take the union of the relevant paths for the entire dependency graph
       # and pass it as a flat list of paths.
-      for source_path in _flatten_depgraph_paths(dep_graph): # pragma: nocover
+      for source_path in _flatten_depgraph_paths(dep_graph):
         relevant_path = check_request.relevant_paths.add()
         relevant_path.path = source_path
 
@@ -212,7 +212,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
   def _ensure_binaries(self):
     """Ensure this module's binaries are installed."""
     if self._pointless_build_checker_path:
-      return  # pragma: nocover
+      return
 
     with self.m.step.nest('ensure binaries'):
       with self.m.context(infra_steps=True):
@@ -238,8 +238,7 @@ def _flatten_depgraph_paths(depgraph):
       packages in the depgraph.
   """
   paths = set()
-  if depgraph: # pragma: nocover
-    for package in depgraph.package_deps:
-      for source_path in package.dependency_source_paths:
-        paths.add(source_path.path)
+  for package in depgraph.package_deps:
+    for source_path in package.dependency_source_paths:
+      paths.add(source_path.path)
   return paths

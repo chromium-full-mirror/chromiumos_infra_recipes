@@ -5,6 +5,7 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
+from PB.chromite.api import depgraph
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
 
@@ -19,7 +20,12 @@ def RunSteps(api):
   bt = BuildTarget(name='my_build_target')
   build_config = [dict(build_target=bt.name)]
   chroot = Chroot()
-  dep_graph = {}
+  dep_graph = depgraph.DepGraph(build_target=bt, package_deps=[
+      depgraph.PackageDepInfo(dependency_source_paths=[
+          depgraph.SourcePath(path='happy/source/dir'),
+      ]),
+  ])
+
   gc = [
       bbcommon_pb2.GerritChange(change=123),
       bbcommon_pb2.GerritChange(change=456)
