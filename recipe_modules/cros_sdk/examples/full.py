@@ -31,9 +31,6 @@ def RunSteps(api):
     chroot = api.cros_sdk.chroot
     api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
     api.assertions.assertTrue(api.cros_sdk.has_goma_config())
-    # Specifying the GomaConfig no longer travels in the Chroot message,
-    # it has been moved to InstallPackagesRequest.
-    api.assertions.assertFalse(chroot.HasField('goma'))
     api.assertions.assertItemsEqual(chroot.env.use_flags,
                                     [common.UseFlag(flag='goma')])
 
