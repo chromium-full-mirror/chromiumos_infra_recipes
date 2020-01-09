@@ -28,4 +28,7 @@ message ProctorProperties {
 
   // Timeout for the proctor execution.
   google.protobuf.Duration timeout = 5;
+
+  // Buildbucket Bucket for VM execution.
+  string vm_bucket = 6;
 }

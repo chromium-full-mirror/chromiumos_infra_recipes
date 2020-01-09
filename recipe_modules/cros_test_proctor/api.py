@@ -37,6 +37,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._timeout = properties.timeout
     if not self._timeout.seconds:
       self._timeout = duration_pb2.Duration(seconds=7 * 60 * 60)
+    self._vm_bucket = properties.vm_bucket or "staging"
 
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
                   enable_history):
@@ -351,7 +352,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           requests.append(
               self.m.buildbucket.schedule_request(
                   gitiles_commit=snapshot,
-                  builder=self._autotest_vm_test(build_target), bucket='vmtest',
+                  builder=self._autotest_vm_test(build_target), bucket=self._vm_bucket,
                   critical=test.common.critical.value,
                   properties=self._with_props_for_child_build(
                       json_format.MessageToDict(
@@ -393,7 +394,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           requests.append(
               self.m.buildbucket.schedule_request(
                   gitiles_commit=snapshot,
-                  builder=self._tast_vm_test(build_target), bucket='vmtest',
+                  builder=self._tast_vm_test(build_target), bucket=self._vm_bucket,
                   critical=test.common.critical.value,
                   properties=self._with_props_for_child_build(
                       json_format.MessageToDict(
