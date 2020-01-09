@@ -110,10 +110,8 @@ def split(api, requests, config):
   with api.step.nest('traffic split') as step:
     split_req = SchedulerTrafficSplitRequests(
         tagged_requests={
-            tag: SchedulerTrafficSplitRequest(
-                request=r,
-                config=config.scheduler_migration,
-            ) for tag, r in requests.iteritems()
+            tag: SchedulerTrafficSplitRequest(request=r)
+            for tag, r in requests.iteritems()
         })
     split_resp = api.cros_test_platform.scheduler_traffic_split(split_req)
     is_skylab, tagged_requests = _get_backend_requests(
@@ -433,8 +431,6 @@ def _test_request(tag):
 def _test_config(tag):
   return Config(
       skylab_worker=Config.SkylabWorker(luci_project='%s luci project' % tag),
-      scheduler_migration=Config.SchedulerMigration(
-          gitiles_host='%s gitiles host' % tag),
   )
 
 

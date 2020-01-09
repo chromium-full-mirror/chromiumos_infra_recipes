@@ -85,11 +85,9 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"second\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"config\": {}, @@@",
       "@@@STEP_LOG_LINE@request@      \"request\": {}@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"first\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"config\": {}, @@@",
       "@@@STEP_LOG_LINE@request@      \"request\": {}@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
@@ -108,7 +106,7 @@
       "-rip-cautotest"
     ],
     "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"second\": {\n      \"config\": {}, \n      \"request\": {}\n    }, \n    \"first\": {\n      \"config\": {}, \n      \"request\": {}\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"second\": {\n      \"request\": {}\n    }, \n    \"first\": {\n      \"request\": {}\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -125,11 +123,11 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 221, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 219, in RunSteps",
       "    skylab, requests = split(api, requests, properties.config)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 120, in split",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 118, in split",
       "    split_resp.tagged_responses)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 143, in _get_backend_requests",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 141, in _get_backend_requests",
       "    raise ValueError('Traffic splits contain both autotest and skylab'",
       "ValueError: Traffic splits contain both autotest and skylab across requests; this is not supported."
     ]
