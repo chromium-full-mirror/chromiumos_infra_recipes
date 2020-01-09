@@ -33,7 +33,7 @@ def RunSteps(api, properties):
     with api.step.nest('read bot policies'):
       bot_policy_config = api.cros_infra_config.get_bot_policy_config()
       api.easy.set_property_step('bot_policy_config',
-                                 jsonpb.MessageToJson(bot_policy_config))
+                                 jsonpb.MessageToDict(bot_policy_config))
 
 
 def GenTests(api):
