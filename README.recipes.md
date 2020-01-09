@@ -5,6 +5,7 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [analysis_service](#recipe_modules-analysis_service)
   * [autotest_status_parser](#recipe_modules-autotest_status_parser)
+  * [bot_scaling](#recipe_modules-bot_scaling)
   * [breakpad](#recipe_modules-breakpad)
   * [build_plan](#recipe_modules-build_plan)
   * [buildbucket_stats](#recipe_modules-buildbucket_stats)
@@ -56,6 +57,8 @@
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [autotest_status_parser:examples/full](#recipes-autotest_status_parser_examples_full)
+  * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
+  * [bot_scaling:examples/get_scaling_action](#recipes-bot_scaling_examples_get_scaling_action)
   * [branch_create](#recipes-branch_create) &mdash; Creates a branch using `cros branch create`.
   * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
@@ -66,6 +69,7 @@
   * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
   * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
+  * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
   * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
@@ -254,6 +258,48 @@ Args:
   results_dir: a string pointing to a directory containing test results.
 
 Returns: Result.
+### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
+
+[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module that determines how to scale bot groups.
+
+&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#37)(self, demand, scaling_restriction):**
+
+Core function that scales bots based on demand.
+
+Args:
+  demand(int): Current demand for bots.
+  scaling_restriction(ScalingRestriction): Scaling restriction defined by
+    the bot policy.
+
+Returns:
+  int, number of bots to request.
+
+&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#55)(self, bots_requested, region_restrictions):**
+
+Determines regional distribution of bot requests.
+
+Args:
+  bots_requested(int): Total number of bots requested.
+  region_restrictions(list[RegionRestriction]): Regional preferences
+    from config.
+
+Returns:
+  list[RegionalAction], region wise distribution of bots requested.
+
+&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#14)(self, demand, bot_policy):**
+
+The overarching function that creates a ScalingAction for a bot group.
+
+Args:
+  demand(int): Current demand for bots.
+  bot_policy(BotPolicy): Config define Policy for a bot group.
+
+Returns:
+  ScalingAction, comprehensive action to be taken by RoboCrop.
 ### *recipe_modules* / [breakpad](/recipe_modules/breakpad)
 
 [DEPS](/recipe_modules/breakpad/__init__.py#5): [easy](#recipe_modules-easy), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -338,6 +384,16 @@ Returns: A list of build_pb2.Build objects, deduped and prioritized.
 #### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to get statistics from buildbucket.
+
+&mdash; **def [get\_bot\_demand](/recipe_modules/buildbucket_stats/api.py#51)(self, status_map):**
+
+Return the demand for bots in a bot group.
+
+Args:
+  status_map (str->int): Map of Buildbucket status to count.
+
+Returns:
+  int, the current demand for bots in the group.
 
 &mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#36)(self, bucket):**
 
@@ -2953,6 +3009,16 @@ Returns:
 [DEPS](/recipe_modules/autotest_status_parser/examples/full.py#6): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/autotest_status_parser/examples/full.py#14)(api):**
+### *recipes* / [bot\_scaling:examples/get\_bot\_request](/recipe_modules/bot_scaling/examples/get_bot_request.py)
+
+[DEPS](/recipe_modules/bot_scaling/examples/get_bot_request.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_bot_request.py#15)(api):**
+### *recipes* / [bot\_scaling:examples/get\_scaling\_action](/recipe_modules/bot_scaling/examples/get_scaling_action.py)
+
+[DEPS](/recipe_modules/bot_scaling/examples/get_scaling_action.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_scaling_action.py#15)(api):**
 ### *recipes* / [branch\_create](/recipes/branch_create.py)
 
 [DEPS](/recipes/branch_create.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
@@ -3044,6 +3110,11 @@ Args:
 
 Returns:
   dict of target versions
+### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
+
+[DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#13)(api):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bucket\_status](/recipe_modules/buildbucket_stats/examples/get_bucket_status.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bucket_status.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -3642,11 +3713,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
-[DEPS](/recipes/robocrop.py#12): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/robocrop.py#12): [bot\_scaling](#recipe_modules-bot_scaling), [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for scaling bots in the Chrome OS pool.
 
-&mdash; **def [RunSteps](/recipes/robocrop.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipes/robocrop.py#22)(api, properties):**
 ### *recipes* / [sign\_image](/recipes/sign_image.py)
 
 [DEPS](/recipes/sign_image.py#29): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

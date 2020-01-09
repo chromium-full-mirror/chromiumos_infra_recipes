@@ -11,6 +11,7 @@ from PB.recipes.chromeos.robocrop import RoboCropProperties
 
 DEPS = [
     'recipe_engine/step',
+    'bot_scaling',
     'buildbucket_stats',
     'cros_infra_config',
     'easy',
@@ -34,6 +35,22 @@ def RunSteps(api, properties):
       bot_policy_config = api.cros_infra_config.get_bot_policy_config()
       api.easy.set_property_step('bot_policy_config',
                                  jsonpb.MessageToDict(bot_policy_config))
+    with api.step.nest('compute scaling actions'):
+      scaling_actions = []
+      for policy in bot_policy_config.bot_policies:
+        demand = api.buildbucket_stats.get_bot_demand(
+            status_map[policy.bot_group])
+        scaling_actions.append(
+            api.bot_scaling.get_scaling_action(demand, policy))
+
+      # TODO: Create a proto definition to clean up this step.
+      actions_as_dict = [
+          jsonpb.MessageToDict(action) for action in scaling_actions
+      ]
+      api.easy.set_property_step('robocrop_action', {
+          'actionable': False,
+          'scaling_actions': actions_as_dict,
+      })
 
 
 def GenTests(api):

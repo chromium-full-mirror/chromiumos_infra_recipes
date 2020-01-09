@@ -10,7 +10,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 
 from recipe_engine import recipe_api
 
-STATUSES = [common_pb2.SCHEDULED, common_pb2.STARTED]
+DEMAND_STATUSES = [common_pb2.SCHEDULED, common_pb2.STARTED]
 
 
 class BuildbucketStatsApi(recipe_api.RecipeApi):
@@ -45,5 +45,18 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     """
     return {
         common_pb2.Status.Name(status): self.get_build_count(bucket, status)
-        for status in STATUSES
+        for status in DEMAND_STATUSES
     }
+
+  def get_bot_demand(self, status_map):
+    """Return the demand for bots in a bot group.
+
+    Args:
+      status_map (str->int): Map of Buildbucket status to count.
+
+    Returns:
+      int, the current demand for bots in the group.
+    """
+    return sum([
+        status_map[common_pb2.Status.Name(status)] for status in DEMAND_STATUSES
+    ])
