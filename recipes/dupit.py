@@ -13,8 +13,7 @@ DEPS = [
 def RunSteps(api):
   api.cros_dupit.configure(
       rsync_mirror_address='rsync://mirrors.rit.edu/gentoo/distfiles',
-      # TODO(crbug.com/952285#c16): Reset to '1m' after initial catch-up.
-      rsync_mirror_rate_limit='0',
+      rsync_mirror_rate_limit='1m',
       gs_distfiles_uri='gs://chromeos-mirror/gentoo/distfiles/')
   api.cros_dupit.run()
 
