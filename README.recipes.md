@@ -3749,9 +3749,9 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#203)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#186)(api, properties):**
 
-&mdash; **def [compute\_backfills](/recipes/test_platform/cros_test_platform.py#182)(api, requests, enumerations, responses):**
+&mdash; **def [compute\_backfills](/recipes/test_platform/cros_test_platform.py#165)(api, requests, enumerations, responses):**
 
 Compute backfill requests for this build.
 
@@ -3770,7 +3770,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#153)(api, requests, enumerations, config, use_skylab):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#139)(api, requests, enumerations, config):**
 
 Execute request in the correct backend.
 
@@ -3778,18 +3778,20 @@ Args:
   requests: {tag: test_platform.Request} dict.
   enumerations: {tag: EnumerationResponse} dict.
   config: test_platform.Config instance.
-  use_skylab: bool indicating which backend to run in
-              (True -> skylab, False -> autotest).
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#219)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#202)(api, requests, responses):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#287)(api, responses, backfills):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#270)(api, responses, backfills):**
 
 Set the output properties that are part of the cros_test_platform API.
 
 &mdash; **def [split](/recipes/test_platform/cros_test_platform.py#97)(api, requests, config):**
 
-Determine which backend will execute the request.
+Run the almost no-op traffic splitter step.
+
+This step now always directs traffic to Skylab.
+TODO(crbug.com/1026367) Completely skip this step once we stop receiving
+                        requests for legacy bvt, suites pools.
 
 Args:
   * api (object): See RunSteps documentation.
@@ -3801,7 +3803,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#254)(api, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#237)(api, responses):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#14): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

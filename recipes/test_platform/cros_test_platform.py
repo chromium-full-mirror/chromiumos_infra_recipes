@@ -95,7 +95,11 @@ def _invocation_summary(autotest_invocation):
 
 
 def split(api, requests, config):
-  """Determine which backend will execute the request.
+  """Run the almost no-op traffic splitter step.
+
+  This step now always directs traffic to Skylab.
+  TODO(crbug.com/1026367) Completely skip this step once we stop receiving
+                          requests for legacy bvt, suites pools.
 
   Args:
     * api (object): See RunSteps documentation.
@@ -114,51 +118,31 @@ def split(api, requests, config):
             for tag, r in requests.iteritems()
         })
     split_resp = api.cros_test_platform.scheduler_traffic_split(split_req)
-    is_skylab, tagged_requests = _get_backend_requests(
-        split_resp.tagged_responses)
-    env_name = 'skylab' if is_skylab else 'autotest'
-    step.presentation.step_summary_text = 'selected backend: ' + env_name
-    return is_skylab, tagged_requests
-
-
-def _get_backend_requests(split_responses):
-  """Extract the backend request from traffic splitter response.
-
-  Args:
-    * split_resp: A test_platform.SchedulerTrafficSplitResponse object.
-
-  Returns: bool, [test_platform.Request]
-    * First item in the pair indicates whether this is a skylab request.
-    * Second item in the pair is the list of extracted requests.
-  """
-  skylab_chosen = []
-  tagged_requests = {}
-  for tag, response in split_responses.iteritems():
-    is_skylab, request = _get_backend_request(response)
-    skylab_chosen.append(is_skylab)
-    tagged_requests[tag] = request
-  return skylab_chosen[0], tagged_requests
+    tagged_requests = {
+        t: _get_backend_request(r)
+        for t, r in split_resp.tagged_responses.iteritems()
+    }
+    step.presentation.step_summary_text = 'selected backend: skylab'
+    return tagged_requests
 
 
 def _get_backend_request(split_resp):
   if not _is_non_empty_proto(split_resp.skylab_request):
     raise ValueError('Traffic split contains no traffic for any backend.')
-  return True, split_resp.skylab_request
+  return split_resp.skylab_request
 
 
 def _is_non_empty_proto(p):
   return bool(p.ByteSize())
 
 
-def execute(api, requests, enumerations, config, use_skylab):
+def execute(api, requests, enumerations, config):
   """Execute request in the correct backend.
 
   Args:
     requests: {tag: test_platform.Request} dict.
     enumerations: {tag: EnumerationResponse} dict.
     config: test_platform.Config instance.
-    use_skylab: bool indicating which backend to run in
-                (True -> skylab, False -> autotest).
   """
   with api.step.nest('execute'):
     _ensure_all_requests_enumerated(requests, enumerations)
@@ -168,8 +152,7 @@ def execute(api, requests, enumerations, config, use_skylab):
                               enumeration=enumerations[t], config=config)
             for t, r in requests.iteritems()
         })
-    if use_skylab:
-      responses = api.cros_test_platform.skylab_execute(exec_reqs)
+    responses = api.cros_test_platform.skylab_execute(exec_reqs)
     return responses.tagged_responses
 
 
@@ -203,13 +186,13 @@ def compute_backfills(api, requests, enumerations, responses):
 def RunSteps(api, properties):
   requests = _get_requests_from_properties(properties)
   # Traffic split failures can be due to malformed requests.
-  skylab, requests = split(api, requests, properties.config)
+  requests = split(api, requests, properties.config)
   # Enumeration or execution failures are all infra failures
   # TODO(akeshet) (with the possible exception of certain kinds of execution
   # timeouts; needs revisiting).
   with api.context(infra_steps=True):
     enumerations = enumerate_tests(api, requests)
-    responses = execute(api, requests, enumerations, properties.config, skylab)
+    responses = execute(api, requests, enumerations, properties.config)
     backfills = compute_backfills(api, requests, enumerations, responses)
     set_output_properties(api, responses, backfills)
     postprocess(api, requests, responses)
@@ -450,8 +433,7 @@ def GenTests(api):
              )) +  #
          api.expect_exception("ValueError"))
 
-  # Traffic split with no traffic to either autotest or skylab
-  # should cause recipe crash.
+  # Traffic split with no traffic to skylab should cause recipe crash.
   yield (api.test('no traffic') +  #
          api.properties(CrosTestPlatformProperties(request=Request())) +  #
          api.step_data(
