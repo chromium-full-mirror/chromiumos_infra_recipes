@@ -11,4 +11,7 @@ import "chromiumos/common.proto";
 message BuildTargetProperties {
   // The build target being built.
   chromiumos.BuildTarget build_target = 1;
+
+  // Override for pointless build check.
+  bool force_relevant_build = 2;
 }

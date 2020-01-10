@@ -67,6 +67,7 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 def RunSteps(api, properties):
   build_target = properties.build_target
   test_pointless = 'pointless' in properties.build_target.name
+  force_relevant_build = properties.force_relevant_build
   gitiles_commit = api.buildbucket.gitiles_commit
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
@@ -97,11 +98,11 @@ def RunSteps(api, properties):
           checkout_path=api.cros_source.workspace_path), \
       api.context(cwd=api.cros_source.workspace_path):
     DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
-               test_pointless)
+               test_pointless, force_relevant_build)
 
 
 def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
-               test_pointless):
+               test_pointless, force_relevant_build):
   api.cros_source.sync_snapshot(gitiles_commit)
 
   if gerrit_changes and build_config.build.apply_gerrit_changes:
@@ -149,9 +150,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   target_graph, sdk_graph = api.cros_relevance.get_dependency_graph(
       build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
-  if api.cros_relevance.is_build_pointless(gerrit_changes, gitiles_commit,
-                                           dep_graph=target_graph,
-                                           test_is_pointless=test_pointless):
+  if not force_relevant_build and api.cros_relevance.is_build_pointless(
+      gerrit_changes, gitiles_commit, dep_graph=target_graph,
+      test_is_pointless=test_pointless):
     # TODO: When it becomes possible to add tags from the build itself set:
     # "hide-in-gerrit": "pointless"
     # See https://crrev.com/c/1913895.
@@ -200,7 +201,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       #
       # If there are any artifact_types with no PrepareForBuild endpoint
       # defined, then the result will be UNKNOWN.
-      if relevance == PrepareForBuildResponse.POINTLESS:
+      if (not force_relevant_build and
+          relevance == PrepareForBuildResponse.POINTLESS):
         return
 
     with api.step.nest('install packages'):
@@ -347,6 +349,17 @@ def GenTests(api):
   yield (api.test('basic') +  #
          cq_build_with_gerrit_change() +  #
          api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('forced') +  #
+         cq_build_with_gerrit_change() +  #
+         api.properties(build_target={'name': 'amd64-generic'},
+                        force_relevant_build=True))
+
+  yield (api.test('forced-pointless') +  #
+         api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                   builder='amd64-generic-cq') +  #
+         api.properties(build_target={'name': 'amd64-generic-pointless'},
+                        force_relevant_build=True))
 
   yield (api.test('with-goma-props') +  #
          cq_build_with_gerrit_change() +  #
