@@ -1593,13 +1593,6 @@
     "name": "pointless build check.depgraph relevance check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@dep_graph {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  package_deps {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@    dependency_source_paths {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@      path: \"some/source/dir\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@    }@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  }@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\010chromeos\\030\\300\\304\\007 \\007\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
@@ -1659,7 +1652,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\u0015\u0012\u0013\u001a\u0011\n\u000fsome/source/dir:4\n2\n chromium-review.googlesource.com\u0012\bchromeos\u0018\ufffd\ufffd\u0007 \u0007B\u0000J\u0011\n\u000fsome/source/dir",
+      ":4\n2\n chromium-review.googlesource.com\u0012\bchromeos\u0018\ufffd\ufffd\u0007 \u0007B\u0000J\u0011\n\u000fsome/source/dir",
       "[CLEANUP]/pointless-build-_tmp_7/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1667,8 +1660,7 @@
     "name": "pointless build check.depgraph relevance check.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@*\u0015\u0012\u0013\u001a\u0011@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u000fsome/source/dir:4@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@:4@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@2@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\bchromeos\u0018\ufffd\ufffd\u0007 \u0007B\u0000J\u0011@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u000fsome/source/dir@@@",

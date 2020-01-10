@@ -88,8 +88,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       step_result.presentation.step_text = (
           '{} relevant, {} irrelevant builder configs'.format(
               len(result.builds_to_run),
-              len(result.skip_for_global_build_irrelevance) + len(
-                  result.skip_for_run_when_rules)))
+              len(result.skip_for_global_build_irrelevance) +
+              len(result.skip_for_run_when_rules)))
       return [b.name for b in result.builds_to_run]
 
   def is_build_pointless(self, gerrit_changes, gitiles_commit, dep_graph,
@@ -123,36 +123,35 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         step_result.presentation.step_text = ('build is relevant')
       return pointless_build
 
-  def is_depgraph_affected(self, gerrit_changes, gitiles_commit, dep_graph,
-                           name=None, test_is_pointless=False):
-    """Determines if a Gerrit Change affects a given dependency graph.
+  def _are_paths_affected(self, gerrit_changes, gitiles_commit, relevant_paths,
+                          test_is_pointless=False, name=None):
+    """Determines if a Gerrit Change affects any files in relevant paths.
 
     Args:
       gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
           applied for the build, if any.
       gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
           snapshot Gitiles commit.
-      dep_graph (chromite.api.DepGraph): The dependency graph to compare the
-          Gerrit changes against to test for build relevancy.
-      name (str): The step name to display, defaults to 'depgraph relevance
+      relevant_paths (Iterable[str]): A collection of paths to be considered
+        relevant.
+      name (str): The step name to display, defaults to 'path relevance
           check'.
+      test_is_pointless (bool): If True, returns a fixed testing value from the
+        checking tool rather than running an actual comparison.
 
     Returns:
-      bool: Whether the given Gerrit Change affects the given dependency graph.
+      bool: Whether the given Gerrit Change affects any of the relevant paths.
     """
-    with self.m.step.nest(name or 'depgraph relevance check') as step_result:
+    with self.m.step.nest(name or 'path relevancy check') as step_result:
       self._ensure_binaries()
       check_request = PointlessBuildCheckRequest(
           gitiles_commit=testplans_proto_bytes(
               serialized_proto=bbcommon_pb2.GitilesCommit.SerializeToString(
                   gitiles_commit)),
           manifest_commit=gitiles_commit.id,
-          dep_graph=dep_graph,
       )
 
-      # Take the union of the relevant paths for the entire dependency graph
-      # and pass it as a flat list of paths.
-      for source_path in _flatten_depgraph_paths(dep_graph):
+      for source_path in relevant_paths:
         relevant_path = check_request.relevant_paths.add()
         relevant_path.path = source_path
 
@@ -187,6 +186,35 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
       step_result.presentation.logs['relevance_output'] = [str(result)]
       return not bool(result.build_is_pointless.value)
+
+  def is_depgraph_affected(self, gerrit_changes, gitiles_commit, dep_graph,
+                           name=None, test_is_pointless=False):
+    """Determines if a Gerrit Change affects a given dependency graph.
+
+    Args:
+      gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+          applied for the build, if any.
+      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+          snapshot Gitiles commit.
+      dep_graph (chromite.api.DepGraph): The dependency graph to compare the
+          Gerrit changes against to test for build relevancy.
+      name (str): The step name to display, defaults to 'depgraph relevance
+          check'.
+      test_is_pointless (bool): If True, returns a fixed testing value from the
+        checking tool rather than running an actual comparison.
+
+
+    Returns:
+      bool: Whether the given Gerrit Change affects the given dependency graph.
+    """
+    # Take the union of the relevant paths for the entire dependency graph
+    # and pass it as a flat list of paths.
+    relevant_paths = _flatten_depgraph_paths(dep_graph)
+
+    return self._are_paths_affected(gerrit_changes, gitiles_commit,
+                                    relevant_paths,
+                                    name=(name or 'depgraph relevance check'),
+                                    test_is_pointless=test_is_pointless)
 
   def get_dependency_graph(self, build_target, chroot, packages=None):
     """Calculates the dependency graph for the build target & SDK

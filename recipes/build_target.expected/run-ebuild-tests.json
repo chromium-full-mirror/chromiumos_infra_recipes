@@ -1470,13 +1470,6 @@
     "name": "pointless build check.depgraph relevance check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@dep_graph {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  package_deps {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@    dependency_source_paths {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@      path: \"some/source/dir\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@    }@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  }@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\010chromeos\\032(2d72510e447ab60a9728aeea2362d8be2cbd7789\\\"\\021refs/heads/master\"@@@",
@@ -1534,7 +1527,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\u0015\u0012\u0013\u001a\u0011\n\u000fsome/source/dir2(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0011\n\u000fsome/source/dir",
+      "2(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0011\n\u000fsome/source/dir",
       "[CLEANUP]/pointless-build-_tmp_7/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1542,8 +1535,7 @@
     "name": "pointless build check.depgraph relevance check.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@*\u0015\u0012\u0013\u001a\u0011@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u000fsome/source/dir2(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@2(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@b@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0011@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u000fsome/source/dir@@@",
@@ -4523,8 +4515,6 @@
     "name": "validate SDK reuse.depgraph relevance check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@dep_graph {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\010chromeos\\032(2d72510e447ab60a9728aeea2362d8be2cbd7789\\\"\\021refs/heads/master\"@@@",
@@ -4543,7 +4533,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\u00002(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
+      "2(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
       "[CLEANUP]/pointless-build-_tmp_28/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4551,7 +4541,7 @@
     "name": "validate SDK reuse.depgraph relevance check.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@*\u00002(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@2(2d72510e447ab60a9728aeea2362d8be2cbd7789Bd@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@b@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
