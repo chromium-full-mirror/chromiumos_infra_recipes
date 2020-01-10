@@ -227,6 +227,27 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       files_by_artifact.update(func(chroot, sysroot, path, types))
     return files_by_artifact
 
+  def _artifacts_gs_path_dict(self, target, kind):
+    """Returns the dictionary tokens for expanding location templates.
+
+    Args:
+      target (BuildTarget): The target whose artifacts will be uploaded.
+      kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
+          e.g. POSTSUBMIT. Used as a descriptor in the GS path.
+
+    Returns:
+      Dictionary of key:value pairs for building a gs_path.
+    """
+    ret = {
+        'label': BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-'),
+        'version': self.m.cros_version.read_workspace_version(),
+        'build_id': self.m.buildbucket.build.id,
+        'target': target.name,
+    }
+    ret['gs_path'] = '%s-%s/%s-%d' % (
+        ret['target'], ret['label'], ret['version'], ret['build_id'])
+    return ret
+
   def artifacts_gs_path(self, target, kind):
     """Returns the GS path for artifacts of the given kind for the given target.
 
@@ -240,10 +261,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Returns:
       The GS path at which artifacts should be uploaded.
     """
-    label = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
-    version = self.m.cros_version.read_workspace_version()
-    build_id = self.m.buildbucket.build.id
-    return '%s-%s/%s-%d' % (target.name, label, version, build_id)
+    return self._artifacts_gs_path_dict(target, kind)['gs_path']
 
   def _publish_artifacts(self, target, kind, publish_info, upload_uri,
                          files_by_artifact, name=None):
@@ -271,19 +289,33 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       upload_uri (string): gs path were the artifacts were uploaded.
       files_by_artifact (dict{name: list[string]}): artifact file dictionary.
       name (str): The step name.  Defaults to 'publish artifacts'.
+
+    Returns:
+      {name: link} of gs publishing directories used.
     """
     published = collections.defaultdict(list)
+    links = {}
     with self.m.step.nest(name or 'publish artifacts') as step:
       for info in publish_info:
+        # TODO(crbug/1019868): finish migrating to publish_gs_location.
+        try:
+          publish_template = info.publish_gs_location
+        except AttributeError: # pragma: no cover
+          publish_template = info.publish_gs_bucket
+        location_dict = self._artifacts_gs_path_dict(target, kind)
         for artifact in info.publish_types:
           artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
           files = files_by_artifact.get(artifact_name, [])
           if files:
-            gs_path = self.artifacts_gs_path(target, kind)
-            step.presentation.links['gs publish dir: %s' % artifact_name] = (
-                'https://console.cloud.google.com/storage/browser/%s/%s' %
-                (info.publish_gs_bucket, gs_path))
-            publish_uri = 'gs://%s/%s' % (info.publish_gs_bucket, gs_path)
+            location_dict['artifact_name'] = artifact_name
+            publish_loc = publish_template.format(location_dict)
+            link_name = 'gs publish dir: %s' % artifact_name
+            link_value = (
+                'https://console.cloud.google.com/storage/browser/%s' %
+                publish_loc)
+            links[link_name] = link_value
+            step.presentation.links[link_name] = link_value
+            publish_uri = 'gs://' + publish_loc
             cmd = ['cp'] + ['%s/%s' % (upload_uri, path) for path in files]
             cmd.append(publish_uri)
             for retries in range(3):
@@ -297,12 +329,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                 else:
                   raise
             published[artifact_name].append({
-                'gs_bucket': info.publish_gs_bucket,
-                'gs_path': gs_path,
-                'files': files})
+                'gs_location': publish_loc, 'files': files})
 
       self.m.easy.set_property_step(
           'published', published, step_name='publish artifact GS paths')
+
+      return links
 
   def upload_artifacts(self, target, kind, gs_bucket, artifact_types,
                        chroot=None, sysroot=None,
@@ -364,8 +396,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # re-uploading. Publishing is intentionally nested under upload
       # artifacts.
       if publish_info:
-        self._publish_artifacts(
+        links = self._publish_artifacts(
             target, kind, publish_info, upload_uri, files_by_artifact)
+        for k, v in links.items():
+          step.presentation.links[k] = v
 
   def download_artifact(self, build_payload, artifact, name=None):
     """Download the given artfiact from the given build payload.

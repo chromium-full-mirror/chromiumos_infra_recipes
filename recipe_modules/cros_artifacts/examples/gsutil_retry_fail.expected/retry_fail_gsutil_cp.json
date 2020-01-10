@@ -325,7 +325,7 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: EBUILD_LOGS@https://console.cloud.google.com/storage/browser/publish_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs publish dir: EBUILD_LOGS@https://console.cloud.google.com/storage/browser/@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -414,7 +414,7 @@
       "----",
       "cp",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
-      "gs://publish_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184"
+      "gs://"
     ],
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.gsutil cp",
@@ -435,7 +435,7 @@
       "----",
       "cp",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
-      "gs://publish_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184"
+      "gs://"
     ],
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.gsutil cp (2)",
@@ -456,7 +456,7 @@
       "----",
       "cp",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
-      "gs://publish_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184"
+      "gs://"
     ],
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.gsutil cp (3)",
