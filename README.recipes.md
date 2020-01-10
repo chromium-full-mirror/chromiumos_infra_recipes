@@ -3605,7 +3605,9 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#286)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#174)(api, config):**
+
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#294)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3622,7 +3624,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#270)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#278)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -3632,7 +3634,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#352)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#360)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3643,7 +3645,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#221)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#229)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -3658,7 +3660,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#341)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#349)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3666,7 +3668,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#327)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#335)(refs):**
 
 Assert the given refs start with refs/heads.
 

@@ -61,54 +61,7 @@ def RunSteps(api, properties):
         api.buildbucket.build.builder.builder)
     step.presentation.logs['orchestrator config'] = [str(config)]
 
-    # There are 3 use cases here:
-    # 1. No gitiles_commit, no gerrit_changes.
-    #    This job was launched by luci-scheduler (or a user).
-    #    Use the gitiles_commit and gerrit_changes from the builder_config,
-    #    with a hardcoded fallback if that is not specified.
-    # 2. No gitiles_commit, with gerrit_changes:
-    #    This build was launched by luci-cq (or a user).
-    #    Use the configured gitiles_commit, and the buildbucket-specified
-    #    gerrit_changes.
-    # 3. Gitiles_commit, with or without gerrit_changes:
-    #    This build was launched by a user.
-    #    Use the given information.
-    snapshot = api.buildbucket.gitiles_commit
-    gerrit_changes = api.buildbucket.build.input.gerrit_changes
-
-    # Case 3 bypasses this entire if block.
-    if not snapshot.project:
-      def ConvertPB(inpb, typ):
-        """Convert |inpb| to |typ|."""
-        outpb = typ();
-        outpb.ParseFromString(inpb.SerializeToString());
-        return outpb
-
-      # Case 1 or 2.
-      with api.step.nest('fetch snapshot ref'):
-        # If we did not get a list of gerrit changes, use the default list.
-        if not gerrit_changes:
-          gerrit_changes = [ConvertPB(x, common_pb2.GerritChange)
-                            for x in config.orchestrator.gerrit_changes]
-
-        # No gitiles_commit from buildbucket: use the default.
-        if config.orchestrator.gitiles_commit.project:
-          # If the configuration specifies a default gitiles_commit, use that.
-          snapshot = ConvertPB(config.orchestrator.gitiles_commit,
-                               common_pb2.GitilesCommit)
-        else:
-          # No default was found in the builder config.  Use a fall-back,
-          # hard-coded default.
-          snapshot = common_pb2.GitilesCommit(
-              host='chrome-internal.googlesource.com',
-              project='chromeos/manifest-internal', ref='refs/heads/snapshot')
-        # The gitiles_commit we have may not have an id, which will be needed
-        # later.  If we need to, re-create the snapshot with the right id.
-        if not snapshot.id:
-          snapshot = common_pb2.GitilesCommit(
-              host=snapshot.host, project=snapshot.project,
-              ref=snapshot.ref, id=api.gitiles.fetch_revision(
-                  snapshot.host, snapshot.project, snapshot.ref))
+    snapshot, gerrit_changes = determine_repo_state(api, config)
 
     # Point start ref to the input snapshot if specified.
     maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
@@ -216,6 +169,61 @@ def RunSteps(api, properties):
     failures = api.failures.update_non_critical_failures(
         step, failures, child_builder_configs)
   return api.failures.aggregate_failures(failures)
+
+
+def determine_repo_state(api, config):
+  # There are 3 use cases here:
+  # 1. No gitiles_commit, no gerrit_changes.
+  #    This job was launched by luci-scheduler (or a user).
+  #    Use the gitiles_commit and gerrit_changes from the builder_config,
+  #    with a hardcoded fallback if that is not specified.
+  # 2. No gitiles_commit, with gerrit_changes:
+  #    This build was launched by luci-cq (or a user).
+  #    Use the configured gitiles_commit, and the buildbucket-specified
+  #    gerrit_changes.
+  # 3. Gitiles_commit, with or without gerrit_changes:
+  #    This build was launched by a user.
+  #    Use the given information.
+  snapshot = api.buildbucket.gitiles_commit
+  gerrit_changes = api.buildbucket.build.input.gerrit_changes
+
+  # Case 3 bypasses the rest.
+  if snapshot.project:
+    return snapshot, gerrit_changes
+
+  def ConvertPB(inpb, typ):
+    """Convert |inpb| to |typ|."""
+    outpb = typ();
+    outpb.ParseFromString(inpb.SerializeToString());
+    return outpb
+
+  # If we did not get a list of gerrit changes, use the default list.
+  if not gerrit_changes:
+    gerrit_changes = [ConvertPB(x, common_pb2.GerritChange)
+                      for x in config.orchestrator.gerrit_changes]
+
+  # Case 1 or 2.
+  with api.step.nest('determine snapshot ref'):
+    # No gitiles_commit from buildbucket: use the default.
+    if config.orchestrator.gitiles_commit.project:
+      # If the configuration specifies a default gitiles_commit, use that.
+      snapshot = ConvertPB(config.orchestrator.gitiles_commit,
+                           common_pb2.GitilesCommit)
+    else:
+      # No default was found in the builder config.  Use a fall-back,
+      # hard-coded default.
+      snapshot = common_pb2.GitilesCommit(
+          host='chrome-internal.googlesource.com',
+          project='chromeos/manifest-internal', ref='refs/heads/snapshot')
+    # The gitiles_commit we have may not have an id, which will be needed
+    # later.  If we need to, re-create the snapshot with the right id.
+    if not snapshot.id:
+      snapshot = common_pb2.GitilesCommit(
+          host=snapshot.host, project=snapshot.project,
+          ref=snapshot.ref, id=api.gitiles.fetch_revision(
+              snapshot.host, snapshot.project, snapshot.ref))
+
+  return snapshot, gerrit_changes
 
 
 def schedule_wait_follow_on(api, parent_step, config,

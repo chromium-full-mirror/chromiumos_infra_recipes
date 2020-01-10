@@ -65,7 +65,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.fetch snapshot ref",
+    "name": "set up orchestrator.determine snapshot ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -78,7 +78,7 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "name": "set up orchestrator.fetch snapshot ref.read deploy_cipd.json",
+    "name": "set up orchestrator.determine snapshot ref.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -101,7 +101,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "set up orchestrator.fetch snapshot ref.ensure_installed",
+    "name": "set up orchestrator.determine snapshot ref.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -122,7 +122,7 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
     ],
     "infra_step": true,
-    "name": "set up orchestrator.fetch snapshot ref.gitiles-fetch-ref",
+    "name": "set up orchestrator.determine snapshot ref.gitiles-fetch-ref",
     "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
