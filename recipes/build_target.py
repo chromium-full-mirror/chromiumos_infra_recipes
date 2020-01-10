@@ -110,6 +110,22 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
       api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
+  # Prepare for the build.  If the build is pointless, we are done.
+  artifacts = build_config.artifacts
+  relevance = PrepareForBuildResponse.UNKNOWN
+  if artifacts.artifact_types:
+    relevance = api.cros_artifacts.prepare_for_build(
+        artifacts.artifact_types, None, None, artifacts.input_artifacts)
+    # If the build is POINTLESS, then we are done.  This can only happen if
+    # all of the artifact_types for this build are handled by some
+    # PrepareForBuild endpoint, and indicate that the build is pointless.
+    #
+    # If there are any artifact_types with no PrepareForBuild endpoint
+    # defined, then the result will be UNKNOWN.
+    if (not force_relevant_build and
+        relevance == PrepareForBuildResponse.POINTLESS):
+      return
+
   with api.step.nest('uprev packages') as step:
     request = UprevPackagesRequest(
         chroot=api.cros_sdk.chroot,
@@ -150,9 +166,11 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   target_graph, sdk_graph = api.cros_relevance.get_dependency_graph(
       build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
-  if not force_relevant_build and api.cros_relevance.is_build_pointless(
-      gerrit_changes, gitiles_commit, dep_graph=target_graph,
-      test_is_pointless=test_pointless):
+  if (not force_relevant_build and
+      relevance != PrepareForBuildResponse.NEEDED and
+      api.cros_relevance.is_build_pointless(
+          gerrit_changes, gitiles_commit, dep_graph=target_graph,
+          test_is_pointless=test_pointless)):
     # TODO: When it becomes possible to add tags from the build itself set:
     # "hide-in-gerrit": "pointless"
     # See https://crrev.com/c/1913895.
@@ -188,24 +206,17 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           str(api.path.mkdtemp(prefix='goma-logs-')),
           'stats.binaryproto', 'counterz.binaryproto')
 
-    # Prepare for the build.  If the build is pointless, we are done.
-    artifacts = build_config.artifacts
-    artifact_types = artifacts.artifact_types
-    if artifact_types:
-      relevance = api.cros_artifacts.prepare_for_build(
-          artifact_types, api.cros_sdk.chroot, sysroot,
-          artifacts.input_artifacts)
-      # If the build is POINTLESS, then we are done.  This can only happen if
-      # all of the artifact_types for this build are handled by some
-      # PrepareForBuild endpoint, and indicate that the build is pointless.
-      #
-      # If there are any artifact_types with no PrepareForBuild endpoint
-      # defined, then the result will be UNKNOWN.
-      if (not force_relevant_build and
-          relevance == PrepareForBuildResponse.POINTLESS):
-        return
-
     with api.step.nest('install packages'):
+      if artifacts.artifact_types:
+        # Final round of preparation to build artifacts.  Some artifacts need
+        # to use portage to fully prepare, so they have to finish preparation
+        # inside the SDK.
+        #
+        # We don't care what the return value is, since we're committed to
+        # running at least install packages at this point.
+        api.cros_artifacts.prepare_for_build(
+            artifacts.artifact_types, api.cros_sdk.chroot, sysroot,
+            artifacts.input_artifacts, name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
           compile_source=build_config.build.compile_source,
           use_goma=api.cros_sdk.has_goma_config())
@@ -268,10 +279,10 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     if api.cros_infra_config.should_exit(ebuilds_run_spec):
       return
 
-  if artifact_types:
+  if artifacts.artifact_types:
     api.cros_artifacts.upload_artifacts(
         build_target, build_config.id.type,
-        artifacts.artifacts_gs_bucket, artifact_types,
+        artifacts.artifacts_gs_bucket, artifacts.artifact_types,
         sysroot=sysroot, chroot=api.cros_sdk.chroot,
         publish_info=artifacts.publish_artifacts)
 
@@ -389,6 +400,13 @@ def GenTests(api):
          api.step_data(
              'prepare artifacts.call chromite.api.ToolchainService/'
              'PrepareForBuild.read output file',
+             api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
+
+  yield (api.test('prepare-for-build-late-pointless') + #
+         toolchain_build() + #
+         api.step_data(
+             'install packages.prepare artifacts final.call chromite.api.'
+             'ToolchainService/PrepareForBuild.read output file',
              api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
 
   yield (api.test('prepare-for-build-verify') + #

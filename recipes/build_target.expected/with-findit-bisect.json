@@ -786,6 +786,13 @@
   },
   {
     "cmd": [],
+    "name": "prepare artifacts",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Build need is UNKNOWN@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "uprev packages"
   },
   {
@@ -2649,14 +2656,15 @@
   },
   {
     "cmd": [],
-    "name": "prepare artifacts",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@Build need is UNKNOWN@@@"
-    ]
+    "name": "install packages"
   },
   {
     "cmd": [],
-    "name": "install packages"
+    "name": "install packages.prepare artifacts final",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Build need is UNKNOWN@@@"
+    ]
   },
   {
     "cmd": [],
