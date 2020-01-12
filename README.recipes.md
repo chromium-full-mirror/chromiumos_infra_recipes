@@ -549,8 +549,8 @@ the given types.
 Args:
   artifact_types (list[ArtifactTypes]): List of artifact_types
       to prepare. See build config for options.
-  chroot (Chroot): chroot to use
-  sysroot (Sysroot): sysroot to use
+  chroot (Chroot): The chroot to use, or None if not yet created.
+  sysroot (Sysroot): The sysroot to use, or None if not yet created.
   input_artifacts (list[InputArtifactInfo]): where to seek input artifacts.
   name (str): The step name. Defaults to 'prepare artifacts'.
 

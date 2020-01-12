@@ -2188,7 +2188,10 @@
   },
   {
     "cmd": [],
-    "name": "prepare artifacts"
+    "name": "prepare artifacts",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Build need is UNKNOWN@@@"
+    ]
   },
   {
     "cmd": [],

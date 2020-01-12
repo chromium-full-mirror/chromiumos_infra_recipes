@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "prepare artifacts"
+    "name": "prepare artifacts",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Build is POINTLESS@@@"
+    ]
   },
   {
     "cmd": [],
@@ -114,7 +117,10 @@
   },
   {
     "cmd": [],
-    "name": "prepare artifacts (2)"
+    "name": "prepare artifacts (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Build need is UNKNOWN@@@"
+    ]
   },
   {
     "cmd": [],

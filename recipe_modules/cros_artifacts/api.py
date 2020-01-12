@@ -97,8 +97,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     prepare step.  It simply returns "UNKNOWN".
 
     Args:
-      _chroot (Chroot): The chroot to use.
-      _sysroot (Sysroot): The sysroot to use.
+      _chroot (Chroot): The chroot to use, or None if not yet created.
+      _sysroot (Sysroot): The sysroot to use, or None if not yet created.
       _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
 
@@ -114,8 +114,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Call ToolchainService.PrepareForBuild to prepare for the build.
 
     Args:
-      chroot (Chroot): The chroot to use.
-      sysroot (Sysroot): The sysroot to use.
+      chroot (Chroot): The chroot to use, or None if not yet created.
+      sysroot (Sysroot): The sysroot to use, or None if not yet created.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
 
@@ -430,8 +430,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Args:
       artifact_types (list[ArtifactTypes]): List of artifact_types
           to prepare. See build config for options.
-      chroot (Chroot): chroot to use
-      sysroot (Sysroot): sysroot to use
+      chroot (Chroot): The chroot to use, or None if not yet created.
+      sysroot (Sysroot): The sysroot to use, or None if not yet created.
       input_artifacts (list[InputArtifactInfo]): where to seek input artifacts.
       name (str): The step name. Defaults to 'prepare artifacts'.
 
@@ -472,10 +472,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       # Return an aggregate response.
       if PrepareForBuildResponse.NEEDED in results:
-        step.presentation.text = "Build is NEEDED"
+        step.presentation.step_text = "Build is NEEDED"
         return PrepareForBuildResponse.NEEDED
       if PrepareForBuildResponse.UNKNOWN in results:
-        step.presentation.text = "Build is UNKNOWN"
+        step.presentation.step_text = "Build need is UNKNOWN"
         return PrepareForBuildResponse.UNKNOWN
-      step.presentation.text = "Build is POINTLESS"
+      step.presentation.step_text = "Build is POINTLESS"
       return PrepareForBuildResponse.POINTLESS

@@ -2582,7 +2582,10 @@
   },
   {
     "cmd": [],
-    "name": "prepare artifacts"
+    "name": "prepare artifacts",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Build is NEEDED@@@"
+    ]
   },
   {
     "cmd": [],
