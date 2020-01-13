@@ -8,112 +8,64 @@
   },
   {
     "cmd": [],
-    "name": "copy images to localmirror"
+    "name": "get latest postsubmit build version"
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cat",
-      "gs://chromeos-image-archive/sludge-postsubmit/LATEST-master"
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "copy images to localmirror.gsutil cat",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "gs://chromeos-image-archive/sludge-postsubmit/R80-1.2.3/image.zip",
-      "./"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "infra_step": true,
-    "name": "copy images to localmirror.gsutil download",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_1/image.zip\", \"include_files\": [\"base-guest-vm\", \"test-guest-vm\"], \"output\": \"[CLEANUP]/archive-staging_tmp_1/image\", \"safe_mode\": true}",
-      "--json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "name": "copy images to localmirror.unzip image archive",
+    "name": "get latest postsubmit build version.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"sludge-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"output\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"gs_bucket\": \"chromeos-image-archive\", @@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"gs_path\": \"postsubmit-sludge/R80-1.2.3-123456\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }, @@@",
+      "@@@STEP_LOG_LINE@json.output@                \"chromeos_version\": \"R80-1.2.3\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            }, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "name": "copy images to localmirror.archive base guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/base-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/base-guest-vm.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "name": "copy images to localmirror.archive test guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/test-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/test-guest-vm.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "*.tbz",
-      "gs://chromeos-localmirror-private/distfiles/sludge/80.1.2.3/"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "infra_step": true,
-    "name": "copy images to localmirror.gsutil upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-localmirror-private/distfiles/sludge/80.1.2.3/@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1, @@@",
+      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"bucket\": \"postsubmit\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"builder\": \"sludge-postsubmit\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@"
     ]
   },
   {
@@ -550,15 +502,15 @@
       "/path/to/tmp/json",
       "copy",
       "chromeos-dtc-vm: updating version pin to latest - 80.1.2.3",
-      "[CLEANUP]/commit_msg_tmp_2"
+      "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
     "infra_step": true,
     "name": "commit uprev.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@chromeos-dtc-vm: updating version pin to latest - 80.1.2.3@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@chromeos-dtc-vm: updating version pin to latest - 80.1.2.3@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
   {
@@ -566,13 +518,106 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_2"
+      "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
     "infra_step": true,
     "name": "commit uprev.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "copy images to localmirror"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/postsubmit-sludge/R80-1.2.3-123456/image.zip",
+      "./"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "infra_step": true,
+    "name": "copy images to localmirror.gsutil download",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
+      "--json-input",
+      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_2/image.zip\", \"include_files\": [\"base-guest-vm\", \"test-guest-vm\"], \"output\": \"[CLEANUP]/archive-staging_tmp_2/image\", \"safe_mode\": true}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "name": "copy images to localmirror.unzip image archive",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "name": "copy images to localmirror.archive base guest VM",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/base-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/base-guest-vm.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "name": "copy images to localmirror.archive test guest VM",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/test-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/test-guest-vm.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "*.tbz",
+      "gs://chromeos-localmirror-private/distfiles/sludge/80.1.2.3/"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "infra_step": true,
+    "name": "copy images to localmirror.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-localmirror-private/distfiles/sludge/80.1.2.3/@@@"
     ]
   },
   {
