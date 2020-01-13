@@ -218,21 +218,25 @@ class DupItApi(recipe_api.RecipeApi):
 
   def _copy_new_distfiles_to_gs(self):
     """Copy new distfiles from tmpdir to gs"""
-    gsutil_cp_cmd = [
-        'cp',
-        # Recursively copy the files.
-        '-r',
-        # No cloberring.
-        '-n',
-        # All distfiles are public-read.
-        '-a',
-        'public-read',
-        self.m.path.join(self.tmp_distfiles_path, '*'),
-        self.m.path.join(self.gs_distfiles_uri, ''),
-    ]
-    gsutil_cp_name = 'upload new distfiles to %s' % self.gs_distfiles_uri
-    self.m.gsutil(cmd=gsutil_cp_cmd, multithreaded=True, name=gsutil_cp_name,
-                  parallel_upload=True)
+    with self.m.step.nest('copy new distfiles to gs') as step:
+      if self.m.file.listdir('list new distfiles', self.tmp_distfiles_path):
+        gsutil_cp_cmd = [
+            'cp',
+            # Recursively copy the files.
+            '-r',
+            # No cloberring.
+            '-n',
+            # All distfiles are public-read.
+            '-a',
+            'public-read',
+            self.m.path.join(self.tmp_distfiles_path, '*'),
+            self.m.path.join(self.gs_distfiles_uri, ''),
+        ]
+        gsutil_cp_name = 'upload new distfiles to %s' % self.gs_distfiles_uri
+        self.m.gsutil(cmd=gsutil_cp_cmd, multithreaded=True,
+                      name=gsutil_cp_name, parallel_upload=True)
+      else:
+        step.presentation.step_text = 'No new distfiles to upload'
 
   def run(self):
     self._rsync_new_distfiles_from_gentoo()

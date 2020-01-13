@@ -103,6 +103,28 @@
     "name": "rsync distfiles from rsync://mirrors.do.not.exists/distfiles"
   },
   {
+    "cmd": [],
+    "name": "copy new distfiles to gs"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/distfiles_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.list new distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/distfiles_tmp_2/new_distfile.tar.gz@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -122,7 +144,10 @@
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
     "infra_step": true,
-    "name": "gsutil upload new distfiles to gs://stark-trek/the-ultimate-computer/distfiles/"
+    "name": "copy new distfiles to gs.gsutil upload new distfiles to gs://stark-trek/the-ultimate-computer/distfiles/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "name": "$result"

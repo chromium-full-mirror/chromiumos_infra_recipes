@@ -6,9 +6,9 @@
 from recipe_engine import recipe_api
 
 DEPS = [
+    'recipe_engine/raw_io',
     'cros_dupit',
 ]
-
 
 def RunSteps(api):
   api.cros_dupit.configure(
@@ -19,4 +19,10 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (
+    api.test('basic') +
+    api.step_data('copy new distfiles to gs.list new distfiles',
+                  stdout=api.raw_io.output_text('new_distfile.tar.gz'))
+  )
+
+  yield api.test('no-new-distfiles')

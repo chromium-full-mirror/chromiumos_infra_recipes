@@ -9,15 +9,15 @@
       "----",
       "ls",
       "-r",
-      "gs://chromeos-mirror/gentoo/distfiles/**"
+      "gs://stark-trek/the-ultimate-computer/distfiles/**"
     ],
     "infra_step": true,
-    "name": "gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/"
+    "name": "gsutil list distfiles in gs://stark-trek/the-ultimate-computer/distfiles/"
   },
   {
     "cmd": [
       "cut",
-      "-c39-",
+      "-c49-",
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
     "infra_step": true,
@@ -49,10 +49,10 @@
       "--recursive",
       "--links",
       "--safe-links",
-      "rsync://mirrors.rit.edu/gentoo/distfiles/**"
+      "rsync://mirrors.do.not.exists/distfiles/**"
     ],
     "infra_step": true,
-    "name": "list distfiles in rsync://mirrors.rit.edu/gentoo/distfiles"
+    "name": "list distfiles in rsync://mirrors.do.not.exists/distfiles"
   },
   {
     "cmd": [
@@ -96,11 +96,11 @@
       "--timeout=180",
       "--bwlimit=1m",
       "--files-from=[CLEANUP]/distfile_lists_tmp_1/new.txt",
-      "rsync://mirrors.rit.edu/gentoo/distfiles/",
+      "rsync://mirrors.do.not.exists/distfiles/",
       "[CLEANUP]/distfiles_tmp_2"
     ],
     "infra_step": true,
-    "name": "rsync distfiles from rsync://mirrors.rit.edu/gentoo/distfiles"
+    "name": "rsync distfiles from rsync://mirrors.do.not.exists/distfiles"
   },
   {
     "cmd": [],
