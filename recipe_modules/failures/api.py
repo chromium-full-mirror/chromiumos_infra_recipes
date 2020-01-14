@@ -209,21 +209,25 @@ class FailuresApi(recipe_api.RecipeApi):
     """
     # TODO(evanhernandez): Migrate this function to use _get_failures for
     # better SoM reporting.
-    with self.m.step.nest('installation results') as step:
-      if not packages:
+    if not packages:
+      with self.m.step.nest('installation results') as step:
         step.presentation.step_text = 'all packages installed successfully'
         return
 
-      if len(packages) == 1:
-        message = 'failed to install {}'.format(
-            self.m.naming.get_package_title(packages[0]))
-      else:
-        message = 'failed to install {} packages'.format(len(packages))
-      step.presentation.step_text = message
+    short_message = ','.join([p.package_name for p in packages])
+
+    if len(packages) == 1:
+      long_message = 'failed to install {}'.format(
+          self.m.naming.get_package_title(packages[0]))
+    else:
+      long_message = 'failed to install {} packages'.format(len(packages))
+
+    with self.m.step.nest('installation failed: ' + short_message) as step:
+      step.presentation.step_text = long_message
       step.presentation.status = self.m.step.FAILURE
       step.presentation.logs['list of failed packages'] = map(
           self.m.naming.get_package_title, packages)
-      raise self.m.step.StepFailure(message)
+      raise self.m.step.StepFailure(long_message)
 
   def raise_failed_image_tests(self, failed_images):
     """Display failed image tests and raise a failure.
