@@ -176,6 +176,7 @@
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
   * [stable_version:examples/full](#recipes-stable_version_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
+  * [tast_vm](#recipes-tast_vm) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_config](#recipes-test_config) &mdash; Compares Parallel CQ and Legacy cbuildbot configs.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
@@ -3786,6 +3787,15 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
+### *recipes* / [tast\_vm](/recipes/tast_vm.py)
+
+[DEPS](/recipes/tast_vm.py#14): [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+An experimental recipe for running Tast VM tests without Chroot and
+ChromeOS checkout, resulting in much faster tests. The tests will
+use tast executable from build_artifacts.
+
+&mdash; **def [RunSteps](/recipes/tast_vm.py#28)(api, properties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#12): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]

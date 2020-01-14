@@ -1,0 +1,23 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.tast_vm;
+
+import "chromiumos/common.proto";
+import "testplans/generate_test_plan.proto";
+
+message TastVmProperties {
+  // The build target under test.
+  chromiumos.BuildTarget build_target = 1;
+
+  // The build payload to test.
+  testplans.BuildPayload build_payload = 2;
+
+  // Expressions describing tests to run. It is either a test name
+  // ("example.Pass") or involves tast attributes (see go/tast-attr).
+  repeated string expressions = 3;
+}
+
