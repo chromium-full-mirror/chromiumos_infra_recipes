@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
-	"go.chromium.org/luci/auth"
-	"go.chromium.org/luci/common/api/gerrit"
 	"log"
 	"os"
+	"time"
+
+	"go.chromium.org/luci/auth"
+	"go.chromium.org/luci/common/api/gerrit"
+
 	"support/internal/cli"
 	sgerrit "support/internal/gerrit"
 	"support/internal/git"
@@ -32,7 +35,8 @@ func main() {
 	var input Input
 	cli.MustUnmarshalInput(&input)
 
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(cli.Context, 15*time.Minute)
+	defer cancel()
 
 	output := &Output{}
 	if input.TempDir == "" {

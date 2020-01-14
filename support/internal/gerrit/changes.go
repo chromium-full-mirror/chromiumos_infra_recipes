@@ -14,8 +14,6 @@ import (
 
 	gerrit2 "go.chromium.org/luci/common/proto/gerrit"
 
-	"support/internal/cli"
-
 	"go.chromium.org/luci/common/api/gerrit"
 )
 
@@ -167,7 +165,7 @@ func (c *Change) fetchFileList(ctx context.Context, httpClient *http.Client) err
 }
 
 // Fetch changes from the given hosts (will only make one request per host) or die.
-func MustFetchChanges(ctx context.Context, httpClient *http.Client, changes Changes, options Options) Changes {
+func MustFetchChanges(parentCtx context.Context, httpClient *http.Client, changes Changes, options Options) Changes {
 	// Group changes by host.
 	hostChanges := make(map[string]Changes)
 	for _, c := range changes {
@@ -181,7 +179,7 @@ func MustFetchChanges(ctx context.Context, httpClient *http.Client, changes Chan
 	// Error management for parallel requests.
 	var hostErrors sync.Map
 	var wg sync.WaitGroup
-	ctx, cancel := context.WithTimeout(cli.Context, 1*time.Minute)
+	ctx, cancel := context.WithTimeout(parentCtx, 1*time.Minute)
 	defer cancel()
 
 	// Parallel request per host.
@@ -194,7 +192,6 @@ func MustFetchChanges(ctx context.Context, httpClient *http.Client, changes Chan
 			err := fetchHostChanges(ctx, httpClient, host, changes, options)
 			if err != nil {
 				hostErrors.Store(host, err)
-				cancel()
 			}
 		}()
 	}
