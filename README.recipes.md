@@ -748,7 +748,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#123)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#123)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, parsable_is_failure=True):**
 
 Call the build API with the given input proto.
 
@@ -768,6 +768,9 @@ Args:
   infra_step (bool): Whether this build API call should be treated as an
       infrastructure step.
   timeout (int): timeout in seconds to be supplied to the BuildAPI call.
+  parsable_is_failure (bool): Keep step status as SUCCESS if parsable
+      output is returned from build api (return code 2). Useful if you're
+      later going to aggregate and raise returned proto contents.
 
 Returns:
   google.protobuf: The parsed response proto.
@@ -3084,7 +3087,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#67)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#302)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#303)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3100,7 +3103,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#320)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#321)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
