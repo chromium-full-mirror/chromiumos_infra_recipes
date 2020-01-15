@@ -1,0 +1,20 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.presubmit_tests;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message PresubmitTestsProperties {
+  // Gitiles commit to fetch.
+  buildbucket.v2.GitilesCommit gitiles_commit = 1;
+
+  // All Gerrit changes for this run.
+  repeated buildbucket.v2.GerritChange gerrit_changes = 2;
+
+  // For testing, pretend that this file exists (e.g., PRESUBMIT.py)
+  string test_filename = 3;
+}
