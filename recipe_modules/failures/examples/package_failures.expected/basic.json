@@ -1,14 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "installation results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all packages installed successfully@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "installation failed: package",
+    "name": "test1",
     "~followup_annotations": [
       "@@@STEP_TEXT@failed to install /package@@@",
       "@@@STEP_LOG_LINE@list of failed packages@/package@@@",
@@ -18,7 +11,7 @@
   },
   {
     "cmd": [],
-    "name": "installation failed: package1,package2",
+    "name": "test2",
     "~followup_annotations": [
       "@@@STEP_TEXT@failed to install 2 packages@@@",
       "@@@STEP_LOG_LINE@list of failed packages@/package1@@@",

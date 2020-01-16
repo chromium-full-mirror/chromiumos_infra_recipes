@@ -750,7 +750,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#123)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, parsable_is_failure=True):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#123)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None):**
 
 Call the build API with the given input proto.
 
@@ -770,9 +770,6 @@ Args:
   infra_step (bool): Whether this build API call should be treated as an
       infrastructure step.
   timeout (int): timeout in seconds to be supplied to the BuildAPI call.
-  parsable_is_failure (bool): Keep step status as SUCCESS if parsable
-      output is returned from build api (return code 2). Useful if you're
-      later going to aggregate and raise returned proto contents.
 
 Returns:
   google.protobuf: The parsed response proto.
@@ -1619,7 +1616,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#259)(self, failures):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#253)(self, failures):**
 
 Returns a recipe result based on the given failures.
 
@@ -1631,7 +1628,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#324)(self, builds):**
+&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#318)(self, builds):**
 
 Verify all builds completed successfully.
 
@@ -1641,7 +1638,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#394)(self, build):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#388)(self, build):**
 
 Retrieve the status of the build.
 
@@ -1651,7 +1648,7 @@ Args:
 Returns:
   status (common_pb2.Status) of the build.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#338)(self, hw_tests, baseline_hw_tests=None):**
+&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#332)(self, hw_tests, baseline_hw_tests=None):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -1664,7 +1661,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#421)(self, hw_test):**
+&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#415)(self, hw_test):**
 
 Get the status of the hw_test.
 
@@ -1674,7 +1671,7 @@ Args:
 Returns:
   status (common_pb2.STATUS) of the test.
 
-&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#374)(self, moblab_vm_tests, baseline_moblab_vm_tests=None):**
+&mdash; **def [get\_moblab\_vm\_test\_failures](/recipe_modules/failures/api.py#368)(self, moblab_vm_tests, baseline_moblab_vm_tests=None):**
 
 Logs Moblab VM test status to UI, but does not rais on failed tests.
 
@@ -1687,7 +1684,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#356)(self, vm_tests, baseline_vm_tests=None):**
+&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#350)(self, vm_tests, baseline_vm_tests=None):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -1707,7 +1704,7 @@ Catches exceptions and logs them instead.
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#443)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#437)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -1717,7 +1714,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#455)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#449)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1727,7 +1724,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#478)(self, moblab_vm_test):**
+&mdash; **def [is\_critical\_moblab\_vm\_test\_failure](/recipe_modules/failures/api.py#472)(self, moblab_vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1737,7 +1734,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#405)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#399)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -1747,7 +1744,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#467)(self, vm_test):**
+&mdash; **def [is\_critical\_vm\_test\_failure](/recipe_modules/failures/api.py#461)(self, vm_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -1757,7 +1754,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical
 
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#432)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#426)(self, hw_test):**
 
 Determine if the vm test was critical.
 
@@ -1767,7 +1764,7 @@ Args:
 Returns:
   bool: True if the test was critical.
 
-&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#232)(self, failed_images):**
+&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#226)(self, failed_images):**
 
 Display failed image tests and raise a failure.
 
@@ -1782,19 +1779,18 @@ Args:
 Raises:
   StepFailure: If failed_images is not empty.
 
-&mdash; **def [raise\_failed\_packages](/recipe_modules/failures/api.py#199)(self, packages):**
+&mdash; **def [set\_failed\_packages](/recipe_modules/failures/api.py#199)(self, enclosing_step, packages):**
 
-Display failed packages and raise a failure.
-
-Each package will be shown as a failed substep.
+If any failed packages, set presentation and raise failure.
 
 Args:
+  enclosing_step (step): The enclosing step to mutate.
   packages (list[chromiumos.common.PackageInfo]): The failed packages.
 
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [update\_non\_critical\_failures](/recipe_modules/failures/api.py#489)(self, step, failures, fresh_builder_configs):**
+&mdash; **def [update\_non\_critical\_failures](/recipe_modules/failures/api.py#483)(self, step, failures, fresh_builder_configs):**
 
 Args:
   failures (list[Failure]): All failures encountered during execution.

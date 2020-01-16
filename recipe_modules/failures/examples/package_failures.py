@@ -13,15 +13,20 @@ from PB.chromiumos.common import PackageInfo
 
 
 def RunSteps(api):
-  api.failures.raise_failed_packages([])
-  api.assertions.assertRaises(api.step.StepFailure,
-                              api.failures.raise_failed_packages,
-                              [PackageInfo(package_name='package')])
-  api.assertions.assertRaises(api.step.StepFailure,
-                              api.failures.raise_failed_packages, [
-                                  PackageInfo(package_name='package1'),
-                                  PackageInfo(package_name='package2')
-                              ])
+  with api.step.nest('test1') as test_step:
+    # Call with no failed packages, should noop.
+    api.failures.set_failed_packages(test_step, [])
+
+    api.assertions.assertRaises(api.step.StepFailure,
+                                api.failures.set_failed_packages,
+                                test_step,
+                                [PackageInfo(package_name='package')])
+  with api.step.nest('test2') as test_step:
+    api.assertions.assertRaises(api.step.StepFailure,
+                                api.failures.set_failed_packages, test_step, [
+                                    PackageInfo(package_name='package1'),
+                                    PackageInfo(package_name='package2')
+                                ])
 
 
 def GenTests(api):

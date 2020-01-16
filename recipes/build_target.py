@@ -184,13 +184,13 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     # Failing on kernel buildtest builders, see https://crbug.com/1017583.
     pass
 
-  with api.step.nest('install toolchain'):
+  with api.step.nest('install toolchain') as install_tc_step:
     flags = InstallToolchainRequest.Flags(
         compile_source=build_config.build.compile_toolchain)
     response = api.cros_build_api.SysrootService.InstallToolchain(
         InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
                                 flags=flags))
-    api.failures.raise_failed_packages(response.failed_packages)
+    api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
   install_packages = build_config.build.install_packages
   if api.cros_infra_config.should_run(install_packages):
@@ -207,7 +207,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           str(api.path.mkdtemp(prefix='goma-logs-')),
           'stats.binaryproto', 'counterz.binaryproto')
 
-    with api.step.nest('install packages'):
+    with api.step.nest('install packages') as ip_step:
       if artifacts.artifact_types:
         # Final round of preparation to build artifacts.  Some artifacts need
         # to use portage to fully prepare, so they have to finish preparation
@@ -221,15 +221,16 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       flags = InstallPackagesRequest.Flags(
           compile_source=build_config.build.compile_source,
           use_goma=api.cros_sdk.has_goma_config())
+
       response = api.cros_build_api.SysrootService.InstallPackages(
           InstallPackagesRequest(sysroot=sysroot, flags=flags,
                                  packages=packages, chroot=api.cros_sdk.chroot,
                                  use_flags=build_config.build.use_flags,
-                                 goma_config=api.cros_sdk.goma_config()),
-                                 parsable_is_failure=False)
+                                 goma_config=api.cros_sdk.goma_config()))
+
       # TODO: if used goma, emit goma info, stats, counterz.
       api.cros_bisect.set_compile_failures(response.failed_packages)
-      api.failures.raise_failed_packages(response.failed_packages)
+      api.failures.set_failed_packages(ip_step, response.failed_packages)
     if api.cros_infra_config.should_exit(install_packages):
       return
 
@@ -238,14 +239,14 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   image_types = build_config.build.image_types
   if image_types:
-    with api.step.nest('build images'):
+    with api.step.nest('build images') as bi_step:
       response = api.cros_build_api.ImageService.Create(
           CreateImageRequest(
               build_target=build_target, chroot=api.cros_sdk.chroot,
               image_types=image_types,
               builder_path=api.cros_artifacts.artifacts_gs_path(
                   build_target, build_config.id.type)), timeout=45 * 60)
-      api.failures.raise_failed_packages(response.failed_packages)
+      api.failures.set_failed_packages(bi_step, response.failed_packages)
     with api.step.nest('test images'):
       failed_images = []
 
@@ -268,7 +269,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   ebuilds_run_spec = build_config.unit_tests.ebuilds_run_spec
   if api.cros_infra_config.should_run(ebuilds_run_spec):
-    with api.step.nest('run ebuild tests'):
+    with api.step.nest('run ebuild tests') as reb_step:
       flags = BuildTargetUnitTestRequest.Flags(
           empty_sysroot=build_config.unit_tests.empty_sysroot)
       response = api.cros_build_api.TestService.BuildTargetUnitTest(
@@ -277,7 +278,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
               result_path=str(api.path.mkdtemp()),
               package_blacklist=build_config.unit_tests.package_blacklist,
               flags=flags), timeout=2 * 60 * 60)
-      api.failures.raise_failed_packages(response.failed_packages)
+      api.failures.set_failed_packages(reb_step, response.failed_packages)
     if api.cros_infra_config.should_exit(ebuilds_run_spec):
       return
 

@@ -1425,14 +1425,6 @@
   },
   {
     "cmd": [],
-    "name": "build autotest packages.installation results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all packages installed successfully@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "build autotest packages.call chromite.api.PackageService/BuildsChrome",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -2059,14 +2051,6 @@
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build autotest packages.installation results (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all packages installed successfully@@@"
     ]
   },
   {

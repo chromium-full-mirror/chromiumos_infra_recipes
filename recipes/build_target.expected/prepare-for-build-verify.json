@@ -2120,14 +2120,6 @@
   },
   {
     "cmd": [],
-    "name": "install toolchain.installation results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all packages installed successfully@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "call chromite.api.PackageService/BuildsChrome",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -3048,14 +3040,6 @@
   },
   {
     "cmd": [],
-    "name": "install packages.installation results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all packages installed successfully@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "read chromeos version",
     "~followup_annotations": [
       "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
@@ -3338,14 +3322,6 @@
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run ebuild tests.installation results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all packages installed successfully@@@"
     ]
   },
   {

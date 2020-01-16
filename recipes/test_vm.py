@@ -134,7 +134,7 @@ def RunSteps(api, properties):
     # Rather than hack the prebuilts into the sysroot, just rebuild.
     # TODO(evanhernandez): Find a way to stop doing this. It's wasteful.
     if properties.test_harness == VmTestRequest.AUTOTEST:
-      with api.step.nest('build autotest packages'):
+      with api.step.nest('build autotest packages') as bap_step:
         sysroot = api.cros_build_api.SysrootService.Create(
             SysrootCreateRequest(
                 build_target=properties.build_target,
@@ -147,7 +147,7 @@ def RunSteps(api, properties):
             InstallToolchainRequest(sysroot=sysroot,
                                     chroot=api.cros_sdk.chroot),
             name='install toolchain').failed_packages
-        api.failures.raise_failed_packages(failed_packages)
+        api.failures.set_failed_packages(bap_step, failed_packages)
 
         # TODO(crbug.com/1011011): sync and goma build chrome if needed
         # because Autotest VM builders are rebuilding chrome.
@@ -188,7 +188,7 @@ def RunSteps(api, properties):
                 goma_config=api.cros_sdk.goma_config()),
             name='install packages').failed_packages
         # TODO: if used goma, emit goma info, stats, counterz.
-        api.failures.raise_failed_packages(failed_packages)
+        api.failures.set_failed_packages(bap_step, failed_packages)
 
     # TODO(evanhernandez): Read and present the test results.
     test_harness_name = VmTestRequest.TestHarness.Name(properties.test_harness)

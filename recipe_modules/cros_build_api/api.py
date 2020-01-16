@@ -122,7 +122,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                test_teelog_data=None, name=None, infra_step=False,
-               timeout=None, parsable_is_failure=True):
+               timeout=None):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -141,9 +141,6 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       infra_step (bool): Whether this build API call should be treated as an
           infrastructure step.
       timeout (int): timeout in seconds to be supplied to the BuildAPI call.
-      parsable_is_failure (bool): Keep step status as SUCCESS if parsable
-          output is returned from build api (return code 2). Useful if you're
-          later going to aggregate and raise returned proto contents.
 
     Returns:
       google.protobuf: The parsed response proto.
@@ -184,7 +181,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
           # way but a consumable response has been produced.
           result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
                                infra_step=infra_step, timeout=timeout)
-          if result.exc_result.retcode != 0 and parsable_is_failure:
+          if result.exc_result.retcode != 0:
             result.presentation.status = self.m.step.FAILURE
           if self._capture_stdout_stderr:
             file_contents = self.m.file.read_raw('read tee output file',

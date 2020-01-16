@@ -196,22 +196,17 @@ class FailuresApi(recipe_api.RecipeApi):
       step = self.m.step('ignored exception', cmd=None)
       step.presentation.logs['caught exception'] = [repr(e)]
 
-  def raise_failed_packages(self, packages):
-    """Display failed packages and raise a failure.
-
-    Each package will be shown as a failed substep.
+  def set_failed_packages(self, enclosing_step, packages):
+    """If any failed packages, set presentation and raise failure.
 
     Args:
+      enclosing_step (step): The enclosing step to mutate.
       packages (list[chromiumos.common.PackageInfo]): The failed packages.
 
     Raises:
       StepFailure: If failed_packages is not empty.
     """
-    # TODO(evanhernandez): Migrate this function to use _get_failures for
-    # better SoM reporting.
     if not packages:
-      with self.m.step.nest('installation results') as step:
-        step.presentation.step_text = 'all packages installed successfully'
         return
 
     short_message = ','.join([p.package_name for p in packages])
@@ -222,12 +217,11 @@ class FailuresApi(recipe_api.RecipeApi):
     else:
       long_message = 'failed to install {} packages'.format(len(packages))
 
-    with self.m.step.nest('installation failed: ' + short_message) as step:
-      step.presentation.step_text = long_message
-      step.presentation.status = self.m.step.FAILURE
-      step.presentation.logs['list of failed packages'] = map(
-          self.m.naming.get_package_title, packages)
-      raise self.m.step.StepFailure(long_message)
+    enclosing_step.presentation.step_text = long_message
+    enclosing_step.presentation.status = self.m.step.FAILURE
+    enclosing_step.presentation.logs['list of failed packages'] = map(
+        self.m.naming.get_package_title, packages)
+    raise self.m.step.StepFailure(long_message)
 
   def raise_failed_image_tests(self, failed_images):
     """Display failed image tests and raise a failure.
