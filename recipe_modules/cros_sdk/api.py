@@ -107,7 +107,6 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """
     cmd = [
         self.cros_sdk_path,
-        '--nouse-image',
         '--chroot',
         self._chroot_path,
     ]

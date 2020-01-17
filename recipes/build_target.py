@@ -138,7 +138,11 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     api.cros_sdk.build_chmod_chroot()
     response = api.cros_build_api.SdkService.Create(
         CreateSdkRequest(
-            flags=CreateSdkRequest.Flags(no_replace=True, no_use_image=True),
+            flags=CreateSdkRequest.Flags(
+                no_replace=True,
+                # Test mounting the SDK as an image only in staging for now.
+                no_use_image=(build_config.general.environment !=
+                              BuilderConfig.General.STAGING)),
             chroot=api.cros_sdk.chroot))
     step.presentation.logs['sdk version'] = [str(response.version.version)]
     api.cros_sdk.link_chroot(api.cros_source.workspace_path)
