@@ -164,6 +164,8 @@
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [repo:examples/full](#recipes-repo_examples_full)
+  * [repo:examples/repo_retry_failure](#recipes-repo_examples_repo_retry_failure)
+  * [repo:examples/repo_retry_success](#recipes-repo_examples_repo_retry_success)
   * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in the Chrome OS pool.
   * [sign_image](#recipes-sign_image) &mdash; Recipe for signing ChromeOS images.
   * [sign_paygen](#recipes-sign_paygen) &mdash; Recipe for signing ChromeOS payloads (AU deltas etc).
@@ -3083,11 +3085,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#104)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#105)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless, force_relevant_build):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#67)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#303)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#304)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3103,7 +3105,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#321)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#322)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3720,6 +3722,20 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#13)(api):**
+### *recipes* / [repo:examples/repo\_retry\_failure](/recipe_modules/repo/examples/repo_retry_failure.py)
+
+[DEPS](/recipe_modules/repo/examples/repo_retry_failure.py#6): [repo](#recipe_modules-repo), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/repo_retry_failure.py#12)(api):**
+
+&mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/examples/repo_retry_failure.py#17)(api, attempt):**
+### *recipes* / [repo:examples/repo\_retry\_success](/recipe_modules/repo/examples/repo_retry_success.py)
+
+[DEPS](/recipe_modules/repo/examples/repo_retry_success.py#6): [repo](#recipe_modules-repo), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/repo_retry_success.py#12)(api):**
+
+&mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/examples/repo_retry_success.py#17)(api, attempt):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
 [DEPS](/recipes/robocrop.py#12): [bot\_scaling](#recipe_modules-bot_scaling), [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]

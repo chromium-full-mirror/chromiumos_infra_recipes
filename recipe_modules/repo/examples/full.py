@@ -75,5 +75,5 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('setup_repo')
 
-  yield (api.test('missing from XML') +  #
+  yield (api.test('missing-from-XML') +  #
          api.step_data('diff remote and local manifest.git show', retcode=128))

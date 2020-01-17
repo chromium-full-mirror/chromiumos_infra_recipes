@@ -92,7 +92,8 @@ def RunSteps(api, properties):
   api.cros_sdk.set_use_flags(build_config.build.use_flags)
 
   # Set up source checkouts.
-  api.cros_source.ensure_synced_cache()
+  api.step('ensure synced cache', api.cros_source.ensure_synced_cache(),
+           timeout=120 * 6)
   with api.cros_source.checkout_overlays_context(), \
       api.cros_sdk.cleanup_context(
           checkout_path=api.cros_source.workspace_path), \

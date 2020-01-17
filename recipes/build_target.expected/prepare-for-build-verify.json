@@ -309,6 +309,10 @@
   },
   {
     "cmd": [],
+    "name": "ensure synced cache"
+  },
+  {
+    "cmd": [],
     "name": "mount overlay master"
   },
   {

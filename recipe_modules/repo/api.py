@@ -371,16 +371,24 @@ class RepoApi(recipe_api.RecipeApi):
     with self.m.step.nest('ensure synced checkout'):
       self.m.file.ensure_directory('ensure root path', root_path)
       with self.m.context(cwd=root_path, infra_steps=True):
-        # Remove .repo/manifests and .repo/manifests.git to avoid potential
-        # problems when switching to a different manifest repo or branch.
-        for manifest_dir in ('manifests', 'manifests.git'):
-          self.m.file.rmtree('remove .repo/%s' % manifest_dir,
-                             root_path.join('.repo', manifest_dir))
+        for retries in range(2):
+          try:
+            # Remove .repo/manifests and .repo/manifests.git to avoid potential
+            # problems when switching to a different manifest repo or branch.
+            for manifest_dir in ('manifests', 'manifests.git'):
+              self.m.file.rmtree('remove .repo/%s' % manifest_dir,
+                                 root_path.join('.repo', manifest_dir))
 
-        self.m.repo.init(manifest_url, **(init_opts or {}))
-        self.m.repo._git_clean_checkout(root_path)
-        self.m.repo._binary_selfupdate(root_path)
-        self.m.repo.sync(**(sync_opts or {}))
+            self.m.repo.init(manifest_url, **(init_opts or {}))
+            self.m.repo._git_clean_checkout(root_path)
+            self.m.repo._binary_selfupdate(root_path)
+            self.m.repo.sync(**(sync_opts or {}))
+            break
+          except recipe_api.StepFailure:
+            if retries < 1:
+              self.m.file.rmcontents('clean up root path and retry', root_path)
+            else:
+              raise
 
       # Sanity check since `repo init` will happily reuse a repository in the
       # cwd's ancestor directories.
