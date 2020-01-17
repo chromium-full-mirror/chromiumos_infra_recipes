@@ -163,6 +163,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses = {}
     responses['Create'] = jsonify(version={'version': 123})
     responses['Delete'] = '{}'
+    responses['Unmount'] = '{}'
     responses['Update'] = jsonify(version={'version': 123})
     return responses
 

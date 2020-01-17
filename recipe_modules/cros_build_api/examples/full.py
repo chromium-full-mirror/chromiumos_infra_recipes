@@ -108,6 +108,7 @@ def RunSteps(api):
       'SdkService': {
           'Create': sdk.CreateResponse,
           'Delete': sdk.UpdateResponse,
+          'Unmount': sdk.UnmountResponse,
           'Update': sdk.UpdateResponse,
       },
       'SysrootService': {
