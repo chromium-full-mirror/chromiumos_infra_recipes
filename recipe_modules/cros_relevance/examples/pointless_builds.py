@@ -30,11 +30,15 @@ def RunSteps(api):
       bbcommon_pb2.GerritChange(change=123),
       bbcommon_pb2.GerritChange(change=456)
   ]
+  no_gc = []
   api.cros_relevance.is_build_pointless(
       gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph,
       test_is_pointless=False)
   api.cros_relevance.is_build_pointless(
       gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph,
+      test_is_pointless=True)
+  api.cros_relevance.is_build_pointless(
+      no_gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph,
       test_is_pointless=True)
   api.cros_relevance.get_dependency_graph(bt, chroot)
 

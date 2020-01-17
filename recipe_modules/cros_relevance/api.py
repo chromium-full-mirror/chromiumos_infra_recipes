@@ -112,6 +112,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Returns:
       bool: Whether the build can be terminated early.
     """
+    if not gerrit_changes:
+      # If there are no CLs, then this is not a CQ run and should never be
+      # treated as pointless.
+      return False
     with self.m.step.nest('pointless build check') as step_result:
       pointless_build = not self.is_depgraph_affected(
           gerrit_changes, gitiles_commit, dep_graph,
