@@ -79,9 +79,14 @@ def RunSteps(api):
                               build_target=common.BuildTarget(name='board')),
       publish_info=[
           BuilderConfig.Artifacts.PublishInfo(
-              publish_gs_bucket='publish_gs_bucket',
+              publish_gs_location='publish_gs_location',
               publish_types=[
-                  BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE])])
+                  BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE]),
+          BuilderConfig.Artifacts.PublishInfo(
+              publish_gs_location='pub2/%(gs_path)s',
+              publish_types=[
+                  BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE])],
+  )
 
 def GenTests(api):
   yield api.test('basic')

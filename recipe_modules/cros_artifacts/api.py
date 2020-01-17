@@ -316,6 +316,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             links[link_name] = link_value
             step.presentation.links[link_name] = link_value
             publish_uri = 'gs://' + publish_loc
+            if not publish_uri.endswith('/'):
+              publish_uri += '/'
             cmd = ['cp'] + ['%s/%s' % (upload_uri, path) for path in files]
             cmd.append(publish_uri)
             for retries in range(3):
@@ -506,10 +508,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       # Return an aggregate response.
       if PrepareForBuildResponse.NEEDED in results:
-        step.presentation.step_text = "Build is NEEDED"
+        step.presentation.step_text = 'Build is NEEDED'
         return PrepareForBuildResponse.NEEDED
       if PrepareForBuildResponse.UNKNOWN in results:
-        step.presentation.step_text = "Build need is UNKNOWN"
+        step.presentation.step_text = 'Build need is UNKNOWN'
         return PrepareForBuildResponse.UNKNOWN
-      step.presentation.step_text = "Build is POINTLESS"
+      step.presentation.step_text = 'Build is POINTLESS'
       return PrepareForBuildResponse.POINTLESS
