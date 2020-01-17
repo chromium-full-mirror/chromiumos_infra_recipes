@@ -750,7 +750,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#123)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#123)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None):**
 
 Call the build API with the given input proto.
 
@@ -770,6 +770,9 @@ Args:
   infra_step (bool): Whether this build API call should be treated as an
       infrastructure step.
   timeout (int): timeout in seconds to be supplied to the BuildAPI call.
+  response_lambda (fn(output_proto)->str): A function that appends a string
+      to the build api response step. Used to make failure step names unique
+      across differing root causes.
 
 Returns:
   google.protobuf: The parsed response proto.

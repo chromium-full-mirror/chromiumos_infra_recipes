@@ -70,10 +70,24 @@
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -111,6 +125,11 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.read deploy_cipd.json",
     "~followup_annotations": [
@@ -135,6 +154,11 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.ensure_installed",
     "~followup_annotations": [
@@ -156,6 +180,11 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCU3N5bmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBh\\nY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgAS\\nAIoDCQoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -327,10 +356,24 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -364,6 +407,11 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "sync chrome (2).call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCV3N5bmMgY2hyb21lICgyKXxjYWxsIGNocm9taXRlLmFw\\naS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIID\\nBAoAEgCKAwkKB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -529,10 +577,24 @@
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.PackageService/BuildsChrome.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/BuildsChrome.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -614,10 +676,24 @@
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.PackageService/BuildsChrome (2).read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/BuildsChrome (2).call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -685,10 +761,24 @@
       "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.PackageService/HasChromePrebuilt.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/HasChromePrebuilt.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -756,10 +846,24 @@
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.PackageService/BuildsChrome (3).read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/BuildsChrome (3).call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {

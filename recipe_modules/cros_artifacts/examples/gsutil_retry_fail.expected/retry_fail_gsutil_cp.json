@@ -103,10 +103,24 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -160,6 +174,11 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.publish event.publish message.read deploy_cipd.json",
     "~followup_annotations": [
@@ -184,6 +203,11 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.publish event.publish message.ensure_installed",
     "~followup_annotations": [
@@ -205,6 +229,11 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BCpQCgcKBWJvYXJkEhlbQ0xFQU5VUF0vYXJ0aWZhY3RzX3Rt\\ncF8xGhEKDy9wYXRoL3RvL2Nocm9vdCIXCgwvYnVpbGQvYm9hcmQSBwoFYm9hcmQyIwohCh9bU1RB\\nUlRfRElSXS90bXAvYXJ0aWZhY3QudGFyLmd60ALQ7IDZrvG1knzaAnh1cGxvYWQgYXJ0aWZhY3Rz\\nfGJ1bmRsZSBFQlVJTERfTE9HUyBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0\\nc1NlcnZpY2UvQnVuZGxlRWJ1aWxkTG9nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",

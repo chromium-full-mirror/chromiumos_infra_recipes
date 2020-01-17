@@ -122,7 +122,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                test_teelog_data=None, name=None, infra_step=False,
-               timeout=None):
+               timeout=None, response_lambda=None):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -141,10 +141,15 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       infra_step (bool): Whether this build API call should be treated as an
           infrastructure step.
       timeout (int): timeout in seconds to be supplied to the BuildAPI call.
+      response_lambda (fn(output_proto)->str): A function that appends a string
+          to the build api response step. Used to make failure step names unique
+          across differing root causes.
 
     Returns:
       google.protobuf: The parsed response proto.
     """
+    response_lambda = response_lambda or (lambda op: '')
+
     with self.m.step.nest(name or 'call %s' % endpoint) as step:
       messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
       input_path = messages_path.join('input_proto.json')
@@ -156,6 +161,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       input_json = json_format.MessageToJson(input_proto)
       self.m.file.write_raw('write input file', input_path, input_json)
       step.presentation.logs['request'] = [input_json]
+      step.logs['response'] =  ['{}']
 
       cmd = [
           self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
@@ -170,58 +176,58 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # needs to be on the PATH.
       chromite_bin_dir = self.m.cros_source.workspace_path.join('chromite/bin')
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
-
-        request_time = timestamp_pb2.Timestamp()
-        request_time.FromDatetime(self.m.time.utcnow())
-
-        output_proto = reflection.MakeClass(output_type)()
-
         try:
+          output_proto = reflection.MakeClass(output_type)()
           # For Build API retcode 2 indicates that the invocation failed in some
           # way but a consumable response has been produced.
-          result = self.m.step('call build API script', cmd, ok_ret=(0, 2),
-                               infra_step=infra_step, timeout=timeout)
-          if result.exc_result.retcode != 0:
-            result.presentation.status = self.m.step.FAILURE
+          request_time = timestamp_pb2.Timestamp()
+          request_time.FromDatetime(self.m.time.utcnow())
+          try:
+            call_step = self.m.step('call build API script', cmd, ok_ret=(0, 2),
+                                    infra_step=infra_step, timeout=timeout)
+          finally:
+            response_time = timestamp_pb2.Timestamp()
+            response_time.FromDatetime(self.m.time.utcnow())
+
           if self._capture_stdout_stderr:
             file_contents = self.m.file.read_raw('read tee output file',
                                                  logfile_path,
                                                  test_data=test_teelog_data)
-        except self.m.step.StepFailure as e:
-          # If the Build API call failed, still publish information to
-          # analysis_service. There is some code duplication with the success
-          # case, e.g. setting response time.
-          response_time = timestamp_pb2.Timestamp()
-          response_time.FromDatetime(self.m.time.utcnow())
 
-          if self._capture_stdout_stderr:
-            file_contents = self.m.file.read_raw('read tee output on failure',
-                                                 logfile_path,
-                                                 test_data=test_teelog_data)
+          # If no test data is provided, see if we have our own.
+          test_output_data = (test_output_data or
+                              self.test_api.response_for_endpoint(endpoint))
+
+          # Parse the output to a proto and record it in the logs.
+          output_json = self.m.file.read_raw('read output file', output_path,
+                                            test_data=test_output_data)
+
+          json_format.Parse(output_json, output_proto,
+                            ignore_unknown_fields=True)
+
+          # Since we can't rename the api step, and certain applications\tables
+          # have taken them as input (e.g. sheriff-o-matic), we then make a
+          # 'response' step that we can have foreknowledge of what the name
+          # _should_ be based on the call's results.
+          step.presentation.logs['response'] = [output_json]
+          resp_step_name = 'call response%s' % response_lambda(output_proto)
+
+          with self.m.step.nest(resp_step_name) as resp_step:
+            resp_step.logs['build api stdout'] = ('' if not file_contents
+                                                  else file_contents)
+            if call_step.exc_result.retcode != 0:
+              resp_step.status = self.m.step.FAILURE
+
+        except self.m.step.StepFailure as e:
+          call_step = e.result
+          raise e
+
+        finally:
+          # Publish Build API responses on Cloud Pub/Sub if they are registered.
           if self.m.analysis_service.can_publish_event(input_proto,
                                                        output_proto):
             self.m.analysis_service.publish_event(input_proto, output_proto,
                                                   request_time, response_time,
-                                                  e.result, file_contents)
-          raise e
-
-        response_time = timestamp_pb2.Timestamp()
-        response_time.FromDatetime(self.m.time.utcnow())
-
-      # If no test data is provided, see if we have our own.
-      if test_output_data is None:
-        test_output_data = self.test_api.response_for_endpoint(endpoint)
-
-      # Finally, parse the output to a proto and record it in the logs.
-      output_json = self.m.file.read_raw('read output file', output_path,
-                                         test_data=test_output_data)
-      step.presentation.logs['response'] = [output_json]
-      json_format.Parse(output_json, output_proto, ignore_unknown_fields=True)
-
-      # Publish Build API responses on Cloud Pub/Sub if they are registered.
-      if self.m.analysis_service.can_publish_event(input_proto, output_proto):
-        self.m.analysis_service.publish_event(
-            input_proto, output_proto, request_time, response_time, result,
-            file_contents)
+                                                  call_step, file_contents)
 
       return output_proto

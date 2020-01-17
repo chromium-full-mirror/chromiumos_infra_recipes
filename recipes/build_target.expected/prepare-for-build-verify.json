@@ -617,10 +617,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -750,10 +764,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "uprev packages.call chromite.api.PackageService/Uprev.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -828,6 +856,11 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.read deploy_cipd.json",
     "~followup_annotations": [
@@ -853,6 +886,11 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.ensure_installed",
     "~followup_annotations": [
@@ -875,6 +913,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNAC0OyA2a7xtZJ82gJLdXByZXYgcGFja2FnZXN8Y2FsbCBj\\naHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gKd\\nAQqWAQoTW0NBQ0hFXS9jcm9zX2Nocm9vdBp/ChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1k\\nZWJ1ZwoZChdzdHJpY3RfdG9vbGNoYWluX2NoZWNrcwoQCg4tb3JkZXJmaWxlX3VzZQoSChBvcmRl\\ncmZpbGVfdmVyaWZ5ChoKGC1zdHJpY3RfdG9vbGNoYWluX2NoZWNrcxIAGAHqAnEKLwotW1NUQVJU\\nX0RJUl0vY2hyb21pdW1vcy9zcmMvb3ZlcmxheS9mb28uZWJ1aWxkCjcKNVtTVEFSVF9ESVJdL2No\\ncm9taXVtb3Mvc3JjL3ByaXZhdGUtb3ZlcmxheS9iYXIuZWJ1aWxkEgUxLjIuMw==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -1032,10 +1075,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.call chromite.api.SdkService/Create.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -1100,6 +1157,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BMIBnwEKBAgBGAESlgEKE1tDQUNIRV0vY3Jvc19jaHJvb3Qa\\nfwoRCg9jaHJvbWVfaW50ZXJuYWwKDQoLLWNyb3MtZGVidWcKGQoXc3RyaWN0X3Rvb2xjaGFpbl9j\\naGVja3MKEAoOLW9yZGVyZmlsZV91c2UKEgoQb3JkZXJmaWxlX3ZlcmlmeQoaChgtc3RyaWN0X3Rv\\nb2xjaGFpbl9jaGVja3PKAQQKAgh70ALQ7IDZrvG1knzaAkJpbml0IHNka3xjYWxsIGNocm9taXRl\\nLmFwaS5TZGtTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -1282,10 +1344,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.call chromite.api.SdkService/Update.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -1350,6 +1426,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIyoDE/QQQgMq17gEiBgjMgMT9BNIBnQEKABIAGpYBChNbQ0FDSEVdL2Nyb3NfY2hyb290Gn8K\\nEQoPY2hyb21lX2ludGVybmFsCg0KCy1jcm9zLWRlYnVnChkKF3N0cmljdF90b29sY2hhaW5fY2hl\\nY2tzChAKDi1vcmRlcmZpbGVfdXNlChIKEG9yZGVyZmlsZV92ZXJpZnkKGgoYLXN0cmljdF90b29s\\nY2hhaW5fY2hlY2tz2gEECgIIe9AC0OyA2a7xtZJ82gJEdXBkYXRlIHNka3xjYWxsIGNocm9taXRl\\nLmFwaS5TZGtTZXJ2aWNlL1VwZGF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -1490,10 +1571,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "create sysroot.call chromite.api.SysrootService/Create.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create sysroot.call chromite.api.SysrootService/Create.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -1562,6 +1657,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "create sysroot.call chromite.api.SysrootService/Create.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BOIBoQEKABIECAEQASKWAQoTW0NBQ0hFXS9jcm9zX2Nocm9v\\ndBp/ChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZwoZChdzdHJpY3RfdG9vbGNoYWlu\\nX2NoZWNrcwoQCg4tb3JkZXJmaWxlX3VzZQoSChBvcmRlcmZpbGVfdmVyaWZ5ChoKGC1zdHJpY3Rf\\ndG9vbGNoYWluX2NoZWNrc+oBGwoZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldNAC0OyA2a7xtZJ8\\n2gJMY3JlYXRlIHN5c3Jvb3R8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvQ3JlYXRl\\nfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -1694,10 +1794,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -1767,6 +1881,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwI0IDE/QQQgMq17gEiBgjSgMT9BJIBmwEKABKWAQoTW0NBQ0hFXS9jcm9zX2Nocm9vdBp/ChEK\\nD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZwoZChdzdHJpY3RfdG9vbGNoYWluX2NoZWNr\\ncwoQCg4tb3JkZXJmaWxlX3VzZQoSChBvcmRlcmZpbGVfdmVyaWZ5ChoKGC1zdHJpY3RfdG9vbGNo\\nYWluX2NoZWNrc5oBFwoVEhMaEQoPc29tZS9zb3VyY2UvZGly0ALQ7IDZrvG1knzaAm5kZXBlbmRl\\nbmN5IGdyYXBoIGNhbGN1bGF0aW9ufGNhbGwgY2hyb21pdGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNl\\nL0dldEJ1aWxkRGVwZW5kZW5jeUdyYXBofGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -1894,10 +2013,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.PackageService/GetTargetVersions.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/GetTargetVersions.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -2040,10 +2173,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -2107,6 +2254,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwI1oDE/QQQgMq17gEiBgjYgMT9BPIBtgEKGQoNL2J1aWxkL3RhcmdldBIICgZ0YXJnZXQSABqW\\nAQoTW0NBQ0hFXS9jcm9zX2Nocm9vdBp/ChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1\\nZwoZChdzdHJpY3RfdG9vbGNoYWluX2NoZWNrcwoQCg4tb3JkZXJmaWxlX3VzZQoSChBvcmRlcmZp\\nbGVfdmVyaWZ5ChoKGC1zdHJpY3RfdG9vbGNoYWluX2NoZWNrc/oBANAC0OyA2a7xtZJ82gJZaW5z\\ndGFsbCB0b29sY2hhaW58Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFRv\\nb2xjaGFpbnxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -2234,10 +2386,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.PackageService/BuildsChrome.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/BuildsChrome.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -2362,10 +2528,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -2425,6 +2605,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwI3IDE/QQQgMq17gEiBgjegMT9BNAC0OyA2a7xtZJ82gJTc3luYyBjaHJvbWV8Y2FsbCBjaHJv\\nbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hyb21lVmVyc2lvbnxjYWxsIGJ1aWxkIEFQSSBz\\nY3JpcHSCA5sBCpYBChNbQ0FDSEVdL2Nyb3NfY2hyb290Gn8KEQoPY2hyb21lX2ludGVybmFsCg0K\\nCy1jcm9zLWRlYnVnChkKF3N0cmljdF90b29sY2hhaW5fY2hlY2tzChAKDi1vcmRlcmZpbGVfdXNl\\nChIKEG9yZGVyZmlsZV92ZXJpZnkKGgoYLXN0cmljdF90b29sY2hhaW5fY2hlY2tzEgCKAwkKB3Zl\\ncnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -2723,10 +2908,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "install packages.prepare artifacts final.call chromite.api.ToolchainService/PrepareForBuild.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.prepare artifacts final.call chromite.api.ToolchainService/PrepareForBuild.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -2926,10 +3125,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -3027,6 +3240,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"CusDChkKDS9idWlsZC90YXJnZXQSCAoGdGFyZ2V0EgQIARgBIqoBChNbQ0FDSEVdL2Nyb3NfY2hy\\nb290Gn8KEQoPY2hyb21lX2ludGVybmFsCg0KCy1jcm9zLWRlYnVnChkKF3N0cmljdF90b29sY2hh\\naW5fY2hlY2tzChAKDi1vcmRlcmZpbGVfdXNlChIKEG9yZGVyZmlsZV92ZXJpZnkKGgoYLXN0cmlj\\ndF90b29sY2hhaW5fY2hlY2tzIhJbU1RBUlRfRElSXS9jaHJvbWUqEQoPY2hyb21lX2ludGVybmFs\\nKg0KCy1jcm9zLWRlYnVnKhkKF3N0cmljdF90b29sY2hhaW5fY2hlY2tzKhAKDi1vcmRlcmZpbGVf\\ndXNlKhIKEG9yZGVyZmlsZV92ZXJpZnkqGgoYLXN0cmljdF90b29sY2hhaW5fY2hlY2tzMpsBChVb\\nU1RBUlRfRElSXS9jaXBkL2dvbWESOC9jcmVkcy9zZXJ2aWNlX2FjY291bnRzL3NlcnZpY2UtYWNj\\nb3VudC1nb21hLWNsaWVudC5qc29uIAEqHQobW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzEyMhFz\\ndGF0cy5iaW5hcnlwcm90bzoUY291bnRlcnouYmluYXJ5cHJvdG8SABoMCOKAxP0EEIDKte4BIgYI\\n5IDE/QTQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lz\\ncm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -3247,10 +3465,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -3313,6 +3545,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwI5YDE/QQQgMq17gEiBgjngMT9BIICxwEKABIUW0NMRUFOVVBdL3RtcF90bXBfMTUaqgEKE1tD\\nQUNIRV0vY3Jvc19jaHJvb3QafwoRCg9jaHJvbWVfaW50ZXJuYWwKDQoLLWNyb3MtZGVidWcKGQoX\\nc3RyaWN0X3Rvb2xjaGFpbl9jaGVja3MKEAoOLW9yZGVyZmlsZV91c2UKEgoQb3JkZXJmaWxlX3Zl\\ncmlmeQoaChgtc3RyaWN0X3Rvb2xjaGFpbl9jaGVja3MiEltTVEFSVF9ESVJdL2Nocm9tZSIAigIO\\nCgx0YXJiYWxsL3BhdGjQAtDsgNmu8bWSfNoCWHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0\\nZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3Jp\\ncHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -3469,10 +3706,24 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "upload artifacts.call chromite.api.ToolchainService/BundleArtifacts.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.call chromite.api.ToolchainService/BundleArtifacts.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -3895,10 +4146,24 @@
       "[CLEANUP]/build_api_messages_tmp_20/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.SdkService/Delete.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.SdkService/Delete.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {

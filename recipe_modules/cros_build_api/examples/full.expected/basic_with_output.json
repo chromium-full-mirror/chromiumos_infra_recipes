@@ -90,10 +90,24 @@
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@Logfile contents for build_cmd.@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -135,6 +149,11 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.publish event.publish message.read deploy_cipd.json",
     "~followup_annotations": [
@@ -159,6 +178,11 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.publish event.publish message.ensure_installed",
     "~followup_annotations": [
@@ -180,6 +204,11 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BGIKCggKBnRhcmdldGoQCg4vYmluaG9zdHMvcGF0aNoCTWNh\\nbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1ByZXBhcmVCaW5ob3N0c1VwbG9hZHN8Y2Fs\\nbCBidWlsZCBBUEkgc2NyaXB0kgMfTG9nZmlsZSBjb250ZW50cyBmb3IgYnVpbGRfY21kLg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -282,10 +311,24 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.TestApiService/InputOutputMethod.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.TestApiService/InputOutputMethod.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@Logfile contents for failing case of build_cmd.@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -321,6 +364,11 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.TestApiService/InputOutputMethod.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BGIKCggKBnRhcmdldGoA2gJIY2FsbCBjaHJvbWl0ZS5hcGku\\nVGVzdEFwaVNlcnZpY2UvSW5wdXRPdXRwdXRNZXRob2R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0kgMv\\nTG9nZmlsZSBjb250ZW50cyBmb3IgZmFpbGluZyBjYXNlIG9mIGJ1aWxkX2NtZC4=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
@@ -423,10 +471,24 @@
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.ArtifactsService/BundleFirmware.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.ArtifactsService/BundleFirmware.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
@@ -465,6 +527,11 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
     "infra_step": true,
     "name": "call chromite.api.ArtifactsService/BundleFirmware.publish event.publish message.publish-message",
     "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BCoKCggKBnRhcmdldDIjCiEKH1tTVEFSVF9ESVJdL3RtcC9h\\ncnRpZmFjdC50YXIuZ3raAkdjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1bmRs\\nZUZpcm13YXJlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
