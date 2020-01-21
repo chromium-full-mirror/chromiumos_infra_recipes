@@ -54,6 +54,7 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties)
+from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 
@@ -66,7 +67,6 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 
 def RunSteps(api, properties):
   build_target = properties.build_target
-  test_pointless = 'pointless' in properties.build_target.name
   force_relevant_build = properties.force_relevant_build
   gitiles_commit = api.buildbucket.gitiles_commit
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
@@ -99,11 +99,11 @@ def RunSteps(api, properties):
           checkout_path=api.cros_source.workspace_path), \
       api.context(cwd=api.cros_source.workspace_path):
     DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
-               test_pointless, force_relevant_build)
+               force_relevant_build)
 
 
 def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
-               test_pointless, force_relevant_build):
+               force_relevant_build):
   api.cros_source.sync_snapshot(gitiles_commit)
 
   if gerrit_changes and build_config.build.apply_gerrit_changes:
@@ -174,8 +174,10 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   if (not force_relevant_build and
       relevance != PrepareForBuildResponse.NEEDED and
       api.cros_relevance.is_build_pointless(
-          gerrit_changes, gitiles_commit, dep_graph=target_graph,
-          test_is_pointless=test_pointless)):
+          gerrit_changes,
+          gitiles_commit,
+          dep_graph=target_graph,
+      )):
     # TODO: When it becomes possible to add tags from the build itself set:
     # "hide-in-gerrit": "pointless"
     # See https://crrev.com/c/1913895.
@@ -368,6 +370,22 @@ def GenTests(api):
         tags=[{'key': 'parent_buildbucket_id', 'value': 'parent_id'}])
     return api.buildbucket.build(build)
 
+  def make_build_pointless():
+    resp = PointlessBuildCheckResponse()
+    resp.build_is_pointless.value = True
+    serialized = resp.SerializeToString()
+    return api.step_data(
+        'pointless build check.depgraph relevance check.read output file',
+        api.file.read_raw(content=serialized))
+
+  def make_build_not_pointless():
+    resp = PointlessBuildCheckResponse()
+    resp.build_is_pointless.value = False
+    serialized = resp.SerializeToString()
+    return api.step_data(
+        'pointless build check.depgraph relevance check.read output file',
+        api.file.read_raw(content=serialized))
+
   yield (api.test('basic') +  #
          cq_build_with_gerrit_change() +  #
          api.properties(build_target={'name': 'amd64-generic'}))
@@ -380,7 +398,7 @@ def GenTests(api):
   yield (api.test('forced-pointless') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
-         api.properties(build_target={'name': 'amd64-generic-pointless'},
+         api.properties(build_target={'name': 'amd64-generic'},
                         force_relevant_build=True))
 
   yield (api.test('with-goma-props') +  #
@@ -393,6 +411,7 @@ def GenTests(api):
 
   yield (api.test('no-needs-chrome') +  #
          cq_build_with_gerrit_change() +  #
+         make_build_not_pointless() +  #
          api.step_data(
              'call chromite.api.PackageService/BuildsChrome.read output file',
              api.file.read_raw(content='{"builds_chrome": false}')) +  #
@@ -503,7 +522,8 @@ def GenTests(api):
   yield (api.test('pointless-build-check') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
                                    builder='amd64-generic-cq') +  #
-         api.properties(build_target={'name': 'amd64-generic-pointless'}))
+         make_build_pointless() +  #
+         api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('with-builder-config-limited-packages') +  #
          api.buildbucket.try_build(

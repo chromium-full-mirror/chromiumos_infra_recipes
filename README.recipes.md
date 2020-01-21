@@ -1067,7 +1067,7 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#223)(self, build_target, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#220)(self, build_target, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -1108,7 +1108,7 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#95)(self, gerrit_changes, gitiles_commit, dep_graph, test_is_pointless=False):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#95)(self, gerrit_changes, gitiles_commit, dep_graph):**
 
 Determines if build(s) can be terminated early.
 
@@ -1123,12 +1123,11 @@ Args:
       snapshot Gitiles commit.
   dep_graph (chromite.api.DepGraph): The dependency graph to compare the
       Gerrit changes against to test for build relevancy.
-  test_is_pointless (bool): test override; sets whether build is pointless.
 
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#194)(self, gerrit_changes, gitiles_commit, dep_graph, name=None, test_is_pointless=False):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#191)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -1141,8 +1140,6 @@ Args:
       Gerrit changes against to test for build relevancy.
   name (str): The step name to display, defaults to 'depgraph relevance
       check'.
-  test_is_pointless (bool): If True, returns a fixed testing value from the
-    checking tool rather than running an actual comparison.
 
 
 Returns:
@@ -3087,11 +3084,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#105)(api, build_target, build_config, gitiles_commit, gerrit_changes, test_pointless, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#105)(api, build_target, build_config, gitiles_commit, gerrit_changes, force_relevant_build):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#67)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#68)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#313)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#315)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3107,7 +3104,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#331)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#333)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3305,9 +3302,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#18)(api):**
 ### *recipes* / [cros\_relevance:examples/pointless\_builds](/recipe_modules/cros_relevance/examples/pointless_builds.py)
 
-[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#12): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#13): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#20)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]

@@ -8,10 +8,12 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.chromite.api import depgraph
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
+from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 DEPS = [
     'cros_relevance',
     'recipe_engine/properties',
+    'recipe_engine/file'
 ]
 
 
@@ -32,16 +34,23 @@ def RunSteps(api):
   ]
   no_gc = []
   api.cros_relevance.is_build_pointless(
-      gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph,
-      test_is_pointless=False)
+      gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph)
   api.cros_relevance.is_build_pointless(
-      gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph,
-      test_is_pointless=True)
-  api.cros_relevance.is_build_pointless(
-      no_gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph,
-      test_is_pointless=True)
+      no_gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph)
   api.cros_relevance.get_dependency_graph(bt, chroot)
 
 
 def GenTests(api):
-  yield (api.test('pointless_check'))
+
+  def force_pointless_check_response(api, pointless_status=True):
+    resp = PointlessBuildCheckResponse()
+    resp.build_is_pointless.value = pointless_status
+    serialized = resp.SerializeToString()
+    return api.step_data(
+        'pointless build check.depgraph relevance check.read output file',
+        api.file.read_raw(content=serialized))
+
+  yield (api.test('not pointless_check'))
+
+  yield (api.test('pointless check') +
+         force_pointless_check_response(api, True))

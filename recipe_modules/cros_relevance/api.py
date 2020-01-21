@@ -92,8 +92,12 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
               len(result.skip_for_run_when_rules)))
       return [b.name for b in result.builds_to_run]
 
-  def is_build_pointless(self, gerrit_changes, gitiles_commit, dep_graph,
-                         test_is_pointless=False):
+  def is_build_pointless(
+      self,
+      gerrit_changes,
+      gitiles_commit,
+      dep_graph,
+  ):
     """Determines if build(s) can be terminated early.
 
     If build_target is set, then the chromiumos workspace must have been
@@ -107,7 +111,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           snapshot Gitiles commit.
       dep_graph (chromite.api.DepGraph): The dependency graph to compare the
           Gerrit changes against to test for build relevancy.
-      test_is_pointless (bool): test override; sets whether build is pointless.
 
     Returns:
       bool: Whether the build can be terminated early.
@@ -117,9 +120,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       # treated as pointless.
       return False
     with self.m.step.nest('pointless build check') as step_result:
-      pointless_build = not self.is_depgraph_affected(
-          gerrit_changes, gitiles_commit, dep_graph,
-          test_is_pointless=test_is_pointless)
+      pointless_build = not self.is_depgraph_affected(gerrit_changes,
+                                                      gitiles_commit, dep_graph)
       if pointless_build:
         step_result.presentation.step_text = ('build is irrelevant')
         step_result.presentation.properties['pointless_build'] = True
@@ -128,7 +130,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       return pointless_build
 
   def _are_paths_affected(self, gerrit_changes, gitiles_commit, relevant_paths,
-                          test_is_pointless=False, name=None):
+                          name=None):
     """Determines if a Gerrit Change affects any files in relevant paths.
 
     Args:
@@ -140,8 +142,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         relevant.
       name (str): The step name to display, defaults to 'path relevance
           check'.
-      test_is_pointless (bool): If True, returns a fixed testing value from the
-        checking tool rather than running an actual comparison.
+
 
     Returns:
       bool: Whether the given Gerrit Change affects any of the relevant paths.
@@ -181,18 +182,14 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       ]
       test_plan_res = self.m.step('run check', cmd, infra_step=True)
 
-      test_resp = PointlessBuildCheckResponse()
-      test_resp.build_is_pointless.value = test_is_pointless
-      response_bin = self.m.file.read_raw(
-          'read output file', output_bin_file,
-          test_data=test_resp.SerializeToString())
+      response_bin = self.m.file.read_raw('read output file', output_bin_file)
       result = PointlessBuildCheckResponse.FromString(response_bin)
 
       step_result.presentation.logs['relevance_output'] = [str(result)]
       return not bool(result.build_is_pointless.value)
 
   def is_depgraph_affected(self, gerrit_changes, gitiles_commit, dep_graph,
-                           name=None, test_is_pointless=False):
+                           name=None):
     """Determines if a Gerrit Change affects a given dependency graph.
 
     Args:
@@ -204,8 +201,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           Gerrit changes against to test for build relevancy.
       name (str): The step name to display, defaults to 'depgraph relevance
           check'.
-      test_is_pointless (bool): If True, returns a fixed testing value from the
-        checking tool rather than running an actual comparison.
 
 
     Returns:
@@ -215,10 +210,12 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     # and pass it as a flat list of paths.
     relevant_paths = _flatten_depgraph_paths(dep_graph)
 
-    return self._are_paths_affected(gerrit_changes, gitiles_commit,
-                                    relevant_paths,
-                                    name=(name or 'depgraph relevance check'),
-                                    test_is_pointless=test_is_pointless)
+    return self._are_paths_affected(
+        gerrit_changes,
+        gitiles_commit,
+        relevant_paths,
+        name=(name or 'depgraph relevance check'),
+    )
 
   def get_dependency_graph(self, build_target, chroot, packages=None):
     """Calculates the dependency graph for the build target & SDK

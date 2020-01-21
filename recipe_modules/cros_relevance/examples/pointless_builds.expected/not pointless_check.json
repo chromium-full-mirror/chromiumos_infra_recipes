@@ -25,8 +25,7 @@
       "@@@STEP_LOG_LINE@relevance_input@  path: \"happy/source/dir\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
-      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
-      "@@@STEP_LOG_LINE@relevance_output@}@@@",
+      "@@@STEP_LOG_LINE@relevance_output@@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
     ]
   },
@@ -122,94 +121,6 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@build is irrelevant@@@",
-      "@@@SET_BUILD_PROPERTY@pointless_build@true@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "pointless build check (2).depgraph relevance check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"my hash\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\030{\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\030\\310\\003\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\032\\007my hash\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  path: \"happy/source/dir\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_END@relevance_input@@@",
-      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
-      "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
-      "@@@STEP_LOG_LINE@relevance_output@}@@@",
-      "@@@STEP_LOG_END@relevance_output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "2\u0007my hash:\u0004\n\u0002\u0018{:\u0005\n\u0003\u0018\ufffd\u0003B\u000b\n\t\u001a\u0007my hashJ\u0012\n\u0010happy/source/dir",
-      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto"
-    ],
-    "infra_step": true,
-    "name": "pointless build check (2).depgraph relevance check.write input binaryproto",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@2\u0007my hash:\u0004@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0018{:\u0005@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\u0003B\u000b@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\t\u001a\u0007my hashJ\u0012@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0010happy/source/dir@@@",
-      "@@@STEP_LOG_END@input.binaryproto@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/test_planner/pointless_build_checker",
-      "check-build",
-      "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto",
-      "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto"
-    ],
-    "infra_step": true,
-    "name": "pointless build check (2).depgraph relevance check.run check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "pointless build check (2).depgraph relevance check.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "dependency graph calculation"
   },
   {
@@ -237,7 +148,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"my_build_target\"\n  }, \n  \"chroot\": {}\n}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
@@ -256,9 +167,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "chromite.api.DependencyService/GetBuildDependencyGraph"
     ],
     "env_suffixes": {
@@ -279,7 +190,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
