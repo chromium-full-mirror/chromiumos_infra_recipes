@@ -300,7 +300,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir"
+      "[CLEANUP]/overlayfs/upperdir/master"
     ],
     "infra_step": true,
     "name": "mount overlay master.create upperdir",
@@ -318,7 +318,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir"
+      "[CLEANUP]/overlayfs/workdir/master"
     ],
     "infra_step": true,
     "name": "mount overlay master.create workdir",
@@ -352,7 +352,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=master",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/master,workdir=[CLEANUP]/overlayfs/workdir/master,x-chromeos-overlay.name=master",
       "overlay",
       "[START_DIR]/chromiumos_master"
     ],
@@ -376,7 +376,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir"
+      "[CLEANUP]/overlayfs/upperdir/workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create upperdir",
@@ -394,7 +394,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir"
+      "[CLEANUP]/overlayfs/workdir/workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create workdir",
@@ -428,7 +428,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[START_DIR]/chromiumos_workspace"
     ],

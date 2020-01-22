@@ -13,7 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir"
+      "[CLEANUP]/overlayfs/upperdir/a"
     ],
     "infra_step": true,
     "name": "mount overlay a.create upperdir",
@@ -31,7 +31,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir"
+      "[CLEANUP]/overlayfs/workdir/a"
     ],
     "infra_step": true,
     "name": "mount overlay a.create workdir",
@@ -65,7 +65,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=a",
+      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir/a,workdir=[CLEANUP]/overlayfs/workdir/a,x-chromeos-overlay.name=a",
       "overlay",
       "[START_DIR]/mount_a"
     ],
@@ -89,7 +89,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir"
+      "[CLEANUP]/overlayfs/upperdir/b"
     ],
     "infra_step": true,
     "name": "mount overlay b.create upperdir",
@@ -107,7 +107,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir"
+      "[CLEANUP]/overlayfs/workdir/b"
     ],
     "infra_step": true,
     "name": "mount overlay b.create workdir",
@@ -141,7 +141,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=b",
+      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir/b,workdir=[CLEANUP]/overlayfs/workdir/b,x-chromeos-overlay.name=b",
       "overlay",
       "[START_DIR]/mount_b"
     ],
@@ -165,7 +165,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir"
+      "[CLEANUP]/overlayfs/upperdir/c"
     ],
     "infra_step": true,
     "name": "mount overlay c.create upperdir",
@@ -183,7 +183,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir"
+      "[CLEANUP]/overlayfs/workdir/c"
     ],
     "infra_step": true,
     "name": "mount overlay c.create workdir",
@@ -217,7 +217,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=c",
+      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir/c,workdir=[CLEANUP]/overlayfs/workdir/c,x-chromeos-overlay.name=c",
       "overlay",
       "[START_DIR]/mount_c"
     ],
@@ -281,7 +281,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir"
+      "[CLEANUP]/overlayfs/upperdir/a"
     ],
     "infra_step": true,
     "name": "mount overlay a (2).create upperdir",
@@ -299,7 +299,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir"
+      "[CLEANUP]/overlayfs/workdir/a"
     ],
     "infra_step": true,
     "name": "mount overlay a (2).create workdir",
@@ -333,7 +333,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=a",
+      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir/a,workdir=[CLEANUP]/overlayfs/workdir/a,x-chromeos-overlay.name=a",
       "overlay",
       "[START_DIR]/mount_a"
     ],
@@ -357,7 +357,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir"
+      "[CLEANUP]/overlayfs/upperdir/b"
     ],
     "infra_step": true,
     "name": "mount overlay b (2).create upperdir",
@@ -375,7 +375,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir"
+      "[CLEANUP]/overlayfs/workdir/b"
     ],
     "infra_step": true,
     "name": "mount overlay b (2).create workdir",
@@ -409,7 +409,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=b",
+      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir/b,workdir=[CLEANUP]/overlayfs/workdir/b,x-chromeos-overlay.name=b",
       "overlay",
       "[START_DIR]/mount_b"
     ],
@@ -449,7 +449,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir"
+      "[CLEANUP]/overlayfs/upperdir/c"
     ],
     "infra_step": true,
     "name": "mount overlay c (2).create upperdir",
@@ -467,7 +467,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir"
+      "[CLEANUP]/overlayfs/workdir/c"
     ],
     "infra_step": true,
     "name": "mount overlay c (2).create workdir",
@@ -501,7 +501,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir,workdir=[CLEANUP]/overlayfs/workdir,x-chromeos-overlay.name=c",
+      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir/c,workdir=[CLEANUP]/overlayfs/workdir/c,x-chromeos-overlay.name=c",
       "overlay",
       "[START_DIR]/mount_c"
     ],

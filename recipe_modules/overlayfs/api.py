@@ -48,9 +48,9 @@ class OverlayfsApi(recipe_api.RecipeApi):
         # Create overlayfs directories.
         work_base = self._base_work_path
         if upperdir_path is None:
-          upperdir_path = work_base.join('upperdir')
+          upperdir_path = work_base.join('upperdir').join(name)
         self.m.file.ensure_directory('create upperdir', upperdir_path)
-        workdir_path = work_base.join('workdir')
+        workdir_path = work_base.join('workdir').join(name)
         self.m.file.ensure_directory('create workdir', workdir_path)
         self.m.file.ensure_directory('create mount path', mount_path)
 
