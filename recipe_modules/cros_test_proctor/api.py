@@ -17,6 +17,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.test_moblab_vm import TestMoblabVmProperties
 from PB.recipes.chromeos.test_vm import TestVmProperties
+from PB.recipes.chromeos.tast_vm import TastVmProperties
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
@@ -188,6 +189,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
   def _tast_vm_test(self, build_target):
     """Returns the tast builder name for the given build_target."""
     return build_target.name + '-tast-vm'
+
+  def _direct_tast_vm_test(self, build_target):
+    """Returns the direct tast builder name for the given build_target."""
+    return build_target.name + '-direct-tast-vm'
 
   def _schedule_tests(self, test_plan, passed_tests, timeout,
                       test_to_build_map=None, snapshot=None,
@@ -406,6 +411,26 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                   t.test_expr for t in test.tast_test_expr
                               ])))))
 
+    for unit in test_plan.direct_tast_vm_test_units:
+      for test in unit.tast_vm_test_cfg.tast_vm_test:
+        if test.common.display_name not in passed_tests:
+          test_name = test.common.display_name
+          build_target = unit.common.build_target
+          test_to_build_map[test_name] = build_target.name
+          requests.append(
+              self.m.buildbucket.schedule_request(
+                  gitiles_commit=snapshot,
+                  builder=self._direct_tast_vm_test(build_target),
+                  bucket=self._vm_bucket,
+                  critical=test.common.critical.value,
+                  properties=self._with_props_for_child_build(
+                      json_format.MessageToDict(
+                          TastVmProperties(
+                              name=test_name, build_target=build_target,
+                              build_payload=unit.common.build_payload,
+                              expressions=[
+                                  t.test_expr for t in test.tast_test_expr
+                              ])))))
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast vm tests',
         url_title_fn=self.m.naming.get_build_title)
