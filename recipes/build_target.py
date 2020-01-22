@@ -29,6 +29,8 @@ DEPS = [
     'portage',
 ]
 
+import hashlib
+
 from google.protobuf import json_format as json_pb
 
 from PB.chromiumos import common
@@ -239,11 +241,28 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           compile_source=build_config.build.compile_source,
           use_goma=api.cros_sdk.has_goma_config(),
           toolchain_changed=toolchain_changed)
+
+      # Define a function to append the failure step with the failed packages
+      def _ip_failed_names(output_proto):
+        # sort package names, join them with ',', and limit to 50 chars.
+        failed_packages = ','.join(sorted([p.package_name for p
+                                           in output_proto.failed_packages]))
+
+        # Add to the default response step name like: ": package1,package2"
+        # If it's extremely long add elipsis and a fancy sha to make unique.
+        if len(failed_packages) > 50:
+          fp_sha = hashlib.sha256()
+          fp_sha.update(failed_packages)
+          failed_packages = (failed_packages[:50] +
+                             ('...(%s)' % fp_sha.hexdigest()[0:4]))
+        return failed_packages
+
       response = api.cros_build_api.SysrootService.InstallPackages(
           InstallPackagesRequest(sysroot=sysroot, flags=flags,
                                  packages=packages, chroot=api.cros_sdk.chroot,
                                  use_flags=build_config.build.use_flags,
-                                 goma_config=api.cros_sdk.goma_config()))
+                                 goma_config=api.cros_sdk.goma_config()),
+                                 response_lambda=_ip_failed_names)
 
       # TODO: if used goma, emit goma info, stats, counterz.
       api.cros_bisect.set_compile_failures(response.failed_packages)
@@ -451,6 +470,29 @@ def GenTests(api):
              '.read output file',
              api.file.read_raw(content='{"has_prebuilt": false}')) +  #
          api.properties(build_target={'name': 'amd64-generic'}))
+
+  yield (api.test('fails_install_with_many_packages') +  #
+         cq_build_with_gerrit_change() +  #
+         api.step_data(
+             'install packages'
+             '.call chromite.api.SysrootService/InstallPackages'
+             '.read output file',
+             api.file.read_raw(
+               content='''{
+                            "failedPackages": [{
+                              "category": "chromeos-base",
+                              "packageName": "thislongpackagenameomg",
+                              "version": "0.0.1-r199"
+                            }, {
+                              "category": "safari-base",
+                              "packageName": "thisisanexceedinglylongpackage",
+                              "version": "0.0.1-r129"
+                            }, {
+                              "category": "edge-base",
+                              "packageName": "shortpackagename",
+                              "version": "0.0.1-r197"
+                            }]
+                          }''')))
 
   yield (api.test('prepare-for-build') + #
          toolchain_build() + #
