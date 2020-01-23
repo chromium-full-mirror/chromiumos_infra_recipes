@@ -11,10 +11,9 @@ DEPS = [
 
 # cache_path does not exist therefore will raise a step failure
 def RunSteps(api):
-  with api.cros_source.checkout_overlays_context():
-    api.assertions.assertRaises(api.step.StepFailure,
-                                api.cros_cache.package_source, 'test_file.bz2',
-                                api.cros_source.cache_path)
+  api.assertions.assertRaises(api.step.StepFailure,
+                              api.cros_cache.package_source, 'test_file.bz2',
+                              api.cros_source.cache_path)
 
 
 def GenTests(api):

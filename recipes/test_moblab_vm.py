@@ -40,7 +40,6 @@ CACHE_ARTIFACTS = [
 ]
 
 def RunSteps(api, properties):
-  api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context(), \
     api.cros_sdk.cleanup_context(
         checkout_path=api.cros_source.workspace_path):
@@ -48,6 +47,7 @@ def RunSteps(api, properties):
     # Though this seems wasteful, it will catch bugs introduced to the build
     # API and any scripts it depends on.
     with api.context(cwd=api.cros_source.workspace_path):
+      api.cros_source.ensure_synced_cache()
       api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
       gerrit_changes = api.buildbucket.build.input.gerrit_changes
       if gerrit_changes:

@@ -27,13 +27,13 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context(), \
       api.cros_sdk.cleanup_context(
           checkout_path=api.cros_source.workspace_path), \
       api.context(
           cwd=api.cros_source.workspace_path.join('manifest-internal')):
 
+    api.cros_source.ensure_synced_cache()
     with api.step.nest('init sdk') as step:
       api.cros_sdk.build_chmod_chroot()
       response = api.cros_build_api.SdkService.Create(

@@ -354,8 +354,10 @@ class RepoApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('ensure clean checkout'):
       with self.m.context(cwd=root_path, infra_steps=True):
-        cmd = ['forall', '--ignore-missing', '-j', '32', '-c', 'git', 'clean',
-              '-d', '-f']
+        cmd = [
+            'forall', '--ignore-missing', '-j', '32', '-c', 'git', 'clean',
+            '-d', '-f'
+        ]
         self._step(cmd, stdout=self.m.raw_io.output(add_output_log=True))
 
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,

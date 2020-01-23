@@ -70,10 +70,10 @@ def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
   # Some of the repos (e.g., crostools) reach into other repos in presubmit
   # checks.  As such, we grab sync the source tree.  Start with a full checkout
   # of the manifest, apply the changes, and then run presubmit checks.
-  api.cros_source.ensure_synced_cache()
   workpath = api.cros_source.workspace_path
   with api.cros_source.checkout_overlays_context(), api.context(cwd=workpath), \
       api.cros_sdk.cleanup_context(checkout_path=workpath):
+    api.cros_source.ensure_synced_cache()
     api.cros_source.sync_snapshot(gitiles_commit)
 
     with api.step.nest('cherry-pick gerrit changes'):

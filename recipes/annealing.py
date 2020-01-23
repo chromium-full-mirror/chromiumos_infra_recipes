@@ -57,10 +57,10 @@ def RunSteps(api, properties):
   if not manifest_ref:
     raise ValueError('must set manifest ref')
 
-  api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context(), \
       api.context(
           cwd=api.cros_source.workspace_path.join('manifest-internal')):
+    api.cros_source.ensure_synced_cache()
     snapshot_xml = api.repo.manifest_snapshot()
     manifest_diffs = api.repo.diff_remote_and_local_manifests(
         api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)

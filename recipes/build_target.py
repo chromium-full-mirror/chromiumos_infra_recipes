@@ -93,9 +93,6 @@ def RunSteps(api, properties):
   api.cros_bisect.set_bisect_builder(build_target.name)
   api.cros_sdk.set_use_flags(build_config.build.use_flags)
 
-  # Set up source checkouts.
-  api.step('ensure synced cache', api.cros_source.ensure_synced_cache(),
-           timeout=120 * 6)
   with api.cros_source.checkout_overlays_context(), \
       api.cros_sdk.cleanup_context(
           checkout_path=api.cros_source.workspace_path), \
@@ -106,6 +103,9 @@ def RunSteps(api, properties):
 
 def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                force_relevant_build):
+  # Set up source checkouts.
+  api.step('ensure synced cache', api.cros_source.ensure_synced_cache(),
+           timeout=120 * 6)
   api.cros_source.sync_snapshot(gitiles_commit)
 
   # Define a function to append the failure step with the failed packages

@@ -13,7 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir/a"
+      "[CACHE]/chromiumos/upperdir/a"
     ],
     "infra_step": true,
     "name": "mount overlay a.create upperdir",
@@ -31,7 +31,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir/a"
+      "[CACHE]/chromiumos/workdir/a"
     ],
     "infra_step": true,
     "name": "mount overlay a.create workdir",
@@ -65,7 +65,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/lowerdir,upperdir=[CLEANUP]/overlayfs/upperdir/a,workdir=[CLEANUP]/overlayfs/workdir/a,x-chromeos-overlay.name=a",
+      "lowerdir=[CACHE]/lowerdir,upperdir=[CACHE]/chromiumos/upperdir/a,workdir=[CACHE]/chromiumos/workdir/a,x-chromeos-overlay.name=a",
       "overlay",
       "[START_DIR]/mount_a"
     ],

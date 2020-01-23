@@ -15,8 +15,6 @@ from util import exponential_retry
 
 ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id'])
 
-DEFAULT_CACHE_INIT_OPTS = dict(reference='/preload/chromeos')
-
 DEFAULT_CACHE_SYNC_OPTS = dict(
     current_branch=True,
     detach=True,
@@ -40,13 +38,22 @@ class CrosSourceApi(recipe_api.RecipeApi):
                               else None)
 
   @property
+  def preload_path(self):
+    """The cached image checkout path.
+
+    This is the cached version of source that is included in the base image of
+    the bot, used as an initial reference path.
+    """
+    return '/preload/chromeos'
+
+  @property
   def cache_path(self):
     """The cached checkout path.
 
     This is the cached version of source, usually updated once at the beginning
     of a build and then mounted into the master and/or workspace paths.
     """
-    return self.m.path['cache'].join('chromiumos')
+    return self.m.path['start_dir'].join('chromiumos')
 
   @property
   def master_path(self):
@@ -82,7 +89,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
       * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
     """
-    init_opts = dict(DEFAULT_CACHE_INIT_OPTS, **(init_opts or {}))
+    init_opts = init_opts or {}
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
     self.m.repo.ensure_synced_checkout(self.cache_path, manifest_url,
                                        init_opts=init_opts, sync_opts=sync_opts)
@@ -91,8 +98,11 @@ class CrosSourceApi(recipe_api.RecipeApi):
   def checkout_overlays_context(self):
     """Returns a context where master and workspace overlays are mounted."""
     with self.m.overlayfs.cleanup_context():
+      self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
+                             persist=True)
       self.m.overlayfs.mount('master', self.cache_path, self.master_path)
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
+      self.m.path.mock_add_paths(self.cache_path.join('.repo'))
       self.m.path.mock_add_paths(self.master_path.join('.repo'))
       self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
       yield

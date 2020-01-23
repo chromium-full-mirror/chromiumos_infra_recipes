@@ -18,7 +18,7 @@ def RunSteps(api):
 
   # Multiple mounts
   with api.overlayfs.cleanup_context():
-    api.overlayfs.mount('a', lowerdir_path, mount_a)
+    api.overlayfs.mount('a', lowerdir_path, mount_a, persist=True)
     api.overlayfs.mount('b', lowerdir_path, mount_b)
     api.overlayfs.mount('c', lowerdir_path, mount_c)
 

@@ -29,7 +29,12 @@ class OverlayfsApi(recipe_api.RecipeApi):
     """Returns a Path to the base work directory for this module."""
     return self.m.path['cleanup'].join('overlayfs')
 
-  def mount(self, name, lowerdir_path, mount_path, upperdir_path=None):
+  @property
+  def _persist_work_path(self):
+    """Returns a Path to the persisted work directory for this module."""
+    return self.m.path['cache'].join('chromiumos')
+
+  def mount(self, name, lowerdir_path, mount_path, persist=False):
     """Mount an OverlayFS.
 
     Args:
@@ -39,16 +44,17 @@ class OverlayfsApi(recipe_api.RecipeApi):
           "Mount options for overlay".
       * mount_path (Path): Path to mount the OverlayFS at. Will be created if
           it doesn't exist.
-      * upperdir_path (Path): Optional Path to the OverlayFS "upperdir".
-          See mount(8) "Mount options for overlay".
+      * persist (bool): Whether to persist the mount beyond one execution.
     """
     assert name.isalnum(), 'overlayfs mount names must be alphanumeric'
     with self.m.step.nest('mount overlay %s' % name):
       with self.m.context(infra_steps=True):
         # Create overlayfs directories.
-        work_base = self._base_work_path
-        if upperdir_path is None:
-          upperdir_path = work_base.join('upperdir').join(name)
+        if persist:
+          work_base = self._persist_work_path
+        else:
+          work_base = self._base_work_path
+        upperdir_path = work_base.join('upperdir').join(name)
         self.m.file.ensure_directory('create upperdir', upperdir_path)
         workdir_path = work_base.join('workdir').join(name)
         self.m.file.ensure_directory('create workdir', workdir_path)

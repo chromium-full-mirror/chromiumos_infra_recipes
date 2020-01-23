@@ -20,9 +20,9 @@ def RunSteps(api):
   build = api.buildbucket.build
   gerrit_changes = build.input.gerrit_changes
 
-  api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
+      api.cros_source.ensure_synced_cache()
       if gerrit_changes:
         with api.step.nest('cherry-pick gerrit changes'):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
