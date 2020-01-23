@@ -108,6 +108,21 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                force_relevant_build):
   api.cros_source.sync_snapshot(gitiles_commit)
 
+  # Define a function to append the failure step with the failed packages
+  def _failed_pkg_names(output_proto):
+    # sort package names, join them with ',', and limit to 50 chars.
+    failed_packages = ','.join(sorted([p.package_name for p
+                                        in output_proto.failed_packages]))
+
+    # Add to the default response step name like: ": package1,package2"
+    # If it's extremely long add elipsis and a fancy sha to make unique.
+    if len(failed_packages) > 50:
+      fp_sha = hashlib.sha256()
+      fp_sha.update(failed_packages)
+      failed_packages = (failed_packages[:50] +
+                          ('...(%s)' % fp_sha.hexdigest()[0:4]))
+    return failed_packages
+
   if gerrit_changes and build_config.build.apply_gerrit_changes:
     with api.step.nest('cherry-pick gerrit changes'):
       patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
@@ -208,7 +223,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
         toolchain_changed=toolchain_changed)
     response = api.cros_build_api.SysrootService.InstallToolchain(
         InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
-                                flags=flags))
+                                flags=flags), response_lambda=_failed_pkg_names)
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
   install_packages = build_config.build.install_packages
@@ -242,27 +257,12 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           use_goma=api.cros_sdk.has_goma_config(),
           toolchain_changed=toolchain_changed)
 
-      # Define a function to append the failure step with the failed packages
-      def _ip_failed_names(output_proto):
-        # sort package names, join them with ',', and limit to 50 chars.
-        failed_packages = ','.join(sorted([p.package_name for p
-                                           in output_proto.failed_packages]))
-
-        # Add to the default response step name like: ": package1,package2"
-        # If it's extremely long add elipsis and a fancy sha to make unique.
-        if len(failed_packages) > 50:
-          fp_sha = hashlib.sha256()
-          fp_sha.update(failed_packages)
-          failed_packages = (failed_packages[:50] +
-                             ('...(%s)' % fp_sha.hexdigest()[0:4]))
-        return failed_packages
-
       response = api.cros_build_api.SysrootService.InstallPackages(
           InstallPackagesRequest(sysroot=sysroot, flags=flags,
                                  packages=packages, chroot=api.cros_sdk.chroot,
                                  use_flags=build_config.build.use_flags,
                                  goma_config=api.cros_sdk.goma_config()),
-                                 response_lambda=_ip_failed_names)
+                                 response_lambda=_failed_pkg_names)
 
       # TODO: if used goma, emit goma info, stats, counterz.
       api.cros_bisect.set_compile_failures(response.failed_packages)
@@ -281,7 +281,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
               build_target=build_target, chroot=api.cros_sdk.chroot,
               image_types=image_types,
               builder_path=api.cros_artifacts.artifacts_gs_path(
-                  build_target, build_config.id.type)), timeout=45 * 60)
+                  build_target, build_config.id.type)), timeout=45 * 60,
+                  response_lambda=_failed_pkg_names)
       api.failures.set_failed_packages(bi_step, response.failed_packages)
     with api.step.nest('test images'):
       failed_images = []
@@ -313,7 +314,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
               build_target=build_target, chroot=api.cros_sdk.chroot,
               result_path=str(api.path.mkdtemp()),
               package_blacklist=build_config.unit_tests.package_blacklist,
-              flags=flags), timeout=2 * 60 * 60)
+              flags=flags), timeout=2 * 60 * 60,
+              response_lambda=_failed_pkg_names)
       api.failures.set_failed_packages(reb_step, response.failed_packages)
     if api.cros_infra_config.should_exit(ebuilds_run_spec):
       return
