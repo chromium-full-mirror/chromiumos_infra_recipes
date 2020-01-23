@@ -425,9 +425,9 @@ Returns:
 
 [DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [portage](#recipe_modules-portage), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#101)(self, build_target, chroot, packages=None, internal=False, ignore_prebuilts=False):**
+&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#135)(self, build_target, chroot, packages=None, internal=False, ignore_prebuilts=False):**
 
 Returns whether this run should build Chrome from source.
 
@@ -444,7 +444,20 @@ Args:
 Returns:
   bool: Whether or not this run needs to build Chrome from source.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#126)(self, build_target, chroot, packages=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#109)(self, patch_sets=None):**
+
+Returns a bool if patch_sets includes files that require rebuilding.
+
+The patch_sets object supplied must have been constructed with the file
+information populated.
+
+Args:
+  patch_sets (List[gerrit.PatchSet]): List of patch sets (with FileInfo).
+
+Returns:
+  A bool that indicates a rebuild should be triggered.
+
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#160)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -460,7 +473,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#23)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#31)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -3097,7 +3110,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#70)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#347)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#356)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3113,7 +3126,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#365)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#374)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3151,9 +3164,9 @@ Recipe for generating ChromeOS cache payloads.
 &mdash; **def [RunSteps](/recipes/cache_generate.py#21)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
-[DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#23)(api):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)

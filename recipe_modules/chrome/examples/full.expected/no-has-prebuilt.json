@@ -514,6 +514,20 @@
   },
   {
     "cmd": [],
+    "name": "check if diff requires chrome rebuild",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@chromeos-base/chromeos-chrome/chromeos-chrome-81.0.4036.0_rc-r1.ebuild caused chrome build@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check if diff requires chrome rebuild (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no file diffs caused rebuild@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "call chromite.api.PackageService/BuildsChrome",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",

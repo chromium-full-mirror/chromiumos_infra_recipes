@@ -123,9 +123,11 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                           ('...(%s)' % fp_sha.hexdigest()[0:4]))
     return failed_packages
 
+  patch_sets = []
   if gerrit_changes and build_config.build.apply_gerrit_changes:
     with api.step.nest('cherry-pick gerrit changes'):
-      patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
+      patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes,
+                                               include_files=True)
       api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
   # Prepare for the build.  If the build is pointless, we are done.
@@ -228,9 +230,16 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   install_packages = build_config.build.install_packages
   if api.cros_infra_config.should_run(install_packages):
-    if toolchain_changed or api.chrome.builds_chrome_from_source(
+
+    # Long chain of |= to determine if chrome requires rebuild.
+    chrome_source_build = toolchain_changed
+    chrome_source_build |= api.chrome.builds_chrome_from_source(
         build_target=build_target, chroot=api.cros_sdk.chroot,
-        packages=packages, ignore_prebuilts=build_config.build.compile_source):
+        packages=packages, ignore_prebuilts=build_config.build.compile_source)
+    chrome_source_build |= api.chrome.diffed_files_requires_rebuild(
+        patch_sets=patch_sets)
+
+    if chrome_source_build:
       chrome_root = api.path['start_dir'].join('chrome')
       api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
                       build_config.chrome.internal)

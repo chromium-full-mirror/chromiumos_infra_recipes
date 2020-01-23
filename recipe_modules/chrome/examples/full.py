@@ -4,11 +4,15 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'chrome',
+    'gerrit',
 ]
+
+from copy import deepcopy
 
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
@@ -31,6 +35,27 @@ def RunSteps(api):
       build_target=build_target,
       internal=False,
   )
+
+  ps_info = {
+      'host': 'test',
+      'info': {'project': 'chromiumos/overlays/chromiumos-overlay',},
+      'revision_info': { 'files': {
+          'chromeos-base/chromeos-chrome/'
+          'chromeos-chrome-81.0.4036.0_rc-r1.ebuild': {},
+          'some/path/that/isnt/important': {},
+          },
+      },
+    'patch_set': '3',}
+  ps1 = api.gerrit.PatchSet(ps_info)
+
+  ps_info2 = deepcopy(ps_info)
+  ps_info2['revision_info']['files'] = {'some/path/that/isnt/important': {},}
+  ps2 = api.gerrit.PatchSet(ps_info2)
+
+  api.assertions.assertTrue(
+      api.chrome.diffed_files_requires_rebuild(patch_sets=[ps1]))
+  api.assertions.assertFalse(
+      api.chrome.diffed_files_requires_rebuild(patch_sets=[ps2]))
 
   api.chrome.builds_chrome_from_source(build_target, chroot)
   api.chrome.builds_chrome_from_source(

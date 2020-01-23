@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import re
+
 from recipe_engine import recipe_api
 
 from PB.chromite.api import packages
@@ -11,6 +13,12 @@ from PB.chromite.api.packages import HasChromePrebuiltRequest
 
 CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 
+# The following project->regexes should trigger a chrome rebuild.
+CHROMIUM_REBUILD_REGEXES = {
+  'chromiumos/overlays/chromiumos-overlay':
+    [re.compile('chromeos-base/chromeos-chrome/'
+                'chromeos-chrome-.+?\.ebuild$')],
+}
 
 class ChromeApi(recipe_api.RecipeApi):
 
@@ -97,6 +105,32 @@ class ChromeApi(recipe_api.RecipeApi):
           self.m.python('gclient sync',
                         self.m.depot_tools.root.join('gclient.py'), sync_cmd,
                         infra_step=True, timeout=60 * 60)
+
+  def diffed_files_requires_rebuild(self, patch_sets=None):
+    """Returns a bool if patch_sets includes files that require rebuilding.
+
+    The patch_sets object supplied must have been constructed with the file
+    information populated.
+
+    Args:
+      patch_sets (List[gerrit.PatchSet]): List of patch sets (with FileInfo).
+
+    Returns:
+      A bool that indicates a rebuild should be triggered.
+    """
+    patch_sets = patch_sets or []
+
+    with self.m.step.nest('check if diff requires chrome rebuild') as s:
+      for patch_set in patch_sets:
+        if patch_set.project in CHROMIUM_REBUILD_REGEXES:
+          regex_list = CHROMIUM_REBUILD_REGEXES[patch_set.project]
+          for f_path in patch_set.file_infos.keys():
+            for regex in regex_list:
+              if regex.match(f_path):
+                s.step_text = '%s caused chrome build' % f_path
+                return True
+      s.step_text = 'no file diffs caused rebuild'
+    return False
 
   def builds_chrome_from_source(self, build_target, chroot, packages=None,
                                 internal=False, ignore_prebuilts=False):

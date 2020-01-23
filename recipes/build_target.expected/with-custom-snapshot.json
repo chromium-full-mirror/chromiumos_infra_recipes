@@ -688,7 +688,7 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"\", \"patch_set\": 0}, {\"change_number\": 2341, \"host\": \"\", \"patch_set\": 0}], \"include_files\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"\", \"patch_set\": 0}, {\"change_number\": 2341, \"host\": \"\", \"patch_set\": 0}], \"include_files\": true}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2772,6 +2772,13 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check if diff requires chrome rebuild",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no file diffs caused rebuild@@@"
     ]
   },
   {
