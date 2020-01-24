@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'chrome',
     'cros_artifacts',
@@ -158,15 +159,28 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   with api.step.nest('init sdk') as step:
     api.cros_sdk.build_chmod_chroot()
+    # If build config has sdk_cache_version present, toggle no_replace flag in
+    # build api call based on if there is a mismatch between config value and
+    # what is present on disk. In short: replace existing sdk cache if mismatch.
+    no_replace_flag = True
+    if build_config.general.sdk_cache_version:
+      step.presentation.logs['sdk cache version'] = [
+          'Version in config: %s' % build_config.general.sdk_cache_version,
+          'Version on disk: %s' % api.cros_sdk.sdk_cache_version,
+      ]
+      no_replace_flag = (str(build_config.general.sdk_cache_version) ==
+                         str(api.cros_sdk.sdk_cache_version))
     response = api.cros_build_api.SdkService.Create(
         CreateSdkRequest(
             flags=CreateSdkRequest.Flags(
-                no_replace=True,
+                no_replace=no_replace_flag,
                 # Test mounting the SDK as an image only in staging for now.
                 no_use_image=(build_config.general.environment !=
                               BuilderConfig.General.STAGING)),
             chroot=api.cros_sdk.chroot))
     step.presentation.logs['sdk version'] = [str(response.version.version)]
+    if build_config.general.sdk_cache_version:
+      api.cros_sdk.sdk_cache_version = build_config.general.sdk_cache_version
     api.cros_sdk.link_chroot(api.cros_source.workspace_path)
 
   with api.step.nest('detect toolchain change') as step:
@@ -632,6 +646,18 @@ def GenTests(api):
              project='chromeos', bucket='cq',
              builder='arm-generic-v42-buildtest-postsubmit') +  #
          api.properties(build_target={'name': 'arm-generic'}))
+
+  yield (api.test('initsdk-existing-sdk-cache') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='cq',
+                                  builder='staging-amd64-generic-cq') +  #
+         api.step_data('init sdk.read sdk cache version json',
+                       api.raw_io.output_text('{"version": "2"}')))
+
+  yield (api.test('initsdk-existing-outdated-sdk-cache') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='cq',
+                                  builder='staging-amd64-generic-cq') +  #
+         api.step_data('init sdk.read sdk cache version json',
+                       api.raw_io.output_text('{"version": "1"}')))
 
   yield (
       api.test('initsdk-destroy-chroot-tests') +  #

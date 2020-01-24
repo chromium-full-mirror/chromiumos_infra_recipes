@@ -254,14 +254,15 @@
     "name": "read builder config",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
-      "@@@STEP_LOG_LINE@builder config@  name: \"amd64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"staging-amd64-generic-cq\"@@@",
       "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: CQ@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",
       "@@@STEP_LOG_LINE@builder config@  critical {@@@",
-      "@@@STEP_LOG_LINE@builder config@    value: true@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  environment: STAGING@@@",
+      "@@@STEP_LOG_LINE@builder config@  sdk_cache_version: 2@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@  prebuilts: NONE@@@",
@@ -319,7 +320,7 @@
     "name": "read builder config.set builder_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": \"RUN\", \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": \"RUN\", \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false, \"environment\": \"STAGING\", \"sdkCacheVersion\": 2}, \"id\": {\"branch\": \"master\", \"name\": \"staging-amd64-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}@@@"
     ]
   },
   {
@@ -507,6 +508,9 @@
     "cmd": [],
     "name": "init sdk",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@sdk cache version@Version in config: 2@@@",
+      "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 2@@@",
+      "@@@STEP_LOG_END@sdk cache version@@@",
       "@@@STEP_LOG_LINE@sdk version@123@@@",
       "@@@STEP_LOG_END@sdk version@@@"
     ]
@@ -524,6 +528,26 @@
     "name": "init sdk.changing permissions of [CACHE]/cros_chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/cros_chroot/sdk_cache_version.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "init sdk.read sdk cache version json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": \"2\"}@@@",
+      "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },
   {
@@ -740,6 +764,39 @@
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"version\": \"2\"}",
+      "[CLEANUP]/sdk_cache_version.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "init sdk.write sdk cache version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": \"2\"}@@@",
+      "@@@STEP_LOG_END@sdk_cache_version.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mv",
+      "[CLEANUP]/sdk_cache_version.json",
+      "[CACHE]/cros_chroot/sdk_cache_version.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "name": "init sdk.move sdk cache version file into place",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -6,6 +6,7 @@
 """API for interacting with cros_sdk, the interface to the CrOS SDK."""
 
 import contextlib
+import json
 import os
 
 from recipe_engine import recipe_api
@@ -31,6 +32,9 @@ class CrosSdkApi(recipe_api.RecipeApi):
     with self.m.step.nest('configure chroot path'):
       self._chroot_path = chroot_parent_path.join('cros_chroot')
       self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
+      self._sdk_cache_version = None
+      self._sdk_cache_version_file = self._chroot_path.join(
+          'sdk_cache_version.json')
       self._chrome_root = None
       self._goma_dir = None
       self._goma_client_json = None
@@ -59,6 +63,42 @@ class CrosSdkApi(recipe_api.RecipeApi):
         chrome_dir=self._chrome_root,
         env=env,
     )
+
+  @property
+  def sdk_cache_version(self):
+    """Lazily load from file. Can be None if version file doesn't exist."""
+    if self._sdk_cache_version == None:
+      # Use os.path because version file pre-exists recipe run.
+      if (os.path.exists(str(self._sdk_cache_version_file)) or
+          self._test_data.enabled):
+        version_json = self.m.file.read_json(
+            name='read sdk cache version json',
+            source=self._sdk_cache_version_file
+        )
+        self._sdk_cache_version = str(version_json['version'])
+    return self._sdk_cache_version
+
+  @sdk_cache_version.setter
+  def sdk_cache_version(self, value):
+    """Set sdk cache version and write to file.
+
+    Args:
+      * value (str): new sdk cache version to set.
+    """
+    tmp_file = self.m.path['cleanup'].join('sdk_cache_version.json')
+    self.m.file.write_json(
+        name='write sdk cache version file',
+        dest=tmp_file,
+        data={'version': str(value)},
+    )
+    cmd = [
+        'sudo',
+        'mv',
+        tmp_file,
+        self._sdk_cache_version_file,
+    ]
+    self.m.step('move sdk cache version file into place', cmd)
+    self._sdk_cache_version = value;
 
   def set_chrome_root(self, chrome_root):
     self._chrome_root = chrome_root
@@ -113,7 +153,6 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
     cmd += args
     return self.m.step(name, cmd, **kwargs)
-
 
   # TODO(crbug.com/949721): Currently, chromite depends on the chroot
   # living within the source tree. As a workaround, link the external
