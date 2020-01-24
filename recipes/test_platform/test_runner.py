@@ -52,7 +52,7 @@ def load_state(api, config=None, dut_hostname="", run_id=""):
     * dut_hostname: DUT hostname string (e.g. 'chromeos8-row8-rack8-host8').
     * run_id: Swarming task run ID string.
 
-  Returns: LoadStateResponse.
+  Returns: LoadResponse.
 
   Raises:
     * InfraFailure if binary call fails.
@@ -239,7 +239,7 @@ def _get_phosphorus_config(recipe_config, load_response):
 
   Args:
     * recipe_config: skylab_test_runner.Config instance.
-    * load_response: skylab_local_state.Response instance.
+    * load_response: skylab_local_state.LoadResponse instance.
 
   Returns: phosphorus.Config.
   """
