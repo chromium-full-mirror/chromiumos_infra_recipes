@@ -120,6 +120,24 @@ def run_test(api, config=None, request=None, dut_hostname=''):
     )
     api.phosphorus.run_test(run_test_request)
 
+def upload_to_gs(api, config=None, target_dir=None, task_id=""):
+  """Upload synchronously-needed test results to Google Storage.
+
+  Args:
+    * config: phosphorus.Config instance
+    * target_dir: URL string for GS directory to upload to
+    * task_id: string ID of Swarming task
+  Raises:
+    * InfraFailure if binary call fails.
+  """
+  with api.step.nest('upload to GS') as step:
+    with api.context(infra_steps=True):
+      req = phosphorus.upload_to_gs.UploadToGSRequest(
+          config=config,
+          gs_directory=target_dir,
+          task_id=task_id)
+      api.phosphorus.upload_to_gs(req)
+
 
 def upload_to_tko(api, config=None):
   """Upload test results to TKO via `tko/parse`.
@@ -248,6 +266,7 @@ def _get_phosphorus_config(recipe_config, load_response):
           autotest_dir=recipe_config.harness.autotest_dir,
       ),
       task=phosphorus.common.TaskEnvironment(
+          synchronous_offload_dir=recipe_config.output.gs_root_dir,
           results_dir=load_response.results_dir,
       )
   )
@@ -283,6 +302,13 @@ def RunSteps(api, properties, envvars):
 
     run_test(api, config=phosphorus_config, request=properties.request,
              dut_hostname=dut_hostname)
+    # Similarly, run the GS upload only if the test completed cleanly (whether
+    # it succeeded or failed), and only if requested
+    if properties.request.test.offload.synchronous_gs_enable:
+      upload_to_gs(
+          api, config=phosphorus_config,
+          target_dir=properties.config.output.gs_root_dir,
+          task_id=envvars.SWARMING_TASK_ID)
   except (api.step.StepFailure, api.step.InfraFailure):
     pass
 
@@ -349,7 +375,8 @@ def GenTests(api):
 
   yield (api.test('run_test_crash') + #
          api.properties(TestRunnerProperties(request={
-             'test': {'autotest': {'name': 'dummy_name'}}})) + #
+             'test': {'autotest': {'name': 'dummy_name'},
+                      }})) + #
          api.properties.environ(TestRunnerEnvProperties(
              SWARMING_BOT_ID='crossk-dummy',
          )) + #
@@ -368,7 +395,8 @@ def GenTests(api):
 
   yield (api.test('upload_to_tko_crash') + #
          api.properties(TestRunnerProperties(request={
-             'test': {'autotest': {'name': 'dummy_name'}}})) + #
+             'test': {'autotest': {'name': 'dummy_name'},
+                      }})) + #
          api.properties.environ(TestRunnerEnvProperties(
              SWARMING_BOT_ID='crossk-dummy',
          )) + #
@@ -384,6 +412,23 @@ def GenTests(api):
              retcode=1
          )
         )
+  yield (api.test('upload_to_gs') + #
+         api.properties(TestRunnerProperties(request={
+             'test': {'autotest': {'name': 'dummy_name'},
+                      'offload': {'synchronous_gs_enable': True},
+                      }})) + #
+         api.properties.environ(TestRunnerEnvProperties(
+             SWARMING_BOT_ID='crossk-dummy',
+         )) + #
+         api.step_data(
+           'load local DUT state.call `skylab_local_state`.load',
+           stdout=api.raw_io.output(
+               json_format.MessageToJson(
+                   skylab_local_state.load.LoadResponse(
+                   results_dir='dummy-results-dir')
+         )))
+        )
+
 
 
   yield (api.test('get_results_crash') + #

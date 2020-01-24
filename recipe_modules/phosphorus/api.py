@@ -10,6 +10,7 @@ from recipe_engine import recipe_api
 from PB.test_platform.phosphorus.prejob import PrejobRequest
 from PB.test_platform.phosphorus.runtest import RunTestRequest
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
+from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
 
 class PhosphorusCommand(recipe_api.RecipeApi):
   """Module for issuing Phosphorus commands"""
@@ -57,6 +58,14 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       request: a RunTestRequest.
     """
     self._run('run-test', request, RunTestRequest)
+
+  def upload_to_gs(self, request):
+    """Upload selected test results to GS via `upload-to-gs` subcommand.
+
+    Args:
+      request: an UploadToGSRequest.
+    """
+    self._run('upload-to-gs', request, UploadToGSRequest)
 
   def upload_to_tko(self, request):
     """Upload test results to TKO via `upload-to-tko` subcommand.

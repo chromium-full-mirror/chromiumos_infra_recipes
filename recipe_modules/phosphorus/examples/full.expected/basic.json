@@ -108,11 +108,39 @@
   {
     "cmd": [
       "[START_DIR]/cipd/phosphorus/phosphorus",
+      "upload-to-gs",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "name": "call `phosphorus` (6).upload-to-gs",
+    "stdin": "{}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `phosphorus` (7)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `phosphorus` (8)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
       "upload-to-tko",
       "-input_json",
       "/dev/stdin"
     ],
-    "name": "call `phosphorus` (6).upload-to-tko",
+    "name": "call `phosphorus` (8).upload-to-tko",
     "stdin": "{}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

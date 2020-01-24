@@ -11,6 +11,7 @@ DEPS = [
 from PB.test_platform.phosphorus.prejob import PrejobRequest
 from PB.test_platform.phosphorus.runtest import RunTestRequest
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
+from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
 
 def RunSteps(api):
   with api.assertions.assertRaises(ValueError):
@@ -22,6 +23,11 @@ def RunSteps(api):
     api.phosphorus.run_test(None)
   run_test_req = RunTestRequest()
   api.phosphorus.run_test(run_test_req)
+
+  with api.assertions.assertRaises(ValueError):
+    api.phosphorus.upload_to_gs(None)
+  upload_to_gs_req = UploadToGSRequest()
+  api.phosphorus.upload_to_gs(upload_to_gs_req)
 
   with api.assertions.assertRaises(ValueError):
     api.phosphorus.upload_to_tko(None)
