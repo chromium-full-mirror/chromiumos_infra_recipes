@@ -153,6 +153,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
                 DeleteSdkRequest(chroot=self.m.cros_sdk.chroot)))
 
       with self.m.step.nest('clean up SDK chroot'):
+        self.unmount_chroot()
         self.unlink_chroot(checkout_path)
         self.swarming_chmod_chroot()
 

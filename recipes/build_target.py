@@ -348,10 +348,6 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                                                dep_graph=sdk_graph):
       api.cros_sdk.mark_sdk_as_dirty()
 
-  if (build_config.general.environment == BuilderConfig.General.STAGING
-     ):  # pragma: no cover
-    api.cros_sdk.unmount_chroot()
-
 
 def get_packages(api, build_config):
   """Returns the packages that should be built for this invocation.
