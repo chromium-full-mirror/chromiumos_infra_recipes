@@ -52,6 +52,7 @@ from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
+from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
@@ -562,6 +563,22 @@ def GenTests(api):
                          snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
                              isolated_hash='foohash',
                              isolate_server='server.com'
+                         ),
+                     )
+             }))
+
+  yield (api.test('with-custom-DEPS') +  #
+         cq_build_with_gerrit_change() +  #
+         api.properties(
+             **{
+                 'build_target': {
+                     'name': 'amd64-generic'
+                 },
+                 '$chromeos/chrome':
+                     ChromeProperties(
+                         deps_isolate=ChromeProperties.DepsIsolate(
+                             isolated_hash='moohash',
+                             isolate_server='cows.com'
                          ),
                      )
              }))

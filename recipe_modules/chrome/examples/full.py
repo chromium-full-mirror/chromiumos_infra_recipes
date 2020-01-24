@@ -74,6 +74,16 @@ def GenTests(api):
              ChromeProperties(parallel_sync_jobs=42)
          }))
 
+  yield (api.test('with-properties-custom-DEPS') + #
+         api.properties(**{
+             "$chromeos/chrome":
+             ChromeProperties(
+                 deps_isolate=ChromeProperties.DepsIsolate(
+                     isolated_hash='aaa',
+                     isolate_server='aaa.com'
+                 )),
+         }))
+
   yield (api.test('no-needs-chrome') + #
          api.step_data(
              'call chromite.api.PackageService/BuildsChrome.read output file',

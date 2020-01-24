@@ -11,4 +11,13 @@ message ChromeProperties {
   // Specifies how many SCM commands can run in parallel. Corresponds to
   // the -j## argument of gclient sync. Defaults to 72 if not set.
   int64 parallel_sync_jobs = 1;
+
+  message DepsIsolate {
+    string isolated_hash = 1;
+    string isolate_server = 2;
+  }
+
+  // Used to specify a custom DEPS file to gclient sync to as a
+  // DEPS file residing in the isolate.
+  DepsIsolate deps_isolate = 2;
 }

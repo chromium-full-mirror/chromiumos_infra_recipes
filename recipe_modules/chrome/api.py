@@ -27,6 +27,9 @@ class ChromeApi(recipe_api.RecipeApi):
     self._parallel_sync_jobs = 72
     if properties.parallel_sync_jobs > 0:
       self._parallel_sync_jobs = properties.parallel_sync_jobs
+    self._deps_isolate = (properties.deps_isolate
+                          if properties.HasField('deps_isolate')
+                          else None)
 
   def sync(self, chrome_root, chroot, build_target, internal):
     """
@@ -35,7 +38,7 @@ class ChromeApi(recipe_api.RecipeApi):
     Must be run with cwd inside a chromiumos source root.
 
     Args:
-      chrome_root (str): Directory to sync the Chrome source code to.
+      chrome_root (Path): Directory to sync the Chrome source code to.
       chroot (chromiumos.Chroot): Information on the chroot for the build.
       build_target (chromiumos.BuildTarget): Build target of the build.
       internal (bool): True for internal checkout.
@@ -49,6 +52,13 @@ class ChromeApi(recipe_api.RecipeApi):
 
       self.m.file.ensure_directory('ensure chrome root', chrome_root)
 
+      if self._deps_isolate:
+        di = self._deps_isolate
+        self.m.isolated.download('download DEPS from isolate',
+                                 isolated_hash=di.isolated_hash,
+                                 isolate_server=di.isolate_server,
+                                 output_dir=chrome_root)
+
       # Similar to what you would get with self.m.gclient.checkout approach
       # but here we up the job parallelism for a speed boost.
       with self.m.context(cwd=chrome_root):
@@ -56,10 +66,13 @@ class ChromeApi(recipe_api.RecipeApi):
         soln = cfg.solutions.add()
         soln.name = 'src'
         soln.url = 'https://chromium.googlesource.com/chromium/src.git'
-        soln.revision = version
         soln.custom_vars = {
             'checkout_src_internal': internal,
         }
+        if self._deps_isolate:
+          soln.deps_file = str(chrome_root) + '/DEPS'
+        else:
+          soln.revision = version
 
         config_cmd = [
             'config',
@@ -86,9 +99,10 @@ class ChromeApi(recipe_api.RecipeApi):
             '--with_branch_heads',
             '--with_tags',
             '--delete_unversioned_trees',
-            '--revision',
-            'src@%s' % version,
         ]
+
+        if not self._deps_isolate:
+          sync_cmd.extend(['--revision', 'src@%s' % version])
 
         with self.m.depot_tools.on_path():
           # Writes out the .gclient file.
