@@ -7,6 +7,7 @@
 
 from google.protobuf import json_format as jsonpb
 
+from PB.chromiumos.bot_scaling import RoboCropAction
 from PB.recipes.chromeos.robocrop import RoboCropProperties
 
 DEPS = [
@@ -43,14 +44,9 @@ def RunSteps(api, properties):
         scaling_actions.append(
             api.bot_scaling.get_scaling_action(demand, policy))
 
-      # TODO: Create a proto definition to clean up this step.
-      actions_as_dict = [
-          jsonpb.MessageToDict(action) for action in scaling_actions
-      ]
-      api.easy.set_property_step('robocrop_action', {
-          'actionable': False,
-          'scaling_actions': actions_as_dict,
-      })
+      robocrop_action = RoboCropAction(scaling_actions=scaling_actions)
+      api.easy.set_property_step('robocrop_action',
+                                 jsonpb.MessageToDict(robocrop_action))
 
 
 def GenTests(api):
