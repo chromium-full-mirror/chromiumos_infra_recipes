@@ -1,15 +1,15 @@
 [
   {
     "cmd": [],
-    "name": "call stable_version2",
+    "name": "call stable_version2 to check remote file",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@response@http://CL/123@@@",
+      "@@@STEP_LOG_LINE@response@sentinel-386b2cca-9482-44cf-be26-6066d2c3796a@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call stable_version2.ensure stable_version tool",
+    "name": "call stable_version2 to check remote file.ensure stable_version tool",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -26,7 +26,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "call stable_version2.ensure stable_version tool.ensure_installed",
+    "name": "call stable_version2 to check remote file.ensure stable_version tool.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -40,6 +40,26 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/stable_version2/stable_version2",
+      "validate-config",
+      "-always-exit-zero",
+      "-remote-file"
+    ],
+    "name": "call stable_version2 to check remote file.validate-config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call stable_version2",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@response@http://CL/123@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {

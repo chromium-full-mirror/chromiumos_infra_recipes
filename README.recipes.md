@@ -2876,13 +2876,17 @@ Args:
 
 Module for issuing stable_version commands
 
-&mdash; **def [fetch\_and\_commit](/recipe_modules/stable_version/api.py#15)(self):**
+&mdash; **def [fetch\_and\_commit](/recipe_modules/stable_version/api.py#35)(self):**
 
 Fetch up-to-date stable version and commit them.
 
 Returns: response: raw string as the stdout data.
 
-&mdash; **def [initialize](/recipe_modules/stable_version/api.py#11)(self):**
+&mdash; **def [initialize](/recipe_modules/stable_version/api.py#13)(self):**
+
+&mdash; **def [validate\_stable\_version](/recipe_modules/stable_version/api.py#17)(self):**
+
+Validate the remote stable version config file.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3609,7 +3613,7 @@ Test git_footers calls.
 
 Recipe for sync stable vesrion for ChromeOS build targets & models.
 
-&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#30)(api, properties):**
+&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#38)(api, properties):**
 
 &mdash; **def [fetch\_and\_commit](/recipes/lab_platform/sync_stable_version.py#20)(api):**
 
@@ -3617,6 +3621,12 @@ Fetch the newest stable version and commit it to config file on git.
 
 Returns:
   A string gerrit CL link.
+
+&mdash; **def [validate\_stable\_version](/recipes/lab_platform/sync_stable_version.py#30)(api):**
+
+Validate the remote stable version config file.
+
+Returns: JSON response with validation result
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

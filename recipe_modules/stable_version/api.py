@@ -8,9 +8,29 @@ from recipe_engine import recipe_api
 class StableVersionApi(recipe_api.RecipeApi):
   """Module for issuing stable_version commands"""
 
+  VALIDATE_TEST_SENTINEL = "sentinel-386b2cca-9482-44cf-be26-6066d2c3796a"
+
   def initialize(self):
     self._cmd = None
     self._version = 'latest'
+
+  def validate_stable_version(self):
+    """Validate the remote stable version config file."""
+    with self.m.step.nest('call stable_version2 to check remote file') as s:
+      self._ensure_stable_version()
+      cmd = [
+          self._cmd,
+          "validate-config",
+          "-always-exit-zero",
+          "-remote-file",
+      ]
+      response = self.m.easy.stdout_step(
+          'validate-config',
+          cmd,
+          test_stdout=StableVersionApi.VALIDATE_TEST_SENTINEL,
+      )
+      s.presentation.logs['response'] = response
+      return response
 
   def fetch_and_commit(self):
     """Fetch up-to-date stable version and commit them.

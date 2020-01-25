@@ -27,16 +27,24 @@ def fetch_and_commit(api):
     api.stable_version.fetch_and_commit()
 
 
+def validate_stable_version(api):
+  """Validate the remote stable version config file.
+
+  Returns: JSON response with validation result"""
+  with api.step.nest('validate stable version') as step:
+    api.stable_version.validate_stable_version()
+
+
 def RunSteps(api, properties):
   # TODO(xixuan): Re-consider the whole processes:
   #   1. log the CL link of automatic stable version update.
   #   2. pass in the real parameters.
   #   3. separate the whole process to individual steps.
+  validate_stable_version(api)
   fetch_and_commit(api)
 
 def GenTests(api):
   yield (
-    api.test('fetch and commit') + #
-    api.step_data('fetch and commit.call stable_version2.update-with-omaha',
-                  stdout=api.raw_io.output_text('http://CL/123'))
-  )
+      api.test('end to end test for updating stable version') +  #
+      api.step_data('fetch and commit.call stable_version2.update-with-omaha',
+                    stdout=api.raw_io.output_text('http://CL/123')))
