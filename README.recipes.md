@@ -3993,7 +3993,7 @@ Args:
   * dut_hostname: DUT hostname string (e.g. 'chromeos8-row8-rack8-host8').
   * run_id: Swarming task run ID string.
 
-Returns: LoadStateResponse.
+Returns: LoadResponse.
 
 Raises:
   * InfraFailure if binary call fails.
