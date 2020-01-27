@@ -174,8 +174,10 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     if toolchain_changed:
       api.cros_sdk.mark_sdk_as_dirty()
       step.presentation.step_text = ('change detected')
+      api.easy.set_property_step('testing_toolchain', True)
     else:
       step.presentation.step_text = ('no change')
+      api.easy.set_property_step('testing_toolchain', False)
 
   with api.step.nest('update sdk'):
     flags = UpdateSdkRequest.Flags(

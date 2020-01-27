@@ -1281,6 +1281,14 @@
   },
   {
     "cmd": [],
+    "name": "detect toolchain change.set testing_toolchain",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "update sdk"
   },
   {
