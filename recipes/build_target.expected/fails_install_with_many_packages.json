@@ -3164,7 +3164,7 @@
   },
   {
     "cmd": [],
-    "name": "install packages.call chromite.api.SysrootService/InstallPackages.call responseshortpackagename,thisisanexceedinglylongpackage,th...(8331)",
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.call response: shortpackagename,thisisanexceedinglylongpackage,th...(8331)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",

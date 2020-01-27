@@ -121,6 +121,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       fp_sha.update(failed_packages)
       failed_packages = (failed_packages[:50] +
                           ('...(%s)' % fp_sha.hexdigest()[0:4]))
+    if failed_packages:
+      failed_packages = ': ' + failed_packages
     return failed_packages
 
   patch_sets = []
