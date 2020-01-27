@@ -325,6 +325,8 @@ def RunSteps(api, properties):
                                       message=outdated_comment_message)
 
 
+# TODO(dburger): deleted files should be at the end of the modified_ebuilds list
+# to work correctly with api.git.diff_check.
 def response_has_changes(api, response):
   """Returns whether the given `UprevPackagesResponse` contains changes."""
   for ebuild in response.modified_ebuilds:
