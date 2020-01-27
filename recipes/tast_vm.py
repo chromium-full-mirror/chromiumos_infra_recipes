@@ -21,6 +21,7 @@ DEPS = [
 
 PROPERTIES = TastVmProperties
 
+# TODO(dhanyaganesh): Organize all the strings into constants and configs.
 PRIVATE_KEY_NAME = 'id_rsa'
 VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
 TAST_ARCHIVE_PATH = 'tast/tast'
@@ -29,19 +30,19 @@ def RunSteps(api, properties):
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
   with api.step.nest('setup RTD') as step:
     step.text = 'download tast executable'
-    server_packages_tar = test_artifacts_dir.join('autotest_server_package.tar')
-    tast_dir = test_artifacts_dir.join('tast')
-    tast_exec_path = str(tast_dir.join('tast'))
-    api.gsutil.download(
-        properties.build_payload.artifacts_gs_bucket,
-        os.path.join(properties.build_payload.artifacts_gs_path, 'autotest_server_package.tar'),
-        server_packages_tar, name='download tast bundle from GS')
-    api.archive.extract('unzip tast bundle', server_packages_tar, tast_dir,
-                        include_files=[TAST_ARCHIVE_PATH])
+    sp_tar_file = test_artifacts_dir.join('autotest_server_package.tar.bz2')
+    archive_path = os.path.join(properties.build_payload.artifacts_gs_path,
+                                'autotest_server_package.tar.bz2')
+    api.gsutil.download(properties.build_payload.artifacts_gs_bucket,
+                        archive_path, sp_tar_file,
+                        name='download tast bundle from GS')
+    api.step('untar tast',
+             ['tar', 'xjf', sp_tar_file, '--directory', test_artifacts_dir])
 
+  image_archive_dir = api.path.mkdtemp(prefix='image-archive')
   with api.step.nest('download vm image'):
-    test_image_zip = test_artifacts_dir.join('image.zip')
-    test_image_dir = test_artifacts_dir.join('image')
+    test_image_zip = image_archive_dir.join('image.zip')
+    test_image_dir = image_archive_dir.join('image')
     vm_image_path = str(test_image_dir.join(VM_IMAGE_NAME))
     private_key_path = str(test_image_dir.join(PRIVATE_KEY_NAME))
     api.gsutil.download(

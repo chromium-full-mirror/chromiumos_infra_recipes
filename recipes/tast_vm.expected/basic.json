@@ -12,8 +12,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs:///autotest_server_package.tar",
-      "[CLEANUP]/test-artifacts_tmp_1/autotest_server_package.tar"
+      "gs:///autotest_server_package.tar.bz2",
+      "[CLEANUP]/test-artifacts_tmp_1/autotest_server_package.tar.bz2"
     ],
     "infra_step": true,
     "name": "setup RTD.gsutil download tast bundle from GS",
@@ -23,25 +23,15 @@
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/test-artifacts_tmp_1/autotest_server_package.tar\", \"include_files\": [\"tast/tast\"], \"output\": \"[CLEANUP]/test-artifacts_tmp_1/tast\", \"safe_mode\": true}",
-      "--json-output",
-      "/path/to/tmp/json"
+      "tar",
+      "xjf",
+      "[CLEANUP]/test-artifacts_tmp_1/autotest_server_package.tar.bz2",
+      "--directory",
+      "[CLEANUP]/test-artifacts_tmp_1"
     ],
-    "name": "setup RTD.unzip tast bundle",
+    "name": "setup RTD.untar tast",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -58,7 +48,7 @@
       "----",
       "cp",
       "gs:///image.zip",
-      "[CLEANUP]/test-artifacts_tmp_1/image.zip"
+      "[CLEANUP]/image-archive_tmp_2/image.zip"
     ],
     "infra_step": true,
     "name": "download vm image.gsutil download image bundle from GS",
@@ -72,7 +62,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/test-artifacts_tmp_1/image.zip\", \"include_files\": [\"chromiumos_qemu_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/test-artifacts_tmp_1/image\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/image-archive_tmp_2/image.zip\", \"include_files\": [\"chromiumos_qemu_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/image-archive_tmp_2/image\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
