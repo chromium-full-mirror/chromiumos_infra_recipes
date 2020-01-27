@@ -918,7 +918,7 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#174)(cls, builds):**
+&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#175)(cls, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -929,11 +929,11 @@ Args:
 
 Returns: a dict(str, build_pb2.Build) of build_target names.
 
-&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#166)(cls, build):**
+&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#167)(cls, build):**
 
 Take a build_pb2 and get its build_target name or return None.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#145)(self, build, statuses=None, start_build_id=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#146)(self, build, statuses=None, start_build_id=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -962,7 +962,7 @@ Find all tests that have passed with the given patches.
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#107)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#108)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get *-snapshot builds with the given snapshot.
 

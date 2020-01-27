@@ -2649,7 +2649,7 @@
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"vm-test\", \"moblab-vm-test\"]@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"moblab-vm-test\", \"vm-test\"]@@@"
     ]
   },
   {

@@ -5554,7 +5554,7 @@
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"vm-test\", \"moblab-vm-test\", \"htarget.hw.bvt-inline\"]@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-inline\", \"moblab-vm-test\", \"vm-test\"]@@@"
     ]
   },
   {
