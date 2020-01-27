@@ -3639,17 +3639,17 @@ Returns: JSON response with validation result
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#55)(api, properties):**
 
-&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#174)(api, config):**
+&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#175)(api, config):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#294)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#295)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3666,7 +3666,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#278)(api):**
+&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#279)(api):**
 
 Returns the child builders that should be run for this invocation.
 
@@ -3676,7 +3676,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#360)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#361)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3687,7 +3687,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#229)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#230)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -3702,7 +3702,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#349)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#350)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3710,7 +3710,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#335)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#336)(refs):**
 
 Assert the given refs start with refs/heads.
 
