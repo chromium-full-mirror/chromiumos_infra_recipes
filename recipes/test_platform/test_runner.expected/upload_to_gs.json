@@ -213,7 +213,11 @@
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"taskId\": \"dummy-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"gsUrl\": \"gs://dummy-gs-url\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -221,7 +225,9 @@
       "[START_DIR]/cipd/phosphorus/phosphorus",
       "upload-to-gs",
       "-input_json",
-      "/dev/stdin"
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
     ],
     "infra_step": true,
     "name": "upload to GS.call `phosphorus`.upload-to-gs",
@@ -275,7 +281,9 @@
     "name": "get test results.call `autotest_status_parser`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"autotestResult\": {}@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -370,7 +378,7 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@result@{}@@@"
+      "@@@SET_BUILD_PROPERTY@result@{\"autotestResult\": {\"synchronousLogDataUrl\": \"gs://dummy-gs-url\"}}@@@"
     ]
   },
   {

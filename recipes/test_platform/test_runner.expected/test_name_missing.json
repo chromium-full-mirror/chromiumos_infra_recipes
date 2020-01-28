@@ -18,7 +18,7 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 297, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 306, in RunSteps",
       "    validate_request(api, properties)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 50, in validate_request",
       "    raise ValueError(\"Test name must be specified\")",

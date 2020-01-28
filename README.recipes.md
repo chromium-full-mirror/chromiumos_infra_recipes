@@ -2623,32 +2623,32 @@ Args:
 
 [DEPS](/recipe_modules/phosphorus/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#50)(self, request):**
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#71)(self, request):**
 
 Run a prejob or a provision via `prejob` subcommand.
 
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#58)(self, request):**
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#79)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#66)(self, request):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#87)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#74)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#96)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 
@@ -4134,16 +4134,16 @@ Returns: bool, [test_platform.Request]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#296)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#304)(api, properties, envvars):**
 
-&mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#181)(api, result):**
+&mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#183)(api, result):**
 
 Display test cases as recipe substeps.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#165)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#167)(api, results_dir=''):**
 
 Parse test results.
 
@@ -4195,7 +4195,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [save\_state](/recipes/test_platform/test_runner.py#207)(api, config=None, results_dir='', dut_hostname='', dut_id='', dut_state=''):**
+&mdash; **def [save\_state](/recipes/test_platform/test_runner.py#209)(api, config=None, results_dir='', dut_hostname='', dut_id='', dut_state=''):**
 
 Update the local DUT state file.
 
@@ -4209,7 +4209,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#237)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#239)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
@@ -4224,10 +4224,12 @@ Args:
   * config: phosphorus.Config instance
   * target_dir: URL string for GS directory to upload to
   * task_id: string ID of Swarming task
+Returns:
+  UploadToGSResponse proto
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#150)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#152)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 

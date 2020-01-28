@@ -11,6 +11,7 @@ from PB.test_platform.phosphorus.prejob import PrejobRequest
 from PB.test_platform.phosphorus.runtest import RunTestRequest
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
+from PB.test_platform.phosphorus.upload_to_gs import UploadToGSResponse
 
 class PhosphorusCommand(recipe_api.RecipeApi):
   """Module for issuing Phosphorus commands"""
@@ -23,13 +24,20 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       raise ValueError('No version label provided for '
           'phosphorus CIPD package.')
 
-  def _run(self, subcommand, request, request_type):
+  def _run(self,
+           subcommand,
+           request, request_type,
+           response_type=None, send_response=False):
     """Generic subcommand runner for phosphorus.
 
     Args:
-      subcommand: (str) subcommand to run.
-      request: proto input request to subcommand.
+      subcommand: (str) subcommand to run
+      request: proto input request to subcommand
       request_type: request must be of this type.
+      response_type: response will be interpreted as this type.
+      send_response: whether to relay a response from the command to the caller
+    Returns:
+      JSON proto of response_type if send_response is set, None otherwise
     """
     with self.m.step.nest('call `phosphorus`') as s:
       if not isinstance(request, request_type):
@@ -42,10 +50,23 @@ class PhosphorusCommand(recipe_api.RecipeApi):
         '-input_json',
         '/dev/stdin',
       ]
-      self.m.easy.step(
+      stdin=self.m.raw_io.input_text(json_format.MessageToJson(request))
+      if not send_response:
+        self.m.easy.step(subcommand, cmd, stdin=stdin)
+        return
+      cmd += [
+          '-output_json',
+          '/dev/stdout',
+      ]
+      response = self.m.easy.stdout_jsonpb_step(
           subcommand,
           cmd,
-          stdin=self.m.raw_io.input_text(json_format.MessageToJson(request)))
+          response_type,
+          stdin=stdin,
+          test_output=response_type(),
+          ok_ret=(0,))
+      s.presentation.logs['response'] = [json_format.MessageToJson(response)]
+      return response
 
   def prejob(self, request):
     """Run a prejob or a provision via `prejob` subcommand.
@@ -69,7 +90,8 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     Args:
       request: an UploadToGSRequest.
     """
-    self._run('upload-to-gs', request, UploadToGSRequest)
+    return self._run('upload-to-gs', request, UploadToGSRequest,
+              UploadToGSResponse, send_response=True)
 
   def upload_to_tko(self, request):
     """Upload test results to TKO via `upload-to-tko` subcommand.

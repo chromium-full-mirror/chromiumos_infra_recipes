@@ -135,6 +135,8 @@ def upload_to_gs(api, config=None, target_dir=None, task_id=""):
     * config: phosphorus.Config instance
     * target_dir: URL string for GS directory to upload to
     * task_id: string ID of Swarming task
+  Returns:
+    UploadToGSResponse proto
   Raises:
     * InfraFailure if binary call fails.
   """
@@ -144,7 +146,7 @@ def upload_to_gs(api, config=None, target_dir=None, task_id=""):
           config=config,
           gs_directory=target_dir,
           task_id=task_id)
-      api.phosphorus.upload_to_gs(req)
+      return api.phosphorus.upload_to_gs(req)
 
 
 def upload_to_tko(api, config=None):
@@ -260,28 +262,34 @@ def _get_dut_hostname(api, env):
   return env.SWARMING_BOT_ID[7:]
 
 
-def _get_phosphorus_config(recipe_config, load_response):
+def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
   """Construct a phosphorus.Config.
 
   Args:
     * recipe_config: skylab_test_runner.Config instance.
     * load_response: skylab_local_state.LoadResponse instance.
+    * set_offload_dir: whether to embed the GS offload dir into the config.
+        This will be used if set, so setting it where it is inapplicable (such
+        as for a non-test task) will result in a downstream error.
 
   Returns: phosphorus.Config.
   """
+  if set_offload_dir:
+    off_dir = recipe_config.output.gs_root_dir
+  else:
+    off_dir = ""
   return phosphorus.common.Config(
       bot=phosphorus.common.BotEnvironment(
           autotest_dir=recipe_config.harness.autotest_dir,
       ),
       task=phosphorus.common.TaskEnvironment(
-          synchronous_offload_dir=recipe_config.output.gs_root_dir,
+          synchronous_offload_dir=off_dir,
           results_dir=load_response.results_dir,
       )
   )
 
-
 def _default_failed_result():
-  """Construct a result for an unkown failure.
+  """Construct a result for an unknown failure.
 
   Returns:
     * skylab_test_runner.Result.
@@ -294,13 +302,16 @@ def _default_failed_result():
 
 
 def RunSteps(api, properties, envvars):
+  upload_response = None
   validate_request(api, properties)
   dut_hostname = _get_dut_hostname(api, envvars)
   load_response = load_state(api, config=properties.config,
                              dut_hostname=dut_hostname,
                              run_id=envvars.SWARMING_TASK_ID)
-  phosphorus_config = _get_phosphorus_config(properties.config,
-                                             load_response)
+  phosphorus_config = _get_phosphorus_config(
+      properties.config, load_response,
+      properties.request.test.offload.synchronous_gs_enable,
+  )
 
   # Run the post-process steps if prejob or run_test fails, but don't run_test
   # if prejob fails.
@@ -313,7 +324,7 @@ def RunSteps(api, properties, envvars):
     # Similarly, run the GS upload only if the test completed cleanly (whether
     # it succeeded or failed), and only if requested
     if properties.request.test.offload.synchronous_gs_enable:
-      upload_to_gs(
+      upload_response = upload_to_gs(
           api, config=phosphorus_config,
           target_dir=properties.config.output.gs_root_dir,
           task_id=envvars.SWARMING_TASK_ID)
@@ -327,6 +338,8 @@ def RunSteps(api, properties, envvars):
 
   try:
     result = get_results(api, load_response.results_dir)
+    if upload_response and result.autotest_result:
+      result.autotest_result.synchronous_log_data_url = upload_response.gs_url
     display_results_summary(api, result)
   # When result parsing fails we want to explicitly return a failure via output
   # properties rather than have the recipe fail with no output properties.
@@ -432,12 +445,26 @@ def GenTests(api):
 
   yield (api.test('upload_to_gs') + #
          _misc_properties() + #
+         _mock_load_step() + #
          api.properties(TestRunnerProperties(request={
              'test': {'autotest': {'name': 'dummy_name'},
-                      'offload': {'synchronous_gs_enable': True},
-                      }})) + #
-         _mock_load_step())
-
+                      'offload': {'synchronous_gs_enable': True}}
+         })) + #
+         api.step_data(
+             'get test results.call `autotest_status_parser`.parse',
+             stdout=api.raw_io.output(
+                 json_format.MessageToJson(
+                     Result(
+                         autotest_result=Result.Autotest(test_cases=[]),
+                     )))) + #
+         api.step_data(
+           'upload to GS.call `phosphorus`.upload-to-gs',
+           stdout=api.raw_io.output(
+               json_format.MessageToJson(
+                   phosphorus.upload_to_gs.UploadToGSResponse(
+                       gs_url="gs://dummy-gs-url")
+         )))
+        )
   yield (api.test('get_results_crash') + #
          _misc_properties() + #
          _request_properties() + #
