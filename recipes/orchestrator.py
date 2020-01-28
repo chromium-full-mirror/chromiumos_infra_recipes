@@ -15,7 +15,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'build_plan',
     'cros_bisect',
     'cros_history',
@@ -255,8 +254,7 @@ def schedule_wait_follow_on(api, parent_step, config,
   bucket = api.buildbucket.build.builder.bucket
   req = api.buildbucket.schedule_request(
       gitiles_commit=snapshot, builder=follow_on.name, bucket=bucket,
-      gerrit_changes=gerrit_changes, critical=True, properties={}, tags=tags,
-      swarming_parent_run_id=api.swarming.task_id)
+      gerrit_changes=gerrit_changes, critical=True, properties={}, tags=tags)
   title_fn = api.naming.get_build_title
   [build] = api.buildbucket.schedule([req], url_title_fn=title_fn)
   url = api.buildbucket.build_url(build_id=build.id)
