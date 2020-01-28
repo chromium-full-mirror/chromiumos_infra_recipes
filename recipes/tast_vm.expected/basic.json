@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "setup RTD"
+    "name": "setup rtd - tast"
   },
   {
     "cmd": [
@@ -16,7 +16,7 @@
       "[CLEANUP]/test-artifacts_tmp_1/autotest_server_package.tar.bz2"
     ],
     "infra_step": true,
-    "name": "setup RTD.gsutil download tast bundle from GS",
+    "name": "setup rtd - tast.gsutil download tast bundle from GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -29,14 +29,14 @@
       "--directory",
       "[CLEANUP]/test-artifacts_tmp_1"
     ],
-    "name": "setup RTD.untar tast",
+    "name": "setup rtd - tast.untar tast",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "download vm image"
+    "name": "setup rts - vm"
   },
   {
     "cmd": [
@@ -51,7 +51,7 @@
       "[CLEANUP]/image-archive_tmp_2/image.zip"
     ],
     "infra_step": true,
-    "name": "download vm image.gsutil download image bundle from GS",
+    "name": "setup rts - vm.gsutil download image bundle from GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -66,7 +66,7 @@
       "--json-output",
       "/path/to/tmp/json"
     ],
-    "name": "download vm image.unzip image bundle",
+    "name": "setup rts - vm.unzip image bundle",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
@@ -77,6 +77,127 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/image-archive_tmp_2/image/chromiumos_qemu_image.bin",
+      "[CLEANUP]/image-archive_tmp_2/image/qcow2.img"
+    ],
+    "name": "setup rts - vm.convert image to qcow format",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_3",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_4",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_5",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/image-archive_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none"
+    ],
+    "name": "setup rts - vm.launch image as vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "chmod",
+      "400",
+      "[CLEANUP]/image-archive_tmp_2/image/id_rsa"
+    ],
+    "name": "setup rts - vm.calibrate ssh key permissions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "name": "setup rts - vm.connect via ssh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tast tests"
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/test-artifacts_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-waituntilready",
+      "-failfortests",
+      "-extrauseflags=tast_vm",
+      "-resultsdir",
+      "[CLEANUP]/test-results_tmp_6",
+      "-keyfile=[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
+      "localhost:9222",
+      "expr"
+    ],
+    "name": "run tast tests.tast run expr",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
