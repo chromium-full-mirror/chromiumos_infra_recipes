@@ -12,3 +12,9 @@ DEPS = [
     'recipe_engine/step',
     'easy',
 ]
+
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
+    CrosInfraConfigProperties)
+
+PROPERTIES = CrosInfraConfigProperties
+

@@ -16,10 +16,13 @@ REPO_URL = "https://chrome-internal.googlesource.com/chromeos/infra/config"
 class CrosInfraConfigApi(recipe_api.RecipeApi):
   """A module for accessing data in the chromeos/infra/config repo"""
 
-  def initialize(self):
-    """Init the InfraConfigApi module."""
+  def __init__(self, properties, *args, **kwargs):
+    super(CrosInfraConfigApi, self).__init__(*args, **kwargs)
     # Map from BuilderConfig's id.name to BuilderConfig, lazily loaded.
     self._name_to_builder_config = {}
+
+    # Parse properties.config_ref
+    self._config_ref = properties.config_ref or 'master'
 
   @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
   def _fetch_builder_configs(self):
@@ -32,6 +35,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # once for each builder.
     return self.m.gitiles.download_file(
         REPO_URL, "generated/builder_configs.binaryproto",
+        branch=self._config_ref,
         step_test_data=self.test_api.builder_configs_step_test_data,
         timeout=self.test_api.gitiles_timeout_seconds)
 
