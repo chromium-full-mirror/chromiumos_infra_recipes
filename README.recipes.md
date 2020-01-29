@@ -2927,11 +2927,11 @@ Ensure the CIPD support package is installed.
 
 [DEPS](/recipe_modules/tast_results/__init__.py#6): [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&mdash; **def [convert\_to\_taskresult](/recipe_modules/tast_results/api.py#62)(self, test_result):**
+&mdash; **def [convert\_to\_taskresult](/recipe_modules/tast_results/api.py#63)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -2941,7 +2941,7 @@ Args:
 Returns:
   TaskResult with the same info.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#20)(self, test_results_path):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#21)(self, test_results_path):**
 
 Return the test results decoded from the results.json.
 
@@ -2952,6 +2952,14 @@ Returns:
   A consolidated Data Structure summarizing all results from a run.
   Currently this is an ExecuteResponse.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#44
+
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#96)(self, execute_response, test_results_path):**
+
+Print results for the user.
+
+Args:
+  execute_response(ExecuteResponse): result of the run.
+  test_results_path (Path): Path to test_results/.
 ### *recipe_modules* / [urls](/recipe_modules/urls)
 
 [DEPS](/recipe_modules/urls/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

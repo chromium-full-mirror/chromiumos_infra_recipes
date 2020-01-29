@@ -138,6 +138,9 @@ def RunSteps(api, properties):
     response = api.tast_results.get_results(test_results_dir)
     api.easy.set_property_step('response', jsonpb.MessageToDict(response))
 
+  with api.step.nest('print results'):
+    api.tast_results.print_results(response, test_results_dir)
+
 
 def GenTests(api):
   yield (api.test('basic') + api.properties(expressions=['expr']))

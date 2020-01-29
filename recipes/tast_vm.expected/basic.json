@@ -235,6 +235,67 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "print results",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print results.arc.Boot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@failure@@@",
+      "@@@STEP_LOG_LINE@dummy_file@@@@",
+      "@@@STEP_LOG_END@dummy_file@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print results.arc.Boot.housekeeping",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/test-results_tmp_6/tests/arc.Boot"
+    ],
+    "infra_step": true,
+    "name": "print results.arc.Boot.housekeeping.ls",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test-results_tmp_6/tests/arc.Boot/dummy_file@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_6/tests/arc.Boot/dummy_file",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "print results.arc.Boot.housekeeping.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@dummy_file@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

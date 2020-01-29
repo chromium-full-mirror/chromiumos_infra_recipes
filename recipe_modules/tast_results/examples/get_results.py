@@ -11,7 +11,9 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.tast_results.get_results(api.path.mkdtemp(prefix='test-results'))
+  temp_dir = api.path.mkdtemp(prefix='test-results')
+  response = api.tast_results.get_results(temp_dir)
+  api.tast_results.print_results(response, temp_dir)
 
 
 def GenTests(api):

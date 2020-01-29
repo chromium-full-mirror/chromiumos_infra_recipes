@@ -12,6 +12,7 @@ from PB.test_platform.taskstate import TaskState
 from PB.tast.test_result import TestResult
 
 import json
+import ntpath
 
 
 class TastResultsApi(recipe_api.RecipeApi):
@@ -91,3 +92,28 @@ class TastResultsApi(recipe_api.RecipeApi):
         )
     ])
     return task_result
+
+  def print_results(self, execute_response, test_results_path):
+    """Print results for the user.
+
+    Args:
+      execute_response(ExecuteResponse): result of the run.
+      test_results_path (Path): Path to test_results/.
+    """
+    for task_result in execute_response.consolidated_results[0].attempts:
+      if task_result.state.verdict == TaskState.VERDICT_FAILED:
+        with self.m.step.nest(task_result.name) as step:
+          step.presentation.step_text = (
+              task_result.test_cases[0].human_readable_summary)
+          step.presentation.status = self.m.step.FAILURE
+
+          # Making a separate step so as to not show these to user.
+          # This step should always be collapsed for end user.
+          with self.m.step.nest('housekeeping'):
+            test_log_dir = test_results_path.join('tests').join(
+                task_result.name)
+            for file in self.m.file.listdir('ls', test_log_dir,
+                                            test_data=['dummy_file']):
+              filename = ntpath.basename(str(file))
+              step.presentation.logs[filename] = self.m.file.read_text(
+                  'reading file', file)
