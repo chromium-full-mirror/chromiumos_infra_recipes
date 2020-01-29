@@ -9,6 +9,8 @@
 """
 
 import os
+
+from google.protobuf import json_format as jsonpb
 from PB.recipes.chromeos.tast_vm import TastVmProperties
 
 DEPS = [
@@ -18,6 +20,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'easy',
+    'tast_results',
 ]
 
 PROPERTIES = TastVmProperties
@@ -113,7 +116,7 @@ def RunSteps(api, properties):
     test_results_dir = api.path.mkdtemp(prefix='test-results')
     tast_dir = test_artifacts_dir.join('tast')
     for expr in properties.expressions:
-      api.step('tast run {}'.format(expr), [
+      api.step('tast run', [
           str(tast_dir.join('tast')), \
           '-verbose', \
           'run', \
@@ -132,6 +135,8 @@ def RunSteps(api, properties):
           'localhost:9222', \
           expr
       ])
+    response = api.tast_results.get_results(test_results_dir)
+    api.easy.set_property_step('response', jsonpb.MessageToDict(response))
 
 
 def GenTests(api):

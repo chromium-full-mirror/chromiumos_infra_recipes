@@ -51,6 +51,7 @@
   * [skylab_local_state](#recipe_modules-skylab_local_state)
   * [stable_version](#recipe_modules-stable_version)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
+  * [tast_results](#recipe_modules-tast_results)
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
 
 **[Recipes](#Recipes)**
@@ -182,6 +183,8 @@
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
   * [stable_version:examples/full](#recipes-stable_version_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
+  * [tast_results:examples/convert_to_taskresult](#recipes-tast_results_examples_convert_to_taskresult)
+  * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results)
   * [tast_vm](#recipes-tast_vm) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_config](#recipes-test_config) &mdash; Compares Parallel CQ and Legacy cbuildbot configs.
@@ -2920,6 +2923,35 @@ Returns:
 Ensure the CIPD support package is installed.
 
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
+### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
+
+[DEPS](/recipe_modules/tast_results/__init__.py#6): [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to process tast-results/ directory.
+
+&mdash; **def [convert\_to\_taskresult](/recipe_modules/tast_results/api.py#62)(self, test_result):**
+
+Convert Tast's result into CTP format.
+
+Args:
+  test_result (TestResult): TestResult to be converted.
+
+Returns:
+  TaskResult with the same info.
+
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#20)(self, test_results_path):**
+
+Return the test results decoded from the results.json.
+
+Args:
+  test_results_path (Path): Path to test_results/.
+
+Returns:
+  A consolidated Data Structure summarizing all results from a run.
+  Currently this is an ExecuteResponse.
+  https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#44
 ### *recipe_modules* / [urls](/recipe_modules/urls)
 
 [DEPS](/recipe_modules/urls/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -3864,15 +3896,25 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
+### *recipes* / [tast\_results:examples/convert\_to\_taskresult](/recipe_modules/tast_results/examples/convert_to_taskresult.py)
+
+[DEPS](/recipe_modules/tast_results/examples/convert_to_taskresult.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/convert_to_taskresult.py#18)(api):**
+### *recipes* / [tast\_results:examples/get\_results](/recipe_modules/tast_results/examples/get_results.py)
+
+[DEPS](/recipe_modules/tast_results/examples/get_results.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/get_results.py#13)(api):**
 ### *recipes* / [tast\_vm](/recipes/tast_vm.py)
 
-[DEPS](/recipes/tast_vm.py#14): [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/tast_vm.py#16): [easy](#recipe_modules-easy), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 An experimental recipe for running Tast VM tests without Chroot and
 ChromeOS checkout, resulting in much faster tests. The tests will
 use tast executable from build_artifacts.
 
-&mdash; **def [RunSteps](/recipes/tast_vm.py#31)(api, properties):**
+&mdash; **def [RunSteps](/recipes/tast_vm.py#34)(api, properties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#12): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
