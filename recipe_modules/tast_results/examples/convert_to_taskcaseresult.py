@@ -50,23 +50,15 @@ def RunSteps(api):
       "skipReason": "Felt like it."
   }
   """, TestResult())
-  passed_task_result = api.tast_results.convert_to_taskresult(
-      passed_test_result)
-  api.assertions.assertEqual(passed_task_result.state.verdict,
-                             TaskState.VERDICT_PASSED)
-  failed_task_result = api.tast_results.convert_to_taskresult(
-      failed_test_result)
-  api.assertions.assertEqual(failed_task_result.state.verdict,
-                             TaskState.VERDICT_FAILED)
-  api.assertions.assertEqual(
-      failed_task_result.test_cases[0].human_readable_summary, u'failure')
-  skipped_task_result = api.tast_results.convert_to_taskresult(
-      skipped_test_result)
-  api.assertions.assertEqual(skipped_task_result.state.verdict,
-                             TaskState.VERDICT_NO_VERDICT)
-  api.assertions.assertEqual(
-      skipped_task_result.test_cases[0].human_readable_summary,
-      u'Felt like it.')
+  passed_tcr = api.tast_results.convert_to_testcaseresult(passed_test_result)
+  api.assertions.assertEqual(passed_tcr.verdict, TaskState.VERDICT_PASSED)
+  failed_tcr = api.tast_results.convert_to_testcaseresult(failed_test_result)
+  api.assertions.assertEqual(failed_tcr.verdict, TaskState.VERDICT_FAILED)
+  api.assertions.assertEqual(failed_tcr.human_readable_summary, u'failure')
+  skipped_tcr = api.tast_results.convert_to_testcaseresult(skipped_test_result)
+  api.assertions.assertEqual(skipped_tcr.verdict, TaskState.VERDICT_NO_VERDICT)
+  api.assertions.assertEqual(skipped_tcr.human_readable_summary,
+                             u'Felt like it.')
 
 
 def GenTests(api):

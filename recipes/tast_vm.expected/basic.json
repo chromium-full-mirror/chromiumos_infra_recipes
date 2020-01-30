@@ -228,24 +228,20 @@
   },
   {
     "cmd": [],
-    "name": "run tast tests.set response",
+    "name": "run tast tests.set task_result",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"consolidatedResults\": [{\"attempts\": [{\"name\": \"arc.Boot\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"testCases\": [{\"humanReadableSummary\": \"failure\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]}, {\"name\": \"arc.BuildProperties\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"testCases\": [{\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}]}, {\"name\": \"arc.MiniContainerState\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"testCases\": [{\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]}]}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@task_result@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"testCases\": [{\"humanReadableSummary\": \"failure\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "print results",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "print results"
   },
   {
     "cmd": [],
-    "name": "print results.arc.Boot",
+    "name": "arc.Boot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@failure@@@",
       "@@@STEP_LOG_LINE@dummy_file@@@@",
       "@@@STEP_LOG_END@dummy_file@@@",
@@ -254,9 +250,9 @@
   },
   {
     "cmd": [],
-    "name": "print results.arc.Boot.housekeeping",
+    "name": "arc.Boot.housekeeping",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -267,13 +263,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/test-results_tmp_6/tests/arc.Boot"
+      "[CLEANUP]/test-results_tmp_6/tests"
     ],
     "infra_step": true,
-    "name": "print results.arc.Boot.housekeeping.ls",
+    "name": "arc.Boot.housekeeping.ls",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test-results_tmp_6/tests/arc.Boot/dummy_file@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test-results_tmp_6/tests/dummy_file@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -285,13 +281,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-results_tmp_6/tests/arc.Boot/dummy_file",
+      "[CLEANUP]/test-results_tmp_6/tests/dummy_file",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "print results.arc.Boot.housekeeping.reading file",
+    "name": "arc.Boot.housekeeping.reading file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@dummy_file@@@"
     ]
   },

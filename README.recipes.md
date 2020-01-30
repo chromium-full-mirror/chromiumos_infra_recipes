@@ -183,7 +183,7 @@
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
   * [stable_version:examples/full](#recipes-stable_version_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
-  * [tast_results:examples/convert_to_taskresult](#recipes-tast_results_examples_convert_to_taskresult)
+  * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult)
   * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results)
   * [tast_vm](#recipes-tast_vm) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
@@ -2938,7 +2938,7 @@ Ensure the CIPD support package is installed.
 
 A module to process tast-results/ directory.
 
-&mdash; **def [convert\_to\_taskresult](/recipe_modules/tast_results/api.py#63)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#63)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -2946,26 +2946,27 @@ Args:
   test_result (TestResult): TestResult to be converted.
 
 Returns:
-  TaskResult with the same info.
+  TestCaseResult with the same info.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#21)(self, test_results_path):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#21)(self, test_results_path, suite_name):**
 
 Return the test results decoded from the results.json.
 
 Args:
   test_results_path (Path): Path to test_results/.
+  suite_name (str): Name of the whole test suite.
 
 Returns:
   A consolidated Data Structure summarizing all results from a run.
-  Currently this is an ExecuteResponse.
-  https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#44
+  Currently this is a TaskResult.
+  https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#96)(self, execute_response, test_results_path):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#88)(self, task_result, test_results_path):**
 
 Print results for the user.
 
 Args:
-  execute_response(ExecuteResponse): result of the run.
+  task_result(TaskResult): result of the run.
   test_results_path (Path): Path to test_results/.
 ### *recipe_modules* / [urls](/recipe_modules/urls)
 
@@ -3911,11 +3912,11 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
-### *recipes* / [tast\_results:examples/convert\_to\_taskresult](/recipe_modules/tast_results/examples/convert_to_taskresult.py)
+### *recipes* / [tast\_results:examples/convert\_to\_taskcaseresult](/recipe_modules/tast_results/examples/convert_to_taskcaseresult.py)
 
-[DEPS](/recipe_modules/tast_results/examples/convert_to_taskresult.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/tast_results/examples/convert_to_taskcaseresult.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/convert_to_taskresult.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/convert_to_taskcaseresult.py#18)(api):**
 ### *recipes* / [tast\_results:examples/get\_results](/recipe_modules/tast_results/examples/get_results.py)
 
 [DEPS](/recipe_modules/tast_results/examples/get_results.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path]

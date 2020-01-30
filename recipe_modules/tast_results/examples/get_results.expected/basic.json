@@ -24,6 +24,10 @@
   },
   {
     "cmd": [],
+    "name": "print results"
+  },
+  {
+    "cmd": [],
     "name": "arc.Boot",
     "~followup_annotations": [
       "@@@STEP_TEXT@failure@@@",
@@ -47,13 +51,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/test-results_tmp_1/tests/arc.Boot"
+      "[CLEANUP]/test-results_tmp_1/tests/fancy-suite"
     ],
     "infra_step": true,
     "name": "arc.Boot.housekeeping.ls",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test-results_tmp_1/tests/arc.Boot/dummy_file@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test-results_tmp_1/tests/fancy-suite/dummy_file@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -65,7 +69,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-results_tmp_1/tests/arc.Boot/dummy_file",
+      "[CLEANUP]/test-results_tmp_1/tests/fancy-suite/dummy_file",
       "/path/to/tmp/"
     ],
     "infra_step": true,

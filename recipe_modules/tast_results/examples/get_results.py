@@ -12,7 +12,7 @@ DEPS = [
 
 def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')
-  response = api.tast_results.get_results(temp_dir)
+  response = api.tast_results.get_results(temp_dir, 'fancy-suite')
   api.tast_results.print_results(response, temp_dir)
 
 
