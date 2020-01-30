@@ -285,7 +285,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       flags = InstallPackagesRequest.Flags(
           compile_source=(
               build_config.build.install_packages_conf.compile_source),
-          use_goma=api.cros_sdk.has_goma_config(),
+          use_goma=(
+              not build_config.build.install_packages_conf.disable_goma and
+              api.cros_sdk.has_goma_config()),
           toolchain_changed=toolchain_changed)
 
       response = api.cros_build_api.SysrootService.InstallPackages(

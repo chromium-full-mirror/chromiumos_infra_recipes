@@ -21,7 +21,7 @@ def RunSteps(api):
       api.buildbucket.build.builder.builder)
   api.cros_infra_config.force_reload()
 
-  api.assertions.assertEqual(builder_config.id.name, "postsubmit-orchestrator")
+  api.assertions.assertEqual(builder_config.id.name, "clang-tidy-toolchain")
 
 
 def GenTests(api):
@@ -30,5 +30,5 @@ def GenTests(api):
                            CrosInfraConfigProperties(
                                config_ref='refs/changes/45/12345/3',
                            )}) + #
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='postsubmit-orchestrator'))
+         api.buildbucket.ci_build(project='chromeos', bucket='toolchain',
+                                  builder='clang-tidy-toolchain'))

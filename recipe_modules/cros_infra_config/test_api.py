@@ -458,6 +458,56 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "clang-tidy-toolchain",
+                    "branch": "master",
+                    "type": "TOOLCHAIN"
+                  },
+                  "general": {
+                    "critical": false,
+                    "environment": "PRODUCTION",
+                    "runWhen": {
+                      "mode": "ALWAYS_RUN"
+                    }
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE",
+                    "artifactsGsBucket": "chromeos-image-archive",
+                    "artifactTypes": [
+                      "CHROME_CLANG_WARNINGS_FILE"
+                    ],
+                    "publishArtifacts": [
+                      {
+                        "publishGsBucket":
+                          "chromeos-toolchain-artifacts/clang-tidy-1",
+                        "publishTypes": [
+                          "CHROME_CLANG_WARNINGS_FILE"
+                        ]
+                      }
+                    ]
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "applyGerritChanges": true,
+                    "useFlags": [
+                      {"flag": "chrome_internal"},
+                      {"flag": "-cros-debug"},
+                      {"flag": "strict_toolchain_checks"},
+                      {"flag": "clang_tidy"}
+                    ],
+                    "installPackagesConf": {
+                      "runSpec": "RUN",
+                      "compileSource": true,
+                      "disableGoma": true
+                    }
+                  },
+                  "unitTests": {
+                    "ebuildsRunSpec": "RUN"
+                  }
+                },
+                {
+                  "id": {
                     "name": "orderfile-generate-orchestrator",
                     "branch": "master",
                     "type": "TOOLCHAIN"
