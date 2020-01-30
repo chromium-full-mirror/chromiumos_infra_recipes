@@ -11,6 +11,7 @@ from recipe_engine import recipe_test_api
 class TastResultsTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the tast_results module."""
 
+  gsutil_timeout_seconds = 120
   test_results_json = json.loads("""
 [
   {

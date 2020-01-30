@@ -16,6 +16,7 @@ from PB.recipes.chromeos.tast_vm import TastVmProperties
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/archive',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
@@ -31,6 +32,8 @@ PRIVATE_KEY_NAME = 'id_rsa'
 VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
 QCOW_IMG_NAME = 'qcow2.img'
 TAST_ARCHIVE_PATH = 'tast/tast'
+GS_BUCKET = 'chromeos-vmtest-archive'
+
 
 def RunSteps(api, properties):
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
@@ -137,8 +140,15 @@ def RunSteps(api, properties):
       ], ok_ret='any')
     task_result = api.tast_results.get_results(test_results_dir,
                                                properties.name)
+    api.tast_results.archive_results(test_results_dir, GS_BUCKET)
     failures = api.tast_results.get_failures(task_result)
     api.easy.set_property_step('task_result', jsonpb.MessageToDict(task_result))
+    api.step('kill vm', ['pkill', '-F', kvm_pid_file])
+    with api.step.nest('qemu debug') as step:
+      step.presentation.logs['kvm.monitor'] = api.file.read_text(
+          'reading file', kvm_monitor_file)
+      step.presentation.logs['kvm.monitor.serial'] = api.file.read_text(
+          'reading file', kvm_monitor_serial_file)
 
   api.tast_results.print_results(task_result, test_results_dir)
 
