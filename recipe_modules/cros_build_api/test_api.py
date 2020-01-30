@@ -167,6 +167,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def sdk_service_responses(self):
     """Generate responses for SdkService."""
     responses = {}
+    responses['Clean'] = '{}'
     responses['Create'] = jsonify(version={'version': 123})
     responses['Delete'] = '{}'
     responses['Unmount'] = '{}'

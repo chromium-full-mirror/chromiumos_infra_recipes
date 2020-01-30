@@ -107,6 +107,7 @@ def RunSteps(api):
           'UprevVersionedPackage': packages.UprevVersionedPackageResponse,
       },
       'SdkService': {
+          'Clean': sdk.CleanResponse,
           'Create': sdk.CreateResponse,
           'Delete': sdk.UpdateResponse,
           'Unmount': sdk.UnmountResponse,
@@ -160,4 +161,3 @@ def GenTests(api):
              AnalysisServiceProperties(max_stdout_stderr_bytes=64)
          })
   )
-

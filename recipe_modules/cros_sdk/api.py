@@ -12,6 +12,7 @@ import os
 from recipe_engine import recipe_api
 
 from PB.chromiumos import common
+from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
 from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UnmountRequest as UnmountSdkRequest
 
@@ -192,6 +193,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
                 DeleteSdkRequest(chroot=self.m.cros_sdk.chroot)))
 
       with self.m.step.nest('clean up SDK chroot'):
+        self.cleanup_sysroot()
         self.unmount_chroot()
         self.unlink_chroot(checkout_path)
         self.swarming_chmod_chroot()
@@ -200,6 +202,11 @@ class CrosSdkApi(recipe_api.RecipeApi):
     with self.m.step.nest('unmounting chroot'):
       self.m.cros_build_api.SdkService.Unmount(
           UnmountSdkRequest(chroot=self.m.cros_sdk.chroot))
+
+  def cleanup_sysroot(self):
+    with self.m.step.nest('removing sysroot'):
+      self.m.cros_build_api.SdkService.Clean(
+          CleanSdkRequest(chroot=self.m.cros_sdk.chroot))
 
   def unlink_chroot(self, checkout_path):
     """Unlink the chroot from the chromiumos checkout.
