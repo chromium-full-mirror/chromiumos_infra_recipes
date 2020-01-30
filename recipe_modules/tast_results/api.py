@@ -14,6 +14,7 @@ from PB.tast.test_result import TestResult
 import json
 import ntpath
 
+EXPECTED_FILES = ['log.txt', 'logcat.txt', 'messages', 'dummy_file']
 
 class TastResultsApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
@@ -85,6 +86,28 @@ class TastResultsApi(recipe_api.RecipeApi):
         human_readable_summary=task_summary,
     )
 
+  def get_failures(self, task_result):
+    """Convert TaskResult into api.failures.Failure objects.
+
+    Args:
+      task_result (TaskResult): TaskResult to be converted.
+
+    Returns:
+      list(Failure) of individual tests.
+    """
+    failures = []
+    for test_case_result in task_result.test_cases:
+      if test_case_result.verdict == TaskState.VERDICT_FAILED:
+        failures.append(self.m.failures.Failure(
+            kind = 'vm test',
+            title = test_case_result.name,
+            link_map = {},
+            fatal = True,
+            id = None,
+        ))
+
+    return failures
+
   def print_results(self, task_result, test_results_path):
     """Print results for the user.
 
@@ -96,20 +119,25 @@ class TastResultsApi(recipe_api.RecipeApi):
       step.presentation.step_text = (
           '' if task_result.state.verdict == TaskState.VERDICT_FAILED else
           'all tests passed!')
-    for test_case_result in task_result.test_cases:
-      if test_case_result.verdict == TaskState.VERDICT_FAILED:
-        with self.m.step.nest(test_case_result.name) as step:
-          step.presentation.step_text = (
-              test_case_result.human_readable_summary)
-          step.presentation.status = self.m.step.FAILURE
+      for test_case_result in task_result.test_cases:
+        if test_case_result.verdict == TaskState.VERDICT_FAILED:
+          with self.m.step.nest(test_case_result.name) as step:
+            step.presentation.step_text = (
+                test_case_result.human_readable_summary)
+            step.presentation.status = self.m.step.FAILURE
 
-          # Making a separate step so as to not show these to user.
-          # This step should always be collapsed for end user.
-          with self.m.step.nest('housekeeping'):
-            test_log_dir = test_results_path.join('tests').join(
-                task_result.name)
-            for file in self.m.file.listdir('ls', test_log_dir,
-                                            test_data=['dummy_file']):
-              filename = ntpath.basename(str(file))
-              step.presentation.logs[filename] = self.m.file.read_text(
-                  'reading file', file)
+            # Making a separate step so as to not show these to user.
+            # This step should always be collapsed for end user.
+            with self.m.step.nest('housekeeping'):
+              test_log_dir = test_results_path.join('tests').join(
+                  test_case_result.name)
+              self.m.file.flatten_single_directories('flatten',
+                                                     test_log_dir)
+              for file in self.m.file.listdir('ls', test_log_dir,
+                                              test_data=['dummy_file'],
+                                              recursive=True):
+                # Strip dir from the name.
+                filename = ntpath.basename(str(file))
+                if filename in EXPECTED_FILES:
+                  step.presentation.logs[filename] = self.m.file.read_text(
+                      'reading file', file)

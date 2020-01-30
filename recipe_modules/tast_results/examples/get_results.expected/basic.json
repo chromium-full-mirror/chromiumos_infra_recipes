@@ -24,12 +24,16 @@
   },
   {
     "cmd": [],
-    "name": "print results"
+    "name": "print results",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "arc.Boot",
+    "name": "print results.arc.Boot",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@failure@@@",
       "@@@STEP_LOG_LINE@dummy_file@@@@",
       "@@@STEP_LOG_END@dummy_file@@@",
@@ -38,9 +42,25 @@
   },
   {
     "cmd": [],
-    "name": "arc.Boot.housekeeping",
+    "name": "print results.arc.Boot.housekeeping",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "flatten_single_directories",
+      "[CLEANUP]/test-results_tmp_1/tests/arc.Boot"
+    ],
+    "infra_step": true,
+    "name": "print results.arc.Boot.housekeeping.flatten",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -51,13 +71,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/test-results_tmp_1/tests/fancy-suite"
+      "[CLEANUP]/test-results_tmp_1/tests/arc.Boot",
+      "--recursive"
     ],
     "infra_step": true,
-    "name": "arc.Boot.housekeeping.ls",
+    "name": "print results.arc.Boot.housekeeping.ls",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test-results_tmp_1/tests/fancy-suite/dummy_file@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test-results_tmp_1/tests/arc.Boot/dummy_file@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -69,13 +90,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-results_tmp_1/tests/fancy-suite/dummy_file",
+      "[CLEANUP]/test-results_tmp_1/tests/arc.Boot/dummy_file",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "arc.Boot.housekeeping.reading file",
+    "name": "print results.arc.Boot.housekeeping.reading file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@dummy_file@@@"
     ]
   },

@@ -20,6 +20,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'easy',
+    'failures',
     'tast_results',
 ]
 
@@ -122,7 +123,6 @@ def RunSteps(api, properties):
           'run', \
           '-build=false', \
           '-waituntilready', \
-          '-failfortests', \
           '-extrauseflags=tast_vm', \
           '-resultsdir', str(test_results_dir), \
           '-keyfile={}'.format(private_key_path), \
@@ -134,12 +134,15 @@ def RunSteps(api, properties):
               str(tast_dir.join('remote_test_runner'))), \
           'localhost:9222', \
           expr
-      ])
+      ], ok_ret='any')
     task_result = api.tast_results.get_results(test_results_dir,
                                                properties.name)
+    failures = api.tast_results.get_failures(task_result)
     api.easy.set_property_step('task_result', jsonpb.MessageToDict(task_result))
 
   api.tast_results.print_results(task_result, test_results_dir)
+
+  return api.failures.aggregate_failures(failures)
 
 
 def GenTests(api):

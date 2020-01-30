@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/path',
     'tast_results',
 ]
@@ -12,8 +13,14 @@ DEPS = [
 
 def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')
-  response = api.tast_results.get_results(temp_dir, 'fancy-suite')
-  api.tast_results.print_results(response, temp_dir)
+  task_result = api.tast_results.get_results(temp_dir, 'fancy-suite')
+  api.tast_results.print_results(task_result, temp_dir)
+
+  failures = api.tast_results.get_failures(task_result)
+  api.assertions.assertEqual(len(failures), 1)
+  api.assertions.assertEqual(failures[0].kind, 'vm test')
+  api.assertions.assertEqual(failures[0].fatal, True)
+  api.assertions.assertEqual(failures[0].title, 'arc.Boot')
 
 
 def GenTests(api):
