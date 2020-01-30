@@ -196,7 +196,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   with api.step.nest('update sdk'):
     flags = UpdateSdkRequest.Flags(
-        build_source=build_config.build.compile_update_sdk,
+        build_source=build_config.build.sdk_update.compile_source,
         toolchain_changed=toolchain_changed)
     api.cros_build_api.SdkService.Update(
         UpdateSdkRequest(chroot=api.cros_sdk.chroot,
@@ -240,21 +240,23 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   with api.step.nest('install toolchain') as install_tc_step:
     flags = InstallToolchainRequest.Flags(
-        compile_source=build_config.build.compile_toolchain,
+        compile_source=build_config.build.install_toolchain.compile_source,
         toolchain_changed=toolchain_changed)
     response = api.cros_build_api.SysrootService.InstallToolchain(
         InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
                                 flags=flags), response_lambda=_failed_pkg_names)
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
-  install_packages = build_config.build.install_packages
-  if api.cros_infra_config.should_run(install_packages):
+  run_install_packages = build_config.build.install_packages_conf.run_spec
+  if api.cros_infra_config.should_run(run_install_packages):
 
     # Long chain of |= to determine if chrome requires rebuild.
     chrome_source_build = toolchain_changed
     chrome_source_build |= api.chrome.builds_chrome_from_source(
         build_target=build_target, chroot=api.cros_sdk.chroot,
-        packages=packages, ignore_prebuilts=build_config.build.compile_source)
+        packages=packages,
+        ignore_prebuilts=(
+            build_config.build.install_packages_conf.compile_source))
     chrome_source_build |= api.chrome.diffed_files_requires_rebuild(
         patch_sets=patch_sets)
 
@@ -281,7 +283,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
             artifacts.artifact_types, api.cros_sdk.chroot, sysroot,
             artifacts.input_artifacts, name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
-          compile_source=build_config.build.compile_source,
+          compile_source=(
+              build_config.build.install_packages_conf.compile_source),
           use_goma=api.cros_sdk.has_goma_config(),
           toolchain_changed=toolchain_changed)
 
@@ -295,13 +298,13 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       # TODO: if used goma, emit goma info, stats, counterz.
       api.cros_bisect.set_compile_failures(response.failed_packages)
       api.failures.set_failed_packages(ip_step, response.failed_packages)
-    if api.cros_infra_config.should_exit(install_packages):
+    if api.cros_infra_config.should_exit(run_install_packages):
       return
 
   version = api.cros_version.read_workspace_version()
   api.easy.set_property_step('chromeos_version', str(version))
 
-  image_types = build_config.build.image_types
+  image_types = build_config.build.build_images.image_types
   if image_types:
     with api.step.nest('build images') as bi_step:
       response = api.cros_build_api.ImageService.Create(
@@ -383,7 +386,8 @@ def get_packages(api, build_config):
   Returns:
     list[PackageInfo] of packages to build
   """
-  return api.cros_bisect.get_packages() or build_config.build.packages
+  return (api.cros_bisect.get_packages() or
+          build_config.build.install_packages_conf.packages)
 
 
 def get_target_versions(api, build_target):

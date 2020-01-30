@@ -32,24 +32,28 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "artifacts": {
                     "prebuilts": "PRIVATE",
-                    "artifact_types": ["IMAGE_ZIP"],
-                    "artifacts_gs_bucket": "chromeos-image-archive",
-                    "prebuilts_gs_bucket": "chromeos-prebuilt"
+                    "artifactTypes": ["IMAGE_ZIP"],
+                    "artifactsGsBucket": "chromeos-image-archive",
+                    "prebuiltsGsBucket": "chromeos-prebuilt"
                   },
                   "chrome": {
                     "internal": true
                   },
                   "build": {
-                    "portage_profile": {
+                    "portageProfile": {
                       "profile": "generic_build"
                     },
-                    "image_types": ["BASE", "TEST"],
-                    "install_packages": "RUN",
-                    "use_flags": [{"flag": "chrome_internal"}]
+                    "buildImages": {
+                      "imageTypes": ["BASE", "TEST"]
+                    },
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    },
+                    "useFlags": [{"flag": "chrome_internal"}]
                   },
-                  "unit_tests": {
-                    "package_blacklist": [],
-                    "ebuilds_run_spec": "RUN"
+                  "unitTests": {
+                    "packageBlacklist": [],
+                    "ebuildsRunSpec": "RUN"
                   }
                 },
                 {
@@ -63,23 +67,25 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "artifacts": {
                     "prebuilts": "NONE",
-                    "artifact_types": ["IMAGE_ZIP"]
+                    "artifactTypes": ["IMAGE_ZIP"]
                   },
                   "chrome": {
                     "internal": true
                   },
                   "build": {
-                    "install_packages": "RUN",
-                    "apply_gerrit_changes": true,
-                    "use_flags": [{"flag": "chrome_internal"}]
+                    "applyGerritChanges": true,
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    },
+                    "useFlags": [{"flag": "chrome_internal"}]
                   },
-                  "unit_tests": {
-                    "package_blacklist": [{
-                      "package_name": "chromite",
+                  "unitTests": {
+                    "packageBlacklist": [{
+                      "packageName": "chromite",
                       "category": "chromeos-base",
                       "version": ""
                     }],
-                    "ebuilds_run_spec": "RUN"
+                    "ebuildsRunSpec": "RUN"
                   }
                 },
                 {
@@ -91,27 +97,29 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   "general": {
                     "critical": false,
                     "environment": "STAGING",
-                    "sdk_cache_version": "2"
+                    "sdkCacheVersion": "2"
                   },
                   "artifacts": {
                     "prebuilts": "NONE",
-                    "artifact_types": ["IMAGE_ZIP"]
+                    "artifactTypes": ["IMAGE_ZIP"]
                   },
                   "chrome": {
                     "internal": true
                   },
                   "build": {
-                    "install_packages": "RUN",
-                    "apply_gerrit_changes": true,
-                    "use_flags": [{"flag": "chrome_internal"}]
+                    "applyGerritChanges": true,
+                    "useFlags": [{"flag": "chrome_internal"}],
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    }
                   },
-                  "unit_tests": {
-                    "package_blacklist": [{
-                      "package_name": "chromite",
+                  "unitTests": {
+                    "packageBlacklist": [{
+                      "packageName": "chromite",
                       "category": "chromeos-base",
                       "version": ""
                     }],
-                    "ebuilds_run_spec": "RUN"
+                    "ebuildsRunSpec": "RUN"
                   }
                 },
                 {
@@ -125,7 +133,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "artifacts": {
                     "prebuilts": "PUBLIC",
-                    "artifact_types": [
+                    "artifactTypes": [
                       "IMAGE_ZIP",
                       "AUTOTEST_FILES",
                       "TAST_FILES",
@@ -140,14 +148,18 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": false
                   },
                   "build": {
-                    "install_packages": "RUN",
-                    "compile_toolchain": false,
-                    "apply_gerrit_changes": true
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    },
+                    "installToolchain": {
+                      "compileSource": false
+                    },
+                    "applyGerritChanges": true
                   },
-                  "unit_tests": {
-                    "package_blacklist": [
+                  "unitTests": {
+                    "packageBlacklist": [
                     ],
-                    "ebuilds_run_spec": "RUN",
+                    "ebuildsRunSpec": "RUN",
                     "emptySysroot": false
                   }
                 },
@@ -167,15 +179,17 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "install_packages": "RUN"
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    }
                   },
-                  "unit_tests": {
-                    "package_blacklist": [{
-                      "package_name": "chromite",
+                  "unitTests": {
+                    "packageBlacklist": [{
+                      "packageName": "chromite",
                       "category": "chromeos-base",
                       "version": ""
                     }],
-                    "ebuilds_run_spec": "RUN"
+                    "ebuildsRunSpec": "RUN"
                   }
                 },
                 {
@@ -194,15 +208,17 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "install_packages": "RUN"
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    }
                   },
-                  "unit_tests": {
-                    "package_blacklist": [{
-                      "package_name": "chromite",
+                  "unitTests": {
+                    "packageBlacklist": [{
+                      "packageName": "chromite",
                       "category": "chromeos-base",
                       "version": ""
                     }],
-                    "ebuilds_run_spec": "RUN"
+                    "ebuildsRunSpec": "RUN"
                   }
                 },
                 {
@@ -222,15 +238,17 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "install_packages": "RUN"
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    }
                   },
-                  "unit_tests": {
-                    "package_blacklist": [{
-                      "package_name": "chromite",
+                  "unitTests": {
+                    "packageBlacklist": [{
+                      "packageName": "chromite",
                       "category": "chromeos-base",
                       "version": ""
                     }],
-                    "ebuilds_run_spec": "RUN"
+                    "ebuildsRunSpec": "RUN"
                   }
                 },
                 {
@@ -256,11 +274,15 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "useFlags": [
                        {"flag": "chrome_internal"}
                     ],
-                    "imageTypes": [
-                      "TEST",
-                      "BASE"
-                    ],
-                    "installPackages": "RUN"
+                    "buildImages": {
+                      "imageTypes": [
+                        "TEST",
+                        "BASE"
+                      ]
+                    },
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    }
                   },
                   "unitTests": {
                     "ebuildsRunSpec": "RUN"
@@ -279,8 +301,10 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "install_packages": "RUN_EXIT",
-                    "apply_gerrit_changes": false
+                    "installPackagesConf": {
+                      "runSpec": "RUN_EXIT"
+                    },
+                    "applyGerritChanges": false
                   }
                 },
                 {
@@ -293,7 +317,9 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "install_packages": "RUN"
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    }
                   }
                 },
                 {
@@ -306,12 +332,14 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "install_packages": "RUN_EXIT",
-                    "packages": [{
-                      "package_name": "chromeos-kernel",
-                      "category": "syskernel",
-                      "version": "4.19"
-                    }]
+                    "installPackagesConf": {
+                      "runSpec": "RUN_EXIT",
+                      "packages": [{
+                        "packageName": "chromeos-kernel",
+                        "category": "syskernel",
+                        "version": "4.19"
+                      }]
+                    }
                   }
                 },
                 {
@@ -322,26 +350,28 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "general": {
                     "critical": true,
-                    "broken_before": "2019-11-01T00:00:00Z"
+                    "brokenBefore": "2019-11-01T00:00:00Z"
                   },
                   "artifacts": {
                     "prebuilts": "NONE",
-                    "artifact_types": ["IMAGE_ZIP"]
+                    "artifactTypes": ["IMAGE_ZIP"]
                   },
                   "chrome": {
                     "internal": true
                   },
                   "build": {
-                    "install_packages": "RUN",
-                    "apply_gerrit_changes": true
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    },
+                    "applyGerritChanges": true
                   },
-                  "unit_tests": {
-                    "package_blacklist": [{
-                      "package_name": "chromite",
+                  "unitTests": {
+                    "packageBlacklist": [{
+                      "packageName": "chromite",
                       "category": "chromeos-base",
                       "version": ""
                     }],
-                    "ebuilds_run_spec": "RUN"
+                    "ebuildsRunSpec": "RUN"
                   }
                 },
                 {
@@ -354,11 +384,13 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "install_packages": "RUN",
-                    "apply_gerrit_changes": false
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    },
+                    "applyGerritChanges": false
                   },
-                  "unit_tests": {
-                    "ebuilds_run_spec": "NO_RUN"
+                  "unitTests": {
+                    "ebuildsRunSpec": "NO_RUN"
                   }
                 },
                 {
@@ -371,11 +403,13 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "install_packages": "RUN",
-                    "apply_gerrit_changes": false
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    },
+                    "applyGerritChanges": false
                   },
-                  "unit_tests": {
-                    "ebuilds_run_spec": "NO_RUN"
+                  "unitTests": {
+                    "ebuildsRunSpec": "NO_RUN"
                   }
                 },
                 {
@@ -388,11 +422,13 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "install_packages": "RUN",
-                    "apply_gerrit_changes": false
+                    "installPackagesConf": {
+                      "runSpec": "RUN"
+                    },
+                    "applyGerritChanges": false
                   },
-                  "unit_tests": {
-                    "ebuilds_run_spec": "RUN_EXIT"
+                  "unitTests": {
+                    "ebuildsRunSpec": "RUN_EXIT"
                   }
                 },
                 {
@@ -407,12 +443,12 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   "orchestrator": {
                     "children": [
                     ],
-                    "gitiles_commit": {
+                    "gitilesCommit": {
                       "host": "chrome-internal",
                       "project": "chromeos/manifest-internal",
                       "ref": "refs/heads/snapshot"
                     },
-                    "gerrit_changes": [{
+                    "gerritChanges": [{
                       "host": "chromium-review.googlesource.com",
                       "project": "chromiumos/overlays/chromiumos-overlay",
                       "change": 1394249,
@@ -437,12 +473,12 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       "name": "orderfile-verify-orchestrator",
                       "awaitCompletion": true
                     },
-                    "gitiles_commit": {
+                    "gitilesCommit": {
                       "host": "chrome-internal",
                       "project": "chromeos/manifest-internal",
                       "ref": "refs/heads/snapshot"
                     },
-                    "gerrit_changes": [{
+                    "gerritChanges": [{
                       "host": "chromium-review.googlesource.com",
                       "project": "chromiumos/overlays/chromiumos-overlay",
                       "change": 1394249,
@@ -471,6 +507,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
+                    "applyGerritChanges": true,
                     "useFlags": [
                       {"flag": "chrome_internal"},
                       {"flag": "-cros-debug"},
@@ -478,15 +515,22 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       {"flag": "llvm-next"},
                       {"flag": "thinlto"}
                     ],
-                    "imageTypes": [
-                      "TEST",
-                      "BASE"
-                    ],
-                    "installPackages": "RUN",
-                    "compileToolchain": true,
-                    "applyGerritChanges": true,
-                    "compileSource": true,
-                    "compileUpdateSdk": true
+                    "sdkUpdate": {
+                      "compileSource": true
+                    },
+                    "installToolchain": {
+                      "compileSource": true
+                    },
+                    "installPackagesConf": {
+                      "runSpec" : "RUN",
+                      "compileSource": true
+                    },
+                    "buildImages": {
+                      "imageTypes": [
+                        "TEST",
+                        "BASE"
+                      ]
+                    }
                   },
                   "unitTests": {
                     "ebuildsRunSpec": "RUN"
@@ -513,7 +557,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     ],
                     "publishArtifacts": [
                       {
-                        "publishGsBucket":
+                        "publishGsLocation":
                           "chromeos-toolchain-artifacts/orderfile/unvetted",
                         "publishTypes": [
                           "UNVERIFIED_ORDERING_FILE"
@@ -533,9 +577,11 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       {"flag": "orderfile_generate"},
                       {"flag": "-strict_toolchain_checks"}
                     ],
-                    "installPackages": "RUN",
-                    "applyGerritChanges": true,
-                    "compileSource": true
+                    "installPackagesConf": {
+                      "runSpec": "RUN",
+                      "compileSource": true
+                    },
+                    "applyGerritChanges": true
                   },
                   "unitTests": {
                     "ebuildsRunSpec": "RUN"
@@ -562,7 +608,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     ],
                     "publishArtifacts": [
                       {
-                        "publishGsBucket":
+                        "publishGsLocation":
                           "chromeos-toolchain-artifacts/orderfile/vetted",
                         "publishTypes": [
                           "VERIFIED_ORDERING_FILE"
@@ -582,6 +628,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
+                    "applyGerritChanges": true,
                     "useFlags": [
                       {"flag": "chrome_internal"},
                       {"flag": "-cros-debug"},
@@ -590,9 +637,10 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       {"flag": "orderfile_verify"},
                       {"flag": "-strict_toolchain_checks"}
                     ],
-                    "installPackages": "RUN",
-                    "applyGerritChanges": true,
-                    "compileSource": true
+                    "installPackagesConf": {
+                      "runSpec": "RUN",
+                      "compileSource": true
+                    }
                   },
                   "unitTests": {
                     "ebuildsRunSpec": "RUN"

@@ -35,11 +35,13 @@
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@build {@@@",
-      "@@@STEP_LOG_LINE@builder config@  install_packages: RUN_EXIT@@@",
-      "@@@STEP_LOG_LINE@builder config@  packages {@@@",
-      "@@@STEP_LOG_LINE@builder config@    package_name: \"chromeos-kernel\"@@@",
-      "@@@STEP_LOG_LINE@builder config@    category: \"syskernel\"@@@",
-      "@@@STEP_LOG_LINE@builder config@    version: \"4.19\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  install_packages_conf {@@@",
+      "@@@STEP_LOG_LINE@builder config@    run_spec: RUN_EXIT@@@",
+      "@@@STEP_LOG_LINE@builder config@    packages {@@@",
+      "@@@STEP_LOG_LINE@builder config@      package_name: \"chromeos-kernel\"@@@",
+      "@@@STEP_LOG_LINE@builder config@      category: \"syskernel\"@@@",
+      "@@@STEP_LOG_LINE@builder config@      version: \"4.19\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    }@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
@@ -76,7 +78,7 @@
     "name": "read builder config.set builder_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackages\": \"RUN_EXIT\", \"packages\": [{\"category\": \"syskernel\", \"packageName\": \"chromeos-kernel\", \"version\": \"4.19\"}]}, \"general\": {\"critical\": false}, \"id\": {\"branch\": \"master\", \"name\": \"arm-generic-v42-buildtest-postsubmit\", \"type\": \"POSTSUBMIT\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackagesConf\": {\"packages\": [{\"category\": \"syskernel\", \"packageName\": \"chromeos-kernel\", \"version\": \"4.19\"}], \"runSpec\": \"RUN_EXIT\"}}, \"general\": {\"critical\": false}, \"id\": {\"branch\": \"master\", \"name\": \"arm-generic-v42-buildtest-postsubmit\", \"type\": \"POSTSUBMIT\"}}@@@"
     ]
   },
   {

@@ -43,8 +43,8 @@
       "@@@STEP_LOG_LINE@builder config@  artifact_types: VERIFIED_ORDERING_FILE@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@builder config@  publish_artifacts {@@@",
-      "@@@STEP_LOG_LINE@builder config@    publish_gs_bucket: \"chromeos-toolchain-artifacts/orderfile/vetted\"@@@",
       "@@@STEP_LOG_LINE@builder config@    publish_types: VERIFIED_ORDERING_FILE@@@",
+      "@@@STEP_LOG_LINE@builder config@    publish_gs_location: \"chromeos-toolchain-artifacts/orderfile/vetted\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  input_artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@    input_artifact_type: UNVERIFIED_ORDERING_FILE@@@",
@@ -73,9 +73,11 @@
       "@@@STEP_LOG_LINE@builder config@  use_flags {@@@",
       "@@@STEP_LOG_LINE@builder config@    flag: \"-strict_toolchain_checks\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@  install_packages: RUN@@@",
       "@@@STEP_LOG_LINE@builder config@  apply_gerrit_changes: true@@@",
-      "@@@STEP_LOG_LINE@builder config@  compile_source: true@@@",
+      "@@@STEP_LOG_LINE@builder config@  install_packages_conf {@@@",
+      "@@@STEP_LOG_LINE@builder config@    compile_source: true@@@",
+      "@@@STEP_LOG_LINE@builder config@    run_spec: RUN@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@unit_tests {@@@",
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
@@ -115,7 +117,7 @@
     "name": "read builder config.set builder_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"VERIFIED_ORDERING_FILE\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"inputArtifacts\": [{\"inputArtifactGsLocations\": [\"chromeos-toolchain-artifacts/orderfile/unvetted\"], \"inputArtifactType\": \"UNVERIFIED_ORDERING_FILE\"}], \"prebuilts\": \"NONE\", \"publishArtifacts\": [{\"publishGsBucket\": \"chromeos-toolchain-artifacts/orderfile/vetted\", \"publishTypes\": [\"VERIFIED_ORDERING_FILE\"]}]}, \"build\": {\"applyGerritChanges\": true, \"compileSource\": true, \"installPackages\": \"RUN\", \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"-orderfile_use\"}, {\"flag\": \"orderfile_verify\"}, {\"flag\": \"-strict_toolchain_checks\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"orderfile-verify-toolchain\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"VERIFIED_ORDERING_FILE\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"inputArtifacts\": [{\"inputArtifactGsLocations\": [\"chromeos-toolchain-artifacts/orderfile/unvetted\"], \"inputArtifactType\": \"UNVERIFIED_ORDERING_FILE\"}], \"prebuilts\": \"NONE\", \"publishArtifacts\": [{\"publishGsLocation\": \"chromeos-toolchain-artifacts/orderfile/vetted\", \"publishTypes\": [\"VERIFIED_ORDERING_FILE\"]}]}, \"build\": {\"applyGerritChanges\": true, \"installPackagesConf\": {\"compileSource\": true, \"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"-orderfile_use\"}, {\"flag\": \"orderfile_verify\"}, {\"flag\": \"-strict_toolchain_checks\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"orderfile-verify-toolchain\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
     ]
   },
   {

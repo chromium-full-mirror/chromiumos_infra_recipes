@@ -39,7 +39,9 @@
       "@@@STEP_LOG_LINE@builder config@  internal: true@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@build {@@@",
-      "@@@STEP_LOG_LINE@builder config@  install_packages: RUN_EXIT@@@",
+      "@@@STEP_LOG_LINE@builder config@  install_packages_conf {@@@",
+      "@@@STEP_LOG_LINE@builder config@    run_spec: RUN_EXIT@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
     ]
@@ -75,7 +77,7 @@
     "name": "read builder config.set builder_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackages\": \"RUN_EXIT\"}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-bisect\", \"type\": \"POSTSUBMIT\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackagesConf\": {\"runSpec\": \"RUN_EXIT\"}}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-bisect\", \"type\": \"POSTSUBMIT\"}}@@@"
     ]
   },
   {
