@@ -190,7 +190,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
         self.m.step.nest(
             'Invalidating SDK due to dirty state',
             self.m.cros_build_api.SdkService.Delete(
-                DeleteSdkRequest(chroot=self.m.cros_sdk.chroot)))
+                DeleteSdkRequest(chroot=self.chroot)))
 
       with self.m.step.nest('clean up SDK chroot'):
         self.cleanup_sysroot()
@@ -201,12 +201,12 @@ class CrosSdkApi(recipe_api.RecipeApi):
   def unmount_chroot(self):
     with self.m.step.nest('unmounting chroot'):
       self.m.cros_build_api.SdkService.Unmount(
-          UnmountSdkRequest(chroot=self.m.cros_sdk.chroot))
+          UnmountSdkRequest(chroot=self.chroot))
 
   def cleanup_sysroot(self):
     with self.m.step.nest('removing sysroot'):
       self.m.cros_build_api.SdkService.Clean(
-          CleanSdkRequest(chroot=self.m.cros_sdk.chroot))
+          CleanSdkRequest(chroot=self.chroot))
 
   def unlink_chroot(self, checkout_path):
     """Unlink the chroot from the chromiumos checkout.

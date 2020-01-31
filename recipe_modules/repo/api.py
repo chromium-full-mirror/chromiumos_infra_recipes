@@ -270,7 +270,7 @@ class RepoApi(recipe_api.RecipeApi):
         step.presentation.status = 'WARNING'
         return None
 
-      diffs = self.m.repo.diff_manifests(from_xml, to_manifest_str)
+      diffs = self.diff_manifests(from_xml, to_manifest_str)
 
       if not diffs:
         step.presentation.step_text = 'no manifest diffs from remote to local'
@@ -381,10 +381,10 @@ class RepoApi(recipe_api.RecipeApi):
               self.m.file.rmtree('remove .repo/%s' % manifest_dir,
                                  root_path.join('.repo', manifest_dir))
 
-            self.m.repo.init(manifest_url, **(init_opts or {}))
-            self.m.repo._git_clean_checkout(root_path)
-            self.m.repo._binary_selfupdate(root_path)
-            self.m.repo.sync(**(sync_opts or {}))
+            self.init(manifest_url, **(init_opts or {}))
+            self._git_clean_checkout(root_path)
+            self._binary_selfupdate(root_path)
+            self.sync(**(sync_opts or {}))
             break
           except recipe_api.StepFailure:
             if retries < 1:
