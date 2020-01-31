@@ -28,7 +28,7 @@ def RunSteps(api):
                               build_target=common.BuildTarget(name='board')),
       publish_info=[
           BuilderConfig.Artifacts.PublishInfo(
-              publish_gs_bucket='publish_gs_bucket',
+              publish_gs_location='publish_gs_bucket',
               publish_types=[BuilderConfig.Artifacts.EBUILD_LOGS])])
 
 def attempt_download_file(api, attempt):

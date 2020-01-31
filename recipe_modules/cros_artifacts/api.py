@@ -297,11 +297,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     links = {}
     with self.m.step.nest(name or 'publish artifacts') as step:
       for info in publish_info:
-        # TODO(crbug/1019868): finish migrating to publish_gs_location.
-        try:
-          publish_template = info.publish_gs_location
-        except AttributeError: # pragma: no cover
-          publish_template = info.publish_gs_bucket
+        publish_template = info.publish_gs_location
         location_dict = self._artifacts_gs_path_dict(target, kind)
         for artifact in info.publish_types:
           artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)

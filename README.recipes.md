@@ -533,7 +533,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#406)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#402)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -548,7 +548,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#439)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#435)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -563,7 +563,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#459)(self, artifact_types, chroot, sysroot, input_artifacts, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#455)(self, artifact_types, chroot, sysroot, input_artifacts, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -581,7 +581,7 @@ Args:
 Returns:
   PrepareForToolchainBuildResponse.BuildRelevance
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#341)(self, target, kind, gs_bucket, artifact_types, chroot=None, sysroot=None, publish_info=None, name=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#337)(self, target, kind, gs_bucket, artifact_types, chroot=None, sysroot=None, publish_info=None, name=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
