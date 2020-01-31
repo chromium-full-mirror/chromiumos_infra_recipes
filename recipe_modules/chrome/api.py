@@ -63,6 +63,7 @@ class ChromeApi(recipe_api.RecipeApi):
       # but here we up the job parallelism for a speed boost.
       with self.m.context(cwd=chrome_root):
         cfg = self.m.gclient.make_config(CACHE_DIR=CHROMIUM_CACHE_DIR)
+        cfg.target_os = ['chromeos']
         soln = cfg.solutions.add()
         soln.name = 'src'
         soln.url = 'https://chromium.googlesource.com/chromium/src.git'
@@ -78,13 +79,6 @@ class ChromeApi(recipe_api.RecipeApi):
             'config',
             '--spec',
             self.m.gclient.config_to_pythonish(cfg),
-        ]
-
-        adjust_cmd = [
-            'sed',
-            '-i',
-            '$ a\\target_os = ["chromeos"]',
-            '.gclient',
         ]
 
         sync_cmd = [
@@ -110,10 +104,6 @@ class ChromeApi(recipe_api.RecipeApi):
                         self.m.depot_tools.root.join('gclient.py'),
                         config_cmd,
                         infra_step=True)
-
-          # Adjust .gclient to include required target_os directive.
-          # This appends one line to the gclient config file.
-          self.m.step('adjust gclient config', adjust_cmd)
 
           # Finally, start the sync.
           self.m.python('gclient sync',

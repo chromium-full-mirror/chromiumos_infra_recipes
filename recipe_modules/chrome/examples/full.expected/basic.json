@@ -221,7 +221,7 @@
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
-      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]"
+      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
     ],
     "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
@@ -231,24 +231,6 @@
     },
     "infra_step": true,
     "name": "sync chrome.gclient config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sed",
-      "-i",
-      "$ a\\target_os = [\"chromeos\"]",
-      ".gclient"
-    ],
-    "cwd": "[START_DIR]/chrome",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "sync chrome.adjust gclient config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -448,7 +430,7 @@
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
-      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': False}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]"
+      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': False}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
     ],
     "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
@@ -458,24 +440,6 @@
     },
     "infra_step": true,
     "name": "sync chrome (2).gclient config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sed",
-      "-i",
-      "$ a\\target_os = [\"chromeos\"]",
-      ".gclient"
-    ],
-    "cwd": "[START_DIR]/chrome",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "sync chrome (2).adjust gclient config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

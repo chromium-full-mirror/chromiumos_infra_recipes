@@ -433,7 +433,7 @@ Returns:
 
 #### **class [ChromeApi](/recipe_modules/chrome/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#149)(self, build_target, chroot, packages=None, internal=False, ignore_prebuilts=False):**
+&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#139)(self, build_target, chroot, packages=None, internal=False, ignore_prebuilts=False):**
 
 Returns whether this run should build Chrome from source.
 
@@ -450,7 +450,7 @@ Args:
 Returns:
   bool: Whether or not this run needs to build Chrome from source.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#123)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#113)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -463,7 +463,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#174)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#164)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
