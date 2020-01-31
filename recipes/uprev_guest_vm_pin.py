@@ -38,8 +38,8 @@ DEPS = [
 
 PROPERTIES = UprevGuestVmPinProperties
 
-_base_vm_name = 'base-guest-vm'
-_test_vm_name = 'test-guest-vm'
+_base_vm_name = 'guest-vm-base'
+_test_vm_name = 'guest-vm-test'
 
 
 def RunSteps(api, properties):
@@ -115,8 +115,7 @@ def RunSteps(api, properties):
         api.gsutil.download(build_artifact_bucket, src_suburl, './')
         api.archive.extract('unzip image archive',
                             api.context.cwd.join('image.zip'),
-                            api.context.cwd.join('image'),
-                            include_files=[_base_vm_name, _test_vm_name])
+                            api.context.cwd.join('image'))
 
         base_tar = (
             api.archive.package(api.context.cwd).with_dir(

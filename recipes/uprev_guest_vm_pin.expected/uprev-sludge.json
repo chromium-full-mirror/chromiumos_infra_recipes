@@ -555,7 +555,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_2/image.zip\", \"include_files\": [\"base-guest-vm\", \"test-guest-vm\"], \"output\": \"[CLEANUP]/archive-staging_tmp_2/image\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_2/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_2/image\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -581,7 +581,7 @@
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "name": "copy images to localmirror.archive base guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/base-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/base-guest-vm.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2\"}",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -594,7 +594,7 @@
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "name": "copy images to localmirror.archive test guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/test-guest-vm\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/test-guest-vm.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2\"}",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
