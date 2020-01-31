@@ -128,7 +128,7 @@
       "@@@STEP_LOG_LINE@planner_input@      flag: \"-strict_toolchain_checks\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@    apply_gerrit_changes: true@@@",
-      "@@@STEP_LOG_LINE@planner_input@    install_packages_conf {@@@",
+      "@@@STEP_LOG_LINE@planner_input@    install_packages {@@@",
       "@@@STEP_LOG_LINE@planner_input@      compile_source: true@@@",
       "@@@STEP_LOG_LINE@planner_input@      run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
@@ -192,7 +192,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001a\ufffd\u0002\n(\n\u001corderfile-generate-toolchain\u0012\u0006master\u0018\u0003\u0012\b\n\u0000\u0010\u0001\u001a\u0002\b\u0001\"S\b\u0003\u0012\u0001\u000b\"\u0016chromeos-image-archive*4\u0012\u0001\u000b\u001a/chromeos-toolchain-artifacts/orderfile/unvetted*\u0002\b\u00012\ufffd\u0001\n\u0011\n\u000fchrome_internal\n\r\n\u000b-cros-debug\n\u0019\n\u0017strict_toolchain_checks\n\u0010\n\u000e-orderfile_use\n\u0014\n\u0012orderfile_generate\n\u001a\n\u0018-strict_toolchain_checks0\u0001r\u0004\b\u0001\u0010\u0002:\u0002(\u0002\"d\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
+      "\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001a\ufffd\u0002\n(\n\u001corderfile-generate-toolchain\u0012\u0006master\u0018\u0003\u0012\b\n\u0000\u0010\u0001\u001a\u0002\b\u0001\"S\b\u0003\u0012\u0001\u000b\"\u0016chromeos-image-archive*4\u0012\u0001\u000b\u001a/chromeos-toolchain-artifacts/orderfile/unvetted*\u0002\b\u00012\ufffd\u0001\n\u0011\n\u000fchrome_internal\n\r\n\u000b-cros-debug\n\u0019\n\u0017strict_toolchain_checks\n\u0010\n\u000e-orderfile_use\n\u0014\n\u0012orderfile_generate\n\u001a\n\u0018-strict_toolchain_checks0\u0001\ufffd\u0001\u0004\b\u0001\u0010\u0002:\u0002(\u0002\"d\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
       "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -214,7 +214,7 @@
       "@@@STEP_LOG_LINE@input.binaryproto@\u0014@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0012orderfile_generate@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u001a@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0018-strict_toolchain_checks0\u0001r\u0004\b\u0001\u0010\u0002:\u0002(\u0002\"d@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0018-strict_toolchain_checks0\u0001\ufffd\u0001\u0004\b\u0001\u0010\u0002:\u0002(\u0002\"d@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@b@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"

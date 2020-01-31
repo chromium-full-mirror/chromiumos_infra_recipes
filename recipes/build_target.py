@@ -247,16 +247,14 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                                 flags=flags), response_lambda=_failed_pkg_names)
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
-  run_install_packages = build_config.build.install_packages_conf.run_spec
-  if api.cros_infra_config.should_run(run_install_packages):
-
+  install_packages = build_config.build.install_packages
+  if api.cros_infra_config.should_run(install_packages.run_spec):
     # Long chain of |= to determine if chrome requires rebuild.
     chrome_source_build = toolchain_changed
     chrome_source_build |= api.chrome.builds_chrome_from_source(
         build_target=build_target, chroot=api.cros_sdk.chroot,
         packages=packages,
-        ignore_prebuilts=(
-            build_config.build.install_packages_conf.compile_source))
+        ignore_prebuilts=install_packages.compile_source)
     chrome_source_build |= api.chrome.diffed_files_requires_rebuild(
         patch_sets=patch_sets)
 
@@ -283,11 +281,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
             artifacts.artifact_types, api.cros_sdk.chroot, sysroot,
             artifacts.input_artifacts, name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
-          compile_source=(
-              build_config.build.install_packages_conf.compile_source),
-          use_goma=(
-              not build_config.build.install_packages_conf.disable_goma and
-              api.cros_sdk.has_goma_config()),
+          compile_source=install_packages.compile_source,
+          use_goma=(not install_packages.disable_goma and
+                    api.cros_sdk.has_goma_config()),
           toolchain_changed=toolchain_changed)
 
       response = api.cros_build_api.SysrootService.InstallPackages(
@@ -300,7 +296,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       # TODO: if used goma, emit goma info, stats, counterz.
       api.cros_bisect.set_compile_failures(response.failed_packages)
       api.failures.set_failed_packages(ip_step, response.failed_packages)
-    if api.cros_infra_config.should_exit(run_install_packages):
+    if api.cros_infra_config.should_exit(install_packages.run_spec):
       return
 
   version = api.cros_version.read_workspace_version()
@@ -389,7 +385,7 @@ def get_packages(api, build_config):
     list[PackageInfo] of packages to build
   """
   return (api.cros_bisect.get_packages() or
-          build_config.build.install_packages_conf.packages)
+          build_config.build.install_packages.packages)
 
 
 def get_target_versions(api, build_target):

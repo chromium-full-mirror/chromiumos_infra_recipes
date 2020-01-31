@@ -46,7 +46,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "buildImages": {
                       "imageTypes": ["BASE", "TEST"]
                     },
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     },
                     "useFlags": [{"flag": "chrome_internal"}]
@@ -74,7 +74,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "build": {
                     "applyGerritChanges": true,
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     },
                     "useFlags": [{"flag": "chrome_internal"}]
@@ -109,7 +109,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   "build": {
                     "applyGerritChanges": true,
                     "useFlags": [{"flag": "chrome_internal"}],
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     }
                   },
@@ -148,7 +148,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": false
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     },
                     "installToolchain": {
@@ -179,7 +179,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     }
                   },
@@ -208,7 +208,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     }
                   },
@@ -238,7 +238,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     }
                   },
@@ -280,7 +280,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                         "BASE"
                       ]
                     },
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     }
                   },
@@ -301,7 +301,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN_EXIT"
                     },
                     "applyGerritChanges": false
@@ -317,7 +317,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     }
                   }
@@ -332,7 +332,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN_EXIT",
                       "packages": [{
                         "packageName": "chromeos-kernel",
@@ -360,7 +360,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "internal": true
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     },
                     "applyGerritChanges": true
@@ -384,7 +384,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     },
                     "applyGerritChanges": false
@@ -403,7 +403,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     },
                     "applyGerritChanges": false
@@ -422,7 +422,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": false
                   },
                   "build": {
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN"
                     },
                     "applyGerritChanges": false
@@ -496,7 +496,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       {"flag": "strict_toolchain_checks"},
                       {"flag": "clang_tidy"}
                     ],
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN",
                       "compileSource": true,
                       "disableGoma": true
@@ -571,7 +571,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "installToolchain": {
                       "compileSource": true
                     },
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec" : "RUN",
                       "compileSource": true
                     },
@@ -627,7 +627,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       {"flag": "orderfile_generate"},
                       {"flag": "-strict_toolchain_checks"}
                     ],
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN",
                       "compileSource": true
                     },
@@ -687,7 +687,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       {"flag": "orderfile_verify"},
                       {"flag": "-strict_toolchain_checks"}
                     ],
-                    "installPackagesConf": {
+                    "installPackages": {
                       "runSpec": "RUN",
                       "compileSource": true
                     }
@@ -744,6 +744,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             }
           """
     configs = jsonpb.Parse(builder_configs, BuilderConfigs())
+
     # Humans can edit the string above for test data, impl reads binary proto.
     return self.m.gitiles.make_encoded_file(configs.SerializeToString())
 
