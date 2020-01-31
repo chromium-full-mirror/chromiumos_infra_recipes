@@ -148,7 +148,7 @@ class TastResultsApi(recipe_api.RecipeApi):
         if test_case_result.verdict == TaskState.VERDICT_FAILED:
           with self.m.step.nest(test_case_result.name) as step:
             step.presentation.step_text = (
-                test_case_result.human_readable_summary)
+                test_case_result.human_readable_summary[:50])
             step.presentation.status = self.m.step.FAILURE
 
             # Making a separate step so as to not show these to user.
