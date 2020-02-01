@@ -84,6 +84,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"1970-01-01T00:00:00Z\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\"@@@",
@@ -139,7 +140,7 @@
     ],
     "infra_step": true,
     "name": "run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {}\n  }, \n  \"dutHostname\": \"dummy\"\n}",
+    "stdin": "{\n  \"deadline\": \"1970-01-01T00:00:00Z\", \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {}\n  }, \n  \"dutHostname\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -165,7 +166,8 @@
       "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {}@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"1970-01-01T00:00:00Z\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -178,7 +180,7 @@
       "/dev/stdin"
     ],
     "name": "run test.call `phosphorus`.run-test",
-    "stdin": "{\n  \"autotest\": {\n    \"name\": \"dummy_name\"\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {}\n  }\n}",
+    "stdin": "{\n  \"autotest\": {\n    \"name\": \"dummy_name\"\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {}\n  }, \n  \"deadline\": \"1970-01-01T00:00:00Z\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

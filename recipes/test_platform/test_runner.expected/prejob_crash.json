@@ -87,6 +87,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"1970-01-01T00:00:00Z\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\"@@@",
@@ -143,7 +144,7 @@
     ],
     "infra_step": true,
     "name": "run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {}\n  }, \n  \"dutHostname\": \"dummy\"\n}",
+    "stdin": "{\n  \"deadline\": \"1970-01-01T00:00:00Z\", \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {}\n  }, \n  \"dutHostname\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_EXCEPTION@@@"
