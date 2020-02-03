@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package recipes.chromeos.check_project_config;
+
+message CheckProjectConfigProperties {
+    // Name of the program repo, e.g. "chromeos/program/<program>"
+    string program_repo = 1;
+
+    // Name of the project repo, e.g. "chromeos/project/<program>/<project>"
+    string project_repo = 2;
+}

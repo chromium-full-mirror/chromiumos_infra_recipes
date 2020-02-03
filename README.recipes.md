@@ -74,6 +74,7 @@
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
   * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
+  * [check_config](#recipes-check_config)
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [config_drift](#recipes-config_drift) &mdash; Compares Parallel CQ and Legacy cbuildbot configs.
@@ -3240,6 +3241,9 @@ Returns:
 Recipe for generating ChromeOS cache payloads.
 
 &mdash; **def [RunSteps](/recipes/cache_generate.py#21)(api):**
+### *recipes* / [check\_config](/recipes/check_config.py)
+
+&mdash; **def [RunSteps](/recipes/check_config.py#13)(api, properties):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
