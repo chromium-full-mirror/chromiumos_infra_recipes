@@ -477,7 +477,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     ],
                     "publishArtifacts": [
                       {
-                        "publishGsBucket":
+                        "publishGsLocation":
                           "chromeos-toolchain-artifacts/clang-tidy-1",
                         "publishTypes": [
                           "CHROME_CLANG_WARNINGS_FILE"
