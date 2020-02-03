@@ -6,6 +6,7 @@
 """Recipe for building a BuildTarget image."""
 
 DEPS = [
+    'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
@@ -285,14 +286,19 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                     api.cros_sdk.has_goma_config()),
           toolchain_changed=toolchain_changed)
 
+      install_pkg_request = InstallPackagesRequest(
+          sysroot=sysroot, flags=flags,
+          packages=packages, chroot=api.cros_sdk.chroot,
+          use_flags=build_config.build.use_flags,
+          goma_config=api.cros_sdk.goma_config())
       response = api.cros_build_api.SysrootService.InstallPackages(
-          InstallPackagesRequest(sysroot=sysroot, flags=flags,
-                                 packages=packages, chroot=api.cros_sdk.chroot,
-                                 use_flags=build_config.build.use_flags,
-                                 goma_config=api.cros_sdk.goma_config()),
-                                 response_lambda=_failed_pkg_names)
+          install_pkg_request, response_lambda=_failed_pkg_names)
 
-      # TODO: if used goma, emit goma info, stats, counterz.
+      # Process goma response to upload logs, stats, and counterz.
+      api.goma.process_artifacts(response,
+                                 install_pkg_request.goma_config.log_dir.dir,
+                                 build_target.name)
+
       api.cros_bisect.set_compile_failures(response.failed_packages)
       api.failures.set_failed_packages(ip_step, response.failed_packages)
     if api.cros_infra_config.should_exit(install_packages.run_spec):
@@ -520,6 +526,48 @@ def GenTests(api):
                               "version": "0.0.1-r197"
                             }]
                           }''')))
+
+  yield (api.test('install_package_no_goma') + #
+         cq_build_with_gerrit_change() +  #
+         api.step_data(
+             'install packages'
+             '.call chromite.api.SysrootService/InstallPackages'
+             '.read output file',
+             api.file.read_raw(
+               content='''{
+               "events": [
+                {
+                  "name": "fake_package-path/fake-package-name-0.0.1-r2",
+                  "durationMilliseconds": "1523",
+                  "timestampMilliseconds": "1580481610805"
+                }]
+               }''')))
+
+  yield (api.test('install_package_with_goma') + #
+         cq_build_with_gerrit_change() +  #
+         api.step_data(
+             'install packages'
+             '.call chromite.api.SysrootService/InstallPackages'
+             '.read output file',
+             api.file.read_raw(
+               content='''{
+               "gomaArtifacts": {
+                 "counterzFile": "counterz.binaryproto",
+                 "statsFile": "stats.binaryproto",
+                 "logFiles": [
+                   "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
+                   "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
+                   "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
+                   "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"
+                 ]
+               },
+               "events": [
+               {
+                 "name": "fake_package-path/fake-package-name-0.0.1-r2",
+                 "durationMilliseconds": "1523",
+                 "timestampMilliseconds": "1580481610805"
+               }]
+             }''')))
 
   yield (api.test('prepare-for-build') + #
          toolchain_build() + #

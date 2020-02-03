@@ -9,6 +9,7 @@ from recipe_engine import recipe_api
 
 from PB.chromiumos import common
 
+
 class GomaApi(recipe_api.RecipeApi):
   """A module for working with goma."""
 
@@ -47,3 +48,33 @@ class GomaApi(recipe_api.RecipeApi):
                        str(self._client_version))
       self.m.cipd.ensure(goma_dir, pkgs)
       self._goma_dir = goma_dir
+
+  def process_artifacts(self, install_pkg_response, goma_log_dir,
+                        build_target_name):
+    """Process goma artifacts, uploading to gsutil if they exist.
+
+    Args:
+      install_pkg_response (chromite.api.InstallPackagesResponse): May contain
+        goma artifacts.
+      goma_log_dir (str): Log directory that contains the goma log files.
+      build_target_name (str): Build target string.
+
+    Returns: (str) the gs_path used when writing to the goma GS bucket or None
+      if there were no artifacts to process.
+    """
+    with self.m.step.nest('process_goma_artifacts') as step:
+      if install_pkg_response.HasField('goma_artifacts') and goma_log_dir:
+        with self.m.context(cwd=self.m.path.abs_to_path(goma_log_dir)):
+          # destination gs_path is based on date and build_target name.
+          today = self.m.time.utcnow()
+          gs_path = '%s/%s' % (
+              today.strftime('%Y/%m/%d'), build_target_name)
+          gs_bucket = 'chrome-goma-log'
+          self.m.gsutil.upload("*.gz", gs_bucket, gs_path)
+          step.presentation.logs['gs_path'] = gs_path
+          return gs_path
+      else:
+        step.presentation.logs['NoGomaArtifacts'] = [
+            str(install_pkg_response.goma_artifacts)
+        ]
+        return None
