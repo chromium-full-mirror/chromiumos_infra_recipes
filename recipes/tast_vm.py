@@ -37,7 +37,7 @@ GS_BUCKET = 'chromeos-vmtest-archive'
 
 def RunSteps(api, properties):
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
-  with api.step.nest('setup rtd - tast') as step:
+  with api.step.nest('setup tast') as step:
     step.text = 'download tast executable'
     sp_tar_file = test_artifacts_dir.join('autotest_server_package.tar.bz2')
     archive_path = os.path.join(properties.build_payload.artifacts_gs_path,
@@ -49,7 +49,7 @@ def RunSteps(api, properties):
              ['tar', 'xjf', sp_tar_file, '--directory', test_artifacts_dir])
 
   image_archive_dir = api.path.mkdtemp(prefix='image-archive')
-  with api.step.nest('setup rts - vm'):
+  with api.step.nest('setup vm'):
     test_image_zip = image_archive_dir.join('image.zip')
     test_image_dir = image_archive_dir.join('image')
     vm_image_path = str(test_image_dir.join(VM_IMAGE_NAME))

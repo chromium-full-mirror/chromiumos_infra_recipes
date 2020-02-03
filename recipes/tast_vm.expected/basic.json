@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "setup rtd - tast"
+    "name": "setup tast"
   },
   {
     "cmd": [
@@ -16,7 +16,7 @@
       "[CLEANUP]/test-artifacts_tmp_1/autotest_server_package.tar.bz2"
     ],
     "infra_step": true,
-    "name": "setup rtd - tast.gsutil download tast bundle from GS",
+    "name": "setup tast.gsutil download tast bundle from GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -29,14 +29,14 @@
       "--directory",
       "[CLEANUP]/test-artifacts_tmp_1"
     ],
-    "name": "setup rtd - tast.untar tast",
+    "name": "setup tast.untar tast",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "setup rts - vm"
+    "name": "setup vm"
   },
   {
     "cmd": [
@@ -51,7 +51,7 @@
       "[CLEANUP]/image-archive_tmp_2/image.zip"
     ],
     "infra_step": true,
-    "name": "setup rts - vm.gsutil download image bundle from GS",
+    "name": "setup vm.gsutil download image bundle from GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -66,7 +66,7 @@
       "--json-output",
       "/path/to/tmp/json"
     ],
-    "name": "setup rts - vm.unzip image bundle",
+    "name": "setup vm.unzip image bundle",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
@@ -89,7 +89,7 @@
       "[CLEANUP]/image-archive_tmp_2/image/chromiumos_qemu_image.bin",
       "[CLEANUP]/image-archive_tmp_2/image/qcow2.img"
     ],
-    "name": "setup rts - vm.convert image to qcow format",
+    "name": "setup vm.convert image to qcow format",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -132,7 +132,7 @@
       "-display",
       "none"
     ],
-    "name": "setup rts - vm.launch image as vm",
+    "name": "setup vm.launch image as vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -143,7 +143,7 @@
       "400",
       "[CLEANUP]/image-archive_tmp_2/image/id_rsa"
     ],
-    "name": "setup rts - vm.calibrate ssh key permissions",
+    "name": "setup vm.calibrate ssh key permissions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -168,7 +168,7 @@
       "--",
       "true"
     ],
-    "name": "setup rts - vm.connect via ssh",
+    "name": "setup vm.connect via ssh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
