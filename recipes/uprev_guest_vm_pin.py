@@ -81,13 +81,13 @@ def RunSteps(api, properties):
     sanitized_version = version[1:]
     sanitized_version = sanitized_version.replace('-', '.')
 
-  api.cros_source.ensure_synced_cache()
-  version_path = api.cros_source.workspace_path.join(
-      properties.version_file)
-  package_path = api.path.dirname(version_path)
-  package = os.path.basename(package_path)
-
   with api.cros_source.checkout_overlays_context():
+    api.cros_source.ensure_synced_cache()
+    version_path = api.cros_source.workspace_path.join(
+        properties.version_file)
+    package_path = api.path.dirname(version_path)
+    package = os.path.basename(package_path)
+
     with api.step.nest('try uprev version file') as step:
       api.file.write_raw(name='version file', dest=version_path,
                           data=sanitized_version)
