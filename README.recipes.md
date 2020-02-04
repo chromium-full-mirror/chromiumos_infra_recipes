@@ -41,6 +41,7 @@
   * [gitiles](#recipe_modules-gitiles) &mdash; APIs for dealing with Gitiles.
   * [goma](#recipe_modules-goma) &mdash; API for working with goma.
   * [ipc](#recipe_modules-ipc)
+  * [iterutils](#recipe_modules-iterutils)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [phosphorus](#recipe_modules-phosphorus)
@@ -158,6 +159,7 @@
   * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs)
   * [ipc:examples/full](#recipes-ipc_examples_full)
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
+  * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
@@ -2436,6 +2438,19 @@ Args:
   attributes: dict of {strings: strings} encoding a 'subtopic'; subscribers
   will take no action on messages outside their subtopic.
 Returns: nothing
+### *recipe_modules* / [iterutils](/recipe_modules/iterutils)
+
+#### **class [IterutilsApi](/recipe_modules/iterutils/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Utility functions for working with iterables
+
+&mdash; **def [get\_one](/recipe_modules/iterutils/api.py#12)(self, iterable, predicate, error_msg):**
+
+Returns the one item from iterable matching predicate.
+
+Raises:
+  A ValueError with error_msg if iterable doesn't have exactly one item
+  matching predicate.
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
 [DEPS](/recipe_modules/naming/__init__.py#6): [skylab](#recipe_modules-skylab)
@@ -3243,9 +3258,11 @@ Recipe for generating ChromeOS cache payloads.
 &mdash; **def [RunSteps](/recipes/cache_generate.py#21)(api):**
 ### *recipes* / [check\_project\_config](/recipes/check_project_config.py)
 
+[DEPS](/recipes/check_project_config.py#15): [cros\_source](#recipe_modules-cros_source), [iterutils](#recipe_modules-iterutils), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
 Checks a project conforms to its program's constraints.
 
-&mdash; **def [RunSteps](/recipes/check_project_config.py#14)(api, properties):**
+&mdash; **def [RunSteps](/recipes/check_project_config.py#26)(api, properties):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -3697,6 +3714,11 @@ Test git_footers calls.
 [DEPS](/recipe_modules/ipc/examples/no_attrs.py#6): [ipc](#recipe_modules-ipc)
 
 &mdash; **def [RunSteps](/recipe_modules/ipc/examples/no_attrs.py#10)(api):**
+### *recipes* / [iterutils:examples/full](/recipe_modules/iterutils/examples/full.py)
+
+[DEPS](/recipe_modules/iterutils/examples/full.py#6): [iterutils](#recipe_modules-iterutils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/iterutils/examples/full.py#11)(api):**
 ### *recipes* / [lab\_platform/sync\_stable\_version](/recipes/lab_platform/sync_stable_version.py)
 
 [DEPS](/recipes/lab_platform/sync_stable_version.py#11): [stable\_version](#recipe_modules-stable_version), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

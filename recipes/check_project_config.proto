@@ -3,9 +3,12 @@ syntax = "proto3";
 package recipes.chromeos.check_project_config;
 
 message CheckProjectConfigProperties {
-    // Name of the program repo, e.g. "chromeos/program/<program>"
-    string program_repo = 1;
-
-    // Name of the project repo, e.g. "chromeos/project/<program>/<project>"
-    string project_repo = 2;
+    // Manifest groups to init and sync.
+    //
+    // The union of repos specified by these groups should contain:
+    // - Exactly one program repo (e.g. "chromeos/program/<program>").
+    // - Exactly one project repo (e.g. "chromeos/project/<program>/<project>").
+    // - All shared config repos needed by the project
+    //   (e.g "chromiumos/config").
+    repeated string manifest_groups = 1;
 }
