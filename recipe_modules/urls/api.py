@@ -65,11 +65,30 @@ class UrlsApi(recipe_api.RecipeApi):
     else:
       link_map = {}
       for task_result in skylab_result.child_results:
+        task_name = (
+            task_result.name + self.get_state_suffix(task_result.state))
         if task_result.state.verdict in (TaskState.VERDICT_FAILED,
                                          TaskState.VERDICT_UNSPECIFIED):
           link_map[task_result.name] = task_result.task_url
 
       return link_map
+
+  def get_state_suffix(self, task_state):
+    """String suffix to supply info about the task.
+
+    Args:
+      tast_state(TaskState): The task state.
+
+    Returns:
+      str, denoting more information about the task.
+    """
+    if task_state.life_cycle in (TaskState.LIFE_CYCLE_CANCELLED,
+                                 TaskState.LIFE_CYCLE_PENDING,
+                                 TaskState.LIFE_CYCLE_ABORTED,
+                                 TaskState.LIFE_CYCLE_REJECTED):
+      return ' (Did not run)'
+    else:
+      return ''
 
   def get_gs_path_url(self, gs_path):
     """Returns the Cloud Storage Browser URL to the given GS path.

@@ -3025,7 +3025,7 @@ Args:
 Returns:
   str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#74)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#93)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -3056,6 +3056,16 @@ Args:
 
 Returns:
   str: URL pointing to the skylab swarming task page.
+
+&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#76)(self, task_state):**
+
+String suffix to supply info about the task.
+
+Args:
+  tast_state(TaskState): The task state.
+
+Returns:
+  str, denoting more information about the task.
 
 &mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#28)(self, vm_test):**
 

@@ -64,6 +64,11 @@ def RunSteps(api):
       'https://storage.cloud.google.com/bucket/a/b/c')
   api.assertions.assertRaises(ValueError, api.urls.get_gs_path_url, 'a/b/c')
 
+  task_state = TaskState(life_cycle=TaskState.LIFE_CYCLE_ABORTED,
+                         verdict=TaskState.VERDICT_FAILED)
+  api.assertions.assertEqual(
+      api.urls.get_state_suffix(task_state), " (Did not run)")
+
 
 def GenTests(api):
   yield api.test('basic')
