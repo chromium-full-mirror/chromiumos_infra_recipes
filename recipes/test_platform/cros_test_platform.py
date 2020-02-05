@@ -31,6 +31,7 @@ from PB.test_platform.steps.compute_backfill import \
 from PB.test_platform.request import Request
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.config.config import Config
+from PB.test_platform.steps.execute.build import Build
 
 import collections
 import contextlib
@@ -151,7 +152,9 @@ def execute(api, requests, enumerations, config):
             t: ExecuteRequest(request_params=r.params,
                               enumeration=enumerations[t], config=config)
             for t, r in requests.iteritems()
-        })
+        },
+        build=Build(create_time=api.buildbucket.build.create_time),
+    )
     responses = api.cros_test_platform.skylab_execute(exec_reqs)
     return responses.tagged_responses
 

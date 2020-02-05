@@ -4050,15 +4050,15 @@ Recipe for running Moblab VM tests.
 &mdash; **def [RunSteps](/recipes/test_moblab_vm.py#42)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#43): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#44): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#186)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#189)(api, properties):**
 
-&mdash; **def [compute\_backfills](/recipes/test_platform/cros_test_platform.py#165)(api, requests, enumerations, responses):**
+&mdash; **def [compute\_backfills](/recipes/test_platform/cros_test_platform.py#168)(api, requests, enumerations, responses):**
 
 Compute backfill requests for this build.
 
@@ -4067,7 +4067,7 @@ requests: {tag: test_platform.Request} dict.
 enumerations: {tag: EnumerationResponse} dict.
 responses: {tag: ExecuteResponse} dict.
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#55)(api, requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#56)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -4077,7 +4077,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#139)(api, requests, enumerations, config):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#140)(api, requests, enumerations, config):**
 
 Execute request in the correct backend.
 
@@ -4086,13 +4086,13 @@ Args:
   enumerations: {tag: EnumerationResponse} dict.
   config: test_platform.Config instance.
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#202)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#205)(api, requests, responses):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#270)(api, responses, backfills):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#273)(api, responses, backfills):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#97)(api, requests, config):**
+&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#98)(api, requests, config):**
 
 Run the almost no-op traffic splitter step.
 
@@ -4110,7 +4110,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#237)(api, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#240)(api, responses):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#14): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
