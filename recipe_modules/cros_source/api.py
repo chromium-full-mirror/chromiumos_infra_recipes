@@ -22,6 +22,7 @@ DEFAULT_CACHE_SYNC_OPTS = dict(
     no_tags=True,
     jobs=32,
     optimized_fetch=True,
+    timeout=3600,
 )
 
 

@@ -106,8 +106,7 @@ def RunSteps(api, properties):
 def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                force_relevant_build):
   # Set up source checkouts.
-  api.step('ensure synced cache', api.cros_source.ensure_synced_cache(),
-           timeout=120 * 6)
+  api.cros_source.ensure_synced_cache()
   api.cros_source.sync_snapshot(gitiles_commit)
 
   # Define a function to append the failure step with the failed packages

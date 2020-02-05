@@ -31,10 +31,11 @@ def RunSteps(api, properties):
   except api.step.StepFailure:
     pass
 
-  api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
+      api.cros_source.ensure_synced_cache()
       api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
+
 
   # Monkey-pack merge to return a StepFailure to test cherry-pick path
   def merge_fail(_a, _b, infra_step=False):

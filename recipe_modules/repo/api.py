@@ -123,7 +123,7 @@ class RepoApi(recipe_api.RecipeApi):
 
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,
-           optimized_fetch=False, cache_dir=None):
+           optimized_fetch=False, cache_dir=None, timeout=None):
     """Executes 'repo sync' with the given arguments.
 
     Args:
@@ -154,7 +154,7 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--optimized-fetch']
     if cache_dir is not None:
       cmd += ['--cache-dir', cache_dir]
-    self._step(cmd)
+    self._step(cmd, name=None, timeout=timeout)
 
   def sync_manifest(self, manifest_data, **kwargs):
     """Sync to the given manifest file data.

@@ -492,13 +492,10 @@
     "cwd": "[START_DIR]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.repo sync",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "ensure synced cache"
   },
   {
     "cmd": [],
