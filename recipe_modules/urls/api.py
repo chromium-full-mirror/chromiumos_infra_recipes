@@ -6,7 +6,10 @@
 """API for creating task URLs out of complex data structures."""
 
 from recipe_engine import recipe_api
+from google.protobuf import json_format
+
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
 
@@ -26,16 +29,29 @@ class UrlsApi(recipe_api.RecipeApi):
     return {'build page': link_url}
 
   def get_vm_test_link_map(self, vm_test):
-    """Returns the title->URL to the given vm test.
+    """Returns the title->URL results from the given VM test.
 
     Args:
       vm_test (Build): The vm test in question.
 
     Returns:
       str->str: title->URL pointing to the vm_test's milo page.
+        For direct-vm tests, the individual failing tests are listed.
     """
     link_url = self.m.buildbucket.build_url(build_id=vm_test.id)
-    return {'test page': link_url}
+    if 'task_result' in vm_test.output.properties:
+      task_result_struct = vm_test.output.properties['task_result']
+      task_result_json = json_format.MessageToJson(task_result_struct)
+      task_result = json_format.Parse(task_result_json,
+                                      ExecuteResponse.TaskResult())
+      link_map = {}
+      for test_case in task_result.test_cases:
+        if test_case.verdict == TaskState.VERDICT_FAILED:
+          link_map[test_case.name] = link_url
+
+      return link_map
+    else:
+      return {'test page': link_url}
 
   def get_skylab_task_url(self, skylab_task):
     """Returns the URL to the given skylab task.

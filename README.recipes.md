@@ -203,6 +203,7 @@
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
+  * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
 ## Recipe Modules
 
 ### *recipe_modules* / [analysis\_service](/recipe_modules/analysis_service)
@@ -3011,11 +3012,11 @@ Args:
 
 API for creating task URLs out of complex data structures.
 
-#### **class [UrlsApi](/recipe_modules/urls/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [UrlsApi](/recipe_modules/urls/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for creating links to tasks.
 
-&mdash; **def [get\_build\_link\_map](/recipe_modules/urls/api.py#16)(self, build):**
+&mdash; **def [get\_build\_link\_map](/recipe_modules/urls/api.py#19)(self, build):**
 
 Returns the title->URL to the given buildbucket build.
 
@@ -3025,7 +3026,7 @@ Args:
 Returns:
   str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#93)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#109)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -3036,7 +3037,7 @@ Returns:
   str: URL pointing to the Cloud Storage Browser page for the
     object.
 
-&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#51)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#67)(self, skylab_result):**
 
 Returns the URL to the given skylab result page.
 
@@ -3047,7 +3048,7 @@ Returns:
   str->str map: title to URL to the skylab swarming task page
   if the suite succeeded or entries of just the failed tests.
 
-&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#40)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#56)(self, skylab_task):**
 
 Returns the URL to the given skylab task.
 
@@ -3057,7 +3058,7 @@ Args:
 Returns:
   str: URL pointing to the skylab swarming task page.
 
-&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#76)(self, task_state):**
+&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#92)(self, task_state):**
 
 String suffix to supply info about the task.
 
@@ -3067,15 +3068,16 @@ Args:
 Returns:
   str, denoting more information about the task.
 
-&mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#28)(self, vm_test):**
+&mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#31)(self, vm_test):**
 
-Returns the title->URL to the given vm test.
+Returns the title->URL results from the given VM test.
 
 Args:
   vm_test (Build): The vm test in question.
 
 Returns:
   str->str: title->URL pointing to the vm_test's milo page.
+    For direct-vm tests, the individual failing tests are listed.
 ## Recipes
 
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
@@ -4265,6 +4267,13 @@ localmirror and then modifies the Guest VM's version pin to match this version.
 Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#23)(api):**
+### *recipes* / [urls:examples/get\_vm\_test\_link\_map](/recipe_modules/urls/examples/get_vm_test_link_map.py)
+
+[DEPS](/recipe_modules/urls/examples/get_vm_test_link_map.py#14): [tast\_results](#recipe_modules-tast_results), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+Basic tests for the urls recipe module.
+
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#22)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/016a0876eaa409609352e145ec61f92f22ff7056/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/016a0876eaa409609352e145ec61f92f22ff7056/recipes/README.recipes.md#recipe_modules-gclient
