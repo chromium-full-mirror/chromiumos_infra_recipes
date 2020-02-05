@@ -1,3 +1,1 @@
-# Chrome OS Test team
-shapiroc@chromium.org
-guocb@chromium.org
+include /OWNERS.test_platform
