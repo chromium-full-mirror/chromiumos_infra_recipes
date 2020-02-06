@@ -18,6 +18,6 @@ class IterutilsApi(recipe_api.RecipeApi):
     """
     matching = [x for x in iterable if predicate(x)]
     if len(matching) != 1:
-        raise ValueError(error_msg)
+      raise ValueError(error_msg)
 
     return matching[0]

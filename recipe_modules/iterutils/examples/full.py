@@ -10,24 +10,23 @@ DEPS = [
 
 
 def RunSteps(api):
-    api.assertions.assertEqual(
-        api.iterutils.get_one(
-            ['abc', 'def'],
-            lambda s: s.startswith('ab'),
-            "Expected string starting with 'ab'"
-        ),
-        'abc'
-    )
+  api.assertions.assertEqual(
+      api.iterutils.get_one(
+          ['abc', 'def'],
+          lambda s: s.startswith('ab'),
+          "Expected string starting with 'ab'",
+      ),
+      'abc',
+  )
 
-    with api.assertions.assertRaisesRegexp(
-        ValueError, "Expected string starting with 'ab'"
-    ):
-        api.iterutils.get_one(
-            ['ac', 'def'],
-            lambda s: s.startswith('ab'),
-            "Expected string starting with 'ab'"
-        )
+  with api.assertions.assertRaisesRegexp(ValueError,
+                                         "Expected string starting with 'ab'"):
+    api.iterutils.get_one(
+        ['ac', 'def'],
+        lambda s: s.startswith('ab'),
+        "Expected string starting with 'ab'",
+    )
 
 
 def GenTests(api):
-    yield api.test('basic')
+  yield api.test('basic')

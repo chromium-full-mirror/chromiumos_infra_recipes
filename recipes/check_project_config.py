@@ -76,29 +76,24 @@ def GenTests(api):
       'basic',
       properties(api),
       project_info_step_data(api),
-      api.post_process(
-          post_process.StepCommandContains, 'ensure synced checkout.repo init',
-          ['--groups', 'partner-config,testprogram-testproject']
-      )
+      api.post_process(post_process.StepCommandContains,
+                       'ensure synced checkout.repo init',
+                       ['--groups', 'partner-config,testprogram-testproject']),
   )
 
   yield api.test(
       'no_manifest_groups',
       api.expect_exception('ValueError'),
-      api.post_process(
-          post_process.ResultReasonRE,
-          '.*At least one manifest group must be specified.*'
-      ),
-      api.post_process(post_process.DropExpectation)
+      api.post_process(post_process.ResultReasonRE,
+                       '.*At least one manifest group must be specified.*'),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'repo_missing',
       properties(api),
       api.expect_exception('ValueError'),
-      api.post_process(
-          post_process.ResultReasonRE,
-          ".*Expected exactly one 'chromiumos/config' repo.*"
-      ),
-      api.post_process(post_process.DropExpectation)
+      api.post_process(post_process.ResultReasonRE,
+                       ".*Expected exactly one 'chromiumos/config' repo.*"),
+      api.post_process(post_process.DropExpectation),
   )
