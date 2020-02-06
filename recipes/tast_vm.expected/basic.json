@@ -184,6 +184,7 @@
       "run",
       "-build=false",
       "-waituntilready",
+      "-continueafterfailure",
       "-extrauseflags=tast_vm",
       "-resultsdir",
       "[CLEANUP]/test-results_tmp_6",
@@ -291,6 +292,80 @@
     "name": "run tast tests.kill vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tast tests.record logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@-kernel.log@@@@",
+      "@@@STEP_LOG_END@-kernel.log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "cp",
+      "-rf",
+      "/var/log",
+      "[CLEANUP]/var-log-dump_tmp_8"
+    ],
+    "name": "run tast tests.record logs.copy logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "-R",
+      "777",
+      "[CLEANUP]/var-log-dump_tmp_8"
+    ],
+    "name": "run tast tests.record logs.loosen permission",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/var-log-dump_tmp_8",
+      "--recursive"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.record logs.ls",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/var-log-dump_tmp_8/kernel.log@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/var-log-dump_tmp_8/kernel.log",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.record logs.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kernel.log@@@"
     ]
   },
   {

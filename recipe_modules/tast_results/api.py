@@ -12,6 +12,7 @@ from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 from PB.tast.test_result import TestResult
 
+import os
 import json
 import ntpath
 
@@ -164,3 +165,26 @@ class TastResultsApi(recipe_api.RecipeApi):
                 if filename in EXPECTED_FILES:
                   step.presentation.logs[filename] = self.m.file.read_text(
                       'reading file', file)
+
+  def record_logs(self, sys_log_dir):
+    """Print system logs to MILO.
+
+    Args:
+      sys_log_dir(str): absolute dir path to copy logs from.
+    """
+    with self.m.step.nest('record logs') as step:
+      dump_dir = self.m.path.mkdtemp('var-log-dump')
+      self.m.step('copy logs',
+                  ['sudo', '-n', 'cp', '-rf', sys_log_dir,
+                   str(dump_dir)])
+      self.m.step('loosen permission',
+                  ['sudo', '-n', 'chmod', '-R', '777',
+                   str(dump_dir)])
+      for file in self.m.file.listdir('ls', dump_dir, recursive=True,
+                                      test_data=['kernel.log']):
+        # Recipe doesn't like '/' in log name. Truncate the temp_dir
+        # part of filename.
+        filename = str(file).replace(os.sep, '-')[len(str(dump_dir)):]
+        if str(file).endswith('.log'):
+          step.presentation.logs[filename] = self.m.file.read_text(
+              'reading file', file)

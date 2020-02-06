@@ -1,0 +1,78 @@
+[
+  {
+    "cmd": [],
+    "name": "record logs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@-kernel.log@@@@",
+      "@@@STEP_LOG_END@-kernel.log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "cp",
+      "-rf",
+      "/var/log",
+      "[CLEANUP]/var-log-dump_tmp_1"
+    ],
+    "name": "record logs.copy logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "-R",
+      "777",
+      "[CLEANUP]/var-log-dump_tmp_1"
+    ],
+    "name": "record logs.loosen permission",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/var-log-dump_tmp_1",
+      "--recursive"
+    ],
+    "infra_step": true,
+    "name": "record logs.ls",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/var-log-dump_tmp_1/kernel.log@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/var-log-dump_tmp_1/kernel.log",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "record logs.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@kernel.log@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
