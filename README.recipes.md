@@ -2974,7 +2974,7 @@ Args:
   test_results_path (Path): Path to test_results/.
   gs_bucket (str): GS bucket to upload to.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#89)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#92)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -2984,7 +2984,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#114)(self, task_result):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#117)(self, task_result):**
 
 Convert TaskResult into api.failures.Failure objects.
 
@@ -3007,7 +3007,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#137)(self, task_result, test_results_path):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#140)(self, task_result, test_results_path):**
 
 Print results for the user.
 
@@ -3015,7 +3015,7 @@ Args:
   task_result(TaskResult): result of the run.
   test_results_path (Path): Path to test_results/.
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#169)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#177)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
@@ -4002,7 +4002,7 @@ Recipe for signing ChromeOS images.
 
 [DEPS](/recipe_modules/tast_results/examples/get_results.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/get_results.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/get_results.py#17)(api):**
 ### *recipes* / [tast\_results:examples/record\_logs](/recipe_modules/tast_results/examples/record_logs.py)
 
 [DEPS](/recipe_modules/tast_results/examples/record_logs.py#7): [tast\_results](#recipe_modules-tast_results)

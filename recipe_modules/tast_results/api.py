@@ -64,7 +64,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       all_verdicts = [t.verdict for t in test_cases]
       overall_state = TaskState(verdict=TaskState.VERDICT_PASSED,
                                 life_cycle=TaskState.LIFE_CYCLE_COMPLETED)
-      if TaskState.VERDICT_FAILED in all_verdicts:
+
+      if not all_verdicts or TaskState.VERDICT_FAILED in all_verdicts:
         overall_state.verdict = TaskState.VERDICT_FAILED
       return ExecuteResponse.TaskResult(name=suite_name, state=overall_state,
                                         attempt=0, test_cases=test_cases)
@@ -82,6 +83,8 @@ class TastResultsApi(recipe_api.RecipeApi):
     list_of_results = self.m.file.read_json(
         'read results.json', test_results_path.join('results.json'),
         test_data=self.test_api.test_results_json)
+    # If results.json is empty, list_of_results will be None.
+    list_of_results = list_of_results or []
     return [
         jsonpb.ParseDict(result, TestResult()) for result in list_of_results
     ]
@@ -142,9 +145,14 @@ class TastResultsApi(recipe_api.RecipeApi):
       test_results_path (Path): Path to test_results/.
     """
     with self.m.step.nest('print results') as step:
-      step.presentation.step_text = (
-          '' if task_result.state.verdict == TaskState.VERDICT_FAILED else
-          'all tests passed!')
+      if not task_result.test_cases:
+        step.status = self.m.step.EXCEPTION
+        step.presentation.step_text = 'empty result'
+      elif task_result.state.verdict == TaskState.VERDICT_FAILED:
+        step.status = self.m.step.FAILURE
+      else:
+        step.presentation.step_text = 'all tests passed!'
+
       for test_case_result in task_result.test_cases:
         if test_case_result.verdict == TaskState.VERDICT_FAILED:
           with self.m.step.nest(test_case_result.name) as step:

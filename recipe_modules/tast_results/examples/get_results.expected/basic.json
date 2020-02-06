@@ -101,6 +101,21 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "print results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all tests passed!@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print results (3)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@empty result@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
