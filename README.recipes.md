@@ -910,15 +910,15 @@ Args:
   * gs_distfiles_uri: the Google cloud storage URI which stores all
     Gentoo distfiles.
 
-&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#253)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#233)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#245)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#225)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#249)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#229)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_dupit/api.py#241)(self):**
+&mdash; **def [run](/recipe_modules/cros_dupit/api.py#221)(self):**
 
-&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#257)(self):**
+&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#237)(self):**
 ### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
 
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

@@ -69,26 +69,6 @@ class DupItApi(recipe_api.RecipeApi):
         leak_to=gs_distfile_relative_list_path)
     self.m.step(cmd=cut_cmd, infra_step=True, name=cut_name, stdout=cut_stdout)
 
-    # Remove paths that start with `.dup-it/` and `distfiles/`.
-    # TODO: Remove this step once/if we remove these dirs from gs.
-    # See https://bugs.chromium.org/p/chromium/issues/detail?id=952285#c8.
-    # Before:
-    #   .dup-it/.../unwanted-distfile1.tar.gz
-    #   distfiles/.../unwanted-distfile2.tar.gz
-    #   wanted-distfile.tar.gz
-    #   ...
-    # After:
-    #   wanted-distfile.tar.gz
-    #   ...
-    sed_cmd = [
-        'sed',
-        '-i',
-        '/^distfiles\//d;/^.dup-it\//d',
-        gs_distfile_relative_list_path,
-    ]
-    sed_name = 'filter bad paths'
-    self.m.step(cmd=sed_cmd, infra_step=True, name=sed_name)
-
     # Ensure the list is sorted (for diffing).
     gs_distfile_relative_sorted_list_path = self._tmp_distfile_lists_path.join(
         'gs_relative_sorted.txt')

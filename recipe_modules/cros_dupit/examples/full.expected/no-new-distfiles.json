@@ -25,16 +25,6 @@
   },
   {
     "cmd": [
-      "sed",
-      "-i",
-      "/^distfiles\\//d;/^.dup-it\\//d",
-      "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
-    ],
-    "infra_step": true,
-    "name": "filter bad paths"
-  },
-  {
-    "cmd": [
       "sort",
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
     ],
