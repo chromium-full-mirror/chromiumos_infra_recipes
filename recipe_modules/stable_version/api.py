@@ -21,7 +21,6 @@ class StableVersionApi(recipe_api.RecipeApi):
       cmd = [
           self._cmd,
           "validate-config",
-          "-always-exit-zero",
           "-remote-file",
       ]
       response = self.m.easy.stdout_step(

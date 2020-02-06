@@ -46,7 +46,6 @@
     "cmd": [
       "[START_DIR]/cipd/stable_version2/stable_version2",
       "validate-config",
-      "-always-exit-zero",
       "-remote-file"
     ],
     "name": "call stable_version2 to check remote file.validate-config",
