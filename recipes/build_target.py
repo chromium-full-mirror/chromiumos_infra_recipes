@@ -6,7 +6,6 @@
 """Recipe for building a BuildTarget image."""
 
 DEPS = [
-    'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
@@ -28,7 +27,6 @@ DEPS = [
     'failures',
     'gerrit',
     'goma',
-    'portage',
 ]
 
 import hashlib
