@@ -313,8 +313,10 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
               build_target=build_target, chroot=api.cros_sdk.chroot,
               image_types=image_types,
               builder_path=api.cros_artifacts.artifacts_gs_path(
-                  build_target, build_config.id.type)), timeout=45 * 60,
-                  response_lambda=_failed_pkg_names)
+                  build_config.id.name, build_target, build_config.id.type),
+          ),
+          timeout=45 * 60,
+          response_lambda=_failed_pkg_names)
       api.failures.set_failed_packages(bi_step, response.failed_packages)
     with api.step.nest('test images'):
       failed_images = []
@@ -354,6 +356,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   if artifacts.artifact_types:
     api.cros_artifacts.upload_artifacts(
+        build_config.id.name,
         build_target, build_config.id.type,
         artifacts.artifacts_gs_bucket, artifacts.artifact_types,
         sysroot=sysroot, chroot=api.cros_sdk.chroot,

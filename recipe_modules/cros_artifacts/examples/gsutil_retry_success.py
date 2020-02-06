@@ -18,6 +18,7 @@ def RunSteps(api):
   target = common.BuildTarget()
   target.name = 'target'
   api.cros_artifacts.upload_artifacts(
+      'target-postsubmit',
       target, BuilderConfig.Id.POSTSUBMIT,
       'artifacts_gs_bucket', [BuilderConfig.Artifacts.EBUILD_LOGS],
       chroot=common.Chroot(path='/path/to/chroot'),

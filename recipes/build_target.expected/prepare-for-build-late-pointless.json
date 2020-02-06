@@ -3616,7 +3616,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/-toolchain/R99-1234.56.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184@@@",
       "@@@STEP_LINK@gs publish dir: UNVERIFIED_ORDERING_FILE@https://console.cloud.google.com/storage/browser/chromeos-toolchain-artifacts/orderfile/unvetted@@@"
     ]
   },
@@ -3866,7 +3866,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_17",
-      "gs://chromeos-image-archive/-toolchain/R99-1234.56.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -3881,7 +3881,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"UNVERIFIED_ORDERING_FILE\": [\"../../my_output_artifact\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"-toolchain/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"UNVERIFIED_ORDERING_FILE\": [\"../../my_output_artifact\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -3977,7 +3977,7 @@
       "-m",
       "----",
       "cp",
-      "gs://chromeos-image-archive/-toolchain/R99-1234.56.0-101-8945511751514863184/../../my_output_artifact",
+      "gs://chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184/../../my_output_artifact",
       "gs://chromeos-toolchain-artifacts/orderfile/unvetted/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

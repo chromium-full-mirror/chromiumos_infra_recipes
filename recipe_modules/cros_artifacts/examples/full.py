@@ -42,6 +42,7 @@ def RunSteps(api):
   )
 
   api.cros_artifacts.upload_artifacts(
+      'target-postsubmit',
       target, BuilderConfig.Id.POSTSUBMIT, 'artifacts_gs_bucket',
       [BuilderConfig.Artifacts.EBUILD_LOGS],
       chroot=common.Chroot(path='/path/to/chroot'),
@@ -50,6 +51,7 @@ def RunSteps(api):
                                       name='upload ebuild logs')
 
   api.cros_artifacts.upload_artifacts(
+      'target-postsubmit',
       target, BuilderConfig.Id.POSTSUBMIT, 'artifacts_gs_bucket',
       [BuilderConfig.Artifacts.FIRMWARE],
       chroot=common.Chroot(path='/path/to/chroot'),
@@ -58,6 +60,7 @@ def RunSteps(api):
       name='upload firmware archive')
 
   api.cros_artifacts.upload_artifacts(
+      'target-cq',
       target, BuilderConfig.Id.CQ,
       'artifacts_gs_bucket', [
           BuilderConfig.Artifacts.IMAGE_ZIP,
@@ -72,6 +75,7 @@ def RunSteps(api):
       name='upload test artifacts')
 
   api.cros_artifacts.upload_artifacts(
+      'target-toolchain',
       target, BuilderConfig.Id.TOOLCHAIN,
       'artifacts_gs_bucket', [BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE],
       chroot=common.Chroot(path='/path/to/chroot'),

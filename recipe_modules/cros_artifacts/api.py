@@ -227,10 +227,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       files_by_artifact.update(func(chroot, sysroot, path, types))
     return files_by_artifact
 
-  def _artifacts_gs_path_dict(self, target, kind):
+  def _artifacts_gs_path_dict(self, builder_name, target, kind):
     """Returns the dictionary tokens for expanding location templates.
 
     Args:
+      builder_name (str): The builder name, e.g. octopus-cq.
       target (BuildTarget): The target whose artifacts will be uploaded.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. Used as a descriptor in the GS path.
@@ -243,17 +244,19 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         'version': self.m.cros_version.read_workspace_version(),
         'build_id': self.m.buildbucket.build.id,
         'target': target.name,
+        'builder_name': builder_name.lower().replace('_', '-'),
     }
-    ret['gs_path'] = '%s-%s/%s-%d' % (
-        ret['target'], ret['label'], ret['version'], ret['build_id'])
+    ret['gs_path'] = '%s/%s-%d' % (
+        ret['builder_name'], ret['version'], ret['build_id'])
     return ret
 
-  def artifacts_gs_path(self, target, kind):
+  def artifacts_gs_path(self, builder_name, target, kind):
     """Returns the GS path for artifacts of the given kind for the given target.
 
     The resulting path will NOT include the GS bucket.
 
     Args:
+      builder_name (str): The builder name, e.g. octopus-cq.
       target (BuildTarget): The target whose artifacts will be uploaded.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. Used as a descriptor in the GS path.
@@ -261,10 +264,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Returns:
       The GS path at which artifacts should be uploaded.
     """
-    return self._artifacts_gs_path_dict(target, kind)['gs_path']
+    return self._artifacts_gs_path_dict(builder_name, target, kind)['gs_path']
 
-  def _publish_artifacts(self, target, kind, publish_info, upload_uri,
-                         files_by_artifact, name=None):
+  def _publish_artifacts(self, builder_name, target, kind, publish_info,
+                         upload_uri, files_by_artifact, name=None):
     """Publish the artifacts that were uploaded.
 
     Some artifacts need to also be published in a better-known place than the
@@ -281,6 +284,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     artifact to transition seamlessly.
 
     Args:
+      builder_name (str): The builder name, e.g. octopus-cq.
       target (BuildTarget): The build target with artifacts of interest.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. This affects where the artifacts are placed in
@@ -298,7 +302,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     with self.m.step.nest(name or 'publish artifacts') as step:
       for info in publish_info:
         publish_template = info.publish_gs_location
-        location_dict = self._artifacts_gs_path_dict(target, kind)
+        location_dict = self._artifacts_gs_path_dict(builder_name, target, kind)
         for artifact in info.publish_types:
           artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
           files = files_by_artifact.get(artifact_name, [])
@@ -334,8 +338,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       return links
 
-  def upload_artifacts(self, target, kind, gs_bucket, artifact_types,
-                       chroot=None, sysroot=None,
+  def upload_artifacts(self, builder_name, target, kind, gs_bucket,
+                       artifact_types, chroot=None, sysroot=None,
                        publish_info=None, name=None):
     """Bundle and upload the given artifacts for the given build target.
 
@@ -345,6 +349,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     type that was uploaded.
 
     Args:
+      builder_name (str): The builder name, e.g. octopus-cq.
       target (BuildTarget): The build target with artifacts of interest.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. This affects where the artifacts are placed in
@@ -363,7 +368,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       files_by_artifact = self._bundle_artifacts(
           artifact_types, staging_root, sysroot, chroot)
 
-      gs_path = self.artifacts_gs_path(target, kind)
+      gs_path = self.artifacts_gs_path(builder_name, target, kind)
       step.presentation.links['gs upload dir'] = (
           'https://console.cloud.google.com/storage/browser/%s/%s' %
           (gs_bucket, gs_path))
@@ -395,6 +400,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # artifacts.
       if publish_info:
         links = self._publish_artifacts(
+            builder_name,
             target, kind, publish_info, upload_uri, files_by_artifact)
         for k, v in links.items():
           step.presentation.links[k] = v

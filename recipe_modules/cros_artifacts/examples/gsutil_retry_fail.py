@@ -21,6 +21,7 @@ def RunSteps(api):
   target.name = 'target'
   api.assertions.assertRaises(
       api.step.StepFailure, api.cros_artifacts.upload_artifacts,
+      'target-postsubmit',
       target, BuilderConfig.Id.POSTSUBMIT,
       'artifacts_gs_bucket', [BuilderConfig.Artifacts.EBUILD_LOGS],
       chroot=common.Chroot(path='/path/to/chroot'),
