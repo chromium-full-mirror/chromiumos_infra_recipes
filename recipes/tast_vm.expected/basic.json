@@ -132,6 +132,7 @@
       "-display",
       "none"
     ],
+    "infra_step": true,
     "name": "setup vm.launch image as vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -168,6 +169,7 @@
       "--",
       "true"
     ],
+    "infra_step": true,
     "name": "setup vm.connect via ssh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

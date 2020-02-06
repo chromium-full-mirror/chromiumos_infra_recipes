@@ -4010,13 +4010,13 @@ Recipe for signing ChromeOS images.
 &mdash; **def [RunSteps](/recipe_modules/tast_results/examples/record_logs.py#12)(api):**
 ### *recipes* / [tast\_vm](/recipes/tast_vm.py)
 
-[DEPS](/recipes/tast_vm.py#16): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/tast_vm.py#18): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 An experimental recipe for running Tast VM tests without Chroot and
 ChromeOS checkout, resulting in much faster tests. The tests will
 use tast executable from build_artifacts.
 
-&mdash; **def [RunSteps](/recipes/tast_vm.py#39)(api, properties):**
+&mdash; **def [RunSteps](/recipes/tast_vm.py#41)(api, properties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#12): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

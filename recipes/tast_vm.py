@@ -13,6 +13,8 @@ import os
 from google.protobuf import json_format as jsonpb
 from PB.recipes.chromeos.tast_vm import TastVmProperties
 
+from util import exponential_retry
+
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/archive',
@@ -98,24 +100,10 @@ def RunSteps(api, properties):
         '-netdev', 'user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22', \
         '-enable-kvm', \
         '-display', 'none'
-    ])
+    ], infra_step=True)
     api.step('calibrate ssh key permissions',
              ['chmod', '400', private_key_path])
-    api.step('connect via ssh', [
-        'ssh', \
-        '-p', '9222', \
-        '-oConnectionAttempts=4', \
-        '-oUserKnownHostsFile=/dev/null', \
-        '-oProtocol=2', \
-        '-oConnectTimeout=30', \
-        '-oServerAliveCountMax=8', \
-        '-oStrictHostKeyChecking=no', \
-        '-oServerAliveInterval=15', \
-        '-oNumberOfPasswordPrompts=0', \
-        '-oIdentitiesOnly=yes', \
-        '-i', private_key_path, \
-        'root@localhost', '--', 'true'
-    ])
+    _test_ssh_conn(api, private_key_path)
 
   with api.step.nest('run tast tests'):
     test_results_dir = api.path.mkdtemp(prefix='test-results')
@@ -156,6 +144,25 @@ def RunSteps(api, properties):
   api.tast_results.print_results(task_result, test_results_dir)
 
   return api.failures.aggregate_failures(failures)
+
+
+@exponential_retry(retries=3)
+def _test_ssh_conn(api, private_key_path):
+  api.step('connect via ssh', [
+      'ssh', \
+      '-p', '9222', \
+      '-oConnectionAttempts=4', \
+      '-oUserKnownHostsFile=/dev/null', \
+      '-oProtocol=2', \
+      '-oConnectTimeout=30', \
+      '-oServerAliveCountMax=8', \
+      '-oStrictHostKeyChecking=no', \
+      '-oServerAliveInterval=15', \
+      '-oNumberOfPasswordPrompts=0', \
+      '-oIdentitiesOnly=yes', \
+      '-i', private_key_path, \
+      'root@localhost', '--', 'true'
+  ], infra_step=True)
 
 
 def GenTests(api):
