@@ -72,17 +72,21 @@ class CrosSourceApi(recipe_api.RecipeApi):
             else None)
 
   def ensure_synced_cache(self, manifest_url=INTERNAL_MANIFEST_URL,
-                          init_opts=None, sync_opts=None):
+                          init_opts=None, sync_opts=None,
+                          cache_path_override=None):
     """Ensure the configured repo cache exists and is synced.
 
     Args:
       * manifest_url (str): Manifest URL for 'repo.init`.
       * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+      * cache_path_override (Path): Path to sync into. If None, the cache_path
+      property is used.
     """
     init_opts = init_opts or {}
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
-    self.m.repo.ensure_synced_checkout(self.cache_path, manifest_url,
+    cache_path = cache_path_override or self.cache_path
+    self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
                                        init_opts=init_opts, sync_opts=sync_opts)
 
   @contextlib.contextmanager

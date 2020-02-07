@@ -5,6 +5,8 @@
 
 """Checks a project conforms to its program's constraints."""
 
+import contextlib
+
 from recipe_engine import post_process
 
 from PB.recipes.chromeos.check_project_config import (
@@ -23,19 +25,32 @@ DEPS = [
 ]
 
 
+@contextlib.contextmanager
+def checkout_manifest_groups(api, properties):
+  """Returns a context with manifest groups checked out to cwd.
+
+  Also syncs to the snapshot in gitiles_commit.
+
+  Note that this function reuses most of the standard cros_source checkout code,
+  but without any caching / overlayfs. The number of repos to checkout is
+  usually much smaller than a full checkout, in which case the time to delete
+  unused repos (which are present because of caching) is much larger than the
+  time to sync the used repos. In addition, not caching reduces chances of
+  leaking between runs of the recipe.
+  """
+  api.cros_source.ensure_synced_cache(
+      init_opts={'groups': properties.manifest_groups},
+      cache_path_override=api.cros_source.workspace_path)
+  with api.context(cwd=api.cros_source.workspace_path):
+    api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
+    yield
+
+
 def RunSteps(api, properties):
   if not properties.manifest_groups:
     raise ValueError('At least one manifest group must be specified.')
 
-  # Using overlayfs and repo caching mechanisms is probably unnecessary, because
-  # the checkout is expected to be small. Use it anyway, for the small benefit
-  # offered, and for consistency with other code.
-  with api.cros_source.checkout_overlays_context(), \
-       api.context(cwd=api.cros_source.workspace_path):
-    api.cros_source.ensure_synced_cache(
-        init_opts={'groups': properties.manifest_groups})
-    api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
-
+  with checkout_manifest_groups(api, properties):
     project_infos = api.repo.project_infos()
 
     chromiumos_config_info = api.iterutils.get_one(

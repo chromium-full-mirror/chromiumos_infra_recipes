@@ -1308,7 +1308,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#119)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#123)(self, patch_sets):**
 
 Apply Gerrit patch sets to the workspace.
 
@@ -1325,11 +1325,11 @@ The cached checkout path.
 This is the cached version of source, usually updated once at the beginning
 of a build and then mounted into the master and/or workspace paths.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#88)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#92)(self):**
 
 Returns a context where chromiumos and workspace overlays are mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#238)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#242)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -1342,7 +1342,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#195)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#199)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -1356,7 +1356,7 @@ Args:
   project_commits (List[ProjectCommit]): Commits to add to archive. Must be
     in patch application order.
 
-&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#74)(self, manifest_url=INTERNAL_MANIFEST_URL, init_opts=None, sync_opts=None):**
+&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#74)(self, manifest_url=INTERNAL_MANIFEST_URL, init_opts=None, sync_opts=None, cache_path_override=None):**
 
 Ensure the configured repo cache exists and is synced.
 
@@ -1364,8 +1364,10 @@ Args:
   * manifest_url (str): Manifest URL for 'repo.init`.
   * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+  * cache_path_override (Path): Path to sync into. If None, the cache_path
+  property is used.
 
-&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#99)(self, project, branch):**
+&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#103)(self, project, branch):**
 
 Find the source path for a given project in the workspace.
 
@@ -1387,7 +1389,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#151)(self, gitiles_commit):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#155)(self, gitiles_commit):**
 
 Sync a checkout to the snapshot.
 
@@ -3279,11 +3281,24 @@ Recipe for generating ChromeOS cache payloads.
 &mdash; **def [RunSteps](/recipes/cache_generate.py#21)(api):**
 ### *recipes* / [check\_project\_config](/recipes/check_project_config.py)
 
-[DEPS](/recipes/check_project_config.py#15): [cros\_source](#recipe_modules-cros_source), [iterutils](#recipe_modules-iterutils), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipes/check_project_config.py#17): [cros\_source](#recipe_modules-cros_source), [iterutils](#recipe_modules-iterutils), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 Checks a project conforms to its program's constraints.
 
-&mdash; **def [RunSteps](/recipes/check_project_config.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipes/check_project_config.py#49)(api, properties):**
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_manifest\_groups](/recipes/check_project_config.py#28)(api, properties):**
+
+Returns a context with manifest groups checked out to cwd.
+
+Also syncs to the snapshot in gitiles_commit.
+
+Note that this function reuses most of the standard cros_source checkout code,
+but without any caching / overlayfs. The number of repos to checkout is
+usually much smaller than a full checkout, in which case the time to delete
+unused repos (which are present because of caching) is much larger than the
+time to sync the used repos. In addition, not caching reduces chances of
+leaking between runs of the recipe.
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
