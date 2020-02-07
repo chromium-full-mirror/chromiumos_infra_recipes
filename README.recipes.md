@@ -524,7 +524,7 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#253)(self, builder_name, target, kind):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#268)(self, builder_name, target, kind):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -539,7 +539,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#408)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#423)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -554,7 +554,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#441)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#456)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -569,7 +569,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#461)(self, artifact_types, chroot, sysroot, input_artifacts, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#476)(self, artifact_types, chroot, sysroot, input_artifacts, additional_args=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -582,12 +582,13 @@ Args:
   chroot (Chroot): The chroot to use, or None if not yet created.
   sysroot (Sysroot): The sysroot to use, or None if not yet created.
   input_artifacts (list[InputArtifactInfo]): where to seek input artifacts.
+  additional_args PrepareForBuildAdditionalArgs: additional arguments.
   name (str): The step name. Defaults to 'prepare artifacts'.
 
 Returns:
   PrepareForToolchainBuildResponse.BuildRelevance
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#341)(self, builder_name, target, kind, gs_bucket, artifact_types, chroot=None, sysroot=None, publish_info=None, name=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#356)(self, builder_name, target, kind, gs_bucket, artifact_types, chroot=None, sysroot=None, publish_info=None, name=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -3250,7 +3251,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#71)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#378)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#380)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3266,7 +3267,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#397)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#399)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

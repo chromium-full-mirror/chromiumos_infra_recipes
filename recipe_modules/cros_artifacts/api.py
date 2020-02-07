@@ -90,7 +90,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return files_by_artifact
 
   def _prepare_unknown(
-      self, _chroot, _sysroot, _artifact_types, _input_artifacts):
+      self, _chroot, _sysroot, _artifact_types,
+      _input_artifacts, _additional_args):
     """Prepare for Build.
 
     Use this prepare_for_build handler for any artifact type which has no
@@ -101,6 +102,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       _sysroot (Sysroot): The sysroot to use, or None if not yet created.
       _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
+      _additional_args PrepareForBuildAdditionalArgs: endpoint specific
+          arguments, such as the Chrome CWP profile name, or kernel version to
+          use.
 
     Returns:
       (PrepareForBuildResponse.build_relevance) build relevance.
@@ -108,7 +112,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return PrepareForBuildResponse.UNKNOWN
 
   def _prepare_toolchain(
-      self, chroot, sysroot, artifact_types, input_artifacts):
+      self, chroot, sysroot, artifact_types, input_artifacts, additional_args):
     """Prepare for Build.
 
     Call ToolchainService.PrepareForBuild to prepare for the build.
@@ -118,13 +122,16 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot to use, or None if not yet created.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
+      additional_args PrepareForBuildAdditionalArgs: endpoint specific
+          arguments, such as the Chrome CWP profile name, or kernel version to
+          use.
 
     Returns:
       (PrepareForBuildResponse) whether build is necessary.
     """
     req = toolchain.PrepareForToolchainBuildRequest(
         chroot=chroot, sysroot=sysroot, artifact_types=artifact_types,
-        input_artifacts=input_artifacts)
+        input_artifacts=input_artifacts, additional_args=additional_args)
     resp = self.m.cros_build_api.ToolchainService.PrepareForBuild(
         req, infra_step=True)
     result = resp.build_relevance
@@ -213,11 +220,19 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             self._bundle_toolchain,
         BuilderConfig.Artifacts.UNVERIFIED_LLVM_PGO_FILE:
             self._bundle_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_AFDO_FILE:
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE:
             self._bundle_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_CHROME_AFDO_FILE:
+        BuilderConfig.Artifacts.VERIFIED_CHROME_BENCHMARK_AFDO_FILE:
             self._bundle_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_KERNEL_AFDO_FILE:
+        BuilderConfig.Artifacts.UNVERIFIED_KERNEL_CWP_AFDO_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_KERNEL_CWP_AFDO_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_CWP_AFDO_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_CHROME_CWP_AFDO_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_RELEASE_AFDO_FILE:
             self._bundle_toolchain,
     }
 
@@ -459,7 +474,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       }
 
   def prepare_for_build(
-      self, artifact_types, chroot, sysroot, input_artifacts, name=None):
+      self, artifact_types, chroot, sysroot, input_artifacts,
+      additional_args=None, name=None):
     """Prepare the build for the given artifacts.
 
     This function calls the Build API to have it prepare to build artifacts of
@@ -471,6 +487,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       chroot (Chroot): The chroot to use, or None if not yet created.
       sysroot (Sysroot): The sysroot to use, or None if not yet created.
       input_artifacts (list[InputArtifactInfo]): where to seek input artifacts.
+      additional_args PrepareForBuildAdditionalArgs: additional arguments.
       name (str): The step name. Defaults to 'prepare artifacts'.
 
     Returns:
@@ -493,11 +510,19 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             self._prepare_toolchain,
         BuilderConfig.Artifacts.UNVERIFIED_LLVM_PGO_FILE:
             self._prepare_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_AFDO_FILE:
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE:
             self._prepare_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_CHROME_AFDO_FILE:
+        BuilderConfig.Artifacts.VERIFIED_CHROME_BENCHMARK_AFDO_FILE:
             self._prepare_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_KERNEL_AFDO_FILE:
+        BuilderConfig.Artifacts.UNVERIFIED_KERNEL_CWP_AFDO_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_KERNEL_CWP_AFDO_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_CWP_AFDO_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_CHROME_CWP_AFDO_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_RELEASE_AFDO_FILE:
             self._prepare_toolchain,
     }
 
@@ -506,7 +531,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       funcs_to_call = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
       for func, types in funcs_to_call.items():
-        results.append(func(chroot, sysroot, types, input_artifacts))
+        results.append(
+            func(chroot, sysroot, types, input_artifacts, additional_args))
 
       # Return an aggregate response.
       if PrepareForBuildResponse.NEEDED in results:

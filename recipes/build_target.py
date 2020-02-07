@@ -277,7 +277,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
         # running at least install packages at this point.
         api.cros_artifacts.prepare_for_build(
             artifacts.artifact_types, api.cros_sdk.chroot, sysroot,
-            artifacts.input_artifacts, name='prepare artifacts final')
+            artifacts.input_artifacts, additional_args=
+            build_config.build.prepare_for_build.additional_args,
+            name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
           compile_source=install_packages.compile_source,
           use_goma=(not install_packages.disable_goma and
