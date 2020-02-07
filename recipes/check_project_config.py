@@ -23,6 +23,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_source',
+    'gerrit',
     'iterutils',
     'repo',
 ]
@@ -32,7 +33,7 @@ DEPS = [
 def checkout_manifest_groups(api, properties):
   """Returns a context with manifest groups checked out to cwd.
 
-  Also syncs to the snapshot in gitiles_commit.
+  Also applies gerrit_changes.
 
   Note that this function reuses most of the standard cros_source checkout code,
   but without any caching / overlayfs. The number of repos to checkout is
@@ -45,13 +46,18 @@ def checkout_manifest_groups(api, properties):
       init_opts={'groups': properties.manifest_groups},
       cache_path_override=api.cros_source.workspace_path)
   with api.context(cwd=api.cros_source.workspace_path):
-    api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
+    patch_sets = api.gerrit.fetch_patch_sets(
+        api.buildbucket.build.input.gerrit_changes)
+    api.cros_source.apply_gerrit_patch_sets(patch_sets)
     yield
 
 
 def RunSteps(api, properties):
   if not properties.manifest_groups:
     raise ValueError('At least one manifest group must be specified.')
+
+  if not api.buildbucket.build.input.gerrit_changes:
+    raise ValueError('At least one gerrit_change must be specified.')
 
   # Do work in a context with manifest groups checked out. Most steps are infra
   # steps, so make this the default. Non-infra steps specify this explicitly.
@@ -102,6 +108,12 @@ def GenTests(api):
     return api.properties(
         manifest_groups=['partner-config', 'testprogram-testproject'])
 
+  def project_config_cq_build(api):
+    """Returns a sample buildbucket project config cq build"""
+    return api.buildbucket.try_build(
+        project="chromeos", bucket="testprogram-testproject",
+        builder="config-checker-testprogram-testproject")
+
   def project_info_step_data(api):
     """Returns step data with project info for chromiumos/config, a test project
        repo, and a test program repo.
@@ -119,6 +131,7 @@ def GenTests(api):
   yield api.test(
       'basic',
       properties(api),
+      project_config_cq_build(api),
       project_info_step_data(api),
       api.post_process(post_process.StepCommandContains,
                        'ensure synced checkout.repo init',
@@ -134,8 +147,18 @@ def GenTests(api):
   )
 
   yield api.test(
+      'no_gerrit_changes',
+      properties(api),
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.ResultReasonRE,
+                       '.*At least one gerrit_change must be specified.*'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'repo_missing',
       properties(api),
+      project_config_cq_build(api),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
                        ".*Expected exactly one 'chromiumos/config' repo.*"),
@@ -145,6 +168,7 @@ def GenTests(api):
   yield api.test(
       'checker_failed',
       properties(api),
+      project_config_cq_build(api),
       project_info_step_data(api),
       api.step_data('Check constraints', retcode=1),
       api.post_process(post_process.StatusFailure),
