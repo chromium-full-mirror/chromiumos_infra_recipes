@@ -3017,7 +3017,7 @@ Args:
   task_result(TaskResult): result of the run.
   test_results_path (Path): Path to test_results/.
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#177)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#179)(self, sys_log_dir):**
 
 Print system logs to MILO.
 

@@ -148,6 +148,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       if not task_result.test_cases:
         step.status = self.m.step.EXCEPTION
         step.presentation.step_text = 'empty result'
+        # Ensure the recipe fails as well.
+        raise self.m.step.InfraFailure('No results dumped')
       elif task_result.state.verdict == TaskState.VERDICT_FAILED:
         step.status = self.m.step.FAILURE
       else:

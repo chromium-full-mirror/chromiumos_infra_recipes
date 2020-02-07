@@ -116,6 +116,9 @@
     ]
   },
   {
+    "failure": {
+      "humanReason": "No results dumped"
+    },
     "name": "$result"
   }
 ]
