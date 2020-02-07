@@ -14,7 +14,6 @@
       "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
       "@@@STEP_LOG_LINE@orchestrator config@}@@@",
       "@@@STEP_LOG_LINE@orchestrator config@orchestrator {@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  children: \"orderfile-generate-toolchain\"@@@",
       "@@@STEP_LOG_LINE@orchestrator config@  gitiles_commit {@@@",
       "@@@STEP_LOG_LINE@orchestrator config@    host: \"chrome-internal\"@@@",
       "@@@STEP_LOG_LINE@orchestrator config@    project: \"chromeos/manifest-internal\"@@@",
@@ -29,6 +28,9 @@
       "@@@STEP_LOG_LINE@orchestrator config@  follow_on_orchestrator {@@@",
       "@@@STEP_LOG_LINE@orchestrator config@    name: \"orderfile-verify-orchestrator\"@@@",
       "@@@STEP_LOG_LINE@orchestrator config@    await_completion: true@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  child_specs {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    name: \"orderfile-generate-toolchain\"@@@",
       "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
       "@@@STEP_LOG_LINE@orchestrator config@}@@@",
       "@@@STEP_LOG_END@orchestrator config@@@"

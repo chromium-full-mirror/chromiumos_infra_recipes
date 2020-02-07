@@ -14,8 +14,12 @@
       "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
       "@@@STEP_LOG_LINE@orchestrator config@}@@@",
       "@@@STEP_LOG_LINE@orchestrator config@orchestrator {@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  children: \"amd64-generic-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  children: \"arm-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  child_specs {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    name: \"amd64-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  child_specs {@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@    name: \"arm-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
       "@@@STEP_LOG_LINE@orchestrator config@}@@@",
       "@@@STEP_LOG_END@orchestrator config@@@"
     ]

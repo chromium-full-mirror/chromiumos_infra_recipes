@@ -286,8 +286,9 @@ def get_child_builders(api):
   child_builders = api.cros_bisect.get_test_child_builders()
   if child_builders:
     return child_builders
-  return api.cros_infra_config.get_builder_config(
-      api.buildbucket.build.builder.builder).orchestrator.children
+  child_specs = api.cros_infra_config.get_builder_config(
+      api.buildbucket.build.builder.builder).orchestrator.child_specs
+  return [cs.name for cs in child_specs]
 
 
 def filter_schedule_wait_builds(api, parent_step, child_builders,

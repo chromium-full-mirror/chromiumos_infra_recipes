@@ -18,8 +18,9 @@ DEPS = [
 
 
 def RunSteps(api):
-  child_builders = api.cros_infra_config.get_builder_config(
-      'cq-orchestrator').orchestrator.children
+  child_specs = api.cros_infra_config.get_builder_config(
+      'cq-orchestrator').orchestrator.child_specs
+  child_builders = [cs.name for cs in child_specs]
   completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
       child_builders, True, [common_pb2.GerritChange(change=1234)],
       common_pb2.GitilesCommit())

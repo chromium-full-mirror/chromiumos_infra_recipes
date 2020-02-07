@@ -3782,7 +3782,7 @@ All builders run against the same source tree.
 
 &mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#174)(api, config):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#293)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#294)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3809,7 +3809,7 @@ Args:
 Returns:
   list[string] of child builder names to run
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#359)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#360)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3835,7 +3835,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#348)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#349)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3843,7 +3843,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#334)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#335)(refs):**
 
 Assert the given refs start with refs/heads.
 

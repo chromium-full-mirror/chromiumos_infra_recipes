@@ -441,7 +441,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": true
                   },
                   "orchestrator": {
-                    "children": [
+                    "child_specs": [
                     ],
                     "gitilesCommit": {
                       "host": "chrome-internal",
@@ -516,8 +516,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": true
                   },
                   "orchestrator": {
-                    "children": [
-                      "orderfile-generate-toolchain"
+                    "child_specs": [
+                      {"name": "orderfile-generate-toolchain"}
                     ],
                     "followOnOrchestrator": {
                       "name": "orderfile-verify-orchestrator",
@@ -706,9 +706,9 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": true
                   },
                   "orchestrator": {
-                    "children": [
-                      "amd64-generic-postsubmit",
-                      "arm-generic-postsubmit"
+                    "child_specs": [
+                      {"name": "amd64-generic-postsubmit"},
+                      {"name": "arm-generic-postsubmit"}
                     ]
                   }
                 },
@@ -722,11 +722,11 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "critical": true
                   },
                   "orchestrator": {
-                    "children": [
-                      "amd64-generic-cq",
-                      "arm-generic-cq",
-                      "arm-generic-pointless-cq",
-                      "atlas-cq"
+                    "child_specs": [
+                      {"name": "amd64-generic-cq"},
+                      {"name": "arm-generic-cq"},
+                      {"name": "arm-generic-pointless-cq"},
+                      {"name": "atlas-cq"}
                     ]
                   }
                 },

@@ -21,10 +21,10 @@ def RunSteps(api):
   api.assertions.assertEqual(builder_config.id.name, "postsubmit-orchestrator")
 
   # Sanity check that the jsonpb was parsed.
-  children = builder_config.orchestrator.children
-  api.assertions.assertEqual(len(children), 2)
-  api.assertions.assertEqual(children[0], "amd64-generic-postsubmit")
-  api.assertions.assertEqual(children[1], "arm-generic-postsubmit")
+  child_specs = builder_config.orchestrator.child_specs
+  api.assertions.assertEqual(len(child_specs), 2)
+  api.assertions.assertEqual(child_specs[0].name, "amd64-generic-postsubmit")
+  api.assertions.assertEqual(child_specs[1].name, "arm-generic-postsubmit")
 
   api.assertions.assertFalse(
       api.cros_infra_config.should_run(BuilderConfig.NO_RUN))
