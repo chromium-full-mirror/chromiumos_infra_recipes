@@ -96,6 +96,17 @@
   },
   {
     "cmd": [
+      "chmod",
+      "400",
+      "[CLEANUP]/image-archive_tmp_2/image/id_rsa"
+    ],
+    "name": "setup vm.calibrate ssh key permissions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
       "8G",
@@ -134,17 +145,6 @@
     ],
     "infra_step": true,
     "name": "setup vm.launch image as vm",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "chmod",
-      "400",
-      "[CLEANUP]/image-archive_tmp_2/image/id_rsa"
-    ],
-    "name": "setup vm.calibrate ssh key permissions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

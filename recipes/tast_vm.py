@@ -77,33 +77,10 @@ def RunSteps(api, properties):
         '-b', vm_image_path, \
         qcow_image_path \
     ])
-    api.step('launch image as vm', [
-        '/usr/bin/qemu-system-x86_64', \
-        '-m', '8G', \
-        '-smp', '8', \
-        '-vga', 'virtio', \
-        '-daemonize', \
-        '-usbdevice', 'tablet', \
-        '-pidfile', str(kvm_pid_file), \
-        '-chardev', 'pipe,id=control_pipe,path={}'.format(
-            str(kvm_monitor_file)), \
-        '-serial', 'file:{}'.format(str(kvm_monitor_serial_file)), \
-        '-mon', 'chardev=control_pipe', \
-        '-cpu', 'SandyBridge,-invpcid,-tsc-deadline,check,vmx=on', \
-        '-device', 'virtio-net,netdev=eth0', \
-        '-device', 'virtio-scsi-pci,id=scsi', \
-        '-device', 'virtio-rng', \
-        '-device', 'scsi-hd,drive=hd', \
-        '-drive',
-        'if=none,id=hd,file={},cache=unsafe,format=qcow2'.format(
-            qcow_image_path), \
-        '-netdev', 'user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22', \
-        '-enable-kvm', \
-        '-display', 'none'
-    ], infra_step=True)
     api.step('calibrate ssh key permissions',
              ['chmod', '400', private_key_path])
-    _test_ssh_conn(api, private_key_path)
+    _launch_vm(api, qcow_image_path, kvm_pid_file, kvm_monitor_file,
+               kvm_monitor_serial_file, private_key_path)
 
   with api.step.nest('run tast tests'):
     test_results_dir = api.path.mkdtemp(prefix='test-results')
@@ -133,7 +110,7 @@ def RunSteps(api, properties):
     api.tast_results.archive_results(test_results_dir, GS_BUCKET)
     failures = api.tast_results.get_failures(task_result)
     api.easy.set_property_step('task_result', jsonpb.MessageToDict(task_result))
-    api.step('kill vm', ['pkill', '-F', kvm_pid_file])
+    _kill_vm(api, kvm_pid_file)
     api.tast_results.record_logs(SYS_LOG_DIR)
     with api.step.nest('qemu debug') as step:
       step.presentation.logs['kvm.monitor'] = api.file.read_text(
@@ -144,6 +121,44 @@ def RunSteps(api, properties):
   api.tast_results.print_results(task_result, test_results_dir)
 
   return api.failures.aggregate_failures(failures)
+
+
+@exponential_retry(retries=2)
+def _launch_vm(api, qcow_image_path, kvm_pid_file, kvm_monitor_file,
+               kvm_monitor_serial_file, private_key_path):
+  api.step('launch image as vm', [
+      '/usr/bin/qemu-system-x86_64', \
+      '-m', '8G', \
+      '-smp', '8', \
+      '-vga', 'virtio', \
+      '-daemonize', \
+      '-usbdevice', 'tablet', \
+      '-pidfile', str(kvm_pid_file), \
+      '-chardev', 'pipe,id=control_pipe,path={}'.format(
+          str(kvm_monitor_file)), \
+      '-serial', 'file:{}'.format(str(kvm_monitor_serial_file)), \
+      '-mon', 'chardev=control_pipe', \
+      '-cpu', 'SandyBridge,-invpcid,-tsc-deadline,check,vmx=on', \
+      '-device', 'virtio-net,netdev=eth0', \
+      '-device', 'virtio-scsi-pci,id=scsi', \
+      '-device', 'virtio-rng', \
+      '-device', 'scsi-hd,drive=hd', \
+      '-drive',
+      'if=none,id=hd,file={},cache=unsafe,format=qcow2'.format(
+          qcow_image_path), \
+      '-netdev', 'user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22', \
+      '-enable-kvm', \
+      '-display', 'none'
+  ], infra_step=True)
+  try:
+    _test_ssh_conn(api, private_key_path)
+  except api.step.StepFailure:  # pragma: nocover
+    _kill_vm(api, kvm_pid_file)
+    raise
+
+
+def _kill_vm(api, kvm_pid_file):
+  api.step('kill vm', ['pkill', '-F', kvm_pid_file])
 
 
 @exponential_retry(retries=3)
