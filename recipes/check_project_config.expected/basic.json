@@ -199,6 +199,7 @@
       "text"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
     "name": "sync to snapshot.fetch :snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -257,6 +258,19 @@
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/project/testproject|src/project/testproject|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "[START_DIR]/chromiumos_workspace/src/config/checker/checker.py",
+      "--program",
+      "src/program/testprogram",
+      "--project",
+      "src/project/testproject"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "Check constraints"
   },
   {
     "name": "$result"

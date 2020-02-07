@@ -18,7 +18,10 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/properties',
+    'recipe_engine/path',
+    'recipe_engine/python',
     'recipe_engine/raw_io',
+    'recipe_engine/step',
     'cros_source',
     'iterutils',
     'repo',
@@ -50,7 +53,9 @@ def RunSteps(api, properties):
   if not properties.manifest_groups:
     raise ValueError('At least one manifest group must be specified.')
 
-  with checkout_manifest_groups(api, properties):
+  # Do work in a context with manifest groups checked out. Most steps are infra
+  # steps, so make this the default. Non-infra steps specify this explicitly.
+  with api.context(infra_steps=True), checkout_manifest_groups(api, properties):
     project_infos = api.repo.project_infos()
 
     chromiumos_config_info = api.iterutils.get_one(
@@ -64,6 +69,30 @@ def RunSteps(api, properties):
     project_info = api.iterutils.get_one(
         project_infos, lambda info: info.name.startswith('chromeos/project'),
         "Expected exactly one project repo.")
+
+    checker_path = api.context.cwd.join(chromiumos_config_info.path,
+                                        'checker/checker.py')
+
+    # mock_add_paths marks that the path exists for tests. The exists call
+    # doesn't actually perform a Recipes step, it just calls the standard
+    # Python os.exists (and in testing it calls a fake implementation of
+    # os.exists). Thus, this mocking can't be done in GenTests. This also means
+    # there isn't a good way to create a test case that triggers the failure
+    # case.
+    api.path.mock_add_paths(checker_path)
+    if not api.path.exists(checker_path):  #pragma: nocover
+      raise api.step.InfraFailure(
+          'Checker not found. Expected at %s' % checker_path)
+
+    # Call checker with checked out program and project. Note that a failure
+    # here is not considered an infra failure. infra_steps set in context takes
+    # precedent over infra_step passed to api.step, so need to create a new
+    # context here.
+    with api.context(infra_steps=False):
+      checker_args = [
+          '--program', program_info.path, '--project', project_info.path
+      ]
+      api.python('Check constraints', checker_path, checker_args)
 
 
 def GenTests(api):
@@ -110,5 +139,14 @@ def GenTests(api):
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
                        ".*Expected exactly one 'chromiumos/config' repo.*"),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'checker_failed',
+      properties(api),
+      project_info_step_data(api),
+      api.step_data('Check constraints', retcode=1),
+      api.post_process(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
   )

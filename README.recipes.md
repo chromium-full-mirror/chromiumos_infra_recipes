@@ -3281,13 +3281,13 @@ Recipe for generating ChromeOS cache payloads.
 &mdash; **def [RunSteps](/recipes/cache_generate.py#21)(api):**
 ### *recipes* / [check\_project\_config](/recipes/check_project_config.py)
 
-[DEPS](/recipes/check_project_config.py#17): [cros\_source](#recipe_modules-cros_source), [iterutils](#recipe_modules-iterutils), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipes/check_project_config.py#17): [cros\_source](#recipe_modules-cros_source), [iterutils](#recipe_modules-iterutils), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Checks a project conforms to its program's constraints.
 
-&mdash; **def [RunSteps](/recipes/check_project_config.py#49)(api, properties):**
+&mdash; **def [RunSteps](/recipes/check_project_config.py#52)(api, properties):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_manifest\_groups](/recipes/check_project_config.py#28)(api, properties):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_manifest\_groups](/recipes/check_project_config.py#31)(api, properties):**
 
 Returns a context with manifest groups checked out to cwd.
 
