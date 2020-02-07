@@ -54,17 +54,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
     This is the cached version of source, usually updated once at the beginning
     of a build and then mounted into the master and/or workspace paths.
     """
-    return self.m.path['start_dir'].join('chromiumos')
-
-  @property
-  def master_path(self):
-    """The "master" checkout path.
-
-    This is a recent version of the source which should not be modified (apart
-    from incidental changes like caching) during a build. "Top of tree" logic
-    will run from this checkout.
-    """
-    return self.m.path['start_dir'].join('chromiumos_master')
+    return self.m.path['cache'].join('chromiumos')
 
   @property
   def workspace_path(self):
@@ -97,14 +87,12 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
   @contextlib.contextmanager
   def checkout_overlays_context(self):
-    """Returns a context where master and workspace overlays are mounted."""
+    """Returns a context where chromiumos and workspace overlays are mounted."""
     with self.m.overlayfs.cleanup_context():
       self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
                              persist=True)
-      self.m.overlayfs.mount('master', self.cache_path, self.master_path)
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
       self.m.path.mock_add_paths(self.cache_path.join('.repo'))
-      self.m.path.mock_add_paths(self.master_path.join('.repo'))
       self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
       yield
 

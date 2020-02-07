@@ -24,7 +24,7 @@ from PB.recipe_modules.chromeos.cros_source.examples.test import (
 PROPERTIES = TestInputProperties
 
 def RunSteps(api, properties):
-  _ = api.cros_source.master_path
+  _ = api.cros_source.workspace_path
 
   try:
     api.cros_source.find_project_path('fake_project', 'fake_branch')

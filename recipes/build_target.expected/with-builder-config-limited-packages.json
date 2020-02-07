@@ -138,7 +138,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "name": "mount overlay chromiumos.create mount path",
@@ -156,86 +156,10 @@
       "--options",
       "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
       "overlay",
-      "[START_DIR]/chromiumos"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "name": "mount overlay chromiumos.mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "mount overlay master"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/upperdir/master"
-    ],
-    "infra_step": true,
-    "name": "mount overlay master.create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/workdir/master"
-    ],
-    "infra_step": true,
-    "name": "mount overlay master.create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "infra_step": true,
-    "name": "mount overlay master.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=[START_DIR]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/master,workdir=[CLEANUP]/overlayfs/workdir/master,x-chromeos-overlay.name=master",
-      "overlay",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "infra_step": true,
-    "name": "mount overlay master.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -306,7 +230,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[START_DIR]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[START_DIR]/chromiumos_workspace"
     ],
@@ -330,7 +254,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos"
+      "[CACHE]/chromiumos"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -347,9 +271,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos/.repo/manifests"
+      "[CACHE]/chromiumos/.repo/manifests"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests",
     "~followup_annotations": [
@@ -364,9 +288,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos/.repo/manifests.git"
+      "[CACHE]/chromiumos/.repo/manifests.git"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests.git",
     "~followup_annotations": [
@@ -382,7 +306,7 @@
       "--groups",
       "all"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
     "~followup_annotations": [
@@ -400,7 +324,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -424,7 +348,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.clear git locks",
     "~followup_annotations": [
@@ -451,7 +375,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
@@ -471,7 +395,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
@@ -490,7 +414,7 @@
       "--no-tags",
       "--optimized-fetch"
     ],
-    "cwd": "[START_DIR]/chromiumos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.repo sync",
     "timeout": 3600,
@@ -3070,22 +2994,10 @@
     "cmd": [
       "sudo",
       "umount",
-      "[START_DIR]/chromiumos"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay chromiumos",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "umount",
-      "[START_DIR]/chromiumos_master"
-    ],
-    "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay master",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
