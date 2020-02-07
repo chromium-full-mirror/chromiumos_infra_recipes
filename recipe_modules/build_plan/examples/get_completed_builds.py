@@ -7,6 +7,8 @@
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+from PB.chromiumos.builder_config import BuilderConfig
+
 from google.protobuf import timestamp_pb2
 
 DEPS = [
@@ -17,7 +19,10 @@ DEPS = [
 
 
 def RunSteps(api):
-  result = api.build_plan.get_completed_builds(['atlas-cq', 'amd64-generic-cq'])
+  result = api.build_plan.get_completed_builds([
+      BuilderConfig.Orchestrator.ChildSpec(name = 'atlas-cq'),
+      BuilderConfig.Orchestrator.ChildSpec(name = 'amd64-generic-cq'),
+  ])
   api.assertions.assertEqual(len(result), 1)
   api.assertions.assertEqual(result[0].builder.builder, 'amd64-generic-cq')
 

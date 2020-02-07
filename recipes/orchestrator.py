@@ -102,10 +102,10 @@ def RunSteps(api, properties):
         else:
           step.presentation.step_text = 'found no inflight run'
 
-  child_builders = []
+  child_specs = []
   with api.step.nest('run builds') as step:
-    child_builders = get_child_builders(api)
-    completed_builds = filter_schedule_wait_builds(api, step, child_builders,
+    child_specs = get_child_specs(api)
+    completed_builds = filter_schedule_wait_builds(api, step, child_specs,
                                                    properties.enable_history,
                                                    snapshot, gerrit_changes)
 
@@ -274,24 +274,26 @@ def schedule_wait_follow_on(api, parent_step, config,
   return completed_builds
 
 
-def get_child_builders(api):
-  """Returns the child builders that should be run for this invocation.
+def get_child_specs(api):
+  """Returns the child specs that should be run for this invocation.
 
   Args:
     api (RecipeApi): See RunSteps.
 
   Returns:
-    list[string] of child builder names to run
+    list[ChildSpec] of children to run
   """
   child_builders = api.cros_bisect.get_test_child_builders()
   if child_builders:
-    return child_builders
-  child_specs = api.cros_infra_config.get_builder_config(
+    return [BuilderConfig.Orchestrator.ChildSpec(
+        name = cb,
+        collect_handling = BuilderConfig.Orchestrator.ChildSpec.COLLECT,
+    ) for cb in child_builders]
+  return api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder).orchestrator.child_specs
-  return [cs.name for cs in child_specs]
 
 
-def filter_schedule_wait_builds(api, parent_step, child_builders,
+def filter_schedule_wait_builds(api, parent_step, child_specs,
                                 enable_history, snapshot, gerrit_changes):
   """Find the builds you need, filter those already started, run, and collect.
 
@@ -300,7 +302,7 @@ def filter_schedule_wait_builds(api, parent_step, child_builders,
   Args:
     api (RecipeApi): See RunSteps documentation.
     parent_step (Step): the calling step, to be used for presentation purposes.
-    child_builders (list(string)): A list of builders.
+    child_specs (list(ChildSpec)): A list of child specs.
     enable_history (bool): Enables history lookup in cq orchestrator.
     snapshot (GitilesCommit): Start ref to be supplied to the child builds.
     gerrit_changes list(GerritChange): List of patches in the order that they
@@ -309,7 +311,7 @@ def filter_schedule_wait_builds(api, parent_step, child_builders,
   Returns: A list of build_pb2.Build objects with build results.
   """
   completed_builds, existing_builds, new_build_requests = api.build_plan.get_build_plan(
-      child_builders=child_builders, enable_history=enable_history,
+      child_specs=child_specs, enable_history=enable_history,
       gerrit_changes=gerrit_changes, snapshot=snapshot)
   parent_step.presentation.step_text = ('{} new, {} recycled'.format(
       len(new_build_requests),
@@ -319,17 +321,49 @@ def filter_schedule_wait_builds(api, parent_step, child_builders,
   existing_builds += api.buildbucket.schedule(
       new_build_requests, url_title_fn=api.naming.get_build_title)
 
+  child_specs_dict = {cs.name:cs for cs in child_specs}
+  child_targets_dict = {cs.name[:cs.name.rfind('-')]:cs for cs in child_specs}
+  collect_builds = [b for b in existing_builds
+                    if should_collect(b, child_specs_dict, child_targets_dict)]
+
   # collect all existing builds, add to completed builds
   try:
     completed_builds += api.buildbucket.collect_builds(
-        [b.id for b in existing_builds], timeout=60 * 60 * 36,
+        [b.id for b in collect_builds], timeout=60 * 60 * 36,
         step_name='collect', url_title_fn=api.naming.get_build_title).values()
   except api.step.StepFailure:  #pragma: no cover
     completed_builds += api.buildbucket.get_multi(
-        [b.id for b in existing_builds], step_name='get',
+        [b.id for b in collect_builds], step_name='get',
         url_title_fn=api.naming.get_build_title).values()
 
   return completed_builds
+
+
+def should_collect(build, child_specs_dict, child_targets_dict):
+  """Returns whether the orchestrator should collect the build.
+
+  Args:
+    build (): the build to check whether to collect.
+    child_specs_dict (dict): mapping of builder name to ChildSpec.
+    child_targets_dict (dict): fuzzy mapping of builder target to to ChildSpec.
+      Fuzzy in the sense that it just chops off from the last '-' to the end
+      of the string. Intended to pick up the *-snapshot cases. See more below.
+
+  Returns: A bool whether to collect the build.
+  """
+  builder_name = build.builder.builder
+  child_spec = child_specs_dict.get(builder_name)
+  if not child_spec:
+    # Missed lookup, the existing build name was not a name in child_specs.
+    # The usual case would be existing build has a *-snapshot name but the
+    # orchestrator's child has a *-postsubmit name.
+    # TODO(crbug/991996): Refactor: use something other than string manip.
+    child_spec = child_targets_dict.get(builder_name[:builder_name.rfind('-')])
+  if not child_spec:  #pragma: no cover
+    # Missed lookup even after fallback for *-snapshot.
+    return True
+  return (child_spec.collect_handling
+          != BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT)
 
 
 def validate_refs(refs):

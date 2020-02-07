@@ -20,9 +20,8 @@ DEPS = [
 def RunSteps(api):
   child_specs = api.cros_infra_config.get_builder_config(
       'cq-orchestrator').orchestrator.child_specs
-  child_builders = [cs.name for cs in child_specs]
   completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
-      child_builders, True, [common_pb2.GerritChange(change=1234)],
+      child_specs, True, [common_pb2.GerritChange(change=1234)],
       common_pb2.GitilesCommit())
   api.assertions.assertEqual(existing_builds, [])
   api.assertions.assertEqual(len(completed_builds), 1)

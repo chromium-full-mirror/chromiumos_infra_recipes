@@ -344,18 +344,18 @@ Returns:
 
 [DEPS](/recipe_modules/build_plan/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to plan the builds to be launched.
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#16)(self, child_builders, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#18)(self, child_specs, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
 This will be split into specialized functions for cq, release, others.
 
 Args:
-  child_builders (list[string]): List of builder names of the child
+  child_specs (list[ChildSpec]): List of child specs of the child
     builders.
   enable_history (bool): Enables history lookup in the orchestrator.
   gerrit_changes list(GerritChange): List of patches in the order that they
@@ -368,21 +368,20 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#139)(self, cq_orch_children):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#146)(self, child_specs):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
 Args:
   api (RecipeApi): See RunSteps documentation.
-  cq_orch_children list(str): List of child builders of cq-orchestrator.
-      e.g. [u'arkham-cq', u'reef-cq', ...]
+  child_specs list(ChildSpec): List of child specs of cq-orchestrator.
 
 Returns:
   A list of build_pb2.Build objects corresponding to the
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#181)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#188)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3221,9 +3220,9 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#20)(api):**
 ### *recipes* / [build\_plan:examples/get\_completed\_builds](/recipe_modules/build_plan/examples/get_completed_builds.py)
 
-[DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#12): [build\_plan](#recipe_modules-build_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#14): [build\_plan](#recipe_modules-build_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#21)(api):**
 ### *recipes* / [build\_plan:examples/postsubmit\_build\_plan](/recipe_modules/build_plan/examples/postsubmit_build_plan.py)
 
 [DEPS](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -3829,7 +3828,7 @@ All builders run against the same source tree.
 
 &mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#174)(api, config):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#294)(api, parent_step, child_builders, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#296)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3838,7 +3837,7 @@ Most of the heavy lifting is done in get_build_plan.
 Args:
   api (RecipeApi): See RunSteps documentation.
   parent_step (Step): the calling step, to be used for presentation purposes.
-  child_builders (list(string)): A list of builders.
+  child_specs (list(ChildSpec)): A list of child specs.
   enable_history (bool): Enables history lookup in cq orchestrator.
   snapshot (GitilesCommit): Start ref to be supplied to the child builds.
   gerrit_changes list(GerritChange): List of patches in the order that they
@@ -3846,17 +3845,17 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_builders](/recipes/orchestrator.py#277)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#277)(api):**
 
-Returns the child builders that should be run for this invocation.
+Returns the child specs that should be run for this invocation.
 
 Args:
   api (RecipeApi): See RunSteps.
 
 Returns:
-  list[string] of child builder names to run
+  list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#360)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#394)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3882,7 +3881,20 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#349)(ref, name):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#342)(build, child_specs_dict, child_targets_dict):**
+
+Returns whether the orchestrator should collect the build.
+
+Args:
+  build (): the build to check whether to collect.
+  child_specs_dict (dict): mapping of builder name to ChildSpec.
+  child_targets_dict (dict): fuzzy mapping of builder target to to ChildSpec.
+    Fuzzy in the sense that it just chops off from the last '-' to the end
+    of the string. Intended to pick up the *-snapshot cases. See more below.
+
+Returns: A bool whether to collect the build.
+
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#383)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3890,7 +3902,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#335)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#369)(refs):**
 
 Assert the given refs start with refs/heads.
 

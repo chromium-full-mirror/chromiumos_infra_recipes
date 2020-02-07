@@ -5,6 +5,8 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+from PB.chromiumos.builder_config import BuilderConfig
+
 from recipe_engine import recipe_api
 from collections import defaultdict
 from datetime import datetime
@@ -13,14 +15,14 @@ from datetime import datetime
 class BuildPlanApi(recipe_api.RecipeApi):
   """A module to plan the builds to be launched."""
 
-  def get_build_plan(self, child_builders, enable_history, gerrit_changes,
+  def get_build_plan(self, child_specs, enable_history, gerrit_changes,
                      snapshot):
     """Return a three-tuple of builds, completed, existing, and needed.
 
     This will be split into specialized functions for cq, release, others.
 
     Args:
-      child_builders (list[string]): List of builder names of the child
+      child_specs (list[ChildSpec]): List of child specs of the child
         builders.
       enable_history (bool): Enables history lookup in the orchestrator.
       gerrit_changes list(GerritChange): List of patches in the order that they
@@ -38,7 +40,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     is_retry = False
 
     builder_configs = [
-        self.m.cros_infra_config.get_builder_config(b) for b in child_builders
+        self.m.cros_infra_config.get_builder_config(b.name) for b in child_specs
     ]
     necessary_builders = self.m.cros_relevance.get_necessary_builders(
         builder_configs, gerrit_changes, snapshot, test_builder_ids=[
@@ -51,7 +53,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           is_retry = len(
               self.m.cros_history.get_matching_builds(
                   self.m.buildbucket.build)) > 1
-          completed_builds = self.get_completed_builds(child_builders)
+          completed_builds = self.get_completed_builds(child_specs)
           step.presentation.step_text = ('found {} build{} to recycle'.format(
               len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
@@ -74,25 +76,26 @@ class BuildPlanApi(recipe_api.RecipeApi):
     filtered_snapshot_builds = []
 
     with self.m.step.nest('filter builds') as step:
-      for child in child_builders:
+      for child_spec in child_specs:
         child_builder_config = self.m.cros_infra_config.get_builder_config(
-            child)
+            child_spec.name)
         critical = child_builder_config.general.critical.value
 
         # now we have a list of build names such as ['buddy-postsubmit', ...]
         # whereas snapshot_builds and completed_builds might be postfixed
         # with -snapshot. Use this to filter out.
         # TODO(crbug/991996): Refactor: use something other than string manip.
-        child_target = child[:child.rfind('-')]
+        child_target = child_spec.name[:child_spec.name.rfind('-')]
         # i.e. wizpig-snapshot -> wizpig
         # No need to retry previously-passed builds.
-        if child in completed_builders:
+        if child_spec.name in completed_builders:
           filter_log.append('{} already passed'.format(child_target))
           continue
 
         # Filter out builds not in the build plan.
-        if child not in necessary_builders:
-          filter_log.append('{} build is not needed for changes'.format(child))
+        if child_spec.name not in necessary_builders:
+          filter_log.append('{} build is not needed for changes'
+                            .format(child_spec.name))
           continue
 
         # We've already found an existing build, we'll just wait on it later.
@@ -106,7 +109,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # Don't retry non-critical builds.
         if not critical and is_retry:
           filter_log.append(
-              '{} is non-critical and this is a CQ rerun'.format(child))
+              '{} is non-critical and this is a CQ rerun'
+              .format(child_spec.name))
           continue
 
         tags = self.m.cros_tags.make_schedule_tags(snapshot)
@@ -118,31 +122,33 @@ class BuildPlanApi(recipe_api.RecipeApi):
         bucket = self.m.buildbucket.build.builder.bucket
         if bucket == 'bisect':
           bucket = 'postsubmit'
-
-        # Don't use swarming_parent_run_id here yet, as child builder bots'
-        # caches can be corrupted when their builds are canceled mid-sync.
+        parent_run_id = None
+        if (child_spec.collect_handling !=
+            BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT):
+          # If collect handling not set to NO_COLLECT, the child will be
+          # terminated if the orchestrator dies and the child is not finished.
+          parent_run_id = self.m.swarming.task_id
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
-                gitiles_commit=snapshot, builder=child, bucket=bucket,
+                gitiles_commit=snapshot, builder=child_spec.name, bucket=bucket,
                 gerrit_changes=gerrit_changes, critical=critical,
                 properties=self.m.cq.props_for_child_build, tags=tags,
-                swarming_parent_run_id=self.m.swarming.task_id))
+                swarming_parent_run_id=parent_run_id))
       step.presentation.logs['filter log'] = filter_log
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.
       step.presentation.step_text = ('need {} new build{} (filtered {})'.format(
           len(new_build_requests), '' if len(new_build_requests) == 1 else 's',
-          len(child_builders) - len(new_build_requests)))
+          len(child_specs) - len(new_build_requests)))
 
     return completed_builds, filtered_snapshot_builds, new_build_requests
 
-  def get_completed_builds(self, cq_orch_children):
+  def get_completed_builds(self, child_specs):
     """Get the list of previously passed child builds with criticality refreshed.
 
     Args:
       api (RecipeApi): See RunSteps documentation.
-      cq_orch_children list(str): List of child builders of cq-orchestrator.
-          e.g. [u'arkham-cq', u'reef-cq', ...]
+      child_specs list(ChildSpec): List of child specs of cq-orchestrator.
 
     Returns:
       A list of build_pb2.Build objects corresponding to the
@@ -156,7 +162,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
       for build in passed_builds:
         # Filter out non-child builds like vm_test, dry run orchestrator or
         # hw_tests in the future.
-        if build.builder.builder not in cq_orch_children:  #pragma: no cover
+        child_builders = [cs.name for cs in child_specs]
+        if build.builder.builder not in child_builders:  #pragma: no cover
           continue
 
         builder_config = self.m.cros_infra_config.get_builder_config(
