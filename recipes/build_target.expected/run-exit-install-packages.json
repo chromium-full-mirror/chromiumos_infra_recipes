@@ -2456,15 +2456,6 @@
   },
   {
     "cmd": [],
-    "name": "install packages.process_goma_artifacts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
-      "@@@STEP_LOG_END@NoGomaArtifacts@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "clean up SDK chroot"
   },
   {

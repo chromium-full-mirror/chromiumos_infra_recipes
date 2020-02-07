@@ -293,9 +293,11 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           install_pkg_request, response_lambda=_failed_pkg_names)
 
       # Process goma response to upload logs, stats, and counterz.
-      api.goma.process_artifacts(response,
-                                 install_pkg_request.goma_config.log_dir.dir,
-                                 build_target.name)
+      # TODO(crbug.com/1050042): Re-enable goma artifacts processing when bucket
+      # creation issue is resolved for all builders.
+      # api.goma.process_artifacts(response,
+      #                            install_pkg_request.goma_config.log_dir.dir,
+      #                            build_target.name)
 
       api.cros_bisect.set_compile_failures(response.failed_packages)
       api.failures.set_failed_packages(ip_step, response.failed_packages)
