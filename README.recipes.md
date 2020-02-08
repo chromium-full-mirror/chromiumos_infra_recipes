@@ -931,7 +931,7 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#175)(cls, builds):**
+&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#177)(cls, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -942,11 +942,11 @@ Args:
 
 Returns: a dict(str, build_pb2.Build) of build_target names.
 
-&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#167)(cls, build):**
+&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#169)(cls, build):**
 
 Take a build_pb2 and get its build_target name or return None.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#146)(self, build, statuses=None, start_build_id=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#148)(self, build, statuses=None, start_build_id=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -977,17 +977,19 @@ Returns:
 
 &mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#108)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
-Get *-snapshot builds with the given snapshot.
+Get builds ran at given snapshot and additional optional filtering.
 
 Args:
   snapshot (GitilesCommit): Snapshot to search on.
-  builder_list (set[str]): List of builder names to filter by.
+  builder_list (set[str]): List of builder names to filter by. If
+    falsey, no name filtering is performed.
   statuses ([common_pb2.Status]): The statuses of snapshots to return.
+    If falsey, no status filtering is performed.
   patches ([GerritChange]): Patches applied to snapshot to search on.
+    If falsey, no patch filtering is performed.
 
 Returns:
-  list[Build] *-snapshot builds with the same snapshot filtered
-  by the builder_list.
+  list[Build] builds with the same snapshot filtered by the builder_list.
 
 &mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#94)(self, tests):**
 

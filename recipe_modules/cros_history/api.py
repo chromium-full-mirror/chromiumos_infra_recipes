@@ -107,17 +107,19 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
   def get_snapshot_builds(self, snapshot, builder_list=None, statuses=None,
                           patches=None):
-    """Get *-snapshot builds with the given snapshot.
+    """Get builds ran at given snapshot and additional optional filtering.
 
     Args:
       snapshot (GitilesCommit): Snapshot to search on.
-      builder_list (set[str]): List of builder names to filter by.
+      builder_list (set[str]): List of builder names to filter by. If
+        falsy, no name filtering is performed.
       statuses ([common_pb2.Status]): The statuses of snapshots to return.
+        If falsy, no status filtering is performed.
       patches ([GerritChange]): Patches applied to snapshot to search on.
+        If falsy, no patch filtering is performed.
 
     Returns:
-      list[Build] *-snapshot builds with the same snapshot filtered
-      by the builder_list.
+      list[Build] builds with the same snapshot and additional filtering.
     """
     with self.m.step.nest('get snapshot builds') as step:
       project = self.m.buildbucket.build.builder.project
