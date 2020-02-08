@@ -482,17 +482,17 @@ def GenTests(api):
   # we have three here to properly exercise "prioritize_builds"
   existing_annealing_builds = [
       build_pb2.Build(id=8922054662172514002, builder={
-          'builder': 'amd64-generic-cq'
+          'builder': 'amd64-generic-snapshot'
       }, status=common_pb2.STARTED, input=input_proto(None, 'amd64-generic')),
       build_pb2.Build(id=8922054662172514003, builder={
-          'builder': 'amd64-generic-cq'
+          'builder': 'amd64-generic-snapshot'
       }, status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic')),
       build_pb2.Build(id=8922054662172514005, builder={
-          'builder': 'amd64-generic-cq'
+          'builder': 'amd64-generic-snapshot'
       }, status=common_pb2.SUCCESS,
                       input=dict(properties=struct_pb2.Struct())),  # no bt
       build_pb2.Build(id=8922054662172514004, builder={
-          'builder': 'amd64-generic-cq'
+          'builder': 'amd64-generic-snapshot'
       }, status=common_pb2.SCHEDULED, input=input_proto(None, 'amd64-generic')),
   ]
 
@@ -581,8 +581,8 @@ def GenTests(api):
              step_name='run tests.collect tests.collect moblab vm tests'))
 
   yield (api.test('joinable_existing_annealing_builds') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True) +  #
+         postsubmit_orchestrator_build() +  #
+         # api.cq(full_run=True) +  #
          api.properties(enable_history=True) +  #
          api.buildbucket.simulated_search_results(
              existing_annealing_builds, 'run builds.get snapshot builds'
