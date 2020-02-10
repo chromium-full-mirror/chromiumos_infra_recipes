@@ -70,8 +70,12 @@ class GomaApi(recipe_api.RecipeApi):
           gs_path = '%s/%s' % (
               today.strftime('%Y/%m/%d'), build_target_name)
           gs_bucket = 'chrome-goma-log'
-          self.m.gsutil.upload("*.gz", gs_bucket, gs_path)
           step.presentation.logs['gs_path'] = gs_path
+          num_logs_uploaded = 0
+          for log_file in install_pkg_response.goma_artifacts.log_files:
+            self.m.gsutil.upload(log_file, gs_bucket, gs_path)
+            num_logs_uploaded += 1
+          step.presentation.logs['num_logs_uploaded'] = str(num_logs_uploaded)
           return gs_path
       else:
         step.presentation.logs['NoGomaArtifacts'] = [

@@ -1,0 +1,135 @@
+[
+  {
+    "cmd": [],
+    "name": "ensure goma client"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/goma",
+      "-ensure-file",
+      "infra_internal/goma/client/${platform} latest",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "ensure goma client.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra_internal/goma/client/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process_goma_artifacts",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
+      "@@@STEP_LOG_END@NoGomaArtifacts@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process_goma_artifacts (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@gs_path@2012/05/14/build_target@@@",
+      "@@@STEP_LOG_END@gs_path@@@",
+      "@@@STEP_LOG_LINE@num_logs_uploaded@4@@@",
+      "@@@STEP_LOG_END@num_logs_uploaded@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
+      "gs://chrome-goma-log/2012/05/14/build_target"
+    ],
+    "cwd": "[CLEANUP]/goma-logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_goma_artifacts (2).gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/build_target@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
+      "gs://chrome-goma-log/2012/05/14/build_target"
+    ],
+    "cwd": "[CLEANUP]/goma-logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_goma_artifacts (2).gsutil upload (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/build_target@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
+      "gs://chrome-goma-log/2012/05/14/build_target"
+    ],
+    "cwd": "[CLEANUP]/goma-logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_goma_artifacts (2).gsutil upload (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/build_target@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz",
+      "gs://chrome-goma-log/2012/05/14/build_target"
+    ],
+    "cwd": "[CLEANUP]/goma-logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_goma_artifacts (2).gsutil upload (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/build_target@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
