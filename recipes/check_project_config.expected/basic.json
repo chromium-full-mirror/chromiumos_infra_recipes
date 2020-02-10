@@ -183,6 +183,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "apply patch sets"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -192,8 +196,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "read deploy_cipd.json",
+    "name": "apply patch sets.read deploy_cipd.json",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
@@ -216,8 +221,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "ensure_installed",
+    "name": "apply patch sets.ensure_installed",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -237,9 +243,10 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "gerrit-fetch-changes",
+    "name": "apply patch sets.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_files\": false}",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -285,7 +292,10 @@
   },
   {
     "cmd": [],
-    "name": "apply gerrit patch sets"
+    "name": "apply patch sets.apply gerrit patch sets",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -297,9 +307,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "apply gerrit patch sets.repo forall",
+    "name": "apply patch sets.apply gerrit patch sets.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -313,9 +323,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply gerrit patch sets.git fetch",
+    "name": "apply patch sets.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -326,9 +336,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply gerrit patch sets.git rev-parse",
+    "name": "apply patch sets.apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -341,9 +351,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply gerrit patch sets.git merge",
+    "name": "apply patch sets.apply gerrit patch sets.git merge",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -354,10 +364,14 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply gerrit patch sets.git rev-parse (2)",
+    "name": "apply patch sets.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "gather project info"
   },
   {
     "cmd": [
@@ -368,8 +382,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "repo forall",
+    "name": "gather project info.repo forall",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromiumos/config|src/config|cros|refs/heads/master@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/testprogram|src/program/testprogram|cros|refs/heads/master@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/project/testproject|src/project/testproject|cros|refs/heads/master@@@",
@@ -387,7 +402,7 @@
       "src/project/testproject"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "Check constraints"
+    "name": "check constraints"
   },
   {
     "name": "$result"

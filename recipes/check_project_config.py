@@ -46,9 +46,10 @@ def checkout_manifest_groups(api, properties):
       init_opts={'groups': properties.manifest_groups},
       cache_path_override=api.cros_source.workspace_path)
   with api.context(cwd=api.cros_source.workspace_path):
-    patch_sets = api.gerrit.fetch_patch_sets(
-        api.buildbucket.build.input.gerrit_changes)
-    api.cros_source.apply_gerrit_patch_sets(patch_sets)
+    with api.step.nest('apply patch sets'):
+      patch_sets = api.gerrit.fetch_patch_sets(
+          api.buildbucket.build.input.gerrit_changes)
+      api.cros_source.apply_gerrit_patch_sets(patch_sets)
     yield
 
 
@@ -62,7 +63,8 @@ def RunSteps(api, properties):
   # Do work in a context with manifest groups checked out. Most steps are infra
   # steps, so make this the default. Non-infra steps specify this explicitly.
   with api.context(infra_steps=True), checkout_manifest_groups(api, properties):
-    project_infos = api.repo.project_infos()
+    with api.step.nest('gather project info'):
+      project_infos = api.repo.project_infos()
 
     chromiumos_config_info = api.iterutils.get_one(
         project_infos, lambda info: info.name == 'chromiumos/config',
@@ -98,7 +100,7 @@ def RunSteps(api, properties):
       checker_args = [
           '--program', program_info.path, '--project', project_info.path
       ]
-      api.python('Check constraints', checker_path, checker_args)
+      api.python('check constraints', checker_path, checker_args)
 
 
 def GenTests(api):
@@ -119,7 +121,7 @@ def GenTests(api):
        repo, and a test program repo.
     """
     return api.override_step_data(
-        'repo forall',
+        'gather project info.repo forall',
         api.raw_io.stream_output('\n'.join(
             '%s|%s|cros|refs/heads/master' % (name, path) for name, path in [
                 ('chromiumos/config', 'src/config'),
@@ -170,7 +172,7 @@ def GenTests(api):
       properties(api),
       project_config_cq_build(api),
       project_info_step_data(api),
-      api.step_data('Check constraints', retcode=1),
+      api.step_data('check constraints', retcode=1),
       api.post_process(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
   )
