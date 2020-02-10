@@ -13,4 +13,8 @@ message GomaProperties {
   string client_version = 1;
   // GomaApproach to use, will use default if not set.
   .chromiumos.GomaConfig.GomaApproach goma_approach = 2;
+  // Disable 'gsutil cp' to upload goma logs.
+  bool disable_goma_logs_upload = 3;
+  // Disable uploading stats/counterz data.
+  bool disable_stats_counterz_upload = 4;
 }

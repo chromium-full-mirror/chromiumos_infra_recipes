@@ -3186,6 +3186,15 @@
   },
   {
     "cmd": [],
+    "name": "install packages.process_goma_artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
+      "@@@STEP_LOG_END@NoGomaArtifacts@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "read chromeos version",
     "~followup_annotations": [
       "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"

@@ -17,6 +17,7 @@ class GomaApi(recipe_api.RecipeApi):
     super(GomaApi, self).__init__(*args, **kwargs)
     self._client_version = properties.client_version or 'latest'
     self._goma_approach = properties.goma_approach or common.GomaConfig.DEFAULT
+    self._upload_goma_logs = not properties.disable_goma_logs_upload
 
   def initialize(self):
     self._goma_dir = None
@@ -52,6 +53,25 @@ class GomaApi(recipe_api.RecipeApi):
   def process_artifacts(self, install_pkg_response, goma_log_dir,
                         build_target_name):
     """Process goma artifacts, uploading to gsutil if they exist.
+
+    Args:
+      install_pkg_response (chromite.api.InstallPackagesResponse): May contain
+        goma artifacts.
+      goma_log_dir (str): Log directory that contains the goma artifacts.
+      build_target_name (str): Build target string.
+
+    Returns: (str) the gs_path used when writing to the goma GS bucket or None
+      if no artifacts were processed (either because none existed or the step
+      config disabled this step).
+    """
+    if not self._upload_goma_logs:
+      return None
+    return self.process_log_files(install_pkg_response, goma_log_dir,
+                                  build_target_name)
+
+  def process_log_files(self, install_pkg_response, goma_log_dir,
+                        build_target_name):
+    """Upload goma log files specified by the response with gsutil.
 
     Args:
       install_pkg_response (chromite.api.InstallPackagesResponse): May contain

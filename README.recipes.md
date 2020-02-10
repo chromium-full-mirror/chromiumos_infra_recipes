@@ -156,6 +156,7 @@
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
+  * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
   * [goma:examples/full](#recipes-goma_examples_full)
   * [goma:examples/with_goma_artifacts](#recipes-goma_examples_with_goma_artifacts)
   * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs)
@@ -2386,19 +2387,33 @@ API for working with goma.
 
 A module for working with goma.
 
-&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#37)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#38)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#24)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#25)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#29)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#30)(self):**
 
 Lazily fetches the goma client and returns its path.
 
-&mdash; **def [initialize](/recipe_modules/goma/api.py#21)(self):**
+&mdash; **def [initialize](/recipe_modules/goma/api.py#22)(self):**
 
-&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#52)(self, install_pkg_response, goma_log_dir, build_target_name):**
+&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#53)(self, install_pkg_response, goma_log_dir, build_target_name):**
 
 Process goma artifacts, uploading to gsutil if they exist.
+
+Args:
+  install_pkg_response (chromite.api.InstallPackagesResponse): May contain
+    goma artifacts.
+  goma_log_dir (str): Log directory that contains the goma artifacts.
+  build_target_name (str): Build target string.
+
+Returns: (str) the gs_path used when writing to the goma GS bucket or None
+  if no artifacts were processed (either because none existed or the step
+  config disabled this step).
+
+&mdash; **def [process\_log\_files](/recipe_modules/goma/api.py#72)(self, install_pkg_response, goma_log_dir, build_target_name):**
+
+Upload goma log files specified by the response with gsutil.
 
 Args:
   install_pkg_response (chromite.api.InstallPackagesResponse): May contain
@@ -3238,7 +3253,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#71)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#380)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#378)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3254,7 +3269,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#399)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#397)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3741,6 +3756,11 @@ Test git_footers calls.
 [DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles)
 
 &mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#11)(api):**
+### *recipes* / [goma:examples/disable\_upload](/recipe_modules/goma/examples/disable_upload.py)
+
+[DEPS](/recipe_modules/goma/examples/disable_upload.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/disable_upload.py#20)(api):**
 ### *recipes* / [goma:examples/full](/recipe_modules/goma/examples/full.py)
 
 [DEPS](/recipe_modules/goma/examples/full.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
