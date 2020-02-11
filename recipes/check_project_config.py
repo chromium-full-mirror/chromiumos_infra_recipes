@@ -78,6 +78,8 @@ def RunSteps(api, properties):
         project_infos, lambda info: info.name.startswith('chromeos/project'),
         "Expected exactly one project repo.")
 
+    generate_path = api.context.cwd.join(chromiumos_config_info.path,
+                                         'generate.sh')
     checker_path = api.context.cwd.join(chromiumos_config_info.path,
                                         'checker/checker.py')
 
@@ -87,10 +89,18 @@ def RunSteps(api, properties):
     # os.exists). Thus, this mocking can't be done in GenTests. This also means
     # there isn't a good way to create a test case that triggers the failure
     # case.
+    api.path.mock_add_paths(generate_path)
     api.path.mock_add_paths(checker_path)
+
+    if not api.path.exists(generate_path):  # pragma: nocover
+      raise api.step.InfraFailure(
+          'generate.sh not found. Expected at %s' % generate_path)
+
     if not api.path.exists(checker_path):  #pragma: nocover
       raise api.step.InfraFailure(
           'Checker not found. Expected at %s' % checker_path)
+
+    api.step('generate proto bindings', [generate_path])
 
     # Call checker with checked out program and project. Note that a failure
     # here is not considered an infra failure. infra_steps set in context takes

@@ -393,6 +393,14 @@
   },
   {
     "cmd": [
+      "[START_DIR]/chromiumos_workspace/src/config/generate.sh"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "generate proto bindings"
+  },
+  {
+    "cmd": [
       "python",
       "-u",
       "[START_DIR]/chromiumos_workspace/src/config/checker/checker.py",
