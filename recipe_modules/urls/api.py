@@ -100,6 +100,7 @@ class UrlsApi(recipe_api.RecipeApi):
     """
     if task_state.life_cycle in (TaskState.LIFE_CYCLE_CANCELLED,
                                  TaskState.LIFE_CYCLE_PENDING,
+                                 TaskState.LIFE_CYCLE_RUNNING,
                                  TaskState.LIFE_CYCLE_ABORTED,
                                  TaskState.LIFE_CYCLE_REJECTED):
       return ' (Did not run)'

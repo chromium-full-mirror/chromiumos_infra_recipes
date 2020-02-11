@@ -3058,7 +3058,7 @@ Args:
 Returns:
   str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#109)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#110)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
