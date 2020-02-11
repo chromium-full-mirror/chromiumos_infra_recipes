@@ -16,7 +16,7 @@ import os
 import json
 import ntpath
 
-PANTHEON_PREFIX = 'https://storage.cloud.google.com'
+PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 
 
 class TastResultsApi(recipe_api.RecipeApi):

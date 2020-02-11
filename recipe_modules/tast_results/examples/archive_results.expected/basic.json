@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "upload test-results",
     "~followup_annotations": [
-      "@@@STEP_LINK@tast-results@https://storage.cloud.google.com/chromeos-archive//0@@@"
+      "@@@STEP_LINK@tast-results@https://pantheon.corp.google.com/storage/browser/chromeos-archive//0@@@"
     ]
   },
   {
