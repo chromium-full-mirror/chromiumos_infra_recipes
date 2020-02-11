@@ -230,21 +230,10 @@
   },
   {
     "cmd": [],
-    "name": "run tast tests.archive and upload test-results",
+    "name": "run tast tests.upload test-results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
-    ],
-    "name": "run tast tests.archive and upload test-results.archive test results",
-    "stdin": "{\"archive_type\": \"tgz\", \"entries\": [{\"path\": \"[CLEANUP]/test-results_tmp_6\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive_tmp_7/tast_results.tgz\", \"root\": \"[CLEANUP]/test-results_tmp_6\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@tast-results@https://storage.cloud.google.com/chromeos-vmtest-archive//0@@@"
     ]
   },
   {
@@ -259,11 +248,12 @@
       "-m",
       "----",
       "rsync",
-      "[CLEANUP]/archive_tmp_7",
+      "-r",
+      "[CLEANUP]/test-results_tmp_6",
       "gs://chromeos-vmtest-archive//0"
     ],
     "infra_step": true,
-    "name": "run tast tests.archive and upload test-results.gsutil rsync",
+    "name": "run tast tests.upload test-results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -271,7 +261,7 @@
   },
   {
     "cmd": [],
-    "name": "run tast tests.archive and upload test-results.set archive_link",
+    "name": "run tast tests.upload test-results.set archive_link",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@archive_link@\"gs://chromeos-vmtest-archive//0\"@@@"
@@ -312,7 +302,7 @@
       "cp",
       "-rf",
       "/var/log",
-      "[CLEANUP]/var-log-dump_tmp_8"
+      "[CLEANUP]/var-log-dump_tmp_7"
     ],
     "name": "run tast tests.record logs.copy logs",
     "~followup_annotations": [
@@ -326,7 +316,7 @@
       "chmod",
       "-R",
       "777",
-      "[CLEANUP]/var-log-dump_tmp_8"
+      "[CLEANUP]/var-log-dump_tmp_7"
     ],
     "name": "run tast tests.record logs.loosen permission",
     "~followup_annotations": [
@@ -341,14 +331,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/var-log-dump_tmp_8",
+      "[CLEANUP]/var-log-dump_tmp_7",
       "--recursive"
     ],
     "infra_step": true,
     "name": "run tast tests.record logs.ls",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/var-log-dump_tmp_8/kernel.log@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/var-log-dump_tmp_7/kernel.log@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -360,7 +350,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/var-log-dump_tmp_8/kernel.log",
+      "[CLEANUP]/var-log-dump_tmp_7/kernel.log",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -430,69 +420,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@failure@@@",
-      "@@@STEP_LOG_LINE@dummy_file@@@@",
-      "@@@STEP_LOG_END@dummy_file@@@",
+      "@@@STEP_LINK@logs@https://storage.cloud.google.com/chromeos-vmtest-archive//0/arc.Boot@@@",
       "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "print results.arc.Boot.housekeeping",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "flatten_single_directories",
-      "[CLEANUP]/test-results_tmp_6/tests/arc.Boot"
-    ],
-    "infra_step": true,
-    "name": "print results.arc.Boot.housekeeping.flatten",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/test-results_tmp_6/tests/arc.Boot",
-      "--recursive"
-    ],
-    "infra_step": true,
-    "name": "print results.arc.Boot.housekeeping.ls",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test-results_tmp_6/tests/arc.Boot/dummy_file@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/test-results_tmp_6/tests/arc.Boot/dummy_file",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "print results.arc.Boot.housekeeping.reading file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@dummy_file@@@"
     ]
   },
   {

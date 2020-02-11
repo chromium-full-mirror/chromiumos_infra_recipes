@@ -107,7 +107,7 @@ def RunSteps(api, properties):
       ], ok_ret='any')
     task_result = api.tast_results.get_results(test_results_dir,
                                                properties.name)
-    api.tast_results.archive_results(test_results_dir, GS_BUCKET)
+    archive_url = api.tast_results.archive_results(test_results_dir, GS_BUCKET)
     failures = api.tast_results.get_failures(task_result)
     api.easy.set_property_step('task_result', jsonpb.MessageToDict(task_result))
     _kill_vm(api, kvm_pid_file)
@@ -118,7 +118,7 @@ def RunSteps(api, properties):
       step.presentation.logs['kvm.monitor.serial'] = api.file.read_text(
           'reading file', kvm_monitor_serial_file)
 
-  api.tast_results.print_results(task_result, test_results_dir)
+  api.tast_results.print_results(task_result, test_results_dir, archive_url)
 
   return api.failures.aggregate_failures(failures)
 

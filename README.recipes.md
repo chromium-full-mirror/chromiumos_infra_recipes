@@ -2986,7 +2986,10 @@ Args:
   test_results_path (Path): Path to test_results/.
   gs_bucket (str): GS bucket to upload to.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#92)(self, test_result):**
+Returns:
+  str, link to the archive on pantheon.
+
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#94)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -2996,7 +2999,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#117)(self, task_result):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#119)(self, task_result):**
 
 Convert TaskResult into api.failures.Failure objects.
 
@@ -3006,7 +3009,7 @@ Args:
 Returns:
   list(Failure) of individual tests.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#47)(self, test_results_path, suite_name):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#49)(self, test_results_path, suite_name):**
 
 Return the test results decoded from the results.json.
 
@@ -3019,15 +3022,17 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#140)(self, task_result, test_results_path):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#142)(self, task_result, test_results_path, archive_url):**
 
 Print results for the user.
 
 Args:
   task_result(TaskResult): result of the run.
-  test_results_path (Path): Path to test_results/.
+  test_results_path(Path): Path to test_results/.
+  archive_url(str): Link to the archive. Appending test name should
+    produce a link to the specific test's logs.
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#179)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#171)(self, sys_log_dir):**
 
 Print system logs to MILO.
 

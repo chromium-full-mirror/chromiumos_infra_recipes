@@ -16,7 +16,7 @@ import os
 import json
 import ntpath
 
-EXPECTED_FILES = ['log.txt', 'logcat.txt', 'messages', 'dummy_file']
+PANTHEON_PREFIX = 'https://storage.cloud.google.com'
 
 
 class TastResultsApi(recipe_api.RecipeApi):
@@ -29,20 +29,22 @@ class TastResultsApi(recipe_api.RecipeApi):
     Args:
       test_results_path (Path): Path to test_results/.
       gs_bucket (str): GS bucket to upload to.
-    """
-    with self.m.step.nest('archive and upload test-results'):
-      temp_archive_dir = self.m.path.mkdtemp('archive')
-      archive_path = str(temp_archive_dir.join('tast_results.tgz'))
-      self.m.archive.package(test_results_path).archive('archive test results',
-                                                        archive_path)
 
+    Returns:
+      str, link to the archive on pantheon.
+    """
+    with self.m.step.nest('upload test-results') as step:
       build = self.m.buildbucket.build
       upload_uri = 'gs://%s/%s/%s' % (gs_bucket, build.builder.builder,
                                       build.id)
-      self.m.gsutil(['rsync', temp_archive_dir, upload_uri],
+      self.m.gsutil(['rsync', '-r', test_results_path, upload_uri],
                     parallel_upload=True, multithreaded=True,
                     timeout=self.test_api.gsutil_timeout_seconds)
       self.m.easy.set_property_step('archive_link', upload_uri)
+      pantheon_url = '%s/%s/%s/%s' % (PANTHEON_PREFIX, gs_bucket,
+                                      build.builder.builder, build.id)
+      step.presentation.links['tast-results'] = pantheon_url
+      return pantheon_url
 
   def get_results(self, test_results_path, suite_name):
     """Return the test results decoded from the results.json.
@@ -137,12 +139,14 @@ class TastResultsApi(recipe_api.RecipeApi):
 
     return failures
 
-  def print_results(self, task_result, test_results_path):
+  def print_results(self, task_result, test_results_path, archive_url):
     """Print results for the user.
 
     Args:
       task_result(TaskResult): result of the run.
-      test_results_path (Path): Path to test_results/.
+      test_results_path(Path): Path to test_results/.
+      archive_url(str): Link to the archive. Appending test name should
+        produce a link to the specific test's logs.
     """
     with self.m.step.nest('print results') as step:
       if not task_result.test_cases:
@@ -161,20 +165,8 @@ class TastResultsApi(recipe_api.RecipeApi):
             step.presentation.step_text = (
                 test_case_result.human_readable_summary[:50])
             step.presentation.status = self.m.step.FAILURE
-
-            # Making a separate step so as to not show these to user.
-            # This step should always be collapsed for end user.
-            with self.m.step.nest('housekeeping'):
-              test_log_dir = test_results_path.join('tests').join(
-                  test_case_result.name)
-              self.m.file.flatten_single_directories('flatten', test_log_dir)
-              for file in self.m.file.listdir(
-                  'ls', test_log_dir, test_data=['dummy_file'], recursive=True):
-                # Strip dir from the name.
-                filename = ntpath.basename(str(file))
-                if filename in EXPECTED_FILES:
-                  step.presentation.logs[filename] = self.m.file.read_text(
-                      'reading file', file)
+            step.presentation.links['logs'] = '%s/%s' % (archive_url,
+                                                         test_case_result.name)
 
   def record_logs(self, sys_log_dir):
     """Print system logs to MILO.

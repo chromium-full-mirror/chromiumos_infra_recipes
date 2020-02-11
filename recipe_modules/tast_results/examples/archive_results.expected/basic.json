@@ -1,18 +1,9 @@
 [
   {
     "cmd": [],
-    "name": "archive and upload test-results"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
-    ],
-    "name": "archive and upload test-results.archive test results",
-    "stdin": "{\"archive_type\": \"tgz\", \"entries\": [{\"path\": \"[CLEANUP]/test-results_tmp_1\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive_tmp_2/tast_results.tgz\", \"root\": \"[CLEANUP]/test-results_tmp_1\"}",
+    "name": "upload test-results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_LINK@tast-results@https://storage.cloud.google.com/chromeos-archive//0@@@"
     ]
   },
   {
@@ -27,11 +18,12 @@
       "-m",
       "----",
       "rsync",
-      "[CLEANUP]/archive_tmp_2",
+      "-r",
+      "[CLEANUP]/test-results_tmp_1",
       "gs://chromeos-archive//0"
     ],
     "infra_step": true,
-    "name": "archive and upload test-results.gsutil rsync",
+    "name": "upload test-results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -39,7 +31,7 @@
   },
   {
     "cmd": [],
-    "name": "archive and upload test-results.set archive_link",
+    "name": "upload test-results.set archive_link",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@archive_link@\"gs://chromeos-archive//0\"@@@"
