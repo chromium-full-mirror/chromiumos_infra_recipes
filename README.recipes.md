@@ -42,6 +42,7 @@
   * [goma](#recipe_modules-goma) &mdash; API for working with goma.
   * [ipc](#recipe_modules-ipc)
   * [iterutils](#recipe_modules-iterutils)
+  * [message](#recipe_modules-message)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [phosphorus](#recipe_modules-phosphorus)
@@ -164,6 +165,7 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
+  * [message:examples/full](#recipes-message_examples_full)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
@@ -2478,6 +2480,13 @@ Returns the one item from iterable matching predicate.
 Raises:
   A ValueError with error_msg if iterable doesn't have exactly one item
   matching predicate.
+### *recipe_modules* / [message](/recipe_modules/message)
+
+[DEPS](/recipe_modules/message/__init__.py#3): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [MessageApi](/recipe_modules/message/api.py#6)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [echo](/recipe_modules/message/api.py#7)(self, name, message):**
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
 [DEPS](/recipe_modules/naming/__init__.py#6): [skylab](#recipe_modules-skylab)
@@ -3813,6 +3822,11 @@ Returns:
 Validate the remote stable version config file.
 
 Returns: JSON response with validation result
+### *recipes* / [message:examples/full](/recipe_modules/message/examples/full.py)
+
+[DEPS](/recipe_modules/message/examples/full.py#3): [message](#recipe_modules-message)
+
+&mdash; **def [RunSteps](/recipe_modules/message/examples/full.py#7)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

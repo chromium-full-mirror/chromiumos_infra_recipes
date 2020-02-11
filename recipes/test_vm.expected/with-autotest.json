@@ -2198,6 +2198,15 @@
   },
   {
     "cmd": [],
+    "name": "build autotest packages.process_goma_artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
+      "@@@STEP_LOG_END@NoGomaArtifacts@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run autotest vm tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",

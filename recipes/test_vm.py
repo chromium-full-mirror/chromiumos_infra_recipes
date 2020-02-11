@@ -175,20 +175,29 @@ def RunSteps(api, properties):
             use_goma=api.cros_sdk.has_goma_config())
         packages = [PackageInfo(category='chromeos-base',
                                 package_name='autotest-all')]
+
         # Matching chrome_internal = True above.
         # In build_target.py we take this from build_config.build.use_flags.
         use_flags = [UseFlag(flag='chrome_internal')]
-        failed_packages = api.cros_build_api.SysrootService.InstallPackages(
-            InstallPackagesRequest(
-                sysroot=sysroot,
-                flags=flags,
-                chroot=api.cros_sdk.chroot,
-                packages=packages,
-                use_flags=use_flags,
-                goma_config=api.cros_sdk.goma_config()),
-            name='install packages').failed_packages
-        # TODO: if used goma, emit goma info, stats, counterz.
-        api.failures.set_failed_packages(bap_step, failed_packages)
+        install_pkg_request = InstallPackagesRequest(
+            sysroot=sysroot,
+            flags=flags,
+            chroot=api.cros_sdk.chroot,
+            packages=packages,
+            use_flags=use_flags,
+            goma_config=api.cros_sdk.goma_config())
+
+        response = api.cros_build_api.SysrootService.InstallPackages(
+            install_pkg_request,
+            name='install packages')
+
+        # Process goma response to upload logs, stats, and counterz.
+        api.goma.process_artifacts(response,
+                                   install_pkg_request.goma_config.log_dir.dir,
+                                   properties.build_target.name)
+
+        # Process goma reponse to upload logs, stats, and counterz.
+        api.failures.set_failed_packages(bap_step, response.failed_packages)
 
     # TODO(evanhernandez): Read and present the test results.
     test_harness_name = VmTestRequest.TestHarness.Name(properties.test_harness)
