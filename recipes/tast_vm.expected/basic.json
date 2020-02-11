@@ -420,7 +420,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@failure@@@",
-      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/arc.Boot@@@",
+      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/tests/arc.Boot@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

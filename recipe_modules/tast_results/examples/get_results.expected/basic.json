@@ -35,7 +35,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@failure@@@",
-      "@@@STEP_LINK@logs@gs://archive/arc.Boot@@@",
+      "@@@STEP_LINK@logs@gs://archive/tests/arc.Boot@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

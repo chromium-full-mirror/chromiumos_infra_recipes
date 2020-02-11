@@ -165,8 +165,8 @@ class TastResultsApi(recipe_api.RecipeApi):
             step.presentation.step_text = (
                 test_case_result.human_readable_summary[:50])
             step.presentation.status = self.m.step.FAILURE
-            step.presentation.links['logs'] = '%s/%s' % (archive_url,
-                                                         test_case_result.name)
+            step.presentation.links['logs'] = '%s/tests/%s' % (
+                archive_url, test_case_result.name)
 
   def record_logs(self, sys_log_dir):
     """Print system logs to MILO.
