@@ -2378,25 +2378,25 @@ Returns:
   str: the current revision hash of the specified branch
 ### *recipe_modules* / [goma](/recipe_modules/goma)
 
-[DEPS](/recipe_modules/goma/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/goma/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 API for working with goma.
 
-#### **class [GomaApi](/recipe_modules/goma/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GomaApi](/recipe_modules/goma/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for working with goma.
 
-&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#38)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#40)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#25)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#27)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#30)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#32)(self):**
 
 Lazily fetches the goma client and returns its path.
 
-&mdash; **def [initialize](/recipe_modules/goma/api.py#22)(self):**
+&mdash; **def [initialize](/recipe_modules/goma/api.py#24)(self):**
 
-&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#53)(self, install_pkg_response, goma_log_dir, build_target_name):**
+&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#55)(self, install_pkg_response, goma_log_dir, build_target_name):**
 
 Process goma artifacts, uploading to gsutil if they exist.
 
@@ -2410,7 +2410,7 @@ Returns: (str) the gs_path used when writing to the goma GS bucket or None
   if no artifacts were processed (either because none existed or the step
   config disabled this step).
 
-&mdash; **def [process\_log\_files](/recipe_modules/goma/api.py#72)(self, install_pkg_response, goma_log_dir, build_target_name):**
+&mdash; **def [process\_log\_files](/recipe_modules/goma/api.py#74)(self, install_pkg_response, goma_log_dir, build_target_name):**
 
 Upload goma log files specified by the response with gsutil.
 

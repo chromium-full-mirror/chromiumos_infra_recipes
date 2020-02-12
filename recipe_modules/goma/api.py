@@ -5,6 +5,8 @@
 
 """API for working with goma."""
 
+import json
+
 from recipe_engine import recipe_api
 
 from PB.chromiumos import common
@@ -87,16 +89,34 @@ class GomaApi(recipe_api.RecipeApi):
         with self.m.context(cwd=self.m.path.abs_to_path(goma_log_dir)):
           # destination gs_path is based on date and build_target name.
           today = self.m.time.utcnow()
-          gs_path = '%s/%s' % (
-              today.strftime('%Y/%m/%d'), build_target_name)
+          gs_path_base = self.m.path.join(
+              today.strftime('%Y/%m/%d'),
+              self.m.properties.get('bot_id', build_target_name))
           gs_bucket = 'chrome-goma-log'
-          step.presentation.logs['gs_path'] = gs_path
+          step.presentation.logs['gs_path'] = gs_path_base
           num_logs_uploaded = 0
+          builder_id = self.m.buildbucket.build.builder
+          metadata = {
+              'x-goog-meta-builderinfo': json.dumps({
+                  'is_cros': True,
+                  'bot_id': self.m.properties.get('bot_id', ''),
+                  'build_id': self.m.buildbucket.build.id,
+                  'builder_id': {
+                      'project': builder_id.project,
+                      'bucket': builder_id.bucket,
+                      'builder': builder_id.builder,
+                  },
+                  'build_target_name': build_target_name,
+              })
+          }
           for log_file in install_pkg_response.goma_artifacts.log_files:
-            self.m.gsutil.upload(log_file, gs_bucket, gs_path)
+            gs_path = self.m.path.join(gs_path_base,
+                                       self.m.path.basename(log_file))
+            self.m.gsutil.upload(log_file, gs_bucket, gs_path,
+                                 metadata=metadata)
             num_logs_uploaded += 1
           step.presentation.logs['num_logs_uploaded'] = str(num_logs_uploaded)
-          return gs_path
+          return gs_path_base
       else:
         step.presentation.logs['NoGomaArtifacts'] = [
             str(install_pkg_response.goma_artifacts)
