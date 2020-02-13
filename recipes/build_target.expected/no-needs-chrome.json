@@ -2542,13 +2542,6 @@
   },
   {
     "cmd": [],
-    "name": "check if diff requires chrome rebuild",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@no file diffs caused rebuild@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "install packages"
   },
   {

@@ -246,15 +246,19 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
   install_packages = build_config.build.install_packages
+  chrome_source_build = False
   if api.cros_infra_config.should_run(install_packages.run_spec):
-    # Long chain of |= to determine if chrome requires rebuild.
-    chrome_source_build = toolchain_changed
-    chrome_source_build |= api.chrome.builds_chrome_from_source(
-        build_target=build_target, chroot=api.cros_sdk.chroot,
-        packages=packages,
-        ignore_prebuilts=install_packages.compile_source)
-    chrome_source_build |= api.chrome.diffed_files_requires_rebuild(
-        patch_sets=patch_sets)
+    needs_chrome = api.chrome.needs_chrome(build_target=build_target,
+                                           chroot=api.cros_sdk.chroot,
+                                           packages=packages)
+    if needs_chrome:
+      # Only bother to do these checks if the build target needs chrome at all.
+      needs_built = not api.chrome.has_chrome_prebuilt(
+          build_target=build_target, chroot=api.cros_sdk.chroot,
+          ignore_prebuilts=install_packages.compile_source)
+      files_changed = api.chrome.diffed_files_requires_rebuild(
+          patch_sets=patch_sets)
+      chrome_source_build = toolchain_changed or needs_built or files_changed
 
     if chrome_source_build:
       chrome_root = api.path['start_dir'].join('chrome')

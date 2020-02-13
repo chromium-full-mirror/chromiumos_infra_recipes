@@ -469,7 +469,9 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#164)(self, build_target, chroot, packages=None):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#163)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#171)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -3259,7 +3261,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#71)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#380)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#384)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3275,7 +3277,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#399)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#403)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
