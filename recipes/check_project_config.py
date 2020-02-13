@@ -81,7 +81,7 @@ def RunSteps(api, properties):
     generate_path = api.context.cwd.join(chromiumos_config_info.path,
                                          'generate.sh')
     checker_path = api.context.cwd.join(chromiumos_config_info.path,
-                                        'checker/checker.py')
+                                        'payload_utils/checker.py')
 
     # mock_add_paths marks that the path exists for tests. The exists call
     # doesn't actually perform a Recipes step, it just calls the standard

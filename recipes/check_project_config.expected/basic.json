@@ -403,7 +403,7 @@
     "cmd": [
       "python",
       "-u",
-      "[START_DIR]/chromiumos_workspace/src/config/checker/checker.py",
+      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/checker.py",
       "--program",
       "src/program/testprogram",
       "--project",
