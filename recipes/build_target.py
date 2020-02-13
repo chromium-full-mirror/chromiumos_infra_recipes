@@ -137,7 +137,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   relevance = PrepareForBuildResponse.UNKNOWN
   if artifacts.artifact_types:
     relevance = api.cros_artifacts.prepare_for_build(
-        artifacts.artifact_types, None, None, artifacts.input_artifacts)
+        artifacts.artifact_types, None, None, artifacts.input_artifacts,
+        build_config.build.prepare_for_build.additional_args)
     # If the build is POINTLESS, then we are done.  This can only happen if
     # all of the artifact_types for this build are handled by some
     # PrepareForBuild endpoint, and indicate that the build is pointless.

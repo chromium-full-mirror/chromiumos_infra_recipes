@@ -533,6 +533,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"additionalArgs\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"inputArtifacts\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"inputArtifactType\": \"UNVERIFIED_ORDERING_FILE\", @@@",
@@ -558,7 +559,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_ORDERING_FILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\"\n      ]\n    }\n  ], \n  \"artifactTypes\": [\n    \"VERIFIED_ORDERING_FILE\"\n  ]\n}",
+      "{\n  \"additionalArgs\": {}, \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_ORDERING_FILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\"\n      ]\n    }\n  ], \n  \"artifactTypes\": [\n    \"VERIFIED_ORDERING_FILE\"\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -567,6 +568,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"additionalArgs\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"inputArtifacts\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactType\": \"UNVERIFIED_ORDERING_FILE\", @@@",
