@@ -8,6 +8,7 @@ from google.protobuf import json_format as jsonpb
 
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.testplans.test_retry import SuiteRetryCfg
 
 
 class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
@@ -786,4 +787,26 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             }
           """
     configs = jsonpb.Parse(bot_policy_config, BotPolicyCfg())
+    return self.m.gitiles.make_encoded_file(configs.SerializeToString())
+
+  def vm_retry_test_data(self):
+    """A fn that can be passed to step_test_data to generate SuiteRetryCfg."""
+    vm_retry_config = """
+        {
+        	"testSuite": "tast_vm",
+        	"suiteScenarios": [
+        		{
+        			"testName": "arc.Boot",
+        			"reason": "Lost SSH connection",
+        			"verdict": "VERDICT_FAILED"
+        		},
+        		{
+        			"testName": "arc.Boot",
+        			"reason": "Test did not finish",
+        			"verdict": "VERDICT_FAILED"
+        		}
+        	]
+        }
+    """
+    configs = jsonpb.Parse(vm_retry_config, SuiteRetryCfg())
     return self.m.gitiles.make_encoded_file(configs.SerializeToString())
