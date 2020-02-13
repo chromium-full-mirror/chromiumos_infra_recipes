@@ -17,7 +17,7 @@ from PB.test_platform.taskstate import TaskState
 def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')
   task_result = api.tast_results.get_results(temp_dir, 'fancy-suite')
-  api.tast_results.print_results(task_result, temp_dir, 'gs://archive')
+  api.tast_results.print_results(task_result, temp_dir)
 
   failures = api.tast_results.get_failures(task_result)
   api.assertions.assertEqual(len(failures), 1)
@@ -31,10 +31,10 @@ def RunSteps(api):
           x for x in task_result.test_cases
           if x.verdict == TaskState.VERDICT_PASSED
       ])
-  api.tast_results.print_results(passed_task_result, temp_dir, 'gs://archive')
+  api.tast_results.print_results(passed_task_result, temp_dir)
   fishy_task_result = ExecuteResponse.TaskResult(name=task_result.name,
                                                  state=task_result.state)
-  api.tast_results.print_results(fishy_task_result, temp_dir, 'gs://archive')
+  api.tast_results.print_results(fishy_task_result, temp_dir)
 
 
 def GenTests(api):

@@ -34,7 +34,6 @@ PRIVATE_KEY_NAME = 'id_rsa'
 VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
 QCOW_IMG_NAME = 'qcow2.img'
 TAST_ARCHIVE_PATH = 'tast/tast'
-GS_BUCKET = 'chromeos-vmtest-archive'
 SYS_LOG_DIR = '/var/log'
 
 
@@ -107,7 +106,6 @@ def RunSteps(api, properties):
       ], ok_ret='any')
     task_result = api.tast_results.get_results(test_results_dir,
                                                properties.name)
-    archive_url = api.tast_results.archive_results(test_results_dir, GS_BUCKET)
     failures = api.tast_results.get_failures(task_result)
     api.easy.set_property_step('task_result', jsonpb.MessageToDict(task_result))
     _kill_vm(api, kvm_pid_file)
@@ -118,7 +116,7 @@ def RunSteps(api, properties):
       step.presentation.logs['kvm.monitor.serial'] = api.file.read_text(
           'reading file', kvm_monitor_serial_file)
 
-  api.tast_results.print_results(task_result, test_results_dir, archive_url)
+  api.tast_results.print_results(task_result, test_results_dir)
 
   return api.failures.aggregate_failures(failures)
 

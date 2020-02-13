@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "upload test-results",
     "~followup_annotations": [
-      "@@@STEP_LINK@tast-results@https://pantheon.corp.google.com/storage/browser/chromeos-archive//0@@@"
+      "@@@STEP_LINK@tast-results@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0@@@"
     ]
   },
   {
@@ -20,7 +20,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_1",
-      "gs://chromeos-archive//0"
+      "gs://chromeos-vmtest-archive//0"
     ],
     "infra_step": true,
     "name": "upload test-results.gsutil rsync",
@@ -34,7 +34,7 @@
     "name": "upload test-results.set archive_link",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@archive_link@\"gs://chromeos-archive//0\"@@@"
+      "@@@SET_BUILD_PROPERTY@archive_link@\"gs://chromeos-vmtest-archive//0\"@@@"
     ]
   },
   {

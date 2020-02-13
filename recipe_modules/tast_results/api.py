@@ -17,31 +17,31 @@ import json
 import ntpath
 
 PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
+GS_BUCKET = 'chromeos-vmtest-archive'
 
 
 class TastResultsApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
 
   @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
-  def archive_results(self, test_results_path, gs_bucket):
+  def archive_results(self, test_results_path):
     """Archive results to Google Storage.
 
     Args:
       test_results_path (Path): Path to test_results/.
-      gs_bucket (str): GS bucket to upload to.
 
     Returns:
       str, link to the archive on pantheon.
     """
     with self.m.step.nest('upload test-results') as step:
       build = self.m.buildbucket.build
-      upload_uri = 'gs://%s/%s/%s' % (gs_bucket, build.builder.builder,
+      upload_uri = 'gs://%s/%s/%s' % (GS_BUCKET, build.builder.builder,
                                       build.id)
       self.m.gsutil(['rsync', '-r', test_results_path, upload_uri],
                     parallel_upload=True, multithreaded=True,
                     timeout=self.test_api.gsutil_timeout_seconds)
       self.m.easy.set_property_step('archive_link', upload_uri)
-      pantheon_url = '%s/%s/%s/%s' % (PANTHEON_PREFIX, gs_bucket,
+      pantheon_url = '%s/%s/%s/%s' % (PANTHEON_PREFIX, GS_BUCKET,
                                       build.builder.builder, build.id)
       step.presentation.links['tast-results'] = pantheon_url
       return pantheon_url
@@ -66,11 +66,13 @@ class TastResultsApi(recipe_api.RecipeApi):
       all_verdicts = [t.verdict for t in test_cases]
       overall_state = TaskState(verdict=TaskState.VERDICT_PASSED,
                                 life_cycle=TaskState.LIFE_CYCLE_COMPLETED)
+      log_url = self.archive_results(test_results_path)
 
       if not all_verdicts or TaskState.VERDICT_FAILED in all_verdicts:
         overall_state.verdict = TaskState.VERDICT_FAILED
       return ExecuteResponse.TaskResult(name=suite_name, state=overall_state,
-                                        attempt=0, test_cases=test_cases)
+                                        log_url=log_url, attempt=0,
+                                        test_cases=test_cases)
 
   def _read_results_json(self, test_results_path):
     """Read the results.json file and return structured contents.
@@ -139,14 +141,12 @@ class TastResultsApi(recipe_api.RecipeApi):
 
     return failures
 
-  def print_results(self, task_result, test_results_path, archive_url):
+  def print_results(self, task_result, test_results_path):
     """Print results for the user.
 
     Args:
       task_result(TaskResult): result of the run.
       test_results_path(Path): Path to test_results/.
-      archive_url(str): Link to the archive. Appending test name should
-        produce a link to the specific test's logs.
     """
     with self.m.step.nest('print results') as step:
       if not task_result.test_cases:
@@ -166,7 +166,7 @@ class TastResultsApi(recipe_api.RecipeApi):
                 test_case_result.human_readable_summary[:50])
             step.presentation.status = self.m.step.FAILURE
             step.presentation.links['logs'] = '%s/tests/%s' % (
-                archive_url, test_case_result.name)
+                task_result.log_url, test_case_result.name)
 
   def record_logs(self, sys_log_dir):
     """Print system logs to MILO.

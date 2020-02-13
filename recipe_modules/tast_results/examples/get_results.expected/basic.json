@@ -24,6 +24,45 @@
   },
   {
     "cmd": [],
+    "name": "process tast output.upload test-results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@tast-results@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/test-results_tmp_1",
+      "gs://chromeos-vmtest-archive//0"
+    ],
+    "infra_step": true,
+    "name": "process tast output.upload test-results.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process tast output.upload test-results.set archive_link",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@archive_link@\"gs://chromeos-vmtest-archive//0\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "print results",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
@@ -35,7 +74,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@failure@@@",
-      "@@@STEP_LINK@logs@gs://archive/tests/arc.Boot@@@",
+      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/tests/arc.Boot@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

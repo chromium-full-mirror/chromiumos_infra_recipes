@@ -2987,22 +2987,21 @@ Ensure the CIPD support package is installed.
 
 [DEPS](/recipe_modules/tast_results/__init__.py#6): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [archive\_results](/recipe_modules/tast_results/api.py#25)(self, test_results_path, gs_bucket):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [archive\_results](/recipe_modules/tast_results/api.py#26)(self, test_results_path):**
 
 Archive results to Google Storage.
 
 Args:
   test_results_path (Path): Path to test_results/.
-  gs_bucket (str): GS bucket to upload to.
 
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#94)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#96)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -3012,7 +3011,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#119)(self, task_result):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#121)(self, task_result):**
 
 Convert TaskResult into api.failures.Failure objects.
 
@@ -3035,15 +3034,13 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#142)(self, task_result, test_results_path, archive_url):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#144)(self, task_result, test_results_path):**
 
 Print results for the user.
 
 Args:
   task_result(TaskResult): result of the run.
   test_results_path(Path): Path to test_results/.
-  archive_url(str): Link to the archive. Appending test name should
-    produce a link to the specific test's logs.
 
 &mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#171)(self, sys_log_dir):**
 
@@ -4092,7 +4089,7 @@ An experimental recipe for running Tast VM tests without Chroot and
 ChromeOS checkout, resulting in much faster tests. The tests will
 use tast executable from build_artifacts.
 
-&mdash; **def [RunSteps](/recipes/tast_vm.py#41)(api, properties):**
+&mdash; **def [RunSteps](/recipes/tast_vm.py#40)(api, properties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#12): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
