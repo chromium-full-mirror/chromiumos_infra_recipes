@@ -35,6 +35,10 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._skylab_priority = properties.skylab_priority or 140
 
+  def set_qs_account(self, qs_account):
+    """Override the quota scheduler account at runtime."""
+    self._qs_account = qs_account
+
   def schedule_suites(self, unit_hw_tests, timeout, name=None):
     """Schedule HW test suites by invoking the cros_test_platform recipe.
 

@@ -2867,7 +2867,7 @@ Args:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#96)(self, test, unit, timeout, name=None):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#100)(self, test, unit, timeout, name=None):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -2880,7 +2880,7 @@ Args:
 Returns:
   SkylabTask: with buildbucket_id of the recipe launched.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#38)(self, unit_hw_tests, timeout, name=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#42)(self, unit_hw_tests, timeout, name=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -2892,7 +2892,11 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#223)(self, tasks, timeout):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#38)(self, qs_account):**
+
+Override the quota scheduler account at runtime.
+
+&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#227)(self, tasks, timeout):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -2903,7 +2907,7 @@ Args:
 Returns:
   list[SkylabResult]: The results for each suite.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#166)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#170)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -3845,9 +3849,9 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, properties):**
 
-&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#174)(api, config):**
+&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#179)(api, config):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#296)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#301)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3864,7 +3868,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#277)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#282)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -3874,7 +3878,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#394)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#399)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3885,7 +3889,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#229)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#234)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -3900,7 +3904,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#342)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#347)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -3913,7 +3917,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#383)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#388)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -3921,7 +3925,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#369)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#374)(refs):**
 
 Assert the given refs start with refs/heads.
 

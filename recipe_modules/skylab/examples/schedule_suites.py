@@ -24,6 +24,8 @@ def RunSteps(api):
   another_unit_hw_test = api.skylab.UnitHwTest(
     unit=another_hw_test_unit, hw_test=another_hw_test)
 
+  api.skylab.set_qs_account('a_new_quota_account')
+
   tasks = api.skylab.schedule_suites([unit_hw_test, another_unit_hw_test],
                                      timeout=duration_pb2.Duration(seconds=3600))
   api.assertions.assertEqual(len(tasks), 2)
