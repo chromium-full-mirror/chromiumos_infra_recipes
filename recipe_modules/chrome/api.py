@@ -162,7 +162,7 @@ class ChromeApi(recipe_api.RecipeApi):
 
   def has_chrome_prebuilt(self, build_target, chroot, internal=False,
                           ignore_prebuilts=False):
-    if ignore_prebuilts:
+    if ignore_prebuilts or self._deps_isolate:
       return False
     return self.m.cros_build_api.PackageService.HasChromePrebuilt(
         HasChromePrebuiltRequest(build_target=build_target, chroot=chroot,
