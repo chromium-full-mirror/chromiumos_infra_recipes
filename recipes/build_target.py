@@ -367,7 +367,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
         build_target, build_config.id.type,
         artifacts.artifacts_gs_bucket, artifacts.artifact_types,
         sysroot=sysroot, chroot=api.cros_sdk.chroot,
-        publish_info=artifacts.publish_artifacts)
+        publish_info=artifacts.publish_artifacts,
+        additional_args=build_config.build.prepare_for_build.additional_args)
 
   prebuilts = artifacts.prebuilts
   if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:

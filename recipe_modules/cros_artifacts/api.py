@@ -60,7 +60,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return getattr(self.m.cros_build_api.ArtifactsService,
                    _LEGACY_ENDPOINTS_BY_ARTIFACT[artifact])
 
-  def _bundle_legacy_artifacts(self, chroot, sysroot, path, artifact_types):
+  def _bundle_legacy_artifacts(
+      self, chroot, sysroot, path, artifact_types, _additional_args):
     """Bundle legacy artifacts.
 
     Batch handler for legacy artifact types.
@@ -70,6 +71,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot to use.
       path (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
+      _additional_args (PrepareForBuildAdditionalArgs): The additional_args that
+          were passed to prepare_for_build.  Bundling sometimes requires them.
 
     Returns:
       dict(artifact_name: list(artifact paths)).  Paths are relative to |path|.
@@ -102,7 +105,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       _sysroot (Sysroot): The sysroot to use, or None if not yet created.
       _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
-      _additional_args PrepareForBuildAdditionalArgs: endpoint specific
+      _additional_args (PrepareForBuildAdditionalArgs): endpoint specific
           arguments, such as the Chrome CWP profile name, or kernel version to
           use.
 
@@ -122,7 +125,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot to use, or None if not yet created.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
-      additional_args PrepareForBuildAdditionalArgs: endpoint specific
+      additional_args (PrepareForBuildAdditionalArgs): endpoint specific
           arguments, such as the Chrome CWP profile name, or kernel version to
           use.
 
@@ -142,7 +145,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       return PrepareForBuildResponse.UNKNOWN
     return PrepareForBuildResponse.POINTLESS
 
-  def _bundle_toolchain(self, chroot, sysroot, path, artifact_types):
+  def _bundle_toolchain(
+      self, chroot, sysroot, path, artifact_types, additional_args):
     """Bundle toolchain artifacts.
 
     Batch handler for toolchain artifact types.
@@ -152,13 +156,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot to use.
       path (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
+      additional_args (PrepareForBuildAdditionalArgs): The additional_args that
+          were passed to prepare_for_build.  Bundling sometimes requires them.
 
     Returns:
       dict(artifact_name: list(artifact paths)).  Paths are relative to |path|.
     """
     req = toolchain.BundleToolchainRequest(
         sysroot=sysroot, chroot=chroot, output_dir=str(path),
-        artifact_types=artifact_types)
+        artifact_types=artifact_types, additional_args=additional_args)
     resp = self.m.cros_build_api.ToolchainService.BundleArtifacts(
         req, infra_step=True)
     ret = {}
@@ -188,7 +194,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ret[func_dict[art]].append(art)
     return ret
 
-  def _bundle_artifacts(self, artifact_types, path, sysroot, chroot):
+  def _bundle_artifacts(
+      self, artifact_types, path, sysroot, chroot, additional_args):
     """Defer to the build API to bundle the given artifact.
 
     Args:
@@ -196,6 +203,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       path (Path): Path to output artifact bundles.
       sysroot (Sysroot): sysroot to use
       chroot (Chroot): chroot to use
+      additional_args PrepareForBuildAdditionalArgs: The additional_args that
+          were passed to prepare_for_build.  Bundling sometimes requires them.
 
     Returns:
       dict(str: list[str]): Artifact name, list of artifact file paths
@@ -239,7 +248,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     files_by_artifact = {}
     funcs_to_call = self._partition_artifacts(artifact_types, _BUNDLE_FUNCS)
     for func, types in funcs_to_call.items():
-      files_by_artifact.update(func(chroot, sysroot, path, types))
+      files_by_artifact.update(
+          func(chroot, sysroot, path, types, additional_args))
     return files_by_artifact
 
   def _artifacts_gs_path_dict(self, builder_name, target, kind):
@@ -355,7 +365,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
   def upload_artifacts(self, builder_name, target, kind, gs_bucket,
                        artifact_types, chroot=None, sysroot=None,
-                       publish_info=None, name=None):
+                       publish_info=None, additional_args=None, name=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -375,13 +385,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): sysroot to use
       chroot (Chroot): chroot to use
       publish_info (list[PublishInfo]): List of publishing information.
+      additional_args (PrepareForBuildAdditionalArgs): The additional_args that
+          were passed to prepare_for_build.  Bundling sometimes requires them.
       name (str): The step name. Defaults to 'upload artifacts'.
     """
     with self.m.step.nest(name or 'upload artifacts') as step:
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
 
       files_by_artifact = self._bundle_artifacts(
-          artifact_types, staging_root, sysroot, chroot)
+          artifact_types, staging_root, sysroot, chroot, additional_args)
 
       gs_path = self.artifacts_gs_path(builder_name, target, kind)
       step.presentation.links['gs upload dir'] = (
@@ -487,7 +499,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       chroot (Chroot): The chroot to use, or None if not yet created.
       sysroot (Sysroot): The sysroot to use, or None if not yet created.
       input_artifacts (list[InputArtifactInfo]): where to seek input artifacts.
-      additional_args PrepareForBuildAdditionalArgs: additional arguments.
+      additional_args (PrepareForBuildAdditionalArgs): additional arguments.
       name (str): The step name. Defaults to 'prepare artifacts'.
 
     Returns:
