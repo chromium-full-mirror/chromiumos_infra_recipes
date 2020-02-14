@@ -3034,15 +3034,14 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#144)(self, task_result, test_results_path):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#144)(self, task_result):**
 
 Print results for the user.
 
 Args:
   task_result(TaskResult): result of the run.
-  test_results_path(Path): Path to test_results/.
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#171)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#170)(self, sys_log_dir):**
 
 Print system logs to MILO.
 

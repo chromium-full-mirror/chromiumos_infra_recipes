@@ -134,19 +134,18 @@ class TastResultsApi(recipe_api.RecipeApi):
             self.m.failures.Failure(
                 kind='vm test',
                 title=test_case_result.name,
-                link_map={},
+                link_map={test_case_result.human_readable_summary: ''},
                 fatal=True,
                 id=None,
             ))
 
     return failures
 
-  def print_results(self, task_result, test_results_path):
+  def print_results(self, task_result):
     """Print results for the user.
 
     Args:
       task_result(TaskResult): result of the run.
-      test_results_path(Path): Path to test_results/.
     """
     with self.m.step.nest('print results') as step:
       if not task_result.test_cases:

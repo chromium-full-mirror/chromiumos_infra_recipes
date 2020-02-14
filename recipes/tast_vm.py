@@ -82,30 +82,9 @@ def RunSteps(api, properties):
                kvm_monitor_serial_file, private_key_path)
 
   with api.step.nest('run tast tests'):
-    test_results_dir = api.path.mkdtemp(prefix='test-results')
     tast_dir = test_artifacts_dir.join('tast')
-    for expr in properties.expressions:
-      api.step('tast run', [
-          str(tast_dir.join('tast')), \
-          '-verbose', \
-          'run', \
-          '-build=false', \
-          '-waituntilready', \
-          '-continueafterfailure', \
-          '-extrauseflags=tast_vm', \
-          '-resultsdir', str(test_results_dir), \
-          '-keyfile={}'.format(private_key_path), \
-          '-remotebundledir={}'.format(
-              str(tast_dir.join('bundles').join('remote'))), \
-          '-remotedatadir={}'.format(str(
-              tast_dir.join('data'))), \
-          '-remoterunner={}'.format(
-              str(tast_dir.join('remote_test_runner'))), \
-          'localhost:9222', \
-          expr
-      ], ok_ret='any')
-    task_result = api.tast_results.get_results(test_results_dir,
-                                               properties.name)
+    task_result = _run_tast(api, properties.expressions, tast_dir,
+                            private_key_path, properties.name)
     failures = api.tast_results.get_failures(task_result)
     api.easy.set_property_step('task_result', jsonpb.MessageToDict(task_result))
     _kill_vm(api, kvm_pid_file)
@@ -116,9 +95,32 @@ def RunSteps(api, properties):
       step.presentation.logs['kvm.monitor.serial'] = api.file.read_text(
           'reading file', kvm_monitor_serial_file)
 
-  api.tast_results.print_results(task_result, test_results_dir)
+  api.tast_results.print_results(task_result)
 
   return api.failures.aggregate_failures(failures)
+
+
+def _run_tast(api, expressions, tast_dir, private_key_path, name):
+  test_results_dir = api.path.mkdtemp(prefix='test-results')
+  api.step('tast run', [
+      str(tast_dir.join('tast')), \
+      '-verbose', \
+      'run', \
+      '-build=false', \
+      '-waituntilready', \
+      '-continueafterfailure', \
+      '-extrauseflags=tast_vm', \
+      '-resultsdir', str(test_results_dir), \
+      '-keyfile={}'.format(private_key_path), \
+      '-remotebundledir={}'.format(
+          str(tast_dir.join('bundles').join('remote'))), \
+      '-remotedatadir={}'.format(str(
+          tast_dir.join('data'))), \
+      '-remoterunner={}'.format(
+          str(tast_dir.join('remote_test_runner'))), \
+      'localhost:9222'] + \
+      list(expressions), ok_ret='any')
+  return api.tast_results.get_results(test_results_dir, name)
 
 
 @exponential_retry(retries=2)

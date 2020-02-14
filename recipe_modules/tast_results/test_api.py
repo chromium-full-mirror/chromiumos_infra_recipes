@@ -39,7 +39,7 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
     "timeout": 300000000000,
     "errors": [
       {
-        "reason": "failure"
+        "reason": "Lost SSH connection to VM"
       }
     ],
     "start": "2020-01-27T15:16:15.146771555-08:00",
