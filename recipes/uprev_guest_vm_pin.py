@@ -119,12 +119,12 @@ def RunSteps(api, properties):
 
         base_tar = (
             api.archive.package(api.context.cwd).with_dir(
-                api.context.cwd.join(_base_vm_name)).archive(
+                api.context.cwd.join('image', _base_vm_name)).archive(
                     'archive base guest VM',
                     api.context.cwd.join(_base_vm_name + '.tbz'), 'tbz'))
         test_tar = (
             api.archive.package(api.context.cwd).with_dir(
-                api.context.cwd.join(_test_vm_name)).archive(
+                api.context.cwd.join('image', _test_vm_name)).archive(
                     'archive test guest VM',
                     api.context.cwd.join(_test_vm_name + '.tbz'), 'tbz'))
 
