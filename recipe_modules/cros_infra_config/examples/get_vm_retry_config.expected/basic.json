@@ -7,11 +7,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/vm_retry_config.binaryproto",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/vm_retry.binaryproto",
       "--format",
       "text"
     ],
-    "name": "fetch master:testingconfig/generated/vm_retry_config.binaryproto",
+    "name": "fetch master:testingconfig/generated/vm_retry.binaryproto",
     "timeout": 180
   },
   {

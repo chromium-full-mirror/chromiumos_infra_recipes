@@ -137,7 +137,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       SuiteRetryCfg as defined in the config repo.
     """
     vm_retry_config_file = self.m.gitiles.download_file(
-        REPO_URL, "testingconfig/generated/vm_retry_config.binaryproto",
+        REPO_URL, "testingconfig/generated/vm_retry.binaryproto",
         step_test_data=self.test_api.vm_retry_test_data,
         timeout=self.test_api.gitiles_timeout_seconds)
     return SuiteRetryCfg.FromString(vm_retry_config_file)
