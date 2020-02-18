@@ -10,7 +10,6 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
-    'cros_infra_config',
     'easy',
     'failures',
 ]

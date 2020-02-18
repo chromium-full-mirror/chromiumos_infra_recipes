@@ -18,43 +18,40 @@ import ntpath
 
 PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 GS_BUCKET = 'chromeos-vmtest-archive'
-FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 
 
 class TastResultsApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
 
   @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
-  def archive_results(self, test_results_path, tag):
+  def archive_results(self, test_results_path):
     """Archive results to Google Storage.
 
     Args:
       test_results_path (Path): Path to test_results/.
-      tag (str): Tag for this execution. Used to distinguish archive folders.
 
     Returns:
       str, link to the archive on pantheon.
     """
     with self.m.step.nest('upload test-results') as step:
       build = self.m.buildbucket.build
-      upload_uri = 'gs://%s/%s/%s/%s' % (GS_BUCKET, build.builder.builder,
-                                         build.id, tag)
+      upload_uri = 'gs://%s/%s/%s' % (GS_BUCKET, build.builder.builder,
+                                      build.id)
       self.m.gsutil(['rsync', '-r', test_results_path, upload_uri],
                     parallel_upload=True, multithreaded=True,
                     timeout=self.test_api.gsutil_timeout_seconds)
       self.m.easy.set_property_step('archive_link', upload_uri)
-      pantheon_url = '%s/%s/%s/%s/%s' % (PANTHEON_PREFIX, GS_BUCKET,
-                                         build.builder.builder, build.id, tag)
+      pantheon_url = '%s/%s/%s/%s' % (PANTHEON_PREFIX, GS_BUCKET,
+                                      build.builder.builder, build.id)
       step.presentation.links['tast-results'] = pantheon_url
       return pantheon_url
 
-  def get_results(self, test_results_path, suite_name, tag):
+  def get_results(self, test_results_path, suite_name):
     """Return the test results decoded from the results.json.
 
     Args:
       test_results_path (Path): Path to test_results/.
       suite_name (str): Name of the whole test suite.
-      tag (str): Tag for this execution. Used to distinguish archive folders.
 
     Returns:
       A consolidated Data Structure summarizing all results from a run.
@@ -69,12 +66,9 @@ class TastResultsApi(recipe_api.RecipeApi):
       all_verdicts = [t.verdict for t in test_cases]
       overall_state = TaskState(verdict=TaskState.VERDICT_PASSED,
                                 life_cycle=TaskState.LIFE_CYCLE_COMPLETED)
-      log_url = self.archive_results(test_results_path, tag)
+      log_url = self.archive_results(test_results_path)
 
-      # If there are no results, assume INFRA_FAILURE.
-      if not all_verdicts:  # pragma: nocover
-        overall_state.verdict = TaskState.VERDICT_UNSPECIFIED
-      elif TaskState.VERDICT_FAILED in all_verdicts:
+      if not all_verdicts or TaskState.VERDICT_FAILED in all_verdicts:
         overall_state.verdict = TaskState.VERDICT_FAILED
       return ExecuteResponse.TaskResult(name=suite_name, state=overall_state,
                                         log_url=log_url, attempt=0,
@@ -140,41 +134,38 @@ class TastResultsApi(recipe_api.RecipeApi):
             self.m.failures.Failure(
                 kind='vm test',
                 title=test_case_result.name,
-                link_map={
-                    test_case_result.human_readable_summary[:50]: (
-                        '%s/tests/%s' % (task_result.log_url,
-                                         test_case_result.name))
-                },
+                link_map={test_case_result.human_readable_summary: ''},
                 fatal=True,
                 id=None,
             ))
 
     return failures
 
-  def print_results(self, failures, empty_result):
+  def print_results(self, task_result):
     """Print results for the user.
 
     Args:
-      failures(list(Failure)): Failures of this run.
-      empty_result(bool): Were the results empty?
+      task_result(TaskResult): result of the run.
     """
     with self.m.step.nest('print results') as step:
-      if empty_result:
+      if not task_result.test_cases:
         step.status = self.m.step.EXCEPTION
         step.presentation.step_text = 'empty result'
         # Ensure the recipe fails as well.
         raise self.m.step.InfraFailure('No results dumped')
-      elif failures:
+      elif task_result.state.verdict == TaskState.VERDICT_FAILED:
         step.status = self.m.step.FAILURE
       else:
         step.presentation.step_text = 'all tests passed!'
 
-      for failure in failures:
-        with self.m.step.nest(failure.title) as step:
-          step.presentation.status = self.m.step.FAILURE
-          for text, log in failure.link_map.items():
-            step.presentation.links['logs'] = log
-            step.presentation.step_text = text
+      for test_case_result in task_result.test_cases:
+        if test_case_result.verdict == TaskState.VERDICT_FAILED:
+          with self.m.step.nest(test_case_result.name) as step:
+            step.presentation.step_text = (
+                test_case_result.human_readable_summary[:50])
+            step.presentation.status = self.m.step.FAILURE
+            step.presentation.links['logs'] = '%s/tests/%s' % (
+                task_result.log_url, test_case_result.name)
 
   def record_logs(self, sys_log_dir):
     """Print system logs to MILO.
@@ -198,44 +189,3 @@ class TastResultsApi(recipe_api.RecipeApi):
         if str(file).endswith('.log'):
           step.presentation.logs[filename] = self.m.file.read_text(
               'reading file', file)
-
-  def _match_to_scenario(self, test_case, scenario):
-    if test_case.name == scenario.test_name:
-      if test_case.verdict == scenario.verdict:
-        if scenario.reason in test_case.human_readable_summary:
-          # Failure matches scenario in config!
-          return True
-
-    return False
-
-  def get_tests_to_retry(self, task_result):
-    """Determine which tests to retry.
-
-    Args:
-      task_result (TaskResult): TaskResult of the test suite.
-
-    Returns:
-      list(str) names of tests to be retried.
-    """
-    with self.m.step.nest('tests to retry') as step:
-      if task_result.state.verdict != TaskState.VERDICT_FAILED:
-        return []
-      else:
-        test_map = {
-            t.name: t
-            for t in task_result.test_cases
-            if t.verdict in FAILURE_VERDICTS
-        }
-        tests_to_retry = []
-        step_log = []
-        for scenario in (
-            self.m.cros_infra_config.get_vm_retry_config().suite_scenarios):
-          if scenario.test_name in test_map:
-            failed_test = test_map[scenario.test_name]
-            if self._match_to_scenario(failed_test, scenario):
-              step_log.append('Found match {}<->{}'.format(
-                  failed_test, scenario))
-              tests_to_retry.append(scenario.test_name)
-
-        step.presentation.logs['matches'] = step_log
-        return tests_to_retry

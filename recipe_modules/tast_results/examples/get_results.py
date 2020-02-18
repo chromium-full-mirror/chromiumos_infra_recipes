@@ -16,18 +16,10 @@ from PB.test_platform.taskstate import TaskState
 
 def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')
-  task_result = api.tast_results.get_results(temp_dir, 'fancy-suite', '1')
+  task_result = api.tast_results.get_results(temp_dir, 'fancy-suite')
+  api.tast_results.print_results(task_result)
+
   failures = api.tast_results.get_failures(task_result)
-  api.tast_results.print_results(failures, False)
-
-  # tests_to_retry unittesting.
-  tests = api.tast_results.get_tests_to_retry(task_result)
-  api.assertions.assertEqual(len(tests), 1)
-  empty_task_result = ExecuteResponse.TaskResult(
-      name=task_result.name,
-      state=TaskState(verdict=TaskState.VERDICT_UNSPECIFIED))
-  api.tast_results.get_tests_to_retry(empty_task_result)
-
   api.assertions.assertEqual(len(failures), 1)
   api.assertions.assertEqual(failures[0].kind, 'vm test')
   api.assertions.assertEqual(failures[0].fatal, True)
@@ -39,12 +31,10 @@ def RunSteps(api):
           x for x in task_result.test_cases
           if x.verdict == TaskState.VERDICT_PASSED
       ])
-  failures = api.tast_results.get_failures(passed_task_result)
-  api.tast_results.print_results(failures, False)
+  api.tast_results.print_results(passed_task_result)
   fishy_task_result = ExecuteResponse.TaskResult(name=task_result.name,
                                                  state=task_result.state)
-  failures = api.tast_results.get_failures(fishy_task_result)
-  api.tast_results.print_results(failures, True)
+  api.tast_results.print_results(fishy_task_result)
 
 
 def GenTests(api):

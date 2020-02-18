@@ -12,7 +12,6 @@ import os
 
 from google.protobuf import json_format as jsonpb
 from PB.recipes.chromeos.tast_vm import TastVmProperties
-from PB.test_platform.taskstate import TaskState
 
 from util import exponential_retry
 
@@ -85,22 +84,9 @@ def RunSteps(api, properties):
   with api.step.nest('run tast tests'):
     tast_dir = test_artifacts_dir.join('tast')
     task_result = _run_tast(api, properties.expressions, tast_dir,
-                            private_key_path, properties.name, '1')
-    all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
-
-    tests_to_retry = api.tast_results.get_tests_to_retry(task_result)
-    failures = [
-        f for f in api.tast_results.get_failures(task_result)
-        if f.title not in tests_to_retry
-    ]
-    if tests_to_retry:
-      retry_task_result = _run_tast(api, tests_to_retry, tast_dir,
-                                    private_key_path, properties.name, '2')
-      all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
-
-    failures += api.tast_results.get_failures(retry_task_result)
+                            private_key_path, properties.name)
+    failures = api.tast_results.get_failures(task_result)
     api.easy.set_property_step('task_result', jsonpb.MessageToDict(task_result))
-    api.easy.set_property_step('all_test_cases', all_test_cases)
     _kill_vm(api, kvm_pid_file)
     api.tast_results.record_logs(SYS_LOG_DIR)
     with api.step.nest('qemu debug') as step:
@@ -109,15 +95,14 @@ def RunSteps(api, properties):
       step.presentation.logs['kvm.monitor.serial'] = api.file.read_text(
           'reading file', kvm_monitor_serial_file)
 
-  api.tast_results.print_results(
-      failures, task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED)
+  api.tast_results.print_results(task_result)
 
   return api.failures.aggregate_failures(failures)
 
 
-def _run_tast(api, expressions, tast_dir, private_key_path, name, tag):
+def _run_tast(api, expressions, tast_dir, private_key_path, name):
   test_results_dir = api.path.mkdtemp(prefix='test-results')
-  api.step('tast run %s' % tag, [
+  api.step('tast run', [
       str(tast_dir.join('tast')), \
       '-verbose', \
       'run', \
@@ -135,7 +120,7 @@ def _run_tast(api, expressions, tast_dir, private_key_path, name, tag):
           str(tast_dir.join('remote_test_runner'))), \
       'localhost:9222'] + \
       list(expressions), ok_ret='any')
-  return api.tast_results.get_results(test_results_dir, name, tag)
+  return api.tast_results.get_results(test_results_dir, name)
 
 
 @exponential_retry(retries=2)
