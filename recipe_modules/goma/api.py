@@ -53,7 +53,7 @@ class GomaApi(recipe_api.RecipeApi):
       self._goma_dir = goma_dir
 
   def process_artifacts(self, install_pkg_response, goma_log_dir,
-                        build_target_name):
+                        build_target_name, is_staging=False):
     """Process goma artifacts, uploading to gsutil if they exist.
 
     Args:
@@ -61,12 +61,16 @@ class GomaApi(recipe_api.RecipeApi):
         goma artifacts.
       goma_log_dir (str): Log directory that contains the goma artifacts.
       build_target_name (str): Build target string.
+      is_staging (bool): If being run in staging environment instead of prod.
 
     Returns: (str) the gs_path used when writing to the goma GS bucket or None
       if no artifacts were processed (either because none existed or the step
       config disabled this step).
     """
     if not self._upload_goma_logs:
+      return None
+    if is_staging:
+      # TODO(mmortensen): Consider uploading to a staging-specific bucket.
       return None
     return self.process_log_files(install_pkg_response, goma_log_dir,
                                   build_target_name)

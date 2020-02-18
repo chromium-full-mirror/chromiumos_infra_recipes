@@ -41,6 +41,14 @@ def RunSteps(api, properties):
   # date (2012/05/14).
   api.assertions.assertEqual(gs_path, '2012/05/14/build_target')
 
+  # Call with staging, verify result is None.
+  result = api.goma.process_artifacts(
+      InstallPackagesResponse(goma_artifacts=GomaArtifacts()),
+      str(api.path.mkdtemp(prefix='goma-logs-')), 'build_target',
+      is_staging=True)
+  api.assertions.assertEqual(result, None)
+
+
 def GenTests(api):
   yield (api.test('basic') +  #
          api.properties(TestInputProperties(

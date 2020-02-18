@@ -107,6 +107,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   # Set up source checkouts.
   api.cros_source.ensure_synced_cache()
   api.cros_source.sync_snapshot(gitiles_commit)
+  is_staging = build_config.general.environment == BuilderConfig.General.STAGING
 
   # Define a function to append the failure step with the failed packages
   def _failed_pkg_names(output_proto):
@@ -174,8 +175,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
             flags=CreateSdkRequest.Flags(
                 no_replace=no_replace_flag,
                 # Test mounting the SDK as an image only in staging for now.
-                no_use_image=(build_config.general.environment !=
-                              BuilderConfig.General.STAGING)),
+                no_use_image=not is_staging),
             chroot=api.cros_sdk.chroot))
     step.presentation.logs['sdk version'] = [str(response.version.version)]
     if build_config.general.sdk_cache_version:
@@ -302,7 +302,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       # Process goma response to upload logs, stats, and counterz.
       api.goma.process_artifacts(response,
                                  install_pkg_request.goma_config.log_dir.dir,
-                                 build_target.name)
+                                 build_target.name,
+                                 is_staging)
 
       api.cros_bisect.set_compile_failures(response.failed_packages)
       api.failures.set_failed_packages(ip_step, response.failed_packages)

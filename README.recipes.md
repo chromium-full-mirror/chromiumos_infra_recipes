@@ -42,6 +42,7 @@
   * [goma](#recipe_modules-goma) &mdash; API for working with goma.
   * [ipc](#recipe_modules-ipc)
   * [iterutils](#recipe_modules-iterutils)
+  * [message](#recipe_modules-message)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [phosphorus](#recipe_modules-phosphorus)
@@ -165,6 +166,7 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
+  * [message:examples/full](#recipes-message_examples_full)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
@@ -2409,7 +2411,7 @@ Lazily fetches the goma client and returns its path.
 
 &mdash; **def [initialize](/recipe_modules/goma/api.py#24)(self):**
 
-&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#55)(self, install_pkg_response, goma_log_dir, build_target_name):**
+&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#55)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
 
 Process goma artifacts, uploading to gsutil if they exist.
 
@@ -2418,12 +2420,13 @@ Args:
     goma artifacts.
   goma_log_dir (str): Log directory that contains the goma artifacts.
   build_target_name (str): Build target string.
+  is_staging (bool): If being run in staging environment instead of prod.
 
 Returns: (str) the gs_path used when writing to the goma GS bucket or None
   if no artifacts were processed (either because none existed or the step
   config disabled this step).
 
-&mdash; **def [process\_log\_files](/recipe_modules/goma/api.py#74)(self, install_pkg_response, goma_log_dir, build_target_name):**
+&mdash; **def [process\_log\_files](/recipe_modules/goma/api.py#78)(self, install_pkg_response, goma_log_dir, build_target_name):**
 
 Upload goma log files specified by the response with gsutil.
 
@@ -2491,6 +2494,13 @@ Returns the one item from iterable matching predicate.
 Raises:
   A ValueError with error_msg if iterable doesn't have exactly one item
   matching predicate.
+### *recipe_modules* / [message](/recipe_modules/message)
+
+[DEPS](/recipe_modules/message/__init__.py#3): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [MessageApi](/recipe_modules/message/api.py#6)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [echo](/recipe_modules/message/api.py#7)(self, name, message):**
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
 [DEPS](/recipe_modules/naming/__init__.py#6): [skylab](#recipe_modules-skylab)
@@ -3276,7 +3286,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#71)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#386)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#387)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3292,7 +3302,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#405)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#406)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3844,6 +3854,11 @@ Returns:
 Validate the remote stable version config file.
 
 Returns: JSON response with validation result
+### *recipes* / [message:examples/full](/recipe_modules/message/examples/full.py)
+
+[DEPS](/recipe_modules/message/examples/full.py#3): [message](#recipe_modules-message)
+
+&mdash; **def [RunSteps](/recipe_modules/message/examples/full.py#7)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
