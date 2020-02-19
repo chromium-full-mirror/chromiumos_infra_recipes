@@ -86,7 +86,9 @@ def RunSteps(api, properties):
     tast_dir = test_artifacts_dir.join('tast')
     task_result = _run_tast(api, properties.expressions, tast_dir,
                             private_key_path, properties.name, '1')
-    all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
+    all_test_cases = []
+    if task_result.test_cases:
+      all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
 
     tests_to_retry = api.tast_results.get_tests_to_retry(task_result)
     failures = [
