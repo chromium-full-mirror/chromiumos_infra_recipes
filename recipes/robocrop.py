@@ -16,6 +16,7 @@ DEPS = [
     'buildbucket_stats',
     'cros_infra_config',
     'easy',
+    'swarming_cli',
 ]
 
 PROPERTIES = RoboCropProperties
@@ -47,6 +48,21 @@ def RunSteps(api, properties):
       robocrop_action = RoboCropAction(scaling_actions=scaling_actions)
       api.easy.set_property_step('robocrop_action',
                                  jsonpb.MessageToDict(robocrop_action))
+    with api.step.nest('query swarming'):
+      api.easy.set_property_step(
+          'swarming_idle_bot_count',
+          api.swarming_cli.get_bot_count(
+              dimensions={
+                  'role': 'cq',
+                  'bot_size': 'large'
+              }, state='IDLE'))
+      api.easy.set_property_step(
+          'swarming_busy_bot_count',
+          api.swarming_cli.get_bot_count(
+              dimensions={
+                  'role': 'cq',
+                  'bot_size': 'large'
+              }, state='BUSY'))
 
 
 def GenTests(api):

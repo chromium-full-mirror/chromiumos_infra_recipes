@@ -42,7 +42,6 @@
   * [goma](#recipe_modules-goma) &mdash; API for working with goma.
   * [ipc](#recipe_modules-ipc)
   * [iterutils](#recipe_modules-iterutils)
-  * [message](#recipe_modules-message)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [phosphorus](#recipe_modules-phosphorus)
@@ -53,6 +52,7 @@
   * [skylab_local_state](#recipe_modules-skylab_local_state)
   * [stable_version](#recipe_modules-stable_version)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
+  * [swarming_cli](#recipe_modules-swarming_cli)
   * [tast_results](#recipe_modules-tast_results)
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
 
@@ -166,7 +166,6 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
-  * [message:examples/full](#recipes-message_examples_full)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
@@ -192,6 +191,7 @@
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
   * [stable_version:examples/full](#recipes-stable_version_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
+  * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full)
   * [tast_results:examples/archive_results](#recipes-tast_results_examples_archive_results)
   * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult)
   * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results)
@@ -2494,13 +2494,6 @@ Returns the one item from iterable matching predicate.
 Raises:
   A ValueError with error_msg if iterable doesn't have exactly one item
   matching predicate.
-### *recipe_modules* / [message](/recipe_modules/message)
-
-[DEPS](/recipe_modules/message/__init__.py#3): [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-#### **class [MessageApi](/recipe_modules/message/api.py#6)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-&mdash; **def [echo](/recipe_modules/message/api.py#7)(self, name, message):**
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
 [DEPS](/recipe_modules/naming/__init__.py#6): [skylab](#recipe_modules-skylab)
@@ -2999,6 +2992,21 @@ Returns:
 Ensure the CIPD support package is installed.
 
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
+### *recipe_modules* / [swarming\_cli](/recipe_modules/swarming_cli)
+
+[DEPS](/recipe_modules/swarming_cli/__init__.py#6): [easy](#recipe_modules-easy), [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+#### **class [SwarmingCli](/recipe_modules/swarming_cli/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module that queries Swarming via the CLI.
+
+&mdash; **def [get\_bot\_count](/recipe_modules/swarming_cli/api.py#55)(self, dimensions=None, state=None):**
+
+Retrieves the count of bots from Swarming based on dimensions.
+
+Args:
+  dimensions (dict): dict containing key, value dimensions to query swarming.
+  state (str): the bot swarming state (busy, idle, or dead-only)
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
 [DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3854,11 +3862,6 @@ Returns:
 Validate the remote stable version config file.
 
 Returns: JSON response with validation result
-### *recipes* / [message:examples/full](/recipe_modules/message/examples/full.py)
-
-[DEPS](/recipe_modules/message/examples/full.py#3): [message](#recipe_modules-message)
-
-&mdash; **def [RunSteps](/recipe_modules/message/examples/full.py#7)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -4026,11 +4029,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/examples/repo_retry_success.py#17)(api, attempt):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
-[DEPS](/recipes/robocrop.py#13): [bot\_scaling](#recipe_modules-bot_scaling), [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/robocrop.py#13): [bot\_scaling](#recipe_modules-bot_scaling), [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for scaling bots in the Chrome OS pool.
 
-&mdash; **def [RunSteps](/recipes/robocrop.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipes/robocrop.py#24)(api, properties):**
 ### *recipes* / [sign\_image](/recipes/sign_image.py)
 
 [DEPS](/recipes/sign_image.py#29): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4094,6 +4097,11 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#12)(api):**
+### *recipes* / [swarming\_cli:examples/full](/recipe_modules/swarming_cli/examples/full.py)
+
+[DEPS](/recipe_modules/swarming_cli/examples/full.py#6): [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/swarming_cli/examples/full.py#12)(api):**
 ### *recipes* / [tast\_results:examples/archive\_results](/recipe_modules/tast_results/examples/archive_results.py)
 
 [DEPS](/recipe_modules/tast_results/examples/archive_results.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -4406,6 +4414,7 @@ Basic tests for the urls recipe module.
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/851532894fe976bfe62e6c3ba15de4904c6f3121/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/851532894fe976bfe62e6c3ba15de4904c6f3121/recipes/README.recipes.md#recipe_modules-gclient
 [depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/851532894fe976bfe62e6c3ba15de4904c6f3121/recipes/README.recipes.md#recipe_modules-gerrit
+[depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/851532894fe976bfe62e6c3ba15de4904c6f3121/recipes/README.recipes.md#recipe_modules-git
 [depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/851532894fe976bfe62e6c3ba15de4904c6f3121/recipes/README.recipes.md#recipe_modules-git_cl
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/851532894fe976bfe62e6c3ba15de4904c6f3121/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/851532894fe976bfe62e6c3ba15de4904c6f3121/recipes/README.recipes.md#recipe_modules-gsutil
