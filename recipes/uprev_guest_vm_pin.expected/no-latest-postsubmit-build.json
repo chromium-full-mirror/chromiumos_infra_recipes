@@ -16,42 +16,23 @@
   {
     "cmd": [
       "bb",
-      "batch",
+      "ls",
       "-host",
-      "cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"sludge-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
     ],
     "infra_step": true,
     "name": "get latest postsubmit build version.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"sludge-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {}@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builds.*.builder,builds.*.createTime,builds.*.createdBy,builds.*.critical,builds.*.endTime,builds.*.id,builds.*.input,builds.*.number,builds.*.output,builds.*.startTime,builds.*.status,builds.*.updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1, @@@",
-      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"bucket\": \"postsubmit\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"builder\": \"sludge-postsubmit\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
