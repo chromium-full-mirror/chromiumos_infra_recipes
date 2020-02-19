@@ -3182,6 +3182,8 @@
     "name": "install packages.process_goma_artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@gs_bucket@chrome-goma-log@@@",
+      "@@@STEP_LOG_END@gs_bucket@@@",
       "@@@STEP_LOG_LINE@gs_path@2012/05/14/@@@",
       "@@@STEP_LOG_END@gs_path@@@",
       "@@@STEP_LOG_LINE@num_logs_uploaded@4@@@",

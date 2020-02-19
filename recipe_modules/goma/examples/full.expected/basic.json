@@ -43,10 +43,16 @@
     "cmd": [],
     "name": "process_goma_artifacts (2)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@gs_path@2012/05/14/build_target@@@",
-      "@@@STEP_LOG_END@gs_path@@@",
-      "@@@STEP_LOG_LINE@num_logs_uploaded@0@@@",
-      "@@@STEP_LOG_END@num_logs_uploaded@@@"
+      "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
+      "@@@STEP_LOG_END@NoGomaArtifacts@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process_goma_artifacts (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
+      "@@@STEP_LOG_END@NoGomaArtifacts@@@"
     ]
   },
   {

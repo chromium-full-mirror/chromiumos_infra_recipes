@@ -33,7 +33,11 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(
       api.goma.process_artifacts(
           InstallPackagesResponse(), 'goma_log_dir', 'build_target'), None)
-  gs_path = api.goma.process_artifacts(
+  # TODO(crbug.com/1041899): Update this comment when this test value indicates
+  # that it did something. Right now there is a return value indicating a path
+  # and bucket even though we are not yet handling stats and counterz and no
+  # logs were processed (since the goma_artifacts did not contain any).
+  gs_tuple = api.goma.process_artifacts(
       InstallPackagesResponse(goma_artifacts=GomaArtifacts(
           counterz_file="counterz.binaryproto",
           stats_file="stats.binaryproto")),
@@ -41,7 +45,8 @@ def RunSteps(api, properties):
   # Because the goma module uses recipe_engine/time rather than datetime,
   # during testing the self.m.time.utcnow() method will always return the same
   # date (2012/05/14).
-  api.assertions.assertEqual(gs_path, '2012/05/14/build_target')
+  api.assertions.assertEqual(gs_tuple.path, '2012/05/14/build_target')
+  api.assertions.assertEqual(gs_tuple.bucket, 'chrome-goma-log')
 
 def GenTests(api):
   yield (api.test('basic') +  #

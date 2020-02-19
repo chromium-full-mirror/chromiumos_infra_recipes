@@ -33,21 +33,18 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(
       api.goma.process_artifacts(
           InstallPackagesResponse(), 'goma_log_dir', 'build_target'), None)
-  gs_path = api.goma.process_artifacts(
-      InstallPackagesResponse(goma_artifacts=GomaArtifacts()),
-      str(api.path.mkdtemp(prefix='goma-logs-')), 'build_target')
-  # Because the goma module uses recipe_engine/time rather than datetime,
-  # during testing the self.m.time.utcnow() method will always return the same
-  # date (2012/05/14).
-  api.assertions.assertEqual(gs_path, '2012/05/14/build_target')
-
-  # Call with staging, verify result is None.
-  result = api.goma.process_artifacts(
-      InstallPackagesResponse(goma_artifacts=GomaArtifacts()),
-      str(api.path.mkdtemp(prefix='goma-logs-')), 'build_target',
-      is_staging=True)
-  api.assertions.assertEqual(result, None)
-
+  # Call process_artifacts without goma_artifacts for prod and staging.
+  api.assertions.assertEqual(
+      api.goma.process_artifacts(
+          InstallPackagesResponse(),
+          str(api.path.mkdtemp(prefix='goma-logs-')), 'build_target'),
+      None)
+  api.assertions.assertEqual(
+      api.goma.process_artifacts(
+          InstallPackagesResponse(),
+              str(api.path.mkdtemp(prefix='goma-logs-')), 'build_target',
+          is_staging=True),
+      None)
 
 def GenTests(api):
   yield (api.test('basic') +  #

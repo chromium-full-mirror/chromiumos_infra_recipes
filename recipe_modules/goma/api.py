@@ -6,11 +6,14 @@
 """API for working with goma."""
 
 import json
+from collections import namedtuple
 
 from recipe_engine import recipe_api
 
 from PB.chromiumos import common
 
+
+GsDestination = namedtuple('GsDestination', ['bucket', 'path'])
 
 class GomaApi(recipe_api.RecipeApi):
   """A module for working with goma."""
@@ -63,20 +66,18 @@ class GomaApi(recipe_api.RecipeApi):
       build_target_name (str): Build target string.
       is_staging (bool): If being run in staging environment instead of prod.
 
-    Returns: (str) the gs_path used when writing to the goma GS bucket or None
-      if no artifacts were processed (either because none existed or the step
-      config disabled this step).
+    Returns:
+      tuple[GsDestination]: tuple containing the bucket and gs_path used when
+          writing to the goma GS bucket or None if there were no artifacts to
+          process.
     """
     if not self._upload_goma_logs:
       return None
-    if is_staging:
-      # TODO(mmortensen): Consider uploading to a staging-specific bucket.
-      return None
-    return self.process_log_files(install_pkg_response, goma_log_dir,
-                                  build_target_name)
+    return self._process_log_files(install_pkg_response, goma_log_dir,
+                                  build_target_name, is_staging)
 
-  def process_log_files(self, install_pkg_response, goma_log_dir,
-                        build_target_name):
+  def _process_log_files(self, install_pkg_response, goma_log_dir,
+                        build_target_name, is_staging):
     """Upload goma log files specified by the response with gsutil.
 
     Args:
@@ -84,9 +85,12 @@ class GomaApi(recipe_api.RecipeApi):
         goma artifacts.
       goma_log_dir (str): Log directory that contains the goma log files.
       build_target_name (str): Build target string.
+      is_staging (bool): If being run in staging environment instead of prod.
 
-    Returns: (str) the gs_path used when writing to the goma GS bucket or None
-      if there were no artifacts to process.
+    Returns:
+      tuple[GsDestination]: tuple containing the bucket and gs_path used when
+          writing to the goma GS bucket or None if there were no artifacts to
+          process.
     """
     with self.m.step.nest('process_goma_artifacts') as step:
       if install_pkg_response.HasField('goma_artifacts') and goma_log_dir:
@@ -96,7 +100,9 @@ class GomaApi(recipe_api.RecipeApi):
           gs_path_base = self.m.path.join(
               today.strftime('%Y/%m/%d'),
               self.m.properties.get('bot_id', build_target_name))
-          gs_bucket = 'chrome-goma-log'
+          gs_bucket = ('staging-chrome-goma-log' if is_staging
+                       else 'chrome-goma-log')
+          step.presentation.logs['gs_bucket'] = gs_bucket
           step.presentation.logs['gs_path'] = gs_path_base
           num_logs_uploaded = 0
           builder_id = self.m.buildbucket.build.builder
@@ -120,7 +126,7 @@ class GomaApi(recipe_api.RecipeApi):
                                  metadata=metadata)
             num_logs_uploaded += 1
           step.presentation.logs['num_logs_uploaded'] = str(num_logs_uploaded)
-          return gs_path_base
+          return GsDestination(gs_bucket, gs_path_base)
       else:
         step.presentation.logs['NoGomaArtifacts'] = [
             str(install_pkg_response.goma_artifacts)

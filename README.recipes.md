@@ -2397,21 +2397,21 @@ Returns:
 
 API for working with goma.
 
-#### **class [GomaApi](/recipe_modules/goma/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GomaApi](/recipe_modules/goma/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for working with goma.
 
-&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#40)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#43)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#27)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#30)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#32)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#35)(self):**
 
 Lazily fetches the goma client and returns its path.
 
-&mdash; **def [initialize](/recipe_modules/goma/api.py#24)(self):**
+&mdash; **def [initialize](/recipe_modules/goma/api.py#27)(self):**
 
-&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#55)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
+&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#58)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
 
 Process goma artifacts, uploading to gsutil if they exist.
 
@@ -2422,22 +2422,10 @@ Args:
   build_target_name (str): Build target string.
   is_staging (bool): If being run in staging environment instead of prod.
 
-Returns: (str) the gs_path used when writing to the goma GS bucket or None
-  if no artifacts were processed (either because none existed or the step
-  config disabled this step).
-
-&mdash; **def [process\_log\_files](/recipe_modules/goma/api.py#78)(self, install_pkg_response, goma_log_dir, build_target_name):**
-
-Upload goma log files specified by the response with gsutil.
-
-Args:
-  install_pkg_response (chromite.api.InstallPackagesResponse): May contain
-    goma artifacts.
-  goma_log_dir (str): Log directory that contains the goma log files.
-  build_target_name (str): Build target string.
-
-Returns: (str) the gs_path used when writing to the goma GS bucket or None
-  if there were no artifacts to process.
+Returns:
+  tuple[GsDestination]: tuple containing the bucket and gs_path used when
+      writing to the goma GS bucket or None if there were no artifacts to
+      process.
 ### *recipe_modules* / [ipc](/recipe_modules/ipc)
 
 [DEPS](/recipe_modules/ipc/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
