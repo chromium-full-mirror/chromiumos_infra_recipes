@@ -7,7 +7,6 @@
 
 from google.protobuf import json_format as jsonpb
 
-from PB.chromiumos.bot_scaling import RoboCropAction
 from PB.recipes.chromeos.robocrop import RoboCropProperties
 
 DEPS = [
@@ -38,14 +37,8 @@ def RunSteps(api, properties):
       api.easy.set_property_step('bot_policy_config',
                                  jsonpb.MessageToDict(bot_policy_config))
     with api.step.nest('compute scaling actions'):
-      scaling_actions = []
-      for policy in bot_policy_config.bot_policies:
-        demand = api.buildbucket_stats.get_bot_demand(
-            status_map[policy.bot_group])
-        scaling_actions.append(
-            api.bot_scaling.get_scaling_action(demand, policy))
-
-      robocrop_action = RoboCropAction(scaling_actions=scaling_actions)
+      robocrop_action = api.bot_scaling.get_robocrop_action(
+          status_map, bot_policy_config)
       api.easy.set_property_step('robocrop_action',
                                  jsonpb.MessageToDict(robocrop_action))
     with api.step.nest('query swarming'):

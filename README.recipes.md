@@ -61,6 +61,7 @@
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [autotest_status_parser:examples/full](#recipes-autotest_status_parser_examples_full)
   * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
+  * [bot_scaling:examples/get_robocrop_action](#recipes-bot_scaling_examples_get_robocrop_action)
   * [bot_scaling:examples/get_scaling_action](#recipes-bot_scaling_examples_get_scaling_action)
   * [branch_create](#recipes-branch_create) &mdash; Creates a branch using `cros branch create`.
   * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
@@ -280,13 +281,13 @@ Args:
 Returns: Result.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
-[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that determines how to scale bot groups.
 
-&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#37)(self, demand, scaling_restriction):**
+&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#58)(self, demand, scaling_restriction):**
 
 Core function that scales bots based on demand.
 
@@ -298,7 +299,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#55)(self, bots_requested, region_restrictions):**
+&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#76)(self, bots_requested, region_restrictions):**
 
 Determines regional distribution of bot requests.
 
@@ -310,13 +311,26 @@ Args:
 Returns:
   list[RegionalAction], region wise distribution of bots requested.
 
-&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#14)(self, demand, bot_policy):**
+&mdash; **def [get\_robocrop\_action](/recipe_modules/bot_scaling/api.py#15)(self, status_map, bot_policy_config):**
 
-The overarching function that creates a ScalingAction for a bot group.
+Function to compute all the actions of this RoboCrop.
+
+Args:
+  status_map(str->str->int): A map from bot group to a map of
+    status to task count.
+  bot_policy_config(BotPolicyCfg): Config define Policy for
+    the RoboCrop.
+
+Returns:
+  ScalingAction, comprehensive action to be taken by RoboCrop.
+
+&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#35)(self, demand, bot_policy):**
+
+The function that creates a ScalingAction for a bot group.
 
 Args:
   demand(int): Current demand for bots.
-  bot_policy(BotPolicy): Config define Policy for a bot group.
+  bot_policy(BotPolicy): Config defined Policy for a bot group.
 
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
@@ -3216,6 +3230,11 @@ Returns:
 [DEPS](/recipe_modules/bot_scaling/examples/get_bot_request.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_bot_request.py#15)(api):**
+### *recipes* / [bot\_scaling:examples/get\_robocrop\_action](/recipe_modules/bot_scaling/examples/get_robocrop_action.py)
+
+[DEPS](/recipe_modules/bot_scaling/examples/get_robocrop_action.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_robocrop_action.py#14)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_scaling\_action](/recipe_modules/bot_scaling/examples/get_scaling_action.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_scaling_action.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -4017,11 +4036,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/examples/repo_retry_success.py#17)(api, attempt):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
-[DEPS](/recipes/robocrop.py#13): [bot\_scaling](#recipe_modules-bot_scaling), [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/robocrop.py#12): [bot\_scaling](#recipe_modules-bot_scaling), [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for scaling bots in the Chrome OS pool.
 
-&mdash; **def [RunSteps](/recipes/robocrop.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipes/robocrop.py#23)(api, properties):**
 ### *recipes* / [sign\_image](/recipes/sign_image.py)
 
 [DEPS](/recipes/sign_image.py#29): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

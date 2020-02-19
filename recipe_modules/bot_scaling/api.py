@@ -4,6 +4,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.chromiumos.bot_scaling import RoboCropAction
 from PB.chromiumos.bot_scaling import ScalingAction
 from recipe_engine import recipe_api
 
@@ -11,12 +12,32 @@ from recipe_engine import recipe_api
 class BotScalingApi(recipe_api.RecipeApi):
   """A module that determines how to scale bot groups."""
 
+  def get_robocrop_action(self, status_map, bot_policy_config):
+    """Function to compute all the actions of this RoboCrop.
+
+    Args:
+      status_map(str->str->int): A map from bot group to a map of
+        status to task count.
+      bot_policy_config(BotPolicyCfg): Config define Policy for
+        the RoboCrop.
+
+    Returns:
+      ScalingAction, comprehensive action to be taken by RoboCrop.
+    """
+    scaling_actions = []
+    for policy in bot_policy_config.bot_policies:
+      demand = self.m.buildbucket_stats.get_bot_demand(
+          status_map[policy.bot_group])
+      scaling_actions.append(self.get_scaling_action(demand, policy))
+
+    return RoboCropAction(scaling_actions=scaling_actions)
+
   def get_scaling_action(self, demand, bot_policy):
-    """The overarching function that creates a ScalingAction for a bot group.
+    """The function that creates a ScalingAction for a bot group.
 
     Args:
       demand(int): Current demand for bots.
-      bot_policy(BotPolicy): Config define Policy for a bot group.
+      bot_policy(BotPolicy): Config defined Policy for a bot group.
 
     Returns:
       ScalingAction, comprehensive action to be taken by RoboCrop.
