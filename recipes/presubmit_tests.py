@@ -109,8 +109,7 @@ def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
                     workpath.join('src/repohooks/pre-upload.py')])
               elif api.path.exists(full_path.join('PRESUBMIT.py')):
                 api.step('git cl presubmit',
-                         ['git', 'presubmit', '--verbose'] +
-                         ['--dry_run'] if dry_run else [])
+                         ['git', 'cl', 'presubmit', '--verbose'])
               else:
                 step.presentation.step_text = 'No PRESUBMIT file found.'
             # The branch isn't merged, so we have to use -D.

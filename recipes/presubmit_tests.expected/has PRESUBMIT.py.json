@@ -797,9 +797,9 @@
   {
     "cmd": [
       "git",
+      "cl",
       "presubmit",
-      "--verbose",
-      "--dry_run"
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "env_suffixes": {
@@ -913,9 +913,9 @@
   {
     "cmd": [
       "git",
+      "cl",
       "presubmit",
-      "--verbose",
-      "--dry_run"
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "env_suffixes": {
