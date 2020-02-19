@@ -67,6 +67,18 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
     BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
 ]
 
+# All step timeouts are in seconds.
+STEP_TIMEOUTS = {
+  'uprev': 10 * 60,
+  'create_sdk': 40 * 60,
+  'update_sdk': 60 * 60,
+  'create_sysroot': 10 * 60,
+  'install_toolchain': 30 * 60,
+  'install_packages': 8 * 60 * 60,
+  'build_image': 45 * 60,
+  'unit_tests': 2 * 60 * 60,
+}
+
 
 def RunSteps(api, properties):
   build_target = properties.build_target
@@ -108,6 +120,10 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   api.cros_source.ensure_synced_cache()
   api.cros_source.sync_snapshot(gitiles_commit)
   is_staging = build_config.general.environment == BuilderConfig.General.STAGING
+  is_toolchain_builder = build_config.id.type == BuilderConfig.Id.TOOLCHAIN
+  # Toolchain builders compile many large packages from source and need higher
+  # step timeouts to successfully complete.
+  long_timeouts = is_toolchain_builder
 
   # Define a function to append the failure step with the failed packages
   def _failed_pkg_names(output_proto):
@@ -155,7 +171,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
         chroot=api.cros_sdk.chroot,
         build_targets=[BuildTarget(name=build_target.name)],
         overlay_type=OVERLAYTYPE_BOTH)
-    response = api.cros_build_api.PackageService.Uprev(request)
+    response = api.cros_build_api.PackageService.Uprev(
+        request, timeout=STEP_TIMEOUTS['uprev'])
 
   with api.step.nest('init sdk') as step:
     api.cros_sdk.build_chmod_chroot()
@@ -176,7 +193,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                 no_replace=no_replace_flag,
                 # Test mounting the SDK as an image only in staging for now.
                 no_use_image=not is_staging),
-            chroot=api.cros_sdk.chroot))
+            chroot=api.cros_sdk.chroot),
+        timeout=(STEP_TIMEOUTS['create_sdk'] if not long_timeouts else None))
     step.presentation.logs['sdk version'] = [str(response.version.version)]
     if build_config.general.sdk_cache_version:
       api.cros_sdk.sdk_cache_version = build_config.general.sdk_cache_version
@@ -185,6 +203,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   with api.step.nest('detect toolchain change') as step:
     toolchain_changed = api.cros_relevance.check_for_toolchain_change(
         gerrit_changes, gitiles_commit, chroot=api.cros_sdk.chroot)
+    # Toolchain CLs take significantly longer to build & test and need the
+    # default step timeouts to be raiesd.
+    long_timeouts |= toolchain_changed
     if toolchain_changed:
       api.cros_sdk.mark_sdk_as_dirty()
       step.presentation.step_text = ('change detected')
@@ -199,8 +220,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
         toolchain_changed=toolchain_changed)
     api.cros_build_api.SdkService.Update(
         UpdateSdkRequest(chroot=api.cros_sdk.chroot,
-                         toolchain_targets=[build_target],
-                         flags=flags))
+                         toolchain_targets=[build_target], flags=flags),
+        timeout=(STEP_TIMEOUTS['update_sdk'] if not long_timeouts else None))
 
   with api.step.nest('create sysroot'):
     profile = None
@@ -211,7 +232,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
             build_target=build_target, profile=profile,
             chroot=api.cros_sdk.chroot, flags=SysrootCreateRequest.Flags(
                 chroot_current=True, replace=True,
-                toolchain_changed=toolchain_changed)))
+                toolchain_changed=toolchain_changed)),
+        timeout=(STEP_TIMEOUTS['create_sysroot']
+                 if not long_timeouts else None))
     sysroot = create_sysroot_response.sysroot
 
   packages = get_packages(api, build_config)
@@ -243,7 +266,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
         toolchain_changed=toolchain_changed)
     response = api.cros_build_api.SysrootService.InstallToolchain(
         InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
-                                flags=flags), response_lambda=_failed_pkg_names)
+                                flags=flags), response_lambda=_failed_pkg_names,
+        timeout=(STEP_TIMEOUTS['install_toolchain']
+                 if not long_timeouts else None))
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
   install_packages = build_config.build.install_packages
@@ -297,7 +322,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           use_flags=build_config.build.use_flags,
           goma_config=api.cros_sdk.goma_config())
       response = api.cros_build_api.SysrootService.InstallPackages(
-          install_pkg_request, response_lambda=_failed_pkg_names)
+          install_pkg_request, response_lambda=_failed_pkg_names,
+          timeout=(STEP_TIMEOUTS['install_packages']
+                   if not long_timeouts else None))
 
       # Process goma response to upload logs, stats, and counterz.
       api.goma.process_artifacts(response,
@@ -318,12 +345,12 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     with api.step.nest('build images') as bi_step:
       response = api.cros_build_api.ImageService.Create(
           CreateImageRequest(
-              build_target=build_target, chroot=api.cros_sdk.chroot,
+              build_target=build_target,
+              chroot=api.cros_sdk.chroot,
               image_types=image_types,
               builder_path=api.cros_artifacts.artifacts_gs_path(
                   build_config.id.name, build_target, build_config.id.type),
-          ),
-          timeout=45 * 60,
+          ), timeout=STEP_TIMEOUTS['build_image'],
           response_lambda=_failed_pkg_names)
       api.failures.set_failed_packages(bi_step, response.failed_packages)
     with api.step.nest('test images'):
@@ -356,8 +383,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
               build_target=build_target, chroot=api.cros_sdk.chroot,
               result_path=str(api.path.mkdtemp()),
               package_blacklist=build_config.unit_tests.package_blacklist,
-              flags=flags), timeout=2 * 60 * 60,
-              response_lambda=_failed_pkg_names)
+              flags=flags), timeout=STEP_TIMEOUTS['unit_tests'],
+          response_lambda=_failed_pkg_names)
       api.failures.set_failed_packages(reb_step, response.failed_packages)
     if api.cros_infra_config.should_exit(ebuilds_run_spec):
       return

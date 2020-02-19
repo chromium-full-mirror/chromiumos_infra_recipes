@@ -874,6 +874,7 @@
       ]
     },
     "name": "uprev packages.call chromite.api.PackageService/Uprev.call build API script",
+    "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1079,6 +1080,7 @@
       ]
     },
     "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
+    "timeout": 2400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1550,6 +1552,7 @@
       ]
     },
     "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1732,6 +1735,7 @@
       ]
     },
     "name": "create sysroot.call chromite.api.SysrootService/Create.call build API script",
+    "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2303,6 +2307,7 @@
       ]
     },
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.call build API script",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3033,6 +3038,7 @@
       ]
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.call build API script",
+    "timeout": 28800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

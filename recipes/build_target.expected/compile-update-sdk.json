@@ -624,6 +624,7 @@
       ]
     },
     "name": "uprev packages.call chromite.api.PackageService/Uprev.call build API script",
+    "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
