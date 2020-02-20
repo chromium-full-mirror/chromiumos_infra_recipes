@@ -201,6 +201,21 @@
     ]
   },
   {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r",
+      "-m",
+      "some_manifest_file"
+    ],
+    "infra_step": true,
+    "name": "repo manifest (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "manifest diff",
     "~followup_annotations": [

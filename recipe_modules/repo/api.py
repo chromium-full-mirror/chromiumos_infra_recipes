@@ -232,16 +232,29 @@ class RepoApi(recipe_api.RecipeApi):
     assert len(set(project_infos)) == 1, 'expected one project'
     return project_infos[0]
 
-  def manifest_snapshot(self):
+  def manifest_snapshot(self, manifest_file=None):
     """Uses repo to create a manifest snapshot and returns it as a string.
+
+    By default uses the internal .repo manifest, but can optionally take
+    another manifest to use.
+
+    Args:
+      manifest_file (Path): If given, path to alternate manifest file to use.
 
     Returns:
       str: The manifest XML as a string.
     """
     step_test_data = lambda: self.m.raw_io.test_api.stream_output('<manifest></manifest>')
-    step_data = self._step(['manifest', '-r'],
-                           stdout=self.m.raw_io.output(add_output_log=True),
-                           step_test_data=step_test_data)
+
+    cmd = ['manifest', '-r']
+    if manifest_file:
+      cmd += ['-m', manifest_file]
+
+    step_data = self._step(
+        cmd,
+        stdout=self.m.raw_io.output(add_output_log=True),
+        step_test_data=step_test_data
+    )
     return step_data.stdout.strip()
 
   def diff_remote_and_local_manifests(self, from_manifest_url,

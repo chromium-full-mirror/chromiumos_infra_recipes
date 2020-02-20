@@ -33,6 +33,7 @@ def RunSteps(api):
   assert info.name == 'foo'
 
   assert api.repo.manifest_snapshot() == "<manifest></manifest>"
+  assert api.repo.manifest_snapshot("some_manifest_file") == "<manifest></manifest>"
 
   snapshot_a = api.path['start_dir'].join('snapshot_a.xml')
   snapshot_b = api.path['start_dir'].join('snapshot_b.xml')
