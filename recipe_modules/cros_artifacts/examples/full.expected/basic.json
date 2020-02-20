@@ -22,11 +22,11 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"/path/to/chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@request@    \"VERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"VERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"inputArtifacts\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"inputArtifactType\": \"UNVERIFIED_ORDERING_FILE\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"inputArtifactType\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", @@@",
       "@@@STEP_LOG_LINE@request@      \"inputArtifactGsLocations\": [@@@",
       "@@@STEP_LOG_LINE@request@        \"chromeos-toolchain-artifacts/orderfile/unvetted\"@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
@@ -46,7 +46,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"board\"\n    }, \n    \"path\": \"/build/board\"\n  }, \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"artifactTypes\": [\n    \"VERIFIED_ORDERING_FILE\"\n  ], \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_ORDERING_FILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\"\n      ]\n    }\n  ]\n}",
+      "{\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"board\"\n    }, \n    \"path\": \"/build/board\"\n  }, \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"artifactTypes\": [\n    \"VERIFIED_CHROME_LLVM_ORDERFILE\"\n  ], \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\"\n      ]\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -64,11 +64,11 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"/path/to/chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"VERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"VERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"inputArtifacts\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactType\": \"UNVERIFIED_ORDERING_FILE\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactType\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactGsLocations\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        \"chromeos-toolchain-artifacts/orderfile/unvetted\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
@@ -1779,7 +1779,7 @@
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-0@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_ORDERING_FILE@https://console.cloud.google.com/storage/browser/pub2/%(gs_path)s@@@"
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/%(gs_path)s@@@"
     ]
   },
   {
@@ -1789,7 +1789,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"/path/to/chroot\"@@@",
@@ -1815,7 +1815,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"artifactTypes\": [\n    \"UNVERIFIED_ORDERING_FILE\"\n  ], \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"board\"\n    }, \n    \"path\": \"/build/board\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_12\"\n}",
+      "{\n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ], \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"board\"\n    }, \n    \"path\": \"/build/board\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_12\"\n}",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "infra_step": true,
@@ -1824,7 +1824,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"/path/to/chroot\"@@@",
@@ -1992,7 +1992,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"UNVERIFIED_ORDERING_FILE\": [\"../../my_output_artifact\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-0\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../my_output_artifact\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-0\"}@@@"
     ]
   },
   {
@@ -2000,7 +2000,7 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_ORDERING_FILE@https://console.cloud.google.com/storage/browser/pub2/%(gs_path)s@@@"
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/%(gs_path)s@@@"
     ]
   },
   {
@@ -2196,7 +2196,7 @@
     "name": "upload artifacts.publish artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_ORDERING_FILE\": [{\"files\": [\"../../my_output_artifact\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../my_output_artifact\"], \"gs_location\": \"pub2/%(gs_path)s\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [{\"files\": [\"../../my_output_artifact\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../my_output_artifact\"], \"gs_location\": \"pub2/%(gs_path)s\"}]}@@@"
     ]
   },
   {

@@ -40,10 +40,10 @@
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@  prebuilts: NONE@@@",
-      "@@@STEP_LOG_LINE@builder config@  artifact_types: UNVERIFIED_ORDERING_FILE@@@",
+      "@@@STEP_LOG_LINE@builder config@  artifact_types: UNVERIFIED_CHROME_LLVM_ORDERFILE@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@builder config@  publish_artifacts {@@@",
-      "@@@STEP_LOG_LINE@builder config@    publish_types: UNVERIFIED_ORDERING_FILE@@@",
+      "@@@STEP_LOG_LINE@builder config@    publish_types: UNVERIFIED_CHROME_LLVM_ORDERFILE@@@",
       "@@@STEP_LOG_LINE@builder config@    publish_gs_location: \"chromeos-toolchain-artifacts/orderfile/unvetted\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
@@ -113,7 +113,7 @@
     "name": "read builder config.set builder_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"UNVERIFIED_ORDERING_FILE\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"NONE\", \"publishArtifacts\": [{\"publishGsLocation\": \"chromeos-toolchain-artifacts/orderfile/unvetted\", \"publishTypes\": [\"UNVERIFIED_ORDERING_FILE\"]}]}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"compileSource\": true, \"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"-orderfile_use\"}, {\"flag\": \"orderfile_generate\"}, {\"flag\": \"-strict_toolchain_checks\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"orderfile-generate-toolchain\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"UNVERIFIED_CHROME_LLVM_ORDERFILE\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"NONE\", \"publishArtifacts\": [{\"publishGsLocation\": \"chromeos-toolchain-artifacts/orderfile/unvetted\", \"publishTypes\": [\"UNVERIFIED_CHROME_LLVM_ORDERFILE\"]}]}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"compileSource\": true, \"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"-orderfile_use\"}, {\"flag\": \"orderfile_generate\"}, {\"flag\": \"-strict_toolchain_checks\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"orderfile-generate-toolchain\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
     ]
   },
   {
@@ -531,7 +531,7 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"additionalArgs\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -547,7 +547,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"additionalArgs\": {}, \n  \"artifactTypes\": [\n    \"UNVERIFIED_ORDERING_FILE\"\n  ]\n}",
+      "{\n  \"additionalArgs\": {}, \n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -558,7 +558,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"additionalArgs\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ]@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -2781,7 +2781,7 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -2797,7 +2797,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"additionalArgs\": {}, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"artifactTypes\": [\n    \"UNVERIFIED_ORDERING_FILE\"\n  ]\n}",
+      "{\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"additionalArgs\": {}, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2840,7 +2840,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ]@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -3546,7 +3546,7 @@
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_ORDERING_FILE@https://console.cloud.google.com/storage/browser/chromeos-toolchain-artifacts/orderfile/unvetted@@@"
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/chromeos-toolchain-artifacts/orderfile/unvetted@@@"
     ]
   },
   {
@@ -3556,7 +3556,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"additionalArgs\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -3606,7 +3606,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"artifactTypes\": [\n    \"UNVERIFIED_ORDERING_FILE\"\n  ], \n  \"additionalArgs\": {}, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_17\"\n}",
+      "{\n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ], \n  \"additionalArgs\": {}, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_17\"\n}",
       "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3616,7 +3616,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_ORDERING_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"additionalArgs\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
@@ -3812,7 +3812,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"UNVERIFIED_ORDERING_FILE\": [\"../../my_output_artifact\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../my_output_artifact\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -3820,7 +3820,7 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_ORDERING_FILE@https://console.cloud.google.com/storage/browser/chromeos-toolchain-artifacts/orderfile/unvetted@@@"
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/chromeos-toolchain-artifacts/orderfile/unvetted@@@"
     ]
   },
   {
@@ -3924,7 +3924,7 @@
     "name": "upload artifacts.publish artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_ORDERING_FILE\": [{\"files\": [\"../../my_output_artifact\"], \"gs_location\": \"chromeos-toolchain-artifacts/orderfile/unvetted\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [{\"files\": [\"../../my_output_artifact\"], \"gs_location\": \"chromeos-toolchain-artifacts/orderfile/unvetted\"}]}@@@"
     ]
   },
   {
