@@ -3188,6 +3188,58 @@
     "name": "install packages.process_goma_artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@compile_event@build_id: 8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@compile_event@stats {@@@",
+      "@@@STEP_LOG_LINE@compile_event@  time_stats {@@@",
+      "@@@STEP_LOG_LINE@compile_event@    uptime: 1234@@@",
+      "@@@STEP_LOG_LINE@compile_event@  }@@@",
+      "@@@STEP_LOG_LINE@compile_event@}@@@",
+      "@@@STEP_LOG_LINE@compile_event@counterz_stats {@@@",
+      "@@@STEP_LOG_LINE@compile_event@}@@@",
+      "@@@STEP_LOG_END@compile_event@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/goma-logs-_tmp_15/stats.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "install packages.process_goma_artifacts.read_stats_proto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/goma-logs-_tmp_15/counterz.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "install packages.process_goma_artifacts.read_counterz_proto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.process_goma_artifacts (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@gs_bucket@chrome-goma-log@@@",
       "@@@STEP_LOG_END@gs_bucket@@@",
       "@@@STEP_LOG_LINE@gs_path@2012/05/14/@@@",
@@ -3212,7 +3264,7 @@
     ],
     "cwd": "[CLEANUP]/goma-logs-_tmp_15",
     "infra_step": true,
-    "name": "install packages.process_goma_artifacts.gsutil upload",
+    "name": "install packages.process_goma_artifacts (2).gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz@@@"
@@ -3234,7 +3286,7 @@
     ],
     "cwd": "[CLEANUP]/goma-logs-_tmp_15",
     "infra_step": true,
-    "name": "install packages.process_goma_artifacts.gsutil upload (2)",
+    "name": "install packages.process_goma_artifacts (2).gsutil upload (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz@@@"
@@ -3256,7 +3308,7 @@
     ],
     "cwd": "[CLEANUP]/goma-logs-_tmp_15",
     "infra_step": true,
-    "name": "install packages.process_goma_artifacts.gsutil upload (3)",
+    "name": "install packages.process_goma_artifacts (2).gsutil upload (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz@@@"
@@ -3278,7 +3330,7 @@
     ],
     "cwd": "[CLEANUP]/goma-logs-_tmp_15",
     "infra_step": true,
-    "name": "install packages.process_goma_artifacts.gsutil upload (4)",
+    "name": "install packages.process_goma_artifacts (2).gsutil upload (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz@@@"

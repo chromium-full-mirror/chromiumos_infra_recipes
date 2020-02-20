@@ -1,0 +1,30 @@
+// Copyright 2020 The Goma Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Copied from https://chromium.googlesource.com/infra/goma/client/+/master/client/counterz.proto
+
+syntax = "proto2";
+
+package devtools_goma;
+
+message CounterzStat {
+  // Represents file and position in source file.
+  optional string location = 1;
+
+  // Function name counterz is declared in.
+  optional string function_name = 2;
+
+  // Name of counterz stat.
+  optional string name = 3;
+
+  // The number of times the location is taken.
+  optional int64 total_count = 4;
+
+  // Total time taken to pass scope of counter.
+  optional int64 total_time_ns = 5;
+}
+
+message CounterzStats {
+  repeated CounterzStat counterz_stats = 1;
+}
