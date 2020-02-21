@@ -5,6 +5,10 @@
   },
   {
     "cmd": [],
+    "name": "Determine target DUT"
+  },
+  {
+    "cmd": [],
     "name": "load local DUT state"
   },
   {

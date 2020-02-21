@@ -106,13 +106,11 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     if self._cmd:
       return
 
-    with self.m.step.nest('ensure phosphorus'):
-      with self.m.context(infra_steps=True):
+    with self.m.context(infra_steps=True):
+      with self.m.step.nest('ensure phosphorus'):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'phosphorus')
-
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/phosphorus/${platform}',
                           self._version)
         self.m.cipd.ensure(cipd_dir, pkgs)
-
         self._cmd = cipd_dir.join('phosphorus')

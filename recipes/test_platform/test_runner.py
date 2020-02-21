@@ -63,8 +63,8 @@ def load_state(api, config=None, dut_hostname="", run_id=""):
   Raises:
     * InfraFailure if binary call fails.
   """
-  with api.step.nest('load local DUT state') as step:
-    with api.context(infra_steps=True):
+  with api.context(infra_steps=True):
+    with api.step.nest('load local DUT state') as step:
       load_request = skylab_local_state.load.LoadRequest(
           config=skylab_local_state.common.Config(
               admin_service=config.lab.admin_service,
@@ -140,8 +140,8 @@ def upload_to_gs(api, config=None, target_dir=None, task_id=""):
   Raises:
     * InfraFailure if binary call fails.
   """
-  with api.step.nest('upload to GS') as step:
-    with api.context(infra_steps=True):
+  with api.context(infra_steps=True):
+    with api.step.nest('upload to GS') as step:
       req = phosphorus.upload_to_gs.UploadToGSRequest(
           config=config,
           gs_directory=target_dir,
@@ -220,8 +220,8 @@ def save_state(api, config=None, results_dir='', dut_hostname='', dut_id='',
   Raises:
     * InfraFailure if binary call fails.
   """
-  with api.step.nest('save local DUT state') as step:
-    with api.context(infra_steps=True):
+  with api.context(infra_steps=True):
+    with api.step.nest('save local DUT state') as step:
       save_request = skylab_local_state.save.SaveRequest(
           config=skylab_local_state.common.Config(
             admin_service=config.lab.admin_service,
@@ -242,8 +242,8 @@ def set_output_properties(api, result=None):
   Args:
     * result: skylab_test_runner.Result instance.
   """
-  with api.step.nest('set output properties') as step:
-    with api.context(infra_steps=True):
+  with api.context(infra_steps=True):
+    with api.step.nest('set output properties') as step:
       step.properties['result'] = json_format.MessageToDict(result)
 
 
@@ -256,10 +256,12 @@ def _get_dut_hostname(api, env):
   Raises:
     * AssertionError if the Swarming bot ID env var is missing or invalid.
   """
-  # TODO(zamorzaev): this is brittle, propagate the DUT hostname directly
-  # instead.
-  assert env.SWARMING_BOT_ID[:7] == 'crossk-'
-  return env.SWARMING_BOT_ID[7:]
+  with api.context(infra_steps=True):
+    with api.step.nest('Determine target DUT') as step:
+      # TODO(zamorzaev): this is brittle, propagate the DUT hostname directly
+      # instead.
+      assert env.SWARMING_BOT_ID[:7] == 'crossk-'
+      return env.SWARMING_BOT_ID[7:]
 
 
 def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
@@ -345,6 +347,7 @@ def RunSteps(api, properties, envvars):
   # properties rather than have the recipe fail with no output properties.
   except api.step.InfraFailure:
     result = _default_failed_result()
+
   save_state(api, config=properties.config,
              results_dir=load_response.results_dir,
              dut_hostname=dut_hostname, dut_id=envvars.SKYLAB_DUT_ID,
