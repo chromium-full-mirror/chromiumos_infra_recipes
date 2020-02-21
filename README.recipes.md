@@ -4255,20 +4255,20 @@ Returns: bool, [test_platform.Request]
 &mdash; **def [RunSteps](/recipes/test_platform/multi_bot/leader.py#20)(api, properties):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#25): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [phosphorus](#recipe_modules-phosphorus), [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/test_runner.py#26): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [phosphorus](#recipe_modules-phosphorus), [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#294)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#306)(api, properties, envvars):**
 
-&mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#183)(api, result):**
+&mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#195)(api, result):**
 
 Display test cases as recipe substeps.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#167)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#179)(api, results_dir=''):**
 
 Parse test results.
 
@@ -4280,7 +4280,7 @@ Returns: skylab_test_runner.Result.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [load\_state](/recipes/test_platform/test_runner.py#53)(api, config=None, dut_hostname='', run_id=''):**
+&mdash; **def [load\_state](/recipes/test_platform/test_runner.py#54)(api, config=None, dut_hostname='', run_id=''):**
 
 Create a host info file.
 
@@ -4294,7 +4294,7 @@ Returns: LoadResponse.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [prejob](/recipes/test_platform/test_runner.py#79)(api, config=None, request=None, dut_hostname='', load_response=None):**
+&mdash; **def [prejob](/recipes/test_platform/test_runner.py#80)(api, config=None, request=None, dut_hostname='', load_response=None):**
 
 Run a prejob (e.g. provision) against the DUT via `autoserv`.
 
@@ -4307,7 +4307,7 @@ Args:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#104)(api, config=None, request=None, dut_hostname=''):**
+&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#110)(api, config=None, request=None, dut_hostname=''):**
 
 Run a test against the DUT via `autoserv`.
 
@@ -4320,7 +4320,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [save\_state](/recipes/test_platform/test_runner.py#209)(api, config=None, results_dir='', dut_hostname='', dut_id='', dut_state=''):**
+&mdash; **def [save\_state](/recipes/test_platform/test_runner.py#221)(api, config=None, results_dir='', dut_hostname='', dut_id='', dut_state=''):**
 
 Update the local DUT state file.
 
@@ -4334,14 +4334,14 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#239)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#251)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [upload\_to\_gs](/recipes/test_platform/test_runner.py#131)(api, config=None, target_dir=None, task_id=''):**
+&mdash; **def [upload\_to\_gs](/recipes/test_platform/test_runner.py#143)(api, config=None, target_dir=None, task_id=''):**
 
 Upload synchronously-needed test results to Google Storage.
 
@@ -4354,7 +4354,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#152)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#164)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 
@@ -4364,7 +4364,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#39)(api, properties):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#40)(api, properties):**
 
 Validate the TestRunnerProperties.
 

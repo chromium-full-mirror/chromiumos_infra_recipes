@@ -21,6 +21,7 @@ from PB.test_platform.skylab_test_runner.result import Result
 from PB.test_platform.skylab_test_runner.config import Config
 
 from google.protobuf import json_format
+from google.protobuf import timestamp_pb2
 
 DEPS = [
     'recipe_engine/context',
@@ -96,8 +97,13 @@ def prejob(api, config=None, request=None, dut_hostname='',
           dut_hostname=dut_hostname,
           desired_provisionable_labels=request.prejob.provisionable_labels,
           existing_provisionable_labels=load_response.provisionable_labels,
-          deadline=request.deadline,
       )
+      if request.HasField('deadline'):
+        # Must explicitly check for existence of deadline.
+        # Reading the deadline from a request where the field is unset returns
+        # the zero value. The zero value google.protobuf.Timestamp translates to
+        # a non-zero time.Time in Go.
+        prejob_request.deadline.MergeFrom(request.deadline)
       api.phosphorus.prejob(prejob_request)
 
 
@@ -126,6 +132,12 @@ def run_test(api, config=None, request=None, dut_hostname=''):
         ),
         deadline=request.deadline,
     )
+    if request.HasField('deadline'):
+      # Must explicitly check for existence of deadline.
+      # Reading the deadline from a request where the field is unset returns
+      # the zero value. The zero value google.protobuf.Timestamp translates to
+      # a non-zero time.Time in Go.
+      run_test_request.deadline.MergeFrom(request.deadline)
     api.phosphorus.run_test(run_test_request)
 
 def upload_to_gs(api, config=None, target_dir=None, task_id=""):
@@ -309,9 +321,9 @@ def RunSteps(api, properties, envvars):
   # An exception from the steps here indicates an infrastructure
   # failure that should be bubbled up immediately.
   prejob(api, config=phosphorus_config, request=properties.request,
-          dut_hostname=dut_hostname, load_response=load_response)
+         dut_hostname=dut_hostname, load_response=load_response)
   run_test(api, config=phosphorus_config, request=properties.request,
-            dut_hostname=dut_hostname)
+           dut_hostname=dut_hostname)
 
   # In case autoserv fails early, upload_to_tko()reruns tko/parse to extract
   # status.log from the logs. Thus, upload_to_tko() must be run before
@@ -367,22 +379,28 @@ def GenTests(api):
 
   # An example request.
   def _request_properties():
-    return (
-        api.properties(
-            TestRunnerProperties(
-                request={
-                    'prejob': {
-                        'provisionable_labels': {
-                            'label1': 'value1'}},
-                    'test': {
-                        'autotest': {
-                            'name': 'dummy_name',
-                            'test_args': 'foo=bar',
-                            'keyvals': {
-                                'key1': 'value1',
-                            },
-                            'is_client_test': True,
-                            'display_name': 'fancy_name'}}})))
+    return (api.properties(
+        TestRunnerProperties(request=_canned_test_runner_request())))
+
+  def _canned_test_runner_request():
+    return {
+        'prejob': {
+            'provisionable_labels': {
+                'label1': 'value1'
+            }
+        },
+        'test': {
+            'autotest': {
+                'name': 'dummy_name',
+                'test_args': 'foo=bar',
+                'keyvals': {
+                    'key1': 'value1',
+                },
+                'is_client_test': True,
+                'display_name': 'fancy_name'
+            }
+        }
+    }
 
   # Required for steps following `skylab_local_state load`.
   def _mock_load_step():
@@ -401,6 +419,13 @@ def GenTests(api):
   yield (api.test('success') + #
          _misc_properties() + #
          _request_properties() + #
+         _mock_load_step())
+
+  r = _canned_test_runner_request()
+  r['deadline'] = timestamp_pb2.Timestamp(seconds=55)
+  yield (api.test('success with deadline') +  #
+         _misc_properties() +  #
+         api.properties(TestRunnerProperties(request=r)) +  #
          _mock_load_step())
 
   yield (api.test('prejob_crash') + #
