@@ -4259,7 +4259,7 @@ Returns: bool, [test_platform.Request]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#306)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#294)(api, properties, envvars):**
 
 &mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#183)(api, result):**
 

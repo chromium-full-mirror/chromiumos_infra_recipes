@@ -290,18 +290,6 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
       )
   )
 
-def _default_failed_result():
-  """Construct a result for an unknown failure.
-
-  Returns:
-    * skylab_test_runner.Result.
-  """
-  return Result(
-      autotest_result=Result.Autotest(
-        incomplete=True
-      )
-  )
-
 
 def RunSteps(api, properties, envvars):
   upload_response = None
@@ -310,49 +298,42 @@ def RunSteps(api, properties, envvars):
   load_response = load_state(api, config=properties.config,
                              dut_hostname=dut_hostname,
                              run_id=envvars.SWARMING_TASK_ID)
+  # TODO(crbug.com/1054840) Save state to trigger DUT repair in case of
+  # infrastructure failures beyond this point.
+
   phosphorus_config = _get_phosphorus_config(
       properties.config, load_response,
       properties.request.test.offload.synchronous_gs_enable,
   )
+  # prejob and test failures are detected when parsing results.
+  # An exception from the steps here indicates an infrastructure
+  # failure that should be bubbled up immediately.
+  prejob(api, config=phosphorus_config, request=properties.request,
+          dut_hostname=dut_hostname, load_response=load_response)
+  run_test(api, config=phosphorus_config, request=properties.request,
+            dut_hostname=dut_hostname)
 
-  # Run the post-process steps if prejob or run_test fails, but don't run_test
-  # if prejob fails.
-  try:
-    prejob(api, config=phosphorus_config, request=properties.request,
-           dut_hostname=dut_hostname, load_response=load_response)
+  # In case autoserv fails early, upload_to_tko()reruns tko/parse to extract
+  # status.log from the logs. Thus, upload_to_tko() must be run before
+  # get_results().
+  upload_to_tko(api, config=phosphorus_config)
+  result = get_results(api, load_response.results_dir)
 
-    run_test(api, config=phosphorus_config, request=properties.request,
-             dut_hostname=dut_hostname)
-    # Similarly, run the GS upload only if the test completed cleanly (whether
-    # it succeeded or failed), and only if requested
-    if properties.request.test.offload.synchronous_gs_enable:
-      upload_response = upload_to_gs(
-          api, config=phosphorus_config,
-          target_dir=properties.config.output.gs_root_dir,
-          task_id=envvars.SWARMING_TASK_ID)
-  except (api.step.StepFailure, api.step.InfraFailure):
-    pass
-
-  try:
-    upload_to_tko(api, config=phosphorus_config)
-  except api.step.InfraFailure:
-    pass
-
-  try:
-    result = get_results(api, load_response.results_dir)
-    if upload_response and result.autotest_result:
-      result.autotest_result.synchronous_log_data_url = upload_response.gs_url
-    display_results_summary(api, result)
-  # When result parsing fails we want to explicitly return a failure via output
-  # properties rather than have the recipe fail with no output properties.
-  except api.step.InfraFailure:
-    result = _default_failed_result()
+  if properties.request.test.offload.synchronous_gs_enable:
+    upload_response = upload_to_gs(
+        api, config=phosphorus_config,
+        target_dir=properties.config.output.gs_root_dir,
+        task_id=envvars.SWARMING_TASK_ID)
+    result.autotest_result.synchronous_log_data_url = upload_response.gs_url
 
   save_state(api, config=properties.config,
              results_dir=load_response.results_dir,
              dut_hostname=dut_hostname, dut_id=envvars.SKYLAB_DUT_ID,
              dut_state=result.state_update.dut_state)
+
+  display_results_summary(api, result)
   set_output_properties(api, result=result)
+  # TODO(crbug.com/1054850) Raise api.step.StepFailure if a test failed.
 
 
 def GenTests(api):

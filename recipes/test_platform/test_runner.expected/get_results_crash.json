@@ -306,49 +306,9 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "save local DUT state"
-  },
-  {
-    "cmd": [],
-    "name": "save local DUT state.call `skylab_local_state`",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy\"@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/skylab_local_state/skylab_local_state",
-      "save",
-      "-input_json",
-      "/dev/stdin"
-    ],
-    "infra_step": true,
-    "name": "save local DUT state.call `skylab_local_state`.save",
-    "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\"\n}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set output properties",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@result@{\"autotestResult\": {\"incomplete\": true}}@@@"
-    ]
-  },
-  {
+    "failure": {
+      "humanReason": "Infra Failure: Step('get test results.call `autotest_status_parser`.parse') (retcode: 1)"
+    },
     "name": "$result"
   }
 ]

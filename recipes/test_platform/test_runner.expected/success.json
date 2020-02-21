@@ -304,10 +304,6 @@
   },
   {
     "cmd": [],
-    "name": "summarize test results"
-  },
-  {
-    "cmd": [],
     "name": "save local DUT state"
   },
   {
@@ -341,6 +337,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize test results"
   },
   {
     "cmd": [],
