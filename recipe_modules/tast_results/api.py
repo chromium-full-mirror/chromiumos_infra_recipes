@@ -74,6 +74,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       # If there are no results, assume INFRA_FAILURE.
       if not all_verdicts:  # pragma: nocover
         overall_state.verdict = TaskState.VERDICT_UNSPECIFIED
+        test_cases = self.fake_empty_result_test_cases()
       elif TaskState.VERDICT_FAILED in all_verdicts:
         overall_state.verdict = TaskState.VERDICT_FAILED
       return ExecuteResponse.TaskResult(name=suite_name, state=overall_state,
@@ -97,6 +98,14 @@ class TastResultsApi(recipe_api.RecipeApi):
     list_of_results = list_of_results or []
     return [
         jsonpb.ParseDict(result, TestResult()) for result in list_of_results
+    ]
+
+  def fake_empty_result_test_cases(self):
+    """A hack for crbug/1049754."""
+    return [
+        ExecuteResponse.TaskResult.TestCaseResult(
+            name='arc.Boot', verdict=TaskState.VERDICT_FAILED,
+            human_readable_summary='tast wrote empty results.json.')
     ]
 
   def convert_to_testcaseresult(self, test_result):

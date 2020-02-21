@@ -19,6 +19,8 @@ def RunSteps(api):
   task_result = api.tast_results.get_results(temp_dir, 'fancy-suite', '1')
   failures = api.tast_results.get_failures(task_result)
   api.tast_results.print_results(failures, False)
+  # fake test case code.
+  api.tast_results.fake_empty_result_test_cases()
 
   # tests_to_retry unittesting.
   tests = api.tast_results.get_tests_to_retry(task_result)
