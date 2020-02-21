@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "validate tests"
+  },
+  {
+    "cmd": [],
     "name": "traffic split",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@selected backend: skylab@@@"

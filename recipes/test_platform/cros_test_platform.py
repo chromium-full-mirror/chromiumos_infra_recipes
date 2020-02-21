@@ -37,6 +37,7 @@ import collections
 import contextlib
 import json
 
+from google.protobuf import duration_pb2
 from google.protobuf import json_format
 
 from recipe_engine.post_process import GetBuildProperties
@@ -51,6 +52,23 @@ DEPS = [
 ]
 
 PROPERTIES = CrosTestPlatformProperties
+
+
+def validate_requests(api, requests):
+  with api.step.nest('validate tests') as step:
+    max_timeout = api.buildbucket.build.execution_timeout
+    max_timeout_s = max_timeout.ToTimedelta().total_seconds()
+    for t, r in requests.iteritems():
+      request_timeout = r.params.time.maximum_duration
+      if request_timeout is None:
+        continue  # pragma: no cover
+
+      request_timeout_s = request_timeout.ToTimedelta().total_seconds()
+      if request_timeout_s > 0 and request_timeout_s >= max_timeout_s:
+        msg = ('Timeout (%s) for request %s is larger than maximum timeout (%s)'
+               % (request_timeout.ToTimedelta(), t, max_timeout.ToTimedelta()))
+        step.presentation.step_summary_text = msg
+        raise api.step.StepFailure(msg)
 
 
 def enumerate_tests(api, requests):
@@ -188,6 +206,7 @@ def compute_backfills(api, requests, enumerations, responses):
 
 def RunSteps(api, properties):
   requests = _get_requests_from_properties(properties)
+  validate_requests(api, requests)
   # Traffic split failures can be due to malformed requests.
   requests = split(api, requests, properties.config)
   # Enumeration or execution failures are all infra failures
@@ -447,6 +466,18 @@ def GenTests(api):
                          'default': SchedulerTrafficSplitResponse()
                      })))) +  #
          api.expect_exception("ValueError"))
+
+
+  # Request with a very long timeout should cause build failure.
+  yield (api.test('timeout too long') +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=Request(
+                     params=Request.Params(
+                         time=Request.Params.Time(
+                             maximum_duration=duration_pb2.Duration(
+                                 seconds=3600))),
+                 ))))
 
   # An end-to-end run with traffic splitting to skylab.
   yield (

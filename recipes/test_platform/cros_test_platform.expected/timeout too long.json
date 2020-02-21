@@ -1,0 +1,17 @@
+[
+  {
+    "cmd": [],
+    "name": "validate tests",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@Timeout (1:00:00) for request default is larger than maximum timeout (0:00:00)@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "Timeout (1:00:00) for request default is larger than maximum timeout (0:00:00)"
+    },
+    "name": "$result"
+  }
+]
