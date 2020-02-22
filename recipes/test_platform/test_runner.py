@@ -247,6 +247,9 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
   )
 
 
+_DUT_STATE_NEEDS_REPAIR = "needs_repair"
+
+
 def RunSteps(api, properties, envvars):
   upload_response = None
   validate_request(api, properties)
@@ -260,37 +263,41 @@ def RunSteps(api, properties, envvars):
   )
   with api.step.nest('load local DUT state'):
     load_response = state_store.load(api)
+  with api.step.nest('Mark local DUT state dirty'):
+    state_store.save(api, _DUT_STATE_NEEDS_REPAIR)
 
-  # TODO(crbug.com/1054840) Save state to trigger DUT repair in case of
-  # infrastructure failures beyond this point.
 
   phosphorus_config = _get_phosphorus_config(
       properties.config, load_response,
       properties.request.test.offload.synchronous_gs_enable,
   )
-  # prejob and test failures are detected when parsing results.
-  # An exception from the steps here indicates an infrastructure
-  # failure that should be bubbled up immediately.
-  prejob(api, config=phosphorus_config, request=properties.request,
-         dut_hostname=dut_hostname, load_response=load_response)
-  run_test(api, config=phosphorus_config, request=properties.request,
-           dut_hostname=dut_hostname)
 
-  # In case autoserv fails early, upload_to_tko()reruns tko/parse to extract
-  # status.log from the logs. Thus, upload_to_tko() must be run before
-  # get_results().
-  upload_to_tko(api, config=phosphorus_config)
-  result = get_results(api, load_response.results_dir)
+  dut_state = _DUT_STATE_NEEDS_REPAIR
+  try:
+    # prejob and test failures are detected when parsing results.
+    # An exception from the steps here indicates an infrastructure
+    # failure that should be bubbled up immediately.
+    prejob(api, config=phosphorus_config, request=properties.request,
+           dut_hostname=dut_hostname, load_response=load_response)
+    run_test(api, config=phosphorus_config, request=properties.request,
+             dut_hostname=dut_hostname)
 
-  if properties.request.test.offload.synchronous_gs_enable:
-    upload_response = upload_to_gs(
-        api, config=phosphorus_config,
-        target_dir=properties.config.output.gs_root_dir,
-        task_id=envvars.SWARMING_TASK_ID)
-    result.autotest_result.synchronous_log_data_url = upload_response.gs_url
+    # In case autoserv fails early, upload_to_tko()reruns tko/parse to extract
+    # status.log from the logs. Thus, upload_to_tko() must be run before
+    # get_results().
+    upload_to_tko(api, config=phosphorus_config)
+    result = get_results(api, load_response.results_dir)
+    dut_state = result.state_update.dut_state
 
-  with api.step.nest('save local DUT state'):
-    state_store.save(api, result.state_update.dut_state)
+    if properties.request.test.offload.synchronous_gs_enable:
+      upload_response = upload_to_gs(
+          api, config=phosphorus_config,
+          target_dir=properties.config.output.gs_root_dir,
+          task_id=envvars.SWARMING_TASK_ID)
+      result.autotest_result.synchronous_log_data_url = upload_response.gs_url
+  finally:
+    with api.step.nest('save local DUT state'):
+      state_store.save_and_seal(api, dut_state)
 
   display_results_summary(api, result)
   set_output_properties(api, result=result)
@@ -337,7 +344,16 @@ class SkylabStateStore(object):
   def save(self, api, dut_state):
     """Update the local DUT state file.
 
-    load() must be called at least once before calling save().
+    Args:
+      * dut_state: DUT state string (e.g. 'ready').
+
+    Raises:
+      * InfraFailure
+    """
+    return self._save(api, dut_state, False)
+
+  def save_and_seal(self, api, dut_state):
+    """Update the local DUT state file and seal the results directory.
 
     Args:
       * dut_state: DUT state string (e.g. 'ready').
@@ -345,6 +361,9 @@ class SkylabStateStore(object):
     Raises:
       * InfraFailure
     """
+    return self._save(api, dut_state, True)
+
+  def _save(self, api, dut_state, seal_results_dir):
     with api.context(infra_steps=True):
       assert self._results_dir, (
           'Results directory not set. Did you call load() first?')
@@ -354,7 +373,8 @@ class SkylabStateStore(object):
               admin_service=self._config.lab.admin_service,
               autotest_dir=self._config.harness.autotest_dir,
           ), results_dir=self._results_dir, dut_name=self._dut_hostname,
-          dut_id=self._dut_id, dut_state=dut_state, seal_results_dir=True)
+          dut_id=self._dut_id, dut_state=dut_state,
+          seal_results_dir=seal_results_dir)
       api.skylab_local_state.save(save_request)
 
 
