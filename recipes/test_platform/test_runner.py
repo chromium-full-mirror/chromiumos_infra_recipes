@@ -51,32 +51,6 @@ def validate_request(api, properties):
       raise ValueError("Test name must be specified")
 
 
-def load_state(api, config=None, dut_hostname="", run_id=""):
-  """Create a host info file.
-
-  Args:
-    * config: skylab_test_runner.Config instance.
-    * dut_hostname: DUT hostname string (e.g. 'chromeos8-row8-rack8-host8').
-    * run_id: Swarming task run ID string.
-
-  Returns: LoadResponse.
-
-  Raises:
-    * InfraFailure if binary call fails.
-  """
-  with api.context(infra_steps=True):
-    with api.step.nest('load local DUT state') as step:
-      load_request = skylab_local_state.load.LoadRequest(
-          config=skylab_local_state.common.Config(
-              admin_service=config.lab.admin_service,
-              autotest_dir=config.harness.autotest_dir,
-          ),
-          dut_name=dut_hostname,
-          run_id=run_id
-      )
-      return api.skylab_local_state.load(load_request)
-
-
 def prejob(api, config=None, request=None, dut_hostname='',
            load_response=None):
   """Run a prejob (e.g. provision) against the DUT via `autoserv`.
@@ -218,36 +192,6 @@ def display_results_summary(api, result):
             "is likely incomplete. Consult autoserv.ERROR for more details.")
 
 
-def save_state(api, config=None, results_dir='', dut_hostname='', dut_id='',
-               dut_state=''):
-  """Update the local DUT state file.
-
-  Args:
-    * config: skylab_test_runner.Config instance.
-    * results_dir: The root directory of test results.
-    * dut_hostname: DUT hostname string (e.g. 'chromeos8-row8-rack8-host8').
-    * dut_id: DUT ID string (e.g. 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee').
-    * dut_state: DUT state string (e.g. 'ready').
-
-  Raises:
-    * InfraFailure if binary call fails.
-  """
-  with api.context(infra_steps=True):
-    with api.step.nest('save local DUT state') as step:
-      save_request = skylab_local_state.save.SaveRequest(
-          config=skylab_local_state.common.Config(
-            admin_service=config.lab.admin_service,
-            autotest_dir=config.harness.autotest_dir,
-          ),
-          results_dir=results_dir,
-          dut_name=dut_hostname,
-          dut_id=dut_id,
-          dut_state=dut_state,
-          seal_results_dir=True
-      )
-      api.skylab_local_state.save(save_request)
-
-
 def set_output_properties(api, result=None):
   """Set the output properties that are part of the test_runner API.
 
@@ -307,9 +251,16 @@ def RunSteps(api, properties, envvars):
   upload_response = None
   validate_request(api, properties)
   dut_hostname = _get_dut_hostname(api, envvars)
-  load_response = load_state(api, config=properties.config,
-                             dut_hostname=dut_hostname,
-                             run_id=envvars.SWARMING_TASK_ID)
+
+  state_store = SkylabStateStore(
+      config=properties.config,
+      dut_hostname=dut_hostname,
+      dut_id=envvars.SKYLAB_DUT_ID,
+      run_id=envvars.SWARMING_TASK_ID,
+  )
+  with api.step.nest('load local DUT state'):
+    load_response = state_store.load(api)
+
   # TODO(crbug.com/1054840) Save state to trigger DUT repair in case of
   # infrastructure failures beyond this point.
 
@@ -338,14 +289,73 @@ def RunSteps(api, properties, envvars):
         task_id=envvars.SWARMING_TASK_ID)
     result.autotest_result.synchronous_log_data_url = upload_response.gs_url
 
-  save_state(api, config=properties.config,
-             results_dir=load_response.results_dir,
-             dut_hostname=dut_hostname, dut_id=envvars.SKYLAB_DUT_ID,
-             dut_state=result.state_update.dut_state)
+  with api.step.nest('save local DUT state'):
+    state_store.save(api, result.state_update.dut_state)
 
   display_results_summary(api, result)
   set_output_properties(api, result=result)
   # TODO(crbug.com/1054850) Raise api.step.StepFailure if a test failed.
+
+
+class SkylabStateStore(object):
+  """Wrapper for skylab_local_state interaction."""
+
+  def __init__(self, config, dut_hostname, dut_id, run_id):
+    """Initialize us.
+
+    Args:
+      * config: skylab_test_runner.Config instance.
+      * results_dir: The root directory of test results.
+      * dut_hostname: DUT hostname string (e.g. 'chromeos8-row8-rack8-host8').
+      * dut_id: DUT ID string (e.g. 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee').
+      * run_id: Swarming task run ID string.
+    """
+    self._config = config
+    self._dut_hostname = dut_hostname
+    self._dut_id = dut_id
+    self._run_id = run_id
+    self._results_dir = ''
+
+  def load(self, api):
+    """Create a host info file.
+
+    Returns: LoadResponse.
+
+    Raises:
+      * InfraFailure
+    """
+    with api.context(infra_steps=True):
+      load_request = skylab_local_state.load.LoadRequest(
+          config=skylab_local_state.common.Config(
+              admin_service=self._config.lab.admin_service,
+              autotest_dir=self._config.harness.autotest_dir,
+          ), dut_name=self._dut_hostname, run_id=self._run_id)
+      r = api.skylab_local_state.load(load_request)
+      self._results_dir = r.results_dir
+      return r
+
+  def save(self, api, dut_state):
+    """Update the local DUT state file.
+
+    load() must be called at least once before calling save().
+
+    Args:
+      * dut_state: DUT state string (e.g. 'ready').
+
+    Raises:
+      * InfraFailure
+    """
+    with api.context(infra_steps=True):
+      assert self._results_dir, (
+          'Results directory not set. Did you call load() first?')
+
+      save_request = skylab_local_state.save.SaveRequest(
+          config=skylab_local_state.common.Config(
+              admin_service=self._config.lab.admin_service,
+              autotest_dir=self._config.harness.autotest_dir,
+          ), results_dir=self._results_dir, dut_name=self._dut_hostname,
+          dut_id=self._dut_id, dut_state=dut_state, seal_results_dir=True)
+      api.skylab_local_state.save(save_request)
 
 
 def GenTests(api):

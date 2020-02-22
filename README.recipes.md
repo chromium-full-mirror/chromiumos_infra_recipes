@@ -4259,16 +4259,16 @@ Returns: bool, [test_platform.Request]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#306)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#250)(api, properties, envvars):**
 
-&mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#195)(api, result):**
+&mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#169)(api, result):**
 
 Display test cases as recipe substeps.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#179)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#153)(api, results_dir=''):**
 
 Parse test results.
 
@@ -4280,21 +4280,7 @@ Returns: skylab_test_runner.Result.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [load\_state](/recipes/test_platform/test_runner.py#54)(api, config=None, dut_hostname='', run_id=''):**
-
-Create a host info file.
-
-Args:
-  * config: skylab_test_runner.Config instance.
-  * dut_hostname: DUT hostname string (e.g. 'chromeos8-row8-rack8-host8').
-  * run_id: Swarming task run ID string.
-
-Returns: LoadResponse.
-
-Raises:
-  * InfraFailure if binary call fails.
-
-&mdash; **def [prejob](/recipes/test_platform/test_runner.py#80)(api, config=None, request=None, dut_hostname='', load_response=None):**
+&mdash; **def [prejob](/recipes/test_platform/test_runner.py#54)(api, config=None, request=None, dut_hostname='', load_response=None):**
 
 Run a prejob (e.g. provision) against the DUT via `autoserv`.
 
@@ -4307,7 +4293,7 @@ Args:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#110)(api, config=None, request=None, dut_hostname=''):**
+&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#84)(api, config=None, request=None, dut_hostname=''):**
 
 Run a test against the DUT via `autoserv`.
 
@@ -4320,28 +4306,14 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [save\_state](/recipes/test_platform/test_runner.py#221)(api, config=None, results_dir='', dut_hostname='', dut_id='', dut_state=''):**
-
-Update the local DUT state file.
-
-Args:
-  * config: skylab_test_runner.Config instance.
-  * results_dir: The root directory of test results.
-  * dut_hostname: DUT hostname string (e.g. 'chromeos8-row8-rack8-host8').
-  * dut_id: DUT ID string (e.g. 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee').
-  * dut_state: DUT state string (e.g. 'ready').
-
-Raises:
-  * InfraFailure if binary call fails.
-
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#251)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#195)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [upload\_to\_gs](/recipes/test_platform/test_runner.py#143)(api, config=None, target_dir=None, task_id=''):**
+&mdash; **def [upload\_to\_gs](/recipes/test_platform/test_runner.py#117)(api, config=None, target_dir=None, task_id=''):**
 
 Upload synchronously-needed test results to Google Storage.
 
@@ -4354,7 +4326,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#164)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#138)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 
