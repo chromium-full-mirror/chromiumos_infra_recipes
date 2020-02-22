@@ -3028,7 +3028,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#113)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#111)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -3042,7 +3042,7 @@ Returns:
 
 A hack for crbug/1049754.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#138)(self, task_result):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#136)(self, task_result):**
 
 Convert TaskResult into api.failures.Failure objects.
 
@@ -3066,7 +3066,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#218)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#216)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -3076,7 +3076,7 @@ Args:
 Returns:
   list(str) names of tests to be retried.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#165)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#163)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -3084,7 +3084,7 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#190)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#188)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
@@ -4424,14 +4424,14 @@ Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#22)(api):**
 
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8410164ab1222df526dbf81f728512a082318c5a/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8410164ab1222df526dbf81f728512a082318c5a/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8410164ab1222df526dbf81f728512a082318c5a/recipes/README.recipes.md#recipe_modules-gerrit
-[depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8410164ab1222df526dbf81f728512a082318c5a/recipes/README.recipes.md#recipe_modules-git
-[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8410164ab1222df526dbf81f728512a082318c5a/recipes/README.recipes.md#recipe_modules-git_cl
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8410164ab1222df526dbf81f728512a082318c5a/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8410164ab1222df526dbf81f728512a082318c5a/recipes/README.recipes.md#recipe_modules-gsutil
-[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8410164ab1222df526dbf81f728512a082318c5a/recipes/README.recipes.md#recipe_modules-tryserver
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1773f37de61efb55634bc3966510141df5ecf143/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1773f37de61efb55634bc3966510141df5ecf143/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1773f37de61efb55634bc3966510141df5ecf143/recipes/README.recipes.md#recipe_modules-gerrit
+[depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1773f37de61efb55634bc3966510141df5ecf143/recipes/README.recipes.md#recipe_modules-git
+[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1773f37de61efb55634bc3966510141df5ecf143/recipes/README.recipes.md#recipe_modules-git_cl
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1773f37de61efb55634bc3966510141df5ecf143/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1773f37de61efb55634bc3966510141df5ecf143/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/1773f37de61efb55634bc3966510141df5ecf143/recipes/README.recipes.md#recipe_modules-tryserver
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/90eb05b0df05f7840e58ff3c9f3685af0c89a27d/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/90eb05b0df05f7840e58ff3c9f3685af0c89a27d/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/90eb05b0df05f7840e58ff3c9f3685af0c89a27d/README.recipes.md#recipe_modules-buildbucket
