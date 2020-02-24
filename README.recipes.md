@@ -2328,9 +2328,9 @@ Args:
   kwargs: Keyword arguments for recipe_engine/python.
 
 Returns:
-  list[str]: All matching footer values.
+  list[str]: All matching footer values, or None
 
-&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#32)(self, message, key=None, \*\*kwargs):**
+&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#35)(self, message, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the commit message for the given key.
 
@@ -2344,7 +2344,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the commit message.
 
-&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#54)(self, ref, key=None, \*\*kwargs):**
+&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#57)(self, ref, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the given ref for the given key.
 
@@ -2355,7 +2355,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
 
-&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#72)(self, ref, \*\*kwargs):**
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#75)(self, ref, \*\*kwargs):**
 
 Return the footer value for Cr-Commit-Position.
 
@@ -3235,7 +3235,7 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#55)(api, properties):**
 
-&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#159)(api, manifest_diffs):**
+&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#208)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 
@@ -3246,11 +3246,11 @@ Args:
 Returns:
   list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#193)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#242)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#203)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#252)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -3272,6 +3272,25 @@ Args:
 
 Returns:
   A string containing the commit message.
+
+&mdash; **def [publish\_snapshot](/recipes/annealing.py#175)(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml, gerrit_commits=None, disable_gerrit=False):**
+
+Generate snapshot.xml file and commit it to a ref.
+
+Does not call api.context() so the cwd should be set to the appropriate
+path in the workspace for a git fetch to work.
+
+Args:
+    api (object):   See RunSteps documentation
+    repo_url:       URL to git repo to publish snapshot.xml file to
+    snapshot_ref:   git ref to publish to (e.g.: "refs/heads/snapshot")
+    snapshot_file:  location of snapshot.xml to write
+    snapshot_xml:   contents to write to snapshot.xml in cwd
+    gerrit_commits: List of gerrit commits to reference in commit message
+    disable_gerrit: If True, disable gerrit commits in commit message
+
+Returns:
+    GitilesCommit object representing the new commit.
 ### *recipes* / [autotest\_status\_parser:examples/full](/recipe_modules/autotest_status_parser/examples/full.py)
 
 [DEPS](/recipe_modules/autotest_status_parser/examples/full.py#6): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -3855,11 +3874,11 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#12)(api):**
 ### *recipes* / [git\_footers:examples/full](/recipe_modules/git_footers/examples/full.py)
 
-[DEPS](/recipe_modules/git_footers/examples/full.py#8): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/git_footers/examples/full.py#10): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 Test git_footers calls.
 
-&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#21)(api, invalid_cr_commit_position):**
 ### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
 
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

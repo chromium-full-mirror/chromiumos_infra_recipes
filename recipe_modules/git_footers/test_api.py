@@ -10,9 +10,9 @@ from recipe_engine import recipe_test_api
 class GitFootersTestApi(recipe_test_api.RecipeTestApi):
   """Generates test data for GitFootersApi."""
 
-  def step_data(self, name, *args):
+  def step_data(self, name, *args, **kwargs):
     return super(GitFootersTestApi, self).step_data(
-        name, stdout=self.m.raw_io.output('\n'.join(args)))
+        name, stdout=self.m.raw_io.output('\n'.join(args)), **kwargs)
 
   def step_test_data(self, *args):
     return self.m.raw_io.stream_output('\n'.join(args))

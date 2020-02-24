@@ -19,14 +19,17 @@ class GitFootersApi(recipe_api.RecipeApi):
       kwargs: Keyword arguments for recipe_engine/python.
 
     Returns:
-      list[str]: All matching footer values.
+      list[str]: All matching footer values, or None
     """
     kwargs.setdefault('infra_step', True)
     kwargs.setdefault('step_test_data',
                       self.test_api.step_test_data_factory('my-footer'))
     result = self.m.python(
         'read git footers', self.m.depot_tools.root.join('git_footers.py'),
-        args, stdout=self.m.raw_io.output(), **kwargs)
+        args, stdout=self.m.raw_io.output(), ok_ret=(0,1), **kwargs)
+
+    if result.retcode == 1:
+      return None
     return [l.strip() for l in result.stdout.splitlines() if l.strip()]
 
   def from_message(self, message, key=None, **kwargs):
@@ -81,5 +84,8 @@ class GitFootersApi(recipe_api.RecipeApi):
     kwargs.setdefault('step_test_data',
                       self.test_api.step_test_data_factory('101'))
     output = self(ref, '--position-num', **kwargs)
+    if not output:
+      return 1
+
     assert len(output) == 1, 'expected exactly one Cr-Commit-Position footer'
     return int(output[0].strip())
