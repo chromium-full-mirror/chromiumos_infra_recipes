@@ -7,8 +7,8 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
-from PB.test_platform.phosphorus.prejob import PrejobRequest
-from PB.test_platform.phosphorus.runtest import RunTestRequest
+from PB.test_platform.phosphorus.prejob import PrejobRequest, PrejobResponse
+from PB.test_platform.phosphorus.runtest import RunTestRequest, RunTestResponse
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSResponse
@@ -74,7 +74,8 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     Args:
       request: a PrejobRequest.
     """
-    self._run('prejob', request, PrejobRequest)
+    self._run('prejob', request, PrejobRequest, PrejobResponse,
+              send_response=True)
 
   def run_test(self, request):
     """Run a test via `run-test` subcommand.
@@ -82,7 +83,8 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     Args:
       request: a RunTestRequest.
     """
-    self._run('run-test', request, RunTestRequest)
+    self._run('run-test', request, RunTestRequest, RunTestResponse,
+              send_response=True)
 
   def upload_to_gs(self, request):
     """Upload selected test results to GS via `upload-to-gs` subcommand.

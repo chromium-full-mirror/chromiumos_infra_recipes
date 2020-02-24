@@ -141,7 +141,9 @@
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"dutHostname\": \"dummy\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -184,7 +186,9 @@
       "[START_DIR]/cipd/phosphorus/phosphorus",
       "prejob",
       "-input_json",
-      "/dev/stdin"
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
     ],
     "infra_step": true,
     "name": "run prejob.call `phosphorus`.prejob",
@@ -237,7 +241,9 @@
       "[START_DIR]/cipd/phosphorus/phosphorus",
       "run-test",
       "-input_json",
-      "/dev/stdin"
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
     ],
     "name": "run test.call `phosphorus`.run-test",
     "stdin": "{\n  \"autotest\": {\n    \"keyvals\": {\n      \"key1\": \"value1\"\n    }, \n    \"testArgs\": \"foo=bar\", \n    \"displayName\": \"fancy_name\", \n    \"name\": \"dummy_name\", \n    \"isClientTest\": true\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"deadline\": \"1970-01-01T00:00:00Z\"\n}",

@@ -11,7 +11,9 @@
     "name": "call `phosphorus` (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -54,7 +56,9 @@
       "[START_DIR]/cipd/phosphorus/phosphorus",
       "prejob",
       "-input_json",
-      "/dev/stdin"
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
     ],
     "name": "call `phosphorus` (2).prejob",
     "stdin": "{}",
@@ -74,7 +78,9 @@
     "name": "call `phosphorus` (4)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -82,7 +88,9 @@
       "[START_DIR]/cipd/phosphorus/phosphorus",
       "run-test",
       "-input_json",
-      "/dev/stdin"
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
     ],
     "name": "call `phosphorus` (4).run-test",
     "stdin": "{}",

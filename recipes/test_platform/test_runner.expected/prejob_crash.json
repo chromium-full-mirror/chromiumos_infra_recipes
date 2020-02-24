@@ -188,7 +188,9 @@
       "[START_DIR]/cipd/phosphorus/phosphorus",
       "prejob",
       "-input_json",
-      "/dev/stdin"
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
     ],
     "infra_step": true,
     "name": "run prejob.call `phosphorus`.prejob",

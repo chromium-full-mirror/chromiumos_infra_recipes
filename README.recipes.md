@@ -2664,21 +2664,21 @@ Run a prejob or a provision via `prejob` subcommand.
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#79)(self, request):**
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#80)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#87)(self, request):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#89)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#96)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#98)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 
