@@ -110,7 +110,6 @@ def run_test(api, config=None, request=None, dut_hostname=''):
             keyvals=request.test.autotest.keyvals,
             is_client_test=request.test.autotest.is_client_test,
         ),
-        deadline=request.deadline,
     )
     if request.HasField('deadline'):
       # Must explicitly check for existence of deadline.
