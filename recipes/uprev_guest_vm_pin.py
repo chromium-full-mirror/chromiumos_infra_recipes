@@ -117,16 +117,15 @@ def RunSteps(api, properties):
                             api.context.cwd.join('image.zip'),
                             api.context.cwd.join('image'))
 
-        base_tar = (
-            api.archive.package(api.context.cwd).with_dir(
-                api.context.cwd.join('image', _base_vm_name)).archive(
-                    'archive base guest VM',
-                    api.context.cwd.join(_base_vm_name + '.tbz'), 'tbz'))
-        test_tar = (
-            api.archive.package(api.context.cwd).with_dir(
-                api.context.cwd.join('image', _test_vm_name)).archive(
-                    'archive test guest VM',
-                    api.context.cwd.join(_test_vm_name + '.tbz'), 'tbz'))
+        base_image_path = api.context.cwd.join('image', _base_vm_name)
+        base_tar = api.archive.package(base_image_path).archive(
+            'archive base guest VM',
+            api.context.cwd.join(_base_vm_name + '.tbz'), 'tbz')
+
+        test_image_path = api.context.cwd.join('image', _test_vm_name)
+        test_tar = api.archive.package(test_image_path).archive(
+            'archive test guest VM',
+            api.context.cwd.join(_test_vm_name + '.tbz'), 'tbz')
 
         dst_bucket = properties.destination_bucket
         dst_suburl = 'distfiles/{}/{}/'.format(properties.board,
