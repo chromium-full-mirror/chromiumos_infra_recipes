@@ -83,14 +83,13 @@ def RunSteps(api, properties):
 
   with api.cros_source.checkout_overlays_context():
     api.cros_source.ensure_synced_cache()
-    version_path = api.cros_source.workspace_path.join(
-        properties.version_file)
+    version_path = api.cros_source.workspace_path.join(properties.version_file)
     package_path = api.path.dirname(version_path)
     package = os.path.basename(package_path)
 
     with api.step.nest('try uprev version file') as step:
       api.file.write_raw(name='version file', dest=version_path,
-                          data=sanitized_version)
+                         data=sanitized_version)
 
       with api.context(cwd=api.path.abs_to_path(package_path)):
         if not api.git.diff_check(version_path):
@@ -129,7 +128,7 @@ def RunSteps(api, properties):
 
         dst_bucket = properties.destination_bucket
         dst_suburl = 'distfiles/{}/{}/'.format(properties.board,
-                                              sanitized_version)
+                                               sanitized_version)
         api.gsutil.upload("*.tbz", dst_bucket, dst_suburl)
 
     with api.step.nest('generate CL'):
@@ -154,8 +153,8 @@ def GenTests(api):
       ))
 
   build_artifacts = {
-    'gs_path': 'postsubmit-sludge/R80-1.2.3-123456',
-    'gs_bucket': 'chromeos-image-archive'
+      'gs_path': 'postsubmit-sludge/R80-1.2.3-123456',
+      'gs_bucket': 'chromeos-image-archive'
   }
   build_properties = struct_pb2.Struct()
   build_properties['chromeos_version'] = 'R80-1.2.3'
