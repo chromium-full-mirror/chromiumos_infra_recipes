@@ -194,7 +194,7 @@ def _test_ssh_conn(api, private_key_path):
       '-oIdentitiesOnly=yes', \
       '-i', private_key_path, \
       'root@localhost', '--', 'true'
-  ], infra_step=True)
+  ], infra_step=True, timeout=5*60)
 
 
 def GenTests(api):

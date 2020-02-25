@@ -171,6 +171,7 @@
     ],
     "infra_step": true,
     "name": "setup vm.connect via ssh",
+    "timeout": 300,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
