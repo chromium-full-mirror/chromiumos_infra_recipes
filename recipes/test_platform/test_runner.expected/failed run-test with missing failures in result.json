@@ -233,7 +233,7 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"state\": \"FAILED\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -291,17 +291,15 @@
   },
   {
     "cmd": [],
-    "name": "get test results",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "get test results"
   },
   {
     "cmd": [],
     "name": "get test results.call `autotest_status_parser`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -348,8 +346,7 @@
     "infra_step": true,
     "name": "get test results.call `autotest_status_parser`.parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -362,15 +359,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -384,14 +380,46 @@
     ],
     "infra_step": true,
     "name": "save local DUT state.call `skylab_local_state`.save",
-    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\", \n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutId\": \"dummy-dut-id\"\n}",
+    "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
+    "cmd": [],
+    "name": "summarize test results",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize test results.test execution",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@summary@ended with unsuccessful state FAILED@@@",
+      "@@@STEP_LOG_END@summary@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@result@{}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "failure": {
-      "humanReason": "Infra Failure: Step('get test results.call `autotest_status_parser`.parse') (retcode: 1)"
+      "failure": {},
+      "humanReason": "prejob or test failed"
     },
     "name": "$result"
   }

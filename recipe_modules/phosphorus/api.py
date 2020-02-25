@@ -74,8 +74,8 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     Args:
       request: a PrejobRequest.
     """
-    self._run('prejob', request, PrejobRequest, PrejobResponse,
-              send_response=True)
+    return self._run('prejob', request, PrejobRequest, PrejobResponse,
+                     send_response=True)
 
   def run_test(self, request):
     """Run a test via `run-test` subcommand.
@@ -83,8 +83,8 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     Args:
       request: a RunTestRequest.
     """
-    self._run('run-test', request, RunTestRequest, RunTestResponse,
-              send_response=True)
+    return self._run('run-test', request, RunTestRequest, RunTestResponse,
+                     send_response=True)
 
   def upload_to_gs(self, request):
     """Upload selected test results to GS via `upload-to-gs` subcommand.

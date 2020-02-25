@@ -4259,16 +4259,9 @@ Returns: bool, [test_platform.Request]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#253)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#292)(api, properties, envvars):**
 
-&mdash; **def [display\_results\_summary](/recipes/test_platform/test_runner.py#169)(api, result):**
-
-Display test cases as recipe substeps.
-
-Args:
-  * result: skylab_test_runner.Result instance.
-
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#153)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#160)(api, results_dir=''):**
 
 Parse test results.
 
@@ -4290,10 +4283,13 @@ Args:
   * dut_hostname: DUT hostname string.
   * load_response: LoadStateResponse instance.
 
+Returns:
+  * phosphorus.prejob.PrejobResponse
+
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#84)(api, config=None, request=None, dut_hostname=''):**
+&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#87)(api, config=None, request=None, dut_hostname=''):**
 
 Run a test against the DUT via `autoserv`.
 
@@ -4302,18 +4298,30 @@ Args:
   * request: skylab_test_runner.Request instance.
   * dut_hostname: DUT hostname string.
 
+Returns:
+  * phosphorus.runtest.RunTestResponse
+
 Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#195)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#234)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [upload\_to\_gs](/recipes/test_platform/test_runner.py#117)(api, config=None, target_dir=None, task_id=''):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#176)(api, prejob_response, run_test_response, result):**
+
+Display test cases as recipe substeps.
+
+Args:
+  * prejob_response: phosphorus.prejob.PrejobResponse instance.
+  * run_test_response: phosphorus.runtest.RunTestResponse instance.
+  * result: skylab_test_runner.Result instance.
+
+&mdash; **def [upload\_to\_gs](/recipes/test_platform/test_runner.py#124)(api, config=None, target_dir=None, task_id=''):**
 
 Upload synchronously-needed test results to Google Storage.
 
@@ -4326,7 +4334,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#138)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#145)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 

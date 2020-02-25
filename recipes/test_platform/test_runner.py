@@ -61,6 +61,9 @@ def prejob(api, config=None, request=None, dut_hostname='',
     * dut_hostname: DUT hostname string.
     * load_response: LoadStateResponse instance.
 
+  Returns:
+    * phosphorus.prejob.PrejobResponse
+
   Raises:
     * InfraFailure if prejob fails.
   """
@@ -78,7 +81,7 @@ def prejob(api, config=None, request=None, dut_hostname='',
         # the zero value. The zero value google.protobuf.Timestamp translates to
         # a non-zero time.Time in Go.
         prejob_request.deadline.MergeFrom(request.deadline)
-      api.phosphorus.prejob(prejob_request)
+      return api.phosphorus.prejob(prejob_request)
 
 
 def run_test(api, config=None, request=None, dut_hostname=''):
@@ -88,6 +91,9 @@ def run_test(api, config=None, request=None, dut_hostname=''):
     * config: phosphorus.Config instance.
     * request: skylab_test_runner.Request instance.
     * dut_hostname: DUT hostname string.
+
+  Returns:
+    * phosphorus.runtest.RunTestResponse
 
   Raises:
     * StepFailure if test crashes.
@@ -112,7 +118,8 @@ def run_test(api, config=None, request=None, dut_hostname=''):
       # the zero value. The zero value google.protobuf.Timestamp translates to
       # a non-zero time.Time in Go.
       run_test_request.deadline.MergeFrom(request.deadline)
-    api.phosphorus.run_test(run_test_request)
+    return api.phosphorus.run_test(run_test_request)
+
 
 def upload_to_gs(api, config=None, target_dir=None, task_id=""):
   """Upload synchronously-needed test results to Google Storage.
@@ -166,10 +173,12 @@ def get_results(api, results_dir=""):
       return api.autotest_status_parser.parse(results_dir)
 
 
-def display_results_summary(api, result):
+def summarize_results(api, prejob_response, run_test_response, result):
   """Display test cases as recipe substeps.
 
   Args:
+    * prejob_response: phosphorus.prejob.PrejobResponse instance.
+    * run_test_response: phosphorus.runtest.RunTestResponse instance.
     * result: skylab_test_runner.Result instance.
   """
   with api.step.nest('summarize test results'):
@@ -190,6 +199,36 @@ def display_results_summary(api, result):
         step.presentation.status = api.step.FAILURE
         step.presentation.logs['summary'] = ("autoserv crashed. The test list "
             "is likely incomplete. Consult autoserv.ERROR for more details.")
+    if (_result_contains_no_failures(result) and
+        prejob_response.state != phosphorus.prejob.PrejobResponse.SUCCEEDED):
+      with api.step.nest('prejob execution') as step:
+        step.presentation.status = api.step.FAILURE
+        step.presentation.logs['summary'] = (
+            "ended with unsuccessful state %s" %
+            phosphorus.prejob.PrejobResponse.State.Name(prejob_response.state))
+    if (_result_contains_no_failures(result) and run_test_response.state !=
+        phosphorus.runtest.RunTestResponse.SUCCEEDED):
+      with api.step.nest('test execution') as step:
+        step.presentation.status = api.step.FAILURE
+        step.presentation.logs['summary'] = (
+            "ended with unsuccessful state %s" %
+            phosphorus.runtest.RunTestResponse.State.Name(
+                run_test_response.state))
+
+
+def _result_contains_no_failures(result):
+  return not _result_contains_failures(result)
+
+
+def _result_contains_failures(result):
+  verdicts = [
+      p.verdict != Result.Prejob.Step.VERDICT_PASS for p in result.prejob.step
+  ]
+  verdicts += [
+      t.verdict != Result.Autotest.TestCase.VERDICT_PASS
+      for t in result.autotest_result.test_cases
+  ]
+  return any(verdicts) or result.autotest_result.incomplete
 
 
 def set_output_properties(api, result=None):
@@ -273,14 +312,18 @@ def RunSteps(api, properties, envvars):
   )
 
   dut_state = _DUT_STATE_NEEDS_REPAIR
+  prejob_response = None
+  run_test_response = None
   try:
     # prejob and test failures are detected when parsing results.
     # An exception from the steps here indicates an infrastructure
     # failure that should be bubbled up immediately.
-    prejob(api, config=phosphorus_config, request=properties.request,
-           dut_hostname=dut_hostname, load_response=load_response)
-    run_test(api, config=phosphorus_config, request=properties.request,
-             dut_hostname=dut_hostname)
+    prejob_response = prejob(
+        api, config=phosphorus_config, request=properties.request,
+        dut_hostname=dut_hostname, load_response=load_response)
+    run_test_response = run_test(api, config=phosphorus_config,
+                                 request=properties.request,
+                                 dut_hostname=dut_hostname)
 
     # In case autoserv fails early, upload_to_tko()reruns tko/parse to extract
     # status.log from the logs. Thus, upload_to_tko() must be run before
@@ -299,9 +342,19 @@ def RunSteps(api, properties, envvars):
     with api.step.nest('save local DUT state'):
       state_store.save_and_seal(api, dut_state)
 
-  display_results_summary(api, result)
+  summarize_results(api, prejob_response, run_test_response, result)
   set_output_properties(api, result=result)
-  # TODO(crbug.com/1054850) Raise api.step.StepFailure if a test failed.
+
+  if _is_failure(prejob_response, run_test_response, result):
+    with api.step.nest('build status'):
+      raise api.step.StepFailure('prejob or test failed')
+
+
+def _is_failure(prejob_response, run_test_response, result):
+  return (
+      _result_contains_failures(result) or
+      prejob_response.state != phosphorus.prejob.PrejobResponse.SUCCEEDED or
+      run_test_response.state != phosphorus.runtest.RunTestResponse.SUCCEEDED)
 
 
 class SkylabStateStore(object):
@@ -442,21 +495,46 @@ def GenTests(api):
               skylab_local_state.load.LoadResponse(
               results_dir='dummy-results-dir')))))
 
+
+  def _successful_prejob_step():
+    return _prejob_step_with_state(phosphorus.prejob.PrejobResponse.SUCCEEDED)
+
+  def _prejob_step_with_state(state):
+    return (api.step_data(
+        'run prejob.call `phosphorus`.prejob', stdout=api.raw_io.output(
+            json_format.MessageToJson(
+                phosphorus.prejob.PrejobResponse(state=state)))))
+
+  def _successful_run_test_step():
+    return _run_test_step_with_state(
+        phosphorus.runtest.RunTestResponse.SUCCEEDED)
+
+  def _run_test_step_with_state(state):
+    return (api.step_data(
+        'run test.call `phosphorus`.run-test', stdout=api.raw_io.output(
+            json_format.MessageToJson(
+                phosphorus.runtest.RunTestResponse(state=state)))))
+
+
   yield (api.test('test_name_missing') + #
          _misc_properties() + #
          api.expect_exception('ValueError'))
 
-  yield (api.test('success') + #
-         _misc_properties() + #
-         _request_properties() + #
-         _mock_load_step())
+  yield (api.test('success') +  #
+         _misc_properties() +  #
+         _request_properties() +  #
+         _mock_load_step() +  #
+         _successful_prejob_step() +  #
+         _successful_run_test_step())
 
   r = _canned_test_runner_request()
   r['deadline'] = timestamp_pb2.Timestamp(seconds=55)
   yield (api.test('success with deadline') +  #
          _misc_properties() +  #
          api.properties(TestRunnerProperties(request=r)) +  #
-         _mock_load_step())
+         _mock_load_step() +  #
+         _successful_prejob_step() +  #
+         _successful_run_test_step())
 
   yield (api.test('prejob_crash') + #
          _misc_properties() + #
@@ -474,64 +552,89 @@ def GenTests(api):
              'run test.call `phosphorus`.run-test',
              retcode=1))
 
-  yield (api.test('upload_to_tko_crash') + #
-         _misc_properties() + #
-         _request_properties() + #
-         _mock_load_step() + #
-         api.step_data(
-             'upload to TKO.call `phosphorus`.upload-to-tko',
-             retcode=1))
+  yield (
+      api.test('upload_to_tko_crash') +  #
+      _misc_properties() +  #
+      _request_properties() +  #
+      _mock_load_step() +  #
+      _successful_prejob_step() +  #
+      _successful_run_test_step() +  #
+      api.step_data('upload to TKO.call `phosphorus`.upload-to-tko', retcode=1))
 
-  yield (api.test('upload_to_gs') + #
-         _misc_properties() + #
-         _mock_load_step() + #
-         api.properties(TestRunnerProperties(request={
-             'test': {'autotest': {'name': 'dummy_name'},
-                      'offload': {'synchronous_gs_enable': True}}
-         })) + #
+  yield (api.test('upload_to_gs') +  #
+         _misc_properties() +  #
+         _mock_load_step() +  #
+         _successful_prejob_step() +  #
+         _successful_run_test_step() +  #
+         api.properties(
+             TestRunnerProperties(
+                 request={
+                     'test': {
+                         'autotest': {
+                             'name': 'dummy_name'
+                         },
+                         'offload': {
+                             'synchronous_gs_enable': True
+                         }
+                     }
+                 })) +  #
          api.step_data(
              'get test results.call `autotest_status_parser`.parse',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
                      Result(
                          autotest_result=Result.Autotest(test_cases=[]),
-                     )))) + #
+                     )))) +  #
          api.step_data(
-           'upload to GS.call `phosphorus`.upload-to-gs',
-           stdout=api.raw_io.output(
-               json_format.MessageToJson(
-                   phosphorus.upload_to_gs.UploadToGSResponse(
-                       gs_url="gs://dummy-gs-url")
-         )))
-        )
-  yield (api.test('get_results_crash') + #
-         _misc_properties() + #
-         _request_properties() + #
-         _mock_load_step() + #
-         api.step_data(
-             'get test results.call `autotest_status_parser`.parse',
-             retcode=1))
-
-  yield (api.test('results_summary') + #
-         _misc_properties() + #
-         _request_properties() + #
-         _mock_load_step() + #
-         api.step_data(
-             'get test results.call `autotest_status_parser`.parse',
+             'upload to GS.call `phosphorus`.upload-to-gs',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
-                     Result(
-                         prejob=Result.Prejob(
-                             step=[Result.Prejob.Step(
-                                 name='failing_prejob_step',
-                                 human_readable_summary='failed prejob',
-                                 verdict=Result.Prejob.Step.VERDICT_FAIL
-                             )]
-                         ),
-                         autotest_result=Result.Autotest(
-                             test_cases=[Result.Autotest.TestCase(
-                                 name='failing_test_case',
-                                 human_readable_summary='failing test case',
-                                 verdict=Result.Autotest.TestCase.VERDICT_FAIL
-                             )],
-                             incomplete=True))))))
+                     phosphorus.upload_to_gs.UploadToGSResponse(
+                         gs_url="gs://dummy-gs-url")))))
+  yield (api.test('get_results_crash') +  #
+         _misc_properties() +  #
+         _request_properties() +  #
+         _mock_load_step() +  #
+         _successful_prejob_step() +  #
+         _successful_run_test_step() +  #
+         api.step_data('get test results.call `autotest_status_parser`.parse',
+                       retcode=1))
+
+  yield (
+      api.test('results_summary') +  #
+      _misc_properties() +  #
+      _request_properties() +  #
+      _mock_load_step() +  #
+      _successful_prejob_step() +  #
+      _successful_run_test_step() +  #
+      api.step_data(
+          'get test results.call `autotest_status_parser`.parse',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      prejob=Result.Prejob(step=[
+                          Result.Prejob.Step(
+                              name='failing_prejob_step',
+                              human_readable_summary='failed prejob',
+                              verdict=Result.Prejob.Step.VERDICT_FAIL)
+                      ]), autotest_result=Result.Autotest(
+                          test_cases=[
+                              Result.Autotest.TestCase(
+                                  name='failing_test_case',
+                                  human_readable_summary='failing test case',
+                                  verdict=Result.Autotest.TestCase.VERDICT_FAIL)
+                          ], incomplete=True))))))
+
+  yield (api.test('failed prejob with missing failures in result') +  #
+         _misc_properties() +  #
+         _request_properties() +  #
+         _mock_load_step() +  #
+         _prejob_step_with_state(phosphorus.prejob.PrejobResponse.FAILED) +  #
+         _successful_run_test_step())
+
+  yield (api.test('failed run-test with missing failures in result') +  #
+         _misc_properties() +  #
+         _request_properties() +  #
+         _mock_load_step() +  #
+         _successful_prejob_step() +  #
+         _run_test_step_with_state(phosphorus.runtest.RunTestResponse.FAILED))
