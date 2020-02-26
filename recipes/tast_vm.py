@@ -95,13 +95,14 @@ def RunSteps(api, properties):
         f for f in api.tast_results.get_failures(task_result)
         if f.title not in tests_to_retry
     ]
+    final_task_result = task_result
     if tests_to_retry:
       retry_task_result = _run_tast(api, tests_to_retry, tast_dir,
                                     private_key_path, properties.name, '2')
       all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
       failures += api.tast_results.get_failures(retry_task_result)
+      final_task_result = retry_task_result
 
-    api.easy.set_property_step('task_result', jsonpb.MessageToDict(task_result))
     api.easy.set_property_step('all_test_cases', all_test_cases)
     _kill_vm(api, kvm_pid_file)
     api.tast_results.record_logs(SYS_LOG_DIR)
@@ -112,7 +113,8 @@ def RunSteps(api, properties):
           'reading file', kvm_monitor_serial_file)
 
   api.tast_results.print_results(
-      failures, task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED)
+      failures,
+      final_task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED)
 
   return api.failures.aggregate_failures(failures)
 

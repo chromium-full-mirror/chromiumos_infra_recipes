@@ -233,13 +233,18 @@ class TastResultsApi(recipe_api.RecipeApi):
       }
       tests_to_retry = []
       step_log = []
-      for scenario in (
-          self.m.cros_infra_config.get_vm_retry_config().suite_scenarios):
+      retry_config = self.m.cros_infra_config.get_vm_retry_config()
+      step.presentation.logs['retry_config'] = str(retry_config)
+      step.presentation.logs['failed_tests'] = str(test_map)
+      for scenario in retry_config.suite_scenarios:
         if scenario.test_name in test_map:
           failed_test = test_map[scenario.test_name]
           if self._match_to_scenario(failed_test, scenario):
             step_log.append('Found match {}<->{}'.format(failed_test, scenario))
             tests_to_retry.append(scenario.test_name)
+            continue
+
+        step_log.append('Scenario had no match:{}'.format(scenario))
 
       step.presentation.logs['matches'] = step_log
       return tests_to_retry
