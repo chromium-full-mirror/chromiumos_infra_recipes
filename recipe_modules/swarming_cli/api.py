@@ -16,9 +16,12 @@ class SwarmingCli(recipe_api.RecipeApi):
     super(SwarmingCli, self).__init__(*args, **kwargs)
     self._version = 'latest'
     self._client = 'swarming.py'
+    self._checkout = None
 
   def _ensure_checkout(self):
     """Ensures swarming client is checked out."""
+    if self._checkout:
+      return
     with self.m.context(infra_steps=True):
       cwd = self.m.path['cleanup'].join('swarming-client')
       self.m.git.checkout(
@@ -67,5 +70,6 @@ class SwarmingCli(recipe_api.RecipeApi):
     cmd = ['bots', '--swarming', CHROMEOS_SWARMING_URL, '-b'] + dim_args
     step = self._run(
         'get bot query result', cmd,
-        test_stdout=lambda: self.test_api.swarming_bot_step_test_data())
+        test_stdout=lambda: self.test_api.swarming_bot_step_test_data(dimensions)
+    )
     return len(step.splitlines())

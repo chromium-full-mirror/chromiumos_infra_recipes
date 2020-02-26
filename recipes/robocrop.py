@@ -36,26 +36,14 @@ def RunSteps(api, properties):
       bot_policy_config = api.cros_infra_config.get_bot_policy_config()
       api.easy.set_property_step('bot_policy_config',
                                  jsonpb.MessageToDict(bot_policy_config))
+    with api.step.nest('get current swarming stats') as step:
+      swarming_counts = api.bot_scaling.get_swarming_stats(bot_policy_config)
+      api.easy.set_property_step('swarming_stats', swarming_counts)
     with api.step.nest('compute scaling actions'):
       robocrop_action = api.bot_scaling.get_robocrop_action(
           status_map, bot_policy_config)
       api.easy.set_property_step('robocrop_action',
                                  jsonpb.MessageToDict(robocrop_action))
-    with api.step.nest('query swarming'):
-      api.easy.set_property_step(
-          'swarming_idle_bot_count',
-          api.swarming_cli.get_bot_count(
-              dimensions={
-                  'role': 'cq',
-                  'bot_size': 'large'
-              }, state='IDLE'))
-      api.easy.set_property_step(
-          'swarming_busy_bot_count',
-          api.swarming_cli.get_bot_count(
-              dimensions={
-                  'role': 'cq',
-                  'bot_size': 'large'
-              }, state='BUSY'))
 
 
 def GenTests(api):

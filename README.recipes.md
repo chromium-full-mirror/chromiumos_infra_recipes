@@ -63,6 +63,7 @@
   * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
   * [bot_scaling:examples/get_robocrop_action](#recipes-bot_scaling_examples_get_robocrop_action)
   * [bot_scaling:examples/get_scaling_action](#recipes-bot_scaling_examples_get_scaling_action)
+  * [bot_scaling:examples/get_swarming_stats](#recipes-bot_scaling_examples_get_swarming_stats)
   * [branch_create](#recipes-branch_create) &mdash; Creates a branch using `cros branch create`.
   * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
@@ -281,13 +282,13 @@ Args:
 Returns: Result.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
-[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that determines how to scale bot groups.
 
-&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#58)(self, demand, scaling_restriction):**
+&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#60)(self, demand, scaling_restriction):**
 
 Core function that scales bots based on demand.
 
@@ -299,7 +300,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#76)(self, bots_requested, region_restrictions):**
+&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#78)(self, bots_requested, region_restrictions):**
 
 Determines regional distribution of bot requests.
 
@@ -311,7 +312,7 @@ Args:
 Returns:
   list[RegionalAction], region wise distribution of bots requested.
 
-&mdash; **def [get\_robocrop\_action](/recipe_modules/bot_scaling/api.py#15)(self, status_map, bot_policy_config):**
+&mdash; **def [get\_robocrop\_action](/recipe_modules/bot_scaling/api.py#17)(self, status_map, bot_policy_config):**
 
 Function to compute all the actions of this RoboCrop.
 
@@ -324,7 +325,7 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#35)(self, demand, bot_policy):**
+&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#37)(self, demand, bot_policy):**
 
 The function that creates a ScalingAction for a bot group.
 
@@ -334,6 +335,17 @@ Args:
 
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
+
+&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#102)(self, bot_policy_config):**
+
+Determines the current Swarming stats per bot group.
+
+Args:
+  bot_policy_config(BotPolicyCfg): Config define Policy for
+    the RoboCrop.
+
+Returns:
+  dict, mapping of bot group, by bot state, to the number of bots.
 ### *recipe_modules* / [breakpad](/recipe_modules/breakpad)
 
 [DEPS](/recipe_modules/breakpad/__init__.py#5): [easy](#recipe_modules-easy), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3008,7 +3020,7 @@ Ensure the CIPD support package is installed.
 
 A module that queries Swarming via the CLI.
 
-&mdash; **def [get\_bot\_count](/recipe_modules/swarming_cli/api.py#55)(self, dimensions=None, state=None):**
+&mdash; **def [get\_bot\_count](/recipe_modules/swarming_cli/api.py#58)(self, dimensions=None, state=None):**
 
 Retrieves the count of bots from Swarming based on dimensions.
 
@@ -3250,6 +3262,11 @@ Returns:
 [DEPS](/recipe_modules/bot_scaling/examples/get_scaling_action.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_scaling_action.py#15)(api):**
+### *recipes* / [bot\_scaling:examples/get\_swarming\_stats](/recipe_modules/bot_scaling/examples/get_swarming_stats.py)
+
+[DEPS](/recipe_modules/bot_scaling/examples/get_swarming_stats.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_swarming_stats.py#14)(api):**
 ### *recipes* / [branch\_create](/recipes/branch_create.py)
 
 [DEPS](/recipes/branch_create.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]

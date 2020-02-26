@@ -8,6 +8,8 @@ from PB.chromiumos.bot_scaling import RoboCropAction
 from PB.chromiumos.bot_scaling import ScalingAction
 from recipe_engine import recipe_api
 
+BOT_STATES = ['idle', 'busy', 'dead-only']
+
 
 class BotScalingApi(recipe_api.RecipeApi):
   """A module that determines how to scale bot groups."""
@@ -96,3 +98,23 @@ class BotScalingApi(recipe_api.RecipeApi):
         ) for restriction in region_restrictions
     ]
     return actions
+
+  def get_swarming_stats(self, bot_policy_config):
+    """Determines the current Swarming stats per bot group.
+
+    Args:
+      bot_policy_config(BotPolicyCfg): Config define Policy for
+        the RoboCrop.
+
+    Returns:
+      dict, mapping of bot group, by bot state, to the number of bots.
+    """
+    swarming_stats = {}
+    for policy in bot_policy_config.bot_policies:
+      dimensions = {d.name: d.value for d in policy.swarming_dimensions}
+      state_stats = {}
+      for state in BOT_STATES:
+        state_stats[state] = self.m.swarming_cli.get_bot_count(
+            dimensions=dimensions, state=state)
+      swarming_stats[policy.bot_group] = state_stats
+    return swarming_stats

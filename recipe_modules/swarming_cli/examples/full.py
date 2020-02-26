@@ -17,6 +17,13 @@ def RunSteps(api):
       }, state='IDLE')
   api.assertions.assertEqual(bot_count, 2)
 
+  bot_count = api.swarming_cli.get_bot_count(
+      dimensions={
+          'role': 'blah',
+          'bot_size': 'large'
+      }, state='IDLE')
+  api.assertions.assertEqual(bot_count, 0)
+
   with api.assertions.assertRaises(ValueError):
     api.swarming_cli.get_bot_count(dimensions={'role': 'test'}, state='FOO')
 

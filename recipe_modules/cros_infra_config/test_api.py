@@ -781,7 +781,17 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             					"prefix": "chromeos-ci-cq-us-west1-b-x32",
             					"weight": 0.2
             				}
-            			]
+            			],
+			            "swarmingDimensions": [
+				              {
+					                "name": "role",
+					                "value": "cq"
+				              },
+				              {
+					                "name": "bot_size",
+					                "value": "large"
+				              }
+			            ]
             		}
             	]
             }

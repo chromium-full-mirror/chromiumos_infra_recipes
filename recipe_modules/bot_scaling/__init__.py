@@ -6,4 +6,5 @@
 DEPS = [
     'recipe_engine/step',
     'buildbucket_stats',
+    'swarming_cli',
 ]

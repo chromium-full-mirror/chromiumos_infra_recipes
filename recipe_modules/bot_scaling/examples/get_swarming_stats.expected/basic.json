@@ -3,6 +3,21 @@
     "cmd": [
       "python",
       "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/bot_scaling/generated/bot_policy.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "fetch master:bot_scaling/generated/bot_policy.binaryproto",
+    "timeout": 180
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
       "RECIPE_MODULE[depot_tools::git]/resources/git_setup.py",
       "--path",
       "[CLEANUP]/swarming-client",
@@ -90,14 +105,32 @@
       "-b",
       "-d",
       "role",
-      "blah",
+      "cq",
       "-d",
       "bot_size",
       "large",
-      "--idle"
+      "--busy"
     ],
     "infra_step": true,
     "name": "get bot query result (2)"
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "bots",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "-b",
+      "-d",
+      "role",
+      "cq",
+      "-d",
+      "bot_size",
+      "large",
+      "--dead-only"
+    ],
+    "infra_step": true,
+    "name": "get bot query result (3)"
   },
   {
     "name": "$result"
