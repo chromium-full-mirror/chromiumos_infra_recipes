@@ -284,6 +284,34 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
       )
   )
 
+def _upload_to_tko_config(api, phosphorus_config, run_test_response):
+  """Construct a phosphorus.Config specific to upload_to_tko step.
+
+  Unlike other steps, upload_to_tko needs to be pointed to the test-specific
+  subdirectory of the overall results directory.
+
+  Args:
+  * phosphorus_config: phosphorus.Config instance.
+  * run_test_response: phosphorus.RunTestResponse instance.
+
+  Returns: phosphorus.Config.
+
+  Raises:
+  * InfraFailure.
+  """
+  task_results_dir = phosphorus_config.task.results_dir
+  test_results_dir = run_test_response.results_dir
+  if not test_results_dir.startswith(task_results_dir):
+    raise api.step.InfraFailure(
+        'test results dir %s is not a subdirectory of task results dir %s' %
+        (test_results_dir, task_results_dir))
+
+  ret = phosphorus.common.Config()
+  ret.CopyFrom(phosphorus_config)
+  ret.task.results_dir = test_results_dir
+  return ret
+
+
 
 _DUT_STATE_NEEDS_REPAIR = "needs_repair"
 
@@ -327,7 +355,9 @@ def RunSteps(api, properties, envvars):
     # In case autoserv fails early, upload_to_tko()reruns tko/parse to extract
     # status.log from the logs. Thus, upload_to_tko() must be run before
     # get_results().
-    upload_to_tko(api, config=phosphorus_config)
+    upload_to_tko(api, config=_upload_to_tko_config(api,
+                                                    phosphorus_config,
+                                                    run_test_response))
     result = get_results(api, load_response.results_dir)
     dut_state = result.state_update.dut_state
 
@@ -512,7 +542,9 @@ def GenTests(api):
     return (api.step_data(
         'run test.call `phosphorus`.run-test', stdout=api.raw_io.output(
             json_format.MessageToJson(
-                phosphorus.runtest.RunTestResponse(state=state)))))
+                phosphorus.runtest.RunTestResponse(
+                  results_dir='dummy-results-dir/subdir',
+                  state=state)))))
 
 
   yield (api.test('test_name_missing') + #
@@ -559,6 +591,24 @@ def GenTests(api):
       _successful_prejob_step() +  #
       _successful_run_test_step() +  #
       api.step_data('upload to TKO.call `phosphorus`.upload-to-tko', retcode=1))
+
+  yield (
+      api.test('mismatched test result directory') +  #
+      _misc_properties() +  #
+      _request_properties() +  #
+      api.step_data(
+          'load local DUT state.call `skylab_local_state`.load',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  skylab_local_state.load.LoadResponse(
+                  results_dir='dummy-results-dir')))) + #
+      _successful_prejob_step() +  #
+      api.step_data(
+          'run test.call `phosphorus`.run-test', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  phosphorus.runtest.RunTestResponse(
+                    results_dir='not-a-subdir-of-dummy-results-dir',
+                    state=phosphorus.runtest.RunTestResponse.SUCCEEDED)))))
 
   yield (api.test('upload_to_gs') +  #
          _misc_properties() +  #
