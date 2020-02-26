@@ -587,35 +587,6 @@
   },
   {
     "cmd": [],
-    "name": "set image permissions on localmirror"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "acl",
-      "ch",
-      "-r",
-      "-u",
-      "tony.stark@google.com:OWNER",
-      "-u",
-      "bighead@google.com:READ",
-      "-g",
-      "koolkids@google.com:READ",
-      "gs://chromeos-localmirror-private/distfiles/sludge/80.1.2.3/"
-    ],
-    "infra_step": true,
-    "name": "set image permissions on localmirror.gsutil acl",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "generate CL"
   },
   {

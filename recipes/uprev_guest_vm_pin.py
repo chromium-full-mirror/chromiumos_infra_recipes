@@ -41,6 +41,10 @@ PROPERTIES = UprevGuestVmPinProperties
 _base_vm_name = 'guest-vm-base'
 _test_vm_name = 'guest-vm-test'
 
+def _gs_path(bucket, suburl):
+  """Returns the full gs:// path for bucket and suburl."""
+  return 'gs://' + bucket + '/' + suburl
+
 
 def RunSteps(api, properties):
   with api.step.nest('validate properties') as step:
@@ -131,6 +135,20 @@ def RunSteps(api, properties):
                                                sanitized_version)
         api.gsutil.upload("*.tbz", dst_bucket, dst_suburl)
 
+
+    if len(properties.user_acls) or len(properties.group_acls):
+      with api.step.nest('set image permissions on localmirror'):
+        cmd = ['acl', 'ch', '-r']
+        for user_acl in properties.user_acls:
+          cmd += ['-u', user_acl]
+
+        for group_acl in properties.group_acls:
+          cmd += ['-g', group_acl]
+
+        cmd += [_gs_path(dst_bucket, dst_suburl)]
+
+        api.gsutil(cmd)
+
     with api.step.nest('generate CL'):
       change = api.gerrit.create_change(
           project=project.name, reviewers=["tbegin@google.com"], topic=package)
@@ -150,6 +168,8 @@ def GenTests(api):
                         'chromeos-base/chromeos-dtc-vm/VERSION-PIN'),
           board='sludge',
           destination_bucket='chromeos-localmirror-private',
+          user_acls=['tony.stark@google.com:OWNER', 'bighead@google.com:READ'],
+          group_acls=['koolkids@google.com:READ']
       ))
 
   build_artifacts = {
@@ -175,7 +195,7 @@ def GenTests(api):
          api.properties(board='') + api.expect_exception('ValueError'))
 
   yield (api.test('no-destination-bucket') + api.properties(**properties) +
-         api.properties(destination_bucket='') +
+         api.properties(destinationBucket='') +
          api.expect_exception('ValueError'))
 
   yield (api.test('no-version-diff') + api.properties(**properties) +
@@ -185,3 +205,7 @@ def GenTests(api):
       **properties) + api.buildbucket.simulated_search_results(
           [],
           step_name='get latest postsubmit build version.buildbucket.search'))
+
+  yield (api.test('no-acls') + api.properties(**properties) +
+         api.properties(userAcls=[], groupAcls=[]) + api.git.diff_check(True) +
+         mock_build_search)

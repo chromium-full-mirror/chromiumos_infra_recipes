@@ -18,5 +18,15 @@ message UprevGuestVmPinProperties {
   // Destination gs bucket where the guest VM image will be copied.
   // Required
   string destination_bucket = 3;
+
+  // List of user acls to set for the uploaded image on the localmirror. ACLs
+  // are in the format expected by `gsutil acl`. e.g
+  // username@google.com:OWNER
+  repeated string user_acls = 4;
+
+  // List of group acls to set for the uploaded image on the localmirror. ACLs
+  // are in the format expected by `gsutil acl`. e.g
+  // username@google.com:OWNER
+  repeated string group_acls = 5;
 }
 
