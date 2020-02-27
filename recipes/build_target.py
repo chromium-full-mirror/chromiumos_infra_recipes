@@ -117,10 +117,10 @@ def RunSteps(api, properties):
 def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                force_relevant_build):
   # Set up source checkouts.
-  api.cros_source.ensure_synced_cache()
-  api.cros_source.sync_snapshot(gitiles_commit)
   is_staging = build_config.general.environment == BuilderConfig.General.STAGING
   is_toolchain_builder = build_config.id.type == BuilderConfig.Id.TOOLCHAIN
+  api.cros_source.ensure_synced_cache(is_staging=is_staging)
+  api.cros_source.sync_snapshot(gitiles_commit)
   # Toolchain builders compile many large packages from source and need higher
   # step timeouts to successfully complete.
   long_timeouts = is_toolchain_builder

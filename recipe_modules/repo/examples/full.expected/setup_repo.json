@@ -62,7 +62,10 @@
       "--depth",
       "10",
       "--repo-url",
-      "http://repo_url"
+      "http://repo_url",
+      "--repo-branch",
+      "next",
+      "--no-repo-verify"
     ],
     "infra_step": true,
     "name": "repo init (2)"

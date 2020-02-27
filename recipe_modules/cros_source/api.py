@@ -25,6 +25,8 @@ DEFAULT_CACHE_SYNC_OPTS = dict(
     timeout=3600,
 )
 
+STAGING_INIT_OPTS = dict(repo_branch='next')
+
 
 class CrosSourceApi(recipe_api.RecipeApi):
   """A module for CrOS-specific source steps."""
@@ -73,7 +75,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
   def ensure_synced_cache(self, manifest_url=INTERNAL_MANIFEST_URL,
                           init_opts=None, sync_opts=None,
-                          cache_path_override=None):
+                          cache_path_override=None, is_staging=False):
     """Ensure the configured repo cache exists and is synced.
 
     Args:
@@ -82,8 +84,11 @@ class CrosSourceApi(recipe_api.RecipeApi):
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
       * cache_path_override (Path): Path to sync into. If None, the cache_path
       property is used.
+      * is_staging (bool): Flag to indicate canary staging environment
     """
     init_opts = init_opts or {}
+    if is_staging:
+      init_opts.update(STAGING_INIT_OPTS)
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
     cache_path = cache_path_override or self.cache_path
     self.m.repo.ensure_synced_checkout(cache_path, manifest_url,

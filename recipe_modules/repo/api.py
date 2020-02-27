@@ -91,7 +91,7 @@ class RepoApi(recipe_api.RecipeApi):
 
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
-           groups=None, depth=None, repo_url=None):
+           groups=None, depth=None, repo_url=None, repo_branch=None):
     """Executes 'repo init' with the given arguments.
 
     Args:
@@ -101,6 +101,7 @@ class RepoApi(recipe_api.RecipeApi):
       * groups (list): Groups to checkout (see `repo init --groups`).
       * depth (int): Create a shallow clone of the given depth.
       * repo_url (str): URL of the repo repository.
+      * repo_branch (str): Repo binary branch to use.
     """
     assert _kwonly is (), 'init accepts only 1 positional arg'
     cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
@@ -115,6 +116,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--depth', '%d' % depth]
     if repo_url is not None:
       cmd += ['--repo-url', repo_url]
+    if repo_branch is not None:
+      cmd += ['--repo-branch', repo_branch, '--no-repo-verify']
     self._step(cmd)
     self._clear_git_locks()
 
