@@ -4,7 +4,9 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/step',
     'buildbucket_stats',
+    'cros_history',
     'swarming_cli',
 ]

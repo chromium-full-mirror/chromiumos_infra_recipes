@@ -145,13 +145,15 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         step.presentation.links[title] = url
       return snapshot_builds
 
-  def get_matching_builds(self, build, statuses=None, start_build_id=None):
+  def get_matching_builds(self, build, statuses=None, start_build_id=None,
+                          limit=None):
     """Get builds with the matching builder and gerrit_changes.
 
     Args:
       build (build_pb2.Build): build to match for.
       statuses ([common_pb2.Status]): query for builds with these statuses.
       start_build_id (int): query builds older than this ID.
+      limit (int): number of results to return. Latest first.
 
     Returns:
       list[Build] which meet the conditions ordered from latest to oldest.
@@ -164,7 +166,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       # relies on that ordering of changes.
       return self._get_patch_history(patches=build.input.gerrit_changes,
                                      builder=build.builder, statuses=statuses,
-                                     start_build_id=start_build_id)
+                                     start_build_id=start_build_id, limit=limit)
 
   @classmethod
   def get_build_target(cls, build):
@@ -243,9 +245,10 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         url_title_fn=self.m.naming.get_build_title)
 
     # We'd prefer to stop rather than return truncated results.
-    if len(builds) == limit:
-      raise RuntimeError("Number of buildbucket search results exceeds limit {}"
-                         .format(limit))  # pragma: no cover
+    if limit and len(builds) > limit:
+      raise RuntimeError(
+          "Number of buildbucket search results {} exceeds limit {}".format(
+              len(builds), limit))  # pragma: no cover
 
     # Filter out builds that were run on a superset of the input patches.
     # e.g. if we're trying to get the history for runs on [cl1#1], we aren't

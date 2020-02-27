@@ -6,6 +6,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'bot_scaling',
     'cros_infra_config',
 ]
@@ -21,4 +22,6 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield (api.test('basic') + api.buildbucket.simulated_search_results(
+      [api.bot_scaling.previous_robocrop()],
+      'find matching builds.buildbucket.search'))

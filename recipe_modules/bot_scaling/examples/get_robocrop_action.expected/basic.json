@@ -15,6 +15,34 @@
     "timeout": 180
   },
   {
+    "cmd": [],
+    "name": "find matching builds"
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "10",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"robocrop_action\": {\"scalingActions\": [{\"botType\": {\"coresPerBot\": 32, \"botSize\": \"large\"}, \"regionalActions\": [{\"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", \"region\": \"us-central1-b\", \"botsRequested\": 367}, {\"prefix\": \"chromeos-ci-cq-us-central2-d-x32\", \"region\": \"us-central2-d\", \"botsRequested\": 464}, {\"region\": \"us-east1-d\", \"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"botsRequested\": 367}, {\"prefix\": \"chromeos-ci-cq-us-west1-b-x32\", \"region\": \"us-west1-b\", \"botsRequested\": 300}], \"botGroup\": \"cq\", \"botsRequested\": 1500}]}}}, \"builder\": {\"builder\": \"RoboCrop\"}, \"id\": \"123\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@RoboCrop@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

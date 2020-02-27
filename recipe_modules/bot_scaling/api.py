@@ -6,6 +6,9 @@
 
 from PB.chromiumos.bot_scaling import RoboCropAction
 from PB.chromiumos.bot_scaling import ScalingAction
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
+from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
 BOT_STATES = ['idle', 'busy', 'dead-only']
@@ -26,6 +29,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       ScalingAction, comprehensive action to be taken by RoboCrop.
     """
+    previous_action = self.get_previous_action()
     scaling_actions = []
     for policy in bot_policy_config.bot_policies:
       demand = self.m.buildbucket_stats.get_bot_demand(
@@ -118,3 +122,17 @@ class BotScalingApi(recipe_api.RecipeApi):
             dimensions=dimensions, state=state)
       swarming_stats[policy.bot_group] = state_stats
     return swarming_stats
+
+  def get_previous_action(self):
+    """Determines regional distribution of bot requests.
+
+    Returns:
+      RoboCropAction, action proto from the last successful
+      iteration.
+    """
+    last_successful_run = self.m.cros_history.get_matching_builds(
+        self.m.buildbucket.build,
+        [common_pb2.SUCCESS], limit=10)[0]
+    action_struct = last_successful_run.output.properties['robocrop_action']
+    return jsonpb.ParseDict(
+        jsonpb.MessageToDict(action_struct), RoboCropAction())

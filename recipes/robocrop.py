@@ -10,6 +10,7 @@ from google.protobuf import json_format as jsonpb
 from PB.recipes.chromeos.robocrop import RoboCropProperties
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/step',
     'bot_scaling',
     'buildbucket_stats',
@@ -47,4 +48,7 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield (api.test('basic'))
+  yield (api.test('basic') + api.buildbucket.simulated_search_results(
+      [api.bot_scaling.previous_robocrop()],
+      'scale bot pools.compute scaling actions.'
+      'find matching builds.buildbucket.search'))
