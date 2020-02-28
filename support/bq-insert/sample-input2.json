@@ -1,0 +1,5 @@
+{
+  "project_id": "chromeos-bot",
+  "table_name": "chromeos-bot.test.sample_data",
+  "test_only": true
+}
