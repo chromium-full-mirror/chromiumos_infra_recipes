@@ -24,10 +24,10 @@
   },
   {
     "cmd": [],
-    "name": "process tast output.upload test-results",
+    "name": "process tast output.GS upload 1_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@tast-results@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/1@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/1_results@@@"
     ]
   },
   {
@@ -44,21 +44,13 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_1",
-      "gs://chromeos-vmtest-archive//0/1"
+      "gs://chromeos-vmtest-archive//0/1_results"
     ],
     "infra_step": true,
-    "name": "process tast output.upload test-results.gsutil rsync",
+    "name": "process tast output.GS upload 1_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "process tast output.upload test-results.set archive_link",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@archive_link@\"gs://chromeos-vmtest-archive//0/1\"@@@"
     ]
   },
   {
@@ -74,7 +66,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Lost SSH connection to VM@@@",
-      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/1/tests/arc.Boot@@@",
+      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/1_results/tests/arc.Boot@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

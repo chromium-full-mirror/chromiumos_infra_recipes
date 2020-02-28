@@ -194,7 +194,7 @@
   * [stable_version:examples/full](#recipes-stable_version_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
   * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full)
-  * [tast_results:examples/archive_results](#recipes-tast_results_examples_archive_results)
+  * [tast_results:examples/archive_dir](#recipes-tast_results_examples_archive_dir)
   * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult)
   * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results)
   * [tast_results:examples/record_logs](#recipes-tast_results_examples_record_logs)
@@ -3040,24 +3040,24 @@ Args:
   state (str): the bot swarming state (busy, idle, or dead-only)
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
-[DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [archive\_results](/recipe_modules/tast_results/api.py#27)(self, test_results_path, tag):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#23)(self, dir_path, tag):**
 
-Archive results to Google Storage.
+Archive dir to Google Storage.
 
 Args:
-  test_results_path (Path): Path to test_results/.
+  dir_path (Path): Path to dir to be uploaded.
   tag (str): Tag for this execution. Used to distinguish archive folders.
 
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#111)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#106)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -3067,11 +3067,11 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [fake\_empty\_result\_test\_cases](/recipe_modules/tast_results/api.py#103)(self):**
+&mdash; **def [fake\_empty\_result\_test\_cases](/recipe_modules/tast_results/api.py#98)(self):**
 
 A hack for crbug/1049754.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#136)(self, task_result):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#131)(self, task_result):**
 
 Convert TaskResult into api.failures.Failure objects.
 
@@ -3081,7 +3081,7 @@ Args:
 Returns:
   list(Failure) of individual tests.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#51)(self, test_results_path, suite_name, tag):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#46)(self, test_results_path, suite_name, tag):**
 
 Return the test results decoded from the results.json.
 
@@ -3095,7 +3095,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#216)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#205)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -3105,7 +3105,7 @@ Args:
 Returns:
   list(str) names of tests to be retried.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#163)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#158)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -3113,7 +3113,7 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#188)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#183)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
@@ -4166,11 +4166,11 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/swarming_cli/examples/full.py#6): [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/swarming_cli/examples/full.py#12)(api):**
-### *recipes* / [tast\_results:examples/archive\_results](/recipe_modules/tast_results/examples/archive_results.py)
+### *recipes* / [tast\_results:examples/archive\_dir](/recipe_modules/tast_results/examples/archive_dir.py)
 
-[DEPS](/recipe_modules/tast_results/examples/archive_results.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/tast_results/examples/archive_dir.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/archive_results.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/archive_dir.py#13)(api):**
 ### *recipes* / [tast\_results:examples/convert\_to\_taskcaseresult](/recipe_modules/tast_results/examples/convert_to_taskcaseresult.py)
 
 [DEPS](/recipe_modules/tast_results/examples/convert_to_taskcaseresult.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

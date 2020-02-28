@@ -12,7 +12,7 @@ DEPS = [
 
 def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')
-  api.tast_results.archive_results(temp_dir, '1')
+  api.tast_results.archive_dir(temp_dir, '1')
 
 
 def GenTests(api):

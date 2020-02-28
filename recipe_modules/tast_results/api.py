@@ -12,10 +12,6 @@ from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 from PB.tast.test_result import TestResult
 
-import os
-import json
-import ntpath
-
 PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 GS_BUCKET = 'chromeos-vmtest-archive'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
@@ -25,27 +21,26 @@ class TastResultsApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
 
   @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
-  def archive_results(self, test_results_path, tag):
-    """Archive results to Google Storage.
+  def archive_dir(self, dir_path, tag):
+    """Archive dir to Google Storage.
 
     Args:
-      test_results_path (Path): Path to test_results/.
+      dir_path (Path): Path to dir to be uploaded.
       tag (str): Tag for this execution. Used to distinguish archive folders.
 
     Returns:
       str, link to the archive on pantheon.
     """
-    with self.m.step.nest('upload test-results') as step:
+    with self.m.step.nest('GS upload ' + tag) as step:
       build = self.m.buildbucket.build
       upload_uri = 'gs://%s/%s/%s/%s' % (GS_BUCKET, build.builder.builder,
                                          build.id, tag)
-      self.m.gsutil(['rsync', '-r', test_results_path, upload_uri],
-                    parallel_upload=True, multithreaded=True,
+      self.m.gsutil(['rsync', '-r', dir_path, upload_uri], parallel_upload=True,
+                    multithreaded=True,
                     timeout=self.test_api.gsutil_timeout_seconds)
-      self.m.easy.set_property_step('archive_link', upload_uri)
       pantheon_url = '%s/%s/%s/%s/%s' % (PANTHEON_PREFIX, GS_BUCKET,
                                          build.builder.builder, build.id, tag)
-      step.presentation.links['tast-results'] = pantheon_url
+      step.presentation.links['archive_link'] = pantheon_url
       return pantheon_url
 
   def get_results(self, test_results_path, suite_name, tag):
@@ -69,7 +64,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       all_verdicts = [t.verdict for t in test_cases]
       overall_state = TaskState(verdict=TaskState.VERDICT_PASSED,
                                 life_cycle=TaskState.LIFE_CYCLE_COMPLETED)
-      log_url = self.archive_results(test_results_path, tag)
+      log_url = self.archive_dir(test_results_path, tag + '_results')
 
       # If there are no results, assume INFRA_FAILURE.
       if not all_verdicts:  # pragma: nocover
@@ -199,14 +194,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       self.m.step('loosen permission',
                   ['sudo', '-n', 'chmod', '-R', '777',
                    str(dump_dir)])
-      for file in self.m.file.listdir('ls', dump_dir, recursive=True,
-                                      test_data=['kernel.log']):
-        # Recipe doesn't like '/' in log name. Truncate the temp_dir
-        # part of filename.
-        filename = str(file).replace(os.sep, '-')[len(str(dump_dir)):]
-        if str(file).endswith('.log'):
-          step.presentation.logs[filename] = self.m.file.read_text(
-              'reading file', file)
+      archive_link = self.archive_dir(dump_dir, 'system_logs')
+      step.presentation.links['system_logs'] = archive_link
 
   def _match_to_scenario(self, test_case, scenario):
     return (test_case.name == scenario.test_name and

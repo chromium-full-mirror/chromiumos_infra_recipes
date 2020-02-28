@@ -3,8 +3,7 @@
     "cmd": [],
     "name": "record logs",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@-kernel.log@@@@",
-      "@@@STEP_LOG_END@-kernel.log@@@"
+      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/system_logs@@@"
     ]
   },
   {
@@ -36,40 +35,34 @@
     ]
   },
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/var-log-dump_tmp_1",
-      "--recursive"
-    ],
-    "infra_step": true,
-    "name": "record logs.ls",
+    "cmd": [],
+    "name": "record logs.GS upload system_logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/var-log-dump_tmp_1/kernel.log@@@",
-      "@@@STEP_LOG_END@listdir@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/system_logs@@@"
     ]
   },
   {
     "cmd": [
-      "vpython",
+      "python",
       "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/var-log-dump_tmp_1/kernel.log",
-      "/path/to/tmp/"
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/var-log-dump_tmp_1",
+      "gs://chromeos-vmtest-archive//0/system_logs"
     ],
     "infra_step": true,
-    "name": "record logs.reading file",
+    "name": "record logs.GS upload system_logs.gsutil rsync",
+    "timeout": 120,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kernel.log@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
