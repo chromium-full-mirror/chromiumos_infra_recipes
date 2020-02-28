@@ -57,153 +57,104 @@ def RunSteps(api, properties):
   if not manifest_ref:
     raise ValueError('must set manifest ref')
 
-  with api.cros_source.checkout_overlays_context():
-    with api.context(
-        cwd=api.cros_source.workspace_path.join('manifest-internal')):
-      api.cros_source.ensure_synced_cache()
-      snapshot_xml = api.repo.manifest_snapshot()
-      manifest_diffs = api.repo.diff_remote_and_local_manifests(
-          api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
+  with api.cros_source.checkout_overlays_context(), \
+      api.context(
+          cwd=api.cros_source.workspace_path.join('manifest-internal')):
+    api.cros_source.ensure_synced_cache()
+    snapshot_xml = api.repo.manifest_snapshot()
+    manifest_diffs = api.repo.diff_remote_and_local_manifests(
+        api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
 
-      # TODO(athilenius): It would be nice to set the 'Info' column here.
-      gerrit_commits = []
-      if manifest_diffs is not None:
-        # If there are zero diffs (empty array) then there is nothing
-        # interesting to be done.
-        if len(manifest_diffs) == 0:
-          return
-
-        # Otherwise we need to ensure all of those diffs have fulfilled deps.
-        api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
-
-        # Then, get the diffs. We are specifically interested in what
-        # gerrit changes have landed.
-        gerrit_commits = get_gerrit_changes(api, manifest_diffs)
-
-      with api.step.nest('publish internal snapshot'):
-        snapshot_commit = publish_snapshot(api,
-            api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
-            api.cros_source.workspace_path.join(
-                'manifest-internal/snapshot.xm'),
-            snapshot_xml, gerrit_commits,
-            properties.disable_gerrit_commits_in_commit_message)
-
-        # Use new snapshot commit as the build output
-        api.buildbucket.set_output_gitiles_commit(snapshot_commit)
-
-      # It may seem weird that we publish uprevs after publishing the snapshot.
-      # Unfortunately, publishing uprevs takes ~10 minutes, in which time it is
-      # not unlikely that commits will land upstream and be trivially merged by
-      # Gerrit. This means the local uprev commits will have different sha1s
-      # from the remote uprev commits. The only two ways around it are (a)
-      # run repo sync a second time, after uprevs, or (b) include the uprevs
-      # in the NEXT snapshot. We choose the least wasteful option.
-      with api.step.nest('uprev packages'), api.context(
-          cwd=api.cros_source.workspace_path):
-        request = UprevPackagesRequest(chroot=api.cros_sdk.chroot,
-                                       overlay_type=OVERLAYTYPE_BOTH)
-        response = api.cros_build_api.PackageService.Uprev(request)
-
-        ebuilds_by_repository = collections.defaultdict(list)
-        for ebuild in response.modified_ebuilds:
-          with api.context(
-              cwd=api.path.abs_to_path(api.path.dirname(ebuild.path))):
-            repository = api.git.repository_root()
-            ebuilds_by_repository[repository].append(ebuild.path)
-
-        with api.step.nest('commit uprevs'):
-          for repository, ebuilds in ebuilds_by_repository.iteritems():
-            with api.context(cwd=api.path.abs_to_path(repository)):
-              api.git.add(ebuilds)
-              api.git.commit('Marking set of ebuilds as stable', files=ebuilds)
-
-        with api.step.nest('push uprevs'):
-          push = util.exponential_retry(retries=3)(api.git.push)
-          for repository, ebuilds in ebuilds_by_repository.iteritems():
-            with api.context(cwd=api.path.abs_to_path(repository)):
-              # Filter to ebuilds that exist. In particular, we need to exclude
-              # the version of the ebuild from prior to the uprev.
-              existing_ebuilds = []
-              for ebuild in ebuilds:
-                api.path.mock_add_paths(ebuild)
-                if api.path.exists(ebuild):
-                  existing_ebuilds.append(ebuild)
-              projects = api.repo.project_infos(projects=existing_ebuilds)
-              # The list of projects should be checked to see if all elements are
-              # equivalent. This check is temporarily removed because Annealing is
-              # broken, and length isn't the right thing to check.
-              # assert len(projects) == 1, 'expected 1 project, got: %r' % projects
-              project = projects[0]
-              push(project.remote,
-                   'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
-                   dry_run=not properties.publish_uprevs)
-
-      if properties.child_builders:
-        with api.step.nest('schedule child builds'):
-          tags = api.cros_tags.make_schedule_tags(snapshot_commit)
-          requests = [
-              api.buildbucket.schedule_request(gitiles_commit=snapshot_commit,
-                                               builder=child, bucket='postsubmit',
-                                               tags=tags)
-              for child in properties.child_builders
-          ]
-          api.buildbucket.schedule(requests)
-
-    # Generate a snapshot commit in the public manifest repo as well.  This is
-    # exactly the same thing we do above in manifest-internal, but now publicly
-    # visible.
-    with api.context(
-        cwd=api.cros_source.workspace_path.join('manifest')):
-
-      # Generate the manifest from public repo
-      snapshot_xml = api.repo.manifest_snapshot(
-          api.cros_source.workspace_path.join(
-              'manifest/full.xml'))
-
-      # And publish
-      with api.step.nest('publish external snapshot'):
-        snapshot_commit = publish_snapshot(api,
-            api.cros_source.EXTERNAL_MANIFEST_URL,
-            manifest_ref,
-            api.cros_source.workspace_path.join(
-                'manifest/snapshot.xml'
-            ),
-            snapshot_xml, [], True
-        )
-
-
-def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
-                     gerrit_commits=None, disable_gerrit=False):
-  """Generate snapshot.xml file and commit it to a ref.
-
-  Does not call api.context() so the cwd should be set to the appropriate
-  path in the workspace for a git fetch to work.
-
-  Args:
-      api (object):   See RunSteps documentation
-      repo_url:       URL to git repo to publish snapshot.xml file to
-      snapshot_ref:   git ref to publish to (e.g.: "refs/heads/snapshot")
-      snapshot_file:  location of snapshot.xml to write
-      snapshot_xml:   contents to write to snapshot.xml in cwd
-      gerrit_commits: List of gerrit commits to reference in commit message
-      disable_gerrit: If True, disable gerrit commits in commit message
-
-  Returns:
-      GitilesCommit object representing the new commit.
-  """
-
-  if not gerrit_commits:
+    # TODO(athilenius): It would be nice to set the 'Info' column here.
     gerrit_commits = []
+    if manifest_diffs is not None:
+      # If there are zero diffs (empty array) then there is nothing
+      # interesting to be done.
+      if len(manifest_diffs) == 0:
+        return
 
-  # fetch and update the ref with the new snapshot file
-  api.git.fetch_ref(repo_url, snapshot_ref)
-  api.git.checkout('FETCH_HEAD')
-  commit_message = make_message(
-      api, snapshot_ref, gerrit_commits, disable_gerrit)
-  api.git_txn.update_ref_write_file(repo_url, snapshot_ref, commit_message,
-                                    snapshot_file, snapshot_xml)
+      # Otherwise we need to ensure all of those diffs have fulfilled deps.
+      api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
-  return make_gitiles_commit(api, repo_url, api.git.head_commit())
+      # Then, get the diffs. We are specifically interested in what
+      # gerrit changes have landed.
+      gerrit_commits = get_gerrit_changes(api, manifest_diffs)
+
+    with api.step.nest('publish snapshot') as step:
+      snapshot_repo_url = api.cros_source.INTERNAL_MANIFEST_URL
+      api.git.fetch_ref(snapshot_repo_url, manifest_ref)
+      api.git.checkout('FETCH_HEAD')
+      snapshot_commit_message = make_message(
+          api, manifest_ref, gerrit_commits,
+          properties.disable_gerrit_commits_in_commit_message)
+      api.git_txn.update_ref_write_file(
+          snapshot_repo_url, manifest_ref, snapshot_commit_message,
+          api.cros_source.workspace_path.join('manifest-internal/snapshot.xml'),
+          snapshot_xml)
+
+      # Use the newly created snapshot commit as the build output.
+      snapshot_commit = make_gitiles_commit(api, snapshot_repo_url,
+                                            api.git.head_commit())
+      api.buildbucket.set_output_gitiles_commit(snapshot_commit)
+
+    # It may seem weird that we publish uprevs after publishing the snapshot.
+    # Unfortunately, publishing uprevs takes ~10 minutes, in which time it is
+    # not unlikely that commits will land upstream and be trivially merged by
+    # Gerrit. This means the local uprev commits will have different sha1s
+    # from the remote uprev commits. The only two ways around it are (a)
+    # run repo sync a second time, after uprevs, or (b) include the uprevs
+    # in the NEXT snapshot. We choose the least wasteful option.
+    with api.step.nest('uprev packages'), api.context(
+        cwd=api.cros_source.workspace_path):
+      request = UprevPackagesRequest(chroot=api.cros_sdk.chroot,
+                                     overlay_type=OVERLAYTYPE_BOTH)
+      response = api.cros_build_api.PackageService.Uprev(request)
+
+      ebuilds_by_repository = collections.defaultdict(list)
+      for ebuild in response.modified_ebuilds:
+        with api.context(
+              cwd=api.path.abs_to_path(api.path.dirname(ebuild.path))):
+          repository = api.git.repository_root()
+          ebuilds_by_repository[repository].append(ebuild.path)
+
+      with api.step.nest('commit uprevs'):
+        for repository, ebuilds in ebuilds_by_repository.iteritems():
+          with api.context(cwd=api.path.abs_to_path(repository)):
+            api.git.add(ebuilds)
+            api.git.commit('Marking set of ebuilds as stable', files=ebuilds)
+
+      with api.step.nest('push uprevs'):
+        push = util.exponential_retry(retries=3)(api.git.push)
+        for repository, ebuilds in ebuilds_by_repository.iteritems():
+          with api.context(cwd=api.path.abs_to_path(repository)):
+            # Filter to ebuilds that exist. In particular, we need to exclude
+            # the version of the ebuild from prior to the uprev.
+            existing_ebuilds = []
+            for ebuild in ebuilds:
+              api.path.mock_add_paths(ebuild)
+              if api.path.exists(ebuild):
+                existing_ebuilds.append(ebuild)
+            projects = api.repo.project_infos(projects=existing_ebuilds)
+            # The list of projects should be checked to see if all elements are
+            # equivalent. This check is temporarily removed because Annealing is
+            # broken, and length isn't the right thing to check.
+            # assert len(projects) == 1, 'expected 1 project, got: %r' % projects
+            project = projects[0]
+            push(project.remote,
+                 'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
+                 dry_run=not properties.publish_uprevs)
+
+    if properties.child_builders:
+      with api.step.nest('schedule child builds'):
+        tags = api.cros_tags.make_schedule_tags(snapshot_commit)
+        requests = [
+            api.buildbucket.schedule_request(gitiles_commit=snapshot_commit,
+                                             builder=child, bucket='postsubmit',
+                                             tags=tags)
+            for child in properties.child_builders
+        ]
+        api.buildbucket.schedule(requests)
+
 
 def get_gerrit_changes(api, manifest_diffs):
   """Find all Gerrit changes that landed since the last snapshot.
