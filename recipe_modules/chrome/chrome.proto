@@ -20,4 +20,7 @@ message ChromeProperties {
   // Used to specify a custom DEPS file to gclient sync to as a
   // DEPS file residing in the isolate.
   DepsIsolate deps_isolate = 2;
+
+  // Custom version to build, if any, used in gclient sync.
+  string version = 3;
 }

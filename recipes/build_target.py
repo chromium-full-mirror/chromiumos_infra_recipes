@@ -676,6 +676,7 @@ def GenTests(api):
                  },
                  '$chromeos/chrome':
                      ChromeProperties(
+                         version='2.0',
                          deps_isolate=ChromeProperties.DepsIsolate(
                              isolated_hash='moohash',
                              isolate_server='cows.com'

@@ -30,6 +30,7 @@ class ChromeApi(recipe_api.RecipeApi):
     self._deps_isolate = (properties.deps_isolate
                           if properties.HasField('deps_isolate')
                           else None)
+    self._version = properties.version
 
   def sync(self, chrome_root, chroot, build_target, internal):
     """
@@ -44,11 +45,14 @@ class ChromeApi(recipe_api.RecipeApi):
       internal (bool): True for internal checkout.
     """
     with self.m.step.nest('sync chrome'):
-      request = packages.GetChromeVersionRequest(
-          chroot=chroot,
-          build_target=build_target)
-      version = self.m.cros_build_api.PackageService.GetChromeVersion(
-          request, infra_step=True).version
+      if self._version or self._deps_isolate:
+        version = self._version
+      else:
+        request = packages.GetChromeVersionRequest(
+            chroot=chroot,
+            build_target=build_target)
+        version = self.m.cros_build_api.PackageService.GetChromeVersion(
+            request, infra_step=True).version
 
       self.m.file.ensure_directory('ensure chrome root', chrome_root)
 
@@ -72,7 +76,7 @@ class ChromeApi(recipe_api.RecipeApi):
         }
         if self._deps_isolate:
           soln.deps_file = str(chrome_root) + '/DEPS'
-        else:
+        if version:
           soln.revision = version
 
         config_cmd = [
@@ -95,7 +99,7 @@ class ChromeApi(recipe_api.RecipeApi):
             '--delete_unversioned_trees',
         ]
 
-        if not self._deps_isolate:
+        if version:
           sync_cmd.extend(['--revision', 'src@%s' % version])
 
         with self.m.depot_tools.on_path():
