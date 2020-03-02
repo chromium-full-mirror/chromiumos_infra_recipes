@@ -1,7 +1,8 @@
-*~
 *.py[cod]
-/.recipe_deps/
-/bundle/
 */branch-util/branch-util
-support/cipd-bin
+*~
 /.env
+/.recipe_deps/
+/.vscode/settings.json
+/bundle/
+support/cipd-bin
