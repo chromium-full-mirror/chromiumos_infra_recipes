@@ -937,7 +937,7 @@ Return:
   list[str]: Cq-Depend strings in same order as changes.
 ### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
 
-[DEPS](/recipe_modules/cros_dupit/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_dupit/__init__.py#5): [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for DupIt script. See the design of this recipe in go/cros-dupit.
 
@@ -956,15 +956,15 @@ Args:
   * gs_distfiles_uri: the Google cloud storage URI which stores all
     Gentoo distfiles.
 
-&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#233)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#263)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#225)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#255)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#229)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#259)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_dupit/api.py#221)(self):**
+&mdash; **def [run](/recipe_modules/cros_dupit/api.py#251)(self):**
 
-&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#237)(self):**
+&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#267)(self):**
 ### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
 
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

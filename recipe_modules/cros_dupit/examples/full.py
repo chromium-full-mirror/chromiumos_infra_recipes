@@ -26,3 +26,26 @@ def GenTests(api):
   )
 
   yield api.test('no-new-distfiles')
+
+  yield (
+    api.test('symlink-distfile') +
+    api.step_data(
+        'gsutil list distfiles in '
+        'gs://stark-trek/the-ultimate-computer/distfiles/',
+        stdout=api.raw_io.output('''
+gs://stark-trek/the-ultimate-computer/distfiles/exists-in-gs.tar.gz''')
+    ) +
+    api.step_data(
+        'list distfiles in rsync://mirrors.do.not.exists/distfiles',
+        stdout=api.raw_io.output('''
+lrwxrwxrwx 12 2020/02/29 12:34:56 symlink.tar.gz -> dir/symlinked.tar.gz
+-rw-r--r-- 12 2020/02/29 12:34:56 exists-in-gs.tar.gz''')
+    ) +
+    api.step_data(
+        'list symlink distfiles',
+        stdout=api.raw_io.output('''
+1 lrwxrwxrwx Feb 29 12:34 ./symlink.tar.gz -> dir/symlinked.tar.gz''')
+    ) +
+    api.step_data('copy new distfiles to gs.list new distfiles',
+        stdout=api.raw_io.output_text('dir/symlinked.tar.gz'))
+  )

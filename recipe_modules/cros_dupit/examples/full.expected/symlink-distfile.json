@@ -104,6 +104,37 @@
     "name": "list symlink distfiles"
   },
   {
+    "cmd": [
+      "awk",
+      "{ print $NF }"
+    ],
+    "infra_step": true,
+    "name": "get list of symlinked distfiles",
+    "stdin": "1 lrwxrwxrwx Feb 29 12:34 ./symlink.tar.gz -> dir/symlinked.tar.gz"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "--perms",
+      "--times",
+      "--compress",
+      "--stats",
+      "--progress",
+      "--human-readable",
+      "--ignore-existing",
+      "--timeout=180",
+      "--bwlimit=1m",
+      "--files-from=[CLEANUP]/distfile_lists_tmp_1/new_symlinked.txt",
+      "rsync://mirrors.do.not.exists/distfiles/",
+      "[CLEANUP]/distfiles_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "ensure symlinked distfiles from rsync://mirrors.do.not.exists/distfiles"
+  },
+  {
     "cmd": [],
     "name": "copy new distfiles to gs"
   },
@@ -121,7 +152,7 @@
     "name": "copy new distfiles to gs.list new distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/distfiles_tmp_2/new_distfile.tar.gz@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/distfiles_tmp_2/dir/symlinked.tar.gz@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },

@@ -145,6 +145,38 @@ class DupItApi(recipe_api.RecipeApi):
 
     return gentoo_distfile_relative_sorted_list_path
 
+  def _get_rsync_cmd(self, files_from):
+    return [
+        'rsync',
+        # Make sure we copy files recursively.
+        '--recursive',
+        # Symlinks are copied as symlinks.
+        '--links',
+        # Ignore symlinks that points to files outside of the root directory.
+        '--safe-links',
+        # Preserve files permission.
+        '--perms',
+        # Preserve modification times.
+        '--times',
+        # Compress files during transfer to save bandwidth.
+        '--compress',
+        # Log out file-transfer stats for debugging.
+        '--stats',
+        # Shows progress during transfer.
+        '--progress',
+        '--human-readable',
+        # Ignore existing because we rsync again to get symlinked distfiles.
+        '--ignore-existing',
+        # IO timeout of 3 minutes.
+        '--timeout=180',
+        # Set rate-limit
+        '--bwlimit=%s' % self.rsync_mirror_rate_limit,
+        '--files-from=%s' % files_from,
+        # Ensure trailing slash on mirror address.
+        self.m.path.join(self.rsync_mirror_address, ''),
+        self.tmp_distfiles_path,
+    ]
+
   def _rsync_new_distfiles_from_gentoo(self):
     """Rsync distfiles that are in Gentoo but not in GS to tmp dir"""
 
@@ -164,37 +196,35 @@ class DupItApi(recipe_api.RecipeApi):
                 stdout=comm_stdout)
 
     # Rsync new gentoo distfiles to tmpdir.
-    rsync_cmd = [
-        'rsync',
-        # Make sure we copy files recursively.
-        '--recursive',
-        # Symlinks are copied as symlinks.
-        '--links',
-        # Ignore symlinks that points to files outside of the root directory.
-        '--safe-links',
-        # Preserve files permission.
-        '--perms',
-        # Preserve modification times.
-        '--times',
-        # Compress files during transfer to save bandwidth.
-        '--compress',
-        # Log out file-transfer stats for debugging.
-        '--stats',
-        # Shows progress during transfer.
-        '--progress',
-        '--human-readable',
-        # IO timeout of 3 minutes.
-        '--timeout=180',
-        # Set rate-limit
-        '--bwlimit=%s' % self.rsync_mirror_rate_limit,
-        # Only rsync files we don't have in gs.
-        '--files-from=%s' % new_distfiles,
-        # Ensure trailing slash on mirror address.
-        self.m.path.join(self.rsync_mirror_address, ''),
-        self.tmp_distfiles_path,
-    ]
+    rsync_cmd = self._get_rsync_cmd(new_distfiles)
     rsync_name = 'rsync distfiles from %s' % self.rsync_mirror_address
     self.m.step(cmd=rsync_cmd, infra_step=True, name=rsync_name)
+
+    # For symlinks, ensure we also rsync files they point to.
+    # See https://crbug.com/1054836.
+    symlinks = self.m.easy.stdout_step('list symlink distfiles', [
+        'find',
+        self.m.path.join(self.tmp_distfiles_path, ''),
+        '-type',
+        'l',
+        '-ls',
+    ]).strip()
+    if symlinks:
+      stdin = self.m.raw_io.input_text(symlinks)
+      new_symlinked = self._tmp_distfile_lists_path.join('new_symlinked.txt')
+      stdout = self.m.raw_io.output(leak_to=new_symlinked)
+      cmd = [
+        'awk',
+        '{ print $NF }',
+      ]
+      self.m.step(cmd=cmd, infra_step=True,
+                  name='get list of symlinked distfiles', stdin=stdin,
+                  stdout=stdout)
+
+      rsync_cmd = self._get_rsync_cmd(new_symlinked)
+      rsync_name = ('ensure symlinked distfiles from %s' %
+          self.rsync_mirror_address)
+      self.m.step(cmd=rsync_cmd, infra_step=True, name=rsync_name)
 
   def _copy_new_distfiles_to_gs(self):
     """Copy new distfiles from tmpdir to gs"""
