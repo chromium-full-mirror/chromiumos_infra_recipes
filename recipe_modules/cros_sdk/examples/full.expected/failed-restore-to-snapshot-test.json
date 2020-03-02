@@ -164,7 +164,10 @@
   },
   {
     "cmd": [],
-    "name": "restoring chroot from snapshot"
+    "name": "restoring chroot from snapshot",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -189,7 +192,8 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_END@response@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -242,84 +246,8 @@
     },
     "name": "restoring chroot from snapshot.call chromite.api.SdkService/RestoreSnapshot.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "restoring chroot from snapshot.call chromite.api.SdkService/RestoreSnapshot.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "restoring chroot from snapshot.call chromite.api.SdkService/RestoreSnapshot.call response",
-    "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--chroot",
-      "[CLEANUP]/test/cros_chroot",
-      "--help"
-    ],
-    "name": "get cros_sdk help"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--chroot",
-      "[CLEANUP]/test/cros_chroot",
-      "PATH=/bin",
-      "--",
-      "ls"
-    ],
-    "name": "ls in chroot"
-  },
-  {
-    "cmd": [],
-    "name": "link chroot in workspace",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/workspace"
-    ],
-    "infra_step": true,
-    "name": "link chroot in workspace.ensure workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -674,7 +602,8 @@
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('link chroot in workspace.ensure workspace') (retcode: 1)"
+      "failure": {},
+      "humanReason": "Step('restoring chroot from snapshot.call chromite.api.SdkService/RestoreSnapshot.call build API script') (retcode: 1)"
     },
     "name": "$result"
   }

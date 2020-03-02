@@ -15,6 +15,8 @@ from PB.chromiumos import common
 from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
 from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UnmountRequest as UnmountSdkRequest
+from PB.chromite.api.sdk import CreateSnapshotRequest
+from PB.chromite.api.sdk import RestoreSnapshotRequest
 
 
 class CrosSdkApi(recipe_api.RecipeApi):
@@ -197,6 +199,38 @@ class CrosSdkApi(recipe_api.RecipeApi):
         self.unmount_chroot()
         self.unlink_chroot(checkout_path)
         self.swarming_chmod_chroot()
+
+  @contextlib.contextmanager
+  def snapshot(self):
+    """Returns a context that snapshots and restores the SDK chroot state.
+
+    When this context manager is entered, a snapshot is made of the chroot
+    state and a token corresponding to that snapshot is stored. When the context
+    is exited, regardless of the reason, the context manager will attempt to
+    restore the chroot back to that initial snapshot. If the chroot was
+    initially created with 'nouse-image', it will be replaced so that it
+    supports the ability to make snapshots.
+    """
+    with self.m.step.nest('creating chroot snapshot'):
+      snapshot_response = self.m.cros_build_api.SdkService.CreateSnapshot(
+          CreateSnapshotRequest(chroot=self.chroot))
+      snapshot_token = snapshot_response.snapshot_token
+
+    try:
+      yield
+    finally:
+      # Regardless of how we exited the context block, try to restore the
+      # chroot snapshot.
+      try:
+        with self.m.step.nest('restoring chroot from snapshot'):
+          self.m.cros_build_api.SdkService.RestoreSnapshot(
+              RestoreSnapshotRequest(
+                  chroot=self.chroot, snapshot_token=snapshot_token))
+      except:
+        # If restoring the snapshot fails for any reason, mark the current SDK
+        # for deletion and reraise the exception.
+        self.mark_sdk_as_dirty()
+        raise
 
   def unmount_chroot(self):
     with self.m.step.nest('unmounting chroot'):

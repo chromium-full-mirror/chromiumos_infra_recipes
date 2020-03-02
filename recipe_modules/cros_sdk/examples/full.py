@@ -27,12 +27,12 @@ def RunSteps(api):
         '/goma_dir', '/creds/goma.json',
         common.GomaConfig.RBE_PROD, '/goma_logs', 'stats.file', 'counterz.file')
     api.cros_sdk.set_use_flags([common.UseFlag(flag='goma')])
-
     chroot = api.cros_sdk.chroot
-    api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
-    api.assertions.assertTrue(api.cros_sdk.has_goma_config())
-    api.assertions.assertItemsEqual(chroot.env.use_flags,
-                                    [common.UseFlag(flag='goma')])
+    with api.cros_sdk.snapshot():
+      api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
+      api.assertions.assertTrue(api.cros_sdk.has_goma_config())
+      api.assertions.assertItemsEqual(chroot.env.use_flags,
+                                      [common.UseFlag(flag='goma')])
 
     goma = api.cros_sdk.goma_config()
     api.assertions.assertEqual(goma.goma_dir, '/goma_dir')
@@ -61,3 +61,9 @@ def GenTests(api):
 
   yield (api.test('failed-step-destroy-chroot-tests') +  #
          api.step_data('link chroot in workspace.ensure workspace', retcode=1))
+
+  yield (api.test('failed-restore-to-snapshot-test') +  #
+         api.step_data(
+             ('restoring chroot from snapshot.call chromite.api.SdkService/'
+              'RestoreSnapshot.call build API script'),
+             retcode=1))
