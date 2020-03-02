@@ -1142,9 +1142,9 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#221)(self, gerrit_changes, gitiles_commit, chroot):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#222)(self, gerrit_changes, gitiles_commit, chroot):**
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#235)(self, build_target, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#236)(self, build_target, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -1204,7 +1204,7 @@ Args:
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#192)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#193)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -3927,9 +3927,9 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#54)(api, properties):**
 
-&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#179)(api, config):**
+&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#186)(api, config):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#301)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#308)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3946,7 +3946,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#282)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#289)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -3956,7 +3956,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#399)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#406)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -3967,7 +3967,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#234)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#241)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -3982,7 +3982,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#347)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#354)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -3995,7 +3995,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#388)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#395)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4003,7 +4003,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#374)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#381)(refs):**
 
 Assert the given refs start with refs/heads.
 

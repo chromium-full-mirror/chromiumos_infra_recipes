@@ -2046,7 +2046,9 @@
     "cmd": [],
     "name": "pointless build check",
     "~followup_annotations": [
-      "@@@STEP_TEXT@build is relevant@@@"
+      "@@@STEP_TEXT@build is relevant@@@",
+      "@@@SET_BUILD_PROPERTY@pointless_build@false@@@",
+      "@@@SET_BUILD_PROPERTY@relevant_build@true@@@"
     ]
   },
   {

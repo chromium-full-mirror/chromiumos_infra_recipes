@@ -121,14 +121,15 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       # treated as pointless.
       return False
     with self.m.step.nest('pointless build check') as step_result:
-      pointless_build = not self.is_depgraph_affected(gerrit_changes,
-                                                      gitiles_commit, dep_graph)
-      if pointless_build:
-        step_result.presentation.step_text = ('build is irrelevant')
-        step_result.presentation.properties['pointless_build'] = True
-      else:
-        step_result.presentation.step_text = ('build is relevant')
-      return pointless_build
+      relevant = self.is_depgraph_affected(gerrit_changes,
+                                           gitiles_commit, dep_graph)
+      # TODO(seanabraham): stop writing 'pointless_build' property once Plx
+      # scripts have switched over to 'relevant_build'.
+      step_result.presentation.properties['pointless_build'] = not relevant
+      step_result.presentation.properties['relevant_build'] = relevant
+      step_result.presentation.step_text = (
+          'build is relevant' if relevant else 'build is irrelevant')
+      return not relevant
 
   def _are_paths_affected(self, gerrit_changes, gitiles_commit, relevant_paths,
                           name=None):

@@ -114,6 +114,13 @@ def RunSteps(api, properties):
     for build in completed_builds:
       if build.status in (common_pb2.STARTED, common_pb2.SCHEDULED):
         step.presentation.text = 'some builds are running/pending'
+    relevant_builds = []
+    for build in completed_builds:
+      # Assume relevant if the child doesn't have the relevant_build prop.
+      if ('relevant_build' not in build.output.properties or
+          build.output.properties['relevant_build']):
+        relevant_builds.append(build.builder.builder)
+    step.presentation.logs['relevant_builds'] = relevant_builds
     failures = api.failures.get_build_failures(completed_builds)
 
   # Recheck the BuilderConfigs at HEAD to see if any failed builds are now

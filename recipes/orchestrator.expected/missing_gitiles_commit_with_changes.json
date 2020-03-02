@@ -283,7 +283,10 @@
   },
   {
     "cmd": [],
-    "name": "check build results"
+    "name": "check build results",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@relevant_builds@@@"
+    ]
   },
   {
     "cmd": [],
