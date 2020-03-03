@@ -43,6 +43,8 @@ def RunSteps(api):
       ])
   failures = api.tast_results.get_failures(passed_task_result)
   api.tast_results.print_results(failures, False)
+  tests = api.tast_results.get_tests_to_retry(passed_task_result)
+  api.assertions.assertEqual(tests, [])
   fishy_task_result = ExecuteResponse.TaskResult(name=task_result.name,
                                                  state=task_result.state)
   failures = api.tast_results.get_failures(fishy_task_result)

@@ -212,7 +212,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       list(str) names of tests to be retried.
     """
     with self.m.step.nest('tests to retry') as step:
-      if task_result.state.verdict != TaskState.VERDICT_FAILED:
+      if task_result.state.verdict == TaskState.VERDICT_PASSED:
         return []
 
       test_map = {

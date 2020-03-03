@@ -123,7 +123,48 @@
   },
   {
     "cmd": [],
-    "name": "tests to retry (2)"
+    "name": "tests to retry (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@retry_config@test_suite: \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Test did not finish\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_END@retry_config@@@",
+      "@@@STEP_LOG_LINE@failed_tests@{}@@@",
+      "@@@STEP_LOG_END@failed_tests@@@",
+      "@@@STEP_LOG_LINE@matches@Scenario had no match:test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@Scenario had no match:test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@reason: \"Test did not finish\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_END@matches@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/vm_retry.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "tests to retry (2).fetch master:testingconfig/generated/vm_retry.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
@@ -131,6 +172,10 @@
     "~followup_annotations": [
       "@@@STEP_TEXT@all tests passed!@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "tests to retry (3)"
   },
   {
     "cmd": [],
