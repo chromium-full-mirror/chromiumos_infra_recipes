@@ -119,7 +119,7 @@ def RunSteps(api, properties):
       # Assume relevant if the child doesn't have the relevant_build prop.
       if build.output.properties.fields.get('relevant_build', True):
         relevant_builds.append(build.builder.builder)
-    step.presentation.logs['relevant_builds'] = relevant_builds
+    step.presentation.logs['relevant_builds'] = sorted(relevant_builds)
     failures = api.failures.get_build_failures(completed_builds)
 
   # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
