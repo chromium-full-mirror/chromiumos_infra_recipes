@@ -91,7 +91,9 @@ def RunSteps(api, properties):
     step.presentation.logs['list of triggers'] = map(json_format.MessageToJson,
                                                      triggers)
 
-  with api.cros_source.checkout_overlays_context():
+  with api.cros_source.checkout_overlays_context(), \
+    api.cros_sdk.cleanup_context(
+          checkout_path=api.cros_source.workspace_path):
     api.cros_source.ensure_synced_cache()
     if properties.init_sdk:
       with api.context(cwd=api.cros_source.workspace_path), \
