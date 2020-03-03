@@ -117,8 +117,7 @@ def RunSteps(api, properties):
     relevant_builds = []
     for build in completed_builds:
       # Assume relevant if the child doesn't have the relevant_build prop.
-      if ('relevant_build' not in build.output.properties or
-          build.output.properties['relevant_build']):
+      if build.output.properties.fields.get('relevant_build', True):
         relevant_builds.append(build.builder.builder)
     step.presentation.logs['relevant_builds'] = relevant_builds
     failures = api.failures.get_build_failures(completed_builds)
