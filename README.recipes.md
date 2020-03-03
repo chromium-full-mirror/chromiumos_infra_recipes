@@ -1512,6 +1512,10 @@ API for generating tags.
 
 A module for generating tags.
 
+&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#34)(self, key, value, tags):**
+
+Returns whether tags contains a tag with key and value.
+
 &mdash; **def [make\_schedule\_tags](/recipe_modules/cros_tags/api.py#13)(self, snapshot):**
 
 Returns the tags typically added to scheduled child builders.

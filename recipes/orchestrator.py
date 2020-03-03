@@ -155,8 +155,8 @@ def RunSteps(api, properties):
   ]
 
   # Is the build tagged as overriding the PCQ quota scheduler account?
-  if (('cq_cl_tag', 'pupr:chromeos-base/chromeos-chrome')
-     in [(t.key, t.value) for t in api.buildbucket.build.tags]):
+  if api.cros_tags.has_entry('cq_cl_tag', 'pupr:chromeos-base/chromeos-chrome',
+                             api.buildbucket.build.tags):
     api.skylab.set_qs_account('pupr')
 
   test_failures = api.cros_test_proctor.run_proctor(

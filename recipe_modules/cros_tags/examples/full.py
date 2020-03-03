@@ -28,6 +28,19 @@ def RunSteps(api):
 
   api.assertions.assertEqual(tags, expected_tags)
 
+  tags = [bbcommon_pb2.StringPair(key=d['key'], value=d['value'])
+          for d in expected_tags]
+
+  api.assertions.assertTrue(
+      api.cros_tags.has_entry('parent_buildbucket_id',
+                              str(api.buildbucket.build.id), tags))
+  api.assertions.assertTrue(
+      api.cros_tags.has_entry('snapshot', snapshot.id, tags))
+  api.assertions.assertFalse(
+      api.cros_tags.has_entry('snapshot', snapshot.id + 'x', tags))
+  api.assertions.assertFalse(
+      api.cros_tags.has_entry('snapshotx', snapshot.id, tags))
+
 def GenTests(api):
   yield (api.test('basic') + #
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',

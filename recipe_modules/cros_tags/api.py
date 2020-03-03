@@ -30,3 +30,10 @@ class CrosTagsApi(recipe_api.RecipeApi):
         'value': value,
         'key': key,
     }
+
+  def has_entry(self, key, value, tags):
+    """Returns whether tags contains a tag with key and value."""
+    for t in tags:
+      if (key, value) == (t.key, t.value):
+        return True
+    return False
