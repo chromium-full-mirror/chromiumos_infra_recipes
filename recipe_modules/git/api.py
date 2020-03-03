@@ -378,3 +378,11 @@ other_test.txt
     if force:
       cmd.append('--force-rebase')
     self._step(cmd)
+
+  def set_global_config(self, args):
+    """Runs `git config --global` to set global config.
+
+    Args:
+      * args list[str]: args for `git config`.
+    """
+    self._step(['config', '--global'] + args)

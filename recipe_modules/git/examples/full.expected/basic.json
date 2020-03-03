@@ -281,6 +281,17 @@
     "name": "git rebase"
   },
   {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "upstream.hammer-branch",
+      "1"
+    ],
+    "infra_step": true,
+    "name": "git config"
+  },
+  {
     "name": "$result"
   }
 ]

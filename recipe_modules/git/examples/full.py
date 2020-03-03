@@ -48,6 +48,7 @@ def RunSteps(api):
 
   api.git.repository_root()
   api.git.rebase(force=True)
+  api.git.set_global_config(['upstream.hammer-branch', '1'])
 
 
 def GenTests(api):

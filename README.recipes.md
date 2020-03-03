@@ -1394,7 +1394,7 @@ of a build and then mounted into the master and/or workspace paths.
 
 Returns a context where chromiumos and workspace overlays are mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#247)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#249)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -1407,7 +1407,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#204)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#206)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -1455,7 +1455,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#160)(self, gitiles_commit):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#162)(self, gitiles_commit):**
 
 Sync a checkout to the snapshot.
 
@@ -2253,6 +2253,13 @@ Return the git repository root for the current directory.
 
 Returns:
   str: The path to the git repository.
+
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#382)(self, args):**
+
+Runs `git config --global` to set global config.
+
+Args:
+  * args list[str]: args for `git config`.
 
 &mdash; **def [show\_file](/recipe_modules/git/api.py#326)(self, rev, path, test_contents=None):**
 

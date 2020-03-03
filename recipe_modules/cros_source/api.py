@@ -135,6 +135,8 @@ class CrosSourceApi(recipe_api.RecipeApi):
       List[ProjectCommit]: A list of commits from cherry-picked patch sets.
     """
     with self.m.step.nest('apply gerrit patch sets'):
+      # Disable packRefs before doing merges. See https://crbug.com/1057878.
+      self.m.git.set_global_config(['gc.packRefs', 'false'])
       new_commits = []
       for patch_set in patch_sets:
         project_path = self.find_project_path(patch_set.project,
