@@ -150,13 +150,11 @@ def RunSteps(api, properties):
         api.gsutil(cmd)
 
     with api.step.nest('generate CL'):
-      change = api.gerrit.create_change(
-          project=project.name, reviewers=["tbegin@google.com"], topic=package)
+      change = api.gerrit.create_change(project=project.name, topic=package)
 
-      # TODO(tbegin): Change label to COMMIT_QUEUE: 2 after initial testing
       labels = {
           api.gerrit.Label.BOT_COMMIT: 1,
-          api.gerrit.Label.COMMIT_QUEUE: 1,
+          api.gerrit.Label.COMMIT_QUEUE: 2,
       }
       api.gerrit.set_change_labels(change, labels)
 

@@ -653,8 +653,6 @@
       "--force",
       "--topic",
       "chromeos-dtc-vm",
-      "--reviewers",
-      "tbegin@google.com",
       "--send-mail"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
@@ -694,7 +692,7 @@
     "name": "generate CL.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+1@@@",
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/+/1@@@"
     ]
   },
@@ -733,7 +731,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+1"
+      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
     "infra_step": true,
