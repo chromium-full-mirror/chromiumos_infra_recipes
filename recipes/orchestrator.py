@@ -44,6 +44,7 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
 from google.protobuf import json_format
 from google.protobuf import struct_pb2
 from google.protobuf import timestamp_pb2
+from google.protobuf import wrappers_pb2
 
 from collections import defaultdict
 from datetime import datetime
@@ -117,8 +118,8 @@ def RunSteps(api, properties):
     relevant_builds = []
     for build in completed_builds:
       # Assume relevant if the child doesn't have the relevant_build prop.
-      if ('relevant_build' not in build.output.properties or
-          build.output.properties['relevant_build']):
+      if (build.output.properties.fields.get(
+          'relevant_build', wrappers_pb2.BoolValue(value=True)).value):
         relevant_builds.append(build.builder.builder)
     step.presentation.logs['relevant_builds'] = sorted(relevant_builds)
     failures = api.failures.get_build_failures(completed_builds)
