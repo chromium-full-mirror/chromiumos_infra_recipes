@@ -401,6 +401,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run tast tests.set failed_test_cases",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@failed_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]@@@"
+    ]
+  },
+  {
     "cmd": [
       "pkill",
       "-F",

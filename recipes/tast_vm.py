@@ -95,6 +95,10 @@ def RunSteps(api, properties):
         f for f in api.tast_results.get_failures(task_result)
         if f.title not in tests_to_retry
     ]
+    failed_test_cases = [
+        jsonpb.MessageToDict(tc) for tc in task_result.test_cases if
+        tc.verdict != TaskState.VERDICT_PASSED and tc.name not in tests_to_retry
+    ]
     final_task_result = task_result
     if tests_to_retry:
       retry_task_result = _run_tast(api, tests_to_retry, tast_dir,
@@ -102,8 +106,14 @@ def RunSteps(api, properties):
       all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
       failures += api.tast_results.get_failures(retry_task_result)
       final_task_result = retry_task_result
+      failed_test_cases += [
+          jsonpb.MessageToDict(tc)
+          for tc in retry_task_result.test_cases
+          if tc.verdict != TaskState.VERDICT_PASSED
+      ]
 
     api.easy.set_property_step('all_test_cases', all_test_cases)
+    api.easy.set_property_step('failed_test_cases', failed_test_cases)
     _kill_vm(api, kvm_pid_file)
     api.tast_results.record_logs(SYS_LOG_DIR)
     with api.step.nest('qemu debug') as step:
