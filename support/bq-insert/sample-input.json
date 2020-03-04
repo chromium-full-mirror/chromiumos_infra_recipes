@@ -1,5 +1,5 @@
 {
   "project_id": "chromeos-bot",
   "table_name": "bigquery-public-data.new_york.tree_census_2015",
-  "test_only": true
+  "read_test": true
 }

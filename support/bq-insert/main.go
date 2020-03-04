@@ -6,8 +6,10 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"cloud.google.com/go/bigquery"
 	"go.chromium.org/luci/auth"
@@ -17,10 +19,12 @@ import (
 )
 
 type Input struct {
-	ProjectId    string `json:"project_id"`
-	TableName    string `json:"table_name"`
-	TestOnly     bool   `json:"test_only"`
-	CompileEvent string `json:"compile_event"`
+	ProjectId    string          `json:"project_id"`
+	DatasetId    string          `json:"dataset_id"`
+	TableName    string          `json:"table_name"`
+	ReadTest     bool            `json:"read_test"`
+	WriteTest    bool            `json:"write_test"`
+	CompileEvent json.RawMessage `json:"compile_event"`
 }
 
 type Output struct {
@@ -39,12 +43,36 @@ func main() {
 		log.Fatal("Error creating client: ", err)
 	}
 
-	if input.TestOnly {
-		tableData := queryTable(ctx, client, input.TableName)
+	if input.ReadTest {
+		var fullTableName string
+		if strings.Contains(input.TableName, ".") {
+			// Then we have a fully qualified table name already.
+			fullTableName = input.TableName
+		} else {
+			// Build up qualified table name.
+			fullTableName = strings.Join([]string{
+				input.ProjectId, input.DatasetId, input.TableName}, ".")
+		}
+		log.Print(" fullTableName ", fullTableName)
+		tableData := queryTable(ctx, client, fullTableName)
 		log.Print("Contents of ", input.TableName)
 		for _, element := range tableData {
 			log.Print("ELEMENT: " + element)
 		}
+
+		enumerateClientContents(ctx, client, input.DatasetId)
+		return
+	}
+	if input.WriteTest {
+		log.Printf("Raw message to write: %v", string(input.CompileEvent))
+		// Get and log the table schema so that it can be visually compared to the
+		// message contents.
+		metadata := getTableMetadata(ctx, client, input.DatasetId, input.TableName)
+		if metadata != nil {
+			logTableSchema(metadata)
+		}
+		insertTableData(ctx, client, input.DatasetId, input.TableName, input.CompileEvent, true)
+		return
 	}
 	// TODO(mmortensen): Handle table updates by defining a type that
 	// implements the ValueSaver interface, which has a single method named
@@ -53,13 +81,126 @@ func main() {
 
 }
 
+// Each item to insert as a row is a json.RawMessage. The insertTableData
+// function will put Item values into an array of ValueSaver interface type,
+// triggering the Save function to be called for each Item.
+type Item struct {
+	message json.RawMessage
+}
+
+// Because 'Item' elements are put into an array of bigquery.Value saver
+// inside insertTableTable, the Save() function will be called for each
+// element from within the inserter's Put method. The Save function returns
+// a key/value map where the key is the column name and the value is a
+// bigquery.Value type.
+func (i Item) Save() (map[string]bigquery.Value, string, error) {
+	mymap := make(map[string]bigquery.Value)
+	var values map[string]interface{}
+	json.Unmarshal(i.message, &values)
+	for key, value := range values {
+		log.Println(" .. Save .. JSON Key: ", key, " Value: ", value)
+		mymap[key] = value
+	}
+	return mymap, "", nil
+}
+
+// Insert the raw Json Message into the table specified by client/datasetId/tableName.
+// If the table cannot be found then log a fatal error.
+// If the insertion fails then log a fatal error.
+func insertTableData(ctx context.Context, client *bigquery.Client, datasetId string, tableName string, message json.RawMessage, logDebugInfo bool) {
+	dataset := client.Dataset(datasetId) // inside projectId 'chromeos-bot'
+	if dataset == nil {
+		log.Fatal("Error getting dataset ", datasetId)
+	}
+	table := dataset.Table(tableName)
+	if table == nil {
+		log.Fatal("Error getting table")
+	}
+	var values map[string]interface{}
+	json.Unmarshal(message, &values)
+	if logDebugInfo {
+		for key, value := range values {
+			log.Println("JSON Key: ", key, " Value: ", value)
+		}
+	}
+	var saverArray = make([]bigquery.ValueSaver, 0)
+	saverArray = append(saverArray, Item{message})
+
+	inserter := table.Inserter()
+	insertion_error := inserter.Put(ctx, saverArray)
+	if insertion_error != nil {
+		log.Fatal("Error inserting values into table ", insertion_error)
+	}
+}
+
+// Given a BigQuery client (i.e. a Pantheon project like "chromeos-bot"), enumerate the datasets
+// and for a given dataset enumerate the tables.
+func enumerateClientContents(ctx context.Context, client *bigquery.Client, datasetId string) {
+	dataset_iter := client.Datasets(ctx)
+	for {
+		dataset, dataset_error := dataset_iter.Next()
+		if dataset_error == iterator.Done {
+			break
+		}
+		if dataset_error != nil {
+			log.Println("Error getting dataset", dataset_error)
+		} else {
+			log.Println("Client contains dataset ProjectID:", dataset.ProjectID, " DatasetID:", dataset.DatasetID)
+		}
+	}
+
+	dataset := client.Dataset(datasetId)
+	if dataset == nil {
+		log.Fatal("Error getting dataset")
+	}
+	log.Println("Enumerating tables of dataset ProjectId: ", dataset.ProjectID, " DatasetId: ", dataset.DatasetID)
+	it := dataset.Tables(ctx)
+	for {
+		table, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			log.Println("Error getting table ", err)
+			break
+		} else {
+			log.Println("TABLE ProjectID ", table.ProjectID, " DatasetID ", table.DatasetID,
+				" TableID ", table.TableID)
+		}
+	}
+}
+
+// Retrieve a dataset's table metadata, logging a fatal error if it cannot be obtained.
+func getTableMetadata(ctx context.Context, client *bigquery.Client, datasetId string, tableName string) *bigquery.TableMetadata {
+	dataset := client.Dataset(datasetId)
+	if dataset == nil {
+		log.Fatal("Error getting dataset")
+	}
+	table := dataset.Table(tableName)
+	if table == nil {
+		log.Fatal("Error getting table")
+	}
+	metadata, err := table.Metadata(ctx)
+	if err != nil {
+		log.Fatal("Error getting table metadata: ", err)
+	}
+	return metadata
+}
+
+// Given the table metadata, log the schema name/type.
+func logTableSchema(metadata *bigquery.TableMetadata) {
+	for _, fs := range metadata.Schema {
+		log.Println(" SCHEMA name/type --- ", fs.Name, fs.Type)
+	}
+}
+
 // Query a table, reading all columns of a few rows. This allows developers to
 // verify basic golang/BigQuery integration, including BigQuery access
 // permissions, BigQuery project id, BigQuery table name path, and so on.
 // These are all prerequisites to what is needed to update a table.
 func queryTable(ctx context.Context, client *bigquery.Client, tableName string) []string {
 	tableData := make([]string, 0)
-	q := client.Query("select * from `" + tableName + "` LIMIT 5")
+	q := client.Query("select * from `" + tableName + "` LIMIT 20")
 	it, err := q.Read(ctx)
 	if err != nil {
 		log.Fatal("Error performing q.Read: ", err)

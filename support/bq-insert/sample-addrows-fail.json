@@ -1,0 +1,13 @@
+{
+  "project_id": "chromeos-bot",
+  "dataset_id": "test",
+  "table_name": "sample_data",
+  "write_test": true,
+  "compile_event": {
+    "month": "April",
+    "num_days": 30,
+    "leap_affected": false,
+    "seasons": "Spring",
+    "BadField": 13
+  }
+}
