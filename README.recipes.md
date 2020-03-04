@@ -3150,7 +3150,7 @@ Args:
 Returns:
   str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#110)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#108)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -3161,7 +3161,7 @@ Returns:
   str: URL pointing to the Cloud Storage Browser page for the
     object.
 
-&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#67)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#65)(self, skylab_result):**
 
 Returns the URL to the given skylab result page.
 
@@ -3172,7 +3172,7 @@ Returns:
   str->str map: title to URL to the skylab swarming task page
   if the suite succeeded or entries of just the failed tests.
 
-&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#56)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#54)(self, skylab_task):**
 
 Returns the URL to the given skylab task.
 
@@ -3182,7 +3182,7 @@ Args:
 Returns:
   str: URL pointing to the skylab swarming task page.
 
-&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#92)(self, task_state):**
+&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#90)(self, task_state):**
 
 String suffix to supply info about the task.
 
@@ -4443,11 +4443,11 @@ Basic tests for the urls recipe module.
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#23)(api):**
 ### *recipes* / [urls:examples/get\_vm\_test\_link\_map](/recipe_modules/urls/examples/get_vm_test_link_map.py)
 
-[DEPS](/recipe_modules/urls/examples/get_vm_test_link_map.py#14): [tast\_results](#recipe_modules-tast_results), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/urls/examples/get_vm_test_link_map.py#14): [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 Basic tests for the urls recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#20)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/a3b6fd06f9d70795dc18d4ce8c7d66f6bf5a9c04/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/a3b6fd06f9d70795dc18d4ce8c7d66f6bf5a9c04/recipes/README.recipes.md#recipe_modules-gclient

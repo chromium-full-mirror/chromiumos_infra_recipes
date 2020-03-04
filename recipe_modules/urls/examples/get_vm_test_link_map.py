@@ -13,8 +13,6 @@ from PB.test_platform.taskstate import TaskState
 
 DEPS = [
     'recipe_engine/assertions',
-    'recipe_engine/buildbucket',
-    'tast_results',
     'urls',
 ]
 
@@ -24,10 +22,11 @@ def RunSteps(api):
       id=123, builder=build_pb2.BuilderID(builder='something-direct-vm'))
   test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
       name='arc.Boot', verdict=TaskState.VERDICT_FAILED)
-  task_result = ExecuteResponse.TaskResult(test_cases=[test_case_result])
-  task_result_dict = json_format.MessageToDict(task_result)
-  build.output.properties.update({'task_result': task_result_dict})
-  api.urls.get_vm_test_link_map(build)
+  test_case_dict = json_format.MessageToDict(test_case_result)
+  build.output.properties.update({'all_test_cases': [test_case_dict]})
+  link_map = api.urls.get_vm_test_link_map(build)
+  api.assertions.assertEqual(link_map['arc.Boot'],
+                             'https://cr-buildbucket.appspot.com/build/123')
 
 
 def GenTests(api):
