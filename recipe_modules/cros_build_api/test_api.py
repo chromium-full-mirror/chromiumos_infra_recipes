@@ -214,7 +214,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     )
     responses['BundleArtifacts'] = jsonify(artifacts_info=[
         dict(
-            artifact_type="UNVERIFIED_ORDERING_FILE", artifacts=[
+            artifact_type="UNVERIFIED_CHROME_LLVM_ORDERFILE", artifacts=[
                 {'path': 'my_output_artifact'},
         ])
     ])

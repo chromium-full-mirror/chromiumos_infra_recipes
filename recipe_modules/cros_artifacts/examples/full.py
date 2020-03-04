@@ -20,12 +20,13 @@ def RunSteps(api):
 
   # An artifact with a prepare service.
   api.cros_artifacts.prepare_for_build(
-      [BuilderConfig.Artifacts.VERIFIED_ORDERING_FILE],
+      [BuilderConfig.Artifacts.VERIFIED_CHROME_LLVM_ORDERFILE],
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
       input_artifacts=[BuilderConfig.Artifacts.InputArtifactInfo(
-          input_artifact_type=BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE,
+          input_artifact_type=(
+              BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE),
           input_artifact_gs_locations=[
               "chromeos-toolchain-artifacts/orderfile/unvetted"
           ]),
@@ -48,7 +49,7 @@ def RunSteps(api):
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
-                                      name='upload ebuild logs')
+      name='upload ebuild logs')
 
   api.cros_artifacts.upload_artifacts(
       'target-postsubmit',
@@ -77,7 +78,8 @@ def RunSteps(api):
   api.cros_artifacts.upload_artifacts(
       'target-toolchain',
       target, BuilderConfig.Id.TOOLCHAIN,
-      'artifacts_gs_bucket', [BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE],
+      'artifacts_gs_bucket', [
+          BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE],
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
@@ -85,11 +87,11 @@ def RunSteps(api):
           BuilderConfig.Artifacts.PublishInfo(
               publish_gs_location='publish_gs_location',
               publish_types=[
-                  BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE]),
+                  BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE]),
           BuilderConfig.Artifacts.PublishInfo(
               publish_gs_location='pub2/%(gs_path)s',
               publish_types=[
-                  BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE])],
+                  BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE])],
   )
 
 def GenTests(api):

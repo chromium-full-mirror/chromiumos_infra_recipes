@@ -604,14 +604,14 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "prebuilts": "NONE",
                     "artifactsGsBucket": "chromeos-image-archive",
                     "artifactTypes": [
-                      "UNVERIFIED_ORDERING_FILE"
+                      "UNVERIFIED_CHROME_LLVM_ORDERFILE"
                     ],
                     "publishArtifacts": [
                       {
                         "publishGsLocation":
                           "chromeos-toolchain-artifacts/orderfile/unvetted",
                         "publishTypes": [
-                          "UNVERIFIED_ORDERING_FILE"
+                          "UNVERIFIED_CHROME_LLVM_ORDERFILE"
                         ]
                       }
                     ]
@@ -655,20 +655,20 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "prebuilts": "NONE",
                     "artifactsGsBucket": "chromeos-image-archive",
                     "artifactTypes": [
-                      "VERIFIED_ORDERING_FILE"
+                      "VERIFIED_CHROME_LLVM_ORDERFILE"
                     ],
                     "publishArtifacts": [
                       {
                         "publishGsLocation":
                           "chromeos-toolchain-artifacts/orderfile/vetted",
                         "publishTypes": [
-                          "VERIFIED_ORDERING_FILE"
+                          "VERIFIED_CHROME_LLVM_ORDERFILE"
                         ]
                       }
                     ],
                     "inputArtifacts": [
                       {
-                        "inputArtifactType": "UNVERIFIED_ORDERING_FILE",
+                        "inputArtifactType": "UNVERIFIED_CHROME_LLVM_ORDERFILE",
                         "inputArtifactGsLocations": [
                           "chromeos-toolchain-artifacts/orderfile/unvetted"
                         ]

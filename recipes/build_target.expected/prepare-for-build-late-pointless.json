@@ -3594,7 +3594,7 @@
       "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_17\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts_info\": [{\"artifacts\": [{\"path\": \"my_output_artifact\"}], \"artifact_type\": \"UNVERIFIED_ORDERING_FILE\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts_info\": [{\"artifacts\": [{\"path\": \"my_output_artifact\"}], \"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

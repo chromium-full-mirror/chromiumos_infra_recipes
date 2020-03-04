@@ -222,9 +222,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         BuilderConfig.Artifacts.EBUILD_LOGS: self._bundle_legacy_artifacts,
         BuilderConfig.Artifacts.CHROMEOS_CONFIG: self._bundle_legacy_artifacts,
         BuilderConfig.Artifacts.CPE_REPORT: self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE:
+        BuilderConfig.Artifacts.IMAGE_ARCHIVES: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE:
             self._bundle_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_ORDERING_FILE: self._bundle_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_CHROME_LLVM_ORDERFILE:
+            self._bundle_toolchain,
         BuilderConfig.Artifacts.CHROME_CLANG_WARNINGS_FILE:
             self._bundle_toolchain,
         BuilderConfig.Artifacts.UNVERIFIED_LLVM_PGO_FILE:
@@ -515,9 +517,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         BuilderConfig.Artifacts.EBUILD_LOGS: self._prepare_unknown,
         BuilderConfig.Artifacts.CHROMEOS_CONFIG: self._prepare_unknown,
         BuilderConfig.Artifacts.CPE_REPORT: self._prepare_unknown,
-        BuilderConfig.Artifacts.UNVERIFIED_ORDERING_FILE:
+        BuilderConfig.Artifacts.IMAGE_ARCHIVES: self._prepare_unknown,
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE:
             self._prepare_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_ORDERING_FILE: self._prepare_toolchain,
+        BuilderConfig.Artifacts.VERIFIED_CHROME_LLVM_ORDERFILE:
+            self._prepare_toolchain,
         BuilderConfig.Artifacts.CHROME_CLANG_WARNINGS_FILE:
             self._prepare_toolchain,
         BuilderConfig.Artifacts.UNVERIFIED_LLVM_PGO_FILE:
