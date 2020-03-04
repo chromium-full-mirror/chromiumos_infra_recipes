@@ -10,7 +10,7 @@ import contextlib
 from recipe_engine import post_process
 
 from PB.recipes.chromeos.check_project_config import (
-    CheckProjectConfigProperties)
+    CheckProjectConfigProperties, ConfigBundleCheckoutPath)
 
 PROPERTIES = CheckProjectConfigProperties
 
@@ -53,6 +53,25 @@ def checkout_manifest_groups(api, properties):
     yield
 
 
+def checkout_paths_specified(properties):
+  """Return True if all checkout_path properties are set, False if none are set.
+
+  Raises if only some of the checkout_path properties are set.
+  """
+  checkout_paths = (
+      properties.chromiumos_config_checkout_path,
+      properties.program_config_bundle_checkout_path.repo_checkout_path,
+      properties.project_config_bundle_checkout_path.repo_checkout_path)
+  if all(checkout_paths):
+    return True
+
+  if any(checkout_paths):
+    raise ValueError(
+        'Either all or none of the checkout_path properties must be specified.')
+
+  return False
+
+
 def RunSteps(api, properties):
   if not properties.manifest_groups:
     raise ValueError('At least one manifest group must be specified.')
@@ -63,24 +82,32 @@ def RunSteps(api, properties):
   # Do work in a context with manifest groups checked out. Most steps are infra
   # steps, so make this the default. Non-infra steps specify this explicitly.
   with api.context(infra_steps=True), checkout_manifest_groups(api, properties):
-    with api.step.nest('gather project info'):
-      project_infos = api.repo.project_infos()
+    if checkout_paths_specified(properties):
+      chromiumos_config_path = properties.chromiumos_config_checkout_path
+      program_path = (
+          properties.program_config_bundle_checkout_path.repo_checkout_path)
+      project_path = (
+          properties.project_config_bundle_checkout_path.repo_checkout_path)
+    else:
+      # TODO(crbug.com/1058057): Remove this branch once checkout_path
+      # properties are set in config.
+      with api.step.nest('gather project info'):
+        project_infos = api.repo.project_infos()
 
-    chromiumos_config_info = api.iterutils.get_one(
-        project_infos, lambda info: info.name == 'chromiumos/config',
-        "Expected exactly one 'chromiumos/config' repo.")
+      chromiumos_config_path = api.iterutils.get_one(
+          project_infos, lambda info: info.name == 'chromiumos/config',
+          "Expected exactly one 'chromiumos/config' repo.").path
 
-    program_info = api.iterutils.get_one(
-        project_infos, lambda info: info.name.startswith('chromeos/program'),
-        "Expected exactly one program repo.")
+      program_path = api.iterutils.get_one(
+          project_infos, lambda info: info.name.startswith('chromeos/program'),
+          "Expected exactly one program repo.").path
 
-    project_info = api.iterutils.get_one(
-        project_infos, lambda info: info.name.startswith('chromeos/project'),
-        "Expected exactly one project repo.")
+      project_path = api.iterutils.get_one(
+          project_infos, lambda info: info.name.startswith('chromeos/project'),
+          "Expected exactly one project repo.").path
 
-    generate_path = api.context.cwd.join(chromiumos_config_info.path,
-                                         'generate.sh')
-    checker_path = api.context.cwd.join(chromiumos_config_info.path,
+    generate_path = api.context.cwd.join(chromiumos_config_path, 'generate.sh')
+    checker_path = api.context.cwd.join(chromiumos_config_path,
                                         'payload_utils/checker.py')
 
     # mock_add_paths marks that the path exists for tests. The exists call
@@ -107,9 +134,7 @@ def RunSteps(api, properties):
     # precedent over infra_step passed to api.step, so need to create a new
     # context here.
     with api.context(infra_steps=False):
-      checker_args = [
-          '--program', program_info.path, '--project', project_info.path
-      ]
+      checker_args = ['--program', program_path, '--project', project_path]
       api.python('check constraints', checker_path, checker_args)
 
 
@@ -119,6 +144,21 @@ def GenTests(api):
     """Returns a basic set of valid properties."""
     return api.properties(
         manifest_groups=['partner-config', 'testprogram-testproject'])
+
+  def properties_with_checkout_paths(api):
+    """Returns a set of valid properties with checkout_path properties set."""
+    return api.properties(
+        manifest_groups=['partner-config', 'testprogram-testproject'],
+        chromiumos_config_checkout_path='src/config',
+        program_config_bundle_checkout_path=ConfigBundleCheckoutPath(
+            repo_checkout_path='src/program/testprogram',
+            config_path='generated/config.binaryproto',
+        ),
+        project_config_bundle_checkout_path=ConfigBundleCheckoutPath(
+            repo_checkout_path='src/project/testproject',
+            config_path='generated/config.binaryproto',
+        ),
+    )
 
   def project_config_cq_build(api):
     """Returns a sample buildbucket project config cq build"""
@@ -148,6 +188,27 @@ def GenTests(api):
       api.post_process(post_process.StepCommandContains,
                        'ensure synced checkout.repo init',
                        ['--groups', 'partner-config,testprogram-testproject']),
+  )
+
+  yield api.test(
+      'checkout_paths_specified',
+      properties_with_checkout_paths(api),
+      project_config_cq_build(api),
+  )
+
+  yield api.test(
+      'only_some_checkout_paths_specified',
+      api.properties(
+          manifest_groups=['partner-config', 'testprogram-testproject'],
+          chromiumos_config_checkout_path='src/config',
+      ),
+      project_config_cq_build(api),
+      api.expect_exception('ValueError'),
+      api.post_process(
+          post_process.ResultReasonRE,
+          ('.*Either all or none of the checkout_path properties must be '
+           'specified.*')),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(

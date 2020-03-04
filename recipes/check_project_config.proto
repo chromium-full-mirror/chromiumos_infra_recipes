@@ -2,6 +2,18 @@ syntax = "proto3";
 
 package recipes.chromeos.check_project_config;
 
+// Describes where a generated ConfigBundle lives in the checked out source
+// tree.
+message ConfigBundleCheckoutPath {
+    // Defines the path the repo is checked out to in the source tree, i.e. the
+    // "path" attribute in the manifest.
+    string repo_checkout_path = 1;
+
+    // Defines the path that stores all of the project configuration.
+    // Relative to the repo.
+    string config_path = 2;
+}
+
 message CheckProjectConfigProperties {
     // Manifest groups to init and sync.
     //
@@ -11,4 +23,12 @@ message CheckProjectConfigProperties {
     // - All shared config repos needed by the project
     //   (e.g "chromiumos/config").
     repeated string manifest_groups = 1;
+
+    // Path the "chromiumos/config" repo is checked out to in the source tree.
+    string chromiumos_config_checkout_path = 2;
+
+    // Paths the program and project ConfigBundles are checked out to in the
+    // source tree.
+    ConfigBundleCheckoutPath program_config_bundle_checkout_path = 3;
+    ConfigBundleCheckoutPath project_config_bundle_checkout_path = 4;
 }
