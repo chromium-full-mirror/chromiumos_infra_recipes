@@ -49,12 +49,14 @@ class CrosBisectApi(recipe_api.RecipeApi):
     """
     self._set_bisect_builder('bisecting-orchestrator')
 
-  def _create_failures_payload(self, failed_packages):
+  def _create_failures_payload(self, failed_packages, failed_step):
     """Creates and returns the failures payload used by FindIt.
 
     Args:
       failed_packages (list[PackageInfo]): list of PackageInfo representing the
           failed packages.
+      failed_step (str): fully qualified step name, that is the names down to
+          nested step concatenated with pipes, of the potentially failing step.
     Returns:
       dict: failures payload used by FindIt to identify failures and later
           echo them back during bisection builds.
@@ -68,14 +70,12 @@ class CrosBisectApi(recipe_api.RecipeApi):
               PackageInfo(category=pkg.category, package_name=pkg.package_name)
           )],
       })
-    # TODO: share the constant 'install packages|installation results'
-    # with build_target.py?
     return {
         'failures': failures,
-        'failed_step': 'install packages|installation results',
+        'failed_step': failed_step,
     }
 
-  def set_compile_failures(self, failed_packages):
+  def set_compile_failures(self, failed_packages, failed_step):
     """Outputs the failed packages, if any, for FindIt consumption.
 
     Outputs build failure of the indicated packages for consumption by FindIt
@@ -85,10 +85,12 @@ class CrosBisectApi(recipe_api.RecipeApi):
     Args:
       failed_packages (list[PackageInfo]): list of PackageInfo representing the
           failed packages.
+      failed_step (str): fully qualified step name, that is the names down to
+          nested step concatenated with pipes, of the potentially failing step.
     """
     if not failed_packages:
       return
-    payload = self._create_failures_payload(failed_packages)
+    payload = self._create_failures_payload(failed_packages, failed_step)
     self.m.easy.set_property_step('compile_failures', payload)
 
   def set_test_failures(self, hw_results, needs_bisection):

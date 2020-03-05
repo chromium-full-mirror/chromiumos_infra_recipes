@@ -210,7 +210,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
           # 'response' step that we can have foreknowledge of what the name
           # _should_ be based on the call's results.
           step.presentation.logs['response'] = [output_json]
-          resp_step_name = 'call response%s' % response_lambda(output_proto)
+          resp_step_name = self.response_step_name(output_proto,
+                                                   response_lambda)
 
           with self.m.step.nest(resp_step_name) as resp_step:
             resp_step.logs['build api stdout'] = ('' if not file_contents
@@ -231,3 +232,6 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
                                                   call_step, file_contents)
 
       return output_proto
+
+  def response_step_name(self, output_proto, response_lambda):
+    return 'call response%s' % response_lambda(output_proto)
