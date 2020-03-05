@@ -238,7 +238,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     sysroot = create_sysroot_response.sysroot
 
   packages = get_packages(api, build_config)
-  target_graph, sdk_graph = api.cros_relevance.get_dependency_graph(
+  dep_graph = api.cros_relevance.get_dependency_graph(
       build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
   if (not force_relevant_build and not toolchain_changed and
@@ -246,7 +246,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       api.cros_relevance.is_build_pointless(
           gerrit_changes,
           gitiles_commit,
-          dep_graph=target_graph,
+          dep_graph=dep_graph.target,
       )):
     # TODO: When it becomes possible to add tags from the build itself set:
     # "hide-in-gerrit": "pointless"
@@ -407,7 +407,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   with api.step.nest('validate SDK reuse'):
     if api.cros_relevance.is_depgraph_affected(gerrit_changes, gitiles_commit,
-                                               dep_graph=sdk_graph):
+                                               dep_graph=dep_graph.sdk):
       api.cros_sdk.mark_sdk_as_dirty()
 
 

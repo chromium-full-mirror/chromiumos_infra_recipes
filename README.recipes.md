@@ -1138,13 +1138,13 @@ Args:
 
 [DEPS](/recipe_modules/cros_relevance/__init__.py#1): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#222)(self, gerrit_changes, gitiles_commit, chroot):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#224)(self, gerrit_changes, gitiles_commit, chroot):**
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#236)(self, build_target, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#238)(self, build_target, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -1160,7 +1160,7 @@ Returns:
       graph for the target and the second element the graph for the
       SDK/chroot.
 
-&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#32)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=[]):**
+&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#34)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=[]):**
 
 Determines which builders must be run (and which can be skipped).
 
@@ -1181,11 +1181,11 @@ Args:
 Returns:
   list[str]: the names of the child builders that must be run.
 
-&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#27)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#29)(self):**
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#96)(self, gerrit_changes, gitiles_commit, dep_graph):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#98)(self, gerrit_changes, gitiles_commit, dep_graph):**
 
 Determines if build(s) can be terminated early.
 
@@ -1204,7 +1204,7 @@ Args:
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#193)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#195)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 

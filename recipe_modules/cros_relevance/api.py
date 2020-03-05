@@ -4,6 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from collections import namedtuple
+
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.chromite.api.depgraph import GetToolchainPathsRequest
 from PB.chromiumos.common import ProtoBytes as common_proto_bytes
@@ -248,11 +250,12 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           graph for the target and the second element the graph for the
           SDK/chroot.
     """
+    _dep_graph = namedtuple('_dep_graph', ['target', 'sdk'])
     with self.m.step.nest('dependency graph calculation'):
       resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
           GetBuildDependencyGraphRequest(build_target=build_target,
                                          chroot=chroot, packages=packages))
-      return resp.dep_graph, resp.sdk_dep_graph
+      return _dep_graph(target=resp.dep_graph, sdk=resp.sdk_dep_graph)
 
   def _ensure_binaries(self):
     """Ensure this module's binaries are installed."""
