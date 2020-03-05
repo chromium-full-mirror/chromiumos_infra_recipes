@@ -24,10 +24,12 @@ type Input struct {
 	TableName    string          `json:"table_name"`
 	ReadTest     bool            `json:"read_test"`
 	WriteTest    bool            `json:"write_test"`
+	WriteData    bool            `json:"write_data"`
 	CompileEvent json.RawMessage `json:"compile_event"`
 }
 
 type Output struct {
+	BqError string `json:"bq_error"`
 }
 
 func main() {
@@ -62,8 +64,10 @@ func main() {
 
 		enumerateClientContents(ctx, client, input.DatasetId)
 		return
-	}
-	if input.WriteTest {
+	} else if input.WriteData {
+		error_string := insertTableData(ctx, client, input.DatasetId, input.TableName, input.CompileEvent, false)
+		cli.MustMarshalOutput(Output{BqError: error_string})
+	} else if input.WriteTest {
 		log.Printf("Raw message to write: %v", string(input.CompileEvent))
 		// Get and log the table schema so that it can be visually compared to the
 		// message contents.
@@ -71,14 +75,10 @@ func main() {
 		if metadata != nil {
 			logTableSchema(metadata)
 		}
-		insertTableData(ctx, client, input.DatasetId, input.TableName, input.CompileEvent, true)
+		error_string := insertTableData(ctx, client, input.DatasetId, input.TableName, input.CompileEvent, true)
+		cli.MustMarshalOutput(Output{BqError: error_string})
 		return
 	}
-	// TODO(mmortensen): Handle table updates by defining a type that
-	// implements the ValueSaver interface, which has a single method named
-	// Save. Then create an Uploader, and call its Put method with a slice of
-	// values.
-
 }
 
 // Each item to insert as a row is a json.RawMessage. The insertTableData
@@ -98,7 +98,6 @@ func (i Item) Save() (map[string]bigquery.Value, string, error) {
 	var values map[string]interface{}
 	json.Unmarshal(i.message, &values)
 	for key, value := range values {
-		log.Println(" .. Save .. JSON Key: ", key, " Value: ", value)
 		mymap[key] = value
 	}
 	return mymap, "", nil
@@ -107,7 +106,7 @@ func (i Item) Save() (map[string]bigquery.Value, string, error) {
 // Insert the raw Json Message into the table specified by client/datasetId/tableName.
 // If the table cannot be found then log a fatal error.
 // If the insertion fails then log a fatal error.
-func insertTableData(ctx context.Context, client *bigquery.Client, datasetId string, tableName string, message json.RawMessage, logDebugInfo bool) {
+func insertTableData(ctx context.Context, client *bigquery.Client, datasetId string, tableName string, message json.RawMessage, logDebugInfo bool) string {
 	dataset := client.Dataset(datasetId) // inside projectId 'chromeos-bot'
 	if dataset == nil {
 		log.Fatal("Error getting dataset ", datasetId)
@@ -129,8 +128,10 @@ func insertTableData(ctx context.Context, client *bigquery.Client, datasetId str
 	inserter := table.Inserter()
 	insertion_error := inserter.Put(ctx, saverArray)
 	if insertion_error != nil {
-		log.Fatal("Error inserting values into table ", insertion_error)
+		log.Println("Error inserting values into table ", insertion_error)
+		return insertion_error.Error()
 	}
+	return ""
 }
 
 // Given a BigQuery client (i.e. a Pantheon project like "chromeos-bot"), enumerate the datasets
@@ -149,6 +150,10 @@ func enumerateClientContents(ctx context.Context, client *bigquery.Client, datas
 		}
 	}
 
+	if datasetId == "" {
+		log.Println("Empty (non-specified datasetId)")
+		return
+	}
 	dataset := client.Dataset(datasetId)
 	if dataset == nil {
 		log.Fatal("Error getting dataset")

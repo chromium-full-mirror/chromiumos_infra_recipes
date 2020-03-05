@@ -22,8 +22,14 @@ The following input files are checked in:
 * sample-addrows.json - For adding data to the chromeos test dataset.
 * sample-addrows-fail.json - Shows that data with unrecognized fields
     will not be added to an existing dataset.
+* sample-write-data.json - Uses write-data (non-verbose) path, as a recipe
+  would.
+* sample-write-data-fail.json - Uses write-data (non-verbose) path, as a recipe
+  would, but demonstrates failure output.
 
 This allows developers to verify basic golang/BigQuery functionality,
 BigQuery access permissions, etc.
 
-NOTE: goma-input.json is currently failing due to permissions issues.
+NOTE: Using goma-input.json requires that the person executing the program
+belong to a group such as chromeos-build-infra@google.com or
+mdb/chromeos-ci-eng.

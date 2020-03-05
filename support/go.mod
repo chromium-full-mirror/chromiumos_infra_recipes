@@ -2,6 +2,7 @@ module support
 
 require (
 	cloud.google.com/go v0.48.0 // indirect
+	cloud.google.com/go/bigquery v1.0.1
 	cloud.google.com/go/pubsub v1.0.1
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
