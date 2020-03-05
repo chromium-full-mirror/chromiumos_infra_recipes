@@ -15,6 +15,7 @@
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
+  * [cros_build_support](#recipe_modules-cros_build_support) &mdash; API for various support functions for building.
   * [cros_cache](#recipe_modules-cros_cache) &mdash; API for working with CrOS cache.
   * [cros_cq_depends](#recipe_modules-cros_cq_depends) &mdash; APIs for interacting with Cq-Depends.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
@@ -94,6 +95,7 @@
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
   * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events)
+  * [cros_build_support:examples/full](#recipes-cros_build_support_examples_full)
   * [cros_cache:examples/full](#recipes-cros_cache_examples_full)
   * [cros_cache:examples/missing_source_dir](#recipes-cros_cache_examples_missing_source_dir)
   * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings)
@@ -853,6 +855,63 @@ Returns:
 Expose all client stubs defined in this module.
 
 &mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#236)(self, output_proto, response_lambda):**
+### *recipe_modules* / [cros\_build\_support](/recipe_modules/cros_build_support)
+
+[DEPS](/recipe_modules/cros_build_support/__init__.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for various support functions for building.
+
+#### **class [CrosBuildSupportApi](/recipe_modules/cros_build_support/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to support building.
+
+&mdash; **def [apply\_changes](/recipe_modules/cros_build_support/api.py#105)(self, changes=None, name='cherry-pick gerrit changes'):**
+
+Apply gerrit changes.
+
+Args:
+  changes (list[GerritChanges]): Changes to apply.  Default: changelist
+      saved in configure_builder()
+  name (string): Step name.  Default: "setup source".
+
+&mdash; **def [configure\_builder](/recipe_modules/cros_build_support/api.py#36)(self, build_target=None, commit=None, changes=None, name='configure builder'):**
+
+Configure the builder.
+
+Args:
+  build_target (BuildTarget): The build target.  Default: None.
+  commit (GitilesCommit): The gitiles commit to use.  Default:
+      common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
+  changes: (GerritChanges): The gerrit changes to apply.  Default: [].
+  name (string): Step name.  Default: "configure builder".
+
+Returns:
+  BuilderConfig
+
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_build_support/api.py#28)(self):**
+
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_build_support/api.py#24)(self):**
+
+&mdash; **def [initialize](/recipe_modules/cros_build_support/api.py#19)(self):**
+
+&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/cros_build_support/api.py#32)(self):**
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/cros_build_support/api.py#80)(self):**
+
+Prepare the source checkout for building.
+
+Returns:
+  A context where source is set up, and the current working directory is the
+      workspace path.
+
+&mdash; **def [sync\_to\_commit](/recipe_modules/cros_build_support/api.py#94)(self, commit=None, staging=False):**
+
+Sync the source tree.
+
+Args:
+  commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
+      saved in configure_builder()
+  staging (bool): Whether this is a staging build.  Default: False.
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
 
 [DEPS](/recipe_modules/cros_cache/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3372,15 +3431,15 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#20)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_build\_support](#recipe_modules-cros_build_support), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#120)(api, build_target, build_config, gitiles_commit, gerrit_changes, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#105)(api, build_target, build_config, gitiles_commit, gerrit_changes, is_staging, force_relevant_build):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#83)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#84)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#421)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#399)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3396,7 +3455,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#440)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#418)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3535,6 +3594,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_build_api/examples/publish_events.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/publish_events.py#14)(api):**
+### *recipes* / [cros\_build\_support:examples/full](/recipe_modules/cros_build_support/examples/full.py)
+
+[DEPS](/recipe_modules/cros_build_support/examples/full.py#6): [cros\_build\_support](#recipe_modules-cros_build_support), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_support/examples/full.py#15)(api):**
 ### *recipes* / [cros\_cache:examples/full](/recipe_modules/cros_cache/examples/full.py)
 
 [DEPS](/recipe_modules/cros_cache/examples/full.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]

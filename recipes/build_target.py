@@ -17,6 +17,7 @@ DEPS = [
     'cros_artifacts',
     'cros_bisect',
     'cros_build_api',
+    'cros_build_support',
     'cros_infra_config',
     'cros_prebuilts',
     'cros_relevance',
@@ -83,51 +84,26 @@ STEP_TIMEOUTS = {
 def RunSteps(api, properties):
   build_target = properties.build_target
   force_relevant_build = properties.force_relevant_build
-  gitiles_commit = api.buildbucket.gitiles_commit
-  gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
-  with api.step.nest('configure builder') as step:
-    try:
-      build_config = api.cros_infra_config.get_builder_config(
-          api.buildbucket.build.builder.builder)
-    except LookupError:
-      step.step_text = 'config not found, assuming deleted'
-      return
-    step.logs['builder config'] = [str(build_config)]
-    step.properties['builder_config'] = json_pb.MessageToDict(build_config)
-    parent_tag = [x.value
-                  for x in api.buildbucket.build.tags
-                  if x.key == 'parent_buildbucket_id']
-    if parent_tag:
-      step.links['parent link'] = (
-          'https://ci.chromium.org/b/%s' % parent_tag[0])
+  build_config = api.cros_build_support.configure_builder(
+      build_target, api.buildbucket.gitiles_commit,
+      api.buildbucket.build.input.gerrit_changes)
+  if not build_config:
+    # No config found, already logged.
+    return
+  # The buildbucket properties may have been altered by configure_builder.
+  gitiles_commit = api.cros_build_support.gitiles_commit
+  gerrit_changes = api.cros_build_support.gerrit_changes
 
-  # If they won't be applied, forget about gerrit changes now.
-  if not build_config.build.apply_gerrit_changes:
-    gerrit_changes = []
-
-  api.cros_bisect.set_bisect_builder(build_target.name)
-  api.cros_sdk.set_use_flags(build_config.build.use_flags)
-
-  with api.cros_source.checkout_overlays_context(), \
-      api.cros_sdk.cleanup_context(
-          checkout_path=api.cros_source.workspace_path), \
-      api.context(cwd=api.cros_source.workspace_path):
+  is_staging = build_config.general.environment == BuilderConfig.General.STAGING
+  with api.cros_build_support.setup_workspace():
+    api.cros_build_support.sync_to_commit(staging=is_staging)
     DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
-               force_relevant_build)
+               is_staging, force_relevant_build)
 
 
 def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
-               force_relevant_build):
-  # Set up source checkouts.
-  is_staging = build_config.general.environment == BuilderConfig.General.STAGING
-  is_toolchain_builder = build_config.id.type == BuilderConfig.Id.TOOLCHAIN
-  api.cros_source.ensure_synced_cache(is_staging=is_staging)
-  api.cros_source.sync_snapshot(gitiles_commit)
-  # Toolchain builders compile many large packages from source and need higher
-  # step timeouts to successfully complete.
-  long_timeouts = is_toolchain_builder
-
+               is_staging, force_relevant_build):
   # Define a function to append the failure step with the failed packages
   def _failed_pkg_names(output_proto):
     # sort package names, join them with ',', and limit to 50 chars.
@@ -145,12 +121,14 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       failed_packages = ': ' + failed_packages
     return failed_packages
 
-  patch_sets = []
-  if gerrit_changes and build_config.build.apply_gerrit_changes:
-    with api.step.nest('cherry-pick gerrit changes'):
-      patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes,
-                                               include_files=True)
-      api.cros_source.apply_gerrit_patch_sets(patch_sets)
+  # Apply any appropriate gerrit_changes.
+  api.cros_build_support.apply_changes()
+
+  # Set up source checkouts.
+  is_toolchain_builder = build_config.id.type == BuilderConfig.Id.TOOLCHAIN
+  # Toolchain builders compile many large packages from source and need higher
+  # step timeouts to successfully complete.
+  long_timeouts = is_toolchain_builder
 
   # Prepare for the build.  If the build is pointless, we are done.
   artifacts = build_config.artifacts
@@ -285,7 +263,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           build_target=build_target, chroot=api.cros_sdk.chroot,
           ignore_prebuilts=install_packages.compile_source)
       files_changed = api.chrome.diffed_files_requires_rebuild(
-          patch_sets=patch_sets)
+          patch_sets=api.cros_build_support.patch_sets)
       chrome_source_build = toolchain_changed or needs_built or files_changed
 
     if chrome_source_build:
