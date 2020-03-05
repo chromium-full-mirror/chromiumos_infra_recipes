@@ -101,11 +101,11 @@
   },
   {
     "cmd": [],
-    "name": "scale bot pools"
+    "name": "scale bot groups"
   },
   {
     "cmd": [],
-    "name": "scale bot pools.read bot policies",
+    "name": "scale bot groups.read bot policies",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -122,7 +122,7 @@
       "--format",
       "text"
     ],
-    "name": "scale bot pools.read bot policies.fetch master:bot_scaling/generated/bot_policy.binaryproto",
+    "name": "scale bot groups.read bot policies.fetch master:bot_scaling/generated/bot_policy.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -130,7 +130,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot pools.read bot policies.set bot_policy_config",
+    "name": "scale bot groups.read bot policies.set bot_policy_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@bot_policy_config@{\"botPolicies\": [{\"botGroup\": \"cq\", \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32}, \"regionRestrictions\": [{\"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", \"region\": \"us-central1-b\", \"weight\": 0.24500000476837158}, {\"prefix\": \"chromeos-ci-cq-us-central2-d-x32\", \"region\": \"us-central2-d\", \"weight\": 0.3100000023841858}, {\"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"region\": \"us-east1-d\", \"weight\": 0.24500000476837158}, {\"prefix\": \"chromeos-ci-cq-us-west1-b-x32\", \"region\": \"us-west1-b\", \"weight\": 0.20000000298023224}], \"swarmingDimensions\": [{\"name\": \"role\", \"value\": \"cq\"}, {\"name\": \"bot_size\", \"value\": \"large\"}]}]}@@@"
@@ -138,7 +138,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot pools.get current swarming stats",
+    "name": "scale bot groups.get current swarming stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -154,7 +154,7 @@
       "https://chromium.googlesource.com/infra/luci/client-py"
     ],
     "infra_step": true,
-    "name": "scale bot pools.get current swarming stats.git setup",
+    "name": "scale bot groups.get current swarming stats.git setup",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -172,7 +172,7 @@
       "PATH": "RECIPE_REPO[depot_tools]:<PATH>"
     },
     "infra_step": true,
-    "name": "scale bot pools.get current swarming stats.git fetch",
+    "name": "scale bot groups.get current swarming stats.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -186,7 +186,7 @@
     ],
     "cwd": "[CLEANUP]/swarming-client",
     "infra_step": true,
-    "name": "scale bot pools.get current swarming stats.git checkout",
+    "name": "scale bot groups.get current swarming stats.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -199,7 +199,7 @@
     ],
     "cwd": "[CLEANUP]/swarming-client",
     "infra_step": true,
-    "name": "scale bot pools.get current swarming stats.read revision",
+    "name": "scale bot groups.get current swarming stats.read revision",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@<br/>checked out 'deadbeef'<br/>@@@"
@@ -215,7 +215,7 @@
     ],
     "cwd": "[CLEANUP]/swarming-client",
     "infra_step": true,
-    "name": "scale bot pools.get current swarming stats.git clean",
+    "name": "scale bot groups.get current swarming stats.git clean",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -236,7 +236,7 @@
       "--idle"
     ],
     "infra_step": true,
-    "name": "scale bot pools.get current swarming stats.get bot query result",
+    "name": "scale bot groups.get current swarming stats.get bot query result",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -257,7 +257,7 @@
       "--busy"
     ],
     "infra_step": true,
-    "name": "scale bot pools.get current swarming stats.get bot query result (2)",
+    "name": "scale bot groups.get current swarming stats.get bot query result (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -278,14 +278,14 @@
       "--dead-only"
     ],
     "infra_step": true,
-    "name": "scale bot pools.get current swarming stats.get bot query result (3)",
+    "name": "scale bot groups.get current swarming stats.get bot query result (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "scale bot pools.get current swarming stats.set swarming_stats",
+    "name": "scale bot groups.get current swarming stats.set swarming_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@swarming_stats@{\"cq\": {\"busy\": 2, \"dead-only\": 2, \"idle\": 2}}@@@"
@@ -293,14 +293,14 @@
   },
   {
     "cmd": [],
-    "name": "scale bot pools.compute scaling actions",
+    "name": "scale bot groups.compute scaling actions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "scale bot pools.compute scaling actions.find matching builds",
+    "name": "scale bot groups.compute scaling actions.find matching builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -321,7 +321,7 @@
       "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}}"
     ],
     "infra_step": true,
-    "name": "scale bot pools.compute scaling actions.find matching builds.buildbucket.search",
+    "name": "scale bot groups.compute scaling actions.find matching builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"robocrop_action\": {\"scalingActions\": [{\"botType\": {\"coresPerBot\": 32, \"botSize\": \"large\"}, \"regionalActions\": [{\"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", \"region\": \"us-central1-b\", \"botsRequested\": 367}, {\"prefix\": \"chromeos-ci-cq-us-central2-d-x32\", \"region\": \"us-central2-d\", \"botsRequested\": 464}, {\"region\": \"us-east1-d\", \"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"botsRequested\": 367}, {\"prefix\": \"chromeos-ci-cq-us-west1-b-x32\", \"region\": \"us-west1-b\", \"botsRequested\": 300}], \"botGroup\": \"cq\", \"botsRequested\": 1500}]}}}, \"builder\": {\"builder\": \"RoboCrop\"}, \"id\": \"123\"}@@@",
@@ -331,7 +331,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot pools.compute scaling actions.set robocrop_action",
+    "name": "scale bot groups.compute scaling actions.set robocrop_action",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@robocrop_action@{\"scalingActions\": [{\"botGroup\": \"cq\", \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32}, \"regionalActions\": [{\"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", \"region\": \"us-central1-b\"}, {\"prefix\": \"chromeos-ci-cq-us-central2-d-x32\", \"region\": \"us-central2-d\"}, {\"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"region\": \"us-east1-d\"}, {\"prefix\": \"chromeos-ci-cq-us-west1-b-x32\", \"region\": \"us-west1-b\"}]}]}@@@"

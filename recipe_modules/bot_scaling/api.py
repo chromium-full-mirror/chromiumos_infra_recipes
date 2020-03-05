@@ -127,12 +127,14 @@ class BotScalingApi(recipe_api.RecipeApi):
     """Determines regional distribution of bot requests.
 
     Returns:
-      RoboCropAction, action proto from the last successful
-      iteration.
+      dict, mapping of bot group to a ScalingAction.
     """
     last_successful_run = self.m.cros_history.get_matching_builds(
         self.m.buildbucket.build,
         [common_pb2.SUCCESS], limit=10)[0]
     action_struct = last_successful_run.output.properties['robocrop_action']
-    return jsonpb.ParseDict(
-        jsonpb.MessageToDict(action_struct), RoboCropAction())
+    previous_actions = {}
+    for _, actions in action_struct.items():
+      for action in actions:
+        previous_actions.update({action['botGroup']: action})
+    return previous_actions

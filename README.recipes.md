@@ -305,8 +305,7 @@ Returns:
 Determines regional distribution of bot requests.
 
 Returns:
-  RoboCropAction, action proto from the last successful
-  iteration.
+  dict, mapping of bot group to a ScalingAction.
 
 &mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#82)(self, bots_requested, region_restrictions):**
 

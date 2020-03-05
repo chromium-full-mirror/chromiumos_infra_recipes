@@ -32,7 +32,7 @@ def RunSteps(api, properties):
     # Save this data to output.properties.
     api.easy.set_property_step('current_bot_data', status_map)
 
-  with api.step.nest('scale bot pools'):
+  with api.step.nest('scale bot groups'):
     with api.step.nest('read bot policies'):
       bot_policy_config = api.cros_infra_config.get_bot_policy_config()
       api.easy.set_property_step('bot_policy_config',
@@ -50,5 +50,5 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield (api.test('basic') + api.buildbucket.simulated_search_results(
       [api.bot_scaling.previous_robocrop()],
-      'scale bot pools.compute scaling actions.'
+      'scale bot groups.compute scaling actions.'
       'find matching builds.buildbucket.search'))

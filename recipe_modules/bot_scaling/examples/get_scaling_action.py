@@ -42,6 +42,28 @@ def RunSteps(api):
       scaling_restriction=scaling_restriction,
       region_restrictions=region_restrictions,
   )
+  previous_action = {
+      'cq': {
+          "botType": {
+              "botSize": "small",
+              "coresPerBot": 4
+          },
+          "botsRequested":
+              50,
+          "regionalActions": [
+              {
+                  "botsRequested": 25,
+                  "prefix": "prefix-first",
+                  "region": "first"
+              },
+              {
+                  "botsRequested": 25,
+                  "prefix": "prefix-second",
+                  "region": "second"
+              },
+          ]
+      }
+  }
 
   scaling_action = api.bot_scaling.get_scaling_action(90, bot_policy)
 
