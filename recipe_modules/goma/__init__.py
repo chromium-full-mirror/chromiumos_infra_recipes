@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
+    'support',
 ]
 
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties

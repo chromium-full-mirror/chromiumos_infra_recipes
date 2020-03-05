@@ -17,4 +17,9 @@ message GomaProperties {
   bool disable_goma_logs_upload = 3;
   // Disable uploading stats/counterz data.
   bool disable_stats_counterz_upload = 4;
+  // BigQuery project in which a query is executed for stats/counterz upload.
+  string bigquery_project_id = 5;
+  // BigQuery table_name (full path) where data is added for stats/counterz
+  // upload.
+  string bigquery_table_name = 6;
 }

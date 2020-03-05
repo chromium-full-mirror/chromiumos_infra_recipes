@@ -31,6 +31,12 @@ class GomaApi(recipe_api.RecipeApi):
     self._client_version = properties.client_version or 'latest'
     self._goma_approach = properties.goma_approach or common.GomaConfig.DEFAULT
     self._upload_goma_logs = not properties.disable_goma_logs_upload
+    self._upload_stats_counterz = (
+        not properties.disable_stats_counterz_upload)
+    self._bigquery_project_id = properties.bigquery_project_id or 'chromeos-bot'
+    self._bigquery_table_name = (
+        properties.bigquery_table_name or
+        'goma-logs.client_events.compile_events')
 
   def initialize(self):
     self._goma_dir = None
@@ -79,8 +85,8 @@ class GomaApi(recipe_api.RecipeApi):
           log files and any BQ errors when updating stats/counterz. None is
           returned if there were no artifacts to process.
     """
-    # Skip if config has disabled this.
-    if not self._upload_goma_logs:
+    # Skip if config has disabled this step entirely.
+    if not self._upload_goma_logs and not self._upload_stats_counterz:
       return None
 
     # Skip if we don't have goma artifacts and a goma_log dir for them.
@@ -92,11 +98,17 @@ class GomaApi(recipe_api.RecipeApi):
         ]
       return None
 
-    bq_errors = self._process_counterz_and_stats(install_pkg_response,
-                                                 goma_log_dir,
-                                                 build_target_name, is_staging)
-    gs_tuple = self._process_log_files(install_pkg_response, goma_log_dir,
-                                       build_target_name, is_staging)
+    bq_errors = None
+    if self._upload_stats_counterz:
+      bq_errors = self._process_counterz_and_stats(install_pkg_response,
+                                                   goma_log_dir,
+                                                   build_target_name,
+                                                   is_staging)
+
+    gs_tuple = None
+    if self._upload_goma_logs:
+      gs_tuple = self._process_log_files(install_pkg_response, goma_log_dir,
+                                         build_target_name, is_staging)
     gs_bucket = None
     gs_path = None
     if gs_tuple:
@@ -148,6 +160,17 @@ class GomaApi(recipe_api.RecipeApi):
           # BigQuery upload. Note that BigQuery insert_rows will have a
           # try/except block and return any error messages as a string.
           presentation.logs['compile_event'] = [str(compile_event)]
+          # Call bq-insert support tool.
+          input = {
+              'project_id': self._bigquery_project_id,
+              'table_name': self._bigquery_table_name,
+              'write_data': True
+          }
+          test_output_data = {}
+          presentation.logs['support_input'] = [str(input)]
+          result = self.m.support.call('bq-insert', input,
+                              test_output_data=test_output_data)
+
     return None
 
 
