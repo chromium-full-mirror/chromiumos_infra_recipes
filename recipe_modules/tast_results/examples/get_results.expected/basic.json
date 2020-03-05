@@ -175,7 +175,10 @@
   },
   {
     "cmd": [],
-    "name": "tests to retry (3)"
+    "name": "tests to retry (3)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@All tests passed!@@@"
+    ]
   },
   {
     "cmd": [],

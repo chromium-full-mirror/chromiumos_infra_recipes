@@ -199,6 +199,7 @@
       "expr"
     ],
     "name": "run tast tests.tast run first",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -331,6 +332,7 @@
       "arc.Boot"
     ],
     "name": "run tast tests.tast run second",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -421,6 +423,53 @@
   },
   {
     "cmd": [],
+    "name": "run tast tests.qemu logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_4",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.qemu logs.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_5",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.qemu logs.reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_5@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tast tests.record logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -484,53 +533,6 @@
     "timeout": 120,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tast tests.qemu debug",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
-      "@@@STEP_LOG_END@kvm.monitor@@@",
-      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
-      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor_tmp_4",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "run tast tests.qemu debug.reading file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_5",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "run tast tests.qemu debug.reading file (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_5@@@"
     ]
   },
   {

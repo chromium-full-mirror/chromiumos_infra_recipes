@@ -209,11 +209,13 @@ class TastResultsApi(recipe_api.RecipeApi):
       task_result(TaskResult): TaskResult of the test suite.
 
     Returns:
-      list(str) names of tests to be retried.
+      list(str) names of tests to be retried and a boolean that
+      requires VM restart before retry.
     """
     with self.m.step.nest('tests to retry') as step:
       if task_result.state.verdict == TaskState.VERDICT_PASSED:
-        return []
+        step.presentation.step_text = 'All tests passed!'
+        return [], False
 
       test_map = {
           t.name: t
@@ -236,4 +238,4 @@ class TastResultsApi(recipe_api.RecipeApi):
         step_log.append('Scenario had no match:{}'.format(scenario))
 
       step.presentation.logs['matches'] = step_log
-      return tests_to_retry
+      return tests_to_retry, False

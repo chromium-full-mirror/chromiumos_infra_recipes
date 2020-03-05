@@ -3121,7 +3121,8 @@ Args:
   task_result(TaskResult): TaskResult of the test suite.
 
 Returns:
-  list(str) names of tests to be retried.
+  list(str) names of tests to be retried and a boolean that
+  requires VM restart before retry.
 
 &mdash; **def [print\_results](/recipe_modules/tast_results/api.py#158)(self, failures, empty_result):**
 

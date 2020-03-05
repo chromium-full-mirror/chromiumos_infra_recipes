@@ -23,7 +23,7 @@ def RunSteps(api):
   api.tast_results.fake_empty_result_test_cases()
 
   # tests_to_retry unittesting.
-  tests = api.tast_results.get_tests_to_retry(task_result)
+  tests, _ = api.tast_results.get_tests_to_retry(task_result)
   api.assertions.assertEqual(len(tests), 1)
   empty_task_result = ExecuteResponse.TaskResult(
       name=task_result.name,
@@ -43,7 +43,7 @@ def RunSteps(api):
       ])
   failures = api.tast_results.get_failures(passed_task_result)
   api.tast_results.print_results(failures, False)
-  tests = api.tast_results.get_tests_to_retry(passed_task_result)
+  tests, _ = api.tast_results.get_tests_to_retry(passed_task_result)
   api.assertions.assertEqual(tests, [])
   fishy_task_result = ExecuteResponse.TaskResult(name=task_result.name,
                                                  state=task_result.state)

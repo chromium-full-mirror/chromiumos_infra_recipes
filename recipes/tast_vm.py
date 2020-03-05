@@ -90,7 +90,7 @@ def RunSteps(api, properties):
     if task_result.test_cases:
       all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
 
-    tests_to_retry = api.tast_results.get_tests_to_retry(task_result)
+    tests_to_retry, _ = api.tast_results.get_tests_to_retry(task_result)
     failures = [
         f for f in api.tast_results.get_failures(task_result)
         if f.title not in tests_to_retry
@@ -115,12 +115,8 @@ def RunSteps(api, properties):
     api.easy.set_property_step('all_test_cases', all_test_cases)
     api.easy.set_property_step('failed_test_cases', failed_test_cases)
     _kill_vm(api, kvm_pid_file)
+    _record_qemu_logs(api, kvm_monitor_file, kvm_monitor_serial_file)
     api.tast_results.record_logs(SYS_LOG_DIR)
-    with api.step.nest('qemu debug') as step:
-      step.presentation.logs['kvm.monitor'] = api.file.read_text(
-          'reading file', kvm_monitor_file)
-      step.presentation.logs['kvm.monitor.serial'] = api.file.read_text(
-          'reading file', kvm_monitor_serial_file)
 
   api.tast_results.print_results(
       failures,
@@ -148,7 +144,7 @@ def _run_tast(api, expressions, tast_dir, private_key_path, name, tag):
       '-remoterunner={}'.format(
           str(tast_dir.join('remote_test_runner'))), \
       'localhost:9222'] + \
-      list(expressions), ok_ret='any')
+      list(expressions), ok_ret='any', timeout=30 * 60)
   return api.tast_results.get_results(test_results_dir, name, tag)
 
 
@@ -188,6 +184,14 @@ def _launch_vm(api, qcow_image_path, kvm_pid_file, kvm_monitor_file,
 
 def _kill_vm(api, kvm_pid_file):
   api.step('kill vm', ['pkill', '-F', kvm_pid_file])
+
+
+def _record_qemu_logs(api, kvm_monitor_file, kvm_monitor_serial_file):
+  with api.step.nest('qemu logs') as step:
+    step.presentation.logs['kvm.monitor'] = api.file.read_text(
+        'reading file', kvm_monitor_file)
+    step.presentation.logs['kvm.monitor.serial'] = api.file.read_text(
+        'reading file', kvm_monitor_serial_file)
 
 
 @exponential_retry(retries=3)
