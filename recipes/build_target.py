@@ -86,22 +86,25 @@ def RunSteps(api, properties):
   gitiles_commit = api.buildbucket.gitiles_commit
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
-  with api.step.nest('read builder config') as step:
+  with api.step.nest('configure builder') as step:
     try:
       build_config = api.cros_infra_config.get_builder_config(
           api.buildbucket.build.builder.builder)
     except LookupError:
-      step.presentation.step_text = 'config not found, assuming deleted'
+      step.step_text = 'config not found, assuming deleted'
       return
-    step.presentation.logs['builder config'] = [str(build_config)]
-    api.easy.set_property_step('builder_config',
-                               json_pb.MessageToDict(build_config))
+    step.logs['builder config'] = [str(build_config)]
+    step.properties['builder_config'] = json_pb.MessageToDict(build_config)
     parent_tag = [x.value
                   for x in api.buildbucket.build.tags
                   if x.key == 'parent_buildbucket_id']
     if parent_tag:
-      step.presentation.links['orchestrator link'] = (
+      step.links['parent link'] = (
           'https://ci.chromium.org/b/%s' % parent_tag[0])
+
+  # If they won't be applied, forget about gerrit changes now.
+  if not build_config.build.apply_gerrit_changes:
+    gerrit_changes = []
 
   api.cros_bisect.set_bisect_builder(build_target.name)
   api.cros_sdk.set_use_flags(build_config.build.use_flags)
@@ -181,7 +184,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     # what is present on disk. In short: replace existing sdk cache if mismatch.
     no_replace_flag = True
     if build_config.general.sdk_cache_version:
-      step.presentation.logs['sdk cache version'] = [
+      step.logs['sdk cache version'] = [
           'Version in config: %s' % build_config.general.sdk_cache_version,
           'Version on disk: %s' % api.cros_sdk.sdk_cache_version,
       ]
@@ -195,7 +198,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                 no_use_image=not is_staging),
             chroot=api.cros_sdk.chroot),
         timeout=(STEP_TIMEOUTS['create_sdk'] if not long_timeouts else None))
-    step.presentation.logs['sdk version'] = [str(response.version.version)]
+    step.logs['sdk version'] = [str(response.version.version)]
     if build_config.general.sdk_cache_version:
       api.cros_sdk.sdk_cache_version = build_config.general.sdk_cache_version
     api.cros_sdk.link_chroot(api.cros_source.workspace_path)
@@ -206,13 +209,12 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     # Toolchain CLs take significantly longer to build & test and need the
     # default step timeouts to be raiesd.
     long_timeouts |= toolchain_changed
+    step.properties['testing_toolchain'] = toolchain_changed
     if toolchain_changed:
       api.cros_sdk.mark_sdk_as_dirty()
-      step.presentation.step_text = ('change detected')
-      api.easy.set_property_step('testing_toolchain', True)
+      step.step_text = ('change detected')
     else:
-      step.presentation.step_text = ('no change')
-      api.easy.set_property_step('testing_toolchain', False)
+      step.step_text = ('no change')
 
   with api.step.nest('update sdk'):
     flags = UpdateSdkRequest.Flags(
@@ -517,8 +519,7 @@ def GenTests(api):
                         force_relevant_build=True))
 
   yield (api.test('forced-pointless') +  #
-         api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='amd64-generic-cq') +  #
+         cq_build_with_gerrit_change(builder='amd64-generic-cq') +  #
          api.properties(build_target={'name': 'amd64-generic'},
                         force_relevant_build=True))
 
@@ -690,8 +691,7 @@ def GenTests(api):
              }))
 
   yield (api.test('with-gerrit-changes') +  #
-         api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='amd64-generic-cq') +  #
+         cq_build_with_gerrit_change(builder='amd64-generic-cq') +  #
          api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('run-exit-install-packages') +  #
@@ -723,8 +723,7 @@ def GenTests(api):
          api.properties(build_target={'name': 'grunt'}))
 
   yield (api.test('pointless-build-check') +  #
-         api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='amd64-generic-cq') +  #
+         cq_build_with_gerrit_change(builder='amd64-generic-cq') +  #
          no_toolchain_change() +  #
          make_build_pointless() +  #
          api.properties(build_target={'name': 'amd64-generic'}))
@@ -734,9 +733,8 @@ def GenTests(api):
          force_toolchain_change())
 
   yield (api.test('with-builder-config-limited-packages') +  #
-         api.buildbucket.try_build(
-             project='chromeos', bucket='cq',
-             builder='arm-generic-v42-buildtest-postsubmit') +  #
+         cq_build_with_gerrit_change(
+             builder='orderfile-verify-toolchain') +  #
          api.properties(build_target={'name': 'arm-generic'}))
 
   yield (api.test('initsdk-existing-sdk-cache') +  #

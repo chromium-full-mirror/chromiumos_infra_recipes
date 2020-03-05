@@ -23,7 +23,7 @@
   },
   {
     "cmd": [],
-    "name": "read builder config",
+    "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"amd64-generic-cq\"@@@",
@@ -58,12 +58,13 @@
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_END@builder config@@@"
+      "@@@STEP_LOG_END@builder config@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "read builder config.read builder configs",
+    "name": "configure builder.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -81,18 +82,10 @@
       "text"
     ],
     "infra_step": true,
-    "name": "read builder config.read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "name": "configure builder.read builder configs.fetch master:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "read builder config.set builder_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}@@@"
     ]
   },
   {
@@ -1305,7 +1298,8 @@
     "cmd": [],
     "name": "detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no change@@@"
+      "@@@STEP_TEXT@no change@@@",
+      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
     ]
   },
   {
@@ -1538,14 +1532,6 @@
     "name": "detect toolchain change.path relevancy check.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "detect toolchain change.set testing_toolchain",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
     ]
   },
   {

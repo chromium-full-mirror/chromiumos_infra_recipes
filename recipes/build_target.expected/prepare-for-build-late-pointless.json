@@ -23,7 +23,7 @@
   },
   {
     "cmd": [],
-    "name": "read builder config",
+    "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"orderfile-generate-toolchain\"@@@",
@@ -79,12 +79,13 @@
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@",
-      "@@@STEP_LINK@orchestrator link@https://ci.chromium.org/b/parent_id@@@"
+      "@@@STEP_LINK@parent link@https://ci.chromium.org/b/parent_id@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"UNVERIFIED_CHROME_LLVM_ORDERFILE\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"NONE\", \"publishArtifacts\": [{\"publishGsLocation\": \"chromeos-toolchain-artifacts/orderfile/unvetted\", \"publishTypes\": [\"UNVERIFIED_CHROME_LLVM_ORDERFILE\"]}]}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"compileSource\": true, \"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"-orderfile_use\"}, {\"flag\": \"orderfile_generate\"}, {\"flag\": \"-strict_toolchain_checks\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"orderfile-generate-toolchain\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "read builder config.read builder configs",
+    "name": "configure builder.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -102,18 +103,10 @@
       "text"
     ],
     "infra_step": true,
-    "name": "read builder config.read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "name": "configure builder.read builder configs.fetch master:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "read builder config.set builder_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"UNVERIFIED_CHROME_LLVM_ORDERFILE\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"NONE\", \"publishArtifacts\": [{\"publishGsLocation\": \"chromeos-toolchain-artifacts/orderfile/unvetted\", \"publishTypes\": [\"UNVERIFIED_CHROME_LLVM_ORDERFILE\"]}]}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"compileSource\": true, \"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"-orderfile_use\"}, {\"flag\": \"orderfile_generate\"}, {\"flag\": \"-strict_toolchain_checks\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": false, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"orderfile-generate-toolchain\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
     ]
   },
   {
@@ -1202,14 +1195,7 @@
     "cmd": [],
     "name": "detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no change@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "detect toolchain change.set testing_toolchain",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no change@@@",
       "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
     ]
   },

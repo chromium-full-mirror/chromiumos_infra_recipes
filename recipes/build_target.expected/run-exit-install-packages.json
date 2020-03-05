@@ -23,7 +23,7 @@
   },
   {
     "cmd": [],
-    "name": "read builder config",
+    "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"amd64-generic-bisect\"@@@",
@@ -43,12 +43,13 @@
       "@@@STEP_LOG_LINE@builder config@    run_spec: RUN_EXIT@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_END@builder config@@@"
+      "@@@STEP_LOG_END@builder config@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackages\": {\"runSpec\": \"RUN_EXIT\"}}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-bisect\", \"type\": \"POSTSUBMIT\"}}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "read builder config.read builder configs",
+    "name": "configure builder.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -66,18 +67,10 @@
       "text"
     ],
     "infra_step": true,
-    "name": "read builder config.read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "name": "configure builder.read builder configs.fetch master:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "read builder config.set builder_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackages\": {\"runSpec\": \"RUN_EXIT\"}}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-bisect\", \"type\": \"POSTSUBMIT\"}}@@@"
     ]
   },
   {
@@ -940,14 +933,7 @@
     "cmd": [],
     "name": "detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no change@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "detect toolchain change.set testing_toolchain",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no change@@@",
       "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
     ]
   },

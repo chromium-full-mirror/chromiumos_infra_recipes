@@ -690,7 +690,11 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     ],
                     "installPackages": {
                       "runSpec": "RUN",
-                      "compileSource": true
+                      "compileSource": true,
+                      "packages": [{
+                        "packageName": "chromeos-chrome",
+                        "category": "chromeos-base"
+                      }]
                     }
                   },
                   "unitTests": {
