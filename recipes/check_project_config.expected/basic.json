@@ -385,28 +385,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "gather project info"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "gather project info.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/config|src/config|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/testprogram|src/program/testprogram|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/project/testproject|src/project/testproject|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
     "cmd": [
       "[START_DIR]/chromiumos_workspace/src/config/generate.sh"
     ],

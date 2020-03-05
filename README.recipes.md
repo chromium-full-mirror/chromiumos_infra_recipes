@@ -3435,7 +3435,7 @@ Recipe for generating ChromeOS cache payloads.
 
 Checks a project conforms to its program's constraints.
 
-&mdash; **def [RunSteps](/recipes/check_project_config.py#75)(api, properties):**
+&mdash; **def [RunSteps](/recipes/check_project_config.py#56)(api, properties):**
 
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_manifest\_groups](/recipes/check_project_config.py#32)(api, properties):**
 
@@ -3449,12 +3449,6 @@ usually much smaller than a full checkout, in which case the time to delete
 unused repos (which are present because of caching) is much larger than the
 time to sync the used repos. In addition, not caching reduces chances of
 leaking between runs of the recipe.
-
-&mdash; **def [checkout\_paths\_specified](/recipes/check_project_config.py#56)(properties):**
-
-Return True if all checkout_path properties are set, False if none are set.
-
-Raises if only some of the checkout_path properties are set.
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
