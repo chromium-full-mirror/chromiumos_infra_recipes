@@ -857,15 +857,15 @@ Expose all client stubs defined in this module.
 &mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#236)(self, output_proto, response_lambda):**
 ### *recipe_modules* / [cros\_build\_support](/recipe_modules/cros_build_support)
 
-[DEPS](/recipe_modules/cros_build_support/__init__.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_build_support/__init__.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for various support functions for building.
 
-#### **class [CrosBuildSupportApi](/recipe_modules/cros_build_support/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildSupportApi](/recipe_modules/cros_build_support/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to support building.
 
-&mdash; **def [apply\_changes](/recipe_modules/cros_build_support/api.py#105)(self, changes=None, name='cherry-pick gerrit changes'):**
+&mdash; **def [apply\_changes](/recipe_modules/cros_build_support/api.py#166)(self, changes=None, name='cherry-pick gerrit changes'):**
 
 Apply gerrit changes.
 
@@ -874,9 +874,13 @@ Args:
       saved in configure_builder()
   name (string): Step name.  Default: "setup source".
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_build_support/api.py#36)(self, build_target=None, commit=None, changes=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_build_support/api.py#93)(self, build_target=None, commit=None, changes=None, name='configure builder'):**
 
 Configure the builder.
+
+Fetch the builder config.
+Determine the actual commit and changes to use.
+Set the bisect_builder and use_flags.
 
 Args:
   build_target (BuildTarget): The build target.  Default: None.
@@ -888,15 +892,15 @@ Args:
 Returns:
   BuilderConfig
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_build_support/api.py#28)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_build_support/api.py#37)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_build_support/api.py#24)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_build_support/api.py#33)(self):**
 
-&mdash; **def [initialize](/recipe_modules/cros_build_support/api.py#19)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_support/api.py#28)(self):**
 
-&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/cros_build_support/api.py#32)(self):**
+&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/cros_build_support/api.py#41)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/cros_build_support/api.py#80)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/cros_build_support/api.py#141)(self):**
 
 Prepare the source checkout for building.
 
@@ -904,7 +908,7 @@ Returns:
   A context where source is set up, and the current working directory is the
       workspace path.
 
-&mdash; **def [sync\_to\_commit](/recipe_modules/cros_build_support/api.py#94)(self, commit=None, staging=False):**
+&mdash; **def [sync\_to\_commit](/recipe_modules/cros_build_support/api.py#155)(self, commit=None, staging=False):**
 
 Sync the source tree.
 

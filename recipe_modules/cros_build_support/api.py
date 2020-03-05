@@ -6,12 +6,21 @@
 """API for various support functions for building."""
 
 import contextlib
+import json
 
 from google.protobuf import json_format as json_pb
 
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
+
+def ConvertPB(inpb, typ):
+  """Convert |inpb| to |typ|."""
+  outpb = typ()
+  outpb.ParseFromString(inpb.SerializeToString())
+  return outpb
+
 
 class CrosBuildSupportApi(recipe_api.RecipeApi):
   """A module to support building."""
@@ -33,9 +42,61 @@ class CrosBuildSupportApi(recipe_api.RecipeApi):
   def patch_sets(self):
     return self._patch_sets
 
+  def _determine_repo_state(self, config, commit, changes):
+    """Set _gitiles_commit and _gerrit_changes.
+
+    If the commit and/or changes are other than what was given, that is added as
+    an output property in a nested step.
+
+    Args:
+      config (BuilderConfig): The builder config.
+      commit (GitilesCommit): The gitiles commit to use.  Default:
+          common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
+      changes: (GerritChanges): The gerrit changes to apply.  Default: [].
+    """
+    if not commit or not commit.project:
+      # No gitiles_commit: we were (likely) launched directly by either
+      # luci-scheduler (no changes), luci-cq (changes), or a user.
+      if not changes:
+        # If there were also no changes, then use the hardcoded default from the
+        # configuration.
+        changes = [ConvertPB(x, common_pb2.GerritChange)
+                   for x in config.orchestrator.gerrit_changes]
+
+      # Use the default gitiles_commit from the config.
+      commit = ConvertPB(
+          config.orchestrator.gitiles_commit, common_pb2.GitilesCommit)
+      # Which may not be there.  In that case, use refs/heads/snapshot.
+      if not commit.project:
+        commit = common_pb2.GitilesCommit(
+            host='chrome-internal.googlesource.com',
+            project='chromeos/manifest-internal', ref='refs/heads/snapshot')
+      # We will need commit.id later.  Add it if necessary.
+      if not commit.id:
+        commit = common_pb2.GitilesCommit(
+            host=commit.host, project=commit.project, ref=commit.ref,
+            id=self.m.gitiles.fetch_revision(
+                commit.host, commit.project, commit.ref))
+
+      # Log what we chose to use (rather than what we were given.)
+      with self.m.step.nest('repo state') as step:
+        step.properties['commit'] = json_pb.MessageToDict(commit)
+        step.properties['changes'] = json.dumps([json_pb.MessageToDict(x)
+                                                 for x in changes])
+
+    # When there is a commit, commit and changes are used unchanged.
+
+    # Record the decision for later.
+    self._gitiles_commit = commit
+    self._gerrit_changes = changes or []
+
   def configure_builder(self, build_target=None, commit=None, changes=None,
                         name='configure builder'):
     """Configure the builder.
+
+    Fetch the builder config.
+    Determine the actual commit and changes to use.
+    Set the bisect_builder and use_flags.
 
     Args:
       build_target (BuildTarget): The build target.  Default: None.
@@ -68,8 +129,8 @@ class CrosBuildSupportApi(recipe_api.RecipeApi):
       # For now, we need to handle this here.
       if not config.build.apply_gerrit_changes:
         changes = []
-      self._gitiles_commit = commit
-      self._gerrit_changes = changes or []
+
+      self._determine_repo_state(config, commit, changes)
 
     if build_target:
       self.m.cros_bisect.set_bisect_builder(build_target.name)

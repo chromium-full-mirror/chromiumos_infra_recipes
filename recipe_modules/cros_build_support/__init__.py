@@ -12,4 +12,5 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'gerrit',
+    'gitiles',
 ]
