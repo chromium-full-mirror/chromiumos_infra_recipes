@@ -12,6 +12,6 @@ message CrosInfraConfigProperties {
   // - 'master' (default)
   // - 'refs/changes/80/2472480/2': patchset 2 of crrev.com/i/2472480
   // - 'refs/changes/FG/NNNNNFG/PP': patchset PP of crrev.com/i/NNNNNFG
+  // This may be propogated to spawned builders.
   string config_ref = 1;
 }
-

@@ -265,9 +265,11 @@ def schedule_wait_follow_on(api, parent_step, config,
   # actual answers to schedule_request.
   # Pass in empty properties until we determine that we need some.
   bucket = api.buildbucket.build.builder.bucket
+  properties = api.cros_infra_config.props_for_child_build
   req = api.buildbucket.schedule_request(
       gitiles_commit=snapshot, builder=follow_on.name, bucket=bucket,
-      gerrit_changes=gerrit_changes, critical=True, properties={}, tags=tags)
+      gerrit_changes=gerrit_changes, critical=True, properties=properties,
+      tags=tags)
   title_fn = api.naming.get_build_title
   [build] = api.buildbucket.schedule([req], url_title_fn=title_fn)
   url = api.buildbucket.build_url(build_id=build.id)

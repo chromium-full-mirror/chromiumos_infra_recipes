@@ -1,0 +1,12 @@
+[
+  {
+    "cmd": [],
+    "name": "props",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@{}@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

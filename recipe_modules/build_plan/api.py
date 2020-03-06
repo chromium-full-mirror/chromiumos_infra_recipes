@@ -128,6 +128,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
           # If collect handling not set to NO_COLLECT, the child will be
           # terminated if the orchestrator dies and the child is not finished.
           parent_run_id = self.m.swarming.task_id
+
+        # Build the properties for the child.
+        properties = self.m.cq.props_for_child_build
+        properties.update(self.m.cros_infra_config.props_for_child_build)
+
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
                 gitiles_commit=snapshot, builder=child_spec.name, bucket=bucket,

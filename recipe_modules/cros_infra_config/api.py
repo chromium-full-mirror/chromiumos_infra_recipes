@@ -3,9 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from google.protobuf import json_format
 from recipe_engine import recipe_api
 from util import exponential_retry
 
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
+    CrosInfraConfigProperties)
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.builder_config import BuilderConfigs
@@ -22,8 +25,24 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Map from BuilderConfig's id.name to BuilderConfig, lazily loaded.
     self._name_to_builder_config = {}
 
+    # Save the properties message.
+    self._properties = properties
+
     # Parse properties.config_ref
     self._config_ref = properties.config_ref or 'master'
+
+  @property
+  def props_for_child_build(self):
+    """Return properties dict meant to be passed to child builds.
+
+    Preserve $chromeos/cros_infra_config when launching a child build.
+    """
+    if not self._properties.config_ref:
+      return {}
+    msg = CrosInfraConfigProperties()
+    msg.CopyFrom(self._properties)
+    return {'$chromeos/cros_infra_config':
+            json_format.MessageToDict(msg, preserving_proto_field_name=True)}
 
   @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
   def _fetch_builder_configs(self):
