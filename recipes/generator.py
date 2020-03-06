@@ -62,7 +62,7 @@ PROPERTIES = GeneratorProperties
 
 
 def RunSteps(api, properties):
-  with api.step.nest('validate properties') as step:
+  with api.step.nest('validate properties') as presentation:
     if not properties.HasField('package_info'):
       raise ValueError('must set package_info')
 
@@ -73,13 +73,13 @@ def RunSteps(api, properties):
       if not reviewer.email:
         raise ValueError('must set reviewer email')
 
-    step.presentation.step_text = 'all properties good'
+    presentation.step_text = 'all properties good'
 
   package = properties.package_info
   cpv = api.naming.get_package_title(package)
 
   triggers = properties.triggers or api.scheduler.triggers
-  with api.step.nest('validate triggers') as step:
+  with api.step.nest('validate triggers') as presentation:
     if not triggers:
       raise ValueError('found no scheduler triggers')
 
@@ -87,9 +87,9 @@ def RunSteps(api, properties):
       if not trigger.HasField('gitiles'):
         raise ValueError('found non-gitiles trigger: %r', trigger)
 
-    step.presentation.step_text = 'found {} good triggers'.format(len(triggers))
-    step.presentation.logs['list of triggers'] = map(json_format.MessageToJson,
-                                                     triggers)
+    presentation.step_text = 'found {} good triggers'.format(len(triggers))
+    presentation.logs['list of triggers'] = map(json_format.MessageToJson,
+                                                triggers)
 
   with api.cros_source.checkout_overlays_context(), \
     api.cros_sdk.cleanup_context(
@@ -97,22 +97,20 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache()
     if properties.init_sdk:
       with api.context(cwd=api.cros_source.workspace_path), \
-           api.step.nest('init sdk') as step:
+           api.step.nest('init sdk') as presentation:
         response = api.cros_build_api.SdkService.Create(
             CreateSdkRequest(
                 flags=CreateSdkRequest.Flags(no_replace=True,
                                              no_use_image=True),
                 chroot=api.cros_sdk.chroot))
-        step.presentation.logs['sdk version'] = [
-            str(response.version.version)
-        ]
+        presentation.logs['sdk version'] = [str(response.version.version)]
         # TODO(crbug.com/949721): Currently, chromite depends on the chroot
         # living within the source tree. As a workaround, link the external
         # chroot the workspace to make it look legit. New chromite services
         # should accept the chroot path as a parameter.
         api.cros_sdk.link_chroot(api.cros_source.workspace_path)
 
-    with api.step.nest('try uprev {}'.format(cpv)) as step:
+    with api.step.nest('try uprev {}'.format(cpv)) as presentation:
       request = UprevVersionedPackageRequest(
           chroot=api.cros_sdk.chroot,
           package_info=package,
@@ -135,7 +133,7 @@ def RunSteps(api, properties):
           modified_ebuilds.append(modified_ebuild)
 
       if not modified_ebuilds or not versions:
-        step.presentation.step_text = 'no new versions for {}'.format(cpv)
+        presentation.step_text = 'no new versions for {}'.format(cpv)
         return
 
       valid_responses = []
@@ -146,11 +144,11 @@ def RunSteps(api, properties):
             valid_responses.append(uprev_response)
 
       if not valid_responses:
-        step.presentation.step_text = (
+        presentation.step_text = (
             'skipping uprev for {}. no modified files'.format(cpv))
         return
 
-      step.presentation.logs['uprev versions'] = [
+      presentation.logs['uprev versions'] = [
           response.version for response in valid_responses
       ]
 
@@ -195,7 +193,7 @@ def RunSteps(api, properties):
 
         repositories.extend(ebuilds_by_repository.keys())
 
-    with api.step.nest('find open uprev CLs') as step:
+    with api.step.nest('find open uprev CLs'):
       open_changes = []
       for host in ('chromium', 'chrome-internal'):
         with api.step.nest('find CLs from {} host'.format(host)):
@@ -204,7 +202,7 @@ def RunSteps(api, properties):
               api.gerrit.query_changes(host_url, [('topic', topic),
                                                   ('status', 'open')]))
 
-    with api.step.nest('generate CLs') as step:
+    with api.step.nest('generate CLs'):
       repositories = map(api.path.abs_to_path, repositories)
       changes = [
           api.gerrit.create_change(
@@ -279,13 +277,13 @@ def RunSteps(api, properties):
       with api.step.nest('examine outdated CLs'):
         for host in ('chromium', 'chrome-internal'):
           with api.step.nest('merged CLs from {} host (within 30 days)'
-              .format(host)) as step:
+              .format(host)) as presentation:
             host_url = 'https://{}-review.googlesource.com'.format(host)
             merged_changes = api.gerrit.query_changes(
                 host_url, [('topic', topic), ('status', 'merged'),
                           ('-age', '30d')])
             if merged_changes:
-              step.presentation.logs['merged CLs'] = [
+              presentation.logs['merged CLs'] = [
                   api.gerrit.parse_gerrit_change_url(cl)
                   for cl in merged_changes]
 
@@ -296,21 +294,21 @@ def RunSteps(api, properties):
                         key=lambda ci: ci.submitted,
                         reverse=True)
               mrm = merged_ci[0] if merged_ci else None
-              step.presentation.logs['most recent merged cl'] = [mrm.display_id]
+              presentation.logs['most recent merged cl'] = [mrm.display_id]
 
     outdated_cls = []
     if mrm:
       open_ci = api.gerrit.fetch_patch_sets(open_changes)
-      with api.step.nest('outdated CLs') as step:
+      with api.step.nest('outdated CLs') as presentation:
         outdated_cls.extend([ci for ci in open_ci
                              if ci.created < mrm.submitted])
-        step.presentation.logs['outdated CLs'] = [
+        presentation.logs['outdated CLs'] = [
             ci.display_id
             for ci in outdated_cls]
 
     if outdated_cls:
       with api.step.nest('act on outdated CLs with policy: {}'.format(
-                             outdated_cls_policy_str)) as step:
+          outdated_cls_policy_str)):
         for outdated_cl in outdated_cls:
           if outdated_cls_policy == OUTDATED_LEAVE_COMMENT:
             outdated_comment_message = ('This CL has been obviated by: {}\n\n'

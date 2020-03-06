@@ -57,13 +57,13 @@ class GitTxnApi(recipe_api.RecipeApi):
       message = 'git transaction'
       if i > 0:
         message += ' retry %d of %d' % (i, retries - 1)
-      with self.m.step.nest(message) as step:
+      with self.m.step.nest(message) as presentation:
         self.m.git.fetch_ref(remote, ref)
 
         self.m.git.checkout('FETCH_HEAD', force=True)
 
         if update_callback() is False:
-          step.presentation.step_text = 'Transaction aborted without failure.'
+          presentation.step_text = 'Transaction aborted without failure.'
           return False
 
         try:

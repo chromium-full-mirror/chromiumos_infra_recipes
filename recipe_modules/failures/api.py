@@ -77,14 +77,14 @@ class FailuresApi(recipe_api.RecipeApi):
       return self.m.step.FAILURE
 
   def _present_run(self, title, link_map, status, critical=True):
-    with self.m.step.nest(title) as step:
+    with self.m.step.nest(title) as presentation:
       if status != common_pb2.SUCCESS and not critical:
-        step.presentation.step_text = 'failed but is not critical'
-        step.presentation.status = self.m.step.SUCCESS
+        presentation.step_text = 'failed but is not critical'
+        presentation.status = self.m.step.SUCCESS
       else:
-        step.presentation.status = self._proto_to_step_status(status)
+        presentation.status = self._proto_to_step_status(status)
       for link_text, link_url in link_map.items():
-        step.presentation.links[link_text] = link_url
+        presentation.links[link_text] = link_url
 
       silence_reason = self._get_silence_reason(self.m.step.active_result.name)
       if silence_reason:
@@ -95,13 +95,13 @@ class FailuresApi(recipe_api.RecipeApi):
         # "build results|[FAILED BUT SILENCED] chromeos.bucket.builder",
         # there will be a new (unsilenced) failure, and the old (silenced)
         # failure will disappear from SoM.
-        step.presentation.logs['silence reason'] = [silence_reason]
+        presentation.logs['silence reason'] = [silence_reason]
 
       return silence_reason is not None
 
   def _get_failures(self, kind, runs, get_status, is_critical, get_title,
                     get_link_map, get_id):
-    with self.m.step.nest('{} results'.format(kind)) as results_step:
+    with self.m.step.nest('{} results'.format(kind)) as results_pres:
       critical_failures = []
       failed_runs = [
           run for run in runs if get_status(run) != common_pb2.SUCCESS
@@ -148,8 +148,8 @@ class FailuresApi(recipe_api.RecipeApi):
         step_text = '{} {}s failed, {} succeeded, {} failures silenced'.format(
             fail_count, kind, success_count, silenced_failure_count)
 
-      results_step.presentation.status = status
-      results_step.presentation.step_text = step_text
+      results_pres.status = status
+      results_pres.step_text = step_text
       return critical_failures
 
   def _get_baseline_validated_failures(self, kind, runs, baseline_runs,
@@ -237,17 +237,17 @@ class FailuresApi(recipe_api.RecipeApi):
     Raises:
       StepFailure: If failed_images is not empty.
     """
-    with self.m.step.nest('image test results') as step:
+    with self.m.step.nest('image test results') as presentation:
       if not failed_images:
-        step.presentation.step_text = 'all images passed'
+        presentation.step_text = 'all images passed'
         return
 
       message = '{} images failed'.format(len(failed_images))
-      step.presentation.step_text = message
-      step.presentation.status = self.m.step.FAILURE
+      presentation.step_text = message
+      presentation.status = self.m.step.FAILURE
       failed_types = map(lambda image: ImageType.Name(image.type),
                          failed_images)
-      step.presentation.logs['list of failed images'] = failed_types
+      presentation.logs['list of failed images'] = failed_types
       raise self.m.step.StepFailure(message)
 
   def aggregate_failures(self, failures):

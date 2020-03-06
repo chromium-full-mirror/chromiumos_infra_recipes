@@ -35,7 +35,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
     Returns:
       GenerateTestPlanResponse of test plan.
     """
-    with self.m.step.nest(name or 'generate test plan') as step:
+    with self.m.step.nest(name or 'generate test plan') as presentation:
       self._ensure_test_planner()
 
       if not gerrit_changes:
@@ -53,7 +53,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
               for build in builds
           ])
       request_json = json_format.MessageToJson(request_proto)
-      step.presentation.logs['planner_input'] = [str(request_json)]
+      presentation.logs['planner_input'] = [str(request_json)]
 
       messages_path = self.m.path.mkdtemp(prefix='test-plan-')
       input_bin_file = messages_path.join('input.binaryproto')
@@ -72,7 +72,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           .generate_test_plan_response.SerializeToString())
       response_proto = GenerateTestPlanResponse.FromString(response_bin)
 
-      step.presentation.logs['planner_output'] = [str(response_proto)]
+      presentation.logs['planner_output'] = [str(response_proto)]
       return response_proto
 
   def _ensure_test_planner(self):

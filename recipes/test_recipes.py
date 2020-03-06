@@ -146,19 +146,19 @@ def _launch_builders(api, builders):
     containing 'host_name' and 'task_id' keys. I.e. results can be called like
     "results[0]['swarming']['host_name']".
   """
-  with api.step.nest('analyze and launch builders') as launch_step:
+  with api.step.nest('analyze and launch builders') as launch_pres:
     results = []
 
-    with api.step.nest('get affected files') as affected_files_step:
+    with api.step.nest('get affected files') as affected_files_pres:
       # Changes should be cherry picked at this point. The relevant diffs should
       # be between the original master and HEAD.
       affected_files = api.git.get_diff_files(from_rev='origin/master',
                                               to_rev='HEAD')
-      affected_files_step.presentation.logs['affected files'] = affected_files
+      affected_files_pres.logs['affected files'] = affected_files
 
     for builder in builders:
       with api.step.nest(
-          'analyze and launch {}'.format(builder)) as builder_step:
+          'analyze and launch {}'.format(builder)) as builder_pres:
         # Get an intermediate result from led to extract the builder definition.
         # Then, chain on calls to launch the builder (if it is relevant).
         last_successful_build = _get_last_successful_build(api, builder)
@@ -179,13 +179,13 @@ def _launch_builders(api, builders):
               'edit-recipe-bundle').then('launch').result
           url = 'https://{}/task?id={}'.format(
               result['swarming']['host_name'], result['swarming']['task_id'])
-          launch_step.presentation.links[builder] = url
+          launch_pres.links[builder] = url
           results.append(result)
         else:
-          builder_step.presentation.step_text = (
+          builder_pres.step_text = (
               'builder {} (recipe {}) not affected'.format(builder, recipe))
 
-    launch_step.presentation.step_text = 'launched {} / {} builders'.format(
+    launch_pres.step_text = 'launched {} / {} builders'.format(
         len(results), len(builders))
 
     return results
@@ -249,7 +249,7 @@ def _get_non_skipped_builders(api, builders):
   Returns:
     A list[str].
   """
-  with api.step.nest('get non-skipped builders') as step:
+  with api.step.nest('get non-skipped builders') as presentation:
     skip_builders = api.tryserver.get_footer(SKIP_BUILDERS_FOOTER)
 
     for skip_builder in skip_builders:
@@ -260,8 +260,8 @@ def _get_non_skipped_builders(api, builders):
 
       builders.remove(skip_builder)
 
-    step.presentation.step_text = 'Non-skipped builders: {}'.format(builders)
-    step.presentation.logs['Skipped builders'] = skip_builders
+    presentation.step_text = 'Non-skipped builders: {}'.format(builders)
+    presentation.logs['Skipped builders'] = skip_builders
 
     return builders
 
@@ -281,7 +281,7 @@ def _analyze_swarming_results(api, swarming_results, led_results):
   Raises:
     StepFailure
   """
-  with api.step.nest('analyze swarming results') as step:
+  with api.step.nest('analyze swarming results') as presentation:
     host_name = _extract_host_name(api, led_results)
     fail_count = 0
     for result in swarming_results:
@@ -289,17 +289,17 @@ def _analyze_swarming_results(api, swarming_results, led_results):
         fail_count += 1
 
         url = 'https://{}/task?id={}'.format(host_name, result.id)
-        step.presentation.links['[FAILED] {}'.format(result.name)] = url
+        presentation.links['[FAILED] {}'.format(result.name)] = url
 
     if fail_count:
-      step.presentation.step_text = '{} tasks failed, {} succeeded'.format(
+      presentation.step_text = '{} tasks failed, {} succeeded'.format(
           fail_count,
           len(swarming_results) - fail_count)
-      step.presentation.status = api.step.FAILURE
+      presentation.status = api.step.FAILURE
 
       raise api.step.StepFailure('{} tasks failed'.format(fail_count))
     else:
-      step.presentation.step_text = 'all tasks succeeded'
+      presentation.step_text = 'all tasks succeeded'
 
 
 def RunSteps(api, properties):

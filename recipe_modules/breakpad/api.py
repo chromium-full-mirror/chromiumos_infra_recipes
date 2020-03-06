@@ -127,17 +127,17 @@ class BreakpadApi(recipe_api.RecipeApi):
 
       for test_result in test_results:
         with self.m.step.nest('symbolicate dumps from {}'.format(
-            test_result.gs_path)) as step:
+            test_result.gs_path)) as pres:
           with self.m.context(cwd=test_result.local_path):
             # Get all '.dmp' files in the test results dir. Note that the
             # `recipe_engine/file` module does not provide recursive search
             # functionality. The `glob` function does not recurse directory
             # structure.
             dmp_files = self._find_dmp_files()
-            step.presentation.logs['.dmp files'] = dmp_files
+            pres.logs['.dmp files'] = dmp_files
 
             for dmp_file in dmp_files:
-              with self.m.step.nest('symbolicate {}'.format(dmp_file)) as step:
+              with self.m.step.nest('symbolicate {}'.format(dmp_file)) as pres2:
                 # Failures on a single minidump_stackwalk call should not crash
                 # the entire recipe. Catch and log StepFailures.
                 try:
@@ -145,17 +145,13 @@ class BreakpadApi(recipe_api.RecipeApi):
                       'minidump_stackwalk',
                       [self._minidump_stackwalk_path, dmp_file, symbols_path])
 
-                  step.presentation.logs['minidump_stackwalk output'] = [
-                      stackwalk_output
-                  ]
+                  pres2.logs['minidump_stackwalk output'] = [stackwalk_output]
 
                   stackwalk_output_path = self._write_stackwalk_output(
                       dmp_file, stackwalk_output)
                   stackwalk_output_paths.append(stackwalk_output_path)
                 except self.m.step.StepFailure as step_failure:
-                  step.presentation.logs['caught StepFailure'] = [
-                      repr(step_failure)
-                  ]
+                  pres2.logs['caught StepFailure'] = [repr(step_failure)]
 
             # `test_result_local_path` will not contain the final path component
             # of the remote test result path , e.g. "swarming-1234". This final

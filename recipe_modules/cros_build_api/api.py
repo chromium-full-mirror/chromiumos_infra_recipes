@@ -150,7 +150,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
     """
     response_lambda = response_lambda or (lambda op: '')
 
-    with self.m.step.nest(name or 'call %s' % endpoint) as step:
+    with self.m.step.nest(name or 'call %s' % endpoint) as presentation:
       messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
       input_path = messages_path.join('input_proto.json')
       output_path = messages_path.join('output_proto.json')
@@ -160,8 +160,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       # the build API) and record it to the step logs for debugging.
       input_json = json_format.MessageToJson(input_proto)
       self.m.file.write_raw('write input file', input_path, input_json)
-      step.presentation.logs['request'] = [input_json]
-      step.logs['response'] =  ['{}']
+      presentation.logs['request'] = [input_json]
+      presentation.logs['response'] =  ['{}']
 
       cmd = [
           self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
@@ -209,15 +209,15 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
           # have taken them as input (e.g. sheriff-o-matic), we then make a
           # 'response' step that we can have foreknowledge of what the name
           # _should_ be based on the call's results.
-          step.presentation.logs['response'] = [output_json]
+          presentation.logs['response'] = [output_json]
           resp_step_name = self.response_step_name(output_proto,
                                                    response_lambda)
 
-          with self.m.step.nest(resp_step_name) as resp_step:
-            resp_step.logs['build api stdout'] = ('' if not file_contents
+          with self.m.step.nest(resp_step_name) as resp_pres:
+            resp_pres.logs['build api stdout'] = ('' if not file_contents
                                                   else file_contents)
             if call_step.exc_result.retcode != 0:
-              resp_step.status = self.m.step.FAILURE
+              resp_pres.status = self.m.step.FAILURE
 
         except self.m.step.StepFailure as e:
           call_step = e.result

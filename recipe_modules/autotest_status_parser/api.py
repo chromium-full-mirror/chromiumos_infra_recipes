@@ -28,7 +28,7 @@ class AutotestStatusParserCommand(recipe_api.RecipeApi):
 
     Returns: Result.
     """
-    with self.m.step.nest('call `autotest_status_parser`') as s:
+    with self.m.step.nest('call `autotest_status_parser`') as presentation:
       if not results_dir:
         raise ValueError('No results directory provided')
       binary = self._get_autotest_status_parser()
@@ -42,7 +42,7 @@ class AutotestStatusParserCommand(recipe_api.RecipeApi):
           cmd,
           Result,
           test_output=Result())
-      s.presentation.logs['response'] = [json_format.MessageToJson(result)]
+      presentation.logs['response'] = [json_format.MessageToJson(result)]
       return result
 
   def _get_autotest_status_parser(self):

@@ -86,8 +86,8 @@ class GomaApi(recipe_api.RecipeApi):
     # Skip if we don't have goma artifacts and a goma_log dir for them.
     if (not install_pkg_response.HasField('goma_artifacts')
         or not goma_log_dir):
-      with self.m.step.nest('process_goma_artifacts') as step:
-        step.presentation.logs['NoGomaArtifacts'] = [
+      with self.m.step.nest('process_goma_artifacts') as presentation:
+        presentation.logs['NoGomaArtifacts'] = [
           str(install_pkg_response.goma_artifacts)
         ]
       return None
@@ -119,7 +119,7 @@ class GomaApi(recipe_api.RecipeApi):
     Returns:
       BigQuery error message (str) or None if no errors occurred.
     """
-    with self.m.step.nest('process_goma_artifacts') as step:
+    with self.m.step.nest('process_goma_artifacts') as presentation:
       if install_pkg_response.HasField('goma_artifacts') and goma_log_dir:
         stats_filename = None
         counterz_filename = None
@@ -147,7 +147,7 @@ class GomaApi(recipe_api.RecipeApi):
           # TODO(crbug.com/1041899): Change from presentation logs to actual
           # BigQuery upload. Note that BigQuery insert_rows will have a
           # try/except block and return any error messages as a string.
-          step.presentation.logs['compile_event'] = [str(compile_event)]
+          presentation.logs['compile_event'] = [str(compile_event)]
     return None
 
 
@@ -166,7 +166,7 @@ class GomaApi(recipe_api.RecipeApi):
       tuple[GsDestination]: tuple containing the bucket and gs_path used when
           writing to the goma GS bucket
     """
-    with self.m.step.nest('process_goma_artifacts') as step:
+    with self.m.step.nest('process_goma_artifacts') as presentation:
        with self.m.context(cwd=self.m.path.abs_to_path(goma_log_dir)):
           # destination gs_path is based on date and build_target name.
           today = self.m.time.utcnow()
@@ -175,8 +175,8 @@ class GomaApi(recipe_api.RecipeApi):
               self.m.properties.get('bot_id', build_target_name))
           gs_bucket = ('staging-chrome-goma-log' if is_staging
                        else 'chrome-goma-log')
-          step.presentation.logs['gs_bucket'] = gs_bucket
-          step.presentation.logs['gs_path'] = gs_path_base
+          presentation.logs['gs_bucket'] = gs_bucket
+          presentation.logs['gs_path'] = gs_path_base
           num_logs_uploaded = 0
           builder_id = self.m.buildbucket.build.builder
           metadata = {
@@ -198,5 +198,5 @@ class GomaApi(recipe_api.RecipeApi):
             self.m.gsutil.upload(log_file, gs_bucket, gs_path,
                                  metadata=metadata)
             num_logs_uploaded += 1
-          step.presentation.logs['num_logs_uploaded'] = str(num_logs_uploaded)
+          presentation.logs['num_logs_uploaded'] = str(num_logs_uploaded)
           return GsDestination(gs_bucket, gs_path_base)

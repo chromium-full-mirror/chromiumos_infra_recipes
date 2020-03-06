@@ -55,12 +55,12 @@ PROPERTIES = OrchestratorProperties
 def RunSteps(api, properties):
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
 
-  with api.step.nest('set up orchestrator') as step:
+  with api.step.nest('set up orchestrator') as presentation:
     validate_refs(properties.update_manifest_refs)
     api.cros_bisect.set_orchestrator_bisect_builder()
     config = api.cros_infra_config.get_builder_config(
         api.buildbucket.build.builder.builder)
-    step.presentation.logs['orchestrator config'] = [str(config)]
+    presentation.logs['orchestrator config'] = [str(config)]
 
     snapshot, gerrit_changes = determine_repo_state(api, config)
 
@@ -74,7 +74,7 @@ def RunSteps(api, properties):
 
   if properties.enable_history and gerrit_changes:
     if properties.assert_singleton:
-      with api.step.nest('find inflight orchestrator') as step:
+      with api.step.nest('find inflight orchestrator') as presentation:
         older_running_builds = api.cros_history.get_matching_builds(
             api.buildbucket.build, statuses=[common_pb2.STARTED])
 
@@ -85,14 +85,14 @@ def RunSteps(api, properties):
 
         # Is a run of the same configuration ongoing? If so, inform and join().
         if len(older_running_builds) > 0:
-          step.presentation.step_text = 'found {} inflight run(s) to wait on'\
+          presentation.step_text = 'found {} inflight run(s) to wait on'\
                                         .format(len(older_running_builds))
 
           # Give the UI the links to STARTED builds with same configuration.
           for build in older_running_builds:
             title = api.naming.get_build_title(build)
             url = api.buildbucket.build_url(build_id=build.id)
-            step.presentation.links[title] = url
+            presentation.links[title] = url
 
           # Wait for all started builds.
           api.buildbucket.collect_builds(
@@ -101,38 +101,38 @@ def RunSteps(api, properties):
               timeout=60 * 60 * 23,
           )
         else:
-          step.presentation.step_text = 'found no inflight run'
+          presentation.step_text = 'found no inflight run'
 
   child_specs = []
-  with api.step.nest('run builds') as step:
+  with api.step.nest('run builds') as presentation:
     child_specs = get_child_specs(api)
-    completed_builds = filter_schedule_wait_builds(api, step, child_specs,
-                                                   properties.enable_history,
-                                                   snapshot, gerrit_changes)
+    completed_builds = filter_schedule_wait_builds(
+        api, presentation, child_specs, properties.enable_history,
+        snapshot, gerrit_changes)
 
   # From here all builds should have been collected: move to checking results.
-  with api.step.nest('check build results') as step:
+  with api.step.nest('check build results') as presentation:
     for build in completed_builds:
       if build.status in (common_pb2.STARTED, common_pb2.SCHEDULED):
-        step.presentation.text = 'some builds are running/pending'
+        presentation.text = 'some builds are running/pending'
     relevant_builds = []
     for build in completed_builds:
       # Assume relevant if the child doesn't have the relevant_build prop.
       if ('relevant_build' not in build.output.properties or
           build.output.properties['relevant_build']):
         relevant_builds.append(build.builder.builder)
-    step.presentation.logs['relevant_builds'] = sorted(relevant_builds)
+    presentation.logs['relevant_builds'] = sorted(relevant_builds)
     failures = api.failures.get_build_failures(completed_builds)
 
   # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
   # non-critical. Snapshot builds are always scheduled without the critical bit
   # set to `NO` so this is also the only place that we will discover that.
-  with api.step.nest('non-critical build check') as step:
+  with api.step.nest('non-critical build check') as presentation:
     api.cros_infra_config.force_reload()
     child_builder_configs = api.cros_infra_config.safe_get_builder_configs(
         [b.builder.builder for b in completed_builds])
     failures = api.failures.update_non_critical_failures(
-        step, failures, child_builder_configs)
+        presentation, failures, child_builder_configs)
   fatal_failures = [f for f in failures if f.fatal == True]
 
   if not fatal_failures:
@@ -168,19 +168,19 @@ def RunSteps(api, properties):
 
   # Launch any specified follow on orchestrator.
   if not fatal_failures and config.orchestrator.follow_on_orchestrator.name:
-    with api.step.nest('run follow on orchestrator') as step:
+    with api.step.nest('run follow on orchestrator') as presentation:
       completed_builds.extend(schedule_wait_follow_on(
-          api, step, config, properties.enable_history, snapshot,
+          api, presentation, config, properties.enable_history, snapshot,
           gerrit_changes))
 
-  with api.step.nest('clean up orchestrator') as step:
+  with api.step.nest('clean up orchestrator') as presentation:
     # Recheck the BuilderConfigs at HEAD, one last time, to see if any failed
     # builders are now noncritical.
     api.cros_infra_config.force_reload()
     child_builder_configs = api.cros_infra_config.safe_get_builder_configs(
         [b.builder.builder for b in completed_builds])
     failures = api.failures.update_non_critical_failures(
-        step, failures, child_builder_configs)
+        presentation, failures, child_builder_configs)
   return api.failures.aggregate_failures(failures)
 
 

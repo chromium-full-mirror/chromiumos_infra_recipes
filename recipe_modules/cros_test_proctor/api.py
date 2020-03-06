@@ -65,7 +65,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         if gc.change in self._multi_request_ctp_cl_allowlist
     ]
     multi_req = multi_req_cls or self._multi_request_ctp_full_enable
-    with self.m.step.nest('run tests') as step:
+    with self.m.step.nest('run tests') as pres:
       with self.m.step.nest('schedule tests'):
         test_plan = self._get_test_plan(need_tests_builds, gerrit_changes,
                                         snapshot)
@@ -110,18 +110,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       needs_baseline_validation = self._needs_baseline_validation(
           failed_test_names, test_plan)
       if needs_baseline_validation:
-        step.presentation.step_text = (
+        pres.step_text = (
             '{} test(s) failed. will run baseline validation'.format(
                 len(failed_test_names)))
       elif failed_test_names:
-        step.presentation.step_text = ('{} test(s) failed'.format(
-            len(failed_test_names)))
+        pres.step_text = ('{} test(s) failed'.format(len(failed_test_names)))
       elif passed_tests:
-        step.presentation.step_text = (
-            'all tests passed. no need for baseline validation')
+        pres.step_text = ('all tests passed. no need for baseline validation')
       else:
-        step.presentation.step_text = ('no tests were necessary')
-        step.presentation.properties['no_tests_needed'] = True
+        pres.step_text = ('no tests were necessary')
+        pres.properties['no_tests_needed'] = True
 
     with self.m.failures.ignore_exceptions():
       if gerrit_changes and needs_baseline_validation:

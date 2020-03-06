@@ -52,7 +52,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Returns:
       list[str]: the names of the child builders that must be run.
     """
-    with self.m.step.nest(name or 'plan builds') as step_result:
+    with self.m.step.nest(name or 'plan builds') as presentation:
       self._ensure_binaries()
       request = GenerateBuildPlanRequest(
           gitiles_commit=common_proto_bytes(
@@ -67,7 +67,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='build-plan-')
       input_bin_file = messages_path.join('input.binaryproto')
       output_bin_file = messages_path.join('output.binaryproto')
-      step_result.presentation.logs['planner_input'] = [str(request)]
+      presentation.logs['planner_input'] = [str(request)]
       self.m.file.write_raw('write input binaryproto', input_bin_file,
                             request.SerializeToString())
 
@@ -87,8 +87,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           test_data=test_resp.SerializeToString())
       result = GenerateBuildPlanResponse.FromString(response_bin)
 
-      step_result.presentation.logs['planner_output'] = [str(result)]
-      step_result.presentation.step_text = (
+      presentation.logs['planner_output'] = [str(result)]
+      presentation.step_text = (
           '{} relevant, {} irrelevant builder configs'.format(
               len(result.builds_to_run),
               len(result.skip_for_global_build_irrelevance) +
@@ -122,14 +122,14 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       # If there are no CLs, then this is not a CQ run and should never be
       # treated as pointless.
       return False
-    with self.m.step.nest('pointless build check') as step_result:
+    with self.m.step.nest('pointless build check') as presentation:
       relevant = self.is_depgraph_affected(gerrit_changes,
                                            gitiles_commit, dep_graph)
       # TODO(seanabraham): stop writing 'pointless_build' property once Plx
       # scripts have switched over to 'relevant_build'.
-      step_result.presentation.properties['pointless_build'] = not relevant
-      step_result.presentation.properties['relevant_build'] = relevant
-      step_result.presentation.step_text = (
+      presentation.properties['pointless_build'] = not relevant
+      presentation.properties['relevant_build'] = relevant
+      presentation.step_text = (
           'build is relevant' if relevant else 'build is irrelevant')
       return not relevant
 
@@ -151,7 +151,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Returns:
       bool: Whether the given Gerrit Change affects any of the relevant paths.
     """
-    with self.m.step.nest(name or 'path relevancy check') as step_result:
+    with self.m.step.nest(name or 'path relevancy check') as presentation:
       self._ensure_binaries()
       check_request = PointlessBuildCheckRequest(
           gitiles_commit=testplans_proto_bytes(
@@ -172,7 +172,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='pointless-build-')
       input_bin_file = messages_path.join('input.binaryproto')
       output_bin_file = messages_path.join('output.binaryproto')
-      step_result.presentation.logs['relevance_input'] = [str(check_request)]
+      presentation.logs['relevance_input'] = [str(check_request)]
       self.m.file.write_raw('write input binaryproto', input_bin_file,
                             check_request.SerializeToString())
 
@@ -189,7 +189,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       response_bin = self.m.file.read_raw('read output file', output_bin_file)
       result = PointlessBuildCheckResponse.FromString(response_bin)
 
-      step_result.presentation.logs['relevance_output'] = [str(result)]
+      presentation.logs['relevance_output'] = [str(result)]
       return not bool(result.build_is_pointless.value)
 
   def is_depgraph_affected(self, gerrit_changes, gitiles_commit, dep_graph,

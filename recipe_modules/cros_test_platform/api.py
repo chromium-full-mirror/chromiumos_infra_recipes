@@ -67,8 +67,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       # This ensures that debugging information is not lost due to outer task
       # failure during the command execution (e.g., due to a timeout).
       with self.m.step.nest('pre-execution debug data') as ds:
-        ds.presentation.logs['cmd'] = [' '.join([str(c) for c in cmd])]
-        ds.presentation.logs['request'] = [json_format.MessageToJson(request)]
+        ds.logs['cmd'] = [' '.join([str(c) for c in cmd])]
+        ds.logs['request'] = [json_format.MessageToJson(request)]
 
       response = self.m.easy.stdout_jsonpb_step(
           subcommand,
@@ -79,7 +79,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
           # TODO(crbug.com/1008921): Surface non-zero return codes as a step
           # warning.
           ok_ret=(0, _RETCODE_PARTIAL_RESPONSE))
-      s.presentation.logs['response'] = [json_format.MessageToJson(response)]
+      s.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
   def enumerate(self, request):

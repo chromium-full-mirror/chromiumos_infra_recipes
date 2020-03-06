@@ -39,10 +39,10 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     Returns:
       JSON proto of response_type if send_response is set, None otherwise
     """
-    with self.m.step.nest('call `phosphorus`') as s:
+    with self.m.step.nest('call `phosphorus`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      s.presentation.logs['request'] = [json_format.MessageToJson(request)]
+      presentation.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_phosphorus()
       cmd = [
         self._cmd,
@@ -65,7 +65,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
           stdin=stdin,
           test_output=response_type(),
           ok_ret=(0,))
-      s.presentation.logs['response'] = [json_format.MessageToJson(response)]
+      presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
   def prejob(self, request):

@@ -51,7 +51,7 @@ class SkylabApi(recipe_api.RecipeApi):
       list[SkylabTask]: with buildbucket_id of the recipe launched.
     """
     name = name or 'schedule skylab tests v2'
-    with self.m.step.nest(name) as step:
+    with self.m.step.nest(name) as presentation:
       # str -> (Request dict)
       reqs = {}
 
@@ -88,7 +88,7 @@ class SkylabApi(recipe_api.RecipeApi):
       build = self.m.buildbucket.schedule([bb_request])[0]
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
-      step.presentation.links['suite link'] = build_url
+      presentation.links['suite link'] = build_url
 
       tasks = []
       for uht in unit_hw_tests:
@@ -110,7 +110,7 @@ class SkylabApi(recipe_api.RecipeApi):
       SkylabTask: with buildbucket_id of the recipe launched.
     """
     name = name or 'schedule %s' % test.common.display_name
-    with self.m.step.nest(name) as step:
+    with self.m.step.nest(name) as presentation:
       req = Request()
       req.params.hardware_attributes.model = ""
       req.params.time.maximum_duration.seconds = timeout.seconds
@@ -144,7 +144,7 @@ class SkylabApi(recipe_api.RecipeApi):
       build = self.m.buildbucket.schedule([bb_request])[0]
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
-      step.presentation.links['suite link'] = build_url
+      presentation.links['suite link'] = build_url
       return self.SkylabTask(id=build.id, url=build_url, test=test, unit=unit)
 
   def _get_ctp_tags(self, test, unit, priority, image_path):
@@ -177,7 +177,7 @@ class SkylabApi(recipe_api.RecipeApi):
     Returns:
       list[SkylabResult]: The results for suites from provided tasks.
     """
-    with self.m.step.nest('collect skylab tasks v2') as step:
+    with self.m.step.nest('collect skylab tasks v2') as presentation:
       if not tasks:
         return []
 
@@ -191,7 +191,7 @@ class SkylabApi(recipe_api.RecipeApi):
       except recipe_api.StepFailure as ex:  #pragma: no cover
         # Mark the step as an INFRA_FAILURE and get the output
         # properties of underlying recipes.
-        step.presentation.status = 'EXCEPTION'
+        presentation.status = 'EXCEPTION'
         hw_tests = self.m.buildbucket.get_multi([task_id])[task_id]
 
       results = []
@@ -201,7 +201,7 @@ class SkylabApi(recipe_api.RecipeApi):
             _request_tag(t.test), self._default_failed_response())
         results.append(self._translate_result(result, t))
 
-      step.presentation.logs['return value'] = [str(r) for r in results]
+      presentation.logs['return value'] = [str(r) for r in results]
       return results
 
   def _get_multi_response(self, build):
@@ -236,7 +236,7 @@ class SkylabApi(recipe_api.RecipeApi):
     """
     tasks_by_id = {task.id: task for task in tasks}
 
-    with self.m.step.nest('collect skylab tasks') as step:
+    with self.m.step.nest('collect skylab tasks') as presentation:
       task_ids = [task.id for task in tasks]
       # Give 30 minutes grace period for recipes to time out.
       timeout_seconds = int(timeout.seconds + 30 * 60)
@@ -246,7 +246,7 @@ class SkylabApi(recipe_api.RecipeApi):
       except recipe_api.StepFailure as ex:  #pragma: no cover
         # Mark the step as an INFRA_FAILURE and get the output
         # properties of underlying recipes.
-        step.presentation.status = 'EXCEPTION'
+        presentation.status = 'EXCEPTION'
         all_hw_tests = self.m.buildbucket.get_multi(task_ids)
 
       results = []
@@ -255,7 +255,7 @@ class SkylabApi(recipe_api.RecipeApi):
         results.append(
             self._translate_result(test_response, tasks_by_id[test_id]))
 
-      step.presentation.logs['return value'] = [str(x) for x in results]
+      presentation.logs['return value'] = [str(x) for x in results]
       return results
 
   def _get_execute_response(self, build):

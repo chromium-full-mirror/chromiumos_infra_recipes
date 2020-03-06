@@ -40,8 +40,8 @@ SYS_LOG_DIR = '/var/log'
 
 def RunSteps(api, properties):
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
-  with api.step.nest('setup tast') as step:
-    step.text = 'download tast executable'
+  with api.step.nest('setup tast') as presentation:
+    presentation.text = 'download tast executable'
     sp_tar_file = test_artifacts_dir.join('autotest_server_package.tar.bz2')
     archive_path = os.path.join(properties.build_payload.artifacts_gs_path,
                                 'autotest_server_package.tar.bz2')
@@ -197,10 +197,10 @@ def _kill_vm(api, kvm_pid_file):
 
 
 def _record_qemu_logs(api, kvm_monitor_file, kvm_monitor_serial_file):
-  with api.step.nest('qemu logs') as step:
-    step.presentation.logs['kvm.monitor'] = api.file.read_text(
+  with api.step.nest('qemu logs') as presentation:
+    presentation.logs['kvm.monitor'] = api.file.read_text(
         'reading file', kvm_monitor_file)
-    step.presentation.logs['kvm.monitor.serial'] = api.file.read_text(
+    presentation.logs['kvm.monitor.serial'] = api.file.read_text(
         'reading file', kvm_monitor_serial_file)
 
 

@@ -326,7 +326,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     published = collections.defaultdict(list)
     links = {}
-    with self.m.step.nest(name or 'publish artifacts') as step:
+    with self.m.step.nest(name or 'publish artifacts') as presentation:
       for info in publish_info:
         publish_template = info.publish_gs_location
         location_dict = self._artifacts_gs_path_dict(builder_name, target, kind)
@@ -341,7 +341,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                 'https://console.cloud.google.com/storage/browser/%s' %
                 publish_loc)
             links[link_name] = link_value
-            step.presentation.links[link_name] = link_value
+            presentation.links[link_name] = link_value
             publish_uri = 'gs://' + publish_loc
             if not publish_uri.endswith('/'):
               publish_uri += '/'
@@ -391,14 +391,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           were passed to prepare_for_build.  Bundling sometimes requires them.
       name (str): The step name. Defaults to 'upload artifacts'.
     """
-    with self.m.step.nest(name or 'upload artifacts') as step:
+    with self.m.step.nest(name or 'upload artifacts') as presentation:
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
 
       files_by_artifact = self._bundle_artifacts(
           artifact_types, staging_root, sysroot, chroot, additional_args)
 
       gs_path = self.artifacts_gs_path(builder_name, target, kind)
-      step.presentation.links['gs upload dir'] = (
+      presentation.links['gs upload dir'] = (
           'https://console.cloud.google.com/storage/browser/%s/%s' %
           (gs_bucket, gs_path))
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
@@ -432,7 +432,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             builder_name,
             target, kind, publish_info, upload_uri, files_by_artifact)
         for k, v in links.items():
-          step.presentation.links[k] = v
+          presentation.links[k] = v
 
   def download_artifact(self, build_payload, artifact, name=None):
     """Download the given artfiact from the given build payload.
@@ -542,7 +542,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             self._prepare_toolchain,
     }
 
-    with self.m.step.nest(name or 'prepare artifacts') as step:
+    with self.m.step.nest(name or 'prepare artifacts') as presentation:
       results = []
 
       funcs_to_call = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
@@ -552,10 +552,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       # Return an aggregate response.
       if PrepareForBuildResponse.NEEDED in results:
-        step.presentation.step_text = 'Build is NEEDED'
+        presentation.step_text = 'Build is NEEDED'
         return PrepareForBuildResponse.NEEDED
       if PrepareForBuildResponse.UNKNOWN in results:
-        step.presentation.step_text = 'Build need is UNKNOWN'
+        presentation.step_text = 'Build need is UNKNOWN'
         return PrepareForBuildResponse.UNKNOWN
-      step.presentation.step_text = 'Build is POINTLESS'
+      presentation.step_text = 'Build is POINTLESS'
       return PrepareForBuildResponse.POINTLESS

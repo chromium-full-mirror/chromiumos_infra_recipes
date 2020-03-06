@@ -47,7 +47,7 @@ def _gs_path(bucket, path):
 
 
 def RunSteps(api, properties):
-  with api.step.nest('validate properties') as step:
+  with api.step.nest('validate properties') as presentation:
     if not properties.version_file:
       raise ValueError('must set version_file')
 
@@ -60,7 +60,7 @@ def RunSteps(api, properties):
     if not properties.destination_gs_path:
       raise ValueError('must set destination_gs_path')
 
-    step.presentation.step_text = 'all properties good'
+    presentation.step_text = 'all properties good'
 
   with api.step.nest('get latest postsubmit build version'):
     builder_name = '{}-postsubmit'.format(properties.board)
@@ -94,13 +94,13 @@ def RunSteps(api, properties):
     package_path = api.path.dirname(version_path)
     package = os.path.basename(package_path)
 
-    with api.step.nest('try uprev version file') as step:
+    with api.step.nest('try uprev version file') as presentation:
       api.file.write_raw(name='version file', dest=version_path,
                          data=sanitized_version)
 
       with api.context(cwd=api.path.abs_to_path(package_path)):
         if not api.git.diff_check(version_path):
-          step.presentation.step_text = (
+          presentation.step_text = (
               'skipping uprev for {}. version unchanged').format(package)
           return
 

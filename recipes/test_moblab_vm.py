@@ -55,7 +55,7 @@ def RunSteps(api, properties):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-      with api.step.nest('init sdk') as step:
+      with api.step.nest('init sdk') as presentation:
         try:
           api.cros_sdk.build_chmod_chroot()
           response = api.cros_build_api.SdkService.Create(
@@ -63,9 +63,7 @@ def RunSteps(api, properties):
                   flags=CreateSdkRequest.Flags(no_replace=True,
                                                no_use_image=True),
                   chroot=api.cros_sdk.chroot))
-          step.presentation.logs['sdk version'] = [
-              str(response.version.version)
-          ]
+          presentation.logs['sdk version'] = [str(response.version.version)]
           api.cros_sdk.link_chroot(api.cros_source.workspace_path)
         except api.step.StepFailure as e:
           # Invalidate the cache if the InitSDK call fails.

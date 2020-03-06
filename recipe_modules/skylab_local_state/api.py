@@ -30,10 +30,10 @@ class SkylabLocalStateCommand(recipe_api.RecipeApi):
 
     Returns: LoadResponse.
     """
-    with self.m.step.nest('call `skylab_local_state`') as s:
+    with self.m.step.nest('call `skylab_local_state`') as pres:
       if not isinstance(request, LoadRequest):
         raise ValueError('request is not of type %s' % LoadRequest)
-      s.presentation.logs['request'] = [json_format.MessageToJson(request)]
+      pres.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_skylab_local_state()
       cmd = [
           self._cmd,
@@ -49,7 +49,7 @@ class SkylabLocalStateCommand(recipe_api.RecipeApi):
           LoadResponse,
           stdin_data=json_format.MessageToJson(request),
           test_output=LoadResponse())
-      s.presentation.logs['response'] = [json_format.MessageToJson(response)]
+      pres.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
   def save(self, request):
@@ -58,10 +58,10 @@ class SkylabLocalStateCommand(recipe_api.RecipeApi):
     Args:
       request: a SaveRequest.
     """
-    with self.m.step.nest('call `skylab_local_state`') as s:
+    with self.m.step.nest('call `skylab_local_state`') as pres:
       if not isinstance(request, SaveRequest):
         raise ValueError('request is not of type %s' % SaveRequest)
-      s.presentation.logs['request'] = [json_format.MessageToJson(request)]
+      pres.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_skylab_local_state()
       cmd = [
           self._cmd,

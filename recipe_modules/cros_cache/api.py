@@ -41,13 +41,13 @@ class CrosCacheApi(recipe_api.RecipeApi):
       archive_file (Path): Path to the created archive file.
       version_file (Path): Path to the created version file.
     """
-    with self.m.step.nest('tar up source repo checkout') as step:
+    with self.m.step.nest('tar up source repo checkout') as presentation:
       if self.m.path.exists(source_path):
         archive_path = self.m.path.mkdtemp(prefix='source_cache')
         version_file = archive_path.join('version.txt')
         self.m.file.write_raw('write version file', version_file, filename)
         archive_file = archive_path.join(filename)
-        step.presentation.step_text = ('archive file: %s' % filename)
+        presentation.step_text = ('archive file: %s' % filename)
         archive_cmd = [
             'tar', '--use-compress-program=pigz', '-cf', archive_file, '.'
         ]

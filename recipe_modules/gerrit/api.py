@@ -315,7 +315,7 @@ class GerritApi(recipe_api.RecipeApi):
     Returns:
       bool: whether the changes are submittable
     """
-    with self.m.step.nest('check for merge conflicts') as step:
+    with self.m.step.nest('check for merge conflicts') as presentation:
       changes = []
       for gc in gerrit_changes:
         changes.append({
@@ -332,12 +332,12 @@ class GerritApi(recipe_api.RecipeApi):
       result = self.m.support.call('git-test-submit', req,
                                    test_output_data=test_output_data)
       if result['errors']:
-        step.presentation.step_text = 'unable to cherry-pick changes'
-        step.presentation.logs['cherry-pick-failures'] = result['errors']
-        step.presentation.status = 'FAILURE'
-        step.presentation.properties['merge_conflict'] = True
+        presentation.step_text = 'unable to cherry-pick changes'
+        presentation.logs['cherry-pick-failures'] = result['errors']
+        presentation.status = 'FAILURE'
+        presentation.properties['merge_conflict'] = True
         return False
-      step.presentation.step_text = 'confirmed no merge conflicts'
+      presentation.step_text = 'confirmed no merge conflicts'
       return True
 
   def create_change(self, project, reviewers=None, topic=None):
@@ -355,7 +355,7 @@ class GerritApi(recipe_api.RecipeApi):
     Returns:
       GerritChange: The newly created change.
     """
-    with self.m.step.nest('create gerrit change for %s' % project) as step:
+    with self.m.step.nest('create gerrit change for %s' % project) as pres:
       with self.m.context(cwd=self.m.cros_source.workspace_path):
         project_info = self.m.repo.project_info(project)
 
@@ -367,7 +367,7 @@ class GerritApi(recipe_api.RecipeApi):
             step_test_data=functools.partial(
                 self.m.raw_io.test_api.stream_output,
                 self.test_api.test_gerrit_change_url()))
-        step.presentation.links['link to change'] = gerrit_change_url
+        pres.links['link to change'] = gerrit_change_url
 
         # The URL does not always include the project name, so always set it.
         change = self.parse_gerrit_change(gerrit_change_url)
@@ -384,11 +384,11 @@ class GerritApi(recipe_api.RecipeApi):
     Returns:
       str: The new label ref (primarily for testing).
     """
-    with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as step:
+    with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as pres:
       full_labels = sorted([
           '%s+%d' % (label.key, value) for label, value in labels.iteritems()])
-      step.presentation.step_text = ','.join(full_labels)
-      step.presentation.links['link to change'] = self.parse_gerrit_change_url(
+      pres.step_text = ','.join(full_labels)
+      pres.links['link to change'] = self.parse_gerrit_change_url(
           gerrit_change)
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
@@ -416,9 +416,9 @@ class GerritApi(recipe_api.RecipeApi):
     Returns:
       str: The new message ref (primarily for testing).
     """
-    with self.m.step.nest('comment on CL %d' % gerrit_change.change) as step:
-      step.presentation.logs['comment text'] = [comment]
-      step.presentation.links['link to change'] = self.parse_gerrit_change_url(
+    with self.m.step.nest('comment on CL %d' % gerrit_change.change) as pres:
+      pres.logs['comment text'] = [comment]
+      pres.links['link to change'] = self.parse_gerrit_change_url(
           gerrit_change)
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
@@ -438,9 +438,9 @@ class GerritApi(recipe_api.RecipeApi):
       str: The change description.
     """
     with self.m.step.nest(
-        'get CL %d description' % gerrit_change.change) as step:
+        'get CL %d description' % gerrit_change.change) as pres:
       gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
-      step.presentation.links['link to change'] = gerrit_change_url
+      pres.links['link to change'] = gerrit_change_url
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
@@ -457,7 +457,7 @@ class GerritApi(recipe_api.RecipeApi):
                 self.m.raw_io.test_api.stream_output,
                 self.test_api.test_gerrit_change_description()))
 
-      step.presentation.logs['description text'] = [description.stdout]
+      pres.logs['description text'] = [description.stdout]
       return description
 
   def set_change_description(self, gerrit_change, description):
@@ -469,10 +469,10 @@ class GerritApi(recipe_api.RecipeApi):
           includes the Change-Id and other essential metadata.
     """
     with self.m.step.nest(
-        'set CL %d description' % gerrit_change.change) as step:
+        'set CL %d description' % gerrit_change.change) as pres:
       gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
-      step.presentation.links['link to change'] = gerrit_change_url
-      step.presentation.logs['description text'] = [description]
+      pres.links['link to change'] = gerrit_change_url
+      pres.logs['description text'] = [description]
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
@@ -489,8 +489,8 @@ class GerritApi(recipe_api.RecipeApi):
       gerrit_change (GerritChange): The change to abandon.
       message (str): Optional message to post to change.
     """
-    with self.m.step.nest('abandon CL %d' % gerrit_change.change) as step:
-      step.presentation.links['link to change'] = self.parse_gerrit_change_url(
+    with self.m.step.nest('abandon CL %d' % gerrit_change.change) as pres:
+      pres.links['link to change'] = self.parse_gerrit_change_url(
           gerrit_change)
 
       self.m.depot_tools_gerrit.abandon_change(
@@ -509,7 +509,7 @@ class GerritApi(recipe_api.RecipeApi):
     Returns:
       list[GerritChange]: Changes that match the query.
     """
-    with self.m.step.nest('query %s' % host) as step:
+    with self.m.step.nest('query %s' % host) as presentation:
       results = self.m.depot_tools_gerrit.get_changes(host, query_params)
       prefix = 'https://'
       changes = [
@@ -521,9 +521,9 @@ class GerritApi(recipe_api.RecipeApi):
           for result in results
       ]
 
-      step.presentation.step_text = 'found %d matching CLs' % len(changes)
+      presentation.step_text = 'found %d matching CLs' % len(changes)
       for change in changes:
         change_url = self.parse_gerrit_change_url(change)
-        step.presentation.links['found CL %d' % change.change] = change_url
+        presentation.links['found CL %d' % change.change] = change_url
 
       return changes

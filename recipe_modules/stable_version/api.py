@@ -16,7 +16,7 @@ class StableVersionApi(recipe_api.RecipeApi):
 
   def validate_stable_version(self):
     """Validate the remote stable version config file."""
-    with self.m.step.nest('call stable_version2 to check remote file') as s:
+    with self.m.step.nest('call stable_version2 to check remote file') as pres:
       self._ensure_stable_version()
       cmd = [
           self._cmd,
@@ -28,7 +28,7 @@ class StableVersionApi(recipe_api.RecipeApi):
           cmd,
           test_stdout=StableVersionApi.VALIDATE_TEST_SENTINEL,
       )
-      s.presentation.logs['response'] = response
+      pres.logs['response'] = response
       return response
 
   def fetch_and_commit(self):
@@ -36,7 +36,7 @@ class StableVersionApi(recipe_api.RecipeApi):
 
     Returns: response: raw string as the stdout data.
     """
-    with self.m.step.nest('call stable_version2') as s:
+    with self.m.step.nest('call stable_version2') as pres:
       self._ensure_stable_version()
       cmd = [
         self._cmd,
@@ -47,7 +47,7 @@ class StableVersionApi(recipe_api.RecipeApi):
           cmd,
           # TODO(xixuan): mock a more structured output.
           test_stdout='http://CL/123')
-      s.presentation.logs['response'] = response
+      pres.logs['response'] = response
       return response
 
   def _ensure_stable_version(self):

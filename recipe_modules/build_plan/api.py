@@ -49,12 +49,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     if enable_history:
       if gerrit_changes:
-        with self.m.step.nest('get build history') as step:
+        with self.m.step.nest('get build history') as presentation:
           is_retry = len(
               self.m.cros_history.get_matching_builds(
                   self.m.buildbucket.build)) > 1
           completed_builds = self.get_completed_builds(child_specs)
-          step.presentation.step_text = ('found {} build{} to recycle'.format(
+          presentation.step_text = ('found {} build{} to recycle'.format(
               len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
       snapshot_builds = self.m.cros_history.get_snapshot_builds(
@@ -75,7 +75,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     filtered_snapshot_builds = []
 
-    with self.m.step.nest('filter builds') as step:
+    with self.m.step.nest('filter builds') as presentation:
       for child_spec in child_specs:
         child_builder_config = self.m.cros_infra_config.get_builder_config(
             child_spec.name)
@@ -134,10 +134,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
                 gerrit_changes=gerrit_changes, critical=critical,
                 properties=self.m.cq.props_for_child_build, tags=tags,
                 swarming_parent_run_id=parent_run_id))
-      step.presentation.logs['filter log'] = filter_log
+      presentation.logs['filter log'] = filter_log
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.
-      step.presentation.step_text = ('need {} new build{} (filtered {})'.format(
+      presentation.step_text = ('need {} new build{} (filtered {})'.format(
           len(new_build_requests), '' if len(new_build_requests) == 1 else 's',
           len(child_specs) - len(new_build_requests)))
 
@@ -155,7 +155,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       latest successful child builds with the same patches as the current
       cq orchestrator with refreshed critical values.
     """
-    with self.m.step.nest("get completed builds") as step:
+    with self.m.step.nest("get completed builds") as presentation:
       completed_builds = []
       passed_builds = self.m.cros_history.get_passed_builds()
       skip_log = []
@@ -182,7 +182,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
             if builder_config.general.critical.value else common_pb2.NO)
         completed_builds.append(build)
 
-      step.presentation.logs['skip log'] = skip_log
+      presentation.logs['skip log'] = skip_log
       return completed_builds
 
   def prioritize_builds(self, builds):

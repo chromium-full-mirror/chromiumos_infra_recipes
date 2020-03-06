@@ -77,19 +77,19 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
       manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
           namedtuples.
     """
-    with self.m.step.nest('ensure manifest cq-depend fulfilled') as step:
+    with self.m.step.nest('ensure manifest cq-depend fulfilled') as pres:
       # Short-circuit if the manifest didn't change.
       if len(manifest_diffs) == 0:
-        step.presentation.step_text = 'manifest did not change'
+        pres.step_text = 'manifest did not change'
         return
 
       # Log the manifest diffs in human-readable form
-      manifest_diff_log = step.presentation.logs.setdefault('diff manifest', [])
+      manifest_diff_log = pres.logs.setdefault('diff manifest', [])
       for diff in manifest_diffs:
         manifest_diff_log.append('%s upreved from %s to %s' %
                                  (diff.path, diff.from_rev, diff.to_rev))
 
-      dep_log = step.presentation.logs.setdefault('gather cq-depend', [])
+      dep_log = pres.logs.setdefault('gather cq-depend', [])
 
       # Gather all Cq-Depend entries in all change messages.
       deps = self._gather_deps(manifest_diffs, dep_log)
@@ -135,7 +135,7 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
                                            test_output_data=test_data)
 
       # Log dep fulfilment in human-readable format as well
-      dep_local_log = step.presentation.logs.setdefault('dep local', [])
+      dep_local_log = pres.logs.setdefault('dep local', [])
 
       project_names = {p.name for p in self.m.repo.project_infos()}
 
@@ -144,7 +144,7 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
         if change.get('info') is None:
           dep_local_log.append(
               'gerrit query failure for cl %s' % change.get('change_number'))
-          step.presentation.status = self.m.step.WARNING
+          pres.status = self.m.step.WARNING
           continue
         project = change['info']['project']
         branch = change['info']['branch']
@@ -179,7 +179,7 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
               '%s found at %s on branch %s' % (rev, path, branch))
 
       # All deps satisfied
-      step.presentation.step_text = 'cq-depend checked'
+      pres.step_text = 'cq-depend checked'
 
   def get_cq_depend_reference(self, gerrit_change):
     """Return the Cq-Depend reference string for the given change.

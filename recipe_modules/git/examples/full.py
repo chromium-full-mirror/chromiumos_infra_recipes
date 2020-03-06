@@ -25,9 +25,9 @@ def RunSteps(api):
   api.git.commit('Updated README\n\nMuch better now.', files=['README.md'])
   api.git.push('origin', 'HEAD:master', dry_run=True, capture_stdout=True)
 
-  with api.step.nest('check diffs') as result:
+  with api.step.nest('check diffs') as presentation:
     has_diffs = api.git.diff_check('some/file/path')
-    result.presentation.text = has_diffs
+    presentation.text = has_diffs
 
   [commit] = api.git.log('START_REF', 'END_REF', limit=30)
   api.assertions.assertEqual(commit.rev, commit_id)

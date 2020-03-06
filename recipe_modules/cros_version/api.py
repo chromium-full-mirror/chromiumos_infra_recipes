@@ -57,7 +57,7 @@ class CrosVersionApi(recipe_api.RecipeApi):
     Raises:
       ValueError: if the version file had unexpected formatting.
     """
-    with self.m.step.nest('read chromeos version') as read_version_step:
+    with self.m.step.nest('read chromeos version') as presentation:
       version_path = self.m.cros_source.workspace_path.join(
           CHROMEOS_VERSION_PATH)
       contents = self.m.file.read_raw(
@@ -79,7 +79,7 @@ class CrosVersionApi(recipe_api.RecipeApi):
         # with the isolate hash.
         version_snapshot = self.m.cros_source.snapshot_isolated_hash
         if version_snapshot:
-          read_snapshot_step.presentation.step_text = 'using snapshot isolate'
+          read_snapshot_step.step_text = 'using snapshot isolate'
         else:
           with self.m.context(
               cwd=self.m.cros_source.workspace_path.join('manifest-internal')):
@@ -90,5 +90,5 @@ class CrosVersionApi(recipe_api.RecipeApi):
         version_args['snapshot'] = version_snapshot
 
       version = Version(**version_args)
-      read_version_step.presentation.step_text = 'found version: %s' % version
+      presentation.step_text = 'found version: %s' % version
       return version

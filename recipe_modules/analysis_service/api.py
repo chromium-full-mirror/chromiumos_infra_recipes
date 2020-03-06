@@ -227,7 +227,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       step_data (recipe_engine.StepData): Data from the step that sent the request.
       step_output (str): Output for the step.
     """
-    with self.m.step.nest('publish event') as step:
+    with self.m.step.nest('publish event') as presentation:
       if not self.can_publish_event(request, response):
         raise ValueError(
             'Must check can_publish_event before calling publish_event.')
@@ -254,7 +254,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       analysis_service_event.request_time.CopyFrom(request_time)
       analysis_service_event.response_time.CopyFrom(response_time)
 
-      step.presentation.logs['published event'] = [
+      presentation.logs['published event'] = [
           json_format.MessageToJson(analysis_service_event)
       ]
 

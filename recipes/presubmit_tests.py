@@ -41,10 +41,10 @@ def RunSteps(api, properties):
 
   # TODO(crbug/1039875): Look at moving this code to a recipe module and using
   # that both here, and in orchestrator.determine_repo_state.
-  with api.step.nest('validate inputs') as step:
+  with api.step.nest('validate inputs') as presentation:
     # If there are no gerrit_changes, we're done.
     if not len(gerrit_changes):
-      step.presentation.step_text = "No changes given:  Build is POINTLESS."
+      presentation.step_text = "No changes given:  Build is POINTLESS."
       return
 
     # If we did not get a gitiles_commit, use refs/heads/snapshot.
@@ -88,7 +88,7 @@ def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
 
       for patch, commit in zip(patch_sets, new_commits):
         full_path = workpath.join(commit.path)
-        with api.step.nest('checking %s' % commit.path) as step:
+        with api.step.nest('checking %s' % commit.path) as presentation:
           info = path_info[commit.path]
           branch = 'master'
           if info.branch.startswith('refs/heads/'):
@@ -111,7 +111,7 @@ def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
                 api.step('git cl presubmit',
                          ['git', 'cl', 'presubmit', '--verbose'])
               else:
-                step.presentation.step_text = 'No PRESUBMIT file found.'
+                presentation.step_text = 'No PRESUBMIT file found.'
             # The branch isn't merged, so we have to use -D.
             api.step('branch cleanup', ['git', 'branch', '-D', '__presubmit'])
 

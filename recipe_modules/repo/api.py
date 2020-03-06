@@ -276,21 +276,21 @@ class RepoApi(recipe_api.RecipeApi):
       List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
       changed project (excludes added/removed projects).
     """
-    with self.m.step.nest('diff remote and local manifest') as step:
+    with self.m.step.nest('diff remote and local manifest') as presentation:
       self.m.git.fetch_ref(from_manifest_url, from_manifest_ref)
       from_xml = self.m.git.show_file('FETCH_HEAD', 'snapshot.xml',
                                       test_contents=MANIFEST_MOCK)
 
       if from_xml is None:
-        step.presentation.step_text = 'no remote manifest found'
-        step.presentation.status = 'WARNING'
+        presentation.step_text = 'no remote manifest found'
+        presentation.status = 'WARNING'
         return None
 
       diffs = self.diff_manifests(from_xml, to_manifest_str)
 
       if not diffs:
-        step.presentation.step_text = 'no manifest diffs from remote to local'
-        step.presentation.status = 'WARNING'
+        presentation.step_text = 'no manifest diffs from remote to local'
+        presentation.status = 'WARNING'
 
       return diffs
 

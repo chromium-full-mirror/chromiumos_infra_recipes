@@ -97,7 +97,7 @@ def RunSteps(api, properties):
   """Run steps."""
   local_dir = api.path['cleanup']
 
-  with api.step.nest('validate request') as step:
+  with api.step.nest('validate request') as presentation:
     image_type = properties.image_type
     image_type_name = ImageType.Name(image_type).lower()
     # TODO(lamontjones): Extend this to checking the config for the list of
@@ -137,9 +137,9 @@ def RunSteps(api, properties):
       return result_pb2.RawResult(
           status=common_pb2.FAILURE, summary_markdown='must set device_id')
 
-    step.presentation.step_text = 'all properties good'
+    presentation.step_text = 'all properties good'
 
-  with api.step.nest('create Cr50 instructions') as step:
+  with api.step.nest('create Cr50 instructions'):
     target = _target_type_to_name[cr50.target]
     channel = _channel_to_name[properties.channel]
 
@@ -176,7 +176,7 @@ def RunSteps(api, properties):
     else:
       insns.append('output_names = cr50_@VERSION@_@TARGET@_@KEYSET@')
 
-  with api.step.nest('upload cr50 instructions') as step:
+  with api.step.nest('upload cr50 instructions') as presentation:
     content = str('\n'.join(insns) + '\n')
     # crbug.com/1025023: Don't clobber other pending instructions files.
     random_suffix = ''.join(api.random.choice(string.ascii_letters)
@@ -191,9 +191,9 @@ def RunSteps(api, properties):
         name='instructions file', dest=local_insn, data=content)
 
     api.gsutil(['cp', local_insn, insn_path])
-    step.presentation.step_text = 'instructions uploaded'
+    presentation.step_text = 'instructions uploaded'
 
-  with api.step.nest('trigger cr50 signing') as step:
+  with api.step.nest('trigger cr50 signing') as presentation:
     # TODO(lamontjones): Put some info there instead of /dev/null.
     trigger_data = r''
     trigger_base = '50,' + rel_insn_path.replace('/', ',')
@@ -203,7 +203,7 @@ def RunSteps(api, properties):
     api.file.write_raw(
         name='trigger file', dest=local_trigger, data=trigger_data)
     api.gsutil(['cp', local_trigger, trigger_path])
-    step.presentation.step_text = 'trigger uploaded'
+    presentation.step_text = 'trigger uploaded'
 
 def GenTests(api):
   yield api.test('basic')

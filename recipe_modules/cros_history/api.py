@@ -38,7 +38,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Returns:
       list([build_pb2.Build]): Passed builds with at most one build per builder.
     """
-    with self.m.step.nest('get change build history') as step:
+    with self.m.step.nest('get change build history') as presentation:
       build = self.m.buildbucket.build
       passed_builds = []
       # Start with cq-orchestrator so we don't add it to the result.
@@ -55,14 +55,14 @@ class CrosHistoryApi(recipe_api.RecipeApi):
           passed_builders.add(build.builder.builder)
           passed_builds.append(build)
 
-      step.presentation.step_text = ('some builds already completed'
-                                     if passed_builds else
-                                     'found no completed builds')
+      presentation.step_text = ('some builds already completed'
+                                if passed_builds else
+                                'found no completed builds')
       passed_builds.sort(key=lambda build: build.builder.builder)
       for build in passed_builds:
         title = self.m.naming.get_build_title(build)
         url = self.m.buildbucket.build_url(build_id=build.id)
-        step.presentation.links[title] = url
+        presentation.links[title] = url
 
       return passed_builds
 
@@ -72,7 +72,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Returns:
       set[str]: Names of passed tests, if any.
     """
-    with self.m.step.nest('get change test history') as step:
+    with self.m.step.nest('get change test history') as presentation:
       current_build = self.m.buildbucket.build
       past_builds = self.get_matching_builds(current_build)
 
@@ -82,12 +82,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         passed_tests = build_output.get(PASSED_TESTS_KEY, [])
         all_passed_tests |= set(passed_tests)
 
-      step.presentation.step_text = ('some tests already passed'
-                                     if all_passed_tests else
-                                     'found no previously passed tests')
+      presentation.step_text = ('some tests already passed'
+                                if all_passed_tests else
+                                'found no previously passed tests')
       if all_passed_tests:
-        step.presentation.logs['list of passed tests'] = sorted(
-            all_passed_tests)
+        presentation.logs['list of passed tests'] = sorted(all_passed_tests)
 
       return all_passed_tests
 
@@ -121,7 +120,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Returns:
       list[Build] builds with the same snapshot and additional filtering.
     """
-    with self.m.step.nest('get snapshot builds') as step:
+    with self.m.step.nest('get snapshot builds') as presentation:
       project = self.m.buildbucket.build.builder.project
       builder_shell = build_pb2.BuilderID(project=project,
                                           bucket=SNAPSHOT_BUCKET)
@@ -137,12 +136,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
             build for build in snapshot_builds
             if build.builder.builder in builder_list
         ]
-      step.presentation.step_text = 'found %d snapshot builds' % len(
-          snapshot_builds)
+      presentation.step_text = 'found %d snapshot builds' % len(snapshot_builds)
       for build in snapshot_builds:
         title = self.m.naming.get_build_title(build)
         url = self.m.buildbucket.build_url(build_id=build.id)
-        step.presentation.links[title] = url
+        presentation.links[title] = url
       return snapshot_builds
 
   def get_matching_builds(self, build, statuses=None, start_build_id=None,

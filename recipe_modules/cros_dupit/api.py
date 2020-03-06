@@ -228,7 +228,7 @@ class DupItApi(recipe_api.RecipeApi):
 
   def _copy_new_distfiles_to_gs(self):
     """Copy new distfiles from tmpdir to gs"""
-    with self.m.step.nest('copy new distfiles to gs') as step:
+    with self.m.step.nest('copy new distfiles to gs') as presentation:
       if self.m.file.listdir('list new distfiles', self.tmp_distfiles_path):
         gsutil_cp_cmd = [
             'cp',
@@ -246,7 +246,7 @@ class DupItApi(recipe_api.RecipeApi):
         self.m.gsutil(cmd=gsutil_cp_cmd, multithreaded=True,
                       name=gsutil_cp_name, parallel_upload=True)
       else:
-        step.presentation.step_text = 'No new distfiles to upload'
+        presentation.step_text = 'No new distfiles to upload'
 
   def run(self):
     self._rsync_new_distfiles_from_gentoo()

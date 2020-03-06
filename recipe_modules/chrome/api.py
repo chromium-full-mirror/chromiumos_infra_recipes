@@ -128,16 +128,16 @@ class ChromeApi(recipe_api.RecipeApi):
     """
     patch_sets = patch_sets or []
 
-    with self.m.step.nest('check if diff requires chrome rebuild') as s:
+    with self.m.step.nest('check if diff requires chrome rebuild') as pres:
       for patch_set in patch_sets:
         if patch_set.project in CHROMIUM_REBUILD_REGEXES:
           regex_list = CHROMIUM_REBUILD_REGEXES[patch_set.project]
           for f_path in patch_set.file_infos.keys():
             for regex in regex_list:
               if regex.match(f_path):
-                s.step_text = '%s caused chrome build' % f_path
+                pres.step_text = '%s caused chrome build' % f_path
                 return True
-      s.step_text = 'no file diffs caused rebuild'
+      pres.step_text = 'no file diffs caused rebuild'
     return False
 
   def builds_chrome_from_source(self, build_target, chroot, packages=None,

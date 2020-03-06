@@ -11,8 +11,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  with api.step.nest('noop for now step') as step:
-    step.presentation.step_text = "noop generate a payload"
+  with api.step.nest('noop for now step') as presentation:
+    presentation.step_text = "noop generate a payload"
 
 
 def GenTests(api):

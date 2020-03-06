@@ -31,7 +31,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     Returns:
       str, link to the archive on pantheon.
     """
-    with self.m.step.nest('GS upload ' + tag) as step:
+    with self.m.step.nest('GS upload ' + tag) as presentation:
       build = self.m.buildbucket.build
       upload_uri = 'gs://%s/%s/%s/%s' % (GS_BUCKET, build.builder.builder,
                                          build.id, tag)
@@ -40,7 +40,7 @@ class TastResultsApi(recipe_api.RecipeApi):
                     timeout=self.test_api.gsutil_timeout_seconds)
       pantheon_url = '%s/%s/%s/%s/%s' % (PANTHEON_PREFIX, GS_BUCKET,
                                          build.builder.builder, build.id, tag)
-      step.presentation.links['archive_link'] = pantheon_url
+      presentation.links['archive_link'] = pantheon_url
       return pantheon_url
 
   def get_results(self, test_results_path, suite_name, tag):
@@ -162,23 +162,23 @@ class TastResultsApi(recipe_api.RecipeApi):
       failures(list(Failure)): Failures of this run.
       empty_result(bool): Were the results empty?
     """
-    with self.m.step.nest('print results') as step:
+    with self.m.step.nest('print results') as presentation:
       if empty_result:
-        step.status = self.m.step.EXCEPTION
-        step.presentation.step_text = 'empty result'
+        presentation.status = self.m.step.EXCEPTION
+        presentation.step_text = 'empty result'
         # Ensure the recipe fails as well.
         raise self.m.step.InfraFailure(
             'No results dumped; Likely a tast crash crbug/1049754')
       elif not failures:
-        step.presentation.step_text = 'all tests passed!'
+        presentation.step_text = 'all tests passed!'
       else:
-        step.status = self.m.step.FAILURE
+        presentation.status = self.m.step.FAILURE
         for failure in failures:
-          with self.m.step.nest(failure.title) as step:
-            step.presentation.status = self.m.step.FAILURE
+          with self.m.step.nest(failure.title) as presentation:
+            presentation.status = self.m.step.FAILURE
             for text, log in failure.link_map.items():
-              step.presentation.links['logs'] = log
-              step.presentation.step_text = text
+              presentation.links['logs'] = log
+              presentation.step_text = text
 
   def record_logs(self, sys_log_dir):
     """Print system logs to MILO.
@@ -186,7 +186,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     Args:
       sys_log_dir(str): absolute dir path to copy logs from.
     """
-    with self.m.step.nest('record logs') as step:
+    with self.m.step.nest('record logs') as presentation:
       dump_dir = self.m.path.mkdtemp('var-log-dump')
       self.m.step('copy logs',
                   ['sudo', '-n', 'cp', '-rf', sys_log_dir,
@@ -195,7 +195,7 @@ class TastResultsApi(recipe_api.RecipeApi):
                   ['sudo', '-n', 'chmod', '-R', '777',
                    str(dump_dir)])
       archive_link = self.archive_dir(dump_dir, 'system_logs')
-      step.presentation.links['system_logs'] = archive_link
+      presentation.links['system_logs'] = archive_link
 
   def _match_to_scenario(self, test_case, scenario):
     return (test_case.name == scenario.test_name and
@@ -212,9 +212,9 @@ class TastResultsApi(recipe_api.RecipeApi):
       list(str) names of tests to be retried and a boolean that
       requires VM restart before retry.
     """
-    with self.m.step.nest('tests to retry') as step:
+    with self.m.step.nest('tests to retry') as presentation:
       if task_result.state.verdict == TaskState.VERDICT_PASSED:
-        step.presentation.step_text = 'All tests passed!'
+        presentation.step_text = 'All tests passed!'
         return [], False
 
       test_map = {
@@ -225,8 +225,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       tests_to_retry = []
       step_log = []
       retry_config = self.m.cros_infra_config.get_vm_retry_config()
-      step.presentation.logs['retry_config'] = str(retry_config)
-      step.presentation.logs['failed_tests'] = str(test_map)
+      presentation.logs['retry_config'] = str(retry_config)
+      presentation.logs['failed_tests'] = str(test_map)
       requires_restart = False
       for scenario in retry_config.suite_scenarios:
         if scenario.test_name in test_map:
@@ -239,5 +239,5 @@ class TastResultsApi(recipe_api.RecipeApi):
 
         step_log.append('Scenario had no match:{}'.format(scenario))
 
-      step.presentation.logs['matches'] = step_log
+      presentation.logs['matches'] = step_log
       return tests_to_retry, requires_restart

@@ -976,7 +976,7 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#179)(cls, builds):**
+&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#177)(cls, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -987,11 +987,11 @@ Args:
 
 Returns: a dict(str, build_pb2.Build) of build_target names.
 
-&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#171)(cls, build):**
+&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#169)(cls, build):**
 
 Take a build_pb2 and get its build_target name or return None.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#148)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#146)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -1021,7 +1021,7 @@ Find all tests that have passed with the given patches.
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#108)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#107)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -1037,7 +1037,7 @@ Args:
 Returns:
   list[Build] builds with the same snapshot and additional filtering.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#94)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#93)(self, tests):**
 
 Record the tests that passed in the current run.
 
@@ -1586,7 +1586,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#274)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#272)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -3781,7 +3781,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [RunSteps](/recipes/generator.py#64)(api, properties):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#332)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#330)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
