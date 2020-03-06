@@ -90,7 +90,8 @@ def RunSteps(api, properties):
     if task_result.test_cases:
       all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
 
-    tests_to_retry, _ = api.tast_results.get_tests_to_retry(task_result)
+    tests_to_retry, requires_restart = (
+        api.tast_results.get_tests_to_retry(task_result))
     failures = [
         f for f in api.tast_results.get_failures(task_result)
         if f.title not in tests_to_retry
@@ -101,6 +102,15 @@ def RunSteps(api, properties):
     ]
     final_task_result = task_result
     if tests_to_retry:
+      if requires_restart:
+        _kill_vm(api, kvm_pid_file)
+        _record_qemu_logs(api, kvm_monitor_file, kvm_monitor_serial_file)
+        kvm_pid_file = api.path.mkstemp(prefix='kvm-pid')
+        kvm_monitor_file = api.path.mkstemp(prefix='kvm-monitor')
+        kvm_monitor_serial_file = api.path.mkstemp(prefix='kvm-monitor-serial')
+        _launch_vm(api, qcow_image_path, kvm_pid_file, kvm_monitor_file,
+                   kvm_monitor_serial_file, private_key_path)
+
       retry_task_result = _run_tast(api, tests_to_retry, tast_dir,
                                     private_key_path, properties.name, 'second')
       all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']

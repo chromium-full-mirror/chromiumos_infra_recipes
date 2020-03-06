@@ -271,6 +271,7 @@
       "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
       "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
       "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@  requires_restart: true@@@",
       "@@@STEP_LOG_LINE@retry_config@}@@@",
       "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
       "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
@@ -289,6 +290,7 @@
       "@@@STEP_LOG_LINE@matches@<->test_name: \"arc.Boot\"@@@",
       "@@@STEP_LOG_LINE@matches@reason: \"Lost SSH connection\"@@@",
       "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@requires_restart: true@@@",
       "@@@STEP_LOG_LINE@matches@Scenario had no match:test_name: \"arc.Boot\"@@@",
       "@@@STEP_LOG_LINE@matches@reason: \"Test did not finish\"@@@",
       "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
@@ -311,103 +313,6 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/test-artifacts_tmp_1/tast/tast",
-      "-verbose",
-      "run",
-      "-build=false",
-      "-waituntilready",
-      "-continueafterfailure",
-      "-extrauseflags=tast_vm",
-      "-resultsdir",
-      "[CLEANUP]/test-results_tmp_7",
-      "-keyfile=[CLEANUP]/image-archive_tmp_2/image/id_rsa",
-      "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
-      "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
-      "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
-      "localhost:9222",
-      "arc.Boot"
-    ],
-    "name": "run tast tests.tast run second",
-    "timeout": 1800,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tast tests.process tast output (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/test-results_tmp_7/results.json",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "run tast tests.process tast output (2).read results.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@results.json@[{\"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"additionalTime\": 30000000000, \"name\": \"arc.Boot\", \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"skipReason\": \"\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"timeout\": 300000000000, \"softwareDeps\": [\"chrome\", \"android_all\"], \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"data\": null, \"desc\": \"Checks that Android boots\"}, {\"errors\": null, \"end\": \"2020-01-27T15:16:36.833644627-08:00\", \"attr\": [\"name:arc.BuildProperties\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"niwa@chromium.org\", \"risan@chromium.org\", \"arc-eng@google.com\"], \"additionalTime\": 30000000000, \"name\": \"arc.BuildProperties\", \"start\": \"2020-01-27T15:16:33.421007899-08:00\", \"skipReason\": \"\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"timeout\": 240000000000, \"softwareDeps\": [\"android\", \"chrome\"], \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\", \"data\": null, \"desc\": \"Checks important Android properties such as first_api_level\"}, {\"errors\": null, \"end\": \"2020-01-27T15:16:40.090886944-08:00\", \"attr\": [\"name:arc.MiniContainerState\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"yusukes@chromium.org\", \"arc-core@google.com\", \"hidehiko@chromium.org\"], \"additionalTime\": 30000000000, \"name\": \"arc.MiniContainerState\", \"start\": \"2020-01-27T15:16:36.833776957-08:00\", \"skipReason\": \"\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"timeout\": 240000000000, \"softwareDeps\": [\"android\", \"chrome\"], \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\", \"data\": null, \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\"}]@@@",
-      "@@@STEP_LOG_END@results.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tast tests.process tast output (2).GS upload second_results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/second_results@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-o",
-      "GSUtil:parallel_composite_upload_threshold=50M",
-      "-m",
-      "----",
-      "rsync",
-      "-r",
-      "[CLEANUP]/test-results_tmp_7",
-      "gs://chromeos-vmtest-archive//0/second_results"
-    ],
-    "infra_step": true,
-    "name": "run tast tests.process tast output (2).GS upload second_results.gsutil rsync",
-    "timeout": 120,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tast tests.set all_test_cases",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@all_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}, {\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tast tests.set failed_test_cases",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@failed_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]@@@"
     ]
   },
   {
@@ -469,6 +374,232 @@
     ]
   },
   {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_7",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_8",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_9",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/image-archive_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.launch image as vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/test-artifacts_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-resultsdir",
+      "[CLEANUP]/test-results_tmp_10",
+      "-keyfile=[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
+      "localhost:9222",
+      "arc.Boot"
+    ],
+    "name": "run tast tests.tast run second",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tast tests.process tast output (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_10/results.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.process tast output (2).read results.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@results.json@[{\"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"additionalTime\": 30000000000, \"name\": \"arc.Boot\", \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"skipReason\": \"\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"timeout\": 300000000000, \"softwareDeps\": [\"chrome\", \"android_all\"], \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"data\": null, \"desc\": \"Checks that Android boots\"}, {\"errors\": null, \"end\": \"2020-01-27T15:16:36.833644627-08:00\", \"attr\": [\"name:arc.BuildProperties\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"niwa@chromium.org\", \"risan@chromium.org\", \"arc-eng@google.com\"], \"additionalTime\": 30000000000, \"name\": \"arc.BuildProperties\", \"start\": \"2020-01-27T15:16:33.421007899-08:00\", \"skipReason\": \"\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"timeout\": 240000000000, \"softwareDeps\": [\"android\", \"chrome\"], \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\", \"data\": null, \"desc\": \"Checks important Android properties such as first_api_level\"}, {\"errors\": null, \"end\": \"2020-01-27T15:16:40.090886944-08:00\", \"attr\": [\"name:arc.MiniContainerState\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"yusukes@chromium.org\", \"arc-core@google.com\", \"hidehiko@chromium.org\"], \"additionalTime\": 30000000000, \"name\": \"arc.MiniContainerState\", \"start\": \"2020-01-27T15:16:36.833776957-08:00\", \"skipReason\": \"\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"timeout\": 240000000000, \"softwareDeps\": [\"android\", \"chrome\"], \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\", \"data\": null, \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\"}]@@@",
+      "@@@STEP_LOG_END@results.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tast tests.process tast output (2).GS upload second_results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/second_results@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/test-results_tmp_10",
+      "gs://chromeos-vmtest-archive//0/second_results"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.process tast output (2).GS upload second_results.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tast tests.set all_test_cases",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@all_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}, {\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tast tests.set failed_test_cases",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@failed_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_7"
+    ],
+    "name": "run tast tests.kill vm (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tast tests.qemu logs (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_8",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.qemu logs (2).reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_8@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_9",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.qemu logs (2).reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_9@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "run tast tests.record logs",
     "~followup_annotations": [
@@ -483,7 +614,7 @@
       "cp",
       "-rf",
       "/var/log",
-      "[CLEANUP]/var-log-dump_tmp_8"
+      "[CLEANUP]/var-log-dump_tmp_11"
     ],
     "name": "run tast tests.record logs.copy logs",
     "~followup_annotations": [
@@ -497,7 +628,7 @@
       "chmod",
       "-R",
       "777",
-      "[CLEANUP]/var-log-dump_tmp_8"
+      "[CLEANUP]/var-log-dump_tmp_11"
     ],
     "name": "run tast tests.record logs.loosen permission",
     "~followup_annotations": [
@@ -525,7 +656,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/var-log-dump_tmp_8",
+      "[CLEANUP]/var-log-dump_tmp_11",
       "gs://chromeos-vmtest-archive//0/system_logs"
     ],
     "infra_step": true,

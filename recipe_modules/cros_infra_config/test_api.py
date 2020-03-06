@@ -808,7 +808,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
         		{
         			"testName": "arc.Boot",
         			"reason": "Lost SSH connection",
-        			"verdict": "VERDICT_FAILED"
+        			"verdict": "VERDICT_FAILED",
+                                "requires_restart": true
         		},
         		{
         			"testName": "arc.Boot",
