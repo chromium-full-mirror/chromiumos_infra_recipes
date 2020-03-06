@@ -55,29 +55,40 @@ func Clone(ctx context.Context, url string, branch string, parentDir string) (st
 }
 
 // FetchAndCherryPick attempts to cherry-pick a provided Gerrit revision into
-// the provided local Git repo. It returns an error if this fails (e.g. if the
-// cherry-pick won't merge successfully) or nil if the cherry-pick works
+// the provided local Git repo. It returns a bool indicating whether further
+// cherry picks can be performed. It also returns an error if this fails (e.g.
+// if the cherry-pick won't merge successfully) or nil if the cherry-pick works
 // alright.
 //
 // Invocations of this method alter the supplied Git repo, so the order of
 // invocations is important.
-func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url string, repoDir string) error {
+func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url string, repoDir string) (bool, error) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Minute)
 	defer cancel()
 	var stdoutBuf, stderrBuf bytes.Buffer
 	if err := runnerImpl.run(
 		ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "fetch", "--depth=2", url, revision.Ref); err != nil {
-		return errors.New(stderrBuf.String())
+		return false, errors.New(stderrBuf.String())
 	}
 	if err := runnerImpl.run(
 		ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "show", "-s", "--pretty=%p", "FETCH_HEAD"); err != nil {
-		return errors.New(stderrBuf.String())
+		return false, errors.New(stderrBuf.String())
 	}
 	parentCommits := strings.Split(strings.Trim(stdoutBuf.String(), "\n"), " ")
 	if len(parentCommits) > 1 {
 		log.Printf("Found multiple parent commits, indicating a merge commit. "+
 			"We are currently unable to validate this sort of situation. Aborting... %v", parentCommits)
-		return nil
+		return false, nil
+	}
+
+	if err := runnerImpl.run(
+		ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "log", "--format=%B", "-n", "1", "FETCH_HEAD"); err != nil {
+		return false, errors.New(stderrBuf.String())
+	}
+	commitMsg := stdoutBuf.String()
+	if strings.Contains(commitMsg, "---") || strings.Contains(commitMsg, "+++") {
+		log.Printf("It looks like this commit message contains a diff. That would break the next part of this program. See https://crbug.com/1031306. Aborting...")
+		return false, nil
 	}
 
 	log.Printf("creating patch of %s in %s", revision.Ref, repoDir)
@@ -86,7 +97,7 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	// changed file.
 	formatPatchCmd := []string{"format-patch", "--unified=100000000", "FETCH_HEAD^1..FETCH_HEAD"}
 	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", formatPatchCmd...); err != nil {
-		return errors.New(stderrBuf.String())
+		return false, errors.New(stderrBuf.String())
 	}
 	patchFile := strings.Trim(stdoutBuf.String(), "\n")
 	log.Printf("patching branch")
@@ -94,11 +105,11 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 		errStr := stderrBuf.String()
 		if strings.Contains(errStr, "information is lacking or useless") {
 			log.Printf("This looks like a case of https://crbug.com/1031306, in which something in the diff represents a non-existent file. Aborting...")
-			return nil
+			return false, nil
 		}
 		// clean up the am state to reset the repo for the next patch.
 		runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "am", "--abort")
-		return errors.New(errStr)
+		return false, errors.New(errStr)
 	}
-	return nil
+	return true, nil
 }

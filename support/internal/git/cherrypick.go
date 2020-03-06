@@ -50,10 +50,16 @@ func CheckCherryPick(
 			log.Printf("clone repoDir %s", repoDir)
 			for _, c := range changes {
 				log.Printf("\n*\n* Checking change %s:%d\n*\n", c.Host, c.Number)
-				err := FetchAndCherryPick(ctx, c.RevisionInfo, url, repoDir)
+				canContinue, err := FetchAndCherryPick(ctx, c.RevisionInfo, url, repoDir)
 				if err != nil {
 					log.Printf("error cherry-picking %s", c.RevisionInfo.Ref)
 					errs = append(errs, err)
+				}
+				if !canContinue {
+					// The repo is in a state from which we can't continue trying cherrypicks,
+					// so the program should just return.
+					log.Printf("Finishing the program early")
+					return errs
 				}
 				log.Printf("Successfully cherry-picked %d", c.Number)
 			}
