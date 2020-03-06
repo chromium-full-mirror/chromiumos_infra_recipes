@@ -743,6 +743,9 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   },
                   "general": {
                     "critical": true
+                  },
+                  "build": {
+                    "applyGerritChanges": true
                   }
                 }
               ]

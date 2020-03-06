@@ -32,29 +32,28 @@ from PB.chromiumos.builder_config import BuilderConfig
 
 
 def RunSteps(api):
+  with api.step.nest('read builder config') as pres:
+    try:
+      build_config = api.cros_infra_config.get_builder_config(
+          api.buildbucket.build.builder.builder)
+    except LookupError:
+      pres.step_text = 'config not found, assuming deleted'
+      return
+    pres.logs['builder config'] = [str(build_config)]
+    pres.properties['builder_config'] = json_pb.MessageToDict(build_config)
+
   with api.cros_source.checkout_overlays_context(), \
-    api.cros_sdk.cleanup_context(
-        checkout_path=api.cros_source.workspace_path):
+      api.cros_sdk.cleanup_context(
+          checkout_path=api.cros_source.workspace_path):
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache()
       api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
 
       gerrit_changes = api.buildbucket.build.input.gerrit_changes
-      if gerrit_changes:
+      if gerrit_changes and build_config.build.apply_gerrit_changes:
         with api.step.nest('cherry-pick gerrit changes'):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
-
-      with api.step.nest('read builder config') as presentation:
-        try:
-          build_config = api.cros_infra_config.get_builder_config(
-              api.buildbucket.build.builder.builder)
-        except LookupError:
-          presentation.step_text = 'config not found, assuming deleted'
-          return
-        presentation.logs['builder config'] = [str(build_config)]
-        api.easy.set_property_step('builder_config',
-                                  json_pb.MessageToDict(build_config))
 
       with api.step.nest('init sdk') as presentation:
         try:
@@ -105,8 +104,8 @@ def RunSteps(api):
 
 def GenTests(api):
   yield (api.test('no-gerrit-changes') +  #
-         api.buildbucket.try_build(project='chromeos', bucket='postsubmit',
-                                   builder='amd64-generic-postsubmit'))
+         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                                  builder='amd64-generic-postsubmit'))
 
   yield (api.test('one-gerrit-change') +  #
          api.buildbucket.try_build(project='chromeos', bucket='cq',
@@ -143,4 +142,6 @@ def GenTests(api):
       api.step_data('init sdk.read sdk cache version json',
                     api.raw_io.output_text('{"version": "1"}')))
 
-  yield (api.test('builder-no-longer-exists'))
+  yield (api.test('builder-no-longer-exists') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='cq',
+                                  builder='none'))

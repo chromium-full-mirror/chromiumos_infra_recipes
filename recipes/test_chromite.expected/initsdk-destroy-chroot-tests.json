@@ -23,6 +23,53 @@
   },
   {
     "cmd": [],
+    "name": "read builder config",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@builder config@id {@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"chromite-cq\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  type: CQ@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@general {@@@",
+      "@@@STEP_LOG_LINE@builder config@  critical {@@@",
+      "@@@STEP_LOG_LINE@builder config@    value: true@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@build {@@@",
+      "@@@STEP_LOG_LINE@builder config@  apply_gerrit_changes: true@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_END@builder config@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"applyGerritChanges\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"chromite-cq\", \"type\": \"CQ\"}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read builder config.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "read builder config.read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "mount overlay chromiumos"
   },
   {
@@ -611,58 +658,6 @@
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "read builder config",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@builder config@id {@@@",
-      "@@@STEP_LOG_LINE@builder config@  name: \"chromite-cq\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  type: CQ@@@",
-      "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_LINE@builder config@general {@@@",
-      "@@@STEP_LOG_LINE@builder config@  critical {@@@",
-      "@@@STEP_LOG_LINE@builder config@    value: true@@@",
-      "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_END@builder config@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "read builder config.read builder configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "read builder config.read builder configs.fetch master:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "read builder config.set builder_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"chromite-cq\", \"type\": \"CQ\"}}@@@"
     ]
   },
   {
