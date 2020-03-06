@@ -494,7 +494,7 @@
   },
   {
     "cmd": [],
-    "name": "copy images to localmirror"
+    "name": "copy images to destination bucket"
   },
   {
     "cmd": [
@@ -510,7 +510,7 @@
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "infra_step": true,
-    "name": "copy images to localmirror.gsutil download",
+    "name": "copy images to destination bucket.gsutil download",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -526,7 +526,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_2",
-    "name": "copy images to localmirror.unzip image archive",
+    "name": "copy images to destination bucket.unzip image archive",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
@@ -546,7 +546,7 @@
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_2",
-    "name": "copy images to localmirror.archive base guest VM",
+    "name": "copy images to destination bucket.archive base guest VM",
     "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -559,7 +559,7 @@
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_2",
-    "name": "copy images to localmirror.archive test guest VM",
+    "name": "copy images to destination bucket.archive test guest VM",
     "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -579,7 +579,7 @@
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "infra_step": true,
-    "name": "copy images to localmirror.gsutil upload",
+    "name": "copy images to destination bucket.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-localmirror-private/distfiles/sludge/80.1.2.3/@@@"

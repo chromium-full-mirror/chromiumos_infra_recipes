@@ -41,9 +41,9 @@ PROPERTIES = UprevGuestVmPinProperties
 _base_vm_name = 'guest-vm-base'
 _test_vm_name = 'guest-vm-test'
 
-def _gs_path(bucket, suburl):
-  """Returns the full gs:// path for bucket and suburl."""
-  return 'gs://' + bucket + '/' + suburl
+def _gs_path(bucket, path):
+  """Returns the full gs:// path for bucket and path."""
+  return 'gs://' + bucket + '/' + path
 
 
 def RunSteps(api, properties):
@@ -54,8 +54,11 @@ def RunSteps(api, properties):
     if not properties.board:
       raise ValueError('must set board')
 
-    if not properties.destination_bucket:
-      raise ValueError('must set destination_bucket')
+    if not properties.destination_gs_bucket:
+      raise ValueError('must set destination_gs_bucket')
+
+    if not properties.destination_gs_path:
+      raise ValueError('must set destination_gs_path')
 
     step.presentation.step_text = 'all properties good'
 
@@ -111,11 +114,11 @@ def RunSteps(api, properties):
       api.git.add([version_path])
       api.git.commit(message)
 
-    with api.step.nest('copy images to localmirror'):
+    with api.step.nest('copy images to destination bucket'):
       tmp_dir = api.path.mkdtemp(prefix='archive-staging')
       with api.context(cwd=tmp_dir):
-        src_suburl = '{}/{}'.format(build_artifact_path, "image.zip")
-        api.gsutil.download(build_artifact_bucket, src_suburl, './')
+        src_path = '{}/{}'.format(build_artifact_path, "image.zip")
+        api.gsutil.download(build_artifact_bucket, src_path, './')
         api.archive.extract('unzip image archive',
                             api.context.cwd.join('image.zip'),
                             api.context.cwd.join('image'))
@@ -130,14 +133,14 @@ def RunSteps(api, properties):
             'archive test guest VM',
             api.context.cwd.join(_test_vm_name + '.tbz'), 'tbz')
 
-        dst_bucket = properties.destination_bucket
-        dst_suburl = 'distfiles/{}/{}/'.format(properties.board,
-                                               sanitized_version)
-        api.gsutil.upload("*.tbz", dst_bucket, dst_suburl)
+        dst_bucket = properties.destination_gs_bucket
+        dst_path = '{}/{}/'.format(properties.destination_gs_path,
+                                   sanitized_version)
+        api.gsutil.upload("*.tbz", dst_bucket, dst_path)
 
 
     if len(properties.user_acls) or len(properties.group_acls):
-      with api.step.nest('set image permissions on localmirror'):
+      with api.step.nest('set image permissions on destination'):
         cmd = ['acl', 'ch', '-r']
         for user_acl in properties.user_acls:
           cmd += ['-u', user_acl]
@@ -145,7 +148,7 @@ def RunSteps(api, properties):
         for group_acl in properties.group_acls:
           cmd += ['-g', group_acl]
 
-        cmd += [_gs_path(dst_bucket, dst_suburl)]
+        cmd += [_gs_path(dst_bucket, dst_path)]
 
         api.gsutil(cmd)
 
@@ -165,7 +168,8 @@ def GenTests(api):
           version_file=('src/private-overlays/project-wilco-private/'
                         'chromeos-base/chromeos-dtc-vm/VERSION-PIN'),
           board='sludge',
-          destination_bucket='chromeos-localmirror-private',
+          destination_gs_bucket='chromeos-localmirror-private',
+          destination_gs_path='distfiles/sludge',
           user_acls=['tony.stark@google.com:OWNER', 'bighead@google.com:READ'],
           group_acls=['koolkids@google.com:READ']
       ))
@@ -192,8 +196,12 @@ def GenTests(api):
   yield (api.test('no-board') + api.properties(**properties) +
          api.properties(board='') + api.expect_exception('ValueError'))
 
-  yield (api.test('no-destination-bucket') + api.properties(**properties) +
-         api.properties(destinationBucket='') +
+  yield (api.test('no-destination-gs-bucket') + api.properties(**properties) +
+         api.properties(destinationGsBucket='') +
+         api.expect_exception('ValueError'))
+
+  yield (api.test('no-destination-gs-path') + api.properties(**properties) +
+         api.properties(destinationGsPath='') +
          api.expect_exception('ValueError'))
 
   yield (api.test('no-version-diff') + api.properties(**properties) +

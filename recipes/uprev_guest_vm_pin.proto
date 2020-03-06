@@ -6,6 +6,7 @@ syntax = "proto3";
 
 package recipes.chromeos.uprev_guest_vm_pin;
 
+// NextId: 7
 message UprevGuestVmPinProperties {
   // Path to the version file to update.
   // Required
@@ -17,7 +18,11 @@ message UprevGuestVmPinProperties {
 
   // Destination gs bucket where the guest VM image will be copied.
   // Required
-  string destination_bucket = 3;
+  string destination_gs_bucket = 3;
+
+  // Destination gs path where the guest VM image will be copied.
+  // Required
+  string destination_gs_path = 6;
 
   // List of user acls to set for the uploaded image on the localmirror. ACLs
   // are in the format expected by `gsutil acl`. e.g
