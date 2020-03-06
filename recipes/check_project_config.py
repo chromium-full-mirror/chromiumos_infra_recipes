@@ -97,10 +97,13 @@ def RunSteps(api, properties):
 
     api.step('generate proto bindings', [generate_path])
 
-    program_path = (
-        properties.program_config_bundle_checkout_path.repo_checkout_path)
-    project_path = (
-        properties.project_config_bundle_checkout_path.repo_checkout_path)
+    program_path = api.context.cwd.join(
+        properties.program_config_bundle_checkout_path.repo_checkout_path,
+        properties.program_config_bundle_checkout_path.config_path)
+
+    project_path = api.context.cwd.join(
+        properties.project_config_bundle_checkout_path.repo_checkout_path,
+        properties.project_config_bundle_checkout_path.config_path)
 
     # Call checker with checked out program and project. Note that a failure
     # here is not considered an infra failure. infra_steps set in context takes

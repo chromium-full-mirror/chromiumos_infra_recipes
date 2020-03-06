@@ -398,9 +398,9 @@
       "-u",
       "[START_DIR]/chromiumos_workspace/src/config/payload_utils/checker.py",
       "--program",
-      "src/program/testprogram",
+      "[START_DIR]/chromiumos_workspace/src/program/testprogram/generated/config.binaryproto",
       "--project",
-      "src/project/testproject"
+      "[START_DIR]/chromiumos_workspace/src/project/testproject/generated/config.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "check constraints"
