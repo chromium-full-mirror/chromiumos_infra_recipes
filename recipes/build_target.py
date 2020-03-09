@@ -17,7 +17,6 @@ DEPS = [
     'cros_artifacts',
     'cros_bisect',
     'cros_build_api',
-    'cros_build_support',
     'cros_infra_config',
     'cros_prebuilts',
     'cros_relevance',
@@ -28,6 +27,7 @@ DEPS = [
     'failures',
     'gerrit',
     'goma',
+    'workspace_util',
 ]
 
 import hashlib
@@ -85,19 +85,19 @@ def RunSteps(api, properties):
   build_target = properties.build_target
   force_relevant_build = properties.force_relevant_build
 
-  build_config = api.cros_build_support.configure_builder(
+  build_config = api.workspace_util.configure_builder(
       build_target, api.buildbucket.gitiles_commit,
       api.buildbucket.build.input.gerrit_changes)
   if not build_config:
     # No config found, already logged.
     return
   # The buildbucket properties may have been altered by configure_builder.
-  gitiles_commit = api.cros_build_support.gitiles_commit
-  gerrit_changes = api.cros_build_support.gerrit_changes
+  gitiles_commit = api.workspace_util.gitiles_commit
+  gerrit_changes = api.workspace_util.gerrit_changes
 
   is_staging = build_config.general.environment == BuilderConfig.General.STAGING
-  with api.cros_build_support.setup_workspace():
-    api.cros_build_support.sync_to_commit(staging=is_staging)
+  with api.workspace_util.setup_workspace():
+    api.workspace_util.sync_to_commit(staging=is_staging)
     DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                is_staging, force_relevant_build)
 
@@ -122,7 +122,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     return failed_packages
 
   # Apply any appropriate gerrit_changes.
-  api.cros_build_support.apply_changes()
+  api.workspace_util.apply_changes()
 
   # Set up source checkouts.
   is_toolchain_builder = build_config.id.type == BuilderConfig.Id.TOOLCHAIN
@@ -263,7 +263,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           build_target=build_target, chroot=api.cros_sdk.chroot,
           ignore_prebuilts=install_packages.compile_source)
       files_changed = api.chrome.diffed_files_requires_rebuild(
-          patch_sets=api.cros_build_support.patch_sets)
+          patch_sets=api.workspace_util.patch_sets)
       chrome_source_build = toolchain_changed or needs_built or files_changed
 
     if chrome_source_build:

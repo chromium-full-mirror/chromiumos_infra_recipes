@@ -22,7 +22,7 @@ def ConvertPB(inpb, typ):
   return outpb
 
 
-class CrosBuildSupportApi(recipe_api.RecipeApi):
+class WorkspaceUtilApi(recipe_api.RecipeApi):
   """A module to support building."""
 
   def initialize(self):

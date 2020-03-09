@@ -5,7 +5,7 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
-    'cros_build_support',
+    'workspace_util',
 ]
 
 from PB.chromiumos import common
@@ -23,15 +23,15 @@ def RunSteps(api):
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
-  config = api.cros_build_support.configure_builder(
+  config = api.workspace_util.configure_builder(
       target, commit=commit, changes=changes)
   if not config:
     return
-  with api.cros_build_support.setup_workspace():
-    api.cros_build_support.sync_to_commit()
-    api.cros_build_support.apply_changes()
+  with api.workspace_util.setup_workspace():
+    api.workspace_util.sync_to_commit()
+    api.workspace_util.apply_changes()
     want = changes if config.build.apply_gerrit_changes and changes else []
-    assert len(want) == len(api.cros_build_support.patch_sets)
+    assert len(want) == len(api.workspace_util.patch_sets)
 
 def GenTests(api):
   def buildbucket_build(
