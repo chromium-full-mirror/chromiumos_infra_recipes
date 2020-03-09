@@ -594,31 +594,34 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     "type": "TOOLCHAIN"
                   },
                   "general": {
-                    "critical": false,
+                    "critical": true,
                     "environment": "PRODUCTION",
-                    "runWhen": {
-                      "mode": "ALWAYS_RUN"
-                    }
+                    "runWhen": {"mode": "ALWAYS_RUN"}
                   },
                   "artifacts": {
                     "prebuilts": "NONE",
-                    "artifactsGsBucket": "chromeos-image-archive",
                     "artifactTypes": [
                       "UNVERIFIED_CHROME_LLVM_ORDERFILE"
                     ],
+                    "artifactsGsBucket": "chromeos-image-archive",
                     "publishArtifacts": [
                       {
+                        "publishTypes": ["UNVERIFIED_CHROME_LLVM_ORDERFILE"],
                         "publishGsLocation":
+                          "chromeos-toolchain-artifacts/orderfile/unvetted"
+                      }
+                    ],
+                    "inputArtifacts": [
+                      {
+                        "inputArtifactType": "UNVERIFIED_CHROME_LLVM_ORDERFILE",
+                        "inputArtifactGsLocations": [
                           "chromeos-toolchain-artifacts/orderfile/unvetted",
-                        "publishTypes": [
-                          "UNVERIFIED_CHROME_LLVM_ORDERFILE"
+                          "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
                         ]
                       }
                     ]
                   },
-                  "chrome": {
-                    "internal": true
-                  },
+                  "chrome": {"internal": true},
                   "build": {
                     "useFlags": [
                       {"flag": "chrome_internal"},
@@ -628,15 +631,22 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                       {"flag": "orderfile_generate"},
                       {"flag": "-strict_toolchain_checks"}
                     ],
-                    "installPackages": {
-                      "runSpec": "RUN",
-                      "compileSource": true
+                    "applyGerritChanges": true,
+                    "prepareForBuild": {
+                      "additionalArgs": {"chromeCwpProfile": "silvermont"}
                     },
-                    "applyGerritChanges": true
+                    "installPackages": {
+                      "compileSource": true,
+                      "runSpec": "RUN",
+                      "packages": [
+                        {
+                          "packageName": "chromeos-chrome",
+                          "category": "chromeos-base"
+                        }
+                      ]
+                    }
                   },
-                  "unitTests": {
-                    "ebuildsRunSpec": "RUN"
-                  }
+                  "unitTests": {"ebuildsRunSpec": "NO_RUN"}
                 },
                 {
                   "id": {

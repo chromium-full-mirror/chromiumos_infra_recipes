@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'workspace_util',
 ]
@@ -31,7 +32,7 @@ def RunSteps(api):
     api.workspace_util.sync_to_commit()
     api.workspace_util.apply_changes()
     want = changes if config.build.apply_gerrit_changes and changes else []
-    assert len(want) == len(api.workspace_util.patch_sets)
+    api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
 
 def GenTests(api):
   def buildbucket_build(

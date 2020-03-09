@@ -10,6 +10,7 @@
   * [build_plan](#recipe_modules-build_plan)
   * [buildbucket_stats](#recipe_modules-buildbucket_stats)
   * [chrome](#recipe_modules-chrome)
+  * [chroot_util](#recipe_modules-chroot_util) &mdash; API for various support functions for building.
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
@@ -53,6 +54,7 @@
   * [stable_version](#recipe_modules-stable_version)
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
   * [swarming_cli](#recipe_modules-swarming_cli)
+  * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
   * [tast_results](#recipe_modules-tast_results)
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
   * [workspace_util](#recipe_modules-workspace_util) &mdash; API for various support functions for building.
@@ -81,6 +83,7 @@
   * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
   * [check_project_config](#recipes-check_project_config) &mdash; Checks a project conforms to its program's constraints.
   * [chrome:examples/full](#recipes-chrome_examples_full)
+  * [chroot_util:examples/full](#recipes-chroot_util_examples_full)
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [config_drift](#recipes-config_drift) &mdash; Compares Parallel CQ and Legacy cbuildbot configs.
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
@@ -196,6 +199,7 @@
   * [stable_version:examples/full](#recipes-stable_version_examples_full)
   * [support:examples/full](#recipes-support_examples_full)
   * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full)
+  * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build)
   * [tast_results:examples/archive_dir](#recipes-tast_results_examples_archive_dir)
   * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult)
   * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results)
@@ -536,6 +540,17 @@ Args:
   chroot (chromiumos.Chroot): Information on the chroot for the build.
   build_target (chromiumos.BuildTarget): Build target of the build.
   internal (bool): True for internal checkout.
+### *recipe_modules* / [chroot\_util](/recipe_modules/chroot_util)
+
+API for various support functions for building.
+
+#### **class [ChrootUtilApi](/recipe_modules/chroot_util/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for chroot (sdk) setup and manipulation.
+
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/chroot_util/api.py#17)(self):**
+
+&mdash; **def [initialize](/recipe_modules/chroot_util/api.py#14)(self):**
 ### *recipe_modules* / [cloud\_pubsub](/recipe_modules/cloud_pubsub)
 
 [DEPS](/recipe_modules/cloud_pubsub/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3068,6 +3083,31 @@ Retrieves the count of bots from Swarming based on dimensions.
 Args:
   dimensions (dict): dict containing key, value dimensions to query swarming.
   state (str): the bot swarming state (busy, idle, or dead-only)
+### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
+
+[DEPS](/recipe_modules/sysroot_util/__init__.py#6): [chroot\_util](#recipe_modules-chroot_util), [cros\_artifacts](#recipe_modules-cros_artifacts)
+
+API for various support functions for building.
+
+#### **class [SysrootUtilApi](/recipe_modules/sysroot_util/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for sysroot setup, manipulation, and use.
+
+&mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#17)(self):**
+
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#20)(self):**
+
+&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#24)(self, artifacts, args, force_relevance=False):**
+
+Update ebuilds for artifact build.
+
+Args:
+  artifacts (BuilderConfig.Artifacts): Artifact Information
+  args (PrepareForBuild.AdditionalArgs): Parameters from config.
+  force_relevance (bool): Whether to always claim relevant.
+
+Returns:
+  (PrepareForBuildResponse): Whether the build is relevant.
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
 [DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3230,7 +3270,7 @@ API for various support functions for building.
 
 #### **class [WorkspaceUtilApi](/recipe_modules/workspace_util/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module to support building.
+A module workspace setup and manipulation.
 
 &mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#166)(self, changes=None, name='cherry-pick gerrit changes'):**
 
@@ -3527,6 +3567,11 @@ leaking between runs of the recipe.
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#23)(api):**
+### *recipes* / [chroot\_util:examples/full](/recipe_modules/chroot_util/examples/full.py)
+
+[DEPS](/recipe_modules/chroot_util/examples/full.py#6): [chroot\_util](#recipe_modules-chroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/chroot_util/examples/full.py#12)(api):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)
@@ -4263,6 +4308,11 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/swarming_cli/examples/full.py#6): [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/swarming_cli/examples/full.py#12)(api):**
+### *recipes* / [sysroot\_util:examples/update\_for\_artifact\_build](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py)
+
+[DEPS](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py#17)(api):**
 ### *recipes* / [tast\_results:examples/archive\_dir](/recipe_modules/tast_results/examples/archive_dir.py)
 
 [DEPS](/recipe_modules/tast_results/examples/archive_dir.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -4555,9 +4605,9 @@ Basic tests for the urls recipe module.
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#20)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
-[DEPS](/recipe_modules/workspace_util/examples/full.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/workspace_util/examples/full.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#16)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/a12175c2a7a9f79c3296068a022ac4f3051f8600/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/a12175c2a7a9f79c3296068a022ac4f3051f8600/recipes/README.recipes.md#recipe_modules-gclient

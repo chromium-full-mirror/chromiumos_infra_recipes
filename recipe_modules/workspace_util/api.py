@@ -23,7 +23,7 @@ def ConvertPB(inpb, typ):
 
 
 class WorkspaceUtilApi(recipe_api.RecipeApi):
-  """A module to support building."""
+  """A module workspace setup and manipulation."""
 
   def initialize(self):
     self._patch_sets = []
