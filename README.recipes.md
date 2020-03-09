@@ -407,7 +407,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#151)(self, child_specs):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#150)(self, child_specs):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -420,7 +420,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#193)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#192)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3422,9 +3422,9 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/bisect_build_plan.py#18)(api):**
 ### *recipes* / [build\_plan:examples/cq\_build\_plan](/recipe_modules/build_plan/examples/cq_build_plan.py)
 
-[DEPS](/recipe_modules/build_plan/examples/cq_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/build_plan/examples/cq_build_plan.py#14): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#23)(api):**
 ### *recipes* / [build\_plan:examples/get\_completed\_builds](/recipe_modules/build_plan/examples/get_completed_builds.py)
 
 [DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#14): [build\_plan](#recipe_modules-build_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

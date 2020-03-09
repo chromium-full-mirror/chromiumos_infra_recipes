@@ -136,9 +136,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
                 gitiles_commit=snapshot, builder=child_spec.name, bucket=bucket,
-                gerrit_changes=gerrit_changes, critical=critical,
-                properties=self.m.cq.props_for_child_build, tags=tags,
-                swarming_parent_run_id=parent_run_id))
+                gerrit_changes=gerrit_changes, critical=critical, tags=tags,
+                properties=properties, swarming_parent_run_id=parent_run_id))
       presentation.logs['filter log'] = filter_log
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.

@@ -6,12 +6,15 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
+    CrosInfraConfigProperties)
 
 from google.protobuf import timestamp_pb2
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'build_plan',
     'cros_infra_config',
 ]
@@ -54,6 +57,17 @@ def GenTests(api):
     return api.buildbucket.build(build)
 
   yield (api.test('basic') + cq_orchestrator_build_with_gerrit_change() +
+         api.buildbucket.simulated_search_results(
+             builds, 'get build history.get completed builds.'
+             'get change build history.buildbucket.search') +
+         api.buildbucket.simulated_search_results(
+             builds, 'get build history.find matching builds.'
+             'buildbucket.search'))
+
+  yield (api.test('with_config') + cq_orchestrator_build_with_gerrit_change() +
+         api.properties(**{
+             '$chromeos/cros_infra_config':
+             CrosInfraConfigProperties(config_ref='refs/changes/33/433/1')}) +
          api.buildbucket.simulated_search_results(
              builds, 'get build history.get completed builds.'
              'get change build history.buildbucket.search') +
