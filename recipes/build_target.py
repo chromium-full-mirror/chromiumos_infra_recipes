@@ -104,23 +104,6 @@ def RunSteps(api, properties):
 
 def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                is_staging, force_relevant_build):
-  # Define a function to append the failure step with the failed packages
-  def _failed_pkg_names(output_proto):
-    # sort package names, join them with ',', and limit to 50 chars.
-    failed_packages = ','.join(sorted([p.package_name for p
-                                        in output_proto.failed_packages]))
-
-    # Add to the default response step name like: ": package1,package2"
-    # If it's extremely long add elipsis and a fancy sha to make unique.
-    if len(failed_packages) > 50:
-      fp_sha = hashlib.sha256()
-      fp_sha.update(failed_packages)
-      failed_packages = (failed_packages[:50] +
-                          ('...(%s)' % fp_sha.hexdigest()[0:4]))
-    if failed_packages:
-      failed_packages = ': ' + failed_packages
-    return failed_packages
-
   # Apply any appropriate gerrit_changes.
   api.workspace_util.apply_changes()
 
@@ -434,6 +417,23 @@ def get_target_versions(api, build_target):
       GetTargetVersionsRequest(chroot=api.cros_sdk.chroot,
                                build_target=build_target))
   return json_pb.MessageToDict(response)
+
+# Define a function to append the failure step with the failed packages
+def _failed_pkg_names(output_proto):
+  # sort package names, join them with ',', and limit to 50 chars.
+  failed_packages = ','.join(
+      sorted(p.package_name for p in output_proto.failed_packages))
+
+  # Add to the default response step name like: ": package1,package2"
+  # If it's extremely long add elipsis and a fancy sha to make unique.
+  if len(failed_packages) > 50:
+    fp_sha = hashlib.sha256()
+    fp_sha.update(failed_packages)
+    failed_packages = (failed_packages[:50] +
+                        ('...(%s)' % fp_sha.hexdigest()[0:4]))
+  if failed_packages:
+    failed_packages = ': ' + failed_packages
+  return failed_packages
 
 
 def GenTests(api):
