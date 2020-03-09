@@ -27,6 +27,7 @@ DEPS = [
     'failures',
     'gerrit',
     'goma',
+    'sysroot_util',
     'workspace_util',
 ]
 
@@ -38,7 +39,7 @@ from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import BASE
-from PB.chromiumos.common import PrepareForBuildResponse
+from PB.chromiumos.common import PrepareForBuildResponse as Relevance
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import TestImageRequest
@@ -91,44 +92,36 @@ def RunSteps(api, properties):
   if not build_config:
     # No config found, already logged.
     return
-  # The buildbucket properties may have been altered by configure_builder.
-  gitiles_commit = api.workspace_util.gitiles_commit
-  gerrit_changes = api.workspace_util.gerrit_changes
 
-  is_staging = build_config.general.environment == BuilderConfig.General.STAGING
   with api.workspace_util.setup_workspace():
-    api.workspace_util.sync_to_commit(staging=is_staging)
-    DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
-               is_staging, force_relevant_build)
+    DoRunSteps(api, build_target, build_config,
+               api.workspace_util.gitiles_commit,
+               api.workspace_util.gerrit_changes,
+               force_relevant_build)
 
 
 def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
-               is_staging, force_relevant_build):
-  # Apply any appropriate gerrit_changes.
-  api.workspace_util.apply_changes()
+               force_relevant_build):
 
-  # Set up source checkouts.
+  is_staging = build_config.general.environment == BuilderConfig.General.STAGING
   is_toolchain_builder = build_config.id.type == BuilderConfig.Id.TOOLCHAIN
   # Toolchain builders compile many large packages from source and need higher
   # step timeouts to successfully complete.
   long_timeouts = is_toolchain_builder
 
-  # Prepare for the build.  If the build is pointless, we are done.
+  # Set up source checkouts.
+  api.workspace_util.sync_to_commit(staging=is_staging)
+  # Apply any appropriate gerrit_changes.
+  api.workspace_util.apply_changes()
+
+  # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
   artifacts = build_config.artifacts
-  relevance = PrepareForBuildResponse.UNKNOWN
-  if artifacts.artifact_types:
-    relevance = api.cros_artifacts.prepare_for_build(
-        artifacts.artifact_types, None, None, artifacts.input_artifacts,
-        build_config.build.prepare_for_build.additional_args)
-    # If the build is POINTLESS, then we are done.  This can only happen if
-    # all of the artifact_types for this build are handled by some
-    # PrepareForBuild endpoint, and indicate that the build is pointless.
-    #
-    # If there are any artifact_types with no PrepareForBuild endpoint
-    # defined, then the result will be UNKNOWN.
-    if (not force_relevant_build and
-        relevance == PrepareForBuildResponse.POINTLESS):
-      return
+  relevance = api.sysroot_util.update_for_artifact_build(
+      build_config.artifacts,
+      build_config.build.prepare_for_build.additional_args,
+      force_relevance=force_relevant_build)
+  if relevance == Relevance.POINTLESS:
+    return
 
   with api.step.nest('uprev packages') as step:
     request = UprevPackagesRequest(
@@ -205,7 +198,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
   if (not force_relevant_build and not toolchain_changed and
-      relevance != PrepareForBuildResponse.NEEDED and
+      relevance != Relevance.NEEDED and
       api.cros_relevance.is_build_pointless(
           gerrit_changes,
           gitiles_commit,
