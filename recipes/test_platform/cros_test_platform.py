@@ -218,7 +218,7 @@ def RunSteps(api, properties):
     backfills = compute_backfills(api, requests, enumerations, responses)
     set_output_properties(api, responses, backfills)
     postprocess(api, requests, responses)
-  summarize(api, responses)
+  summarize(api, enumerations, responses)
 
 
 def postprocess(api, requests, responses):
@@ -256,12 +256,13 @@ def postprocess(api, requests, responses):
         api.buildbucket.schedule([bb_request])
 
 
-def summarize(api, responses):
+def summarize(api, enumerations, responses):
   # Failures in summarization are non-infra related.
   with api.step.nest('summarize') as step:
     for tag, response in responses.iteritems():
       with api.step.nest('%s task results' % tag):
         try:
+          _log_enumeration_errors(api, enumerations[tag])
           _log_task_results(api, response.task_results)
           if response.state.verdict not in [TaskState.VERDICT_PASSED]:
             raise api.step.StepFailure('%s task results' % tag)
@@ -276,6 +277,7 @@ def _some_response_contains_unsuccessful_results(responses):
       _contains_unsuccessful_results(_classify_task_results(r.task_results))
       for r in responses.itervalues()
   ])
+
 
 def _get_requests_from_properties(properties):
   if len(properties.requests) > 0:
@@ -307,11 +309,15 @@ def set_output_properties(api, responses, backfills):
     #   marshalled[tag] = _marshal_proto_to_json(backfill.request)
     # step.properties['backfills'] = marshalled
 
+
+def _log_enumeration_errors(api, enumeration):
+  if enumeration.error_summary:
+    with _failing_substep(api, 'enumeration error') as step:
+      step.logs['summary'] = [enumeration.error_summary]
+
+
 def _log_task_results(api, task_results):
   """Report task results for a request on the UI."""
-  # TODO(akeshet): Don't present failure if the underlying enumeration item
-  # was retried and passed separately. Instead, include in a "failed but
-  # retried" section.
   classified_results = _classify_task_results(task_results)
   if classified_results.passed:
     with api.step.nest('passed tests') as step:
@@ -812,6 +818,43 @@ def GenTests(api):
                                      skylab_request=_test_request('foo'))
                          })))) +  #
          api.expect_exception("ValueError"))
+
+  yield (
+      api.test('enumeration error') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output('''
+  {
+    "tagged_responses": {
+      "default": {
+        "autotest_invocations": [{"test": {"name": "foo-test"}}],
+        "error_summary": "some tests are missing"
+      }
+    }
+  }''')) +  #
+      api.step_data(
+          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
+                                  state=TaskState(
+                                      life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_PASSED'))
+                      })))))
 
   yield (
       api.test('skylab execution with two failed invocations') +  #

@@ -13,7 +13,7 @@
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 208, in RunSteps",
       "    requests = _get_requests_from_properties(properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 289, in _get_requests_from_properties",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 291, in _get_requests_from_properties",
       "    raise ValueError('Must set at least one of request and requests')",
       "ValueError: Must set at least one of request and requests"
     ]

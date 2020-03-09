@@ -4363,7 +4363,7 @@ Args:
 
 &mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#224)(api, requests, responses):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#292)(api, responses, backfills):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#294)(api, responses, backfills):**
 
 Set the output properties that are part of the cros_test_platform API.
 
@@ -4385,7 +4385,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#259)(api, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#259)(api, enumerations, responses):**
 
 &mdash; **def [validate\_requests](/recipes/test_platform/cros_test_platform.py#57)(api, requests):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
