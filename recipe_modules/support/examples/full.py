@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/json',
     'support',
 ]
@@ -11,7 +12,7 @@ DEPS = [
 
 def RunSteps(api):
   output = api.support.call('my-tool', {'input': 'data'})
-  assert output == {'output': 'data'}
+  api.assertions.assertDictEqual(output, {'output': 'data'})
 
 
 def GenTests(api):

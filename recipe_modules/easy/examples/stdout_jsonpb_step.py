@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'easy',
 ]
 
@@ -11,7 +12,7 @@ from google.protobuf.wrappers_pb2 import Int32Value
 
 def RunSteps(api):
   out = api.easy.stdout_jsonpb_step('foo', ['foo'], Int32Value)
-  assert out.value == 1
+  api.assertions.assertEqual(out.value, 1)
 
 
 def GenTests(api):

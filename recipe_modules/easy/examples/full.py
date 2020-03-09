@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/json',
     'recipe_engine/raw_io',
     'easy',
@@ -16,16 +17,16 @@ def RunSteps(api):
 
   stdout = api.easy.stdout_step('raw', ['gzip'], stdin_data='uncompressed',
                                    test_stdout=lambda: 'compressed')
-  assert stdout == 'compressed'
+  api.assertions.assertEqual(stdout, 'compressed')
 
   proto_out = api.easy.stdout_jsonpb_step('jsonpb', ['foo'], Int32Value,
       test_output=Int32Value(value=1))
-  assert isinstance(proto_out, Int32Value)
-  assert proto_out.value == 1
+  api.assertions.assertIsInstance(proto_out, Int32Value)
+  api.assertions.assertEqual(proto_out.value, 1)
 
   json_stdout = api.easy.stdout_json_step('json', ['jq'], stdin_json={'a': 1},
                                    test_stdout={'b': 2})
-  assert json_stdout == {'b': 2}
+  api.assertions.assertDictEqual(json_stdout, {'b': 2})
   api.easy.set_property_step('property', 'value')
 
 

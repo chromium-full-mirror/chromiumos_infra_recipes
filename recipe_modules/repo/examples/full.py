@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/context',
     'recipe_engine/path',
     'repo',
@@ -12,7 +13,7 @@ DEPS = [
 
 def RunSteps(api):
   with api.context(cwd=api.path['cleanup']):
-    assert api.repo._find_root() is None
+    api.assertions.assertIsNone(api.repo._find_root())
 
   with api.context(cwd=api.path['start_dir']):
     api.repo.init('http://manifest_url')
@@ -27,13 +28,16 @@ def RunSteps(api):
     api.repo.sync_manifest('<manifest></manifest>')
 
   infos = api.repo.project_infos()
-  assert len(infos) == 3 and infos[0].path == 'src/a'
+  api.assertions.assertEqual(len(infos), 3)
+  api.assertions.assertEqual(infos[0].path, 'src/a')
 
   info = api.repo.project_info(project='foo')
-  assert info.name == 'foo'
+  api.assertions.assertEqual(info.name, 'foo')
 
-  assert api.repo.manifest_snapshot() == "<manifest></manifest>"
-  assert api.repo.manifest_snapshot("some_manifest_file") == "<manifest></manifest>"
+  api.assertions.assertEqual(api.repo.manifest_snapshot(),
+                             "<manifest></manifest>")
+  api.assertions.assertEqual(api.repo.manifest_snapshot("some_manifest_file"),
+                             "<manifest></manifest>")
 
   snapshot_a = api.path['start_dir'].join('snapshot_a.xml')
   snapshot_b = api.path['start_dir'].join('snapshot_b.xml')
@@ -61,8 +65,10 @@ def RunSteps(api):
   """
 
   [diff] = api.repo.diff_manifests(from_manifest, to_manifest)
-  assert diff.name == 'NAME' and diff.path == 'PATH' and \
-         diff.from_rev == 'FROM_REV' and diff.to_rev == 'TO_REV'
+  api.assertions.assertEqual(diff.name, 'NAME')
+  api.assertions.assertEqual(diff.path, 'PATH')
+  api.assertions.assertEqual(diff.from_rev, 'FROM_REV')
+  api.assertions.assertEqual(diff.to_rev, 'TO_REV')
 
   api.repo.diff_remote_and_local_manifests('URL', 'REV', '<manifest />')
 

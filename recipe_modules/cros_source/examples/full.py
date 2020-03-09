@@ -49,7 +49,7 @@ def RunSteps(api, properties):
   archive_path = api.path['start_dir'].join('commits.tar')
   api.cros_source.create_project_commits_archive(archive_path, commits)
   projects = api.cros_source.checkout_project_commits_archive(archive_path)
-  assert set(projects) == {'a/b', 'a/b/c'}, projects
+  api.assertions.assertSetEqual(set(projects), {'a/b', 'a/b/c'})
 
   # The test.proto default for string is empty, the api returns a None
   # when this is not set.
