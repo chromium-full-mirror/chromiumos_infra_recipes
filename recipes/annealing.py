@@ -84,7 +84,7 @@ def RunSteps(api, properties):
         snapshot_commit = publish_snapshot(api,
             api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
             api.cros_source.workspace_path.join(
-                'manifest-internal/snapshot.xm'),
+                'manifest-internal/snapshot.xml'),
             snapshot_xml, gerrit_commits,
             properties.disable_gerrit_commits_in_commit_message)
 

@@ -603,7 +603,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "remove",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xm"
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -621,15 +621,15 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest><project name=\"NAME\" revision=\"TO_REV\" /></manifest>",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xm"
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "publish internal snapshot.git transaction.write file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@snapshot.xm@<manifest><project name=\"NAME\" revision=\"TO_REV\" /></manifest>@@@",
-      "@@@STEP_LOG_END@snapshot.xm@@@"
+      "@@@STEP_LOG_LINE@snapshot.xml@<manifest><project name=\"NAME\" revision=\"TO_REV\" /></manifest>@@@",
+      "@@@STEP_LOG_END@snapshot.xml@@@"
     ]
   },
   {
@@ -644,7 +644,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xm"
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -659,7 +659,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xm"
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
