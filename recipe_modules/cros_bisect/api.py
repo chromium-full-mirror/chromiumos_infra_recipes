@@ -49,7 +49,8 @@ class CrosBisectApi(recipe_api.RecipeApi):
     """
     self._set_bisect_builder('bisecting-orchestrator')
 
-  def _create_failures_payload(self, failed_packages, failed_step):
+  def _create_failures_payload(self, failed_packages, failed_step,
+                               needs_bisection):
     """Creates and returns the failures payload used by FindIt.
 
     Args:
@@ -57,6 +58,9 @@ class CrosBisectApi(recipe_api.RecipeApi):
           failed packages.
       failed_step (str): fully qualified step name, that is the names down to
           nested step concatenated with pipes, of the potentially failing step.
+      needs_bisection: (bool): Whether or not bisection is needed for this run.
+          A non-critical builder, for example may not need bisection.
+
     Returns:
       dict: failures payload used by FindIt to identify failures and later
           echo them back during bisection builds.
@@ -69,13 +73,14 @@ class CrosBisectApi(recipe_api.RecipeApi):
           'output_targets': [jsonpb.MessageToJson(
               PackageInfo(category=pkg.category, package_name=pkg.package_name)
           )],
+          'needs_bisection': needs_bisection,
       })
     return {
         'failures': failures,
         'failed_step': failed_step,
     }
 
-  def set_compile_failures(self, failed_packages, failed_step):
+  def set_compile_failures(self, failed_packages, failed_step, needs_bisection):
     """Outputs the failed packages, if any, for FindIt consumption.
 
     Outputs build failure of the indicated packages for consumption by FindIt
@@ -87,10 +92,13 @@ class CrosBisectApi(recipe_api.RecipeApi):
           failed packages.
       failed_step (str): fully qualified step name, that is the names down to
           nested step concatenated with pipes, of the potentially failing step.
+      needs_bisection: (bool): Whether or not bisection is needed for this run.
+          A non-critical builder, for example may not need bisection.
     """
     if not failed_packages:
       return
-    payload = self._create_failures_payload(failed_packages, failed_step)
+    payload = self._create_failures_payload(
+        failed_packages, failed_step, needs_bisection)
     self.m.easy.set_property_step('compile_failures', payload)
 
   def set_test_failures(self, hw_results, needs_bisection):

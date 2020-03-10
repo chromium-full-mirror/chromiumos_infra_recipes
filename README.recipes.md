@@ -678,7 +678,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#134)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#142)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -688,7 +688,7 @@ empty list if this run was not invoked as a bisection build.
 Returns:
   list[PackageInfo]: list of packages to build as specified by FindIt
 
-&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#145)(self):**
+&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#153)(self):**
 
 Returns the child builders as specified by FindIt or empty list.
 
@@ -699,7 +699,7 @@ build.
 Returns:
   list[str]: sorted list of child builders to run.
 
-&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#161)(self, builds):**
+&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#169)(self, builds):**
 
 Returns the test plan as specified by FindIt or None.
 
@@ -725,7 +725,7 @@ should invoke if the build fails and bisection is required.
 Args:
   build_target_name (str): build target name to set the bisect builder for.
 
-&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#78)(self, failed_packages, failed_step):**
+&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#83)(self, failed_packages, failed_step, needs_bisection):**
 
 Outputs the failed packages, if any, for FindIt consumption.
 
@@ -738,6 +738,8 @@ Args:
       failed packages.
   failed_step (str): fully qualified step name, that is the names down to
       nested step concatenated with pipes, of the potentially failing step.
+  needs_bisection: (bool): Whether or not bisection is needed for this run.
+      A non-critical builder, for example may not need bisection.
 
 &mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#43)(self):**
 
@@ -747,7 +749,7 @@ Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the postsubmit-orchestrator encounters hardware test
 failures.
 
-&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#96)(self, hw_results, needs_bisection):**
+&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#104)(self, hw_results, needs_bisection):**
 
 Outputs the failed hardware tests, if any, for FindIt consumption.
 
@@ -3490,7 +3492,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#84)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#399)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#400)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3506,7 +3508,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#418)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#419)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

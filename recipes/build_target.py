@@ -317,7 +317,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                    '{}'.format(api.cros_build_api.response_step_name(
                        response, _failed_pkg_names)))
 
-      api.cros_bisect.set_compile_failures(response.failed_packages, step_name)
+      api.cros_bisect.set_compile_failures(response.failed_packages, step_name,
+                                           build_config.general.critical.value)
       api.failures.set_failed_packages(ip_step, response.failed_packages)
     if api.cros_infra_config.should_exit(install_packages.run_spec):
       return

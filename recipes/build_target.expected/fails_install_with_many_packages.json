@@ -3205,7 +3205,7 @@
     "name": "install packages.set compile_failures",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compile_failures@{\"failed_step\": \"install packages|call chromite.api.SysrootService/InstallPackages|call response: shortpackagename,thisisanexceedinglylongpackage,th...(8331)\", \"failures\": [{\"output_targets\": [\"{\\n  \\\"category\\\": \\\"chromeos-base\\\", \\n  \\\"packageName\\\": \\\"thislongpackagenameomg\\\"\\n}\"], \"rule\": \"emerge\"}, {\"output_targets\": [\"{\\n  \\\"category\\\": \\\"safari-base\\\", \\n  \\\"packageName\\\": \\\"thisisanexceedinglylongpackage\\\"\\n}\"], \"rule\": \"emerge\"}, {\"output_targets\": [\"{\\n  \\\"category\\\": \\\"edge-base\\\", \\n  \\\"packageName\\\": \\\"shortpackagename\\\"\\n}\"], \"rule\": \"emerge\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@compile_failures@{\"failed_step\": \"install packages|call chromite.api.SysrootService/InstallPackages|call response: shortpackagename,thisisanexceedinglylongpackage,th...(8331)\", \"failures\": [{\"needs_bisection\": true, \"output_targets\": [\"{\\n  \\\"category\\\": \\\"chromeos-base\\\", \\n  \\\"packageName\\\": \\\"thislongpackagenameomg\\\"\\n}\"], \"rule\": \"emerge\"}, {\"needs_bisection\": true, \"output_targets\": [\"{\\n  \\\"category\\\": \\\"safari-base\\\", \\n  \\\"packageName\\\": \\\"thisisanexceedinglylongpackage\\\"\\n}\"], \"rule\": \"emerge\"}, {\"needs_bisection\": true, \"output_targets\": [\"{\\n  \\\"category\\\": \\\"edge-base\\\", \\n  \\\"packageName\\\": \\\"shortpackagename\\\"\\n}\"], \"rule\": \"emerge\"}]}@@@"
     ]
   },
   {
