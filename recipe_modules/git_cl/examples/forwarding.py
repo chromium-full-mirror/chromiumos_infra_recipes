@@ -9,7 +9,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.git_cl.get_description(patch_url='foo', codereview='gerrit')
+  api.git_cl.get_description(patch_url='foo')
 
 def GenTests(api):
   yield api.test('basic')

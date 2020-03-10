@@ -6,7 +6,6 @@
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "description",
       "-d",
-      "--gerrit",
       "foo"
     ],
     "env_suffixes": {

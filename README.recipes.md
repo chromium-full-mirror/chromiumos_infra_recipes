@@ -1944,7 +1944,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#485)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#484)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -2047,7 +2047,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#500)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#499)(self, host, query_params):**
 
 Query gerrit for the given changes.
 

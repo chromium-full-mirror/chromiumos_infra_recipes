@@ -33,8 +33,7 @@
       "description",
       "-n",
       "-",
-      "https://chromium-review.googlesource.com/c/project/+/123",
-      "--gerrit"
+      "https://chromium-review.googlesource.com/c/project/+/123"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "env_suffixes": {

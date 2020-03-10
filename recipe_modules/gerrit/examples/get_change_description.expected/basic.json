@@ -35,7 +35,6 @@
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "description",
       "-d",
-      "--gerrit",
       "https://chromium-review.googlesource.com/c/project/+/123"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",

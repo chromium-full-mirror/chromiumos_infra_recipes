@@ -452,7 +452,7 @@ class GerritApi(recipe_api.RecipeApi):
         # always supply the patch number, and many of our applications
         # do not know it.
         description = self.m.git_cl.get_description(
-            patch_url=gerrit_change_url, codereview='gerrit',
+            patch_url=gerrit_change_url,
             step_test_data=functools.partial(
                 self.m.raw_io.test_api.stream_output,
                 self.test_api.test_gerrit_change_description()))
@@ -479,8 +479,7 @@ class GerritApi(recipe_api.RecipeApi):
 
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
-        self.m.git_cl.set_description(description, patch_url=gerrit_change_url,
-                                      codereview='gerrit')
+        self.m.git_cl.set_description(description, patch_url=gerrit_change_url)
 
   def abandon_change(self, gerrit_change, message=None):
     """Abandon the given change.

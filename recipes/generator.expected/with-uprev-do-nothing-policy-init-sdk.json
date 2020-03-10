@@ -1302,7 +1302,6 @@
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "description",
       "-d",
-      "--gerrit",
       "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
@@ -1355,8 +1354,7 @@
       "description",
       "-n",
       "-",
-      "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1",
-      "--gerrit"
+      "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
@@ -1414,7 +1412,6 @@
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "description",
       "-d",
-      "--gerrit",
       "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
@@ -1467,8 +1464,7 @@
       "description",
       "-n",
       "-",
-      "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1",
-      "--gerrit"
+      "https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
