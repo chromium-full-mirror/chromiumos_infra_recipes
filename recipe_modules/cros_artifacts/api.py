@@ -92,13 +92,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         ]
     return files_by_artifact
 
-  def _prepare_unknown(
-      self, _chroot, _sysroot, _artifact_types,
-      _input_artifacts, _additional_args):
-    """Prepare for Build.
+  def _prepare_pointless(self, _chroot, _sysroot, _artifact_types,
+                         _input_artifacts, _additional_args):
+    """Declare the build necessity POINTLESS from this artifact's perspective.
 
-    Use this prepare_for_build handler for any artifact type which has no
-    prepare step.  It simply returns "UNKNOWN".
+    Use this prepare_for_build handler for any artifact type which should not
+    affect the build decision in the prepare step.  It returns "POINTLESS".
 
     Args:
       _chroot (Chroot): The chroot to use, or None if not yet created.
@@ -110,13 +109,34 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           use.
 
     Returns:
-      (PrepareForBuildResponse.build_relevance) build relevance.
+      (PrepareForBuildResponse.build_relevance) POINTLESS.
+    """
+    return PrepareForBuildResponse.POINTLESS
+
+  def _prepare_unknown(self, _chroot, _sysroot, _artifact_types,
+                       _input_artifacts, _additional_args):
+    """Declare the build necessity UNKNOWN from this artifact's perspective.
+
+    Use this prepare_for_build handler for any artifact type which has no
+    prepare step.  It returns "UNKNOWN".
+
+    Args:
+      _chroot (Chroot): The chroot to use, or None if not yet created.
+      _sysroot (Sysroot): The sysroot to use, or None if not yet created.
+      _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
+      _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
+      _additional_args (PrepareForBuildAdditionalArgs): endpoint specific
+          arguments, such as the Chrome CWP profile name, or kernel version to
+          use.
+
+    Returns:
+      (PrepareForBuildResponse.build_relevance) UNKNOWN.
     """
     return PrepareForBuildResponse.UNKNOWN
 
   def _prepare_toolchain(
       self, chroot, sysroot, artifact_types, input_artifacts, additional_args):
-    """Prepare for Build.
+    """Query the ToolchainService about the necessity of this build.
 
     Call ToolchainService.PrepareForBuild to prepare for the build.
 
@@ -505,7 +525,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       name (str): The step name. Defaults to 'prepare artifacts'.
 
     Returns:
-      PrepareForToolchainBuildResponse.BuildRelevance
+      PrepareForToolchainBuildResponse.BuildRelevance indicating that the build
+      is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
+      build check applies), or POINTLESS (just exit now.)
     """
     _PREPARE_FUNCS = {
         BuilderConfig.Artifacts.IMAGE_ZIP: self._prepare_unknown,
@@ -514,7 +536,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         BuilderConfig.Artifacts.TAST_FILES: self._prepare_unknown,
         BuilderConfig.Artifacts.PINNED_GUEST_IMAGES: self._prepare_unknown,
         BuilderConfig.Artifacts.FIRMWARE: self._prepare_unknown,
-        BuilderConfig.Artifacts.EBUILD_LOGS: self._prepare_unknown,
+        # EBUILD_LOGS never affect the decision.
+        BuilderConfig.Artifacts.EBUILD_LOGS: self._prepare_pointless,
         BuilderConfig.Artifacts.CHROMEOS_CONFIG: self._prepare_unknown,
         BuilderConfig.Artifacts.CPE_REPORT: self._prepare_unknown,
         BuilderConfig.Artifacts.IMAGE_ARCHIVES: self._prepare_unknown,

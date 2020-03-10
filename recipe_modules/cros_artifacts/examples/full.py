@@ -5,7 +5,6 @@
 
 DEPS = [
     'cros_artifacts',
-    'recipe_engine/file',
 ]
 
 from PB.chromite.api import sysroot
@@ -13,34 +12,9 @@ from PB.chromite.api import sysroot
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 
-
 def RunSteps(api):
   target = common.BuildTarget()
   target.name = 'target'
-
-  # An artifact with a prepare service.
-  api.cros_artifacts.prepare_for_build(
-      [BuilderConfig.Artifacts.VERIFIED_CHROME_LLVM_ORDERFILE],
-      chroot=common.Chroot(path='/path/to/chroot'),
-      sysroot=sysroot.Sysroot(path='/build/board',
-                              build_target=common.BuildTarget(name='board')),
-      input_artifacts=[BuilderConfig.Artifacts.InputArtifactInfo(
-          input_artifact_type=(
-              BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE),
-          input_artifact_gs_locations=[
-              "chromeos-toolchain-artifacts/orderfile/unvetted"
-          ]),
-      ],
-  )
-
-  # An artifact with no prepare service.
-  api.cros_artifacts.prepare_for_build(
-      [BuilderConfig.Artifacts.IMAGE_ZIP],
-      chroot=common.Chroot(path='/path/to/chroot'),
-      sysroot=sysroot.Sysroot(path='/build/board',
-                              build_target=common.BuildTarget(name='board')),
-      input_artifacts=[],
-  )
 
   api.cros_artifacts.upload_artifacts(
       'target-postsubmit',
@@ -96,15 +70,3 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic')
-
-  # Test POINTLESS and NEEDED.  UNKNOWN is handled by 'basic' above, since it is
-  # the default response found in test_api.py
-  yield (api.test('pointless') + api.step_data(
-      'prepare artifacts.call chromite.api.ToolchainService/'
-      'PrepareForBuild.read output file',
-      api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
-
-  yield (api.test('needed') + api.step_data(
-      'prepare artifacts.call chromite.api.ToolchainService/'
-      'PrepareForBuild.read output file',
-      api.file.read_raw(content='{"build_relevance": "NEEDED"}')))
