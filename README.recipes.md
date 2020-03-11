@@ -3127,7 +3127,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#106)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#111)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -3137,11 +3137,11 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [fake\_empty\_result\_test\_cases](/recipe_modules/tast_results/api.py#98)(self):**
+&mdash; **def [fake\_empty\_result\_test\_cases](/recipe_modules/tast_results/api.py#103)(self):**
 
 A hack for crbug/1049754.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#131)(self, task_result):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#136)(self, task_result):**
 
 Convert TaskResult into api.failures.Failure objects.
 
@@ -3165,7 +3165,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#205)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#210)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -3176,7 +3176,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#158)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#163)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -3184,7 +3184,7 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#183)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#188)(self, sys_log_dir):**
 
 Print system logs to MILO.
 

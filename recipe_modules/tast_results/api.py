@@ -86,11 +86,16 @@ class TastResultsApi(recipe_api.RecipeApi):
       list(TestResult).
       https://crrev.com/62d6530f6f61417cf47a2bcea8bb714470ef5ca2/src/tast/test_result.proto
     """
-    list_of_results = self.m.file.read_json(
-        'read results.json', test_results_path.join('results.json'),
-        test_data=self.test_api.test_results_json)
-    # If results.json is empty, list_of_results will be None.
-    list_of_results = list_of_results or []
+    try:
+      list_of_results = self.m.file.read_json(
+          'read results.json', test_results_path.join('results.json'),
+          test_data=self.test_api.test_results_json)
+    except self.m.file.Error:  # pragma: nocover
+      # if results.json doesn't exist.
+      list_of_results = []
+    finally:
+      # If results.json is an empty file, list_of_results will be None.
+      list_of_results = list_of_results or []
     return [
         jsonpb.ParseDict(result, TestResult()) for result in list_of_results
     ]
