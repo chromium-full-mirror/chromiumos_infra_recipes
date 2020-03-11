@@ -8,7 +8,7 @@
 import json
 import os
 from collections import namedtuple
-
+from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 from PB.chromiumos import common
@@ -33,10 +33,11 @@ class GomaApi(recipe_api.RecipeApi):
     self._upload_goma_logs = not properties.disable_goma_logs_upload
     self._upload_stats_counterz = (
         not properties.disable_stats_counterz_upload)
-    self._bigquery_project_id = properties.bigquery_project_id or 'chromeos-bot'
+    self._bigquery_project_id = properties.bigquery_project_id or 'goma-logs'
+    self._bigquery_dataset_id = (
+        properties.bigquery_dataset_id or 'client_events')
     self._bigquery_table_name = (
-        properties.bigquery_table_name or
-        'goma-logs.client_events.compile_events')
+        properties.bigquery_table_name or 'compile_events')
 
   def initialize(self):
     self._goma_dir = None
@@ -163,13 +164,15 @@ class GomaApi(recipe_api.RecipeApi):
           # Call bq-insert support tool.
           input = {
               'project_id': self._bigquery_project_id,
+              'dataset_id': self._bigquery_dataset_id,
               'table_name': self._bigquery_table_name,
-              'write_data': True
+              'write_data': True,
+              'compile_event': json_format.MessageToJson(compile_event)
           }
           test_output_data = {}
           presentation.logs['support_input'] = [str(input)]
           result = self.m.support.call('bq-insert', input,
-                              test_output_data=test_output_data)
+                                       test_output_data=test_output_data)
 
     return None
 
