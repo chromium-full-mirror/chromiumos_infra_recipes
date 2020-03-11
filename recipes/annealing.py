@@ -138,17 +138,6 @@ def RunSteps(api, properties):
                    'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
                    dry_run=not properties.publish_uprevs)
 
-      if properties.child_builders:
-        with api.step.nest('schedule child builds'):
-          tags = api.cros_tags.make_schedule_tags(snapshot_commit)
-          requests = [
-              api.buildbucket.schedule_request(gitiles_commit=snapshot_commit,
-                                               builder=child, bucket='postsubmit',
-                                               tags=tags)
-              for child in properties.child_builders
-          ]
-          api.buildbucket.schedule(requests)
-
     # Generate a snapshot commit in the public manifest repo as well.  This is
     # exactly the same thing we do above in manifest-internal, but now publicly
     # visible.
@@ -171,6 +160,23 @@ def RunSteps(api, properties):
             snapshot_xml, [], True
         )
 
+    # We schedule child snapshot builders last so that if a breaking
+    # configuration change occurs between recipe launch and launching the
+    # children, the snapshots are already published and uprevs have already
+    # occurred. A breaking change would be a builder that was in the input
+    # property child_builders that no longer exists. When this happens the
+    # recipe will exit with an infra failure but the necessary children will
+    # have been launched.
+    if properties.child_builders:
+      with api.step.nest('schedule child builds'):
+        tags = api.cros_tags.make_schedule_tags(snapshot_commit)
+        requests = [
+            api.buildbucket.schedule_request(gitiles_commit=snapshot_commit,
+                                             builder=child, bucket='postsubmit',
+                                             tags=tags)
+            for child in properties.child_builders
+        ]
+        api.buildbucket.schedule(requests)
 
 def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
                      gerrit_commits=None, disable_gerrit=False):
