@@ -811,7 +811,8 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/src/repohooks/pre-upload.py"
+      "[START_DIR]/chromiumos_workspace/src/repohooks/pre-upload.py",
+      "--pre-submit"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "env_suffixes": {
@@ -924,7 +925,8 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/src/repohooks/pre-upload.py"
+      "[START_DIR]/chromiumos_workspace/src/repohooks/pre-upload.py",
+      "--pre-submit"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "env_suffixes": {
