@@ -130,7 +130,8 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
@@ -191,7 +192,7 @@
     ],
     "infra_step": true,
     "name": "run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"dutHostname\": \"dummy\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"dutHostname\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -214,7 +215,8 @@
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
@@ -239,7 +241,7 @@
       "/dev/stdout"
     ],
     "name": "run test.call `phosphorus`.run-test",
-    "stdin": "{\n  \"autotest\": {\n    \"name\": \"dummy_name\"\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
+    "stdin": "{\n  \"autotest\": {\n    \"name\": \"dummy_name\"\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -256,7 +258,8 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir/subdir\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir/subdir\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
@@ -275,7 +278,7 @@
     ],
     "infra_step": true,
     "name": "upload to TKO.call `phosphorus`.upload-to-tko",
-    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir/subdir\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
+    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir/subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -354,7 +357,8 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
@@ -380,7 +384,7 @@
     ],
     "infra_step": true,
     "name": "upload to GS.call `phosphorus`.upload-to-gs",
-    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"taskId\": \"dummy-task-id\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"taskId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

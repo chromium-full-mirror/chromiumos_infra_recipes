@@ -274,6 +274,7 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
     off_dir = recipe_config.output.gs_root_dir
   else:
     off_dir = ""
+  subdir = os.path.join(load_response.results_dir, "autoserv_test")
   return phosphorus.common.Config(
       bot=phosphorus.common.BotEnvironment(
           autotest_dir=recipe_config.harness.autotest_dir,
@@ -281,6 +282,7 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
       task=phosphorus.common.TaskEnvironment(
           synchronous_offload_dir=off_dir,
           results_dir=load_response.results_dir,
+          test_results_dir=subdir,
       )
   )
 

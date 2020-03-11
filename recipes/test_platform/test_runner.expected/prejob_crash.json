@@ -136,7 +136,8 @@
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
@@ -194,7 +195,7 @@
     ],
     "infra_step": true,
     "name": "run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  }, \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"dutHostname\": \"dummy\"\n}",
+    "stdin": "{\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  }, \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"dutHostname\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_EXCEPTION@@@"
