@@ -5,7 +5,7 @@
 To test locally you'll need to authenticate with gerrit OAuth scopes:
 
 ```shell
-luci-auth login -scopes 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gerritcodereview'
+luci-auth login -scopes 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gerritcodereview https://www.googleapis.com/auth/bigquery.insertdata'
 ```
 
 then use an input like the sample-input.json, sample-input2.json, or
@@ -16,12 +16,16 @@ go run bq-insert/main.go --input-json=/path/to/sample-input.json
 ```
 
 The following input files are checked in:
-* sample-input.json - For listing data from public dataset
-* sample-input2.json - For listing data from a chromeos test dataset.
 * goma-input.json - For listing data from the goma logs dataset.
+* goma-write-data.json - For writing data to goma. Shows proper format of
+  request including sample row data. Should fail since only the
+  chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com should be able to
+  write.
 * sample-addrows.json - For adding data to the chromeos test dataset.
 * sample-addrows-fail.json - Shows that data with unrecognized fields
     will not be added to an existing dataset.
+* sample-input.json - For listing data from public dataset
+* sample-input2.json - For listing data from a chromeos test dataset.
 * sample-write-data.json - Uses write-data (non-verbose) path, as a recipe
   would.
 * sample-write-data-fail.json - Uses write-data (non-verbose) path, as a recipe

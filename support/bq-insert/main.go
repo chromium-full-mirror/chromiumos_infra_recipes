@@ -63,10 +63,12 @@ func main() {
 		}
 
 		enumerateClientContents(ctx, client, input.DatasetId)
+		cli.MustMarshalOutput(Output{BqError: ""})
 		return
 	} else if input.WriteData {
 		error_string := insertTableData(ctx, client, input.DatasetId, input.TableName, input.CompileEvent, false)
 		cli.MustMarshalOutput(Output{BqError: error_string})
+		return
 	} else if input.WriteTest {
 		log.Printf("Raw message to write: %v", string(input.CompileEvent))
 		// Get and log the table schema so that it can be visually compared to the
@@ -79,6 +81,7 @@ func main() {
 		cli.MustMarshalOutput(Output{BqError: error_string})
 		return
 	}
+	cli.MustMarshalOutput(Output{BqError: ""})
 }
 
 // Each item to insert as a row is a json.RawMessage. The insertTableData
@@ -107,7 +110,7 @@ func (i Item) Save() (map[string]bigquery.Value, string, error) {
 // If the table cannot be found then log a fatal error.
 // If the insertion fails then log a fatal error.
 func insertTableData(ctx context.Context, client *bigquery.Client, datasetId string, tableName string, message json.RawMessage, logDebugInfo bool) string {
-	dataset := client.Dataset(datasetId) // inside projectId 'chromeos-bot'
+	dataset := client.Dataset(datasetId)
 	if dataset == nil {
 		log.Fatal("Error getting dataset ", datasetId)
 	}

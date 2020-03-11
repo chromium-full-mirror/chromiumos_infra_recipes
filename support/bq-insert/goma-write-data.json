@@ -1,0 +1,396 @@
+{
+  "project_id": "goma-logs",
+  "dataset_id": "client_events",
+  "table_name": "compile_events",
+  "write_data": true,
+  "compile_event": {
+    "build_id": 8886603865613266928,
+    "stats": {
+      "request_stats": {
+        "total": 45703,
+        "success": 45703,
+        "failure": 0,
+        "compiler_proxy": {
+          "fail": 0
+        },
+        "compiler_info": {
+          "stores": 105,
+          "store_dups": 3,
+          "miss": 0,
+          "fail": 0,
+          "loaded_size_bytes": 0
+        },
+        "goma": {
+          "finished": 44113,
+          "cache_hit": 43288,
+          "aborted": 281,
+          "retry": 1,
+          "fail": 0,
+          "local_cache_hit": 0
+        },
+        "local": {
+          "run": 1667,
+          "killed": 6,
+          "finished": 1309
+        },
+        "fallback_in_setup": {
+          "failed_to_parse_flags": 0,
+          "no_remote_compile_supported": 53,
+          "http_disabled": 0,
+          "fail_to_get_compiler_info": 0,
+          "compiler_disabled": 0,
+          "requested_by_user": 0,
+          "failed_to_update_required_files": 0
+        }
+      },
+      "file_stats": {
+        "requested": 22815481,
+        "uploaded": 128911,
+        "missed": 1,
+        "dropped": 0
+      },
+      "output_stats": {
+        "files": 93163,
+        "rename": 0,
+        "buf": 93145,
+        "peak_req": 123573667
+      },
+      "memory_stats": {
+        "consuming": 4949487616,
+        "virtual_memory_size": 8965824512
+      },
+      "time_stats": {
+        "uptime": 5863
+      },
+      "include_processor_stats": {
+        "total": 122915431,
+        "skipped": 94301264,
+        "total_wait_time": 476492,
+        "total_run_time": 3045468
+      },
+      "depscache_stats": {
+        "deps_table_size": 45516,
+        "max_entries": 4308,
+        "total_entries": 22743678,
+        "idtable_size": 86859,
+        "hit": 0,
+        "updated": 0,
+        "missed": 45650
+      },
+      "http_rpc_stats": {
+        "ping_status_code": 200,
+        "query": 45842,
+        "active": 0,
+        "retry": 0,
+        "timeout": 0,
+        "error": 0,
+        "network_error": 0,
+        "network_recovered": 0,
+        "status_code": {
+          "status_code": 200,
+          "count": 45841
+        },
+        "ping_round_trip_time_ms": 200,
+        "current_pending": 0,
+        "total_pending": 0,
+        "peak_pending": 0,
+        "throttled": 0,
+        "connect_failed": 0
+      },
+      "histogram": {
+        "rpc_call_time": {
+          "count": 45133,
+          "sum": 19431884,
+          "sum_of_squares": 66015038858.0,
+          "min": 3,
+          "max": 52522,
+          "logbase": 2.0,
+          "bucket_value": 0,
+          "bucket_value": 0,
+          "bucket_value": 54,
+          "bucket_value": 314,
+          "bucket_value": 328,
+          "bucket_value": 536,
+          "bucket_value": 1133,
+          "bucket_value": 4727,
+          "bucket_value": 15311,
+          "bucket_value": 14447,
+          "bucket_value": 6586,
+          "bucket_value": 906,
+          "bucket_value": 346,
+          "bucket_value": 271,
+          "bucket_value": 125,
+          "bucket_value": 46,
+          "bucket_value": 3
+        }
+      },
+      "machine_info": {
+        "goma_revision": "5e56182cfeae205a8a4a7a4fd4cada4fa6c48b46@1583484919",
+        "os": "LINUX",
+        "ncpus": 32,
+        "memory_size": 67242942464
+      },
+      "error_stats": {
+        "user_error": 0,
+        "log_error": 2,
+        "log_warning": 1
+      },
+      "mismatch_stats": {
+        "command_version_mismatch": 0,
+        "binary_hash_mismatch": 0,
+        "subprogram_mismatch": 0
+      },
+      "includecache_stats": {
+        "total_entries": 86858,
+        "hit": 28460590,
+        "missed": 73771,
+        "updated": 0,
+        "evicted": 0
+      },
+      "subprocess_stats": {
+        "count_burst_by_network_error": 0,
+        "count_burst_by_compiler_disabled": 0
+      }
+    },
+    "counterz_stats": {
+      "counterz_stats": {
+        "location": "../../client/file_stat.cc:52",
+        "function_name": "FileStat",
+        "name": "FileStat",
+        "total_count": 32767315,
+        "total_time_ns": 135616559947
+      },
+      "counterz_stats": {
+        "location": "../../client/compiler_info_builder.cc:32",
+        "function_name": "FillFromCompilerOutputs",
+        "name": "",
+        "total_count": 108,
+        "total_time_ns": 132721601682
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/gcc_compiler_info_builder.cc:187",
+        "function_name": "GetRealClangPath",
+        "name": "ReadCommandOutput(-xc -v)",
+        "total_count": 108,
+        "total_time_ns": 13962881465
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/gcc_compiler_info_builder.cc:92",
+        "function_name": "GetGccVersion",
+        "name": "ReadCommandOutput(dumpversion)",
+        "total_count": 108,
+        "total_time_ns": 10674020110
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/gcc_compiler_info_builder.cc:108",
+        "function_name": "GetGccVersion",
+        "name": "ReadCommandOutput(version)",
+        "total_count": 108,
+        "total_time_ns": 9200316186
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/gcc_compiler_info_builder.cc:148",
+        "function_name": "GetGccTarget",
+        "name": "ReadCommandOutput(dumpmachine)",
+        "total_count": 108,
+        "total_time_ns": 8793961814
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/clang_compiler_info_builder_helper.cc:160",
+        "function_name": "GccDisplayPrograms",
+        "name": "ReadCommandOutput(-v)",
+        "total_count": 175,
+        "total_time_ns": 20823854470
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/clang_compiler_info_builder_helper.cc:211",
+        "function_name": "GccDisplayPredefinedMacros",
+        "name": "ReadCommandOutput(-E -ffreestanding -dM)",
+        "total_count": 108,
+        "total_time_ns": 12126829550
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/clang_compiler_info_builder_helper.cc:757",
+        "function_name": "GetPredefinedFeaturesAndExtensions",
+        "name": "ReadCommandOutput(predefined features)",
+        "total_count": 108,
+        "total_time_ns": 12609345236
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/cxx_compiler_info_builder.cc:107",
+        "function_name": "GetSubprograms",
+        "name": "ReadCommandOutput(subprogram)",
+        "total_count": 108,
+        "total_time_ns": 11883753499
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/include_file_finder.cc:55",
+        "function_name": "IncludeFileFinder",
+        "name": "IncludeFileFinder",
+        "total_count": 45516,
+        "total_time_ns": 31462702677
+      },
+      "counterz_stats": {
+        "location": "../../client/file_stat_cache.cc:67",
+        "function_name": "Get",
+        "name": "Get",
+        "total_count": 195270630,
+        "total_time_ns": 216249356359
+      },
+      "counterz_stats": {
+        "location": "../../client/list_dir_cache.cc:28",
+        "function_name": "GetDirEntries",
+        "name": "total",
+        "total_count": 1247272,
+        "total_time_ns": 4738127460
+      },
+      "counterz_stats": {
+        "location": "../../client/list_dir_cache.cc:41",
+        "function_name": "GetDirEntries",
+        "name": "miss",
+        "total_count": 2756,
+        "total_time_ns": 229096499
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:113",
+        "function_name": "ProcessDirectives",
+        "name": "ProcessDirectives",
+        "total_count": 2381983,
+        "total_time_ns": 2377970857153
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:419",
+        "function_name": "ProcessDefine",
+        "name": "define",
+        "total_count": 211597362,
+        "total_time_ns": 65933649569
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:386",
+        "function_name": "ProcessInclude",
+        "name": "include",
+        "total_count": 121668059,
+        "total_time_ns": 2068960156295
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_include_processor.cc:256",
+        "function_name": "HandleIncludeInDir",
+        "name": "handle include try",
+        "total_count": 70886446,
+        "total_time_ns": 173940974909
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_include_processor.cc:79",
+        "function_name": "TryInclude",
+        "name": "TryInclude",
+        "total_count": 28614167,
+        "total_time_ns": 1570041926541
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/include_cache.cc:116",
+        "function_name": "GetIncludeItem",
+        "name": "GetDirectiveList",
+        "total_count": 28534361,
+        "total_time_ns": 1547945252152
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:433",
+        "function_name": "ProcessIfdef",
+        "name": "ifdef",
+        "total_count": 26102673,
+        "total_time_ns": 3126043623
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/include_file_finder.cc:132",
+        "function_name": "Lookup",
+        "name": "Lookup",
+        "total_count": 122636808,
+        "total_time_ns": 259125720083
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:447",
+        "function_name": "ProcessIf",
+        "name": "if",
+        "total_count": 28558734,
+        "total_time_ns": 70073612863
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:828",
+        "function_name": "ProcessHasCheckMacro",
+        "name": "ProcessHasCheckMacro",
+        "total_count": 3736929,
+        "total_time_ns": 2522774635
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:467",
+        "function_name": "ProcessEndif",
+        "name": "endif",
+        "total_count": 116860817,
+        "total_time_ns": 5010548134
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:424",
+        "function_name": "ProcessUndef",
+        "name": "undef",
+        "total_count": 30797282,
+        "total_time_ns": 3699046253
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:440",
+        "function_name": "ProcessIfndef",
+        "name": "ifndef",
+        "total_count": 35524138,
+        "total_time_ns": 7725578775
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:454",
+        "function_name": "ProcessElse",
+        "name": "else",
+        "total_count": 27829930,
+        "total_time_ns": 1268333706
+      },
+      "counterz_stats": {
+        "location": "../../client/list_dir_cache.cc:35",
+        "function_name": "GetDirEntries",
+        "name": "hit",
+        "total_count": 1244516,
+        "total_time_ns": 3088962369
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:480",
+        "function_name": "ProcessElif",
+        "name": "elif",
+        "total_count": 10429634,
+        "total_time_ns": 6495410396
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_include_processor.cc:263",
+        "function_name": "HandleIncludeInDir",
+        "name": "handle include pruned",
+        "total_count": 70454444,
+        "total_time_ns": 3020903084
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:414",
+        "function_name": "ProcessIncludeNext",
+        "name": "include_next",
+        "total_count": 1167566,
+        "total_time_ns": 8692894983
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:776",
+        "function_name": "ProcessHasIncludeInternal",
+        "name": "ProcessHasIncludeInternal",
+        "total_count": 153379,
+        "total_time_ns": 2324767514
+      },
+      "counterz_stats": {
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:500",
+        "function_name": "ProcessPragma",
+        "name": "pragma",
+        "total_count": 43265,
+        "total_time_ns": 81074410
+      }
+    }
+  }
+}
