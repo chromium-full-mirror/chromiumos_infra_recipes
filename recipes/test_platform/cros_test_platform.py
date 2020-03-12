@@ -43,11 +43,8 @@ from google.protobuf import json_format
 from recipe_engine.post_process import GetBuildProperties
 
 DEPS = [
-    'recipe_engine/buildbucket',
-    'recipe_engine/context',
-    'recipe_engine/properties',
-    'recipe_engine/raw_io',
-    'recipe_engine/step',
+    'recipe_engine/buildbucket', 'recipe_engine/context',
+    'recipe_engine/properties', 'recipe_engine/raw_io', 'recipe_engine/step',
     'cros_test_platform'
 ]
 
@@ -226,7 +223,7 @@ def postprocess(api, requests, responses):
     for tag, response in responses.iteritems():
       request = requests[tag]
       if not request.params.metadata.debug_symbols_archive_url:
-        continue # pragma: no cover
+        continue  # pragma: no cover
 
       test_results = []
       # TODO(akeshet): Iterate through response.consolidated_results instead of
@@ -243,8 +240,8 @@ def postprocess(api, requests, responses):
 
       with api.step.nest(tag) as step:
         pp_request = CrosTestPostprocessRequest(
-            debug_symbols_archive_url=
-                request.params.metadata.debug_symbols_archive_url,
+            debug_symbols_archive_url=request.params.metadata
+            .debug_symbols_archive_url,
             test_results=test_results,
         )
         bb_request = api.buildbucket.schedule_request(
@@ -256,25 +253,29 @@ def postprocess(api, requests, responses):
         api.buildbucket.schedule([bb_request])
 
 
+_SUCCESSFUL_VERDICTS = (TaskState.VERDICT_PASSED,
+                        TaskState.VERDICT_PASSED_ON_RETRY)
+
+
 def summarize(api, enumerations, responses):
   # Failures in summarization are non-infra related.
   with api.step.nest('summarize') as step:
     for tag, response in responses.iteritems():
       with api.step.nest('%s task results' % tag):
-        try:
-          _log_enumeration_errors(api, enumerations[tag])
-          _log_task_results(api, response.task_results)
-          if response.state.verdict not in [TaskState.VERDICT_PASSED]:
-            raise api.step.StepFailure('%s task results' % tag)
-        except api.step.StepFailure:
-          pass
-    if _some_response_contains_unsuccessful_results(responses):
-      raise api.step.StepFailure('Some tests were unsuccessful')
+        _log_enumeration_errors(api, enumerations[tag])
+        _log_task_results(api, response.task_results)
+        if response.state.verdict not in _SUCCESSFUL_VERDICTS:
+          step.logs['overall verdict'] = [
+              TaskState.Verdict.Name(response.state.verdict)
+          ]
+          step.presentation.status = api.step.FAILURE
+    if _contains_failed_verdict(responses):
+      raise api.step.StepFailure('Some requests were unsuccessful')
 
 
-def _some_response_contains_unsuccessful_results(responses):
+def _contains_failed_verdict(responses):
   return any([
-      _contains_unsuccessful_results(_classify_task_results(r.task_results))
+      r.state.verdict not in _SUCCESSFUL_VERDICTS
       for r in responses.itervalues()
   ])
 
@@ -286,7 +287,7 @@ def _get_requests_from_properties(properties):
     return properties.requests
   if properties.HasField('request'):
     return {
-      'default': properties.request,
+        'default': properties.request,
     }
   raise ValueError('Must set at least one of request and requests')
 
@@ -317,8 +318,9 @@ def set_output_properties(api, responses, backfills):
 
 def _log_enumeration_errors(api, enumeration):
   if enumeration.error_summary:
-    with _failing_substep(api, 'enumeration error') as step:
+    with api.step.nest('enumeration error') as step:
       step.logs['summary'] = [enumeration.error_summary]
+      step.presentation.status = api.step.FAILURE
 
 
 def _log_task_results(api, task_results):
@@ -331,17 +333,17 @@ def _log_task_results(api, task_results):
     with api.step.nest('failed attempts that later passed') as step:
       _emit_links(step, classified_results.passed_on_retry)
   if classified_results.unsuccessful:
-    with _failing_substep(api, 'failed or incomplete tests') as step:
+    with api.step.nest('failed or incomplete tests') as step:
       _emit_links(step, classified_results.unsuccessful)
+      step.presentation.status = api.step.FAILURE
   if classified_results.rejected:
-    with _failing_substep(api, 'did not run due to DUT shortage') as step:
+    with api.step.nest('did not run due to DUT shortage') as step:
       _emit_links(step, classified_results.rejected)
+      step.presentation.status = api.step.FAILURE
   if classified_results.other:  # pragma: no cover
-    with _failing_substep(api, 'unclassified tests') as step:
+    with api.step.nest('unclassified tests') as step:
       _emit_links(step, classified_results.other)
-
-  if _contains_unsuccessful_results(classified_results):
-    raise api.step.StepFailure('Some tests were unsuccessful')
+      step.presentation.status = api.step.FAILURE
 
 
 _ClassifiedTaskResults = collections.namedtuple(
@@ -377,21 +379,6 @@ def _classify_task_results(task_results):
   return classified
 
 
-def _contains_unsuccessful_results(classified_results):
-  return (classified_results.unsuccessful or classified_results.rejected or
-          classified_results.other)
-
-
-@contextlib.contextmanager
-def _failing_substep(api, tag):
-  try:
-    with api.step.nest(tag) as step:
-      yield step
-      raise api.step.StepFailure(tag)
-  except api.step.StepFailure:
-    pass
-
-
 def _emit_links(step, task_results):
   """Emit presentation links related to a task.
 
@@ -422,11 +409,9 @@ def _test_request(tag):
   return Request(
       params=Request.Params(
           hardware_attributes=Request.Params.HardwareAttributes(
-              model='%s-model' % tag),
-          metadata=Request.Params.Metadata(
-              test_metadata_url='%s-metadata-url' % tag,
-              debug_symbols_archive_url='%s-metadata-url' % tag)
-      ),
+              model='%s-model' % tag), metadata=Request.Params.Metadata(
+                  test_metadata_url='%s-metadata-url' % tag,
+                  debug_symbols_archive_url='%s-metadata-url' % tag)),
       test_plan=Request.TestPlan(suite=[Request.Suite(name='%s-suite' % tag)]),
   )
 
@@ -452,10 +437,8 @@ def _test_single_enumeration(tag):
 
 def GenTests(api):
   # Missing request and requests should cause a recipe crash
-  yield (
-    api.test('no request or requests') + #
-    api.expect_exception("ValueError")
-  )
+  yield (api.test('no request or requests') +  #
+         api.expect_exception("ValueError"))
 
   # Setting both request and requests should cause a recipe crash
   yield (api.test('both request and requests') +  #
@@ -477,7 +460,6 @@ def GenTests(api):
                          'default': SchedulerTrafficSplitResponse()
                      })))) +  #
          api.expect_exception("ValueError"))
-
 
   # Request with a very long timeout should cause build failure.
   yield (api.test('timeout too long') +  #
@@ -559,7 +541,8 @@ def GenTests(api):
                                  ExecuteResponse(
                                      state=TaskState(
                                          life_cycle='LIFE_CYCLE_ABORTED',
-                                         verdict='VERDICT_FAILED'),)
+                                         verdict='VERDICT_FAILED'),
+                                 )
                          })))))
 
   yield (
@@ -618,7 +601,9 @@ def GenTests(api):
           stdout=api.raw_io.output(
               json_format.MessageToJson(
                   ComputeBackfillResponses(tagged_responses={
-                      'default': ComputeBackfillResponse(request=Request(),)
+                      'default': ComputeBackfillResponse(
+                          request=Request(),
+                      )
                   })))))
 
   yield (
@@ -868,7 +853,8 @@ def GenTests(api):
               requests={
                   'first': _test_request('foo'),
                   'second': _test_request('foo'),
-              }, config=_test_config('foo')),) +  #
+              }, config=_test_config('foo')),
+      ) +  #
       api.step_data(
           'traffic split.call binary.scheduler-traffic-split',
           stdout=api.raw_io.output(

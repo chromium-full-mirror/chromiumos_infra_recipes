@@ -679,6 +679,8 @@
     "cmd": [],
     "name": "summarize",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@overall verdict@VERDICT_FAILED@@@",
+      "@@@STEP_LOG_END@overall verdict@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -721,7 +723,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Some tests were unsuccessful"
+      "humanReason": "Some requests were unsuccessful"
     },
     "name": "$result"
   }
