@@ -1,7 +1,29 @@
 [
   {
     "cmd": [],
-    "name": "validate tests"
+    "name": "validate request",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate request.validate timeouts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate request.validate scheduling parameters",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@second@priority 0 is out of valid range [50, 255]@@@",
+      "@@@STEP_LOG_END@second@@@",
+      "@@@STEP_LOG_LINE@first@priority 0 is out of valid range [50, 255]@@@",
+      "@@@STEP_LOG_END@first@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],

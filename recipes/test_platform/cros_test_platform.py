@@ -52,7 +52,13 @@ PROPERTIES = CrosTestPlatformProperties
 
 
 def validate_requests(api, requests):
-  with api.step.nest('validate tests') as step:
+  with api.step.nest('validate request') as step:
+    _validate_timeouts(api, requests)
+    _validate_scheduling_params(api, requests)
+
+
+def _validate_timeouts(api, requests):
+  with api.step.nest('validate timeouts') as step:
     max_timeout = api.buildbucket.build.execution_timeout
     max_timeout_s = max_timeout.ToTimedelta().total_seconds()
     for t, r in requests.iteritems():
@@ -62,10 +68,26 @@ def validate_requests(api, requests):
 
       request_timeout_s = request_timeout.ToTimedelta().total_seconds()
       if request_timeout_s > 0 and request_timeout_s >= max_timeout_s:
-        msg = ('Timeout (%s) for request %s is larger than maximum timeout (%s)'
-               % (request_timeout.ToTimedelta(), t, max_timeout.ToTimedelta()))
-        step.presentation.step_summary_text = msg
-        raise api.step.StepFailure(msg)
+        step.presentation.logs[t] = [
+            'Timeout (%s) is larger than maximum timeout (%s)' %
+            (request_timeout.ToTimedelta(), max_timeout.ToTimedelta())
+        ]
+        step.presentation.status = api.step.FAILURE
+
+
+def _validate_scheduling_params(api, requests):
+  with api.step.nest('validate scheduling parameters') as step:
+    for t, r in requests.iteritems():
+      error_logs = []
+      priority = r.params.scheduling.priority
+      if priority < 50 or priority > 255:
+        error_logs.append(
+            'priority %d is out of valid range [50, 255]' % priority)
+      if error_logs:
+        step.presentation.logs[t] = error_logs
+        step.presentation.status = api.step.FAILURE
+
+
 
 
 def enumerate_tests(api, requests):
@@ -472,6 +494,14 @@ def GenTests(api):
                                  seconds=3600))),
                  ))))
 
+  # Request with too large priority should cause build failure.
+  yield (api.test('priority out of range') +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=Request(
+                     params=Request.Params(
+                         scheduling=Request.Params.Scheduling(priority=300)),
+                 ))))
   # An end-to-end run with traffic splitting to skylab.
   yield (
       api.test('end-to-end skylab execution with passed tasks') +  #
