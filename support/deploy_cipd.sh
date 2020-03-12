@@ -3,8 +3,9 @@
 cd "$(dirname "$0")"
 
 # Build all of the binaries and install them to cipd-bin/
-export GOBIN=$(pwd)/cipd-bin
-go install ./...
+# Set the OS and architecture corresponding to the GCE bots.
+# This allows cross compilation.
+GOOS=linux GOARCH=amd64 go build -o cipd-bin/ ./...
 echo "Build the following"
 ls -l cipd-bin/
 
