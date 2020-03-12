@@ -145,7 +145,7 @@ def RunSteps(api, properties):
                               snapshot)
 
   # If this is a dry run, check that the builds passed and quit.
-  if api.cq.state == api.cq.DRY:
+  if not properties.enable_tests_on_dry_runs and api.cq.state == api.cq.DRY:
     return api.failures.aggregate_failures(failures)
 
   # Otherwise, run tests for builds that weren't build failures and that

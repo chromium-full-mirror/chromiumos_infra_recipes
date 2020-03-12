@@ -29,4 +29,7 @@ message OrchestratorProperties {
 
   // Specifies whether to enable exiting redundant builds.
   bool assert_singleton = 3;
+
+  // Whether to enable HW/VM tests on dry runs.
+  bool enable_tests_on_dry_runs = 4;
 }
