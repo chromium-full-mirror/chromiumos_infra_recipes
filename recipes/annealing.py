@@ -81,7 +81,8 @@ def RunSteps(api, properties):
         gerrit_commits = get_gerrit_changes(api, manifest_diffs)
 
       with api.step.nest('publish internal snapshot'):
-        snapshot_commit = publish_snapshot(api,
+        internal_snapshot_commit = publish_snapshot(
+            api,
             api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
             api.cros_source.workspace_path.join(
                 'manifest-internal/snapshot.xml'),
@@ -89,7 +90,7 @@ def RunSteps(api, properties):
             properties.disable_gerrit_commits_in_commit_message)
 
         # Use new snapshot commit as the build output
-        api.buildbucket.set_output_gitiles_commit(snapshot_commit)
+        api.buildbucket.set_output_gitiles_commit(internal_snapshot_commit)
 
       # It may seem weird that we publish uprevs after publishing the snapshot.
       # Unfortunately, publishing uprevs takes ~10 minutes, in which time it is
@@ -151,7 +152,8 @@ def RunSteps(api, properties):
 
       # And publish
       with api.step.nest('publish external snapshot'):
-        snapshot_commit = publish_snapshot(api,
+        external_snapshot_commit = publish_snapshot(
+            api,
             api.cros_source.EXTERNAL_MANIFEST_URL,
             manifest_ref,
             api.cros_source.workspace_path.join(
@@ -169,11 +171,11 @@ def RunSteps(api, properties):
     # have been launched.
     if properties.child_builders:
       with api.step.nest('schedule child builds'):
-        tags = api.cros_tags.make_schedule_tags(snapshot_commit)
-        requests = [
-            api.buildbucket.schedule_request(gitiles_commit=snapshot_commit,
-                                             builder=child, bucket='postsubmit',
-                                             tags=tags)
+        tags = api.cros_tags.make_schedule_tags(internal_snapshot_commit)
+        requests = [api.buildbucket.schedule_request(
+            gitiles_commit=internal_snapshot_commit,
+            builder=child, bucket='postsubmit',
+            tags=tags)
             for child in properties.child_builders
         ]
         api.buildbucket.schedule(requests)
