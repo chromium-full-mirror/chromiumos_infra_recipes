@@ -412,7 +412,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#150)(self, child_specs):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#153)(self, child_specs):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -425,7 +425,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#192)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#195)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -4202,7 +4202,7 @@ Returns: A list of build_pb2.Build objects with results.
 Returns whether the orchestrator should collect the build.
 
 Args:
-  build (): the build to check whether to collect.
+  build (build_pb2.Build): the build to check whether to collect.
   child_specs_dict (dict): mapping of builder name to ChildSpec.
   child_targets_dict (dict): fuzzy mapping of builder target to to ChildSpec.
     Fuzzy in the sense that it just chops off from the last '-' to the end

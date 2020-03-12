@@ -57,8 +57,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
           presentation.step_text = ('found {} build{} to recycle'.format(
               len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
+      # By filtering to the names of the builders in child_specs,
+      # the *-snapshot builders will be ignored. See https://crbug.com/1040593
+      # for details on why we want the actual *-postsubmit builders to run.
       snapshot_builds = self.m.cros_history.get_snapshot_builds(
-          snapshot, [],
+          snapshot, [cs.name for cs in child_specs],
           [common_pb2.SUCCESS, common_pb2.SCHEDULED, common_pb2.STARTED],
           patches=gerrit_changes)
 

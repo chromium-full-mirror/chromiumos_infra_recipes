@@ -421,7 +421,7 @@ def should_collect(build, child_specs_dict, child_targets_dict):
   """Returns whether the orchestrator should collect the build.
 
   Args:
-    build (): the build to check whether to collect.
+    build (build_pb2.Build): the build to check whether to collect.
     child_specs_dict (dict): mapping of builder name to ChildSpec.
     child_targets_dict (dict): fuzzy mapping of builder target to to ChildSpec.
       Fuzzy in the sense that it just chops off from the last '-' to the end
@@ -431,7 +431,7 @@ def should_collect(build, child_specs_dict, child_targets_dict):
   """
   builder_name = build.builder.builder
   child_spec = child_specs_dict.get(builder_name)
-  if not child_spec:
+  if not child_spec:  #pragma: no cover
     # Missed lookup, the existing build name was not a name in child_specs.
     # The usual case would be existing build has a *-snapshot name but the
     # orchestrator's child has a *-postsubmit name.
