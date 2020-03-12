@@ -3491,11 +3491,23 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#103)(api, build_target, build_config, gitiles_commit, gerrit_changes, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#106)(api, build_target, build_config, gitiles_commit, gerrit_changes, force_relevant_build):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#85)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#88)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#376)(api, build_config):**
+&mdash; **def [calculate\_build\_cost](/recipes/build_target.py#382)(build):**
+
+Calculate the cost of building this image.
+
+Calculates the cost of building this image based on the build time duration.
+
+Args:
+  build (build_pb2.Build): The build proto for this image.
+
+Returns:
+  A float representing the cost (USD) of building this image.
+
+&mdash; **def [get\_packages](/recipes/build_target.py#398)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3511,7 +3523,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#395)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#417)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4096,11 +4108,26 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#55)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#58)(api, properties):**
 
-&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#187)(api, config):**
+&mdash; **def [calculate\_cq\_run\_cost](/recipes/orchestrator.py#299)(orch_build, child_builds, parent_step):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#311)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+Calculates the cost of the cq run.
+
+Calculates the total cost of this cq run based on the cost to run the
+orchestrator and build the child images.
+
+ Args:
+  orch_build (build_pb2.Build): The orchestrator build.
+  child_builds (list[build_pb2.Build]): The child builds for this cq run.
+  parent_step (Step): the calling step, to be used for presentation purposes.
+
+Returns:
+  A float representing the cost (USD) of the cq run.
+
+&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#194)(api, config):**
+
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#374)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4117,7 +4144,24 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#292)(api):**
+&mdash; **def [get\_child\_builds\_cost](/recipes/orchestrator.py#322)(orch_build_id, child_builds, parent_step):**
+
+Calculates the cost of building child images during this cq run.
+
+Calculates the cost for building child images during this cq run. Only adds to
+the cost if the child build was created during this cq run. Logs the child
+builds created for this cq run that do not have a build_cost property.
+
+Args:
+  orch_build_id (build_pb2.Build): The orchestrator's build id.
+  child_builds (list[build_pb2.Build]): The builds completed for this cq run.
+  parent_step (Step): the calling step, to be used for presentation purposes.
+
+Returns:
+  total_child_build_cost (float): The cost (USD) of building child images
+  during this cq run.
+
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#355)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4127,7 +4171,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#409)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#472)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -4138,7 +4182,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#242)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#249)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4153,7 +4197,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#357)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#420)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4166,7 +4210,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#398)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#461)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4174,7 +4218,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#384)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#447)(refs):**
 
 Assert the given refs start with refs/heads.
 

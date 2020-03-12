@@ -3905,7 +3905,11 @@
   },
   {
     "cmd": [],
-    "name": "clean up orchestrator"
+    "name": "clean up orchestrator",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@child builds missing build_cost@@@",
+      "@@@SET_BUILD_PROPERTY@cq_run_cost@0.0@@@"
+    ]
   },
   {
     "cmd": [],

@@ -4844,6 +4844,13 @@
   },
   {
     "cmd": [],
+    "name": "set build_cost",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "call chromite.api.SdkService/Delete",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",

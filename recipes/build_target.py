@@ -69,6 +69,9 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
     BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
 ]
 
+# Cost is in USD per day as calculated in go/cros-infra-sizing on 2018-12-12.
+BOT_COST = 8.08
+
 # All step timeouts are in seconds.
 STEP_TIMEOUTS = {
   'uprev': 10 * 60,
@@ -371,6 +374,25 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     if api.cros_relevance.is_depgraph_affected(gerrit_changes, gitiles_commit,
                                                dep_graph=dep_graph.sdk):
       api.cros_sdk.mark_sdk_as_dirty()
+
+  api.easy.set_property_step('build_cost',
+                             calculate_build_cost(api.buildbucket.build))
+
+
+def calculate_build_cost(build):
+  """Calculate the cost of building this image.
+
+  Calculates the cost of building this image based on the build time duration.
+
+  Args:
+    build (build_pb2.Build): The build proto for this image.
+
+  Returns:
+    A float representing the cost (USD) of building this image.
+  """
+  bot_days = (build.end_time.seconds - build.start_time.seconds) / (
+      60.0 * 60.0 * 24.0)
+  return bot_days * BOT_COST
 
 
 def get_packages(api, build_config):
