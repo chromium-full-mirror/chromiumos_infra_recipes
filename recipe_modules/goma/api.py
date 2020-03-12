@@ -132,7 +132,7 @@ class GomaApi(recipe_api.RecipeApi):
     Returns:
       BigQuery error message (str) or None if no errors occurred.
     """
-    with self.m.step.nest('process_goma_artifacts') as presentation:
+    with self.m.step.nest('process_goma_counterz_stats') as presentation:
       if install_pkg_response.HasField('goma_artifacts') and goma_log_dir:
         stats_filename = None
         counterz_filename = None
@@ -192,37 +192,37 @@ class GomaApi(recipe_api.RecipeApi):
       tuple[GsDestination]: tuple containing the bucket and gs_path used when
           writing to the goma GS bucket
     """
-    with self.m.step.nest('process_goma_artifacts') as presentation:
-       with self.m.context(cwd=self.m.path.abs_to_path(goma_log_dir)):
-          # destination gs_path is based on date and build_target name.
-          today = self.m.time.utcnow()
-          gs_path_base = self.m.path.join(
-              today.strftime('%Y/%m/%d'),
-              self.m.properties.get('bot_id', build_target_name))
-          gs_bucket = ('staging-chrome-goma-log' if is_staging
-                       else 'chrome-goma-log')
-          presentation.logs['gs_bucket'] = gs_bucket
-          presentation.logs['gs_path'] = gs_path_base
-          num_logs_uploaded = 0
-          builder_id = self.m.buildbucket.build.builder
-          metadata = {
-              'x-goog-meta-builderinfo': json.dumps({
-                  'is_cros': True,
-                  'bot_id': self.m.properties.get('bot_id', ''),
-                  'build_id': self.m.buildbucket.build.id,
-                  'builder_id': {
-                      'project': builder_id.project,
-                      'bucket': builder_id.bucket,
-                      'builder': builder_id.builder,
-                  },
-                  'build_target_name': build_target_name,
-              })
-          }
-          for log_file in install_pkg_response.goma_artifacts.log_files:
-            gs_path = self.m.path.join(gs_path_base,
-                                       self.m.path.basename(log_file))
-            self.m.gsutil.upload(log_file, gs_bucket, gs_path,
-                                 metadata=metadata)
-            num_logs_uploaded += 1
-          presentation.logs['num_logs_uploaded'] = str(num_logs_uploaded)
-          return GsDestination(gs_bucket, gs_path_base)
+    with self.m.step.nest('process_goma_logs') as presentation:
+      with self.m.context(cwd=self.m.path.abs_to_path(goma_log_dir)):
+        # destination gs_path is based on date and build_target name.
+        today = self.m.time.utcnow()
+        gs_path_base = self.m.path.join(
+            today.strftime('%Y/%m/%d'),
+            self.m.properties.get('bot_id', build_target_name))
+        gs_bucket = ('staging-chrome-goma-log'
+                     if is_staging else 'chrome-goma-log')
+        presentation.logs['gs_bucket'] = gs_bucket
+        presentation.logs['gs_path'] = gs_path_base
+        num_logs_uploaded = 0
+        builder_id = self.m.buildbucket.build.builder
+        metadata = {
+            'x-goog-meta-builderinfo':
+                json.dumps({
+                    'is_cros': True,
+                    'bot_id': self.m.properties.get('bot_id', ''),
+                    'build_id': self.m.buildbucket.build.id,
+                    'builder_id': {
+                        'project': builder_id.project,
+                        'bucket': builder_id.bucket,
+                        'builder': builder_id.builder,
+                    },
+                    'build_target_name': build_target_name,
+                })
+        }
+        for log_file in install_pkg_response.goma_artifacts.log_files:
+          gs_path = self.m.path.join(gs_path_base,
+                                     self.m.path.basename(log_file))
+          self.m.gsutil.upload(log_file, gs_bucket, gs_path, metadata=metadata)
+          num_logs_uploaded += 1
+        presentation.logs['num_logs_uploaded'] = str(num_logs_uploaded)
+        return GsDestination(gs_bucket, gs_path_base)

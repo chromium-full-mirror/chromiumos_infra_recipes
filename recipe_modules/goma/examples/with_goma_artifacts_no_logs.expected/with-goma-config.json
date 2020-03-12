@@ -41,7 +41,7 @@
   },
   {
     "cmd": [],
-    "name": "process_goma_artifacts (2)",
+    "name": "process_goma_counterz_stats",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@compile_event@stats {@@@",
       "@@@STEP_LOG_LINE@compile_event@  time_stats {@@@",
@@ -67,7 +67,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "process_goma_artifacts (2).read_stats_proto",
+    "name": "process_goma_counterz_stats.read_stats_proto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -84,7 +84,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "process_goma_artifacts (2).read_counterz_proto",
+    "name": "process_goma_counterz_stats.read_counterz_proto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -97,7 +97,7 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "name": "process_goma_artifacts (2).read deploy_cipd.json",
+    "name": "process_goma_counterz_stats.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -120,7 +120,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "process_goma_artifacts (2).ensure_installed",
+    "name": "process_goma_counterz_stats.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -141,7 +141,7 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/bq-insert"
     ],
     "infra_step": true,
-    "name": "process_goma_artifacts (2).bq-insert",
+    "name": "process_goma_counterz_stats.bq-insert",
     "stdin": "{\"compile_event\": \"{\\n  \\\"stats\\\": {\\n    \\\"timeStats\\\": {\\n      \\\"uptime\\\": \\\"1234\\\"\\n    }\\n  }, \\n  \\\"counterzStats\\\": {}\\n}\", \"dataset_id\": \"client_events\", \"project_id\": \"goma-logs\", \"table_name\": \"compile_events\", \"write_data\": true}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -151,7 +151,7 @@
   },
   {
     "cmd": [],
-    "name": "process_goma_artifacts (3)",
+    "name": "process_goma_logs",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@gs_bucket@chrome-goma-log@@@",
       "@@@STEP_LOG_END@gs_bucket@@@",
