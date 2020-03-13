@@ -1,0 +1,17 @@
+[
+  {
+    "cmd": [],
+    "name": "validate inputs",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No build@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "No changes present"
+    },
+    "name": "$result"
+  }
+]

@@ -1,0 +1,20 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.presubmit_cq;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message PresubmitCqProperties {
+  // Passed to depot_tools/presubmit (Infra Presubmit). See
+  // depot_tools/recipes/recipe_modules/presubmit/properties.proto for details.
+  bool runhooks = 1;
+
+  // Passed to depot_tools/presubmit (Infra Presubmit). See
+  // depot_tools/recipes/recipe_modules/presubmit/properties.proto for details.
+  // Passed to presubmit as timeout_s.
+  int32 timeout_sec = 2;
+}

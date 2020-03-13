@@ -1,0 +1,262 @@
+[
+  {
+    "cmd": [],
+    "name": "validate inputs",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@One CL, using Infra Presubmit@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run Infra Presubmit",
+    "~followup_annotations": [
+      "@@@STEP_LINK@Infra Presubmit@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "run Infra Presubmit.buildbucket.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"Infra Presubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"SHA\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"properties\": {\"runhooks\": false, \"timeout_s\": 0}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"infra\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"Infra Presubmit\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"bucket\": \"infra\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"Infra Presubmit\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"1234\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
+      "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"id\": \"SHA\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/master\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
+      "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"runhooks\": false, @@@",
+      "@@@STEP_LOG_LINE@request@          \"timeout_s\": 0@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"SHA\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run Infra Presubmit.collect",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "collect",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-interval",
+      "60s",
+      "8922054662172514000"
+    ],
+    "infra_step": true,
+    "name": "run Infra Presubmit.collect.wait",
+    "timeout": 7200,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "run Infra Presubmit.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514000\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514000\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check results"
+  },
+  {
+    "cmd": [],
+    "name": "check results.build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@all critical builds succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check results.build results.",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "check results.build results..get access token for default account",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::url]/resources/pycurl.py",
+      "--url",
+      "https://sheriff-o-matic.appspot.com/api/v1/annotations/chromeos",
+      "--status-json",
+      "/path/to/tmp/json",
+      "--outfile",
+      "/path/to/tmp/json",
+      "--headers-json",
+      "{\"Authorization\": \"Bearer extra.secret.token.should.not.be.logged\"}",
+      "--transient-retry",
+      "3"
+    ],
+    "name": "check results.build results..get Sheriff-o-Matic annotations",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@[@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@      \"1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step with linked bugs\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:snoozed step\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step with no snoozes or linked bugs\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (5)|builder\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"Group with snooze\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"123\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"123\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step in group with snooze\", @@@",
+      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
+      "@@@STEP_LOG_LINE@json.output[output]@]@@@",
+      "@@@STEP_LOG_END@json.output[output]@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
