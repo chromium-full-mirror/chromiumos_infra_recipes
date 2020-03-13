@@ -71,9 +71,8 @@ def RunSteps(api, properties):
     maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
                               snapshot)
 
-  if gerrit_changes and not api.gerrit.changes_are_submittable(gerrit_changes):
-    raise api.step.StepFailure('Merge conflict detected! '
-                               'Please rebase and retry.')
+  if gerrit_changes:
+    api.gerrit.assert_changes_submittable(gerrit_changes)
 
   if properties.enable_history and gerrit_changes:
     if properties.assert_singleton:

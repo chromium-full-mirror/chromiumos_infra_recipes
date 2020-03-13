@@ -31,8 +31,12 @@ def RunSteps(api):
   api.assertions.assertEqual(patch.display_url,
                              'https://chromium-review.googlesource.com/91827')
   api.assertions.assertIn('my/fake/file', patch.file_infos)
-  api.gerrit.changes_are_submittable([change])
-  api.gerrit.changes_are_submittable([change],
+  api.gerrit.assert_changes_submittable([change])
+  # Not submittable
+  api.assertions.assertRaises(
+      api.step.StepFailure,
+      api.gerrit.assert_changes_submittable,
+      [change],
       test_output_data=api.gerrit.test_api.test_changes_are_submittable(
           errors=['could not cherry pick']))
   api.gerrit.test_api.simulated_changes_are_submittable(submittable=False)
@@ -45,10 +49,10 @@ def RunSteps(api):
   api.assertions.assertEqual(patch.git_fetch_ref, 'refs/changes/27/91827/1')
 
   # Missing result
-  try:
-    api.gerrit.fetch_patch_sets([change], test_output_data={'changes': [{}]})
-  except api.step.StepFailure:
-    pass
+  api.assertions.assertRaises(
+      api.step.StepFailure,
+      api.gerrit.fetch_patch_sets,
+      [change], test_output_data={'changes': [{}]})
 
   api.gerrit.test_api.test_patch_set()
   api.gerrit.test_api.test_gerrit_change_url()

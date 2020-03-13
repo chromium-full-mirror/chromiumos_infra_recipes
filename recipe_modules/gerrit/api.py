@@ -306,14 +306,14 @@ class GerritApi(recipe_api.RecipeApi):
         host = host[len(prefix):]
     return 'https://' + host
 
-  def changes_are_submittable(self, gerrit_changes, test_output_data=None):
+  def assert_changes_submittable(self, gerrit_changes, test_output_data=None):
     """Checks if the provided changes can be merged onto their Git branches.
 
     Args:
       gerrit_changes (list(common_pb2.GerritChange)): the changes to check
 
-    Returns:
-      bool: whether the changes are submittable
+    Raises:
+      StepFailure if the changes cannot be merged.
     """
     with self.m.step.nest('check for merge conflicts') as presentation:
       changes = []
@@ -336,9 +336,13 @@ class GerritApi(recipe_api.RecipeApi):
         presentation.logs['cherry-pick-failures'] = result['errors']
         presentation.status = 'FAILURE'
         presentation.properties['merge_conflict'] = True
-        return False
+        # Write an error into the failure so that it's surfaced to the user.
+        # Currently the program only returns one error, so just use the first.
+        raise self.m.step.StepFailure(
+            'Merge conflict detected! Please rebase and retry.\n{}'.format(
+            result['errors'][0]))
       presentation.step_text = 'confirmed no merge conflicts'
-      return True
+      return
 
   def create_change(self, project, reviewers=None, topic=None):
     """Create a Gerrit change for the most recent commits in the given project.

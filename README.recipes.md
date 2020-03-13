@@ -1950,7 +1950,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#484)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#488)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -1958,7 +1958,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#409)(self, gerrit_change, comment):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#413)(self, gerrit_change, comment):**
 
 Add a comment to the given Gerrit change.
 
@@ -1969,17 +1969,17 @@ Args:
 Returns:
   str: The new message ref (primarily for testing).
 
-&mdash; **def [changes\_are\_submittable](/recipe_modules/gerrit/api.py#309)(self, gerrit_changes, test_output_data=None):**
+&mdash; **def [assert\_changes\_submittable](/recipe_modules/gerrit/api.py#309)(self, gerrit_changes, test_output_data=None):**
 
 Checks if the provided changes can be merged onto their Git branches.
 
 Args:
   gerrit_changes (list(common_pb2.GerritChange)): the changes to check
 
-Returns:
-  bool: whether the changes are submittable
+Raises:
+  StepFailure if the changes cannot be merged.
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#343)(self, project, reviewers=None, topic=None):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#347)(self, project, reviewers=None, topic=None):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -2009,7 +2009,7 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#431)(self, gerrit_change):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#435)(self, gerrit_change):**
 
 Get the description of the given Gerrit change.
 
@@ -2053,7 +2053,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#499)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#503)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -2066,7 +2066,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#463)(self, gerrit_change, description):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#467)(self, gerrit_change, description):**
 
 Set the description of the given Gerrit change.
 
@@ -2075,7 +2075,7 @@ Args:
   description (str): The new description, in full. Be sure this still
       includes the Change-Id and other essential metadata.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#377)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#381)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
 
@@ -3939,9 +3939,9 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/add_change_comment.py#12)(api):**
 ### *recipes* / [gerrit:examples/changes\_are\_submittable](/recipe_modules/gerrit/examples/changes_are_submittable.py)
 
-[DEPS](/recipe_modules/gerrit/examples/changes_are_submittable.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/gerrit/examples/changes_are_submittable.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/changes_are_submittable.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/changes_are_submittable.py#14)(api):**
 ### *recipes* / [gerrit:examples/create\_change](/recipe_modules/gerrit/examples/create_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/create_change.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -4111,7 +4111,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#58)(api, properties):**
 
-&mdash; **def [calculate\_cq\_run\_cost](/recipes/orchestrator.py#299)(orch_build, child_builds, parent_step):**
+&mdash; **def [calculate\_cq\_run\_cost](/recipes/orchestrator.py#298)(orch_build, child_builds, parent_step):**
 
 Calculates the cost of the cq run.
 
@@ -4126,9 +4126,9 @@ orchestrator and build the child images.
 Returns:
   A float representing the cost (USD) of the cq run.
 
-&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#194)(api, config):**
+&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#193)(api, config):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#374)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#373)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4145,7 +4145,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_builds\_cost](/recipes/orchestrator.py#322)(orch_build_id, child_builds, parent_step):**
+&mdash; **def [get\_child\_builds\_cost](/recipes/orchestrator.py#321)(orch_build_id, child_builds, parent_step):**
 
 Calculates the cost of building child images during this cq run.
 
@@ -4162,7 +4162,7 @@ Returns:
   total_child_build_cost (float): The cost (USD) of building child images
   during this cq run.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#355)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#354)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4172,7 +4172,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#472)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#471)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -4183,7 +4183,7 @@ Args:
       a property name on update_manifest_refs.
   commit (GitilesCommit): The commit to update the manifest ref to.
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#249)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#248)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4198,7 +4198,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#420)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#419)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4211,7 +4211,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#461)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#460)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4219,7 +4219,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#447)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#446)(refs):**
 
 Assert the given refs start with refs/heads.
 

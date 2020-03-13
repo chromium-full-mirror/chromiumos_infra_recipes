@@ -7,6 +7,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/step',
     'gerrit',
 ]
 
@@ -18,8 +19,10 @@ def RunSteps(api):
       patchset=1,
   )
 
-  api.gerrit.changes_are_submittable([change])
-  api.gerrit.changes_are_submittable(
+  api.gerrit.assert_changes_submittable([change])
+  api.assertions.assertRaises(
+      api.step.StepFailure,
+      api.gerrit.assert_changes_submittable,
       [change],
       test_output_data=api.gerrit.test_api.test_changes_are_submittable(
           errors=['could not cherry pick']))

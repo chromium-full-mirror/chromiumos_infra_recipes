@@ -4349,7 +4349,7 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 190, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 189, in RunSteps",
       "    presentation, failures, child_builder_configs)",
       "  File \"PYTHON/lib/python2.7/contextlib.py\", in __exit__",
       "    self.gen.next()",

@@ -93,7 +93,7 @@ Change-Id: deadbeef
     """
     output = {'errors': []}
     if not submittable:
-      output['errors'].append('some cherry pick error')
+      output['errors'].append('some cherry pick error line 1\nline2')
     return self.step_data('check for merge conflicts.git-test-submit',
                           stdout=self.m.json.output(output))
 
