@@ -92,6 +92,27 @@ def RunSteps(api, properties):
         # Use new snapshot commit as the build output
         api.buildbucket.set_output_gitiles_commit(internal_snapshot_commit)
 
+      # Generate a snapshot commit in the public manifest repo as well.
+      with api.context(
+          cwd=api.cros_source.workspace_path.join('manifest')):
+
+        # Generate the manifest from public repo
+        snapshot_xml = api.repo.manifest_snapshot(
+            api.cros_source.workspace_path.join(
+                'manifest/full.xml'))
+
+        # And publish
+        with api.step.nest('publish external snapshot'):
+          external_snapshot_commit = publish_snapshot(
+              api,
+              api.cros_source.EXTERNAL_MANIFEST_URL,
+              manifest_ref,
+              api.cros_source.workspace_path.join(
+                  'manifest/snapshot.xml'
+              ),
+              snapshot_xml, [], True
+          )
+
       # It may seem weird that we publish uprevs after publishing the snapshot.
       # Unfortunately, publishing uprevs takes ~10 minutes, in which time it is
       # not unlikely that commits will land upstream and be trivially merged by
@@ -138,29 +159,6 @@ def RunSteps(api, properties):
               push(project.remote,
                    'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
                    dry_run=not properties.publish_uprevs)
-
-    # Generate a snapshot commit in the public manifest repo as well.  This is
-    # exactly the same thing we do above in manifest-internal, but now publicly
-    # visible.
-    with api.context(
-        cwd=api.cros_source.workspace_path.join('manifest')):
-
-      # Generate the manifest from public repo
-      snapshot_xml = api.repo.manifest_snapshot(
-          api.cros_source.workspace_path.join(
-              'manifest/full.xml'))
-
-      # And publish
-      with api.step.nest('publish external snapshot'):
-        external_snapshot_commit = publish_snapshot(
-            api,
-            api.cros_source.EXTERNAL_MANIFEST_URL,
-            manifest_ref,
-            api.cros_source.workspace_path.join(
-                'manifest/snapshot.xml'
-            ),
-            snapshot_xml, [], True
-        )
 
     # We schedule child snapshot builders last so that if a breaking
     # configuration change occurs between recipe launch and launching the
