@@ -33,7 +33,7 @@ type Output struct {
 }
 
 func main() {
-	cli.SetAuthScopes(auth.OAuthScopeEmail)
+	cli.SetAuthScopes(auth.OAuthScopeEmail, bigquery.Scope)
 	cli.Init()
 
 	var input Input
