@@ -682,7 +682,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#142)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#152)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -692,7 +692,7 @@ empty list if this run was not invoked as a bisection build.
 Returns:
   list[PackageInfo]: list of packages to build as specified by FindIt
 
-&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#153)(self):**
+&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#163)(self):**
 
 Returns the child builders as specified by FindIt or empty list.
 
@@ -703,7 +703,7 @@ build.
 Returns:
   list[str]: sorted list of child builders to run.
 
-&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#169)(self, builds):**
+&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#179)(self, builds):**
 
 Returns the test plan as specified by FindIt or None.
 
@@ -719,7 +719,7 @@ Args:
 Returns:
   GenerateTestPlanResponse or None.
 
-&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#32)(self, build_target_name):**
+&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#42)(self, build_target_name):**
 
 Sets the BISECT_BUILDER output property for the build target recipe.
 
@@ -729,7 +729,7 @@ should invoke if the build fails and bisection is required.
 Args:
   build_target_name (str): build target name to set the bisect builder for.
 
-&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#83)(self, failed_packages, failed_step, needs_bisection):**
+&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#93)(self, failed_packages, failed_step, needs_bisection):**
 
 Outputs the failed packages, if any, for FindIt consumption.
 
@@ -745,7 +745,7 @@ Args:
   needs_bisection: (bool): Whether or not bisection is needed for this run.
       A non-critical builder, for example may not need bisection.
 
-&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#43)(self):**
+&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#53)(self):**
 
 Sets the BISECT_BUILDER output property for the orchestrator.
 
@@ -753,7 +753,7 @@ Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the postsubmit-orchestrator encounters hardware test
 failures.
 
-&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#104)(self, hw_results, needs_bisection):**
+&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#114)(self, hw_results, needs_bisection):**
 
 Outputs the failed hardware tests, if any, for FindIt consumption.
 
@@ -765,6 +765,10 @@ Args:
   hw_results (list[SkylabResult]): list of SkylabResults from running
       hardware tests
   needs_bisection: (bool): Whether or not bisection is needed for this run.
+
+&emsp; **@property**<br>&mdash; **def [test\_bisection\_count](/recipe_modules/cros_bisect/api.py#35)(self):**
+
+&emsp; **@property**<br>&mdash; **def [test\_bisection\_percent](/recipe_modules/cros_bisect/api.py#31)(self):**
 ### *recipe_modules* / [cros\_branch](/recipe_modules/cros_branch)
 
 [DEPS](/recipe_modules/cros_branch/__init__.py#4): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1616,7 +1620,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#272)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#280)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 

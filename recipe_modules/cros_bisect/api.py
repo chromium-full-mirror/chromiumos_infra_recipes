@@ -25,6 +25,16 @@ class CrosBisectApi(recipe_api.RecipeApi):
     super(CrosBisectApi, self).__init__(*args, **kwargs)
     self._compile = properties.compile
     self._test = properties.test
+    self._test_bisection_percent = properties.test_bisection_percent
+    self._test_bisection_count = properties.test_bisection_count
+
+  @property
+  def test_bisection_percent(self):
+    return self._test_bisection_percent
+
+  @property
+  def test_bisection_count(self):
+    return self._test_bisection_count
 
   def _set_bisect_builder(self, builder):
     self.m.easy.set_property_step('BISECT_BUILDER', builder)

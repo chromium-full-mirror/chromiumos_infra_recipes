@@ -33,6 +33,12 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(api.cros_bisect.get_test_child_builders(),
                              properties.expected_test_child_builders)
 
+  api.assertions.assertEqual(api.cros_bisect.test_bisection_percent,
+                             properties.expected_test_bisection_percent)
+
+  api.assertions.assertEqual(api.cros_bisect.test_bisection_count,
+                             properties.expected_test_bisection_count)
+
 def GenTests(api):
   yield api.test('basic')
 
@@ -52,7 +58,7 @@ def GenTests(api):
            ],
          )))
 
-  yield (api.test('with-failed-build') + #
+  yield (api.test('with-failed-build') +  #
          api.properties(TestInputProperties(failed_packages=[
                PackageInfo(package_name='uno', category='pkg', version='1'),
                PackageInfo(package_name='dos', category='pkg', version='2'),
@@ -79,4 +85,16 @@ def GenTests(api):
              'bar-snapshot',
              'foo-snapshot',
            ],
+         )))
+
+  yield (api.test('with-validation-props') +  #
+         api.properties(
+             **{'$chromeos/cros_bisect':
+                CrosBisectProperties(
+                    test_bisection_percent=20,
+                    test_bisection_count=10
+                )}) +  #
+         api.properties(TestInputProperties(
+             expected_test_bisection_percent=20,
+             expected_test_bisection_count=10,
          )))

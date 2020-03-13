@@ -27,4 +27,12 @@ message CrosBisectProperties {
     repeated TestFailure hw_test_failures = 1;
   }
   TestFailures test = 3;
+
+  // The threshold for the ratio of failed tests to total tests
+  // below which test bisection gets triggered.
+  float test_bisection_percent = 4;
+
+  // The threshold for the number of failed tests below which
+  // test bisection gets triggered.
+  int32 test_bisection_count = 5;
 }

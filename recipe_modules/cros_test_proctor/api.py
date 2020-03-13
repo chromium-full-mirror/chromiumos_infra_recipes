@@ -107,8 +107,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               test_results.tast_vm)
           if self.m.failures.is_critical_test_failure(test_result)
       ])
-      needs_baseline_validation = self._needs_baseline_validation(
-          failed_test_names, test_plan)
+      needs_baseline_validation = self._needs_validation(
+          failed_test_names, test_plan,
+          self._baseline_validation_percent,
+          self._baseline_validation_count)
+
       if needs_baseline_validation:
         pres.step_text = (
             '{} test(s) failed. will run baseline validation'.format(
@@ -161,8 +164,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('check test results'):
       self.m.cros_history.set_passed_tests(passed_tests)
+      needs_test_bisection = self._needs_validation(
+          failed_test_names, test_plan,
+          self.m.cros_bisect.test_bisection_percent,
+          self.m.cros_bisect.test_bisection_count)
+
       self.m.cros_bisect.set_test_failures(test_results.skylab,
-                                           needs_baseline_validation)
+                                           needs_test_bisection)
       failures = self.get_test_failures(test_results, baseline_results)
     return failures
 
@@ -474,8 +482,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         url_title_fn=self.m.naming.get_build_title)
     return moblab_vm_tests
 
-  def _needs_baseline_validation(self, failed_results, test_plan):
-    """Check if we need baseline validation for this orchestrator.
+  def _needs_validation(self, failed_results, test_plan,
+                        percent_threshold, count_threshold):
+    """Check if we need validation.
+
+    Check if we need validation of the results per the validation constraints.
 
     Args:
       failed_results (list[SkylabResults]): Results of failed tests.
@@ -501,8 +512,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     failure_ratio = 0
     if test_count != 0 and failed_results:
       failure_ratio = float(len(failed_results)) / test_count
-      if (failure_ratio <= float(self._baseline_validation_percent) / 100 or
-          len(failed_results) <= self._baseline_validation_count):
+      if (failure_ratio <= float(percent_threshold) / 100 or
+          len(failed_results) <= count_threshold):
         return True
 
     return False
