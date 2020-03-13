@@ -63,6 +63,11 @@ PROPERTIES = GeneratorProperties
 
 def RunSteps(api, properties):
   with api.step.nest('validate properties') as presentation:
+    existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
+    no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
+    outdated_cls_policy = properties.outdated_cls_policy or OUTDATED_DO_NOTHING
+    outdated_cls_policy_str = OutdatedClsPolicy.Name(outdated_cls_policy)
+
     if not properties.HasField('package_info'):
       raise ValueError('must set package_info')
 
@@ -202,6 +207,59 @@ def RunSteps(api, properties):
               api.gerrit.query_changes(host_url, [('topic', topic),
                                                   ('status', 'open')]))
 
+    mrm = None  # Most recently merged uprev.
+    if open_changes:
+      with api.step.nest('examine outdated CLs'):
+        for host in ('chromium', 'chrome-internal'):
+          with api.step.nest('merged CLs from {} host (within 30 days)'
+              .format(host)) as presentation:
+            host_url = 'https://{}-review.googlesource.com'.format(host)
+            merged_changes = api.gerrit.query_changes(
+                host_url, [('topic', topic), ('status', 'merged'),
+                          ('-age', '30d')])
+            if merged_changes:
+              presentation.logs['merged CLs'] = [
+                  api.gerrit.parse_gerrit_change_url(cl)
+                  for cl in merged_changes]
+
+              # Must fetch to get submitted times from the "PatchSets", which
+              # are really instances of ChangeInfo.
+              merged_ci = api.gerrit.fetch_patch_sets(merged_changes)
+              list.sort(merged_ci,
+                        key=lambda ci: ci.submitted,
+                        reverse=True)
+              mrm = merged_ci[0] if merged_ci else None
+              presentation.logs['most recent merged cl'] = [mrm.display_id]
+
+    outdated_cls, abandoned_cls = [], []
+    if mrm:
+      open_ci = api.gerrit.fetch_patch_sets(open_changes)
+      with api.step.nest('outdated CLs') as presentation:
+        outdated_cls.extend([ci for ci in open_ci
+                             if ci.created < mrm.submitted])
+        presentation.logs['outdated CLs'] = [
+            ci.display_id
+            for ci in outdated_cls]
+
+    if outdated_cls:
+      with api.step.nest('act on outdated CLs with policy: {}'.format(
+          outdated_cls_policy_str)):
+        for outdated_cl in outdated_cls:
+          if outdated_cls_policy == OUTDATED_LEAVE_COMMENT:
+            outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                       'PUpr has been set to remind you that it'
+                                       ' likely should be abandoned.').format(
+                                           mrm.display_url)
+            api.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
+                                          outdated_comment_message)
+          if outdated_cls_policy == OUTDATED_ABANDON:
+            outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                       'PUpr has been set to abandon.').format(
+                                           mrm.display_url)
+            api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
+                                      message=outdated_comment_message)
+            abandoned_cls.append(outdated_cl)
+
     with api.step.nest('generate CLs'):
       repositories = map(api.path.abs_to_path, repositories)
       changes = [
@@ -213,7 +271,7 @@ def RunSteps(api, properties):
           for repository in repositories
       ]
 
-    if len(changes) > 1:
+    if changes:
       with api.step.nest('cq-depend generated CLs'):
         cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
         for change, cq_depend in zip(changes, cq_depends):
@@ -222,13 +280,9 @@ def RunSteps(api, properties):
             description = '{}\n{}'.format(description, cq_depend)
             api.gerrit.set_change_description(change, description)
 
-    existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
-    no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
-    outdated_cls_policy = properties.outdated_cls_policy or OUTDATED_DO_NOTHING
-    outdated_cls_policy_str = OutdatedClsPolicy.Name(outdated_cls_policy)
-
-    send_to_cq_policy = (
-        existing_cls_policy if open_changes else no_existing_cls_policy)
+    existing_cls = open_changes and len(abandoned_cls) < len(open_changes)
+    send_to_cq_policy = (existing_cls_policy if existing_cls
+                         else no_existing_cls_policy)
 
     with api.step.nest('update CL labels'):
       for change in changes:
@@ -271,58 +325,6 @@ def RunSteps(api, properties):
 
         if labels is not None:
           api.gerrit.set_change_labels(change, labels)
-
-    mrm = None  # Most recently merged uprev.
-    if open_changes:
-      with api.step.nest('examine outdated CLs'):
-        for host in ('chromium', 'chrome-internal'):
-          with api.step.nest('merged CLs from {} host (within 30 days)'
-              .format(host)) as presentation:
-            host_url = 'https://{}-review.googlesource.com'.format(host)
-            merged_changes = api.gerrit.query_changes(
-                host_url, [('topic', topic), ('status', 'merged'),
-                          ('-age', '30d')])
-            if merged_changes:
-              presentation.logs['merged CLs'] = [
-                  api.gerrit.parse_gerrit_change_url(cl)
-                  for cl in merged_changes]
-
-              # Must fetch to get submitted times from the "PatchSets", which
-              # are really instances of ChangeInfo.
-              merged_ci = api.gerrit.fetch_patch_sets(merged_changes)
-              list.sort(merged_ci,
-                        key=lambda ci: ci.submitted,
-                        reverse=True)
-              mrm = merged_ci[0] if merged_ci else None
-              presentation.logs['most recent merged cl'] = [mrm.display_id]
-
-    outdated_cls = []
-    if mrm:
-      open_ci = api.gerrit.fetch_patch_sets(open_changes)
-      with api.step.nest('outdated CLs') as presentation:
-        outdated_cls.extend([ci for ci in open_ci
-                             if ci.created < mrm.submitted])
-        presentation.logs['outdated CLs'] = [
-            ci.display_id
-            for ci in outdated_cls]
-
-    if outdated_cls:
-      with api.step.nest('act on outdated CLs with policy: {}'.format(
-          outdated_cls_policy_str)):
-        for outdated_cl in outdated_cls:
-          if outdated_cls_policy == OUTDATED_LEAVE_COMMENT:
-            outdated_comment_message = ('This CL has been obviated by: {}\n\n'
-                                       'PUpr has been set to remind you that it'
-                                       ' likely should be abandoned.').format(
-                                           mrm.display_url)
-            api.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
-                                          outdated_comment_message)
-          if outdated_cls_policy == OUTDATED_ABANDON:
-            outdated_comment_message = ('This CL has been obviated by: {}\n\n'
-                                       'PUpr has been set to abandon.').format(
-                                           mrm.display_url)
-            api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
-                                      message=outdated_comment_message)
 
 
 # TODO(dburger): deleted files should be at the end of the modified_ebuilds list
