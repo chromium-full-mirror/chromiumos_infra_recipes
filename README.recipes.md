@@ -4111,7 +4111,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#58)(api, properties):**
 
-&mdash; **def [calculate\_cq\_run\_cost](/recipes/orchestrator.py#298)(orch_build, child_builds, parent_step):**
+&mdash; **def [calculate\_cq\_run\_cost](/recipes/orchestrator.py#297)(orch_build, child_builds, parent_step):**
 
 Calculates the cost of the cq run.
 
@@ -4128,7 +4128,7 @@ Returns:
 
 &mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#193)(api, config):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#373)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#372)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4145,7 +4145,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_builds\_cost](/recipes/orchestrator.py#321)(orch_build_id, child_builds, parent_step):**
+&mdash; **def [get\_child\_builds\_cost](/recipes/orchestrator.py#320)(orch_build_id, child_builds, parent_step):**
 
 Calculates the cost of building child images during this cq run.
 
@@ -4162,7 +4162,7 @@ Returns:
   total_child_build_cost (float): The cost (USD) of building child images
   during this cq run.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#354)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#353)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4172,7 +4172,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#471)(api, update_manifest_refs, name, commit):**
+&mdash; **def [maybe\_update\_manifest\_ref](/recipes/orchestrator.py#470)(api, update_manifest_refs, name, commit):**
 
 Update ref in manifest-internal to point to current snapshot.
 
@@ -4198,7 +4198,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#419)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#418)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4211,7 +4211,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#460)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#459)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4219,7 +4219,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#446)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#445)(refs):**
 
 Assert the given refs start with refs/heads.
 

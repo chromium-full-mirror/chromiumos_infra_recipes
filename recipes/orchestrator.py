@@ -212,8 +212,8 @@ def determine_repo_state(api, config):
 
   def ConvertPB(inpb, typ):
     """Convert |inpb| to |typ|."""
-    outpb = typ();
-    outpb.ParseFromString(inpb.SerializeToString());
+    outpb = typ()
+    outpb.ParseFromString(inpb.SerializeToString())
     return outpb
 
   # If we did not get a list of gerrit changes, use the default list.
@@ -289,8 +289,7 @@ def schedule_wait_follow_on(api, parent_step, config,
           step_name='collect', url_title_fn=title_fn).values()
     except api.step.StepFailure:  #pragma: no cover
       completed_builds += api.buildbucket.get_multi(
-          [b.id for b in existing_builds], step_name='get',
-          url_title_fn=api.naming.get_build_title).values()
+          [build.id], step_name='get', url_title_fn=title_fn).values()
 
   return completed_builds
 
