@@ -5,14 +5,11 @@
 
 """Launches presubmit tests for CQ."""
 
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
-    'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'cros_infra_config',
@@ -22,9 +19,6 @@ DEPS = [
 ]
 
 from PB.recipes.chromeos.presubmit_cq import PresubmitCqProperties
-from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
-from PB.recipe_modules.depot_tools.presubmit.properties import (
-    InputProperties as InfraPresubmitProperties)
 
 PROPERTIES = PresubmitCqProperties
 
