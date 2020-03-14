@@ -291,6 +291,10 @@ def _get_requests_from_properties(properties):
   raise ValueError('Must set at least one of request and requests')
 
 
+def _base64_compress_proto(proto):
+  wire_format = proto.SerializeToString()
+  return wire_format.encode('zlib_codec').encode('base64_codec')
+
 def set_output_properties(api, responses, backfills):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
@@ -301,6 +305,7 @@ def set_output_properties(api, responses, backfills):
     if 'default' in marshalled:
       step.properties['response'] = marshalled['default']
 
+    step.properties['compressed_responses'] = _base64_compress_proto(responses)
     # TODO(crbug.com/1028732) Re-enable once a mitigation has landed on
     # buildbucket to bump up the limitation on output properties size.
     #

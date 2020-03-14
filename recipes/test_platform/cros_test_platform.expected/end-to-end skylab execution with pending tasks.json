@@ -377,6 +377,7 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTUuFiT0lNSyzNKRGS5BKUYuJgVOJOy8/XLUjNS8nMSxdi4WAUYAIApc8ITA==\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"name\": \"foo-pending\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\"}}]}@@@",
       "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"name\": \"foo-pending\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\"}}]}}@@@"
     ]

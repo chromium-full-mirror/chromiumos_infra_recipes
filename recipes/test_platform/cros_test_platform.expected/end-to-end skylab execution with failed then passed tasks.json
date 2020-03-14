@@ -403,6 +403,7 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTquViT0lNSyzNKREq4jIS4k3Lz7fS109KLALiKikWjgIBJiVuoKBuUWpJUWZqihZfTn56MUIJ\\nl5kQH4oeQ7AmRlRN/KiaDA0YhUCqWAASkSOq\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"attempt\": 1, \"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz1\"}]}@@@",
       "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"attempt\": 1, \"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz1\"}]}}@@@"
     ]

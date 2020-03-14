@@ -4561,7 +4561,7 @@ Args:
 
 &mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#224)(api, requests, responses):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#294)(api, responses, backfills):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#298)(api, responses, backfills):**
 
 Set the output properties that are part of the cros_test_platform API.
 

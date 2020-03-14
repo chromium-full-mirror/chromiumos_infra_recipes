@@ -361,6 +361,7 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhCBBgAgAokAOy\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_ABORTED\", \"verdict\": \"VERDICT_FAILED\"}}@@@",
       "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_ABORTED\", \"verdict\": \"VERDICT_FAILED\"}}}@@@"
     ]
