@@ -445,25 +445,6 @@ def GenTests(api):
       ),
   ]
 
-  MATCHES_DEPS="""
-# Some leading stuff
-vars = {
-  "buildspec_platforms": "android, chromeos",
-  # some comments
-  'build_with_chromium': True,
-}
-"""
-
-  # DEPS with no match.
-  NO_MATCHES_DEPS="""
-# Some leading stuff
-vars = {
-  "buildspec_platforms": "win64",
-  # some comments
-  'build_with_chromium': True,
-}
-"""
-
   # Testing direct invocation, that is, not invoked with properties from
   # a gitiles poller through api.scheduler.
   yield (api.test('invoked-directly') +
