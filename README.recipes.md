@@ -4550,7 +4550,7 @@ Recipe for the ChromeOS Skylab Test Runner.
 
 &mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#321)(api, properties, envvars):**
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#159)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#157)(api, results_dir=''):**
 
 Parse test results.
 
@@ -4594,14 +4594,14 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#233)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#231)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#175)(api, prejob_response, run_test_response, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#173)(api, prejob_response, run_test_response, result):**
 
 Display test cases as recipe substeps.
 
@@ -4610,20 +4610,19 @@ Args:
   * run_test_response: phosphorus.runtest.RunTestResponse instance.
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [upload\_to\_gs](/recipes/test_platform/test_runner.py#123)(api, config=None, target_dir=None, task_id=''):**
+&mdash; **def [upload\_sync\_results\_to\_gs](/recipes/test_platform/test_runner.py#123)(api, config=None, target_dir=None):**
 
 Upload synchronously-needed test results to Google Storage.
 
 Args:
   * config: phosphorus.Config instance
   * target_dir: URL string for GS directory to upload to
-  * task_id: string ID of Swarming task
 Returns:
   UploadToGSResponse proto
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#144)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#142)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 

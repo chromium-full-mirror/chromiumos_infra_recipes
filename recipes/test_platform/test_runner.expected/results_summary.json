@@ -449,7 +449,7 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@result@{\"autotestResult\": {\"incomplete\": true, \"testCases\": [{\"humanReadableSummary\": \"failing test case\", \"name\": \"failing_test_case\", \"verdict\": \"VERDICT_FAIL\"}]}, \"prejob\": {\"step\": [{\"humanReadableSummary\": \"failed prejob\", \"name\": \"failing_prejob_step\", \"verdict\": \"VERDICT_FAIL\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzj0uHS4BJMS8zMycxLjy9JLS6JT04sThVgkoIJKoAEFcCCjEIaXGpcwjDVBUWpWflJ8cUlqQVA\\n9bwg4dQUBYgoAKYCG9k=\\n\"@@@"
     ]
   },
   {

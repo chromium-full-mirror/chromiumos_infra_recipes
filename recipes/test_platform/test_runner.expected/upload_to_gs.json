@@ -347,11 +347,11 @@
   },
   {
     "cmd": [],
-    "name": "upload to GS"
+    "name": "upload results to GS"
   },
   {
     "cmd": [],
-    "name": "upload to GS.call `phosphorus`",
+    "name": "upload results to GS.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -363,8 +363,7 @@
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"taskId\": \"dummy-task-id\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -383,8 +382,8 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "name": "upload to GS.call `phosphorus`.upload-to-gs",
-    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"taskId\": \"dummy-task-id\"\n}",
+    "name": "upload results to GS.call `phosphorus`.upload-to-gs",
+    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -433,7 +432,7 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@result@{\"autotestResult\": {\"synchronousLogDataUrl\": \"gs://dummy-gs-url\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjEpYSTC+20tdPKc3NrdRNL9YtLcoBADrCBm4=\\n\"@@@"
     ]
   },
   {

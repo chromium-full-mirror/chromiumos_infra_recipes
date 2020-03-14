@@ -120,24 +120,22 @@ def run_test(api, config=None, request=None, dut_hostname=''):
     return api.phosphorus.run_test(run_test_request)
 
 
-def upload_to_gs(api, config=None, target_dir=None, task_id=""):
+def upload_sync_results_to_gs(api, config=None, target_dir=None):
   """Upload synchronously-needed test results to Google Storage.
 
   Args:
     * config: phosphorus.Config instance
     * target_dir: URL string for GS directory to upload to
-    * task_id: string ID of Swarming task
   Returns:
     UploadToGSResponse proto
   Raises:
     * InfraFailure if binary call fails.
   """
   with api.context(infra_steps=True):
-    with api.step.nest('upload to GS') as step:
+    with api.step.nest('upload results to GS') as step:
       req = phosphorus.upload_to_gs.UploadToGSRequest(
           config=config,
-          gs_directory=target_dir,
-          task_id=task_id)
+          gs_directory=target_dir)
       return api.phosphorus.upload_to_gs(req)
 
 
@@ -238,7 +236,9 @@ def set_output_properties(api, result=None):
   """
   with api.context(infra_steps=True):
     with api.step.nest('set output properties') as step:
-      step.properties['result'] = json_format.MessageToDict(result)
+      step.properties['compressed_result'] = (
+          result.SerializeToString().encode('zlib_codec').encode('base64_codec')
+      )
 
 
 def _get_dut_hostname(api, env):
@@ -364,10 +364,9 @@ def RunSteps(api, properties, envvars):
     dut_state = result.state_update.dut_state
 
     if properties.request.test.offload.synchronous_gs_enable:
-      upload_response = upload_to_gs(
+      upload_response = upload_sync_results_to_gs(
           api, config=phosphorus_config,
-          target_dir=properties.config.output.gs_root_dir,
-          task_id=envvars.SWARMING_TASK_ID)
+          target_dir=properties.config.output.gs_root_dir)
       result.autotest_result.synchronous_log_data_url = upload_response.gs_url
   finally:
     with api.step.nest('save local DUT state'):
@@ -637,7 +636,7 @@ def GenTests(api):
                          autotest_result=Result.Autotest(test_cases=[]),
                      )))) +  #
          api.step_data(
-             'upload to GS.call `phosphorus`.upload-to-gs',
+             'upload results to GS.call `phosphorus`.upload-to-gs',
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
                      phosphorus.upload_to_gs.UploadToGSResponse(
