@@ -10,6 +10,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'cros_infra_config',
@@ -26,19 +27,21 @@ PROPERTIES = PresubmitCqProperties
 def RunSteps(api, properties):
   commit = api.buildbucket.build.input.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
+  input_props = {}
 
   with api.step.nest('validate inputs') as presentation:
     if len(changes) == 1:
       presentation.step_text = 'One CL, using Infra Presubmit'
       bucket = 'infra'
       builder = 'Infra Presubmit'
-      input_props = dict(runhooks=properties.runhooks,
-                         timeout_s=properties.timeout_sec)
+      if properties.runhooks:
+        input_props['runhooks'] = properties.runhooks
+      if properties.timeout_s > 0:
+        input_props['timeout_s'] = properties.timeout_s
     elif len(changes) > 1:
       presentation.step_text = 'Multiple changes, using fullcheckout-presubmit'
       bucket = 'cq'
       builder = 'fullcheckout-presubmit'
-      input_props = {}
     else:
       presentation.step_text = 'No build'
       raise api.step.StepFailure('No changes present')
@@ -54,8 +57,7 @@ def RunSteps(api, properties):
         builder=builder, bucket=bucket, critical=True, tags=tags,
         properties=child_props, swarming_parent_run_id=api.swarming.task_id)
     child = api.buildbucket.schedule([request])[0]
-    presentation.links[api.naming.get_build_title(child)] = (
-        api.buildbucket.build_url(build_id=child.id))
+    presentation.links[builder] = api.buildbucket.build_url(build_id=child.id)
 
     try:
       output = api.buildbucket.collect_builds(
@@ -98,6 +100,10 @@ def GenTests(api):
   # This is the normal case
   yield (api.test('normal_one_change') +  #
          make_build(changes=[common_pb2.GerritChange(change=1234)]))
+
+  yield (api.test('normal_one_change_and_props') +  #
+         make_build(changes=[common_pb2.GerritChange(change=1234)]) +  #
+         api.properties(runhooks=True, timeout_s=3))
 
   yield (api.test('normal_two_changes') +  #
          make_build(changes=[

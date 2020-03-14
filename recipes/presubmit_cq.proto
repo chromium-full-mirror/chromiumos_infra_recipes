@@ -16,5 +16,5 @@ message PresubmitCqProperties {
   // Passed to depot_tools/presubmit (Infra Presubmit). See
   // depot_tools/recipes/recipe_modules/presubmit/properties.proto for details.
   // Passed to presubmit as timeout_s.
-  int32 timeout_sec = 2;
+  int32 timeout_s = 2;
 }
