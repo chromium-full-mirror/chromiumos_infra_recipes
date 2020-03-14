@@ -108,21 +108,25 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     Returns:
       BuilderConfig
     """
-    with self.m.step.nest(name) as step:
+    with self.m.step.nest(name) as presentation:
       try:
         config = self.m.cros_infra_config.get_builder_config(
             self.m.buildbucket.build.builder.builder)
       except LookupError:
-        step.step_text = 'config not found, assuming deleted'
+        presentation.step_text = 'config not found, assuming deleted'
         return None
-      step.logs['builder config'] = [str(config)]
-      step.properties['builder_config'] = json_pb.MessageToDict(config)
+      presentation.logs['builder config'] = [str(config)]
+      self.m.easy.set_property_step('builder_config',
+                                    json_pb.MessageToDict(config))
 
-      parent = [x.value
-                for x in self.m.buildbucket.build.tags
-                if x.key == 'parent_buildbucket_id']
+      parent = [
+          x.value
+          for x in self.m.buildbucket.build.tags
+          if x.key == 'parent_buildbucket_id'
+      ]
       if parent:
-        step.links['parent link'] = 'https://ci.chromium.org/b/%s' % parent[0]
+        presentation.links['parent link'] = (
+            self.m.buildbucket.build_url(build_id=parent[0]))
 
       # TODO(crbug/1053073): once changes is being stripped by callers, we can
       # drop the check of apply_gerrit_changes.

@@ -11,6 +11,7 @@ DEPS = [
     'cros_infra_config',
     'cros_sdk',
     'cros_source',
+    'easy',
     'gerrit',
     'gitiles',
 ]

@@ -58,8 +58,7 @@
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_END@builder config@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"runSpec\": \"RUN\"}}, \"chrome\": {\"internal\": true}, \"general\": {\"brokenBefore\": \"2019-11-01T00:00:00Z\", \"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"atlas-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}@@@"
+      "@@@STEP_LOG_END@builder config@@@"
     ]
   },
   {
@@ -86,6 +85,14 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"runSpec\": \"RUN\"}}, \"chrome\": {\"internal\": true}, \"general\": {\"brokenBefore\": \"2019-11-01T00:00:00Z\", \"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"atlas-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}@@@"
     ]
   },
   {

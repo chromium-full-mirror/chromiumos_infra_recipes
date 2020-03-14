@@ -3274,7 +3274,7 @@ Returns:
     For direct-vm tests, the individual failing tests are listed.
 ### *recipe_modules* / [workspace\_util](/recipe_modules/workspace_util)
 
-[DEPS](/recipe_modules/workspace_util/__init__.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/workspace_util/__init__.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for various support functions for building.
 
@@ -3282,7 +3282,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#166)(self, changes=None, name='cherry-pick gerrit changes'):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#170)(self, changes=None, name='cherry-pick gerrit changes'):**
 
 Apply gerrit changes.
 
@@ -3317,7 +3317,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#41)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#141)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#145)(self):**
 
 Prepare the source checkout for building.
 
@@ -3325,7 +3325,7 @@ Returns:
   A context where source is set up, and the current working directory is the
       workspace path.
 
-&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#155)(self, commit=None, staging=False):**
+&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#159)(self, commit=None, staging=False):**
 
 Sync the source tree.
 

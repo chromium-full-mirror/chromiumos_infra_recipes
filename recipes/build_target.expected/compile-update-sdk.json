@@ -82,8 +82,7 @@
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@",
-      "@@@STEP_LINK@parent link@https://ci.chromium.org/b/parent_id@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"buildImages\": {\"imageTypes\": [\"TEST\", \"BASE\"]}, \"installPackages\": {\"compileSource\": true, \"runSpec\": \"RUN\"}, \"installToolchain\": {\"compileSource\": true}, \"sdkUpdate\": {\"compileSource\": true}, \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"llvm-next\"}, {\"flag\": \"thinlto\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"atlas-llvm-next\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
+      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/parent_id@@@"
     ]
   },
   {
@@ -110,6 +109,14 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"buildImages\": {\"imageTypes\": [\"TEST\", \"BASE\"]}, \"installPackages\": {\"compileSource\": true, \"runSpec\": \"RUN\"}, \"installToolchain\": {\"compileSource\": true}, \"sdkUpdate\": {\"compileSource\": true}, \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"llvm-next\"}, {\"flag\": \"thinlto\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"atlas-llvm-next\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
     ]
   },
   {

@@ -43,8 +43,7 @@
       "@@@STEP_LOG_LINE@builder config@    run_spec: RUN_EXIT@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_END@builder config@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackages\": {\"runSpec\": \"RUN_EXIT\"}}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-bisect\", \"type\": \"POSTSUBMIT\"}}@@@"
+      "@@@STEP_LOG_END@builder config@@@"
     ]
   },
   {
@@ -71,6 +70,14 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackages\": {\"runSpec\": \"RUN_EXIT\"}}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-bisect\", \"type\": \"POSTSUBMIT\"}}@@@"
     ]
   },
   {

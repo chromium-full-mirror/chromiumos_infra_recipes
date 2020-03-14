@@ -62,8 +62,7 @@
       "@@@STEP_LOG_LINE@builder config@unit_tests {@@@",
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_END@builder config@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"PRIVATE\", \"prebuiltsGsBucket\": \"chromeos-prebuilt\"}, \"build\": {\"buildImages\": {\"imageTypes\": [\"BASE\", \"TEST\"]}, \"installPackages\": {\"runSpec\": \"RUN\"}, \"portageProfile\": {\"profile\": \"generic_build\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-postsubmit\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
+      "@@@STEP_LOG_END@builder config@@@"
     ]
   },
   {
@@ -90,6 +89,14 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"PRIVATE\", \"prebuiltsGsBucket\": \"chromeos-prebuilt\"}, \"build\": {\"buildImages\": {\"imageTypes\": [\"BASE\", \"TEST\"]}, \"installPackages\": {\"runSpec\": \"RUN\"}, \"portageProfile\": {\"profile\": \"generic_build\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-postsubmit\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
     ]
   },
   {
