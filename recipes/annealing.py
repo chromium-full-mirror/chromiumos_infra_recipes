@@ -65,6 +65,31 @@ def RunSteps(api, properties):
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
           api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
 
+      # Generate a public snapshot of the manifest in the manifest/ repo.  We
+      # need to do this _first_ so that we can fill in the Cr-External-Snapshot
+      # footer in in the internal snapshot commit.
+      external_snapshot_ref = None
+      with api.context(
+          cwd=api.cros_source.workspace_path.join('manifest')):
+
+        # Generate the manifest from public repo
+        snapshot_xml = api.repo.manifest_snapshot(
+            api.cros_source.workspace_path.join(
+                'manifest/full.xml'))
+
+        # And publish
+        with api.step.nest('publish external snapshot'):
+          external_snapshot_commit = publish_snapshot(
+              api,
+              api.cros_source.EXTERNAL_MANIFEST_URL,
+              manifest_ref,
+              api.cros_source.workspace_path.join(
+                  'manifest/snapshot.xml'
+              ),
+              snapshot_xml, disable_gerrit=True
+          )
+          external_snapshot_ref = external_snapshot_commit.id
+
       # TODO(athilenius): It would be nice to set the 'Info' column here.
       gerrit_commits = []
       if manifest_diffs is not None:
@@ -87,31 +112,12 @@ def RunSteps(api, properties):
             api.cros_source.workspace_path.join(
                 'manifest-internal/snapshot.xml'),
             snapshot_xml, gerrit_commits,
-            properties.disable_gerrit_commits_in_commit_message)
+            properties.disable_gerrit_commits_in_commit_message,
+            footers=[("Cr-External-Snapshot", external_snapshot_ref)]
+        )
 
         # Use new snapshot commit as the build output
         api.buildbucket.set_output_gitiles_commit(internal_snapshot_commit)
-
-      # Generate a snapshot commit in the public manifest repo as well.
-      with api.context(
-          cwd=api.cros_source.workspace_path.join('manifest')):
-
-        # Generate the manifest from public repo
-        snapshot_xml = api.repo.manifest_snapshot(
-            api.cros_source.workspace_path.join(
-                'manifest/full.xml'))
-
-        # And publish
-        with api.step.nest('publish external snapshot'):
-          external_snapshot_commit = publish_snapshot(
-              api,
-              api.cros_source.EXTERNAL_MANIFEST_URL,
-              manifest_ref,
-              api.cros_source.workspace_path.join(
-                  'manifest/snapshot.xml'
-              ),
-              snapshot_xml, [], True
-          )
 
       # It may seem weird that we publish uprevs after publishing the snapshot.
       # Unfortunately, publishing uprevs takes ~10 minutes, in which time it is
@@ -179,7 +185,7 @@ def RunSteps(api, properties):
         api.buildbucket.schedule(requests)
 
 def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
-                     gerrit_commits=None, disable_gerrit=False):
+                     gerrit_commits=None, disable_gerrit=False, footers=[]):
   """Generate snapshot.xml file and commit it to a ref.
 
   Does not call api.context() so the cwd should be set to the appropriate
@@ -193,6 +199,7 @@ def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
       snapshot_xml:   contents to write to snapshot.xml in cwd
       gerrit_commits: List of gerrit commits to reference in commit message
       disable_gerrit: If True, disable gerrit commits in commit message
+      footers:        List of (key,value) pairs to add as footers
 
   Returns:
       GitilesCommit object representing the new commit.
@@ -206,9 +213,12 @@ def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
   api.git.checkout('FETCH_HEAD')
   commit_message = make_message(
       api, snapshot_ref, gerrit_commits, disable_gerrit)
+
+  for key,val in footers:
+    commit_message += "%s: %s\n" % (key,val)
+
   api.git_txn.update_ref_write_file(repo_url, snapshot_ref, commit_message,
                                     snapshot_file, snapshot_xml)
-
   return make_gitiles_commit(api, repo_url, api.git.head_commit())
 
 def get_gerrit_changes(api, manifest_diffs):
