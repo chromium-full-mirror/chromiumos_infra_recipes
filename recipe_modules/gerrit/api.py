@@ -338,9 +338,12 @@ class GerritApi(recipe_api.RecipeApi):
         presentation.properties['merge_conflict'] = True
         # Write an error into the failure so that it's surfaced to the user.
         # Currently the program only returns one error, so just use the first.
+        error_markdown_lines = [
+          '    {}'.format(s) for s in result['errors'][0].splitlines()]
+        error_msg = '\n'.join(error_markdown_lines)
         raise self.m.step.StepFailure(
-            'Merge conflict detected! Please rebase and retry.\n{}'.format(
-            result['errors'][0]))
+            'Merge conflict detected! Please rebase and retry.\n\n{}'.format(
+            error_msg))
       presentation.step_text = 'confirmed no merge conflicts'
       return
 
