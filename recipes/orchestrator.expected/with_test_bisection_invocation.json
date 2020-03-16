@@ -77,6 +77,54 @@
   },
   {
     "cmd": [],
+    "name": "set up orchestrator.clone manifest-internal repo",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "."
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.clone manifest-internal repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.clone manifest-internal repo.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.clone manifest-internal repo.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 new, 0 recycled@@@"
@@ -180,7 +228,7 @@
       "/path/to/tmp/json",
       "copy",
       "\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001ap\n\"\n\u0016amd64-generic-snapshot\u0012\u0006master\u0018\u0002\u0012\u0002\n\u0000\"5\b\u0001\u0012\u0006\u0001\u0003\u0004\u0005\u0007\u0002\u001a\u0011chromeos-prebuilt\"\u0016chromeos-image-archive*\u00002\t0\u0001j\u0000\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0002\"d\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
-      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.write input binaryproto",
@@ -200,9 +248,9 @@
       "[START_DIR]/cipd/test_planner/build_plan_generator",
       "generate-plan",
       "--input_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.run planner",
@@ -218,7 +266,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,

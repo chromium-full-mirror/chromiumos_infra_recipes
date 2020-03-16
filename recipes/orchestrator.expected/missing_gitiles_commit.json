@@ -131,7 +131,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.update manifest start ref",
+    "name": "set up orchestrator.clone manifest-internal repo",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -145,7 +145,7 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.update manifest start ref.git clone",
+    "name": "set up orchestrator.clone manifest-internal repo.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -159,7 +159,7 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.update manifest start ref.git fetch",
+    "name": "set up orchestrator.clone manifest-internal repo.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -172,9 +172,16 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.update manifest start ref.git rev-parse",
+    "name": "set up orchestrator.clone manifest-internal repo.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.update manifest-internal ref refs/heads/foo",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -186,7 +193,7 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.update manifest start ref.git push",
+    "name": "set up orchestrator.update manifest-internal ref refs/heads/foo.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -4359,7 +4366,7 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 189, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 204, in RunSteps",
       "    presentation, failures, child_builder_configs)",
       "  File \"PYTHON/lib/python2.7/contextlib.py\", in __exit__",
       "    self.gen.next()",

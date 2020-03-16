@@ -19,6 +19,7 @@ DEPS = [
     'cros_bisect',
     'cros_history',
     'cros_infra_config',
+    'cros_source',
     'cros_tags',
     'cros_test_proctor',
     'easy',
@@ -57,7 +58,9 @@ BOT_COST = 4.56
 
 def RunSteps(api, properties):
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
+  repo_internal_path = None
 
+  snapshot_id = None
   with api.step.nest('set up orchestrator') as presentation:
     validate_refs(properties.update_manifest_refs)
     api.cros_bisect.set_orchestrator_bisect_builder()
@@ -66,10 +69,18 @@ def RunSteps(api, properties):
     presentation.logs['orchestrator config'] = [str(config)]
 
     snapshot, gerrit_changes = determine_repo_state(api, config)
+    snapshot_id = snapshot.id
+
+    # clone internal repo
+    repo_internal_path = clone_repo(api, 'manifest-internal',
+        api.cros_source.INTERNAL_MANIFEST_URL, fetch=snapshot_id
+    )
 
     # Point start ref to the input snapshot if specified.
-    maybe_update_manifest_ref(api, properties.update_manifest_refs, 'start',
-                              snapshot)
+    maybe_push_commit(api, "manifest-internal",
+        api.cros_source.INTERNAL_MANIFEST_URL, repo_internal_path,
+        properties.update_manifest_refs.start, snapshot_id
+    )
 
   if gerrit_changes:
     api.gerrit.assert_changes_submittable(gerrit_changes)
@@ -140,8 +151,10 @@ def RunSteps(api, properties):
   if not fatal_failures:
     # If we've made it this far, the child builders were successful
     # and we can update the build success manifest ref if it is specified.
-    maybe_update_manifest_ref(api, properties.update_manifest_refs, 'build',
-                              snapshot)
+    maybe_push_commit(api, "manifest-internal",
+        api.cros_source.INTERNAL_MANIFEST_URL, repo_internal_path,
+        properties.update_manifest_refs.build, snapshot_id
+    )
 
   # If this is a dry run, check that the builds passed and quit.
   if not properties.enable_tests_on_dry_runs and api.cq.state == api.cq.DRY:
@@ -165,8 +178,10 @@ def RunSteps(api, properties):
 
   # Victory! If we've made it this far, all tests were successful
   # and we can update the test success manifest ref if it is specified.
-  maybe_update_manifest_ref(api, properties.update_manifest_refs, 'test',
-                            snapshot)
+  maybe_push_commit(api, "manifest-internal",
+      api.cros_source.INTERNAL_MANIFEST_URL, repo_internal_path,
+      properties.update_manifest_refs.test, snapshot_id
+  )
 
   # Launch any specified follow on orchestrator.
   if not fatal_failures and config.orchestrator.follow_on_orchestrator.name:
@@ -188,6 +203,27 @@ def RunSteps(api, properties):
     failures = api.failures.update_non_critical_failures(
         presentation, failures, child_builder_configs)
   return api.failures.aggregate_failures(failures)
+
+
+def clone_repo(api, name, url, fetch=None):
+  """Clone a repo into a temporary directory.
+
+  Args:
+    api   (RecipeApi): See RunSteps documentation.
+    name  (str):       Name of repo for display purposes
+    url   (str):       Url to clone from
+    fetch (str|None):  If specified, ref to fetch from remote
+
+  Returns:
+    path (Path): path on disk to cloned repo
+  """
+  path = api.path.mkdtemp()
+  with api.step.nest('clone %s repo' % name):
+    with api.context(cwd=path):
+      api.git.clone(url)
+      if fetch:
+        api.git.fetch_ref(url, fetch)
+  return path
 
 
 def determine_repo_state(api, config):
@@ -467,27 +503,22 @@ def validate_ref(ref, name):
     raise ValueError('%s ref %s is missing refs/heads/' % (name, ref))
 
 
-def maybe_update_manifest_ref(api, update_manifest_refs, name, commit):
-  """Update ref in manifest-internal to point to current snapshot.
+def maybe_push_commit(api, repo_name, repo_url, repo_path, ref, commit):
+  """Update a ref in the remote repo to point to a given commit.  If ref
+  evaluates as False, then do nothing
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    update_manifest_refs (UpdateManifestRefs): refs to maybe update.
-    name (string): name of ref to maybe update. Must correspond to
-        a property name on update_manifest_refs.
-    commit (GitilesCommit): The commit to update the manifest ref to.
+    api (RecipeApi):  See RunSteps documentation.
+    repo_name (str):  Name of repo for display purposes
+    repo_url  (str):  URL of remote repo to push to
+    repo_path (Path): Path to local repo to push from
+    ref       (str):  ref to push to (possibly empty) or None
+    commit    (str):  commit SHA1 to push to ref
   """
-  assert commit.project, 'malformed gitiles commit: %r' % commit
-  ref = getattr(update_manifest_refs, name)
   if ref:
-    with api.step.nest('update manifest %s ref' % name):
-      checkout_path = api.path.mkdtemp()
-      with api.context(cwd=checkout_path):
-        git_repo = 'https://%s/%s' % (commit.host, commit.project)
-        api.git.clone(git_repo)
-        api.git.fetch_ref(git_repo, commit.id)
-        refspec = '%s:%s' % (commit.id, ref)
-        api.git.push(git_repo, refspec)
+    with api.context(cwd=repo_path):
+      with api.step.nest('update %s ref %s' % (repo_name, ref)):
+        api.git.push(repo_url, "%s:%s" % (commit, ref))
 
 
 def GenTests(api):

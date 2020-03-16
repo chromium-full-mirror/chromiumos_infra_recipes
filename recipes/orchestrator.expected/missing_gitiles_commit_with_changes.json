@@ -136,6 +136,54 @@
   },
   {
     "cmd": [],
+    "name": "set up orchestrator.clone manifest-internal repo",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "."
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.clone manifest-internal repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "abcd1234:"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.clone manifest-internal repo.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.clone manifest-internal repo.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check for merge conflicts",
     "~followup_annotations": [
       "@@@STEP_TEXT@confirmed no merge conflicts@@@"
@@ -225,7 +273,7 @@
       "/path/to/tmp/json",
       "copy",
       "\n\u0005\n\u0003\u0018\ufffd\t\u0012\babcd1234\"N\nL\n\u000fchrome-internal\u0012\u001achromeos/manifest-internal\u001a\babcd1234\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.write input binaryproto",
@@ -244,9 +292,9 @@
       "[START_DIR]/cipd/test_planner/build_plan_generator",
       "generate-plan",
       "--input_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.run planner",
@@ -262,7 +310,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -1924,7 +1972,7 @@
       "/path/to/tmp/json",
       "copy",
       ":\babcd1234B\u0005\n\u0003\u0018\ufffd\tJN\nL\n\u000fchrome-internal\u0012\u001achromeos/manifest-internal\u001a\babcd1234\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/test-plan-_tmp_2/input.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_3/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.write input binaryproto",
@@ -1942,9 +1990,9 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_2/input.binaryproto",
+      "[CLEANUP]/test-plan-_tmp_3/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_2/output.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_3/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
@@ -1960,7 +2008,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_2/output.binaryproto",
+      "[CLEANUP]/test-plan-_tmp_3/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
