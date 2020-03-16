@@ -214,8 +214,10 @@ def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
   commit_message = make_message(
       api, snapshot_ref, gerrit_commits, disable_gerrit)
 
-  for key,val in footers:
-    commit_message += "%s: %s\n" % (key,val)
+  if footers:
+    commit_message += "\n"
+    for key,val in footers:
+      commit_message += "%s: %s\n" % (key,val)
 
   api.git_txn.update_ref_write_file(repo_url, snapshot_ref, commit_message,
                                     snapshot_file, snapshot_xml)
