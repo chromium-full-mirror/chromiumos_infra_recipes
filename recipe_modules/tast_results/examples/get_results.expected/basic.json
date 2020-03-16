@@ -194,7 +194,7 @@
   },
   {
     "failure": {
-      "humanReason": "No results dumped; Likely a tast crash crbug/1049754"
+      "humanReason": "No results dumped; Likely a tast crash"
     },
     "name": "$result"
   }

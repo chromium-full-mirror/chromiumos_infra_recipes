@@ -173,7 +173,7 @@ class TastResultsApi(recipe_api.RecipeApi):
         presentation.step_text = 'empty result'
         # Ensure the recipe fails as well.
         raise self.m.step.InfraFailure(
-            'No results dumped; Likely a tast crash crbug/1049754')
+            'No results dumped; Likely a tast crash')
       elif not failures:
         presentation.step_text = 'all tests passed!'
       else:
