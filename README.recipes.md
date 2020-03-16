@@ -12,6 +12,7 @@
   * [chrome](#recipe_modules-chrome)
   * [chroot_util](#recipe_modules-chroot_util) &mdash; API for various support functions for building.
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
+  * [config_util](#recipe_modules-config_util) &mdash; API for various support functions for building.
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
@@ -86,6 +87,7 @@
   * [chroot_util:examples/full](#recipes-chroot_util_examples_full)
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [config_drift](#recipes-config_drift) &mdash; Compares Parallel CQ and Legacy cbuildbot configs.
+  * [config_util:examples/full](#recipes-config_util_examples_full)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
   * [cros_artifacts:examples/gsutil_retry_fail](#recipes-cros_artifacts_examples_gsutil_retry_fail)
@@ -572,6 +574,39 @@ Args:
   * topic_id (str): The topic name.
   * data (str): The data to put in the message. The input must be encodable
     with utf8, as it will be sent to the publish-message binary via JSON.
+### *recipe_modules* / [config\_util](/recipe_modules/config_util)
+
+[DEPS](/recipe_modules/config_util/__init__.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API for various support functions for building.
+
+#### **class [ConfigUtilApi](/recipe_modules/config_util/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for handling builder configuration.
+
+&mdash; **def [configure\_builder](/recipe_modules/config_util/api.py#87)(self, build_target=None, commit=None, changes=None, name='configure builder'):**
+
+Configure the builder.
+
+Fetch the builder config.
+Determine the actual commit and changes to use.
+Set the bisect_builder and use_flags.
+
+Args:
+  build_target (BuildTarget): The build target.  Default: None.
+  commit (GitilesCommit): The gitiles commit to use.  Default:
+      common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
+  changes: (GerritChanges): The gerrit changes to apply.  Default: [].
+  name (string): Step name.  Default: "configure builder".
+
+Returns:
+  BuilderConfig
+
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/config_util/api.py#35)(self):**
+
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/config_util/api.py#31)(self):**
+
+&mdash; **def [initialize](/recipe_modules/config_util/api.py#27)(self):**
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
 [DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3278,50 +3313,28 @@ Returns:
     For direct-vm tests, the individual failing tests are listed.
 ### *recipe_modules* / [workspace\_util](/recipe_modules/workspace_util)
 
-[DEPS](/recipe_modules/workspace_util/__init__.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/workspace_util/__init__.py#6): [config\_util](#recipe_modules-config_util), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for various support functions for building.
 
-#### **class [WorkspaceUtilApi](/recipe_modules/workspace_util/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [WorkspaceUtilApi](/recipe_modules/workspace_util/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#170)(self, changes=None, name='cherry-pick gerrit changes'):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#54)(self, changes=None, name='cherry-pick gerrit changes'):**
 
 Apply gerrit changes.
 
 Args:
   changes (list[GerritChanges]): Changes to apply.  Default: changelist
-      saved in configure_builder()
+      saved in config_util.configure_builder().
   name (string): Step name.  Default: "setup source".
 
-&mdash; **def [configure\_builder](/recipe_modules/workspace_util/api.py#93)(self, build_target=None, commit=None, changes=None, name='configure builder'):**
+&mdash; **def [initialize](/recipe_modules/workspace_util/api.py#21)(self):**
 
-Configure the builder.
+&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#24)(self):**
 
-Fetch the builder config.
-Determine the actual commit and changes to use.
-Set the bisect_builder and use_flags.
-
-Args:
-  build_target (BuildTarget): The build target.  Default: None.
-  commit (GitilesCommit): The gitiles commit to use.  Default:
-      common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
-  changes: (GerritChanges): The gerrit changes to apply.  Default: [].
-  name (string): Step name.  Default: "configure builder".
-
-Returns:
-  BuilderConfig
-
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/workspace_util/api.py#37)(self):**
-
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/workspace_util/api.py#33)(self):**
-
-&mdash; **def [initialize](/recipe_modules/workspace_util/api.py#28)(self):**
-
-&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#41)(self):**
-
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#145)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#28)(self):**
 
 Prepare the source checkout for building.
 
@@ -3329,13 +3342,13 @@ Returns:
   A context where source is set up, and the current working directory is the
       workspace path.
 
-&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#159)(self, commit=None, staging=False):**
+&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#42)(self, commit=None, staging=False):**
 
 Sync the source tree.
 
 Args:
   commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
-      saved in configure_builder()
+      saved in config_util.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 ## Recipes
 
@@ -3497,15 +3510,15 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#20)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [chrome](#recipe_modules-chrome), [config\_util](#recipe_modules-config_util), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#106)(api, build_target, build_config, gitiles_commit, gerrit_changes, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#107)(api, build_target, build_config, gitiles_commit, gerrit_changes, force_relevant_build):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#88)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#89)(api, properties):**
 
-&mdash; **def [calculate\_build\_cost](/recipes/build_target.py#382)(build):**
+&mdash; **def [calculate\_build\_cost](/recipes/build_target.py#383)(build):**
 
 Calculate the cost of building this image.
 
@@ -3517,7 +3530,7 @@ Args:
 Returns:
   A float representing the cost (USD) of building this image.
 
-&mdash; **def [get\_packages](/recipes/build_target.py#398)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#399)(api, build_config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3533,7 +3546,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#417)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#418)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -3611,6 +3624,11 @@ leaking between runs of the recipe.
 Compares Parallel CQ and Legacy cbuildbot configs.
 
 &mdash; **def [RunSteps](/recipes/config_drift.py#19)(api):**
+### *recipes* / [config\_util:examples/full](/recipe_modules/config_util/examples/full.py)
+
+[DEPS](/recipe_modules/config_util/examples/full.py#6): [config\_util](#recipe_modules-config_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/config_util/examples/full.py#21)(api, properties):**
 ### *recipes* / [cros\_artifacts:examples/download\_artifacts](/recipe_modules/cros_artifacts/examples/download_artifacts.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/download_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -4676,9 +4694,9 @@ Basic tests for the urls recipe module.
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#20)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
-[DEPS](/recipe_modules/workspace_util/examples/full.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/workspace_util/examples/full.py#6): [config\_util](#recipe_modules-config_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#21)(api, properties):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8cf12290bab829820fd5e8ef3cf98f3c84a6f2a5/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/8cf12290bab829820fd5e8ef3cf98f3c84a6f2a5/recipes/README.recipes.md#recipe_modules-gclient

@@ -15,132 +15,15 @@ from recipe_engine import recipe_api
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 
-def ConvertPB(inpb, typ):
-  """Convert |inpb| to |typ|."""
-  outpb = typ()
-  outpb.ParseFromString(inpb.SerializeToString())
-  return outpb
-
-
 class WorkspaceUtilApi(recipe_api.RecipeApi):
   """A module workspace setup and manipulation."""
 
   def initialize(self):
     self._patch_sets = []
-    self._gitiles_commit = None
-    self._gerrit_changes = []
-
-  @property
-  def gitiles_commit(self):
-    return self._gitiles_commit
-
-  @property
-  def gerrit_changes(self):
-    return self._gerrit_changes
 
   @property
   def patch_sets(self):
     return self._patch_sets
-
-  def _determine_repo_state(self, config, commit, changes):
-    """Set _gitiles_commit and _gerrit_changes.
-
-    If the commit and/or changes are other than what was given, that is added as
-    an output property in a nested step.
-
-    Args:
-      config (BuilderConfig): The builder config.
-      commit (GitilesCommit): The gitiles commit to use.  Default:
-          common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
-      changes: (GerritChanges): The gerrit changes to apply.  Default: [].
-    """
-    if not commit or not commit.project:
-      # No gitiles_commit: we were (likely) launched directly by either
-      # luci-scheduler (no changes), luci-cq (changes), or a user.
-      if not changes:
-        # If there were also no changes, then use the hardcoded default from the
-        # configuration.
-        changes = [ConvertPB(x, common_pb2.GerritChange)
-                   for x in config.orchestrator.gerrit_changes]
-
-      # Use the default gitiles_commit from the config.
-      commit = ConvertPB(
-          config.orchestrator.gitiles_commit, common_pb2.GitilesCommit)
-      # Which may not be there.  In that case, use refs/heads/snapshot.
-      if not commit.project:
-        commit = common_pb2.GitilesCommit(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/manifest-internal', ref='refs/heads/snapshot')
-      # We will need commit.id later.  Add it if necessary.
-      if not commit.id:
-        commit = common_pb2.GitilesCommit(
-            host=commit.host, project=commit.project, ref=commit.ref,
-            id=self.m.gitiles.fetch_revision(
-                commit.host, commit.project, commit.ref))
-
-      # Log what we chose to use (rather than what we were given.)
-      with self.m.step.nest('repo state') as step:
-        step.properties['commit'] = json_pb.MessageToDict(commit)
-        step.properties['changes'] = json.dumps([json_pb.MessageToDict(x)
-                                                 for x in changes])
-
-    # When there is a commit, commit and changes are used unchanged.
-
-    # Record the decision for later.
-    self._gitiles_commit = commit
-    self._gerrit_changes = changes or []
-
-  def configure_builder(self, build_target=None, commit=None, changes=None,
-                        name='configure builder'):
-    """Configure the builder.
-
-    Fetch the builder config.
-    Determine the actual commit and changes to use.
-    Set the bisect_builder and use_flags.
-
-    Args:
-      build_target (BuildTarget): The build target.  Default: None.
-      commit (GitilesCommit): The gitiles commit to use.  Default:
-          common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
-      changes: (GerritChanges): The gerrit changes to apply.  Default: [].
-      name (string): Step name.  Default: "configure builder".
-
-    Returns:
-      BuilderConfig
-    """
-    with self.m.step.nest(name) as presentation:
-      try:
-        config = self.m.cros_infra_config.get_builder_config(
-            self.m.buildbucket.build.builder.builder)
-      except LookupError:
-        presentation.step_text = 'config not found, assuming deleted'
-        return None
-      presentation.logs['builder config'] = [str(config)]
-      self.m.easy.set_property_step('builder_config',
-                                    json_pb.MessageToDict(config))
-
-      parent = [
-          x.value
-          for x in self.m.buildbucket.build.tags
-          if x.key == 'parent_buildbucket_id'
-      ]
-      if parent:
-        presentation.links['parent link'] = (
-            self.m.buildbucket.build_url(build_id=parent[0]))
-
-      # TODO(crbug/1053073): once changes is being stripped by callers, we can
-      # drop the check of apply_gerrit_changes.
-      # For now, we need to handle this here.
-      if not config.build.apply_gerrit_changes:
-        changes = []
-
-      self._determine_repo_state(config, commit, changes)
-
-    if build_target:
-      self.m.cros_bisect.set_bisect_builder(build_target.name)
-    self.m.cros_sdk.set_use_flags(config.build.use_flags)
-
-    return config
 
   @contextlib.contextmanager
   def setup_workspace(self):
@@ -161,23 +44,24 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     Args:
       commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
-          saved in configure_builder()
+          saved in config_util.configure_builder().
       staging (bool): Whether this is a staging build.  Default: False.
     """
     self.m.cros_source.ensure_synced_cache(is_staging=staging)
-    self.m.cros_source.sync_snapshot(commit or self.gitiles_commit)
+    self.m.cros_source.sync_snapshot(commit or
+                                     self.m.config_util.gitiles_commit)
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes'):
     """Apply gerrit changes.
 
     Args:
       changes (list[GerritChanges]): Changes to apply.  Default: changelist
-          saved in configure_builder()
+          saved in config_util.configure_builder().
       name (string): Step name.  Default: "setup source".
     """
     patch_sets = []
     if not changes:
-      changes = self.gerrit_changes
+      changes = self.m.config_util.gerrit_changes
     if changes:
       with self.m.step.nest(name):
         patch_sets = self.m.gerrit.fetch_patch_sets(changes, include_files=True)

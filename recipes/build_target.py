@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'chrome',
+    'config_util',
     'cros_artifacts',
     'cros_bisect',
     'cros_build_api',
@@ -89,7 +90,7 @@ def RunSteps(api, properties):
   build_target = properties.build_target
   force_relevant_build = properties.force_relevant_build
 
-  build_config = api.workspace_util.configure_builder(
+  build_config = api.config_util.configure_builder(
       build_target, api.buildbucket.gitiles_commit,
       api.buildbucket.build.input.gerrit_changes)
   if not build_config:
@@ -98,8 +99,8 @@ def RunSteps(api, properties):
 
   with api.workspace_util.setup_workspace():
     DoRunSteps(api, build_target, build_config,
-               api.workspace_util.gitiles_commit,
-               api.workspace_util.gerrit_changes,
+               api.config_util.gitiles_commit,
+               api.config_util.gerrit_changes,
                force_relevant_build)
 
 

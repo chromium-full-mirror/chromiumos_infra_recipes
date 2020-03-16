@@ -164,7 +164,7 @@
     "name": "configure builder.repo state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@changes@\"[{\\\"project\\\": \\\"chromeos\\\", \\\"host\\\": \\\"chromium-review.googlesource.com\\\", \\\"patchset\\\": \\\"7\\\", \\\"change\\\": \\\"123456\\\"}, {\\\"change\\\": \\\"1234\\\"}]\"@@@",
+      "@@@SET_BUILD_PROPERTY@changes@\"[{\\\"change\\\": \\\"1234\\\"}]\"@@@",
       "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"abcd1234\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
@@ -579,47 +579,11 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}, {\"change_number\": 1234, \"host\": \"\", \"patch_set\": 0}], \"include_files\": true}",
+    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"\", \"patch_set\": 0}], \"include_files\": true}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"change_number\": 1234, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"\", @@@",
@@ -704,8 +668,8 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chromium.googlesource.com/chromium/src",
-      "refs/changes/56/123456/7:"
+      "https:///chromium/src",
+      "refs/changes/34/1234/0:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
@@ -750,77 +714,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromium/src",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.repo forall (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https:///chromium/src",
-      "refs/changes/34/1234/0:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "merge",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-      "-m",
-      "merge gerrit changes"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

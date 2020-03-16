@@ -6,62 +6,54 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
+    'config_util',
     'workspace_util',
 ]
 
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.config_util.examples.test import (
+    TestInputProperties)
 
+PROPERTIES = TestInputProperties
 
-def RunSteps(api):
-  # This relies on the builder name being '${TARGET}-cq' in the tests below.
-  # See also amd64-generic-cq and grunt-unittest-only-cq for some examples of
-  # where this would break.
-  # DO NOT EXTRACT THIS WAY IN LIVE CODE.
-  name = api.buildbucket.build.builder.builder.split('-',1)[0]
-  target = common.BuildTarget(name=name)
-
+def RunSteps(api, properties):
+  target = properties.build_target
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
-  config = api.workspace_util.configure_builder(
+  # Configure the builder so that we have self.m.config_util.gitiles_commit
+  # All of our tests will be with builders that have configs.
+  config = api.config_util.configure_builder(
       target, commit=commit, changes=changes)
-  if not config:
-    return
   with api.workspace_util.setup_workspace():
     api.workspace_util.sync_to_commit()
     api.workspace_util.apply_changes()
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
 
+
 def GenTests(api):
   def buildbucket_build(
-      project='chromeos', bucket='cq', builder='atlas-cq', tags=None,
-      revision='2d72510e447ab60a9728aeea2362d8be2cbd7789', cls=None):
-    if revision:
-      build = api.buildbucket.ci_build_message(
-          project=project, bucket=bucket, builder=builder, tags=tags,
-          revision=revision)
-      if cls:
-        build.input.gerrit_changes.extend(cls)
-    elif cls:
-      # There's always an extra CL on the front, thanks to try_build_message.
-      build = api.buildbucket.try_build_message(
-          project=project, bucket=bucket, builder=builder, tags=tags)
+      project='chromeos', bucket='cq', builder='atlas-cq', build_target='atlas',
+      tags=None, revision='2d72510e447ab60a9728aeea2362d8be2cbd7789', cls=None):
+    build = api.buildbucket.ci_build_message(
+        project=project, bucket=bucket, builder=builder, tags=tags,
+        revision=revision)
+    if not revision:
+      build.input.gitiles_commit.Clear()
+    if cls:
       build.input.gerrit_changes.extend(cls)
-    else:
-      return api.buildbucket.generic_build(
-          project=project, bucket=bucket, builder=builder, tags=tags)
-    return api.buildbucket.build(build)
+    return (api.buildbucket.build(build) +  #
+            api.properties(TestInputProperties(
+                build_target=common.BuildTarget(name=build_target),
+                builder=builder)))
 
   yield api.test('basic') + buildbucket_build()
 
   yield (api.test('has_changes') + #
          buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]))
-
-  yield (api.test('apply_gerrit_changes_false') + #
-         buildbucket_build(builder='grunt-postsubmit',
-                           cls=[common_pb2.GerritChange(change=1234)]))
 
   yield (api.test('has_changes_and_no_commit') + #
          buildbucket_build(
@@ -69,10 +61,3 @@ def GenTests(api):
 
   yield (api.test('has_no_commit_and_no_changes') + #
          buildbucket_build(revision=None))
-
-  yield (api.test('has_parent') + #
-         buildbucket_build(tags=[
-             {'key': 'parent_buildbucket_id', 'value': 'parent_id'},
-         ]))
-
-  yield api.test('missing_config') + buildbucket_build(builder='nosuch-cq')

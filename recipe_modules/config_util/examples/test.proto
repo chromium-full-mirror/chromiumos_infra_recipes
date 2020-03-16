@@ -1,0 +1,18 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.config_util.examples;
+
+import "chromiumos/common.proto";
+
+message TestInputProperties {
+  // The build_target for this builder.
+  chromiumos.BuildTarget build_target = 1;
+
+  // Expected builder name, if any.  See BuilderConfig.Id.name.
+  string builder = 2;
+}
+
