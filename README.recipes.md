@@ -3579,11 +3579,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#107)(api, build_target, build_config, gitiles_commit, gerrit_changes, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#105)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#89)(api, properties):**
 
-&mdash; **def [calculate\_build\_cost](/recipes/build_target.py#383)(build):**
+&mdash; **def [calculate\_build\_cost](/recipes/build_target.py#377)(build):**
 
 Calculate the cost of building this image.
 
@@ -3595,7 +3595,7 @@ Args:
 Returns:
   A float representing the cost (USD) of building this image.
 
-&mdash; **def [get\_packages](/recipes/build_target.py#399)(api, build_config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#393)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3606,12 +3606,12 @@ are attempted or special builders like kernel builders.
 
 Args:
   api (RecipeApi): See RunSteps.
-  build_config (BuilderConfig): builder configuration for the builder
+  config (BuilderConfig): builder configuration for the builder
 
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#418)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#412)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

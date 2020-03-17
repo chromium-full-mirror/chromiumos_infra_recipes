@@ -75,14 +75,14 @@ BOT_COST = 8.08
 
 # All step timeouts are in seconds.
 STEP_TIMEOUTS = {
-  'uprev': 10 * 60,
-  'create_sdk': 40 * 60,
-  'update_sdk': 60 * 60,
-  'create_sysroot': 10 * 60,
-  'install_toolchain': 30 * 60,
-  'install_packages': 8 * 60 * 60,
-  'build_image': 45 * 60,
-  'unit_tests': 2 * 60 * 60,
+    'uprev': 10 * 60,
+    'create_sdk': 40 * 60,
+    'update_sdk': 60 * 60,
+    'create_sysroot': 10 * 60,
+    'install_toolchain': 30 * 60,
+    'install_packages': 8 * 60 * 60,
+    'build_image': 45 * 60,
+    'unit_tests': 2 * 60 * 60,
 }
 
 
@@ -90,25 +90,23 @@ def RunSteps(api, properties):
   build_target = properties.build_target
   force_relevant_build = properties.force_relevant_build
 
-  build_config = api.config_util.configure_builder(
+  config = api.config_util.configure_builder(
       build_target, api.buildbucket.gitiles_commit,
       api.buildbucket.build.input.gerrit_changes)
-  if not build_config:
+  if not config:
     # No config found, already logged.
     return
 
   with api.workspace_util.setup_workspace():
-    DoRunSteps(api, build_target, build_config,
-               api.config_util.gitiles_commit,
-               api.config_util.gerrit_changes,
-               force_relevant_build)
+    DoRunSteps(api, build_target, config, api.config_util.gitiles_commit,
+               api.config_util.gerrit_changes, force_relevant_build)
 
 
-def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
+def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
                force_relevant_build):
 
-  is_staging = build_config.general.environment == BuilderConfig.General.STAGING
-  is_toolchain_builder = build_config.id.type == BuilderConfig.Id.TOOLCHAIN
+  is_staging = config.general.environment == BuilderConfig.General.STAGING
+  is_toolchain_builder = config.id.type == BuilderConfig.Id.TOOLCHAIN
   # Toolchain builders compile many large packages from source and need higher
   # step timeouts to successfully complete.
   long_timeouts = is_toolchain_builder
@@ -119,10 +117,9 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   api.workspace_util.apply_changes()
 
   # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
-  artifacts = build_config.artifacts
+  artifacts = config.artifacts
   relevance = api.sysroot_util.update_for_artifact_build(
-      build_config.artifacts,
-      build_config.build.prepare_for_build.additional_args,
+      config.artifacts, config.build.prepare_for_build.additional_args,
       force_relevance=force_relevant_build)
   if relevance == Relevance.POINTLESS:
     return
@@ -141,13 +138,14 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     # build api call based on if there is a mismatch between config value and
     # what is present on disk. In short: replace existing sdk cache if mismatch.
     no_replace_flag = True
-    if build_config.general.sdk_cache_version:
+    if config.general.sdk_cache_version:
       step.logs['sdk cache version'] = [
-          'Version in config: %s' % build_config.general.sdk_cache_version,
+          'Version in config: %s' % config.general.sdk_cache_version,
           'Version on disk: %s' % api.cros_sdk.sdk_cache_version,
       ]
-      no_replace_flag = (str(build_config.general.sdk_cache_version) ==
-                         str(api.cros_sdk.sdk_cache_version))
+      no_replace_flag = (
+          str(config.general.sdk_cache_version) == str(
+              api.cros_sdk.sdk_cache_version))
     response = api.cros_build_api.SdkService.Create(
         CreateSdkRequest(
             flags=CreateSdkRequest.Flags(
@@ -157,8 +155,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
             chroot=api.cros_sdk.chroot),
         timeout=(STEP_TIMEOUTS['create_sdk'] if not long_timeouts else None))
     step.logs['sdk version'] = [str(response.version.version)]
-    if build_config.general.sdk_cache_version:
-      api.cros_sdk.sdk_cache_version = build_config.general.sdk_cache_version
+    if config.general.sdk_cache_version:
+      api.cros_sdk.sdk_cache_version = config.general.sdk_cache_version
     api.cros_sdk.link_chroot(api.cros_source.workspace_path)
 
   with api.step.nest('detect toolchain change') as step:
@@ -176,7 +174,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   with api.step.nest('update sdk'):
     flags = UpdateSdkRequest.Flags(
-        build_source=build_config.build.sdk_update.compile_source,
+        build_source=config.build.sdk_update.compile_source,
         toolchain_changed=toolchain_changed)
     api.cros_build_api.SdkService.Update(
         UpdateSdkRequest(chroot=api.cros_sdk.chroot,
@@ -185,8 +183,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   with api.step.nest('create sysroot'):
     profile = None
-    if build_config.build.portage_profile.profile:
-      profile = Profile(name=build_config.build.portage_profile.profile)
+    if config.build.portage_profile.profile:
+      profile = Profile(name=config.build.portage_profile.profile)
     create_sysroot_response = api.cros_build_api.SysrootService.Create(
         SysrootCreateRequest(
             build_target=build_target, profile=profile,
@@ -197,13 +195,12 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                  if not long_timeouts else None))
     sysroot = create_sysroot_response.sysroot
 
-  packages = get_packages(api, build_config)
+  packages = get_packages(api, config)
   dep_graph = api.cros_relevance.get_dependency_graph(
       build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
   if (not force_relevant_build and not toolchain_changed and
-      relevance != Relevance.NEEDED and
-      api.cros_relevance.is_build_pointless(
+      relevance != Relevance.NEEDED and api.cros_relevance.is_build_pointless(
           gerrit_changes,
           gitiles_commit,
           dep_graph=dep_graph.target,
@@ -222,7 +219,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   with api.step.nest('install toolchain') as install_tc_step:
     flags = InstallToolchainRequest.Flags(
-        compile_source=build_config.build.install_toolchain.compile_source,
+        compile_source=config.build.install_toolchain.compile_source,
         toolchain_changed=toolchain_changed)
     response = api.cros_build_api.SysrootService.InstallToolchain(
         InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
@@ -231,7 +228,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
                  if not long_timeouts else None))
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
-  install_packages = build_config.build.install_packages
+  install_packages = config.build.install_packages
   chrome_source_build = False
   if api.cros_infra_config.should_run(install_packages.run_spec):
     needs_chrome = api.chrome.needs_chrome(build_target=build_target,
@@ -249,13 +246,13 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
     if chrome_source_build:
       chrome_root = api.path['start_dir'].join('chrome')
       api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
-                      build_config.chrome.internal)
+                      config.chrome.internal)
       api.cros_sdk.set_chrome_root(str(chrome_root))
       api.cros_sdk.set_goma_config(
-          str(api.goma.goma_dir), str(api.goma.goma_client_json),
-          api.goma.goma_approach,
-          str(api.path.mkdtemp(prefix='goma-logs-')),
-          'stats.binaryproto', 'counterz.binaryproto')
+          str(api.goma.goma_dir),
+          str(api.goma.goma_client_json), api.goma.goma_approach,
+          str(api.path.mkdtemp(prefix='goma-logs-')), 'stats.binaryproto',
+          'counterz.binaryproto')
 
     with api.step.nest('install packages') as ip_step:
       if artifacts.artifact_types:
@@ -267,8 +264,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
         # running at least install packages at this point.
         api.cros_artifacts.prepare_for_build(
             artifacts.artifact_types, api.cros_sdk.chroot, sysroot,
-            artifacts.input_artifacts, additional_args=
-            build_config.build.prepare_for_build.additional_args,
+            artifacts.input_artifacts,
+            additional_args=config.build.prepare_for_build.additional_args,
             name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
           compile_source=install_packages.compile_source,
@@ -277,9 +274,8 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           toolchain_changed=toolchain_changed)
 
       install_pkg_request = InstallPackagesRequest(
-          sysroot=sysroot, flags=flags,
-          packages=packages, chroot=api.cros_sdk.chroot,
-          use_flags=build_config.build.use_flags,
+          sysroot=sysroot, flags=flags, packages=packages,
+          chroot=api.cros_sdk.chroot, use_flags=config.build.use_flags,
           goma_config=api.cros_sdk.goma_config())
       response = api.cros_build_api.SysrootService.InstallPackages(
           install_pkg_request, response_lambda=_failed_pkg_names,
@@ -289,16 +285,16 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
       # Process goma response to upload logs, stats, and counterz.
       api.goma.process_artifacts(response,
                                  install_pkg_request.goma_config.log_dir.dir,
-                                 build_target.name,
-                                 is_staging)
+                                 build_target.name, is_staging)
 
       step_name = ('install packages|'
                    'call chromite.api.SysrootService/InstallPackages|'
-                   '{}'.format(api.cros_build_api.response_step_name(
-                       response, _failed_pkg_names)))
+                   '{}'.format(
+                       api.cros_build_api.response_step_name(
+                           response, _failed_pkg_names)))
 
       api.cros_bisect.set_compile_failures(response.failed_packages, step_name,
-                                           build_config.general.critical.value)
+                                           config.general.critical.value)
       api.failures.set_failed_packages(ip_step, response.failed_packages)
     if api.cros_infra_config.should_exit(install_packages.run_spec):
       return
@@ -306,7 +302,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
   version = api.cros_version.read_workspace_version()
   api.easy.set_property_step('chromeos_version', str(version))
 
-  image_types = build_config.build.build_images.image_types
+  image_types = config.build.build_images.image_types
   if image_types:
     with api.step.nest('build images') as bi_step:
       response = api.cros_build_api.ImageService.Create(
@@ -315,7 +311,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
               chroot=api.cros_sdk.chroot,
               image_types=image_types,
               builder_path=api.cros_artifacts.artifacts_gs_path(
-                  build_config.id.name, build_target, build_config.id.type),
+                  config.id.name, build_target, config.id.type),
           ), timeout=STEP_TIMEOUTS['build_image'],
           response_lambda=_failed_pkg_names)
       api.failures.set_failed_packages(bi_step, response.failed_packages)
@@ -328,7 +324,7 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
         if image.type != BASE or image.type not in image_types:
           # This continue statement is not correctly caught by coveragepy:
           # https://bitbucket.org/ned/coveragepy/issues/198/continue-marked-as-not-covered
-          continue # pragma: no cover
+          continue  # pragma: no cover
 
         result_dir = api.path.mkdtemp(prefix="image-test-result-")
         if not api.cros_build_api.ImageService.Test(
@@ -339,16 +335,16 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
           failed_images.append(image)
       api.failures.raise_failed_image_tests(failed_images)
 
-  ebuilds_run_spec = build_config.unit_tests.ebuilds_run_spec
+  ebuilds_run_spec = config.unit_tests.ebuilds_run_spec
   if api.cros_infra_config.should_run(ebuilds_run_spec):
     with api.step.nest('run ebuild tests') as reb_step:
       flags = BuildTargetUnitTestRequest.Flags(
-          empty_sysroot=build_config.unit_tests.empty_sysroot)
+          empty_sysroot=config.unit_tests.empty_sysroot)
       response = api.cros_build_api.TestService.BuildTargetUnitTest(
           BuildTargetUnitTestRequest(
               build_target=build_target, chroot=api.cros_sdk.chroot,
               result_path=str(api.path.mkdtemp()),
-              package_blacklist=build_config.unit_tests.package_blacklist,
+              package_blacklist=config.unit_tests.package_blacklist,
               flags=flags), timeout=STEP_TIMEOUTS['unit_tests'],
           response_lambda=_failed_pkg_names)
       api.failures.set_failed_packages(reb_step, response.failed_packages)
@@ -357,18 +353,16 @@ def DoRunSteps(api, build_target, build_config, gitiles_commit, gerrit_changes,
 
   if artifacts.artifact_types:
     api.cros_artifacts.upload_artifacts(
-        build_config.id.name,
-        build_target, build_config.id.type,
+        config.id.name, build_target, config.id.type,
         artifacts.artifacts_gs_bucket, artifacts.artifact_types,
         sysroot=sysroot, chroot=api.cros_sdk.chroot,
         publish_info=artifacts.publish_artifacts,
-        additional_args=build_config.build.prepare_for_build.additional_args)
+        additional_args=config.build.prepare_for_build.additional_args)
 
   prebuilts = artifacts.prebuilts
   if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
     api.cros_prebuilts.upload_target_prebuilts(
-        build_target, build_config.id.type,
-        build_config.artifacts.prebuilts_gs_bucket,
+        build_target, config.id.type, config.artifacts.prebuilts_gs_bucket,
         private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
   with api.step.nest('validate SDK reuse'):
@@ -396,7 +390,7 @@ def calculate_build_cost(build):
   return bot_days * BOT_COST
 
 
-def get_packages(api, build_config):
+def get_packages(api, config):
   """Returns the packages that should be built for this invocation.
 
   Returns the list of packages that should be built for this or an
@@ -406,13 +400,13 @@ def get_packages(api, build_config):
 
   Args:
     api (RecipeApi): See RunSteps.
-    build_config (BuilderConfig): builder configuration for the builder
+    config (BuilderConfig): builder configuration for the builder
 
   Returns:
     list[PackageInfo] of packages to build
   """
   return (api.cros_bisect.get_packages() or
-          build_config.build.install_packages.packages)
+          config.build.install_packages.packages)
 
 
 def get_target_versions(api, build_target):
@@ -434,6 +428,7 @@ def get_target_versions(api, build_target):
                                build_target=build_target))
   return json_pb.MessageToDict(response)
 
+
 # Define a function to append the failure step with the failed packages
 def _failed_pkg_names(output_proto):
   # sort package names, join them with ',', and limit to 50 chars.
@@ -445,8 +440,8 @@ def _failed_pkg_names(output_proto):
   if len(failed_packages) > 50:
     fp_sha = hashlib.sha256()
     fp_sha.update(failed_packages)
-    failed_packages = (failed_packages[:50] +
-                        ('...(%s)' % fp_sha.hexdigest()[0:4]))
+    failed_packages = (
+        failed_packages[:50] + ('...(%s)' % fp_sha.hexdigest()[0:4]))
   if failed_packages:
     failed_packages = ': ' + failed_packages
   return failed_packages
@@ -468,8 +463,10 @@ def GenTests(api):
   def toolchain_build(builder='orderfile-generate-toolchain'):
     """Generate a test build proto."""
     build = api.buildbucket.ci_build_message(
-        project='chromeos', bucket='toolchain', builder=builder,
-        tags=[{'key': 'parent_buildbucket_id', 'value': 'parent_id'}])
+        project='chromeos', bucket='toolchain', builder=builder, tags=[{
+            'key': 'parent_buildbucket_id',
+            'value': 'parent_id'
+        }])
     return api.buildbucket.build(build)
 
   def make_build_pointless():
@@ -521,10 +518,14 @@ def GenTests(api):
   yield (api.test('with-goma-props') +  #
          cq_build_with_gerrit_change() +  #
          api.properties(build_target={'name': 'amd64-generic'}) +  #
-         api.properties(**{'$chromeos/goma': GomaProperties(
-             client_version='staging',
-             goma_approach=common.GomaConfig.RBE_PROD,
-         )}))
+         api.properties(
+             **{
+                 '$chromeos/goma':
+                     GomaProperties(
+                         client_version='staging',
+                         goma_approach=common.GomaConfig.RBE_PROD,
+                     )
+             }))
 
   yield (api.test('no-needs-chrome') +  #
          cq_build_with_gerrit_change() +  #
@@ -548,8 +549,7 @@ def GenTests(api):
              'install packages'
              '.call chromite.api.SysrootService/InstallPackages'
              '.read output file',
-             api.file.read_raw(
-               content='''{
+             api.file.read_raw(content='''{
                             "failedPackages": [{
                               "category": "chromeos-base",
                               "packageName": "thislongpackagenameomg",
@@ -565,14 +565,13 @@ def GenTests(api):
                             }]
                           }''')))
 
-  yield (api.test('install_package_no_goma') + #
+  yield (api.test('install_package_no_goma') +  #
          cq_build_with_gerrit_change() +  #
          api.step_data(
              'install packages'
              '.call chromite.api.SysrootService/InstallPackages'
              '.read output file',
-             api.file.read_raw(
-               content='''{
+             api.file.read_raw(content='''{
                "events": [
                 {
                   "name": "fake_package-path/fake-package-name-0.0.1-r2",
@@ -581,14 +580,13 @@ def GenTests(api):
                 }]
                }''')))
 
-  yield (api.test('install_package_with_goma') + #
+  yield (api.test('install_package_with_goma') +  #
          cq_build_with_gerrit_change() +  #
          api.step_data(
              'install packages'
              '.call chromite.api.SysrootService/InstallPackages'
              '.read output file',
-             api.file.read_raw(
-               content='''{
+             api.file.read_raw(content='''{
                "gomaArtifacts": {
                  "counterzFile": "counterz.binaryproto",
                  "statsFile": "stats.binaryproto",
@@ -607,28 +605,28 @@ def GenTests(api):
                }]
              }''')))
 
-  yield (api.test('prepare-for-build') + #
-         toolchain_build() + #
+  yield (api.test('prepare-for-build') +  #
+         toolchain_build() +  #
          api.step_data(
              'prepare artifacts.call chromite.api.ToolchainService/'
              'PrepareForBuild.read output file',
              api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
 
-  yield (api.test('prepare-for-build-late-pointless') + #
-         toolchain_build() + #
+  yield (api.test('prepare-for-build-late-pointless') +  #
+         toolchain_build() +  #
          api.step_data(
              'install packages.prepare artifacts final.call chromite.api.'
              'ToolchainService/PrepareForBuild.read output file',
              api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
 
-  yield (api.test('prepare-for-build-verify') + #
-         toolchain_build(builder='orderfile-verify-toolchain') + #
+  yield (api.test('prepare-for-build-verify') +  #
+         toolchain_build(builder='orderfile-verify-toolchain') +  #
          api.step_data(
              'prepare artifacts.call chromite.api.ToolchainService/'
              'PrepareForBuild.read output file',
              api.file.read_raw(content='{"build_relevance": "NEEDED"}')))
 
-  yield (api.test('compile-update-sdk') + #
+  yield (api.test('compile-update-sdk') +  #
          toolchain_build(builder='atlas-llvm-next'))
 
   yield (api.test('with-findit-bisect') +  #
@@ -652,38 +650,36 @@ def GenTests(api):
                          })
              }))
 
-  yield (api.test('with-custom-snapshot') +  #
-         cq_build_with_gerrit_change() +  #
-         api.properties(
-             **{
-                 'build_target': {
-                     'name': 'amd64-generic'
-                 },
-                 '$chromeos/cros_source':
-                     CrosSourceProperties(
-                         snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-                             isolated_hash='foohash',
-                             isolate_server='server.com'
-                         ),
-                     )
-             }))
+  yield (
+      api.test('with-custom-snapshot') +  #
+      cq_build_with_gerrit_change() +  #
+      api.properties(
+          **{
+              'build_target': {
+                  'name': 'amd64-generic'
+              },
+              '$chromeos/cros_source':
+                  CrosSourceProperties(
+                      snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+                          isolated_hash='foohash', isolate_server='server.com'),
+                  )
+          }))
 
-  yield (api.test('with-custom-DEPS') +  #
-         cq_build_with_gerrit_change() +  #
-         api.properties(
-             **{
-                 'build_target': {
-                     'name': 'amd64-generic'
-                 },
-                 '$chromeos/chrome':
-                     ChromeProperties(
-                         version='2.0',
-                         deps_isolate=ChromeProperties.DepsIsolate(
-                             isolated_hash='moohash',
-                             isolate_server='cows.com'
-                         ),
-                     )
-             }))
+  yield (
+      api.test('with-custom-DEPS') +  #
+      cq_build_with_gerrit_change() +  #
+      api.properties(
+          **{
+              'build_target': {
+                  'name': 'amd64-generic'
+              },
+              '$chromeos/chrome':
+                  ChromeProperties(
+                      version='2.0',
+                      deps_isolate=ChromeProperties.DepsIsolate(
+                          isolated_hash='moohash', isolate_server='cows.com'),
+                  )
+          }))
 
   yield (api.test('with-gerrit-changes') +  #
          cq_build_with_gerrit_change(builder='amd64-generic-cq') +  #
@@ -728,8 +724,7 @@ def GenTests(api):
          force_toolchain_change())
 
   yield (api.test('with-builder-config-limited-packages') +  #
-         cq_build_with_gerrit_change(
-             builder='orderfile-verify-toolchain') +  #
+         cq_build_with_gerrit_change(builder='orderfile-verify-toolchain') +  #
          api.properties(build_target={'name': 'arm-generic'}))
 
   yield (api.test('initsdk-existing-sdk-cache') +  #
@@ -752,13 +747,12 @@ def GenTests(api):
           'init sdk.call chromite.api.SdkService/Create.call build API script',
           retcode=1))
 
-  yield (
-      api.test('updatesdk-destroy-chroot-tests') +  #
-      api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                               builder='amd64-generic-cq') +  #
-      api.step_data(
-          'update sdk.call chromite.api.SdkService/'
-          'Update.call build API script', retcode=1))
+  yield (api.test('updatesdk-destroy-chroot-tests') +  #
+         api.buildbucket.ci_build(project='chromeos', bucket='cq',
+                                  builder='amd64-generic-cq') +  #
+         api.step_data(
+             'update sdk.call chromite.api.SdkService/'
+             'Update.call build API script', retcode=1))
 
   yield (api.test('destroy-chroot-failed-step-tests') +  #
          api.buildbucket.ci_build(project='chromeos', bucket='cq',
