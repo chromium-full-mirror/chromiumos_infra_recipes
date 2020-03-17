@@ -49,7 +49,24 @@ def checkout_manifest_groups(api, properties):
     with api.step.nest('apply patch sets'):
       patch_sets = api.gerrit.fetch_patch_sets(
           api.buildbucket.build.input.gerrit_changes)
-      api.cros_source.apply_gerrit_patch_sets(patch_sets)
+
+      # It is possible that input.gerrit_changes includes changes to repos this
+      # builder is not allowed to read (e.g. if Cq-Depends groups together
+      # changes that affect multiple project repos). In this case,
+      # apply_gerrit_patch_sets will fail. Catch the failure and report it as a
+      # StepFailure (i.e. not an InfraFailure), with a message that may help the
+      # submitter.
+      #
+      # For now just catch all failures of apply_gerrit_patch_sets. If needed,
+      # we can add more filters (e.g. on stdout, exact step that failed) for the
+      # above case.
+      try:
+        api.cros_source.apply_gerrit_patch_sets(patch_sets)
+      except api.step.StepFailure:
+        raise api.step.StepFailure(
+            ("Failed to apply patch sets. This may be "
+             "the result of Cq-Depends that include CLs outside of this "
+             "builder's read ACLs."))
     yield
 
 
@@ -182,6 +199,23 @@ def GenTests(api):
       properties(api),
       project_config_cq_build(api),
       api.step_data('check constraints', retcode=1),
+      api.post_process(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'cannot_access_gerrit_changes',
+      properties(api),
+      project_config_cq_build(api),
+      api.step_data(
+          'apply patch sets.apply gerrit patch sets.repo forall',
+          retcode=1,
+          stdout=api.raw_io.output('error: project othertestproject not found'),
+      ),
+      api.post_process(
+          post_process.ResultReason,
+          "Failed to apply patch sets. This may be the result of "
+          "Cq-Depends that include CLs outside of this builder's read ACLs."),
       api.post_process(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
   )

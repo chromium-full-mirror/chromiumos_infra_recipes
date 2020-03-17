@@ -3588,7 +3588,7 @@ Recipe for generating ChromeOS cache payloads.
 
 Checks a project conforms to its program's constraints.
 
-&mdash; **def [RunSteps](/recipes/check_project_config.py#56)(api, properties):**
+&mdash; **def [RunSteps](/recipes/check_project_config.py#73)(api, properties):**
 
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_manifest\_groups](/recipes/check_project_config.py#32)(api, properties):**
 
