@@ -1727,7 +1727,9 @@
     "cmd": [],
     "name": "build autotest packages.sync chrome",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@gclient configuration@@@"
     ]
   },
   {
@@ -1914,6 +1916,31 @@
     "name": "build autotest packages.sync chrome.gclient config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chrome/.gclient",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "build autotest packages.sync chrome.gclient contents",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@.gclient@@@"
     ]
   },
   {

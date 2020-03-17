@@ -44,7 +44,7 @@ class ChromeApi(recipe_api.RecipeApi):
       build_target (chromiumos.BuildTarget): Build target of the build.
       internal (bool): True for internal checkout.
     """
-    with self.m.step.nest('sync chrome'):
+    with self.m.step.nest('sync chrome') as pres:
       if self._version or self._deps_isolate:
         version = self._version
       else:
@@ -108,6 +108,13 @@ class ChromeApi(recipe_api.RecipeApi):
                         self.m.depot_tools.root.join('gclient.py'),
                         config_cmd,
                         infra_step=True)
+
+          # Reads what we just wrote for user consumption.
+          gclient_text = (
+              self.m.file.read_text('gclient contents',
+                                    chrome_root.join('.gclient'),
+                                    test_data='solutions = [ {"name":"src"}]'))
+          pres.logs['gclient configuration'] = gclient_text.splitlines()
 
           # Finally, start the sync.
           self.m.python('gclient sync',

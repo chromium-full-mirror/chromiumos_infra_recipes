@@ -1,7 +1,11 @@
 [
   {
     "cmd": [],
-    "name": "sync chrome"
+    "name": "sync chrome",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@gclient configuration@@@"
+    ]
   },
   {
     "cmd": [
@@ -97,6 +101,31 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chrome/.gclient",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome.gclient contents",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@.gclient@@@"
+    ]
+  },
+  {
+    "cmd": [
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
@@ -129,7 +158,11 @@
   },
   {
     "cmd": [],
-    "name": "sync chrome (2)"
+    "name": "sync chrome (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@gclient configuration@@@"
+    ]
   },
   {
     "cmd": [
@@ -186,6 +219,31 @@
     "name": "sync chrome (2).gclient config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chrome/.gclient",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome (2).gclient contents",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@.gclient@@@"
     ]
   },
   {
