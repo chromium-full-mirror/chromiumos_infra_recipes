@@ -26,6 +26,7 @@ DEPS = [
     'failures',
     'gerrit',
     'git',
+    'git_footers',
     'gitiles',
     'naming',
     'skylab',
@@ -58,9 +59,8 @@ BOT_COST = 4.56
 
 def RunSteps(api, properties):
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
-  repo_internal_path = None
 
-  snapshot_id = None
+  push_manifest_refs = None
   with api.step.nest('set up orchestrator') as presentation:
     validate_refs(properties.update_manifest_refs)
     api.cros_bisect.set_orchestrator_bisect_builder()
@@ -69,18 +69,50 @@ def RunSteps(api, properties):
     presentation.logs['orchestrator config'] = [str(config)]
 
     snapshot, gerrit_changes = determine_repo_state(api, config)
-    snapshot_id = snapshot.id
+    intern_snapshot_id = snapshot.id
 
-    # clone internal repo
-    repo_internal_path = clone_repo(api, 'manifest-internal',
-        api.cros_source.INTERNAL_MANIFEST_URL, fetch=snapshot_id
+    # clone internal manifest repo
+    intern_repo_path = clone_repo(api, 'internal manifest',
+        api.cros_source.INTERNAL_MANIFEST_URL, fetch=intern_snapshot_id
     )
 
-    # Point start ref to the input snapshot if specified.
-    maybe_push_commit(api, "manifest-internal",
-        api.cros_source.INTERNAL_MANIFEST_URL, repo_internal_path,
-        properties.update_manifest_refs.start, snapshot_id
+    # read the Cr-External-Snapshot footer to get ref of external snapshot
+    # that corresponds with the internal snapshot
+    with api.context(cwd=intern_repo_path):
+      footer_values = api.git_footers.from_ref(intern_snapshot_id,
+          key='Cr-External-Snapshot'
+      )
+
+      # make sure we got exactly one snapshot ref
+      assert footer_values and len(footer_values) == 1, \
+          'expected exactly one Cr-External-Snapshot footer'
+      extern_snapshot_id = footer_values[0]
+
+    # clone the external manifest repo
+    extern_repo_path = clone_repo(api, 'external manifest',
+        api.cros_source.EXTERNAL_MANIFEST_URL, fetch=extern_snapshot_id
     )
+
+    # create a helper function bound up to our exact repo url and path for
+    # updating manifest snapshots refs internally and externally
+    def _push_manifest_refs(ref):
+      """Helper function to push the snapshot ref for both internal and
+      external manifest repos to the given named ref.
+
+      Args:
+        ref (str): the ref to push to (possibly empty), or None
+      """
+      maybe_push_commit(api, 'manifest-internal',
+          api.cros_source.INTERNAL_MANIFEST_URL, intern_repo_path,
+          ref, intern_snapshot_id)
+      maybe_push_commit(api, 'manifest',
+          api.cros_source.EXTERNAL_MANIFEST_URL, extern_repo_path,
+          ref, extern_snapshot_id)
+
+    push_manifest_refs = _push_manifest_refs
+
+  # Update the start ref to indicate we've begun processing the snapshot.
+  push_manifest_refs(properties.update_manifest_refs.start)
 
   if gerrit_changes:
     api.gerrit.assert_changes_submittable(gerrit_changes)
@@ -151,10 +183,7 @@ def RunSteps(api, properties):
   if not fatal_failures:
     # If we've made it this far, the child builders were successful
     # and we can update the build success manifest ref if it is specified.
-    maybe_push_commit(api, "manifest-internal",
-        api.cros_source.INTERNAL_MANIFEST_URL, repo_internal_path,
-        properties.update_manifest_refs.build, snapshot_id
-    )
+    push_manifest_refs(properties.update_manifest_refs.build)
 
   # If this is a dry run, check that the builds passed and quit.
   if not properties.enable_tests_on_dry_runs and api.cq.state == api.cq.DRY:
@@ -178,10 +207,7 @@ def RunSteps(api, properties):
 
   # Victory! If we've made it this far, all tests were successful
   # and we can update the test success manifest ref if it is specified.
-  maybe_push_commit(api, "manifest-internal",
-      api.cros_source.INTERNAL_MANIFEST_URL, repo_internal_path,
-      properties.update_manifest_refs.test, snapshot_id
-  )
+  push_manifest_refs(properties.update_manifest_refs.test)
 
   # Launch any specified follow on orchestrator.
   if not fatal_failures and config.orchestrator.follow_on_orchestrator.name:

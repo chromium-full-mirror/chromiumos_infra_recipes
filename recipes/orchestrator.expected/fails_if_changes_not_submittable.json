@@ -66,7 +66,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.clone manifest-internal repo",
+    "name": "set up orchestrator.clone internal manifest repo",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -80,7 +80,7 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.clone manifest-internal repo.git clone",
+    "name": "set up orchestrator.clone internal manifest repo.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -94,7 +94,7 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.clone manifest-internal repo.git fetch",
+    "name": "set up orchestrator.clone internal manifest repo.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -107,7 +107,71 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.clone manifest-internal repo.git rev-parse",
+    "name": "set up orchestrator.clone internal manifest repo.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "--key",
+      "Cr-External-Snapshot"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.clone external manifest repo",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "."
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:Cr-External-Snapshot:"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

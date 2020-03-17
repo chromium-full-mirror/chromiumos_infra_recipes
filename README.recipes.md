@@ -4205,15 +4205,15 @@ Returns: JSON response with validation result
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#59)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#60)(api, properties):**
 
-&mdash; **def [calculate\_cq\_run\_cost](/recipes/orchestrator.py#333)(orch_build, child_builds, parent_step):**
+&mdash; **def [calculate\_cq\_run\_cost](/recipes/orchestrator.py#359)(orch_build, child_builds, parent_step):**
 
 Calculates the cost of the cq run.
 
@@ -4228,7 +4228,7 @@ orchestrator and build the child images.
 Returns:
   A float representing the cost (USD) of the cq run.
 
-&mdash; **def [clone\_repo](/recipes/orchestrator.py#208)(api, name, url, fetch=None):**
+&mdash; **def [clone\_repo](/recipes/orchestrator.py#234)(api, name, url, fetch=None):**
 
 Clone a repo into a temporary directory.
 
@@ -4241,9 +4241,9 @@ Args:
 Returns:
   path (Path): path on disk to cloned repo
 
-&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#229)(api, config):**
+&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#255)(api, config):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#408)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#434)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4260,7 +4260,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_builds\_cost](/recipes/orchestrator.py#356)(orch_build_id, child_builds, parent_step):**
+&mdash; **def [get\_child\_builds\_cost](/recipes/orchestrator.py#382)(orch_build_id, child_builds, parent_step):**
 
 Calculates the cost of building child images during this cq run.
 
@@ -4277,7 +4277,7 @@ Returns:
   total_child_build_cost (float): The cost (USD) of building child images
   during this cq run.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#389)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#415)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4287,7 +4287,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#506)(api, repo_name, repo_url, repo_path, ref, commit):**
+&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#532)(api, repo_name, repo_url, repo_path, ref, commit):**
 
 Update a ref in the remote repo to point to a given commit.  If ref
 evaluates as False, then do nothing
@@ -4300,7 +4300,7 @@ Args:
   ref       (str):  ref to push to (possibly empty) or None
   commit    (str):  commit SHA1 to push to ref
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#284)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#310)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4315,7 +4315,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#454)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#480)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4328,7 +4328,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#495)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#521)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4336,7 +4336,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#481)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#507)(refs):**
 
 Assert the given refs start with refs/heads.
 

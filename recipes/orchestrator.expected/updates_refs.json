@@ -60,7 +60,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.clone manifest-internal repo",
+    "name": "set up orchestrator.clone internal manifest repo",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -74,7 +74,7 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.clone manifest-internal repo.git clone",
+    "name": "set up orchestrator.clone internal manifest repo.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -88,7 +88,7 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.clone manifest-internal repo.git fetch",
+    "name": "set up orchestrator.clone internal manifest repo.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -101,17 +101,78 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.clone manifest-internal repo.git rev-parse",
+    "name": "set up orchestrator.clone internal manifest repo.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "--key",
+      "Cr-External-Snapshot"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.clone external manifest repo",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "."
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:Cr-External-Snapshot:"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.update manifest-internal ref refs/heads/foo",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "update manifest-internal ref refs/heads/foo"
   },
   {
     "cmd": [
@@ -122,9 +183,27 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.update manifest-internal ref refs/heads/foo.git push",
+    "name": "update manifest-internal ref refs/heads/foo.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update manifest ref refs/heads/foo"
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:Cr-External-Snapshot:refs/heads/foo"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "update manifest ref refs/heads/foo.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -257,7 +336,7 @@
       "/path/to/tmp/json",
       "copy",
       "\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001a\ufffd\u0001\n$\n\u0018amd64-generic-postsubmit\u0012\u0006master\u0018\u0002\u0012\u0004\n\u0002\b\u0001\"0\b\u0002\u0012\u0001\u0001\u001a\u0011chromeos-prebuilt\"\u0016chromeos-image-archive*\u0002\b\u00012/\n\u0011\n\u000fchrome_internal\u0012\u000f\n\rgeneric_buildz\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0002\u001a/\n\"\n\u0016arm-generic-postsubmit\u0012\u0006master\u0018\u0002\u0012\u0002\n\u00002\u0005\ufffd\u0001\u0002\u0010\u0002\"d\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
-      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_3/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.write input binaryproto",
@@ -285,9 +364,9 @@
       "[START_DIR]/cipd/test_planner/build_plan_generator",
       "generate-plan",
       "--input_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_3/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_3/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.run planner",
@@ -303,7 +382,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_3/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -2414,7 +2493,7 @@
       "/path/to/tmp/json",
       "copy",
       "*X\nV\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0012\u001a\u0010amd64-generic-cq`\fz4\n-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a\u0003\u0018\ufffd\t*P\nN\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\n\u001a\batlas-cq:\u0006\b\ufffd\ufffd\ufffd\ufffd\u0005`\fz,\n%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\u001a\u0003\u0018\ufffd\t*\ufffd\u0001\n\ufffd\u0001\b\u03ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0012\u001a\u0010amd64-generic-cq`\fz4\n-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a\u0003\u0018\ufffd\t\ufffd\u0001\u001b\n\u0019\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\ufffd\u0001,\n\u0015parent_buildbucket_id\u0012\u00138945511751514863184*\ufffd\u0001\n\ufffd\u0001\b\u03ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0012\u001a\u0010amd64-generic-cq`\fz4\n-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a\u0003\u0018\ufffd\t\ufffd\u0001,\n\u0015parent_buildbucket_id\u0012\u00138945511751514863184:(2d72510e447ab60a9728aeea2362d8be2cbd7789Jd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
-      "[CLEANUP]/test-plan-_tmp_3/input.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_4/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.write input binaryproto",
@@ -2465,9 +2544,9 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_3/input.binaryproto",
+      "[CLEANUP]/test-plan-_tmp_4/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_3/output.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_4/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
@@ -2483,7 +2562,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_3/output.binaryproto",
+      "[CLEANUP]/test-plan-_tmp_4/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -4305,7 +4384,7 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 204, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/orchestrator.py\", line 230, in RunSteps",
       "    presentation, failures, child_builder_configs)",
       "  File \"PYTHON/lib/python2.7/contextlib.py\", in __exit__",
       "    self.gen.next()",

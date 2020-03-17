@@ -136,7 +136,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.clone manifest-internal repo",
+    "name": "set up orchestrator.clone internal manifest repo",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -150,7 +150,7 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.clone manifest-internal repo.git clone",
+    "name": "set up orchestrator.clone internal manifest repo.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -164,7 +164,7 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.clone manifest-internal repo.git fetch",
+    "name": "set up orchestrator.clone internal manifest repo.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -177,7 +177,71 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "set up orchestrator.clone manifest-internal repo.git rev-parse",
+    "name": "set up orchestrator.clone internal manifest repo.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "abcd1234",
+      "--key",
+      "Cr-External-Snapshot"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.clone external manifest repo",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "."
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "abcd1234:Cr-External-Snapshot:"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -273,7 +337,7 @@
       "/path/to/tmp/json",
       "copy",
       "\n[\nY\n chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001\u0012\babcd1234\"N\nL\n\u000fchrome-internal\u0012\u001achromeos/manifest-internal\u001a\babcd1234\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_3/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.write input binaryproto",
@@ -293,9 +357,9 @@
       "[START_DIR]/cipd/test_planner/build_plan_generator",
       "generate-plan",
       "--input_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_3/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_3/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.run planner",
@@ -311,7 +375,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_3/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -1973,7 +2037,7 @@
       "/path/to/tmp/json",
       "copy",
       ":\babcd1234B[\nY\n chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001JN\nL\n\u000fchrome-internal\u0012\u001achromeos/manifest-internal\u001a\babcd1234\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/test-plan-_tmp_3/input.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_4/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.write input binaryproto",
@@ -1992,9 +2056,9 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_3/input.binaryproto",
+      "[CLEANUP]/test-plan-_tmp_4/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_3/output.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_4/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
@@ -2010,7 +2074,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_3/output.binaryproto",
+      "[CLEANUP]/test-plan-_tmp_4/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
