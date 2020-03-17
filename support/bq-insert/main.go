@@ -14,6 +14,7 @@ import (
 	"cloud.google.com/go/bigquery"
 	"go.chromium.org/luci/auth"
 	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 
 	"support/internal/cli"
 )
@@ -36,11 +37,16 @@ func main() {
 	cli.SetAuthScopes(auth.OAuthScopeEmail, bigquery.Scope)
 	cli.Init()
 
+	httpClient, err := cli.AuthenticatedHTTPClient()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	var input Input
 	cli.MustUnmarshalInput(&input)
 
 	ctx := context.Background()
-	client, err := bigquery.NewClient(ctx, input.ProjectId)
+	client, err := bigquery.NewClient(ctx, input.ProjectId, option.WithHTTPClient(httpClient))
 	if err != nil {
 		log.Fatal("Error creating client: ", err)
 	}
@@ -131,7 +137,7 @@ func insertTableData(ctx context.Context, client *bigquery.Client, datasetId str
 	inserter := table.Inserter()
 	insertion_error := inserter.Put(ctx, saverArray)
 	if insertion_error != nil {
-		log.Println("Error inserting values into table ", insertion_error)
+		log.Println("Error inserting values into table ", tableName, " : ", insertion_error)
 		return insertion_error.Error()
 	}
 	return ""

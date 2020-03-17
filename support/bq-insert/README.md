@@ -5,7 +5,7 @@
 To test locally you'll need to authenticate with gerrit OAuth scopes:
 
 ```shell
-luci-auth login -scopes 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gerritcodereview https://www.googleapis.com/auth/bigquery.insertdata'
+luci-auth login -scopes 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/bigquery'
 ```
 
 then use an input like the sample-input.json, sample-input2.json, or
