@@ -4470,9 +4470,9 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#207)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#206)(api, properties):**
 
-&mdash; **def [compute\_backfills](/recipes/test_platform/cros_test_platform.py#186)(api, requests, enumerations, responses):**
+&mdash; **def [compute\_backfills](/recipes/test_platform/cros_test_platform.py#185)(api, requests, enumerations, responses):**
 
 Compute backfill requests for this build.
 

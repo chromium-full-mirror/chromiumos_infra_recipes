@@ -173,8 +173,7 @@ def execute(api, requests, enumerations, config):
         },
         build=Build(create_time=api.buildbucket.build.create_time),
     )
-    responses = api.cros_test_platform.skylab_execute(exec_reqs)
-    return responses.tagged_responses
+    return api.cros_test_platform.skylab_execute(exec_reqs)
 
 
 def _ensure_all_requests_enumerated(requests, enumerations):
@@ -215,10 +214,11 @@ def RunSteps(api, properties):
   with api.context(infra_steps=True):
     enumerations = enumerate_tests(api, requests)
     responses = execute(api, requests, enumerations, properties.config)
-    backfills = compute_backfills(api, requests, enumerations, responses)
+    tagged_responses = responses.tagged_responses
+    backfills = compute_backfills(api, requests, enumerations, tagged_responses)
     set_output_properties(api, responses, backfills)
-    postprocess(api, requests, responses)
-  summarize(api, enumerations, responses)
+    postprocess(api, requests, tagged_responses)
+  summarize(api, enumerations, tagged_responses)
 
 
 def postprocess(api, requests, responses):
@@ -295,13 +295,13 @@ def set_output_properties(api, responses, backfills):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
     marshalled = {}
-    for tag, response in responses.iteritems():
+    for tag, response in responses.tagged_responses.iteritems():
       marshalled[tag] = json_format.MessageToDict(response)
     step.properties['responses'] = marshalled
     if 'default' in marshalled:
       step.properties['response'] = marshalled['default']
 
-    # TODO(crbug.com/1028420) Re-enable once a mitigation has landed on
+    # TODO(crbug.com/1028732) Re-enable once a mitigation has landed on
     # buildbucket to bump up the limitation on output properties size.
     #
     # marshalled = {}
