@@ -40,6 +40,9 @@ def RunSteps(api, properties):
     with api.step.nest('get current swarming stats') as step:
       swarming_counts = api.bot_scaling.get_swarming_stats(bot_policy_config)
       api.easy.set_property_step('swarming_stats', swarming_counts)
+    with api.step.nest('get current GCE config') as step:
+      gce_stats = api.bot_scaling.get_current_gce_config(bot_policy_config)
+      api.easy.set_property_step('gce_config', jsonpb.MessageToDict(gce_stats))
     with api.step.nest('compute scaling actions'):
       robocrop_action = api.bot_scaling.get_robocrop_action(
           status_map, bot_policy_config)

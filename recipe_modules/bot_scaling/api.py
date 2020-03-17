@@ -129,12 +129,30 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       dict, mapping of bot group to a ScalingAction.
     """
+    # TODO(mikenichols): Refactor logic to ensure that the recipe can
+    # recover from previous failed executions.
     last_successful_run = self.m.cros_history.get_matching_builds(
         self.m.buildbucket.build,
-        [common_pb2.SUCCESS], limit=10)[0]
+        [common_pb2.SUCCESS], limit=1000)[0]
     action_struct = last_successful_run.output.properties['robocrop_action']
     previous_actions = {}
     for _, actions in action_struct.items():
       for action in actions:
         previous_actions.update({action['botGroup']: action})
     return previous_actions
+
+  def get_current_gce_config(self, bot_policy_config):
+    """Retrieves the current configuration from GCE Provider service.
+
+    Args:
+      bot_policy_config(BotPolicyCfg): Config define Policy for
+        the RoboCrop.
+
+    Returns:
+      list(Config), GCE Provider config definitions.
+    """
+    prefixes = []
+    for policy in bot_policy_config.bot_policies:
+      for restriction in policy.region_restrictions:
+        prefixes.append(restriction.prefix)
+    return self.m.gce_provider.get_current_config(prefixes)
