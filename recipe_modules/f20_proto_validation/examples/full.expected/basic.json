@@ -1,0 +1,40 @@
+[
+  {
+    "cmd": [],
+    "name": "metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@serialized F20 data@{@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@  \"remoteTestDriver\": {@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@    \"command\": \"echo hello world\", @@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@    \"id\": \"TAUTO\"@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@  }, @@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@  \"test\": [@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@    {@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@      \"name\": \"footest\"@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@    }@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@  ]@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@}@@@",
+      "@@@STEP_LOG_END@serialized F20 data@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "plan",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@serialized F20 data@{@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@  \"units\": [@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@    {@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@      \"testCondition\": {@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@        \"expression\": \"true\"@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@      }@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@    }@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@  ], @@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@  \"name\": \"fooplan\"@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@}@@@",
+      "@@@STEP_LOG_END@serialized F20 data@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
