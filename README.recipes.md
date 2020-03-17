@@ -3375,7 +3375,7 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#55)(api, properties):**
 
-&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#226)(api, manifest_diffs):**
+&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#228)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 
@@ -3386,11 +3386,11 @@ Args:
 Returns:
   list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#260)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#262)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#270)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#272)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -3413,7 +3413,7 @@ Args:
 Returns:
   A string containing the commit message.
 
-&mdash; **def [publish\_snapshot](/recipes/annealing.py#187)(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml, gerrit_commits=None, disable_gerrit=False, footers=[]):**
+&mdash; **def [publish\_snapshot](/recipes/annealing.py#189)(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml, gerrit_commits=None, disable_gerrit=False, footers=[]):**
 
 Generate snapshot.xml file and commit it to a ref.
 

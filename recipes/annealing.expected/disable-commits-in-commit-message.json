@@ -359,73 +359,15 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "manifest",
-      "-r"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "repo manifest",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@<manifest><project name=\"NAME\" revision=\"TO_REV\" /></manifest>@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "diff remote and local manifest"
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "diff remote and local manifest.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "diff remote and local manifest.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "show",
-      "FETCH_HEAD:snapshot.xml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "diff remote and local manifest.git show",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "manifest",
       "-r",
       "-m",
       "[START_DIR]/chromiumos_workspace/manifest/full.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "repo manifest (2)",
+    "name": "repo manifest",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -569,7 +511,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "<manifest></manifest>",
+      "<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>",
       "[START_DIR]/chromiumos_workspace/manifest/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
@@ -577,7 +519,7 @@
     "name": "publish external snapshot.git transaction.write file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@snapshot.xml@<manifest></manifest>@@@",
+      "@@@STEP_LOG_LINE@snapshot.xml@<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@snapshot.xml@@@"
     ]
   },
@@ -626,6 +568,64 @@
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git rev-parse (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "repo manifest (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "diff remote and local manifest"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "show",
+      "FETCH_HEAD:snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git show",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -837,7 +837,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "<manifest></manifest>",
+      "<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>",
       "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
@@ -845,7 +845,7 @@
     "name": "publish internal snapshot.git transaction.write file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@snapshot.xml@<manifest></manifest>@@@",
+      "@@@STEP_LOG_LINE@snapshot.xml@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@snapshot.xml@@@"
     ]
   },

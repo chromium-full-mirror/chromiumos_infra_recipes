@@ -61,9 +61,6 @@ def RunSteps(api, properties):
     with api.context(
         cwd=api.cros_source.workspace_path.join('manifest-internal')):
       api.cros_source.ensure_synced_cache()
-      snapshot_xml = api.repo.manifest_snapshot()
-      manifest_diffs = api.repo.diff_remote_and_local_manifests(
-          api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml)
 
       # Generate a public snapshot of the manifest in the manifest/ repo.  We
       # need to do this _first_ so that we can fill in the Cr-External-Snapshot
@@ -73,7 +70,7 @@ def RunSteps(api, properties):
           cwd=api.cros_source.workspace_path.join('manifest')):
 
         # Generate the manifest from public repo
-        snapshot_xml = api.repo.manifest_snapshot(
+        snapshot_xml_extern = api.repo.manifest_snapshot(
             api.cros_source.workspace_path.join(
                 'manifest/full.xml'))
 
@@ -86,9 +83,14 @@ def RunSteps(api, properties):
               api.cros_source.workspace_path.join(
                   'manifest/snapshot.xml'
               ),
-              snapshot_xml, disable_gerrit=True
+              snapshot_xml_extern, disable_gerrit=True
           )
           external_snapshot_ref = external_snapshot_commit.id
+
+      # snapshot internal manifest
+      snapshot_xml_intern = api.repo.manifest_snapshot()
+      manifest_diffs = api.repo.diff_remote_and_local_manifests(
+          api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml_intern)
 
       # TODO(athilenius): It would be nice to set the 'Info' column here.
       gerrit_commits = []
@@ -111,7 +113,7 @@ def RunSteps(api, properties):
             api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
             api.cros_source.workspace_path.join(
                 'manifest-internal/snapshot.xml'),
-            snapshot_xml, gerrit_commits,
+            snapshot_xml_intern, gerrit_commits,
             properties.disable_gerrit_commits_in_commit_message,
             footers=[("Cr-External-Snapshot", external_snapshot_ref)]
         )
@@ -320,8 +322,12 @@ def GenTests(api):
           AnnealingProperties(child_builders=['eve-postsubmit'])) +  #
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
-              '<manifest><project name="NAME" revision="TO_REV" /></manifest>'))
-      +  #
+              '<manifest visibility="external"><project name="NAME" revision="TO_REV"/></manifest>'))
+      +
+      api.step_data(
+          'repo manifest (2)', stdout=api.raw_io.output(
+              '<manifest visibility="internal"><project name="NAME" revision="TO_REV"/></manifest>'))
+      +
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
@@ -335,8 +341,12 @@ def GenTests(api):
       api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
-              '<manifest><project name="NAME" revision="TO_REV" /></manifest>'))
-      +  #
+              '<manifest visibility="external"><project name="NAME" revision="TO_REV"/></manifest>'))
+      +
+      api.step_data(
+          'repo manifest (2)', stdout=api.raw_io.output(
+              '<manifest visibility="internal"><project name="NAME" revision="TO_REV"/></manifest>'))
+      +
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
@@ -351,8 +361,12 @@ def GenTests(api):
           disable_gerrit_commits_in_commit_message=True)) +  #
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
-              '<manifest><project name="NAME" revision="TO_REV" /></manifest>'))
-      +  #
+              '<manifest visibility="external"><project name="NAME" revision="TO_REV"/></manifest>'))
+      +
+      api.step_data(
+          'repo manifest (2)', stdout=api.raw_io.output(
+              '<manifest visibility="internal"><project name="NAME" revision="TO_REV"/></manifest>'))
+      +
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
