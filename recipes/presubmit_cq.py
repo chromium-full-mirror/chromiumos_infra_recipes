@@ -34,6 +34,9 @@ def RunSteps(api, properties):
       presentation.step_text = 'One CL, using Infra Presubmit'
       bucket = 'infra'
       builder = 'Infra Presubmit'
+      # Infra Presubmit doesn't have a 'prod' version, it always runs
+      # refs/heads/master.
+      exe_cipd_version = 'refs/heads/master'
       if properties.runhooks:
         input_props['runhooks'] = properties.runhooks
       if properties.timeout_s > 0:
@@ -42,6 +45,7 @@ def RunSteps(api, properties):
       presentation.step_text = 'Multiple changes, using fullcheckout-presubmit'
       bucket = 'cq'
       builder = 'fullcheckout-presubmit'
+      exe_cipd_version = api.buildbucket.INHERIT
     else:
       presentation.step_text = 'No build'
       raise api.step.StepFailure('No changes present')
@@ -55,7 +59,8 @@ def RunSteps(api, properties):
 
     request = api.buildbucket.schedule_request(
         builder=builder, bucket=bucket, critical=True, tags=tags,
-        properties=child_props, swarming_parent_run_id=api.swarming.task_id)
+        properties=child_props, exe_cipd_version=exe_cipd_version,
+        swarming_parent_run_id=api.swarming.task_id)
     child = api.buildbucket.schedule([request])[0]
     presentation.links[builder] = api.buildbucket.build_url(build_id=child.id)
 
