@@ -46,6 +46,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/scheduler',
     'recipe_engine/step',
+    'chroot_util',
     'cros_build_api',
     'cros_cq_depends',
     'depot_tools/gitiles',
@@ -101,19 +102,9 @@ def RunSteps(api, properties):
           checkout_path=api.cros_source.workspace_path):
     api.cros_source.ensure_synced_cache()
     if properties.init_sdk:
-      with api.context(cwd=api.cros_source.workspace_path), \
-           api.step.nest('init sdk') as presentation:
-        response = api.cros_build_api.SdkService.Create(
-            CreateSdkRequest(
-                flags=CreateSdkRequest.Flags(no_replace=True,
-                                             no_use_image=True),
-                chroot=api.cros_sdk.chroot))
-        presentation.logs['sdk version'] = [str(response.version.version)]
-        # TODO(crbug.com/949721): Currently, chromite depends on the chroot
-        # living within the source tree. As a workaround, link the external
-        # chroot the workspace to make it look legit. New chromite services
-        # should accept the chroot path as a parameter.
-        api.cros_sdk.link_chroot(api.cros_source.workspace_path)
+      with api.context(cwd=api.cros_source.workspace_path):
+        api.chroot_util.init_sdk(version=None, use_image=False,
+                                 timeout_sec=None)
 
     with api.step.nest('try uprev {}'.format(cpv)) as presentation:
       request = UprevVersionedPackageRequest(

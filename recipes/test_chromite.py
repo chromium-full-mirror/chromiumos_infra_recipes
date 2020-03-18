@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'chroot_util',
     'cros_build_api',
     'cros_infra_config',
     'cros_sdk',
@@ -55,34 +56,8 @@ def RunSteps(api):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-      with api.step.nest('init sdk') as presentation:
-        try:
-          api.cros_sdk.build_chmod_chroot()
-          no_replace_flag = True
-          if config.general.sdk_cache_version:
-            presentation.logs['sdk cache version'] = [
-                'Version in config: %s' % config.general.sdk_cache_version,
-                'Version on disk: %s' % api.cros_sdk.sdk_cache_version,
-            ]
-            no_replace_flag = (
-                str(config.general.sdk_cache_version) == str(
-                    api.cros_sdk.sdk_cache_version))
-          response = api.cros_build_api.SdkService.Create(
-              CreateSdkRequest(
-                  flags=CreateSdkRequest.Flags(no_replace=no_replace_flag,
-                                               no_use_image=True),
-                  chroot=api.cros_sdk.chroot))
-          presentation.logs['sdk version'] = [str(response.version.version)]
-          if config.general.sdk_cache_version:
-            api.cros_sdk.sdk_cache_version = config.general.sdk_cache_version
-          api.cros_sdk.link_chroot(api.cros_source.workspace_path)
-        except api.step.StepFailure as e:
-          # Invalidate the cache if the InitSDK call fails.
-          api.step.nest(
-              'InitSDK failure, deleting chroot',
-              api.cros_build_api.SdkService.Delete(
-                  DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-          raise
+      api.chroot_util.init_sdk(version=config.general.sdk_cache_version,
+                               use_image=False, timeout_sec=None)
 
       with api.step.nest('update sdk'):
         try:

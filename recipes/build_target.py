@@ -15,6 +15,7 @@ DEPS = [
     'recipe_engine/step',
     'bot_cost',
     'chrome',
+    'chroot_util',
     'config_util',
     'cros_artifacts',
     'cros_bisect',
@@ -130,32 +131,9 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
     response = api.cros_build_api.PackageService.Uprev(
         request, timeout=STEP_TIMEOUTS['uprev'])
 
-  with api.step.nest('init sdk') as step:
-    api.cros_sdk.build_chmod_chroot()
-    # If build config has sdk_cache_version present, toggle no_replace flag in
-    # build api call based on if there is a mismatch between config value and
-    # what is present on disk. In short: replace existing sdk cache if mismatch.
-    no_replace_flag = True
-    if config.general.sdk_cache_version:
-      step.logs['sdk cache version'] = [
-          'Version in config: %s' % config.general.sdk_cache_version,
-          'Version on disk: %s' % api.cros_sdk.sdk_cache_version,
-      ]
-      no_replace_flag = (
-          str(config.general.sdk_cache_version) == str(
-              api.cros_sdk.sdk_cache_version))
-    response = api.cros_build_api.SdkService.Create(
-        CreateSdkRequest(
-            flags=CreateSdkRequest.Flags(
-                no_replace=no_replace_flag,
-                # Test mounting the SDK as an image only in staging for now.
-                no_use_image=not is_staging),
-            chroot=api.cros_sdk.chroot),
-        timeout=(STEP_TIMEOUTS['create_sdk'] if not long_timeouts else None))
-    step.logs['sdk version'] = [str(response.version.version)]
-    if config.general.sdk_cache_version:
-      api.cros_sdk.sdk_cache_version = config.general.sdk_cache_version
-    api.cros_sdk.link_chroot(api.cros_source.workspace_path)
+  api.chroot_util.init_sdk(
+      version=config.general.sdk_cache_version, use_image=is_staging,
+      timeout_sec=None if long_timeouts else STEP_TIMEOUTS['create_sdk'])
 
   with api.step.nest('detect toolchain change') as step:
     toolchain_changed = api.cros_relevance.check_for_toolchain_change(
