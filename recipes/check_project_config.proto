@@ -14,6 +14,18 @@ message ConfigBundleCheckoutPath {
     string config_path = 2;
 }
 
+// Describes the location of a local manifest file.
+// See https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.md#local-manifests.
+message LocalManifest {
+    // URL of the repo with the local manifest. E.g.
+    // https://chrome-internal.googlesource.com/chromeos/project/...
+    string repo_url = 1;
+
+    // Path to the local manifest.
+    // Relative to the repo.
+    string manifest_path = 2;
+}
+
 message CheckProjectConfigProperties {
     // Manifest groups to init and sync.
     //
@@ -23,6 +35,9 @@ message CheckProjectConfigProperties {
     // - All shared config repos needed by the project
     //   (e.g "chromiumos/config").
     repeated string manifest_groups = 1;
+
+    // Local manifest to add to the checkout.
+    LocalManifest local_manifest = 5;
 
     // Path the "chromiumos/config" repo is checked out to in the source tree.
     string chromiumos_config_checkout_path = 2;

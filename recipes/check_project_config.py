@@ -10,7 +10,10 @@ import contextlib
 from recipe_engine import post_process
 
 from PB.recipes.chromeos.check_project_config import (
-    CheckProjectConfigProperties, ConfigBundleCheckoutPath)
+    CheckProjectConfigProperties,
+    ConfigBundleCheckoutPath,
+    LocalManifest,
+)
 
 PROPERTIES = CheckProjectConfigProperties
 
@@ -42,8 +45,29 @@ def checkout_manifest_groups(api, properties):
   time to sync the used repos. In addition, not caching reduces chances of
   leaking between runs of the recipe.
   """
+  init_opts = {
+      'groups': properties.manifest_groups,
+  }
+  manifest_url = api.cros_source.INTERNAL_MANIFEST_URL
+
+  # If a local manifest is specified, init with the public manifest and local
+  # manifest. Otherwise, init with the private manifest.
+  # TODO(crbug.com/1058171): Require local manifests once they are specified in
+  # config.
+  if properties.local_manifest.repo_url:
+    if not properties.local_manifest.manifest_path:
+      raise ValueError(
+          'local_manifest.manifest_path must be set if local_manifest.repo_url'
+          ' is set.')
+
+    manifest_url = api.cros_source.EXTERNAL_MANIFEST_URL
+    init_opts['local_manifest'] = api.repo.LocalManifest(
+        repo=properties.local_manifest.repo_url,
+        path=properties.local_manifest.manifest_path,
+    )
+
   api.cros_source.ensure_synced_cache(
-      init_opts={'groups': properties.manifest_groups},
+      manifest_url=manifest_url, init_opts=init_opts,
       cache_path_override=api.cros_source.workspace_path)
   with api.context(cwd=api.cros_source.workspace_path):
     with api.step.nest('apply patch sets'):
@@ -105,12 +129,12 @@ def RunSteps(api, properties):
     api.path.mock_add_paths(checker_path)
 
     if not api.path.exists(generate_path):  # pragma: nocover
-      raise api.step.InfraFailure(
-          'generate.sh not found. Expected at %s' % generate_path)
+      raise api.step.InfraFailure('generate.sh not found. Expected at %s' %
+                                  generate_path)
 
     if not api.path.exists(checker_path):  #pragma: nocover
-      raise api.step.InfraFailure(
-          'Checker not found. Expected at %s' % checker_path)
+      raise api.step.InfraFailure('Checker not found. Expected at %s' %
+                                  checker_path)
 
     api.step('generate proto bindings', [generate_path])
 
@@ -133,20 +157,25 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def properties(api):
-    """Returns a basic set of valid properties."""
-    return api.properties(
-        manifest_groups=['partner-config', 'testprogram-testproject'],
-        chromiumos_config_checkout_path='src/config',
-        program_config_bundle_checkout_path=ConfigBundleCheckoutPath(
-            repo_checkout_path='src/program/testprogram',
-            config_path='generated/config.binaryproto',
-        ),
-        project_config_bundle_checkout_path=ConfigBundleCheckoutPath(
-            repo_checkout_path='src/project/testproject',
-            config_path='generated/config.binaryproto',
-        ),
-    )
+  def properties_dict(extra_props={}):
+    """Returns a dict of basic valid properties, updated with extra_props."""
+    props = {
+        'manifest_groups': ['partner-config', 'testprogram-testproject'],
+        'chromiumos_config_checkout_path':
+            'src/config',
+        'program_config_bundle_checkout_path':
+            ConfigBundleCheckoutPath(
+                repo_checkout_path='src/program/testprogram',
+                config_path='generated/config.binaryproto',
+            ),
+        'project_config_bundle_checkout_path':
+            ConfigBundleCheckoutPath(
+                repo_checkout_path='src/project/testproject',
+                config_path='generated/config.binaryproto',
+            ),
+    }
+    props.update(extra_props)
+    return props
 
   def project_config_cq_build(api):
     """Returns a sample buildbucket project config cq build"""
@@ -156,11 +185,43 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      properties(api),
+      api.properties(**properties_dict()),
       project_config_cq_build(api),
       api.post_process(post_process.StepCommandContains,
                        'ensure synced checkout.repo init',
                        ['--groups', 'partner-config,testprogram-testproject']),
+  )
+
+  yield api.test(
+      'with_local_manifest',
+      api.properties(**properties_dict(
+          extra_props={
+              'local_manifest':
+                  LocalManifest(
+                      repo_url=('https://chrome-internal.googlesource.com'
+                                '/chromeos/project/testproject1'),
+                      manifest_path='local_manifest.xml',
+                  ),
+          })),
+      project_config_cq_build(api),
+  )
+
+  yield api.test(
+      'local_manifest_path_missing',
+      api.properties(**properties_dict(
+          extra_props={
+              'local_manifest':
+                  LocalManifest(
+                      repo_url=('https://chrome-internal.googlesource.com'
+                                '/chromeos/project/testproject1'),
+                  ),
+          })),
+      project_config_cq_build(api),
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.ResultReasonRE,
+                       ('.*local_manifest.manifest_path must be set if '
+                        'local_manifest.repo_url is set.*')),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -187,7 +248,7 @@ def GenTests(api):
 
   yield api.test(
       'no_gerrit_changes',
-      properties(api),
+      api.properties(**properties_dict()),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
                        '.*At least one gerrit_change must be specified.*'),
@@ -196,7 +257,7 @@ def GenTests(api):
 
   yield api.test(
       'checker_failed',
-      properties(api),
+      api.properties(**properties_dict()),
       project_config_cq_build(api),
       api.step_data('check constraints', retcode=1),
       api.post_process(post_process.StatusFailure),
@@ -205,7 +266,7 @@ def GenTests(api):
 
   yield api.test(
       'cannot_access_gerrit_changes',
-      properties(api),
+      api.properties(**properties_dict()),
       project_config_cq_build(api),
       api.step_data(
           'apply patch sets.apply gerrit patch sets.repo forall',
