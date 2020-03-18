@@ -90,9 +90,7 @@ def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
         full_path = workpath.join(commit.path)
         with api.step.nest('checking %s' % commit.path) as presentation:
           info = path_info[commit.path]
-          branch = 'master'
-          if info.branch.startswith('refs/heads/'):
-            branch = info.branch.split('/', 2)[2]
+          branch = api.git.extract_branch(info.branch, 'master')
           with api.context(cwd=full_path), api.depot_tools.on_path():
             # Several checks require that we have an upstream tracking branch.
             # This requires us to have a branch, which we don't yet have.

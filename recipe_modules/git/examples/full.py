@@ -50,6 +50,10 @@ def RunSteps(api):
   api.git.rebase(force=True)
   api.git.set_global_config(['upstream.hammer-branch', '1'])
 
+  api.assertions.assertEqual(
+      api.git.extract_branch('refs/heads/something', 'whatever'), 'something')
+  api.assertions.assertEqual(
+      api.git.extract_branch('refs/tags/something', 'whatever'), 'whatever')
 
 def GenTests(api):
   yield api.test('basic')

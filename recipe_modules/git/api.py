@@ -386,3 +386,18 @@ other_test.txt
       * args list[str]: args for `git config`.
     """
     self._step(['config', '--global'] + args)
+
+  def extract_branch(self, refspec, default):
+    """Splits the branch from the refspec.
+
+    Splits the branch from a refs/heads refspec and returns it. Returns
+    default if the refspec is not of the required format.
+
+    Args:
+      * refspec (str): refspec to split the branch from.
+      * default (str): value to return if refspec not of required format.
+    """
+    if refspec.startswith('refs/heads/'):
+      return refspec.split('/', 2)[2]
+    else:
+      return default

@@ -2413,6 +2413,17 @@ Returns:
       otherwise.
   
 
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#390)(self, refspec, default):**
+
+Splits the branch from the refspec.
+
+Splits the branch from a refs/heads refspec and returns it. Returns
+default if the refspec is not of the required format.
+
+Args:
+  * refspec (str): refspec to split the branch from.
+  * default (str): value to return if refspec not of required format.
+
 &emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [fetch](/recipe_modules/git/api.py#136)(self, remote, refspecs=None):**
 
 Runs 'git fetch'.
@@ -4347,9 +4358,11 @@ Validate the remote stable version config file.
 Returns: JSON response with validation result
 ### *recipes* / [local\_manifest\_presubmit](/recipes/local_manifest_presubmit.py)
 
+[DEPS](/recipes/local_manifest_presubmit.py#18): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/presubmit][depot_tools/recipe_modules/presubmit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
 Runs the presubmit for a project with checkout per local manifest.
 
-&mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#8)(api):**
+&mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#33)(api, properties):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -4924,6 +4937,7 @@ Basic tests for the urls recipe module.
 [depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/ae3586b5380f0c00448c5a056528419b03ddf9b1/recipes/README.recipes.md#recipe_modules-git_cl
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/ae3586b5380f0c00448c5a056528419b03ddf9b1/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/ae3586b5380f0c00448c5a056528419b03ddf9b1/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/presubmit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/ae3586b5380f0c00448c5a056528419b03ddf9b1/recipes/README.recipes.md#recipe_modules-presubmit
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/ae3586b5380f0c00448c5a056528419b03ddf9b1/recipes/README.recipes.md#recipe_modules-tryserver
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0e8214509db0b273e7136270946b8d6688899356/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0e8214509db0b273e7136270946b8d6688899356/README.recipes.md#recipe_modules-assertions

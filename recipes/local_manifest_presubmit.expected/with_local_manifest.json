@@ -60,7 +60,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "--groups",
       "all",
       "--groups",
@@ -113,6 +113,73 @@
     "name": "ensure synced checkout.clear git locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace/.repo/local_manifests"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure synced checkout.ensure local manifest dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/project/testproject1/+/master/local_manifest.xml",
+      "--format",
+      "text"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure synced checkout.fetch master:local_manifest.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n<manifest>\n  <remote name=\"cros-internal\"\n          fetch=\"https://chrome-internal.googlesource.com\"\n          review=\"https://chrome-internal-review.googlesource.com\" />\n  <project name=\"chromeos/private-repo1\"\n     path=\"src/private-repo1\"\n     remote=\"cros-internal\" />\n</manifest>\n    ",
+      "[START_DIR]/chromiumos_workspace/.repo/local_manifests/local_manifest.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure synced checkout.write local manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@<manifest>@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@  <remote name=\"cros-internal\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@          fetch=\"https://chrome-internal.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@          review=\"https://chrome-internal-review.googlesource.com\" />@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@  <project name=\"chromeos/private-repo1\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@     path=\"src/private-repo1\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@     remote=\"cros-internal\" />@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@</manifest>@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@    @@@",
+      "@@@STEP_LOG_END@local_manifest.xml@@@"
     ]
   },
   {
