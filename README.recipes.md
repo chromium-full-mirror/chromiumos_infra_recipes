@@ -5,6 +5,7 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [analysis_service](#recipe_modules-analysis_service)
   * [autotest_status_parser](#recipe_modules-autotest_status_parser)
+  * [bot_cost](#recipe_modules-bot_cost)
   * [bot_scaling](#recipe_modules-bot_scaling)
   * [breakpad](#recipe_modules-breakpad)
   * [build_plan](#recipe_modules-build_plan)
@@ -66,6 +67,8 @@
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [autotest_status_parser:examples/full](#recipes-autotest_status_parser_examples_full)
+  * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
+  * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost)
   * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
   * [bot_scaling:examples/get_gce_config](#recipes-bot_scaling_examples_get_gce_config)
   * [bot_scaling:examples/get_robocrop_action](#recipes-bot_scaling_examples_get_robocrop_action)
@@ -296,6 +299,45 @@ Args:
   results_dir: a string pointing to a directory containing test results.
 
 Returns: Result.
+### *recipe_modules* / [bot\_cost](/recipe_modules/bot_cost)
+
+[DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to calculate the cost of running bots.
+
+&mdash; **def [calculate\_build\_cost](/recipe_modules/bot_cost/api.py#17)(self, build_id, bot_size):**
+
+Calculate the cost of creating a build.
+
+Calculates the cost of creating a build based on the time duration. If
+the build status is terminal, the duration is based on the start_time and
+end_time, if the build status is 'STARTED', build durations is based on
+start_time and update_time.
+
+Args:
+  build_id (int): The build id for this build.
+  bot_size (str): The size of the bot used to create the build.
+
+Returns:
+  A float representing the cost (USD) of building this image.
+
+&mdash; **def [calculate\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#80)(self, orch_build_id, child_builds, parent_step):**
+
+Calculates the cost of the cq run.
+
+Calculates the total cost of this cq run based on the cost to run the
+orchestrator and build the child images.
+
+Args:
+  orch_build_id (int): The orchestrator's build id.
+  child_builds (list[build_pb2.Build]): The child builds for this cq run.
+  parent_step (Step): The calling step, to be used for presentation
+  purposes.
+
+Returns:
+  A float representing the cost (USD) of the cq run.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
 [DEPS](/recipe_modules/bot_scaling/__init__.py#6): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_history](#recipe_modules-cros_history), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3499,6 +3541,16 @@ Returns:
 [DEPS](/recipe_modules/autotest_status_parser/examples/full.py#6): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/autotest_status_parser/examples/full.py#16)(api):**
+### *recipes* / [bot\_cost:examples/calculate\_build\_cost](/recipe_modules/bot_cost/examples/calculate_build_cost.py)
+
+[DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#6): [bot\_cost](#recipe_modules-bot_cost), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#20)(api):**
+### *recipes* / [bot\_cost:examples/calculate\_cq\_run\_cost](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py)
+
+[DEPS](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#6): [bot\_cost](#recipe_modules-bot_cost), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#20)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_bot\_request](/recipe_modules/bot_scaling/examples/get_bot_request.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_bot_request.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -3577,27 +3629,15 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#20)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [chrome](#recipe_modules-chrome), [config\_util](#recipe_modules-config_util), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [bot\_cost](#recipe_modules-bot_cost), [chrome](#recipe_modules-chrome), [config\_util](#recipe_modules-config_util), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#105)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#103)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#89)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#87)(api, properties):**
 
-&mdash; **def [calculate\_build\_cost](/recipes/build_target.py#377)(build):**
-
-Calculate the cost of building this image.
-
-Calculates the cost of building this image based on the build time duration.
-
-Args:
-  build (build_pb2.Build): The build proto for this image.
-
-Returns:
-  A float representing the cost (USD) of building this image.
-
-&mdash; **def [get\_packages](/recipes/build_target.py#393)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#376)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3613,7 +3653,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#412)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#395)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4207,30 +4247,15 @@ Returns: JSON response with validation result
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#60)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#58)(api, properties):**
 
-&mdash; **def [calculate\_cq\_run\_cost](/recipes/orchestrator.py#359)(orch_build, child_builds, parent_step):**
-
-Calculates the cost of the cq run.
-
-Calculates the total cost of this cq run based on the cost to run the
-orchestrator and build the child images.
-
- Args:
-  orch_build (build_pb2.Build): The orchestrator build.
-  child_builds (list[build_pb2.Build]): The child builds for this cq run.
-  parent_step (Step): the calling step, to be used for presentation purposes.
-
-Returns:
-  A float representing the cost (USD) of the cq run.
-
-&mdash; **def [clone\_repo](/recipes/orchestrator.py#234)(api, name, url, fetch=None):**
+&mdash; **def [clone\_repo](/recipes/orchestrator.py#231)(api, name, url, fetch=None):**
 
 Clone a repo into a temporary directory.
 
@@ -4243,9 +4268,9 @@ Args:
 Returns:
   path (Path): path on disk to cloned repo
 
-&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#255)(api, config):**
+&mdash; **def [determine\_repo\_state](/recipes/orchestrator.py#252)(api, config):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#434)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#376)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4262,24 +4287,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_builds\_cost](/recipes/orchestrator.py#382)(orch_build_id, child_builds, parent_step):**
-
-Calculates the cost of building child images during this cq run.
-
-Calculates the cost for building child images during this cq run. Only adds to
-the cost if the child build was created during this cq run. Logs the child
-builds created for this cq run that do not have a build_cost property.
-
-Args:
-  orch_build_id (build_pb2.Build): The orchestrator's build id.
-  child_builds (list[build_pb2.Build]): The builds completed for this cq run.
-  parent_step (Step): the calling step, to be used for presentation purposes.
-
-Returns:
-  total_child_build_cost (float): The cost (USD) of building child images
-  during this cq run.
-
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#415)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#357)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4289,7 +4297,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#532)(api, repo_name, repo_url, repo_path, ref, commit):**
+&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#476)(api, repo_name, repo_url, repo_path, ref, commit):**
 
 Update a ref in the remote repo to point to a given commit.  If ref
 evaluates as False, then do nothing
@@ -4302,7 +4310,7 @@ Args:
   ref       (str):  ref to push to (possibly empty) or None
   commit    (str):  commit SHA1 to push to ref
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#310)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#307)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4317,7 +4325,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#480)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#424)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4330,7 +4338,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#521)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#465)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4338,7 +4346,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#507)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#451)(refs):**
 
 Assert the given refs start with refs/heads.
 

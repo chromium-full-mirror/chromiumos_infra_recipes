@@ -15,6 +15,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'bot_cost',
     'build_plan',
     'cros_bisect',
     'cros_history',
@@ -52,9 +53,6 @@ from collections import defaultdict
 from datetime import datetime
 
 PROPERTIES = OrchestratorProperties
-
-# Cost is in USD per day as calculated in go/cros-infra-sizing on 2018-12-12.
-BOT_COST = 4.56
 
 
 def RunSteps(api, properties):
@@ -217,9 +215,8 @@ def RunSteps(api, properties):
           gerrit_changes))
 
   with api.step.nest('clean up orchestrator') as presentation:
-    cq_run_cost = calculate_cq_run_cost(api.buildbucket.build, completed_builds,
-                                        presentation)
-    presentation.properties['cq_run_cost'] = cq_run_cost
+    api.bot_cost.calculate_cq_run_cost(api.buildbucket.build.id,
+                                       completed_builds, presentation)
 
     # Recheck the BuilderConfigs at HEAD, one last time, to see if any failed
     # builders are now noncritical.
@@ -345,72 +342,17 @@ def schedule_wait_follow_on(api, parent_step, config,
 
   # Are we supposed to wait?
   if follow_on.await_completion:
+    fields = api.buildbucket.DEFAULT_FIELDS | {'tags'}
     try:
       completed_builds += api.buildbucket.collect_builds(
-          [build.id], timeout=60 * 60 * 36,
-          step_name='collect', url_title_fn=title_fn).values()
+          [build.id], timeout=60 * 60 * 36, step_name='collect',
+          url_title_fn=title_fn, fields=fields).values()
     except api.step.StepFailure:  #pragma: no cover
-      completed_builds += api.buildbucket.get_multi(
-          [build.id], step_name='get', url_title_fn=title_fn).values()
+      completed_builds += api.buildbucket.get_multi([build.id], step_name='get',
+                                                    url_title_fn=title_fn,
+                                                    fields=fields).values()
 
   return completed_builds
-
-
-def calculate_cq_run_cost(orch_build, child_builds, parent_step):
-  """Calculates the cost of the cq run.
-
-  Calculates the total cost of this cq run based on the cost to run the
-  orchestrator and build the child images.
-
-   Args:
-    orch_build (build_pb2.Build): The orchestrator build.
-    child_builds (list[build_pb2.Build]): The child builds for this cq run.
-    parent_step (Step): the calling step, to be used for presentation purposes.
-
-  Returns:
-    A float representing the cost (USD) of the cq run.
-  """
-  bot_days = (orch_build.end_time.seconds - orch_build.start_time.seconds) / (
-      60.0 * 60.0 * 24.0)
-  orch_cost = bot_days * BOT_COST
-  child_builds_cost = get_child_builds_cost(orch_build.id, child_builds,
-                                            parent_step)
-  cq_run_cost = orch_cost + child_builds_cost
-  return cq_run_cost
-
-
-def get_child_builds_cost(orch_build_id, child_builds, parent_step):
-  """Calculates the cost of building child images during this cq run.
-
-  Calculates the cost for building child images during this cq run. Only adds to
-  the cost if the child build was created during this cq run. Logs the child
-  builds created for this cq run that do not have a build_cost property.
-
-  Args:
-    orch_build_id (build_pb2.Build): The orchestrator's build id.
-    child_builds (list[build_pb2.Build]): The builds completed for this cq run.
-    parent_step (Step): the calling step, to be used for presentation purposes.
-
-  Returns:
-    total_child_build_cost (float): The cost (USD) of building child images
-    during this cq run.
-  """
-  total_child_build_cost = 0
-  child_builds_missing_cost = []
-
-  for build in child_builds:
-    for tag in build.tags:
-      if tag.key == 'parent_buildbucket_id' and int(tag.value) == orch_build_id:
-        for key, value in build.output.properties.fields.items():
-          if key == 'build_cost':
-            total_child_build_cost += value.number_value
-          break
-        else:
-          child_builds_missing_cost.append(build)
-  parent_step.logs[
-      'child builds missing build_cost'] = child_builds_missing_cost
-  return total_child_build_cost
-
 
 def get_child_specs(api):
   """Returns the child specs that should be run for this invocation.
@@ -465,14 +407,16 @@ def filter_schedule_wait_builds(api, parent_step, child_specs,
                     if should_collect(b, child_specs_dict, child_targets_dict)]
 
   # collect all existing builds, add to completed builds
+  fields = api.buildbucket.DEFAULT_FIELDS | {'tags'}
   try:
     completed_builds += api.buildbucket.collect_builds(
         [b.id for b in collect_builds], timeout=60 * 60 * 36,
-        step_name='collect', url_title_fn=api.naming.get_build_title).values()
+        step_name='collect', url_title_fn=api.naming.get_build_title,
+        fields=fields).values()
   except api.step.StepFailure:  #pragma: no cover
     completed_builds += api.buildbucket.get_multi(
         [b.id for b in collect_builds], step_name='get',
-        url_title_fn=api.naming.get_build_title).values()
+        url_title_fn=api.naming.get_build_title, fields=fields).values()
 
   return completed_builds
 
@@ -638,18 +582,6 @@ def GenTests(api):
   output.properties['build_cost'] = 10.0
 
   builds = [
-      build_pb2.Build(
-          id=8922054662172513998, builder={'builder': 'amd64-generic-cq'},
-          status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic'),
-          tags=api.buildbucket.tags(
-              parent_buildbucket_id=str(api.buildbucket.ci_build_message().id)),
-          output=output),
-      build_pb2.Build(
-          id=8922054662172513999, builder={'builder': 'amd64-generic-cq'},
-          status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic'),
-          tags=api.buildbucket.tags(
-              parent_buildbucket_id=str(api.buildbucket.ci_build_message()
-                                        .id))),
       build_pb2.Build(id=8922054662172514000, builder={
           'builder': 'amd64-generic-cq'
       }, status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic')),

@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'bot_cost',
     'chrome',
     'config_util',
     'cros_artifacts',
@@ -69,9 +70,6 @@ PROPERTIES = BuildTargetProperties
 UPLOADABLE_PREBUILTS_CONFIGS = [
     BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
 ]
-
-# Cost is in USD per day as calculated in go/cros-infra-sizing on 2018-12-12.
-BOT_COST = 8.08
 
 # All step timeouts are in seconds.
 STEP_TIMEOUTS = {
@@ -370,24 +368,9 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
                                                dep_graph=dep_graph.sdk):
       api.cros_sdk.mark_sdk_as_dirty()
 
-  api.easy.set_property_step('build_cost',
-                             calculate_build_cost(api.buildbucket.build))
-
-
-def calculate_build_cost(build):
-  """Calculate the cost of building this image.
-
-  Calculates the cost of building this image based on the build time duration.
-
-  Args:
-    build (build_pb2.Build): The build proto for this image.
-
-  Returns:
-    A float representing the cost (USD) of building this image.
-  """
-  bot_days = (build.end_time.seconds - build.start_time.seconds) / (
-      60.0 * 60.0 * 24.0)
-  return bot_days * BOT_COST
+  api.easy.set_property_step(
+      'build_cost',
+      api.bot_cost.calculate_build_cost(api.buildbucket.build.id, 'large'))
 
 
 def get_packages(api, config):
