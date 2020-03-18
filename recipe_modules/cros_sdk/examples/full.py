@@ -6,12 +6,19 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/path',
+    'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'cros_sdk',
 ]
 
 from PB.chromiumos import common
+from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
+    TestInputProperties)
 
-def RunSteps(api):
+PROPERTIES = TestInputProperties
+
+
+def RunSteps(api, properties):
   workspace = api.path['cleanup'].join('workspace')
 
   with api.cros_sdk.cleanup_context(checkout_path=workspace):
@@ -21,11 +28,13 @@ def RunSteps(api):
 
     api.assertions.assertIsNone(api.cros_sdk.goma_config())
 
-    api.cros_sdk.build_chmod_chroot()
+    chroot = api.cros_sdk.create_chroot(version=properties.sdk_version)
+    api.assertions.assertNotEqual(chroot, None)
+
     api.cros_sdk.set_chrome_root('/chrome_dir')
-    api.cros_sdk.set_goma_config(
-        '/goma_dir', '/creds/goma.json',
-        common.GomaConfig.RBE_PROD, '/goma_logs', 'stats.file', 'counterz.file')
+    api.cros_sdk.set_goma_config('/goma_dir', '/creds/goma.json',
+                                 common.GomaConfig.RBE_PROD, '/goma_logs',
+                                 'stats.file', 'counterz.file')
     api.cros_sdk.set_use_flags([common.UseFlag(flag='goma')])
     chroot = api.cros_sdk.chroot
     with api.cros_sdk.snapshot():
@@ -59,11 +68,20 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic')
 
+  yield (api.test('versioned') +  #
+         api.properties(TestInputProperties(sdk_version=3)) +  #
+         api.step_data('init sdk.read sdk cache version json',
+                       api.raw_io.output_text('{"version": "1"}')))
+
+  yield (api.test('failed-step-init-sdk') +  #
+         api.step_data(
+             'init sdk.call chromite.api.SdkService/'
+             'Create.call build API script', retcode=1))
+
   yield (api.test('failed-step-destroy-chroot-tests') +  #
          api.step_data('link chroot in workspace.ensure workspace', retcode=1))
 
   yield (api.test('failed-restore-to-snapshot-test') +  #
          api.step_data(
              ('restoring chroot from snapshot.call chromite.api.SdkService/'
-              'RestoreSnapshot.call build API script'),
-             retcode=1))
+              'RestoreSnapshot.call build API script'), retcode=1))

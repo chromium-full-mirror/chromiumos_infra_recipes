@@ -79,7 +79,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       self._name_to_builder_config = name_to_builder_config
     return self._name_to_builder_config
 
-  def get_builder_config(self, builder_name):
+  def get_builder_config(self, builder_name, missing_ok=False):
     """Gets the BuilderConfig for the specified builder from the master branch.
 
     Finds the BuilderConfig whose id.name matches the specified Buildbucket
@@ -93,15 +93,17 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Args:
       * builder_name (str): The Buildbucket builder to look for, matched against
         BuilderConfig's id.name.
+      * missing_ok (boolean): Whether to allow a missing config.
 
     Returns:
       A BuilderConfigs proto.
 
     Raises:
-      A LookupError if no BuilderConfig is found for the specified builder.
+      A LookupError if a BuilderConfig is not found for the specified builder.
+
     """
     config = self._get_name_to_builder_config().get(builder_name)
-    if not config:
+    if not config and not missing_ok:
       raise LookupError("No BuilderConfig for builder {}".format(builder_name))
     return config
 

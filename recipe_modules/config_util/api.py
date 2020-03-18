@@ -36,6 +36,31 @@ class ConfigUtilApi(recipe_api.RecipeApi):
   def gerrit_changes(self):
     return self._gerrit_changes
 
+  @property
+  def config(self):
+    """Return the config for this builder.
+
+    This convenience property wraps cros_infra_config.get_builder_config,
+    which caches the data.
+
+    Returns:
+      BuilderConfig for this builder.
+    """
+    return self.m.cros_infra_config.get_builder_config(
+          self.m.buildbucket.build.builder.builder, missing_ok=True)
+
+  @property
+  def fresh_config(self):
+    """Return a freshly loaded config for this builder.
+
+    Returns:
+      BuilderConfig for this builder, freshly reloaded.
+    """
+    # Have cros_infra_config reload its configs.
+    self.m.cros_infra_config.force_reload()
+    # Now we can just return self.config.
+    return self.config
+
   def _determine_repo_state(self, config, commit, changes):
     """Set _gitiles_commit and _gerrit_changes.
 
@@ -43,7 +68,7 @@ class ConfigUtilApi(recipe_api.RecipeApi):
     an output property in a nested step.
 
     Args:
-      config (BuilderConfig): The builder config.
+      config (BuilderConfig): The builder config, or None.
       commit (GitilesCommit): The gitiles commit to use.  Default:
           common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
       changes: (GerritChanges): The gerrit changes to apply.  Default: [].
@@ -51,25 +76,27 @@ class ConfigUtilApi(recipe_api.RecipeApi):
     if not commit or not commit.project:
       # No gitiles_commit: we were (likely) launched directly by either
       # luci-scheduler (no changes), luci-cq (changes), or a user.
-      if not changes:
+      if not changes and config:
         # If there were also no changes, then use the hardcoded default from the
         # configuration.
-        changes = [ConvertPB(x, common_pb2.GerritChange)
-                   for x in config.orchestrator.gerrit_changes]
+        changes = [
+            ConvertPB(x, common_pb2.GerritChange)
+            for x in config.orchestrator.gerrit_changes
+        ]
 
       # Use the default gitiles_commit from the config.
-      commit = ConvertPB(
+      commit = None if not config else ConvertPB(
           config.orchestrator.gitiles_commit, common_pb2.GitilesCommit)
       # Which may not be there.  In that case, use refs/heads/snapshot.
-      if not commit.project:
+      if not commit or not commit.project:
         commit = common_pb2.GitilesCommit(
             host='chrome-internal.googlesource.com',
             project='chromeos/manifest-internal', ref='refs/heads/snapshot')
       # We will need commit.id later.  Add it if necessary.
       if not commit.id:
         commit = common_pb2.GitilesCommit(
-            host=commit.host, project=commit.project, ref=commit.ref,
-            id=self.m.gitiles.fetch_revision(
+            host=commit.host, project=commit.project,
+            ref=commit.ref, id=self.m.gitiles.fetch_revision(
                 commit.host, commit.project, commit.ref))
 
       # Log what we chose to use (rather than what we were given.)
@@ -103,10 +130,8 @@ class ConfigUtilApi(recipe_api.RecipeApi):
       BuilderConfig
     """
     with self.m.step.nest(name) as presentation:
-      try:
-        config = self.m.cros_infra_config.get_builder_config(
-            self.m.buildbucket.build.builder.builder)
-      except LookupError:
+      config = self.config
+      if not config:
         presentation.step_text = 'config not found, assuming deleted'
         return None
       presentation.logs['builder config'] = [str(config)]

@@ -604,6 +604,8 @@ Args:
   internal (bool): True for internal checkout.
 ### *recipe_modules* / [chroot\_util](/recipe_modules/chroot_util)
 
+[DEPS](/recipe_modules/chroot_util/__init__.py#6): [cros\_sdk](#recipe_modules-cros_sdk)
+
 API for various support functions for building.
 
 #### **class [ChrootUtilApi](/recipe_modules/chroot_util/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
@@ -611,6 +613,20 @@ API for various support functions for building.
 A module for chroot (sdk) setup and manipulation.
 
 &emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/chroot_util/api.py#17)(self):**
+
+&mdash; **def [init\_sdk](/recipe_modules/chroot_util/api.py#21)(self, version=None, use_image=True, timeout_sec=(40 \* 60), name=None):**
+
+Initialize the SDK.
+
+Args:
+  version (int): Required SDK version, if any.  Some recipes do not care
+      what version the SDK is, they just need any SDK.
+  use_image (boolean): Mount the SDK file as an image. Default: True.
+  timeout_sec (int): Step timeout (in seconds). Default: 40 * 60.
+  name (string): Step name.  Default: "init sdk".
+
+Returns:
+  chromiumos_pb2.Chroot protobuf for the initialized SDK.
 
 &mdash; **def [initialize](/recipe_modules/chroot_util/api.py#14)(self):**
 ### *recipe_modules* / [cloud\_pubsub](/recipe_modules/cloud_pubsub)
@@ -642,7 +658,17 @@ API for various support functions for building.
 
 A module for handling builder configuration.
 
-&mdash; **def [configure\_builder](/recipe_modules/config_util/api.py#87)(self, build_target=None, commit=None, changes=None, name='configure builder'):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/config_util/api.py#39)(self):**
+
+Return the config for this builder.
+
+This convenience property wraps cros_infra_config.get_builder_config,
+which caches the data.
+
+Returns:
+  BuilderConfig for this builder.
+
+&mdash; **def [configure\_builder](/recipe_modules/config_util/api.py#114)(self, build_target=None, commit=None, changes=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -659,6 +685,13 @@ Args:
 
 Returns:
   BuilderConfig
+
+&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/config_util/api.py#52)(self):**
+
+Return a freshly loaded config for this builder.
+
+Returns:
+  BuilderConfig for this builder, freshly reloaded.
 
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/config_util/api.py#35)(self):**
 
@@ -1179,18 +1212,18 @@ Generate start time in seconds.
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#130)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#132)(self):**
 
 Force a reload of the config map from ToT.
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#140)(self):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#142)(self):**
 
 Get BotPolicies as defined in infra/config.
 
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#82)(self, builder_name):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#82)(self, builder_name, missing_ok=False):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -1205,14 +1238,15 @@ many lookups are needed, e.g. a parent builder looks up all child configs.
 Args:
   * builder_name (str): The Buildbucket builder to look for, matched against
     BuilderConfig's id.name.
+  * missing_ok (boolean): Whether to allow a missing config.
 
 Returns:
   A BuilderConfigs proto.
 
 Raises:
-  A LookupError if no BuilderConfig is found for the specified builder.
+  A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#152)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#154)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
@@ -1225,7 +1259,7 @@ Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#108)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#110)(self, builder_names):**
 
 Gets the BuilderConfigs for the specified builder names from master.
 
@@ -1239,9 +1273,9 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#137)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#139)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#134)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#136)(self, run_spec):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1353,15 +1387,15 @@ Returns:
   bool: Whether the given Gerrit Change affects the given dependency graph.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
-[DEPS](/recipe_modules/cros_sdk/__init__.py#1): [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_sdk/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for interacting with cros_sdk, the interface to the CrOS SDK.
 
-#### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#140)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#141)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -1373,49 +1407,63 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#266)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#310)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#56)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#57)(self):**
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#182)(self, checkout_path):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#226)(self, checkout_path):**
 
 Returns a context that cleans the SDK chroot named cache.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#240)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#284)(self):**
 
-&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#29)(self, chroot_parent_path):**
+&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#30)(self, chroot_parent_path):**
 
 Configure CrosSdkApi.
 
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#51)(self):**
+&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#161)(self, version=None, use_image=True, timeout_sec=(40 \* 60), name=None):**
+
+Initialize the chroot and link it into the workspace.
+
+Args:
+  version (int): Required SDK version, if any.  Some recipes do not care
+      what version the SDK is, they just need any SDK.
+  use_image (boolean): Mount the SDK file as an image.  Default: True.
+  timeout_sec (int): Timeout for build api call.  Default: 40 * 60.
+  name (str): Step name.  Default: 'init sdk'.
+
+Returns:
+  chromiumos_pb2.Chroot protobuf for the chroot.
+
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#52)(self):**
 
 Returns a Path to the cros_sdk script.
 
-&mdash; **def [goma\_config](/recipe_modules/cros_sdk/api.py#121)(self):**
+&mdash; **def [goma\_config](/recipe_modules/cros_sdk/api.py#122)(self):**
 
-&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#118)(self):**
+&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#119)(self):**
 
-&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#25)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#26)(self):**
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#164)(self, checkout_path):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#208)(self, checkout_path):**
 
 Link the chroot to a chromiumos checkout.
 
 Args:
   checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#137)(self):**
+&mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#138)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#275)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#319)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1431,20 +1479,20 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@sdk_cache_version.setter**<br>&mdash; **def [sdk\_cache\_version](/recipe_modules/cros_sdk/api.py#84)(self, value):**
+&emsp; **@sdk_cache_version.setter**<br>&mdash; **def [sdk\_cache\_version](/recipe_modules/cros_sdk/api.py#85)(self, value):**
 
 Set sdk cache version and write to file.
 
 Args:
   * value (str): new sdk cache version to set.
 
-&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#106)(self, chrome_root):**
+&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#107)(self, chrome_root):**
 
-&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#109)(self, goma_dir, goma_client_json, goma_approach, log_dir, stats_file, counterz_file):**
+&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#110)(self, goma_dir, goma_client_json, goma_approach, log_dir, stats_file, counterz_file):**
 
-&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#134)(self, use_flags):**
+&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#135)(self, use_flags):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#203)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#247)(self):**
 
 Returns a context that snapshots and restores the SDK chroot state.
 
@@ -1455,19 +1503,19 @@ restore the chroot back to that initial snapshot. If the chroot was
 initially created with 'nouse-image', it will be replaced so that it
 supports the ability to make snapshots.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#257)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#301)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#245)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#289)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
 Args:
  checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#235)(self):**
+&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#279)(self):**
 ### *recipe_modules* / [cros\_som](/recipe_modules/cros_som)
 
 [DEPS](/recipe_modules/cros_som/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
@@ -3417,7 +3465,7 @@ Returns:
     For direct-vm tests, the individual failing tests are listed.
 ### *recipe_modules* / [workspace\_util](/recipe_modules/workspace_util)
 
-[DEPS](/recipe_modules/workspace_util/__init__.py#6): [config\_util](#recipe_modules-config_util), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/workspace_util/__init__.py#6): [config\_util](#recipe_modules-config_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for various support functions for building.
 
@@ -3716,9 +3764,9 @@ leaking between runs of the recipe.
 &mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#23)(api):**
 ### *recipes* / [chroot\_util:examples/full](/recipe_modules/chroot_util/examples/full.py)
 
-[DEPS](/recipe_modules/chroot_util/examples/full.py#6): [chroot\_util](#recipe_modules-chroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/chroot_util/examples/full.py#6): [chroot\_util](#recipe_modules-chroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/chroot_util/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chroot_util/examples/full.py#19)(api, properties):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)
@@ -3916,9 +3964,9 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py#15)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
-[DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#21)(api, properties):**
 ### *recipes* / [cros\_som:examples/full](/recipe_modules/cros_som/examples/full.py)
 
 [DEPS](/recipe_modules/cros_som/examples/full.py#6): [cros\_som](#recipe_modules-cros_som), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

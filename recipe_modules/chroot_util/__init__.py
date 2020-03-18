@@ -4,4 +4,5 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'cros_sdk',
 ]

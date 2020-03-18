@@ -13,6 +13,7 @@ from recipe_engine import recipe_api
 
 from PB.chromiumos import common
 from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
+from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UnmountRequest as UnmountSdkRequest
 from PB.chromite.api.sdk import CreateSnapshotRequest
@@ -157,9 +158,52 @@ class CrosSdkApi(recipe_api.RecipeApi):
     cmd += args
     return self.m.step(name, cmd, **kwargs)
 
+  def create_chroot(self, version=None, use_image=True, timeout_sec=40 * 60,
+                    name=None):
+    """Initialize the chroot and link it into the workspace.
+
+    Args:
+      version (int): Required SDK version, if any.  Some recipes do not care
+          what version the SDK is, they just need any SDK.
+      use_image (boolean): Mount the SDK file as an image.  Default: True.
+      timeout_sec (int): Timeout for build api call.  Default: 40 * 60.
+      name (str): Step name.  Default: 'init sdk'.
+
+    Returns:
+      chromiumos_pb2.Chroot protobuf for the chroot.
+    """
+    with self.m.step.nest(name or 'init sdk') as presentation:
+      try:
+        self.build_chmod_chroot()
+        # Replace the chroot if necessary.
+        replace = False
+        if version:
+          disk_version = self.sdk_cache_version
+          presentation.logs['sdk cache version'] = [
+              'Version in config: %s' % version,
+              'Version on disk: %s' % disk_version,
+          ]
+          replace = str(version) != disk_version
+        response = self.m.cros_build_api.SdkService.Create(
+            CreateSdkRequest(
+                flags=CreateSdkRequest.Flags(no_replace=not replace,
+                                             no_use_image=not use_image),
+                chroot=self.chroot), timeout=timeout_sec)
+        presentation.logs['sdk version'] = str(response.version.version)
+        if version:
+          self.sdk_cache_version = version
+        self.m.cros_sdk.link_chroot(self.m.cros_source.workspace_path)
+      except self.m.step.StepFailure:
+        # Invalidate the cache if the InitSDK call fails.
+        with self.m.step.nest('InitSDK failure'):
+          self.m.cros_build_api.SdkService.Delete(
+              DeleteSdkRequest(chroot=self.m.cros_sdk.chroot))
+        raise
+    return self.chroot
+
   # TODO(crbug.com/949721): Currently, chromite depends on the chroot
   # living within the source tree. As a workaround, link the external
-  # chroot the workspace to make it look legit. New chromite services
+  # chroot into the workspace to make it look legit. New chromite services
   # should accept the chroot path as a parameter.
   def link_chroot(self, checkout_path):
     """Link the chroot to a chromiumos checkout.

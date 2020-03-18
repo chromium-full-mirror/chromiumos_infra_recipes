@@ -25,6 +25,7 @@ def RunSteps(api, properties):
 
   config = api.config_util.configure_builder(target, commit=commit,
                                              changes=changes)
+  api.assertions.assertEqual(config, api.config_util.config)
   builder = config.id.name if config else 'nosuch-cq'
   api.assertions.assertEqual(properties.builder, builder)
   if not config:
@@ -37,6 +38,9 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(commit, api.config_util.gitiles_commit)
   want = [] if not (changes and config.build.apply_gerrit_changes) else changes
   api.assertions.assertEqual(want, api.config_util.gerrit_changes)
+
+  # Force a reload of the config.
+  api.assertions.assertEqual(config, api.config_util.fresh_config)
 
 
 def GenTests(api):
