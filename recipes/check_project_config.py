@@ -29,69 +29,8 @@ DEPS = [
     'gerrit',
     'iterutils',
     'repo',
+    'workspace_util',
 ]
-
-
-@contextlib.contextmanager
-def checkout_manifest_groups(api, properties):
-  """Returns a context with manifest groups checked out to cwd.
-
-  Also applies gerrit_changes.
-
-  Note that this function reuses most of the standard cros_source checkout code,
-  but without any caching / overlayfs. The number of repos to checkout is
-  usually much smaller than a full checkout, in which case the time to delete
-  unused repos (which are present because of caching) is much larger than the
-  time to sync the used repos. In addition, not caching reduces chances of
-  leaking between runs of the recipe.
-  """
-  init_opts = {
-      'groups': properties.manifest_groups,
-  }
-  manifest_url = api.cros_source.INTERNAL_MANIFEST_URL
-
-  # If a local manifest is specified, init with the public manifest and local
-  # manifest. Otherwise, init with the private manifest.
-  # TODO(crbug.com/1058171): Require local manifests once they are specified in
-  # config.
-  if properties.local_manifest.repo_url:
-    if not properties.local_manifest.manifest_path:
-      raise ValueError(
-          'local_manifest.manifest_path must be set if local_manifest.repo_url'
-          ' is set.')
-
-    manifest_url = api.cros_source.EXTERNAL_MANIFEST_URL
-    init_opts['local_manifest'] = api.repo.LocalManifest(
-        repo=properties.local_manifest.repo_url,
-        path=properties.local_manifest.manifest_path,
-    )
-
-  api.cros_source.ensure_synced_cache(
-      manifest_url=manifest_url, init_opts=init_opts,
-      cache_path_override=api.cros_source.workspace_path)
-  with api.context(cwd=api.cros_source.workspace_path):
-    with api.step.nest('apply patch sets'):
-      patch_sets = api.gerrit.fetch_patch_sets(
-          api.buildbucket.build.input.gerrit_changes)
-
-      # It is possible that input.gerrit_changes includes changes to repos this
-      # builder is not allowed to read (e.g. if Cq-Depends groups together
-      # changes that affect multiple project repos). In this case,
-      # apply_gerrit_patch_sets will fail. Catch the failure and report it as a
-      # StepFailure (i.e. not an InfraFailure), with a message that may help the
-      # submitter.
-      #
-      # For now just catch all failures of apply_gerrit_patch_sets. If needed,
-      # we can add more filters (e.g. on stdout, exact step that failed) for the
-      # above case.
-      try:
-        api.cros_source.apply_gerrit_patch_sets(patch_sets)
-      except api.step.StepFailure:
-        raise api.step.StepFailure(
-            ("Failed to apply patch sets. This may be "
-             "the result of Cq-Depends that include CLs outside of this "
-             "builder's read ACLs."))
-    yield
 
 
 def RunSteps(api, properties):
@@ -110,9 +49,26 @@ def RunSteps(api, properties):
   )):
     raise ValueError('All checkout_paths and config_paths must be specified.')
 
+  local_manifest = None
+  if (properties.local_manifest.repo_url and
+      properties.local_manifest.manifest_path):
+    local_manifest = api.repo.LocalManifest(
+        repo=properties.local_manifest.repo_url,
+        path=properties.local_manifest.manifest_path)
+
   # Do work in a context with manifest groups checked out. Most steps are infra
   # steps, so make this the default. Non-infra steps specify this explicitly.
-  with api.context(infra_steps=True), checkout_manifest_groups(api, properties):
+  # Note the overriding of the cache path in the sync_to_manifest_groups call.
+  # This is done because these checkouts are much smaller than a full checkout
+  # and thus skipping the standard cache avoids a costly time sink of deleting
+  # unused repos.
+  with api.context(infra_steps=True), \
+      api.workspace_util.sync_to_manifest_groups(
+          properties.manifest_groups,
+          local_manifest,
+          api.cros_source.workspace_path):
+    api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
+                                     cq_depend_fail_message=True)
     chromiumos_config_path = properties.chromiumos_config_checkout_path
 
     generate_path = api.context.cwd.join(chromiumos_config_path, 'generate.sh')
@@ -207,24 +163,6 @@ def GenTests(api):
   )
 
   yield api.test(
-      'local_manifest_path_missing',
-      api.properties(**properties_dict(
-          extra_props={
-              'local_manifest':
-                  LocalManifest(
-                      repo_url=('https://chrome-internal.googlesource.com'
-                                '/chromeos/project/testproject1'),
-                  ),
-          })),
-      project_config_cq_build(api),
-      api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
-                       ('.*local_manifest.manifest_path must be set if '
-                        'local_manifest.repo_url is set.*')),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
       'checkout_paths_missing',
       api.properties(
           manifest_groups=['partner-config', 'testprogram-testproject'],
@@ -269,7 +207,7 @@ def GenTests(api):
       api.properties(**properties_dict()),
       project_config_cq_build(api),
       api.step_data(
-          'apply patch sets.apply gerrit patch sets.repo forall',
+          'cherry-pick gerrit changes.apply gerrit patch sets.repo forall',
           retcode=1,
           stdout=api.raw_io.output('error: project othertestproject not found'),
       ),

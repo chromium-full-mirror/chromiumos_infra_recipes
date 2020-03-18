@@ -1,6 +1,28 @@
 [
   {
     "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.ensure chroot directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "ensure synced checkout"
   },
   {
@@ -251,7 +273,7 @@
   },
   {
     "cmd": [],
-    "name": "apply patch sets"
+    "name": "cherry-pick gerrit changes"
   },
   {
     "cmd": [
@@ -263,7 +285,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "apply patch sets.read deploy_cipd.json",
+    "name": "cherry-pick gerrit changes.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -288,7 +310,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "apply patch sets.ensure_installed",
+    "name": "cherry-pick gerrit changes.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -310,8 +332,8 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "apply patch sets.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_files\": false}",
+    "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_files\": true}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -359,7 +381,7 @@
   },
   {
     "cmd": [],
-    "name": "apply patch sets.apply gerrit patch sets",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -374,7 +396,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "apply patch sets.apply gerrit patch sets.git config",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -389,7 +411,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "apply patch sets.apply gerrit patch sets.repo forall",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master@@@",
@@ -405,7 +427,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply patch sets.apply gerrit patch sets.git fetch",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -418,7 +440,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply patch sets.apply gerrit patch sets.git rev-parse",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -433,7 +455,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply patch sets.apply gerrit patch sets.git merge",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -446,7 +468,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply patch sets.apply gerrit patch sets.git rev-parse (2)",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

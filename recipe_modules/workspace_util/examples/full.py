@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'config_util',
+    'repo',
     'workspace_util',
 ]
 
@@ -32,6 +33,11 @@ def RunSteps(api, properties):
     api.workspace_util.apply_changes()
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
+
+  with api.workspace_util.sync_to_manifest_groups(
+      ['group1', 'group2'],
+      api.repo.LocalManifest(repo='http://repo.url', path='manifest_path')):
+    api.workspace_util.apply_changes()
 
 
 def GenTests(api):

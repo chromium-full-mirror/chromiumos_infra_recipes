@@ -231,6 +231,7 @@
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
+  * [workspace_util:examples/apply_changes_failure](#recipes-workspace_util_examples_apply_changes_failure)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
 ## Recipe Modules
 
@@ -3465,7 +3466,7 @@ Returns:
     For direct-vm tests, the individual failing tests are listed.
 ### *recipe_modules* / [workspace\_util](/recipe_modules/workspace_util)
 
-[DEPS](/recipe_modules/workspace_util/__init__.py#6): [config\_util](#recipe_modules-config_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/workspace_util/__init__.py#6): [config\_util](#recipe_modules-config_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for various support functions for building.
 
@@ -3473,7 +3474,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#54)(self, changes=None, name='cherry-pick gerrit changes'):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#54)(self, changes=None, name='cherry-pick gerrit changes', cq_depend_fail_message=False):**
 
 Apply gerrit changes.
 
@@ -3481,6 +3482,8 @@ Args:
   changes (list[GerritChanges]): Changes to apply.  Default: changelist
       saved in config_util.configure_builder().
   name (string): Step name.  Default: "setup source".
+  cq_depend_fail_message (bool): Whether to give Cq-Depend failure
+      advisement on failure to apply patch sets. See below for details.
 
 &mdash; **def [initialize](/recipe_modules/workspace_util/api.py#21)(self):**
 
@@ -3502,6 +3505,22 @@ Args:
   commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
       saved in config_util.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#93)(self, manifest_groups, local_manifest=None, cache_path_override=None):**
+
+Returns a context with manifest groups checked out to cwd.
+
+Note the importance of the `cache_path_override` parameter. For cases
+where the number of repos being synced is much smaller than a full
+checkout it is more efficient to override the default cache. This is because
+the time to delete unused repos (which are present because of caching) is
+much larger than the time to sync the used repos.
+
+Args:
+  manifest_groups (list[str]): List of manifest groups to checkout.
+  local_manifest (repo.LocalManifest): Optional local manifest to sync to.
+  cache_path_override (Path): Path to sync into. If None, the default
+      caching of cros_source.ensure_synced_cache is used.
 ## Recipes
 
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
@@ -3739,24 +3758,11 @@ Recipe for generating ChromeOS cache payloads.
 &mdash; **def [RunSteps](/recipes/cache_generate.py#21)(api):**
 ### *recipes* / [check\_project\_config](/recipes/check_project_config.py)
 
-[DEPS](/recipes/check_project_config.py#20): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [iterutils](#recipe_modules-iterutils), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/check_project_config.py#20): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [iterutils](#recipe_modules-iterutils), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Checks a project conforms to its program's constraints.
 
-&mdash; **def [RunSteps](/recipes/check_project_config.py#97)(api, properties):**
-
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_manifest\_groups](/recipes/check_project_config.py#35)(api, properties):**
-
-Returns a context with manifest groups checked out to cwd.
-
-Also applies gerrit_changes.
-
-Note that this function reuses most of the standard cros_source checkout code,
-but without any caching / overlayfs. The number of repos to checkout is
-usually much smaller than a full checkout, in which case the time to delete
-unused repos (which are present because of caching) is much larger than the
-time to sync the used repos. In addition, not caching reduces chances of
-leaking between runs of the recipe.
+&mdash; **def [RunSteps](/recipes/check_project_config.py#36)(api, properties):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -4839,11 +4845,16 @@ Basic tests for the urls recipe module.
 Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#20)(api):**
+### *recipes* / [workspace\_util:examples/apply\_changes\_failure](/recipe_modules/workspace_util/examples/apply_changes_failure.py)
+
+[DEPS](/recipe_modules/workspace_util/examples/apply_changes_failure.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/apply_changes_failure.py#16)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
-[DEPS](/recipe_modules/workspace_util/examples/full.py#6): [config\_util](#recipe_modules-config_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/workspace_util/examples/full.py#6): [config\_util](#recipe_modules-config_util), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#22)(api, properties):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/c99efb2f8c62aadcaa6b3f9507a17232e3367bac/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/c99efb2f8c62aadcaa6b3f9507a17232e3367bac/recipes/README.recipes.md#recipe_modules-gclient
