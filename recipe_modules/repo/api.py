@@ -25,11 +25,14 @@ ManifestDiff = namedtuple('ManifestDiff', ['name', 'path', 'from_rev', 'to_rev']
 
 ProjectInfo = namedtuple('ProjectInfo', ['name', 'path', 'remote', 'branch'])
 
+LocalManifest = namedtuple('LocalManifest', ['repo', 'path'])
+
 
 class RepoApi(recipe_api.RecipeApi):
   """A module for interacting with the repo tool."""
 
   ManifestDiff = ManifestDiff
+  LocalManifest = LocalManifest
 
   @property
   def repo_path(self):
@@ -91,7 +94,8 @@ class RepoApi(recipe_api.RecipeApi):
 
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
-           groups=None, depth=None, repo_url=None, repo_branch=None):
+           groups=None, depth=None, repo_url=None, repo_branch=None,
+           local_manifest=None):
     """Executes 'repo init' with the given arguments.
 
     Args:
@@ -102,6 +106,8 @@ class RepoApi(recipe_api.RecipeApi):
       * depth (int): Create a shallow clone of the given depth.
       * repo_url (str): URL of the repo repository.
       * repo_branch (str): Repo binary branch to use.
+      * local_manifest (LocalManifest): Local manifest to add. See
+      https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.md#local-manifests.
     """
     assert _kwonly is (), 'init accepts only 1 positional arg'
     cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
@@ -123,6 +129,21 @@ class RepoApi(recipe_api.RecipeApi):
 
     if self.m.context.cwd:
       self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))
+
+    if local_manifest is not None:
+      # Local manifests should be installed under .repo/local_manifests/*.xml.
+      # The .repo dir should be created by the above init.
+      assert self.m.path.exists(self.m.context.cwd.join('.repo'))
+      local_manifest_dir = self.m.context.cwd.join('.repo', 'local_manifests')
+      self.m.file.ensure_directory(name='ensure local manifest dir',
+                                   dest=local_manifest_dir)
+
+      manifest_data = self.m.gitiles.download_file(
+          local_manifest.repo, local_manifest.path,
+          step_test_data=self.test_api.local_manifest_step_test_data)
+      self.m.file.write_raw(name='write local manifest',
+                            dest=local_manifest_dir.join('local_manifest.xml'),
+                            data=manifest_data)
 
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,

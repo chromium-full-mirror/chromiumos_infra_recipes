@@ -106,6 +106,62 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/.repo/local_manifests"
+    ],
+    "infra_step": true,
+    "name": "ensure local manifest dir"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/testproject1/+/master/local_manifest.xml",
+      "--format",
+      "text"
+    ],
+    "name": "fetch master:local_manifest.xml"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n<manifest>\n  <remote name=\"cros-internal\"\n          fetch=\"https://chrome-internal.googlesource.com\"\n          review=\"https://chrome-internal-review.googlesource.com\" />\n  <project name=\"chromeos/private-repo1\"\n     path=\"src/private-repo1\"\n     remote=\"cros-internal\" />\n</manifest>\n    ",
+      "[START_DIR]/.repo/local_manifests/local_manifest.xml"
+    ],
+    "infra_step": true,
+    "name": "write local manifest",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@local_manifest.xml@@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@<manifest>@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@  <remote name=\"cros-internal\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@          fetch=\"https://chrome-internal.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@          review=\"https://chrome-internal-review.googlesource.com\" />@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@  <project name=\"chromeos/private-repo1\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@     path=\"src/private-repo1\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@     remote=\"cros-internal\" />@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@</manifest>@@@",
+      "@@@STEP_LOG_LINE@local_manifest.xml@    @@@",
+      "@@@STEP_LOG_END@local_manifest.xml@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "sync"
     ],
