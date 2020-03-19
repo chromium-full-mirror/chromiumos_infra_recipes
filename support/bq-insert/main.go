@@ -138,6 +138,15 @@ func insertTableData(ctx context.Context, client *bigquery.Client, datasetId str
 	insertion_error := inserter.Put(ctx, saverArray)
 	if insertion_error != nil {
 		log.Println("Error inserting values into table ", tableName, " : ", insertion_error)
+		// This cast is based on the docs which indicate the the error interface
+		// returned by the Inserter function is a PutMultiError:
+		// https://godoc.org/cloud.google.com/go/bigquery#example-Inserter-Put
+		multiError := insertion_error.(bigquery.PutMultiError)
+		rowInsertionError := multiError[0]
+		log.Println("InsertID ", rowInsertionError.InsertID, " RowIndex ", rowInsertionError.RowIndex)
+		for index, err := range rowInsertionError.Errors {
+			log.Printf("error %d = %v", index, err)
+		}
 		return insertion_error.Error()
 	}
 	return ""
