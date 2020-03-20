@@ -32,4 +32,7 @@ message OrchestratorProperties {
 
   // Whether to enable HW/VM tests on dry runs.
   bool enable_tests_on_dry_runs = 4;
+
+  // Time delay between each child build.
+  float stagger_children_seconds = 5;
 }
