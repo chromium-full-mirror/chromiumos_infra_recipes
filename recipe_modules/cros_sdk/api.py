@@ -158,6 +158,16 @@ class CrosSdkApi(recipe_api.RecipeApi):
     cmd += args
     return self.m.step(name, cmd, **kwargs)
 
+  def _delete_chroot(self, name=None):
+    """Call SdkService.Delete.
+
+    Args:
+      name (string): step name. Default: 'delete sdk'.
+    """
+    with self.m.step.nest(name or 'delete sdk'):
+      self.m.cros_build_api.SdkService.Delete(
+          DeleteSdkRequest(chroot=self.chroot))
+
   def create_chroot(self, version=None, use_image=True, timeout_sec=40 * 60,
                     name=None):
     """Initialize the chroot and link it into the workspace.
@@ -192,12 +202,10 @@ class CrosSdkApi(recipe_api.RecipeApi):
         presentation.logs['sdk version'] = str(response.version.version)
         if version:
           self.sdk_cache_version = version
-        self.m.cros_sdk.link_chroot(self.m.cros_source.workspace_path)
+        self.link_chroot(self.m.cros_source.workspace_path)
       except self.m.step.StepFailure:
         # Invalidate the cache if the InitSDK call fails.
-        with self.m.step.nest('InitSDK failure'):
-          self.m.cros_build_api.SdkService.Delete(
-              DeleteSdkRequest(chroot=self.m.cros_sdk.chroot))
+        self._delete_chroot(name='InitSDK failure')
         raise
     return self.chroot
 
@@ -233,10 +241,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       raise
     finally:
       if self._sdk_is_dirty:
-        self.m.step.nest(
-            'Invalidating SDK due to dirty state',
-            self.m.cros_build_api.SdkService.Delete(
-                DeleteSdkRequest(chroot=self.chroot)))
+        self._delete_chroot(name='Invalidating SDK due to dirty state')
 
       with self.m.step.nest('clean up SDK chroot'):
         self.cleanup_sysroot()

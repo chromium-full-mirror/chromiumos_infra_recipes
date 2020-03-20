@@ -1394,7 +1394,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#310)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#315)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -1402,11 +1402,11 @@ Chroot needs to be tightened to 755 for the build process.
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#226)(self, checkout_path):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#234)(self, checkout_path):**
 
 Returns a context that cleans the SDK chroot named cache.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#284)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#289)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#30)(self, chroot_parent_path):**
 
@@ -1415,7 +1415,7 @@ Configure CrosSdkApi.
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#161)(self, version=None, use_image=True, timeout_sec=(40 \* 60), name=None):**
+&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#171)(self, version=None, use_image=True, timeout_sec=(40 \* 60), name=None):**
 
 Initialize the chroot and link it into the workspace.
 
@@ -1441,7 +1441,7 @@ Returns a Path to the cros_sdk script.
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#208)(self, checkout_path):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#216)(self, checkout_path):**
 
 Link the chroot to a chromiumos checkout.
 
@@ -1450,7 +1450,7 @@ Args:
 
 &mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#138)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#319)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#324)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1479,7 +1479,7 @@ Args:
 
 &mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#135)(self, use_flags):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#247)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#252)(self):**
 
 Returns a context that snapshots and restores the SDK chroot state.
 
@@ -1490,19 +1490,19 @@ restore the chroot back to that initial snapshot. If the chroot was
 initially created with 'nouse-image', it will be replaced so that it
 supports the ability to make snapshots.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#301)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#306)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#289)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#294)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
 Args:
  checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#279)(self):**
+&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#284)(self):**
 ### *recipe_modules* / [cros\_som](/recipe_modules/cros_som)
 
 [DEPS](/recipe_modules/cros_som/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
