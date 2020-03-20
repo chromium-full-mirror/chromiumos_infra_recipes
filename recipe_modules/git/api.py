@@ -321,7 +321,7 @@ other_test.txt
       bool: True if the revision can be reached from HEAD.
     """
     cmd = ['merge-base', '--is-ancestor', revision, 'HEAD']
-    return self._step(cmd, ok_ret=(0, 128)).retcode == 0
+    return self._step(cmd, ok_ret=(0, 1, 128)).retcode == 0
 
   def show_file(self, rev, path, test_contents=None):
     """Returns the contents of the given file path at the given revision.
