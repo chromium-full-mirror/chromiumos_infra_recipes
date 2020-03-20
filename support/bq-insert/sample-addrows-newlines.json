@@ -1,0 +1,19 @@
+{"compile_event":
+  { "month": "November", "num_days": 30, "leap_affected": false, "seasons": "Winter",
+    "stats":
+    { "request_stats":
+	    { "total": 45703,
+              "success": 45703,
+	      "failure": 0,
+	      "compiler_proxy": {
+                "fail": 0,
+		"pass": 3
+              }
+	    }
+    }
+  },
+  "project_id": "chromeos-bot",
+  "dataset_id": "test",
+  "table_name": "sample_data",
+  "write_test": true
+}

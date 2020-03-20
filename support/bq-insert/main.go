@@ -51,6 +51,9 @@ func main() {
 		log.Fatal("Error creating client: ", err)
 	}
 
+	debugInfo := debugJsonRawMessage(input.CompileEvent)
+	log.Print(debugInfo)
+
 	if input.ReadTest {
 		var fullTableName string
 		if strings.Contains(input.TableName, ".") {
@@ -215,6 +218,38 @@ func logTableSchema(metadata *bigquery.TableMetadata) {
 	for _, fs := range metadata.Schema {
 		log.Println(" SCHEMA name/type --- ", fs.Name, fs.Type)
 	}
+}
+
+// Given a json RawMessage, return debug string information such as the raw
+// message and key/value pairs.
+func debugJsonRawMessage(message json.RawMessage) string {
+	var debugString string = ""
+	debugString = fmt.Sprintf("Raw message: %v", string(message))
+	debugString += "Unmarshalled json: " + debugPrintJsonRawMessage(1, message)
+	return debugString
+}
+
+// Given a jsonRawMessage, print the string keys and the generic json values.
+// For the values, if they can be unmarshalled, then recursively expand those
+// json values as well.
+func debugPrintJsonRawMessage(level int, message json.RawMessage) string {
+	messageString := strings.Repeat(" ", level)
+	genericJsonData := &map[string]json.RawMessage{}
+	err := json.Unmarshal(message, genericJsonData)
+	if err == nil {
+		for key, value := range *genericJsonData {
+			messageString += fmt.Sprintf(" JSON_KEY{%d} [%s] JSON_VALUE[%s]", level, key, value)
+			genericJsonSubMsg := &map[string]json.RawMessage{}
+			subErr := json.Unmarshal(value, genericJsonSubMsg)
+			if subErr == nil {
+				for subkey, subvalue := range *genericJsonSubMsg {
+					messageString += " SUBKEY[" + subkey + "] " + debugPrintJsonRawMessage(level+1, subvalue)
+				}
+			}
+		}
+	}
+	messageString += "\n"
+	return messageString
 }
 
 // Query a table, reading all columns of a few rows. This allows developers to
