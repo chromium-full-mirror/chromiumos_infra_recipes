@@ -21,9 +21,9 @@ def RunSteps(api):
   artifacts = build_config.artifacts
   args = build_config.build.prepare_for_build.additional_args
 
-  api.sysroot_util.update_for_artifact_build(artifacts, args)
+  api.sysroot_util.update_for_artifact_build(None, artifacts, args)
   resp = api.sysroot_util.update_for_artifact_build(
-      artifacts, args, force_relevance=True)
+      None, artifacts, args, force_relevance=True)
   api.assertions.assertEqual(resp, PrepareForBuildResponse.NEEDED)
 
 

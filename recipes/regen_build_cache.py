@@ -18,7 +18,6 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/step',
-    'chroot_util',
     'cros_build_api',
     'cros_sdk',
     'cros_source',
@@ -35,7 +34,7 @@ def RunSteps(api):
           cwd=api.cros_source.workspace_path.join('manifest-internal')):
 
     api.cros_source.ensure_synced_cache()
-    api.chroot_util.init_sdk(version=None, use_image=False, timeout_sec=None)
+    api.cros_sdk.create_chroot(version=None, use_image=False, timeout_sec=None)
 
     with api.step.nest('update sdk'):
       api.cros_build_api.SdkService.Update(

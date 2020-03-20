@@ -46,13 +46,11 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/scheduler',
     'recipe_engine/step',
-    'chroot_util',
     'cros_build_api',
     'cros_cq_depends',
-    'depot_tools/gitiles',
-    'gerrit',
     'cros_sdk',
     'cros_source',
+    'gerrit',
     'git',
     'git_cl',
     'naming',
@@ -103,7 +101,7 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache()
     if properties.init_sdk:
       with api.context(cwd=api.cros_source.workspace_path):
-        api.chroot_util.init_sdk(version=None, use_image=False,
+        api.cros_sdk.create_chroot(version=None, use_image=False,
                                  timeout_sec=None)
 
     with api.step.nest('try uprev {}'.format(cpv)) as presentation:

@@ -5,7 +5,6 @@
 
 """API for various support functions for building."""
 
-
 from recipe_engine import recipe_api
 
 from PB.chromiumos.common import PrepareForBuildResponse
@@ -21,10 +20,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
   def sysroot(self):
     return self._sysroot
 
-  def update_for_artifact_build(self, artifacts, args, force_relevance=False):
+  def update_for_artifact_build(self, chroot, artifacts, args,
+                                force_relevance=False):
     """Update ebuilds for artifact build.
 
     Args:
+      chroot (Chroot): Chroot, or None.
       artifacts (BuilderConfig.Artifacts): Artifact Information
       args (PrepareForBuild.AdditionalArgs): Parameters from config.
       force_relevance (bool): Whether to always claim relevant.
@@ -37,7 +38,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     if artifacts.artifact_types:
       # If there are artifacts, always call the Build API.
       resp = self.m.cros_artifacts.prepare_for_build(
-          artifacts.artifact_types, self.m.chroot_util.chroot, self.sysroot,
+          artifacts.artifact_types, chroot, self.sysroot,
           artifacts.input_artifacts, args)
 
     # If the build is POINTLESS, then we are done.  This can only happen if

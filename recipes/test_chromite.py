@@ -14,7 +14,6 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'chroot_util',
     'cros_build_api',
     'cros_infra_config',
     'cros_sdk',
@@ -56,7 +55,7 @@ def RunSteps(api):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-      api.chroot_util.init_sdk(version=config.general.sdk_cache_version,
+      api.cros_sdk.create_chroot(version=config.general.sdk_cache_version,
                                use_image=False, timeout_sec=None)
 
       with api.step.nest('update sdk'):

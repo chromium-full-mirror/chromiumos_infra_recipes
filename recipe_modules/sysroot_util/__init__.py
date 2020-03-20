@@ -4,6 +4,6 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'chroot_util',
+    'cros_sdk',
     'cros_artifacts',
 ]

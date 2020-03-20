@@ -44,7 +44,6 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'chrome',
-    'chroot_util',
     'cros_build_api',
     'cros_sdk',
     'cros_source',
@@ -76,7 +75,8 @@ def RunSteps(api, properties):
           patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-      api.chroot_util.init_sdk(version=None, use_image=False, timeout_sec=None)
+      api.cros_sdk.create_chroot(version=None, use_image=False,
+                                 timeout_sec=None)
 
       with api.step.nest('uprev packages'):
         request = UprevPackagesRequest(

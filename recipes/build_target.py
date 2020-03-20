@@ -15,7 +15,6 @@ DEPS = [
     'recipe_engine/step',
     'bot_cost',
     'chrome',
-    'chroot_util',
     'config_util',
     'cros_artifacts',
     'cros_bisect',
@@ -118,7 +117,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
   artifacts = config.artifacts
   relevance = api.sysroot_util.update_for_artifact_build(
-      config.artifacts, config.build.prepare_for_build.additional_args,
+      None, config.artifacts, config.build.prepare_for_build.additional_args,
       force_relevance=force_relevant_build)
   if relevance == Relevance.POINTLESS:
     return
@@ -131,7 +130,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
     response = api.cros_build_api.PackageService.Uprev(
         request, timeout=STEP_TIMEOUTS['uprev'])
 
-  api.chroot_util.init_sdk(
+  api.cros_sdk.create_chroot(
       version=config.general.sdk_cache_version, use_image=is_staging,
       timeout_sec=None if long_timeouts else STEP_TIMEOUTS['create_sdk'])
 
