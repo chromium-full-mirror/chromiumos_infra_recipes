@@ -9,10 +9,10 @@ import contextlib
 
 from recipe_engine import post_process
 
+from PB.project_mgmt.project import LocalManifest
 from PB.recipes.chromeos.check_project_config import (
     CheckProjectConfigProperties,
     ConfigBundleCheckoutPath,
-    LocalManifest,
 )
 
 PROPERTIES = CheckProjectConfigProperties
