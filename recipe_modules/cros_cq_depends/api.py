@@ -168,13 +168,11 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
           # Check whether the dep is reachable locally
           # If it's not, we'll carry along anyway, because there's little else
           # we can do about it.
-
-          # Disabled entirely, annealing is failing here: crbug.com/1063224
-          # if not self.m.git.is_reachable(rev):
-          #   dep_local_log.append(
-          #       'Unsatisfied dep :(. %s does not exist at %s on branch %s' %
-          #       (rev, path, branch))
-          #   continue
+          if not self.m.git.is_reachable(rev):
+            dep_local_log.append(
+                'Unsatisfied dep :(. %s does not exist at %s on branch %s' %
+                (rev, path, branch))
+            continue
 
           # Dep is satisfied locally
           dep_local_log.append(
