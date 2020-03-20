@@ -41,6 +41,7 @@ def RunSteps(api):
       bot_type=bot_type,
       scaling_restriction=scaling_restriction,
       region_restrictions=region_restrictions,
+      policy_mode=BotPolicy.CONFIGURED,
   )
   previous_action = {
       'cq': {
@@ -96,6 +97,13 @@ def RunSteps(api):
   scaling_action = api.bot_scaling.get_scaling_action(40, bot_policy,
                                                       test_config)
   api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
+  api.assertions.assertEqual(scaling_action.bots_requested, 40)
+
+  # Monitored bot group
+  bot_policy.policy_mode = BotPolicy.MONITORED
+  scaling_action = api.bot_scaling.get_scaling_action(90, bot_policy,
+                                                      test_config)
+  api.assertions.assertEqual(scaling_action.actionable, ScalingAction.NO)
 
 
 def GenTests(api):

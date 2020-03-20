@@ -4,7 +4,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.chromiumos.bot_scaling import RoboCropAction, ScalingAction
+from PB.chromiumos.bot_scaling import BotPolicy, RoboCropAction, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config
 
@@ -55,11 +55,17 @@ class BotScalingApi(recipe_api.RecipeApi):
     bots_configured = self.calculate_gce_totals(
         bot_policy.region_restrictions, self._get_prefix_to_gce_config(configs))
     actionable = ScalingAction.NO
+
+    # Check to determine whether bots should be scaled up or down.
     if (bots_configured + bot_policy.scaling_restriction.step_size <=
         bots_requested or
         bots_configured - bot_policy.scaling_restriction.step_size >=
         bots_requested):
       actionable = ScalingAction.YES
+
+    # Check whether a bot policy is set as configured, otherwise set to NO.
+    if bot_policy.policy_mode != BotPolicy.CONFIGURED:
+      actionable = ScalingAction.NO
 
     scaling_action = ScalingAction(bot_group=bot_policy.bot_group,
                                    bot_type=bot_policy.bot_type,

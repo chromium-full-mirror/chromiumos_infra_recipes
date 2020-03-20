@@ -605,7 +605,7 @@
     "name": "scale bot groups.compute scaling actions.set robocrop_action",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"scalingActions\": [{\"actionable\": \"YES\", \"botGroup\": \"cq\", \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32}, \"regionalActions\": [{\"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", \"region\": \"us-central1-b\"}, {\"prefix\": \"chromeos-ci-cq-us-central2-d-x32\", \"region\": \"us-central2-d\"}, {\"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"region\": \"us-east1-d\"}, {\"prefix\": \"chromeos-ci-cq-us-west1-b-x32\", \"region\": \"us-west1-b\"}]}]}@@@"
+      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"scalingActions\": [{\"actionable\": \"NO\", \"botGroup\": \"cq\", \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32}, \"regionalActions\": [{\"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", \"region\": \"us-central1-b\"}, {\"prefix\": \"chromeos-ci-cq-us-central2-d-x32\", \"region\": \"us-central2-d\"}, {\"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"region\": \"us-east1-d\"}, {\"prefix\": \"chromeos-ci-cq-us-west1-b-x32\", \"region\": \"us-west1-b\"}]}]}@@@"
     ]
   },
   {
