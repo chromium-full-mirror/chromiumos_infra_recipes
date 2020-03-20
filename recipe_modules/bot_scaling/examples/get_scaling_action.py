@@ -9,7 +9,7 @@ DEPS = [
     'bot_scaling',
 ]
 
-from PB.chromiumos.bot_scaling import BotPolicy, BotType
+from PB.chromiumos.bot_scaling import BotPolicy, BotType, ScalingAction
 
 
 def RunSteps(api):
@@ -65,7 +65,10 @@ def RunSteps(api):
       }
   }
 
-  scaling_action = api.bot_scaling.get_scaling_action(90, bot_policy)
+  test_config = api.bot_scaling.test_api.gce_provider_stats()
+
+  scaling_action = api.bot_scaling.get_scaling_action(90, bot_policy,
+                                                      test_config)
 
   api.assertions.assertEqual(scaling_action.bots_requested, 90)
   api.assertions.assertEqual(scaling_action.bot_type, bot_type)
@@ -82,6 +85,17 @@ def RunSteps(api):
                              'prefix-second')
   api.assertions.assertEqual(scaling_action.regional_actions[1].bots_requested,
                              45)
+  api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
+
+  # Request + step size is not less than configured.
+  scaling_action = api.bot_scaling.get_scaling_action(70, bot_policy,
+                                                      test_config)
+  api.assertions.assertEqual(scaling_action.actionable, ScalingAction.NO)
+
+  # Request - step size is less than configured, scaling down.
+  scaling_action = api.bot_scaling.get_scaling_action(40, bot_policy,
+                                                      test_config)
+  api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
 
 
 def GenTests(api):

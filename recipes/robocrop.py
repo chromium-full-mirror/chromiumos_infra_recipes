@@ -45,7 +45,7 @@ def RunSteps(api, properties):
       api.easy.set_property_step('gce_config', jsonpb.MessageToDict(gce_stats))
     with api.step.nest('compute scaling actions'):
       robocrop_action = api.bot_scaling.get_robocrop_action(
-          status_map, bot_policy_config)
+          status_map, bot_policy_config, gce_stats)
       api.easy.set_property_step('robocrop_action',
                                  jsonpb.MessageToDict(robocrop_action))
 

@@ -4,9 +4,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.chromiumos.bot_scaling import RoboCropAction
-from PB.chromiumos.bot_scaling import ScalingAction
+from PB.chromiumos.bot_scaling import RoboCropAction, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.gce.api.config.v1.config import Config
 
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
@@ -17,7 +17,7 @@ BOT_STATES = ['idle', 'busy', 'dead-only']
 class BotScalingApi(recipe_api.RecipeApi):
   """A module that determines how to scale bot groups."""
 
-  def get_robocrop_action(self, status_map, bot_policy_config):
+  def get_robocrop_action(self, status_map, bot_policy_config, configs):
     """Function to compute all the actions of this RoboCrop.
 
     Args:
@@ -25,6 +25,7 @@ class BotScalingApi(recipe_api.RecipeApi):
         status to task count.
       bot_policy_config(BotPolicyCfg): Config define Policy for
         the RoboCrop.
+      configs(Configs): List of GCE Config objects.
 
     Returns:
       ScalingAction, comprehensive action to be taken by RoboCrop.
@@ -34,22 +35,35 @@ class BotScalingApi(recipe_api.RecipeApi):
     for policy in bot_policy_config.bot_policies:
       demand = self.m.buildbucket_stats.get_bot_demand(
           status_map[policy.bot_group])
-      scaling_actions.append(self.get_scaling_action(demand, policy))
+      scaling_actions.append(self.get_scaling_action(demand, policy, configs))
 
     return RoboCropAction(scaling_actions=scaling_actions)
 
-  def get_scaling_action(self, demand, bot_policy):
+  def get_scaling_action(self, demand, bot_policy, configs):
     """The function that creates a ScalingAction for a bot group.
 
     Args:
       demand(int): Current demand for bots.
       bot_policy(BotPolicy): Config defined Policy for a bot group.
+      configs(Configs): List of GCE Config objects.
 
     Returns:
       ScalingAction, comprehensive action to be taken by RoboCrop.
     """
+    bots_requested = self.get_bot_request(demand,
+                                          bot_policy.scaling_restriction)
+    bots_configured = self.calculate_gce_totals(
+        bot_policy.region_restrictions, self._get_prefix_to_gce_config(configs))
+    actionable = ScalingAction.NO
+    if (bots_configured + bot_policy.scaling_restriction.step_size <=
+        bots_requested or
+        bots_configured - bot_policy.scaling_restriction.step_size >=
+        bots_requested):
+      actionable = ScalingAction.YES
+
     scaling_action = ScalingAction(bot_group=bot_policy.bot_group,
-                                   bot_type=bot_policy.bot_type)
+                                   bot_type=bot_policy.bot_type,
+                                   actionable=actionable)
 
     scaling_action.bots_requested = self.get_bot_request(
         demand, bot_policy.scaling_restriction)
@@ -57,8 +71,6 @@ class BotScalingApi(recipe_api.RecipeApi):
     scaling_action.regional_actions.extend(
         self.get_regional_actions(scaling_action.bots_requested,
                                   bot_policy.region_restrictions))
-    # TODO: Use step_size and history to determine if this action
-    # is actionable.
     return scaling_action
 
   def get_bot_request(self, demand, scaling_restriction):
@@ -156,3 +168,33 @@ class BotScalingApi(recipe_api.RecipeApi):
       for restriction in policy.region_restrictions:
         prefixes.append(restriction.prefix)
     return self.m.gce_provider.get_current_config(prefixes)
+
+  def calculate_gce_totals(self, region_restrictions, config_map):
+    """Sums the total number of configured bots per bot policy.
+
+    Args:
+      region_restrictions(list[RegionRestriction]): Regional preferences
+        from config.
+      config_map(dict|Config): Map of GCE Config to prefix
+
+    Returns:
+      int, sum of the total number of bots in GCE Provider
+    """
+    policy_count = 0
+    for restriction in region_restrictions:
+      config = config_map.get(restriction.prefix, Config())
+      policy_count += config.current_amount
+    return policy_count
+
+  def _get_prefix_to_gce_config(self, configs):
+    """Helper method that returns the prefix to Config map.
+
+    Loads the proto and builds the map.
+
+    Args:
+      configs (Configs): list of GCE Provider Config meessages.
+
+    Returns:
+      dict, map of prefix to GCE Config
+    """
+    return {c.prefix: c for c in configs.vms}

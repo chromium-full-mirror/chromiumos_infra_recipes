@@ -33,15 +33,15 @@ class GceProvider(recipe_api.RecipeApi):
     Returns:
       Configs, list of GCE Provide Config objects.
     """
-    config_mapping = []
+    configs = []
     for prefix in ids:
       req = {'id': prefix}
       step = self._run(
           'Get', req,
           test_stdout=lambda: self.test_api.get_current_config_step_test_data())
-      config_mapping.append(
+      configs.append(
           json_format.ParseDict(step, Config(), ignore_unknown_fields=True))
-    return Configs(vms=config_mapping)
+    return Configs(vms=configs)
 
   def _run(self, method, stdin_json, step_name=None, test_stdout=None):
     """Return a swarming command step.

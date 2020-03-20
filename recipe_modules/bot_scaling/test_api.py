@@ -7,9 +7,10 @@ from recipe_engine import recipe_test_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
 
-class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
+class BotScalingTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the cros_history module."""
 
   def previous_robocrop(self):
@@ -61,3 +62,9 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
             ]
         }]
     }
+
+  def gce_provider_stats(self):
+    return Configs(vms=[
+        Config(prefix='prefix-first', current_amount=35),
+        Config(prefix='prefix-second', current_amount=35)
+    ])
