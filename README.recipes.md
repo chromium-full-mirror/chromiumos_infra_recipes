@@ -184,6 +184,7 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
+  * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
@@ -4289,6 +4290,11 @@ Returns:
 Validate the remote stable version config file.
 
 Returns: JSON response with validation result
+### *recipes* / [local\_manifest\_presubmit](/recipes/local_manifest_presubmit.py)
+
+Runs the presubmit for a project with checkout per local manifest.
+
+&mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#8)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
