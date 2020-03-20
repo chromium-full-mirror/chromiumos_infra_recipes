@@ -35,10 +35,7 @@ def RunSteps(api):
 
     api.cros_source.ensure_synced_cache()
     api.cros_sdk.create_chroot(version=None, use_image=False, timeout_sec=None)
-
-    with api.step.nest('update sdk'):
-      api.cros_build_api.SdkService.Update(
-          UpdateSdkRequest(chroot=api.cros_sdk.chroot))
+    api.cros_sdk.update_chroot(None, None, timeout_sec=None)
 
     with api.step.nest('update metadata'), api.context(
         cwd=api.cros_source.workspace_path):

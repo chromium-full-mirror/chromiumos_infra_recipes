@@ -1474,24 +1474,28 @@
   },
   {
     "cmd": [],
-    "name": "detect toolchain change",
+    "name": "update sdk"
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no change@@@",
-      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no change@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "detect toolchain change.determine toolchain paths",
+    "name": "update sdk.detect toolchain change.determine toolchain paths",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths",
+    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
@@ -1537,9 +1541,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.write input file",
+    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
@@ -1585,9 +1589,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call build API script",
+    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1608,25 +1612,25 @@
       ]
     },
     "infra_step": true,
-    "name": "detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.read output file",
+    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call response",
+    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "detect toolchain change.path relevancy check",
+    "name": "update sdk.detect toolchain change.path relevancy check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\030\\322\\t\"@@@",
@@ -1649,9 +1653,9 @@
   },
   {
     "cmd": [],
-    "name": "detect toolchain change.path relevancy check.ensure binaries",
+    "name": "update sdk.detect toolchain change.path relevancy check.ensure binaries",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1667,9 +1671,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "detect toolchain change.path relevancy check.ensure binaries.ensure_installed",
+    "name": "update sdk.detect toolchain change.path relevancy check.ensure binaries.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -1696,9 +1700,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "detect toolchain change.path relevancy check.write input binaryproto",
+    "name": "update sdk.detect toolchain change.path relevancy check.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@2(2d72510e447ab60a9728aeea2362d8be2cbd7789:\u0005@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\t:\u0005@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\u0012Bd@@@",
@@ -1719,9 +1723,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "detect toolchain change.path relevancy check.run check",
+    "name": "update sdk.detect toolchain change.path relevancy check.run check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1737,14 +1741,18 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "detect toolchain change.path relevancy check.read output file",
+    "name": "update sdk.detect toolchain change.path relevancy check.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update sdk"
+    "name": "update sdk.detect toolchain change.set testing_toolchain",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
+    ]
   },
   {
     "cmd": [],
@@ -1857,6 +1865,7 @@
       ]
     },
     "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

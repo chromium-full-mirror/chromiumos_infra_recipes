@@ -1224,14 +1224,6 @@
   },
   {
     "cmd": [],
-    "name": "detect toolchain change",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@no change@@@",
-      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "update sdk"
   },
   {
@@ -1341,6 +1333,7 @@
       ]
     },
     "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

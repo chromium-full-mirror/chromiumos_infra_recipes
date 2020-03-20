@@ -57,18 +57,8 @@ def RunSteps(api):
 
       api.cros_sdk.create_chroot(version=config.general.sdk_cache_version,
                                use_image=False, timeout_sec=None)
-
-      with api.step.nest('update sdk'):
-        try:
-          api.cros_build_api.SdkService.Update(
-              UpdateSdkRequest(chroot=api.cros_sdk.chroot))
-        except api.step.StepFailure:
-          # Invalidate the cache if the UpdateSDK call fails.
-          api.step.nest(
-              'UpdateSDK failure, deleting chroot',
-              api.cros_build_api.SdkService.Delete(
-                  DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-          raise
+      api.cros_sdk.update_chroot(
+          api.buildbucket.gitiles_commit, gerrit_changes, timeout_sec=None)
 
       api.cros_build_api.TestService.ChromiteUnitTest(
           ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot),

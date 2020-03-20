@@ -85,20 +85,9 @@ def RunSteps(api, properties):
             overlay_type=OVERLAYTYPE_BOTH)
         response = api.cros_build_api.PackageService.Uprev(request)
 
-      with api.step.nest('update sdk'):
-        try:
-          api.cros_build_api.SdkService.Update(
-              UpdateSdkRequest(
-                  chroot=api.cros_sdk.chroot, toolchain_targets=[
-                      BuildTarget(name=properties.build_target.name)
-                  ]))
-        except api.step.StepFailure:
-          # Invalidate the cache if the UpdateSDK call fails.
-          api.step.nest(
-              'UpdateSDK failure, deleting chroot',
-              api.cros_build_api.SdkService.Delete(
-                  DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-          raise
+      api.cros_sdk.update_chroot(
+          api.buildbucket.gitiles_commit, gerrit_changes,
+          toolchain_targets=[BuildTarget(name=properties.build_target.name)])
 
     with api.step.nest('download vm image'):
       test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')

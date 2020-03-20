@@ -938,14 +938,6 @@
   },
   {
     "cmd": [],
-    "name": "detect toolchain change",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@no change@@@",
-      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "update sdk"
   },
   {

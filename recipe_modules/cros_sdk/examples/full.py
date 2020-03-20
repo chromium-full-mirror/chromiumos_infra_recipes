@@ -12,6 +12,7 @@ DEPS = [
 ]
 
 from PB.chromiumos import common
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
     TestInputProperties)
 
@@ -30,6 +31,8 @@ def RunSteps(api, properties):
 
     chroot = api.cros_sdk.create_chroot(version=properties.sdk_version)
     api.assertions.assertNotEqual(chroot, None)
+    api.cros_sdk.update_chroot(properties.gitiles_commit,
+                               properties.gerrit_changes)
 
     api.cros_sdk.set_chrome_root('/chrome_dir')
     api.cros_sdk.set_goma_config('/goma_dir', '/creds/goma.json',
@@ -73,10 +76,19 @@ def GenTests(api):
          api.step_data('init sdk.read sdk cache version json',
                        api.raw_io.output_text('{"version": "1"}')))
 
+  yield (api.test('with changes') +  #
+         api.properties(TestInputProperties(
+             gerrit_changes=[common_pb2.GerritChange(change=1234)])))
+
   yield (api.test('failed-step-init-sdk') +  #
          api.step_data(
              'init sdk.call chromite.api.SdkService/'
              'Create.call build API script', retcode=1))
+
+  yield (api.test('failed-step-update-sdk') +  #
+         api.step_data(
+             'update sdk.call chromite.api.SdkService/'
+             'Update.call build API script', retcode=1))
 
   yield (api.test('failed-step-destroy-chroot-tests') +  #
          api.step_data('link chroot in workspace.ensure workspace', retcode=1))

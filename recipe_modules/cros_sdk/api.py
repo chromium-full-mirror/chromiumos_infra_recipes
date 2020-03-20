@@ -14,6 +14,7 @@ from recipe_engine import recipe_api
 from PB.chromiumos import common
 from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
+from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UnmountRequest as UnmountSdkRequest
 from PB.chromite.api.sdk import CreateSnapshotRequest
@@ -176,7 +177,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       version (int): Required SDK version, if any.  Some recipes do not care
           what version the SDK is, they just need any SDK.
       use_image (boolean): Mount the SDK file as an image.  Default: True.
-      timeout_sec (int): Timeout for build api call.  Default: 40 * 60.
+      timeout_sec (int): Step timeout (in seconds).  Default: 40 minutes.
       name (str): Step name.  Default: 'init sdk'.
 
     Returns:
@@ -230,6 +231,54 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
       self.m.file.symlink('link %s to chroot' % checkout_basename,
                           self._chroot_path, chroot_link)
+
+  def update_chroot(self, commit, changes, build_source=False,
+                    toolchain_changed=False, toolchain_targets=None,
+                    timeout_sec='DEFAULT', name=None):
+    """Update the chroot.
+
+    Args:
+      commit (GitilesCommit): Active gitiles_commit, or None.
+      changes (list[GerritChange]): Active gerrit changes, or None.
+      build_source (boolean): Whether to compile from source.  Default: False.
+      toolchain_changed (boolean): Whether toolchain has changed.
+          Default: False.
+      toolchain_targets (list[BuildTarget]): List of toolchain targets needed,
+          or None.
+      timeout_sec (int): Step timeout (in seconds).  Default: None if a
+          toolchain change is detected, otherwise 1 hour.
+      name (string): Step name.  Default: "update sdk".
+
+    Returns:
+      (boolean) whether the toolchain was changed.
+    """
+    with self.m.step.nest(name or 'update sdk'):
+      # If there are changes, they may affect the toolchain.
+      if changes and not toolchain_changed:
+        with self.m.step.nest('detect toolchain change') as detect:
+          toolchain_changed = self.m.cros_relevance.check_for_toolchain_change(
+              changes, commit, chroot=self.chroot)
+          self.m.easy.set_property_step('testing_toolchain', toolchain_changed)
+          detect.step_text = ('change detected'
+                              if toolchain_changed else 'no change')
+      if toolchain_changed:
+        self.mark_sdk_as_dirty()
+      flags = UpdateSdkRequest.Flags(build_source=build_source,
+                                     toolchain_changed=toolchain_changed)
+      if timeout_sec == 'DEFAULT':
+        timeout_sec = None if toolchain_changed else 60 * 60
+      try:
+        self.m.cros_build_api.SdkService.Update(
+            UpdateSdkRequest(chroot=self.m.cros_sdk.chroot, flags=flags,
+                             toolchain_targets=toolchain_targets),
+            timeout=timeout_sec)
+      except self.m.step.StepFailure:
+        # If the update fails, also delete the SDK.
+        with self.m.step.nest('UpdateSDK failure'):
+          self.m.cros_build_api.SdkService.Delete(
+              DeleteSdkRequest(chroot=self.m.cros_sdk.chroot))
+          raise
+      return toolchain_changed
 
   @contextlib.contextmanager
   def cleanup_context(self, checkout_path):

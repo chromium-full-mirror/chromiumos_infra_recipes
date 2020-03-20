@@ -102,12 +102,10 @@ def RunSteps(api, properties):
 
 def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
                force_relevant_build):
-
   is_staging = config.general.environment == BuilderConfig.General.STAGING
-  is_toolchain_builder = config.id.type == BuilderConfig.Id.TOOLCHAIN
   # Toolchain builders compile many large packages from source and need higher
   # step timeouts to successfully complete.
-  long_timeouts = is_toolchain_builder
+  long_timeouts = config.id.type == BuilderConfig.Id.TOOLCHAIN
 
   # Set up source checkouts.
   api.workspace_util.sync_to_commit(staging=is_staging)
@@ -134,27 +132,10 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       version=config.general.sdk_cache_version, use_image=is_staging,
       timeout_sec=None if long_timeouts else STEP_TIMEOUTS['create_sdk'])
 
-  with api.step.nest('detect toolchain change') as step:
-    toolchain_changed = api.cros_relevance.check_for_toolchain_change(
-        gerrit_changes, gitiles_commit, chroot=api.cros_sdk.chroot)
-    # Toolchain CLs take significantly longer to build & test and need the
-    # default step timeouts to be raiesd.
-    long_timeouts |= toolchain_changed
-    step.properties['testing_toolchain'] = toolchain_changed
-    if toolchain_changed:
-      api.cros_sdk.mark_sdk_as_dirty()
-      step.step_text = ('change detected')
-    else:
-      step.step_text = ('no change')
-
-  with api.step.nest('update sdk'):
-    flags = UpdateSdkRequest.Flags(
-        build_source=config.build.sdk_update.compile_source,
-        toolchain_changed=toolchain_changed)
-    api.cros_build_api.SdkService.Update(
-        UpdateSdkRequest(chroot=api.cros_sdk.chroot,
-                         toolchain_targets=[build_target], flags=flags),
-        timeout=(STEP_TIMEOUTS['update_sdk'] if not long_timeouts else None))
+  toolchain_changed = api.cros_sdk.update_chroot(
+      gitiles_commit, gerrit_changes, toolchain_targets=[build_target],
+      build_source=config.build.sdk_update.compile_source)
+  long_timeouts |= toolchain_changed
 
   with api.step.nest('create sysroot'):
     profile = None
@@ -450,16 +431,16 @@ def GenTests(api):
     resp.build_is_pointless.value = True
     serialized = resp.SerializeToString()
     return api.step_data(
-        'detect toolchain change.path relevancy check.read output file',
-        api.file.read_raw(content=serialized))
+        'update sdk.detect toolchain change.path relevancy check.'
+        'read output file', api.file.read_raw(content=serialized))
 
   def force_toolchain_change():
     resp = PointlessBuildCheckResponse()
     resp.build_is_pointless.value = False
     serialized = resp.SerializeToString()
     return api.step_data(
-        'detect toolchain change.path relevancy check.read output file',
-        api.file.read_raw(content=serialized))
+        'update sdk.detect toolchain change.path relevancy check.'
+        'read output file', api.file.read_raw(content=serialized))
 
   yield (api.test('basic') +  #
          cq_build_with_gerrit_change() +  #

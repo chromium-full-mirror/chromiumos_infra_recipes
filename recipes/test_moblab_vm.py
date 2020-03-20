@@ -57,20 +57,9 @@ def RunSteps(api, properties):
 
       api.cros_sdk.create_chroot(version=None, use_image=False,
                                  timeout_sec=None)
-
-      with api.step.nest('update sdk'):
-        try:
-          api.cros_build_api.SdkService.Update(
-              UpdateSdkRequest(
-                  chroot=api.cros_sdk.chroot,
-                  toolchain_targets=[BuildTarget(name='moblab-generic-vm')]))
-        except api.step.StepFailure:
-          # Invalidate the cache if the UpdateSDK call fails.
-          api.step.nest(
-              'UpdateSDK failure, deleting chroot',
-              api.cros_build_api.SdkService.Delete(
-                  DeleteSdkRequest(chroot=api.cros_sdk.chroot)))
-          raise
+      api.cros_sdk.update_chroot(
+          api.buildbucket.gitiles_commit, gerrit_changes,
+          toolchain_targets=[BuildTarget(name='moblab-generic-vm')])
 
     with api.step.nest('prepare artifacts'):
       artifact_paths_by_artifact = api.cros_artifacts.download_artifacts(
