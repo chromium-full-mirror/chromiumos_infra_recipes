@@ -47,7 +47,7 @@ class ConfigUtilApi(recipe_api.RecipeApi):
       BuilderConfig for this builder.
     """
     return self.m.cros_infra_config.get_builder_config(
-          self.m.buildbucket.build.builder.builder, missing_ok=True)
+        self.m.buildbucket.build.builder.builder, missing_ok=True)
 
   @property
   def fresh_config(self):

@@ -47,8 +47,6 @@ from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.packages import UprevPackagesRequest
-from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
-from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sysroot import Profile
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
@@ -120,7 +118,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   if relevance == Relevance.POINTLESS:
     return
 
-  with api.step.nest('uprev packages') as step:
+  with api.step.nest('uprev packages'):
     request = UprevPackagesRequest(
         chroot=api.cros_sdk.chroot,
         build_targets=[BuildTarget(name=build_target.name)],
@@ -282,7 +280,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
           # https://bitbucket.org/ned/coveragepy/issues/198/continue-marked-as-not-covered
           continue  # pragma: no cover
 
-        result_dir = api.path.mkdtemp(prefix="image-test-result-")
+        result_dir = api.path.mkdtemp(prefix='image-test-result-')
         if not api.cros_build_api.ImageService.Test(
             TestImageRequest(
                 image=image, build_target=build_target,
@@ -394,21 +392,42 @@ def GenTests(api):
       common_pb2.GerritChange(change=2341),
   ]
 
-  def cq_build_with_gerrit_change(builder='amd64-generic-cq'):
+  def cq_build(builder='amd64-generic-cq', build_target='amd64-generic',
+               gerrit_changes=True, no_toolchain=True):
     """Generate a test build proto with no gitiles commit project."""
     build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
                                              builder=builder)
-    build.input.gerrit_changes.extend(mock_CLs)
-    return api.buildbucket.build(build) + no_toolchain_change()
+    if gerrit_changes:
+      build.input.gerrit_changes.extend(mock_CLs)
+    ret = api.buildbucket.build(build)
+    if no_toolchain:
+      ret += no_toolchain_change()
+    if build_target:
+      ret += api.properties(build_target={'name': build_target})
+    return ret
 
-  def toolchain_build(builder='orderfile-generate-toolchain'):
+  def cq_build_no_changes(builder='amd64-generic-cq',
+                          build_target='amd64-generic'):
+    """Generate a test build proto with no gitiles commit project."""
+    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
+                                             builder=builder)
+    ret = api.buildbucket.build(build)
+    if build_target:
+      ret += api.properties(build_target={'name': build_target})
+    return ret
+
+  def toolchain_build(builder='orderfile-generate-toolchain',
+                      build_target='eve'):
     """Generate a test build proto."""
     build = api.buildbucket.ci_build_message(
         project='chromeos', bucket='toolchain', builder=builder, tags=[{
             'key': 'parent_buildbucket_id',
             'value': 'parent_id'
         }])
-    return api.buildbucket.build(build)
+    ret = api.buildbucket.build(build)
+    if build_target:
+      ret += api.properties(build_target={'name': build_target})
+    return ret
 
   def make_build_pointless():
     resp = PointlessBuildCheckResponse()
@@ -443,21 +462,21 @@ def GenTests(api):
         'read output file', api.file.read_raw(content=serialized))
 
   yield (api.test('basic') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build(build_target=None) +  #
          api.properties(build_target={'name': 'amd64-generic'}))
 
   yield (api.test('forced') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build(build_target=None) +  #
          api.properties(build_target={'name': 'amd64-generic'},
                         force_relevant_build=True))
 
   yield (api.test('forced-pointless') +  #
-         cq_build_with_gerrit_change(builder='amd64-generic-cq') +  #
+         cq_build(builder='amd64-generic-cq', build_target=None) +  #
          api.properties(build_target={'name': 'amd64-generic'},
                         force_relevant_build=True))
 
   yield (api.test('with-goma-props') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build(build_target=None) +  #
          api.properties(build_target={'name': 'amd64-generic'}) +  #
          api.properties(
              **{
@@ -469,23 +488,21 @@ def GenTests(api):
              }))
 
   yield (api.test('no-needs-chrome') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build() +  #
          make_build_not_pointless() +  #
          api.step_data(
              'call chromite.api.PackageService/BuildsChrome.read output file',
-             api.file.read_raw(content='{"builds_chrome": false}')) +  #
-         api.properties(build_target={'name': 'amd64-generic'}))
+             api.file.read_raw(content='{"builds_chrome": false}')))
 
   yield (api.test('no-has-chrome-prebuilt') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build() +  #
          api.step_data(
              'call chromite.api.PackageService/HasChromePrebuilt'
              '.read output file',
-             api.file.read_raw(content='{"has_prebuilt": false}')) +  #
-         api.properties(build_target={'name': 'amd64-generic'}))
+             api.file.read_raw(content='{"has_prebuilt": false}')))
 
   yield (api.test('fails_install_with_many_packages') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build() +  #
          api.step_data(
              'install packages'
              '.call chromite.api.SysrootService/InstallPackages'
@@ -507,7 +524,7 @@ def GenTests(api):
                           }''')))
 
   yield (api.test('install_package_no_goma') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build() +  #
          api.step_data(
              'install packages'
              '.call chromite.api.SysrootService/InstallPackages'
@@ -522,7 +539,7 @@ def GenTests(api):
                }''')))
 
   yield (api.test('install_package_with_goma') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build() +  #
          api.step_data(
              'install packages'
              '.call chromite.api.SysrootService/InstallPackages'
@@ -568,15 +585,12 @@ def GenTests(api):
              api.file.read_raw(content='{"build_relevance": "NEEDED"}')))
 
   yield (api.test('compile-update-sdk') +  #
-         toolchain_build(builder='atlas-llvm-next'))
+         toolchain_build(builder='atlas-llvm-next', build_target='atlas'))
 
   yield (api.test('with-findit-bisect') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build() +  #
          api.properties(
              **{
-                 'build_target': {
-                     'name': 'amd64-generic'
-                 },
                  '$chromeos/cros_bisect':
                      CrosBisectProperties(
                          compile={
@@ -593,12 +607,9 @@ def GenTests(api):
 
   yield (
       api.test('with-custom-snapshot') +  #
-      cq_build_with_gerrit_change() +  #
+      cq_build() +  #
       api.properties(
           **{
-              'build_target': {
-                  'name': 'amd64-generic'
-              },
               '$chromeos/cros_source':
                   CrosSourceProperties(
                       snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
@@ -608,12 +619,9 @@ def GenTests(api):
 
   yield (
       api.test('with-custom-DEPS') +  #
-      cq_build_with_gerrit_change() +  #
+      cq_build() +  #
       api.properties(
           **{
-              'build_target': {
-                  'name': 'amd64-generic'
-              },
               '$chromeos/chrome':
                   ChromeProperties(
                       version='2.0',
@@ -623,8 +631,7 @@ def GenTests(api):
           }))
 
   yield (api.test('with-gerrit-changes') +  #
-         cq_build_with_gerrit_change(builder='amd64-generic-cq') +  #
-         api.properties(build_target={'name': 'amd64-generic'}))
+         cq_build())
 
   yield (api.test('run-exit-install-packages') +  #
          api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
@@ -655,28 +662,24 @@ def GenTests(api):
          api.properties(build_target={'name': 'grunt'}))
 
   yield (api.test('pointless-build-check') +  #
-         cq_build_with_gerrit_change(builder='amd64-generic-cq') +  #
-         no_toolchain_change() +  #
-         make_build_pointless() +  #
-         api.properties(build_target={'name': 'amd64-generic'}))
+         cq_build() +  #
+         make_build_pointless())
 
   yield (api.test('toolchain-change-test') +  #
-         cq_build_with_gerrit_change() +  #
+         cq_build() +  #
          force_toolchain_change())
 
   yield (api.test('with-builder-config-limited-packages') +  #
-         cq_build_with_gerrit_change(builder='orderfile-verify-toolchain') +  #
-         api.properties(build_target={'name': 'arm-generic'}))
+         cq_build(builder='orderfile-verify-toolchain',
+                  build_target='arm-generic'))
 
   yield (api.test('initsdk-existing-sdk-cache') +  #
-         api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                                  builder='staging-amd64-generic-cq') +  #
+         cq_build_no_changes(builder='staging-amd64-generic-cq') +  #
          api.step_data('init sdk.read sdk cache version json',
                        api.raw_io.output_text('{"version": "2"}')))
 
   yield (api.test('initsdk-existing-outdated-sdk-cache') +  #
-         api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                                  builder='staging-amd64-generic-cq') +  #
+         cq_build_no_changes(builder='staging-amd64-generic-cq') +  #
          api.step_data('init sdk.read sdk cache version json',
                        api.raw_io.output_text('{"version": "1"}')))
 
@@ -684,22 +687,21 @@ def GenTests(api):
       api.test('initsdk-destroy-chroot-tests') +  #
       api.buildbucket.ci_build(project='chromeos', bucket='cq',
                                builder='amd64-generic-cq') +  #
+      api.properties(build_target={'name': 'amd64-generic'}) +  #
       api.step_data(
           'init sdk.call chromite.api.SdkService/Create.call build API script',
           retcode=1))
 
   yield (api.test('updatesdk-destroy-chroot-tests') +  #
-         api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                                  builder='amd64-generic-cq') +  #
+         cq_build_no_changes(builder='amd64-generic-cq') +  #
          api.step_data(
              'update sdk.call chromite.api.SdkService/'
              'Update.call build API script', retcode=1))
 
   yield (api.test('destroy-chroot-failed-step-tests') +  #
-         api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                                  builder='amd64-generic-cq') +  #
+         cq_build_no_changes(builder='amd64-generic-cq') +  #
          api.step_data(
              'dependency graph calculation.call chromite.api.DependencyService/'
              'GetBuildDependencyGraph.write input file', retcode=1))
 
-  yield (api.test('builder-no-longer-exists'))
+  yield api.test('builder-no-longer-exists')
