@@ -98,8 +98,8 @@ def GenTests(api):
       responses=[dict(schedule_build=cros_test_platforms[1])])
 
   hw_tests = [
-      api.skylab.test_with_execute_response(id=1234),
-      api.skylab.test_with_execute_response(id=4321),
+      api.skylab.test_with_execute_response_json(id=1234),
+      api.skylab.test_with_execute_response_json(id=4321),
   ]
 
   builds = [
@@ -215,9 +215,9 @@ def GenTests(api):
           step_name='run tests.collect tests.collect moblab vm tests'))
 
   hw_tests = [
-      api.skylab.test_with_execute_response(
+      api.skylab.test_with_execute_response_json(
           id=1234, task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
-      api.skylab.test_with_execute_response(
+      api.skylab.test_with_execute_response_json(
           id=4321, task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
 
@@ -245,7 +245,7 @@ def GenTests(api):
           step_name='run tests.collect tests.collect moblab vm tests'))
 
   baseline_results_failure = [
-      api.skylab.test_with_execute_response(
+      api.skylab.test_with_execute_response_json(
           id=4321, task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
   yield (
@@ -288,7 +288,7 @@ def GenTests(api):
           'collect skylab tasks.buildbucket.collect'))
 
   baseline_results_success = [
-      api.skylab.test_with_execute_response(id=4321),
+      api.skylab.test_with_execute_response_json(id=4321),
   ]
   yield (
       api.test('fail_with_baseline_validation') +  #
@@ -331,7 +331,7 @@ def GenTests(api):
 
   hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
   hw_tests = [
-      api.skylab.test_with_execute_response(
+      api.skylab.test_with_execute_response_json(
           id=1234, task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
 

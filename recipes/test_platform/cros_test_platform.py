@@ -340,6 +340,8 @@ def _get_requests_from_properties(properties):
 
 
 def _base64_compress_proto(proto):
+  # Keep this in sync with recipe_modules/skylab/test_api.py
+  # TODO(jkop, chromium:1067440): refactor both to call the same code
   wire_format = proto.SerializeToString()
   return wire_format.encode('zlib_codec').encode('base64_codec')
 

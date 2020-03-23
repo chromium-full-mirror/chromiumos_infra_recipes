@@ -3015,6 +3015,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"1234\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJzdj02KwkAQRmlxMWQVGmHApUsh3YYR/0DnBrNyK9Jpa5LGJNV2leZ27rzELOYsBkFEj+ABvve+\\nJ/9F1GMTcmBVNCo7ceLq0tUgLyI6C7kqmD0ttLZFwAqQEmpMqFydK+M9eWRlsdJsaP/tdsvxNDWT\\nr8zO7XiWjtJRv/vhYzH4tAUA0/YH2f06a9hhvQbi4eaOJzatF4haXPAqR8xLuKGzgA3Bw2+OjNxu\\nkwB0LJn0/VDyKteyEwv5J6L4OdAe3iXuCo8GmBI=\\n\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"responses\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"target.hw.bvt-cq\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",

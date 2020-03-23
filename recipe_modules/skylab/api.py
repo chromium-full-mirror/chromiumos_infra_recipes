@@ -7,6 +7,7 @@ import json
 
 from collections import namedtuple
 from google.protobuf import json_format
+from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
@@ -15,7 +16,7 @@ import structs
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.skylab_tool.result import WaitTasksResult
 from PB.test_platform.request import Request
-from PB.test_platform.steps.execution import ExecuteResponse
+from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
 from PB.test_platform.taskstate import TaskState
 
 
@@ -199,7 +200,7 @@ class SkylabApi(recipe_api.RecipeApi):
         hw_tests = self.m.buildbucket.get_multi([task_id])[task_id]
 
       results = []
-      responses = self._get_multi_response(hw_tests)
+      responses = self._get_multi_response_binary(hw_tests)
       for t in tasks:
         result = responses.get(
             _request_tag(t.test), self._default_failed_response())
@@ -208,25 +209,14 @@ class SkylabApi(recipe_api.RecipeApi):
       presentation.logs['return value'] = [str(r) for r in results]
       return results
 
-  def _get_multi_response(self, build):
-    # ExecuteResponse is stored as a Struct in output.properties.
-    # This helper handles the re-casting and error catching.
-    responses = {}
+  def _get_multi_response_binary(self, build):
     try:
-      responses_prop = build.output.properties['responses']
-    except (KeyError, ValueError):
-      return responses
-
-    for tag, response_struct in responses_prop.fields.iteritems():
-      response = ExecuteResponse()
-      try:
-        response_json = json_format.MessageToJson(response_struct.struct_value)
-        json_format.Parse(response_json, response, ignore_unknown_fields=True)
-      except (ValueError, json_format.ParseError) as e:  #pragma: no cover
-        response = self._default_failed_response()
-      finally:
-        responses[tag] = response
-    return responses
+      resps = build.output.properties['compressed_responses']
+    except ValueError:
+      return ExecuteResponses().tagged_responses
+    wire_format = resps.decode('base64_codec').decode('zlib_codec')
+    responses = ExecuteResponses.FromString(wire_format)
+    return responses.tagged_responses
 
   def wait_on_recipes(self, tasks, timeout):
     """Wait for all Skylab suites to finish and return the results.
@@ -255,14 +245,14 @@ class SkylabApi(recipe_api.RecipeApi):
 
       results = []
       for test_id, test in all_hw_tests.items():
-        test_response = self._get_execute_response(test)
+        test_response = self._get_execute_response_json(test)
         results.append(
             self._translate_result(test_response, tasks_by_id[test_id]))
 
       presentation.logs['return value'] = [str(x) for x in results]
       return results
 
-  def _get_execute_response(self, build):
+  def _get_execute_response_json(self, build):
     # ExecuteResponse is stored as a Struct in output.properties.
     # This helper handles the re-casting and error catching.
     try:
@@ -272,7 +262,6 @@ class SkylabApi(recipe_api.RecipeApi):
       json_format.Parse(response_json, response, ignore_unknown_fields=True)
     except (ValueError, json_format.ParseError) as e:  #pragma: no cover
       return self._default_failed_response()
-
     return response
 
   def _default_failed_response(self):

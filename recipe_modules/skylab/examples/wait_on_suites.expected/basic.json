@@ -127,6 +127,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"1234\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJzdj01qAkEQRmlxIbPSBhFcugzMtEPEP0hyA1duQ1PTVmYaZ6aarpK5XXY5RRZeRQmIYG7gAb73\\nvqd/VTIKNQKj7cCLpdY2qH9U8q30eyUSeGuMqyI1SJxyB7HxbZlBCBxIMkeNEeDjhz+8LVY5LF8L\\nt3GLdT7P59P+IAzVbOIqRGG7I/Ff3oF4avfI8vJ5w7OAb2tkvuJiyEqissY/dBGpY7z74SQk120a\\nkU+1sLkdSh/lRveGSp9VMv5XZ4XoWQov9OiZ9A==\\n\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"responses\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"please_wait_on_me\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",
