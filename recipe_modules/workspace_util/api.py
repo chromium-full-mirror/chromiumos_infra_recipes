@@ -31,11 +31,10 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     Returns:
       A context where source is set up, and the current working directory is the
-          workspace path.
+      workspace path.  Note that api.cros_source.cleanup_context() is generally
+      going to be needed.
     """
     with self.m.cros_source.checkout_overlays_context(), \
-        self.m.cros_sdk.cleanup_context(
-            checkout_path=self.m.cros_source.workspace_path), \
         self.m.context(cwd=self.m.cros_source.workspace_path):
       yield
 

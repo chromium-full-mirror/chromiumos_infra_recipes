@@ -29,6 +29,8 @@ def RunSteps(api, properties):
   # builders that have configs.
   config = api.cros_infra_config.configure_builder(commit=commit,
                                                    changes=changes)
+  # Note that any use case involving a chroot (SDK) will say:
+  #   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
   with api.workspace_util.setup_workspace():
     api.workspace_util.sync_to_commit()
     api.workspace_util.apply_changes()

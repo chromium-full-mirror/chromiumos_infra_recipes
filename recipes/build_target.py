@@ -94,7 +94,7 @@ def RunSteps(api, properties):
 
   api.cros_bisect.set_bisect_builder(build_target.name)
   api.cros_sdk.set_use_flags(config.build.use_flags)
-  with api.workspace_util.setup_workspace():
+  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
     DoRunSteps(api, build_target, config, api.cros_infra_config.gitiles_commit,
                api.cros_infra_config.gerrit_changes, force_relevant_build)
 

@@ -229,8 +229,8 @@
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
-  * [workspace_util:examples/apply_changes_failure](#recipes-workspace_util_examples_apply_changes_failure)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
+  * [workspace_util:tests/apply_changes_failure](#recipes-workspace_util_tests_apply_changes_failure)
 ## Recipe Modules
 
 ### *recipe_modules* / [analysis\_service](/recipe_modules/analysis_service)
@@ -1397,7 +1397,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#362)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#367)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -1405,11 +1405,15 @@ Chroot needs to be tightened to 755 for the build process.
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#281)(self, checkout_path):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#281)(self, checkout_path=None):**
 
 Returns a context that cleans the SDK chroot named cache.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#336)(self):**
+Args:
+  checkout_path (Path): Path to source checkout.  Default:
+      cros_source.workspace_path.
+
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#341)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#31)(self, chroot_parent_path):**
 
@@ -1453,7 +1457,7 @@ Args:
 
 &mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#139)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#371)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#376)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1482,7 +1486,7 @@ Args:
 
 &mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#136)(self, use_flags):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#299)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#304)(self):**
 
 Returns a context that snapshots and restores the SDK chroot state.
 
@@ -1493,19 +1497,19 @@ restore the chroot back to that initial snapshot. If the chroot was
 initially created with 'nouse-image', it will be replaced so that it
 supports the ability to make snapshots.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#353)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#358)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#341)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#346)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
 Args:
  checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#331)(self):**
+&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#336)(self):**
 
 &mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#235)(self, commit, changes, build_source=False, toolchain_changed=False, toolchain_targets=None, timeout_sec='DEFAULT', name=None):**
 
@@ -3475,7 +3479,7 @@ Returns:
     For direct-vm tests, the individual failing tests are listed.
 ### *recipe_modules* / [workspace\_util](/recipe_modules/workspace_util)
 
-[DEPS](/recipe_modules/workspace_util/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/workspace_util/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for various support functions for building.
 
@@ -3483,7 +3487,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#54)(self, changes=None, name='cherry-pick gerrit changes', cq_depend_fail_message=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#53)(self, changes=None, name='cherry-pick gerrit changes', cq_depend_fail_message=False):**
 
 Apply gerrit changes.
 
@@ -3504,9 +3508,10 @@ Prepare the source checkout for building.
 
 Returns:
   A context where source is set up, and the current working directory is the
-      workspace path.
+  workspace path.  Note that api.cros_source.cleanup_context() is generally
+  going to be needed.
 
-&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#42)(self, commit=None, staging=False):**
+&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#41)(self, commit=None, staging=False):**
 
 Sync the source tree.
 
@@ -3515,7 +3520,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#93)(self, manifest_groups, local_manifest=None, cache_path_override=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#92)(self, manifest_groups, local_manifest=None, cache_path_override=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -4854,16 +4859,16 @@ Basic tests for the urls recipe module.
 Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#20)(api):**
-### *recipes* / [workspace\_util:examples/apply\_changes\_failure](/recipe_modules/workspace_util/examples/apply_changes_failure.py)
-
-[DEPS](/recipe_modules/workspace_util/examples/apply_changes_failure.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/apply_changes_failure.py#16)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#22)(api, properties):**
+### *recipes* / [workspace\_util:tests/apply\_changes\_failure](/recipe_modules/workspace_util/tests/apply_changes_failure.py)
+
+[DEPS](/recipe_modules/workspace_util/tests/apply_changes_failure.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/apply_changes_failure.py#16)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/ae3586b5380f0c00448c5a056528419b03ddf9b1/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/ae3586b5380f0c00448c5a056528419b03ddf9b1/recipes/README.recipes.md#recipe_modules-gclient
