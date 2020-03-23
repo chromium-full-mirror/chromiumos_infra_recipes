@@ -6,9 +6,7 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
-    'cros_bisect',
     'cros_infra_config',
-    'cros_sdk',
     'easy',
     'gitiles',
 ]

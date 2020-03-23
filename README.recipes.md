@@ -637,7 +637,7 @@ Args:
     with utf8, as it will be sent to the publish-message binary via JSON.
 ### *recipe_modules* / [config\_util](/recipe_modules/config_util)
 
-[DEPS](/recipe_modules/config_util/__init__.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/config_util/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for various support functions for building.
 
@@ -655,7 +655,7 @@ which caches the data.
 Returns:
   BuilderConfig for this builder.
 
-&mdash; **def [configure\_builder](/recipe_modules/config_util/api.py#114)(self, build_target=None, commit=None, changes=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/config_util/api.py#114)(self, commit=None, changes=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -664,7 +664,6 @@ Determine the actual commit and changes to use.
 Set the bisect_builder and use_flags.
 
 Args:
-  build_target (BuildTarget): The build target.  Default: None.
   commit (GitilesCommit): The gitiles commit to use.  Default:
       common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
   changes: (GerritChanges): The gerrit changes to apply.  Default: [].
@@ -3706,11 +3705,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#101)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#103)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#85)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#332)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#334)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3726,7 +3725,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#351)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#353)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

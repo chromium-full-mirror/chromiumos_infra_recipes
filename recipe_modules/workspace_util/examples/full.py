@@ -26,8 +26,7 @@ def RunSteps(api, properties):
 
   # Configure the builder so that we have self.m.config_util.gitiles_commit
   # All of our tests will be with builders that have configs.
-  config = api.config_util.configure_builder(
-      target, commit=commit, changes=changes)
+  config = api.config_util.configure_builder(commit=commit, changes=changes)
   with api.workspace_util.setup_workspace():
     api.workspace_util.sync_to_commit()
     api.workspace_util.apply_changes()

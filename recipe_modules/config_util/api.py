@@ -111,7 +111,7 @@ class ConfigUtilApi(recipe_api.RecipeApi):
     self._gitiles_commit = commit
     self._gerrit_changes = changes or []
 
-  def configure_builder(self, build_target=None, commit=None, changes=None,
+  def configure_builder(self, commit=None, changes=None,
                         name='configure builder'):
     """Configure the builder.
 
@@ -120,7 +120,6 @@ class ConfigUtilApi(recipe_api.RecipeApi):
     Set the bisect_builder and use_flags.
 
     Args:
-      build_target (BuildTarget): The build target.  Default: None.
       commit (GitilesCommit): The gitiles commit to use.  Default:
           common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
       changes: (GerritChanges): The gerrit changes to apply.  Default: [].
@@ -154,11 +153,5 @@ class ConfigUtilApi(recipe_api.RecipeApi):
         changes = []
 
       self._determine_repo_state(config, commit, changes)
-
-    if build_target and build_target.name:
-      self.m.cros_bisect.set_bisect_builder(build_target.name)
-    else:
-      self.m.cros_bisect.set_orchestrator_bisect_builder()
-    self.m.cros_sdk.set_use_flags(config.build.use_flags)
 
     return config

@@ -23,8 +23,7 @@ def RunSteps(api, properties):
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
-  config = api.config_util.configure_builder(target, commit=commit,
-                                             changes=changes)
+  config = api.config_util.configure_builder(commit=commit, changes=changes)
   api.assertions.assertEqual(config, api.config_util.config)
   builder = config.id.name if config else 'nosuch-cq'
   api.assertions.assertEqual(properties.builder, builder)
@@ -88,7 +87,3 @@ def GenTests(api):
 
   yield (api.test('missing_config') +  #
          buildbucket_build(builder='nosuch-cq', build_target='nosuch'))
-
-  yield (
-      api.test('orchestrator') +  #
-      buildbucket_build(builder='postsubmit-orchestrator', build_target=None))

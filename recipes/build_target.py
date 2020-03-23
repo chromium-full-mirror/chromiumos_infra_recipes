@@ -87,12 +87,14 @@ def RunSteps(api, properties):
   force_relevant_build = properties.force_relevant_build
 
   config = api.config_util.configure_builder(
-      build_target, api.buildbucket.gitiles_commit,
+      api.buildbucket.gitiles_commit,
       api.buildbucket.build.input.gerrit_changes)
   if not config:
     # No config found, already logged.
     return
 
+  api.cros_bisect.set_bisect_builder(build_target.name)
+  api.cros_sdk.set_use_flags(config.build.use_flags)
   with api.workspace_util.setup_workspace():
     DoRunSteps(api, build_target, config, api.config_util.gitiles_commit,
                api.config_util.gerrit_changes, force_relevant_build)
