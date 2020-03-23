@@ -12,6 +12,8 @@ import os
 from recipe_engine import recipe_api
 
 from PB.chromiumos import common
+from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
+from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
@@ -393,3 +395,23 @@ class CrosSdkApi(recipe_api.RecipeApi):
       args += ['%s=%s' % x for x in env.items()]
     args += ['--'] + cmd
     return self(name, args, **kwargs)
+
+  def uprev_packages(self, build_targets=None, timeout_sec = 10 * 60,
+                     name='uprev packages'):
+    """Uprev packages.
+
+    Args:
+      build_targets (list[BuildTarget]): List of build_targets whose packages
+          should be uprevved, or None for all build_targets.
+      timeout_sec (int): Step timeout (in seconds).  Default: 10 minutes.
+      name (string): Name for step.
+
+    Returns:
+      UprevPackagesResponse
+    """
+    with self.m.step.nest(name):
+      return self.m.cros_build_api.PackageService.Uprev(
+          UprevPackagesRequest(
+              chroot=self.chroot, build_targets=build_targets,
+              overlay_type=OVERLAYTYPE_BOTH),
+          timeout=timeout_sec)

@@ -19,8 +19,6 @@ The annealing builders run in serial and do the following:
 import collections
 import urlparse
 
-from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
-from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -130,9 +128,7 @@ def RunSteps(api, properties):
       # in the NEXT snapshot. We choose the least wasteful option.
       with api.step.nest('uprev packages'), api.context(
           cwd=api.cros_source.workspace_path):
-        request = UprevPackagesRequest(chroot=api.cros_sdk.chroot,
-                                       overlay_type=OVERLAYTYPE_BOTH)
-        response = api.cros_build_api.PackageService.Uprev(request)
+        response = api.cros_sdk.uprev_packages(name='uprev ebuilds')
 
         ebuilds_by_repository = collections.defaultdict(list)
         for ebuild in response.modified_ebuilds:

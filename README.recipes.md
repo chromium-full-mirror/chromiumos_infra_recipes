@@ -1395,11 +1395,11 @@ Returns:
 
 API for interacting with cros_sdk, the interface to the CrOS SDK.
 
-#### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSdkApi](/recipe_modules/cros_sdk/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#142)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#144)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -1411,15 +1411,15 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#367)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#369)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#58)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#60)(self):**
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#281)(self, checkout_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#283)(self, checkout_path=None):**
 
 Returns a context that cleans the SDK chroot named cache.
 
@@ -1427,16 +1427,16 @@ Args:
   checkout_path (Path): Path to source checkout.  Default:
       cros_source.workspace_path.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#341)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#343)(self):**
 
-&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#31)(self, chroot_parent_path):**
+&mdash; **def [configure](/recipe_modules/cros_sdk/api.py#33)(self, chroot_parent_path):**
 
 Configure CrosSdkApi.
 
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#172)(self, version=None, use_image=True, timeout_sec=(40 \* 60), name=None):**
+&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#174)(self, version=None, use_image=True, timeout_sec=(40 \* 60), name=None):**
 
 Initialize the chroot and link it into the workspace.
 
@@ -1450,28 +1450,28 @@ Args:
 Returns:
   chromiumos_pb2.Chroot protobuf for the chroot.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#53)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#55)(self):**
 
 Returns a Path to the cros_sdk script.
 
-&mdash; **def [goma\_config](/recipe_modules/cros_sdk/api.py#123)(self):**
+&mdash; **def [goma\_config](/recipe_modules/cros_sdk/api.py#125)(self):**
 
-&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#120)(self):**
+&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#122)(self):**
 
-&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#27)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#29)(self):**
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#217)(self, checkout_path):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#219)(self, checkout_path):**
 
 Link the chroot to a chromiumos checkout.
 
 Args:
   checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#139)(self):**
+&mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#141)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#376)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#378)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1487,20 +1487,20 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@sdk_cache_version.setter**<br>&mdash; **def [sdk\_cache\_version](/recipe_modules/cros_sdk/api.py#86)(self, value):**
+&emsp; **@sdk_cache_version.setter**<br>&mdash; **def [sdk\_cache\_version](/recipe_modules/cros_sdk/api.py#88)(self, value):**
 
 Set sdk cache version and write to file.
 
 Args:
   * value (str): new sdk cache version to set.
 
-&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#108)(self, chrome_root):**
+&mdash; **def [set\_chrome\_root](/recipe_modules/cros_sdk/api.py#110)(self, chrome_root):**
 
-&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#111)(self, goma_dir, goma_client_json, goma_approach, log_dir, stats_file, counterz_file):**
+&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#113)(self, goma_dir, goma_client_json, goma_approach, log_dir, stats_file, counterz_file):**
 
-&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#136)(self, use_flags):**
+&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#138)(self, use_flags):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#304)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#306)(self):**
 
 Returns a context that snapshots and restores the SDK chroot state.
 
@@ -1511,21 +1511,21 @@ restore the chroot back to that initial snapshot. If the chroot was
 initially created with 'nouse-image', it will be replaced so that it
 supports the ability to make snapshots.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#358)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#360)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#346)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#348)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
 Args:
  checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#336)(self):**
+&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#338)(self):**
 
-&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#235)(self, commit, changes, build_source=False, toolchain_changed=False, toolchain_targets=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#237)(self, commit, changes, build_source=False, toolchain_changed=False, toolchain_targets=None, timeout_sec='DEFAULT', name=None):**
 
 Update the chroot.
 
@@ -1543,6 +1543,19 @@ Args:
 
 Returns:
   (boolean) whether the toolchain was changed.
+
+&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#399)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+
+Uprev packages.
+
+Args:
+  build_targets (list[BuildTarget]): List of build_targets whose packages
+      should be uprevved, or None for all build_targets.
+  timeout_sec (int): Step timeout (in seconds).  Default: 10 minutes.
+  name (string): Name for step.
+
+Returns:
+  UprevPackagesResponse
 ### *recipe_modules* / [cros\_som](/recipe_modules/cros_som)
 
 [DEPS](/recipe_modules/cros_som/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
@@ -3569,7 +3582,7 @@ Args:
 &mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#43)(api, properties):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#31): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#29): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -3583,9 +3596,9 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#55)(api, properties):**
+&mdash; **def [RunSteps](/recipes/annealing.py#53)(api, properties):**
 
-&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#228)(api, manifest_diffs):**
+&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#224)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 
@@ -3596,11 +3609,11 @@ Args:
 Returns:
   list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#262)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#258)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#272)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#268)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -3623,7 +3636,7 @@ Args:
 Returns:
   A string containing the commit message.
 
-&mdash; **def [publish\_snapshot](/recipes/annealing.py#189)(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml, gerrit_commits=None, disable_gerrit=False, footers=[]):**
+&mdash; **def [publish\_snapshot](/recipes/annealing.py#185)(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml, gerrit_commits=None, disable_gerrit=False, footers=[]):**
 
 Generate snapshot.xml file and commit it to a ref.
 
@@ -3744,11 +3757,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#102)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#100)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#84)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#82)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#351)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#344)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3764,7 +3777,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#370)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#363)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4853,7 +4866,7 @@ Tests a recipe CL by running ChromeOS builders.
 &mdash; **def [RunSteps](/recipes/test_recipes.py#312)(api, properties):**
 ### *recipes* / [test\_vm](/recipes/test_vm.py)
 
-[DEPS](/recipes/test_vm.py#38): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_vm.py#36): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for running VM tests.
 
@@ -4869,7 +4882,7 @@ The steps specific to VM testing are:
   3. If the VM tests run within the autotest harness, build autotest.
   4. Call the build API to run VM tests.
 
-&mdash; **def [RunSteps](/recipes/test_vm.py#62)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_vm.py#60)(api, properties):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
 [DEPS](/recipes/uprev_guest_vm_pin.py#23): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

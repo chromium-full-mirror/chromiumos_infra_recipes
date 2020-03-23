@@ -41,11 +41,9 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import BASE
 from PB.chromiumos.common import PrepareForBuildResponse as Relevance
-from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.packages import GetTargetVersionsRequest
-from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sysroot import Profile
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
@@ -119,13 +117,8 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   if relevance == Relevance.POINTLESS:
     return
 
-  with api.step.nest('uprev packages'):
-    request = UprevPackagesRequest(
-        chroot=api.cros_sdk.chroot,
-        build_targets=[BuildTarget(name=build_target.name)],
-        overlay_type=OVERLAYTYPE_BOTH)
-    response = api.cros_build_api.PackageService.Uprev(
-        request, timeout=STEP_TIMEOUTS['uprev'])
+  api.cros_sdk.uprev_packages(
+      build_targets=[BuildTarget(name=build_target.name)])
 
   api.cros_sdk.create_chroot(
       version=config.general.sdk_cache_version, use_image=is_staging,
