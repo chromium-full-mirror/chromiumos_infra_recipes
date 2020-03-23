@@ -274,10 +274,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
             timeout=timeout_sec)
       except self.m.step.StepFailure:
         # If the update fails, also delete the SDK.
-        with self.m.step.nest('UpdateSDK failure'):
-          self.m.cros_build_api.SdkService.Delete(
-              DeleteSdkRequest(chroot=self.m.cros_sdk.chroot))
-          raise
+        self._delete_chroot(name='UpdateSDK failure')
+        raise
       return toolchain_changed
 
   @contextlib.contextmanager

@@ -1207,8 +1207,7 @@
     "cmd": [],
     "name": "update sdk.UpdateSDK failure",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
