@@ -1898,7 +1898,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_packages\": [{\"category\": \"chromeos-base\", \"version\": \"1-r52\", \"package_name\": \"chrome-icu\"}], \"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2002,6 +2002,13 @@
       "@@@STEP_LOG_LINE@published event@            {@@@",
       "@@@STEP_LOG_LINE@published event@              \"path\": \"some/source/dir\"@@@",
       "@@@STEP_LOG_LINE@published event@            }@@@",
+      "@@@STEP_LOG_LINE@published event@          ], @@@",
+      "@@@STEP_LOG_LINE@published event@          \"dependencyPackages\": [@@@",
+      "@@@STEP_LOG_LINE@published event@            {@@@",
+      "@@@STEP_LOG_LINE@published event@              \"category\": \"chromeos-base\", @@@",
+      "@@@STEP_LOG_LINE@published event@              \"packageName\": \"chrome-icu\", @@@",
+      "@@@STEP_LOG_LINE@published event@              \"version\": \"1-r52\"@@@",
+      "@@@STEP_LOG_LINE@published event@            }@@@",
       "@@@STEP_LOG_LINE@published event@          ]@@@",
       "@@@STEP_LOG_LINE@published event@        }@@@",
       "@@@STEP_LOG_LINE@published event@      ]@@@",
@@ -2049,7 +2056,7 @@
     },
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI0IDE/QQQgMq17gEiBgjSgMT9BJIBPQoPCg1hbWQ2NC1nZW5lcmljEioKE1tDQUNIRV0vY3Jv\\nc19jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWyaARcKFRITGhEKD3NvbWUvc291cmNlL2RpctAC\\n0OyA2a7xtZJ82gJuZGVwZW5kZW5jeSBncmFwaCBjYWxjdWxhdGlvbnxjYWxsIGNocm9taXRlLmFw\\naS5EZXBlbmRlbmN5U2VydmljZS9HZXRCdWlsZERlcGVuZGVuY3lHcmFwaHxjYWxsIGJ1aWxkIEFQ\\nSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI0IDE/QQQgMq17gEiBgjSgMT9BJIBPQoPCg1hbWQ2NC1nZW5lcmljEioKE1tDQUNIRV0vY3Jv\\nc19jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWyaATsKORI3EiIKCmNocm9tZS1pY3USDWNocm9t\\nZW9zLWJhc2UaBTEtcjUyGhEKD3NvbWUvc291cmNlL2RpctAC0OyA2a7xtZJ82gJuZGVwZW5kZW5j\\neSBncmFwaCBjYWxjdWxhdGlvbnxjYWxsIGNocm9taXRlLmFwaS5EZXBlbmRlbmN5U2VydmljZS9H\\nZXRCdWlsZERlcGVuZGVuY3lHcmFwaHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

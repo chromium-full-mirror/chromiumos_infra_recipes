@@ -196,7 +196,25 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
           ignore_prebuilts=install_packages.compile_source)
       files_changed = api.chrome.diffed_files_requires_rebuild(
           patch_sets=api.workspace_util.patch_sets)
-      chrome_source_build = toolchain_changed or needs_built or files_changed
+
+      # TODO(crbug.com/1063327): Remove this dep_graph access and corresponding
+      # use, we shouldn't be inspecting this, rather, call the build api.
+      # I don't bother breaking this out into a function lest someone use it.
+      flattened_packages = []
+      for package in dep_graph[0].package_deps:  # dep_graph[0] == target deps.
+        for dep_package in package.dependency_packages:
+          flattened_packages.append(dep_package)
+
+      follower_needs_chrome = api.chrome.follower_needs_chrome(
+          build_target=build_target,
+          chroot=api.cros_sdk.chroot,
+          packages=flattened_packages)
+
+      # Evaluate the |or| of all the reasons we might want local chrome source.
+      chrome_source_build = (toolchain_changed or
+                             needs_built or
+                             files_changed or
+                             follower_needs_chrome)
 
     if chrome_source_build:
       chrome_root = api.path['start_dir'].join('chrome')

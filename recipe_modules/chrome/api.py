@@ -10,6 +10,7 @@ from recipe_engine import recipe_api
 from PB.chromite.api import packages
 from PB.chromite.api.packages import BuildsChromeRequest
 from PB.chromite.api.packages import HasChromePrebuiltRequest
+from PB.chromite.api.packages import HasPrebuiltRequest
 
 CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 
@@ -19,6 +20,13 @@ CHROMIUM_REBUILD_REGEXES = {
     [re.compile('chromeos-base/chromeos-chrome/'
                 'chromeos-chrome-.+?\.ebuild$')],
 }
+
+# The following packages need chrome source to be synced to build.
+CHROME_FOLLOWER_PACKAGES = [
+  ('chromeos-base', 'chrome-icu'),
+  ('chromeos-base', 'ml'),
+  ('dev-libs', 'libtextclassifier'),
+]
 
 class ChromeApi(recipe_api.RecipeApi):
 
@@ -199,3 +207,32 @@ class ChromeApi(recipe_api.RecipeApi):
             build_target=build_target,
             chroot=chroot,
             packages=packages)).builds_chrome
+
+  def follower_needs_chrome(self, build_target, chroot, packages):
+    """Returns whether we need the chrome source to be synced.
+
+    Returns whether or not this run needs chrome source to be synced locally.
+    This is independent of if we need to actually build chrome, as we've
+    allowed 'follower' packages to be built out of chrome's source.
+
+    Args:
+      build_target (chromiumos.BuildTarget): Build target of the build.
+      chroot (chromiumos.Chroot): Information on the chroot for the build.
+      packages (list[chromiumos.PackageInfo]): Packages that the builder needs
+          to build.
+    Returns:
+      bool: Whether or not this run needs chrome.
+    """
+    # We'll first query the packages we're going to build out of the dependent
+    # packages to get the versions and if it's necessary to build at all.
+    packageInfos = [p for p in packages
+                    if (p.category, p.package_name)
+                    in CHROME_FOLLOWER_PACKAGES]
+
+    # If any follower packages are lacking prebuilts, return True.
+    return not all([self.m.cros_build_api.PackageService.HasPrebuilt(
+                    HasPrebuiltRequest(
+                        build_target=build_target,
+                        chroot=chroot,
+                        package_info=p)).has_prebuilt
+                     for p in packageInfos])

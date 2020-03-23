@@ -727,8 +727,8 @@
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"packages\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"category\": \"cat\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"packageName\": \"pack\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"category\": \"chromeos-base\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"packageName\": \"chrome-icu\", @@@",
       "@@@STEP_LOG_LINE@request@      \"version\": \"1.01\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
@@ -746,7 +746,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}, \n  \"packages\": [\n    {\n      \"category\": \"cat\", \n      \"packageName\": \"pack\", \n      \"version\": \"1.01\"\n    }\n  ]\n}",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}, \n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\", \n      \"packageName\": \"chrome-icu\", \n      \"version\": \"1.01\"\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "infra_step": true,
@@ -758,8 +758,8 @@
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"packages\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"category\": \"cat\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"packageName\": \"pack\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"category\": \"chromeos-base\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"packageName\": \"chrome-icu\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"version\": \"1.01\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ]@@@",
@@ -981,6 +981,101 @@
   {
     "cmd": [],
     "name": "call chromite.api.PackageService/BuildsChrome (3).call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/HasPrebuilt",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"packageInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"category\": \"chromeos-base\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"packageName\": \"chrome-icu\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"version\": \"1.01\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"has_prebuilt\": false}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}, \n  \"packageInfo\": {\n    \"category\": \"chromeos-base\", \n    \"packageName\": \"chrome-icu\", \n    \"version\": \"1.01\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/HasPrebuilt.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"packageInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"category\": \"chromeos-base\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"packageName\": \"chrome-icu\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"version\": \"1.01\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "chromite.api.PackageService/HasPrebuilt"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.PackageService/HasPrebuilt.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "call chromite.api.PackageService/HasPrebuilt.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.PackageService/HasPrebuilt.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",

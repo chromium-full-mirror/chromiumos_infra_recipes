@@ -47,6 +47,9 @@ def RunSteps(api):
       },
     'patch_set': '3',}
   ps1 = api.gerrit.PatchSet(ps_info)
+  p_list = [PackageInfo(package_name='chrome-icu',
+                        category='chromeos-base',
+                        version='1.01')]
 
   ps_info2 = deepcopy(ps_info)
   ps_info2['revision_info']['files'] = {'some/path/that/isnt/important': {},}
@@ -58,12 +61,10 @@ def RunSteps(api):
       api.chrome.diffed_files_requires_rebuild(patch_sets=[ps2]))
 
   api.chrome.builds_chrome_from_source(build_target, chroot)
-  api.chrome.builds_chrome_from_source(
-      build_target, chroot,
-      [PackageInfo(package_name='pack', category='cat', version='1.01')])
+  api.chrome.builds_chrome_from_source(build_target, chroot, p_list)
   api.chrome.builds_chrome_from_source(
       build_target, chroot, ignore_prebuilts=True)
-
+  api.chrome.follower_needs_chrome(build_target, chroot, p_list)
 
 def GenTests(api):
   yield (api.test('basic'))

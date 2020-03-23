@@ -77,6 +77,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['GetBuildDependencyGraph'] = jsonify(
         dep_graph={
           'package_deps': [{
+            "dependency_packages": [
+              {
+                "category": "chromeos-base",
+                "package_name": "chrome-icu",
+                "version": "1-r52"
+              }
+            ],
             'dependency_source_paths': [{
               'path': 'some/source/dir',
             }],
@@ -140,6 +147,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['HasChromePrebuilt'] = jsonify(
         has_prebuilt=False,
     )
+
+    responses['HasPrebuilt'] = jsonify(
+        has_prebuilt=False,
+    )
+
     responses['Uprev'] = jsonify(
         version='1.2.3', modified_ebuilds=[
             {
