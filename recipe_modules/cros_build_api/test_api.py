@@ -199,6 +199,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         tarball_path='tarball/path',
         failed_packages=[],
     )
+    responses['ChromitePytest'] = '{}'
     responses['ChromiteUnitTest'] = '{}'
     responses['DebugInfoTest'] = '{}'
     responses['VmTest'] = '{}'

@@ -27,7 +27,7 @@ from google.protobuf import json_format as json_pb
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
-from PB.chromite.api.test import ChromiteUnitTestRequest
+from PB.chromite.api.test import ChromitePytestRequest, ChromiteUnitTestRequest
 from PB.chromiumos.builder_config import BuilderConfig
 
 
@@ -60,6 +60,9 @@ def RunSteps(api):
       api.cros_sdk.update_chroot(
           api.buildbucket.gitiles_commit, gerrit_changes, timeout_sec=None)
 
+      api.cros_build_api.TestService.ChromitePytest(
+          ChromitePytestRequest(chroot=api.cros_sdk.chroot),
+          name='run chromite pytest')
       api.cros_build_api.TestService.ChromiteUnitTest(
           ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot),
           name='run chromite unit tests')
