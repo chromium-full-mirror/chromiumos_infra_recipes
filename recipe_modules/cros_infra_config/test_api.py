@@ -764,7 +764,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     configs = jsonpb.Parse(builder_configs, BuilderConfigs())
 
     # Humans can edit the string above for test data, impl reads binary proto.
-    return self.m.gitiles.make_encoded_file(configs.SerializeToString())
+    return self.m.depot_gitiles.make_encoded_file(configs.SerializeToString())
 
   def bot_policy_test_data(self):
     """A fn that can be passed to step_test_data to generate BotPolicies."""
@@ -814,7 +814,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             }
           """
     configs = jsonpb.Parse(bot_policy_config, BotPolicyCfg())
-    return self.m.gitiles.make_encoded_file(configs.SerializeToString())
+    return self.m.depot_gitiles.make_encoded_file(configs.SerializeToString())
 
   def vm_retry_test_data(self):
     """A fn that can be passed to step_test_data to generate SuiteRetryCfg."""
@@ -837,4 +837,4 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
         }
     """
     configs = jsonpb.Parse(vm_retry_config, SuiteRetryCfg())
-    return self.m.gitiles.make_encoded_file(configs.SerializeToString())
+    return self.m.depot_gitiles.make_encoded_file(configs.SerializeToString())

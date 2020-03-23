@@ -7,14 +7,14 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
-    'config_util',
+    'cros_infra_config',
     'repo',
     'workspace_util',
 ]
 
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.config_util.examples.test import (
+from PB.recipe_modules.chromeos.cros_infra_config.examples.test import (
     TestInputProperties)
 
 PROPERTIES = TestInputProperties
@@ -24,9 +24,11 @@ def RunSteps(api, properties):
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
-  # Configure the builder so that we have self.m.config_util.gitiles_commit
-  # All of our tests will be with builders that have configs.
-  config = api.config_util.configure_builder(commit=commit, changes=changes)
+  # Configure the builder so that we have
+  # self.m.cros_infra_config.gitiles_commit. All of our tests will be with
+  # builders that have configs.
+  config = api.cros_infra_config.configure_builder(commit=commit,
+                                                   changes=changes)
   with api.workspace_util.setup_workspace():
     api.workspace_util.sync_to_commit()
     api.workspace_util.apply_changes()

@@ -31,8 +31,15 @@ STAGING_INIT_OPTS = dict(repo_branch='next')
 class CrosSourceApi(recipe_api.RecipeApi):
   """A module for CrOS-specific source steps."""
 
-  EXTERNAL_MANIFEST_URL = 'https://chromium.googlesource.com/chromiumos/manifest'
-  INTERNAL_MANIFEST_URL = 'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
+  EXTERNAL_HOST = 'chromium.googlesource.com'
+  EXTERNAL_PROJECT = 'chromiumos/manifest'
+  INTERNAL_HOST = 'chrome-internal.googlesource.com'
+  INTERNAL_PROJECT = 'chromeos/manifest-internal'
+
+  EXTERNAL_MANIFEST_URL = 'https://{}/{}'.format(EXTERNAL_HOST,
+                                                 EXTERNAL_PROJECT)
+  INTERNAL_MANIFEST_URL = 'https://{}/{}'.format(INTERNAL_HOST,
+                                                 INTERNAL_PROJECT)
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosSourceApi, self).__init__(*args, **kwargs)

@@ -7,12 +7,12 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
-    'config_util',
+    'cros_infra_config',
 ]
 
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.config_util.examples.test import (
+from PB.recipe_modules.chromeos.cros_infra_config.examples.test import (
     TestInputProperties)
 
 PROPERTIES = TestInputProperties
@@ -23,8 +23,9 @@ def RunSteps(api, properties):
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
-  config = api.config_util.configure_builder(commit=commit, changes=changes)
-  api.assertions.assertEqual(config, api.config_util.config)
+  config = api.cros_infra_config.configure_builder(commit=commit,
+                                                   changes=changes)
+  api.assertions.assertEqual(config, api.cros_infra_config.config)
   builder = config.id.name if config else 'nosuch-cq'
   api.assertions.assertEqual(properties.builder, builder)
   if not config:
@@ -34,12 +35,12 @@ def RunSteps(api, properties):
     commit = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
                                       id='abcd1234', ref='refs/heads/snapshot')
-  api.assertions.assertEqual(commit, api.config_util.gitiles_commit)
+  api.assertions.assertEqual(commit, api.cros_infra_config.gitiles_commit)
   want = [] if not (changes and config.build.apply_gerrit_changes) else changes
-  api.assertions.assertEqual(want, api.config_util.gerrit_changes)
+  api.assertions.assertEqual(want, api.cros_infra_config.gerrit_changes)
 
   # Force a reload of the config.
-  api.assertions.assertEqual(config, api.config_util.fresh_config)
+  api.assertions.assertEqual(config, api.cros_infra_config.fresh_config)
 
 
 def GenTests(api):

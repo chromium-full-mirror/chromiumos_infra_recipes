@@ -44,12 +44,12 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     Args:
       commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
-          saved in config_util.configure_builder().
+          saved in cros_infra_config.configure_builder().
       staging (bool): Whether this is a staging build.  Default: False.
     """
     self.m.cros_source.ensure_synced_cache(is_staging=staging)
     self.m.cros_source.sync_snapshot(commit or
-                                     self.m.config_util.gitiles_commit)
+                                     self.m.cros_infra_config.gitiles_commit)
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',
                     cq_depend_fail_message=False):
@@ -57,14 +57,14 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     Args:
       changes (list[GerritChanges]): Changes to apply.  Default: changelist
-          saved in config_util.configure_builder().
+          saved in cros_infra_config.configure_builder().
       name (string): Step name.  Default: "setup source".
       cq_depend_fail_message (bool): Whether to give Cq-Depend failure
           advisement on failure to apply patch sets. See below for details.
     """
     patch_sets = []
     if not changes:
-      changes = self.m.config_util.gerrit_changes
+      changes = self.m.cros_infra_config.gerrit_changes
     if changes:
       with self.m.step.nest(name):
         patch_sets = self.m.gerrit.fetch_patch_sets(changes, include_files=True)

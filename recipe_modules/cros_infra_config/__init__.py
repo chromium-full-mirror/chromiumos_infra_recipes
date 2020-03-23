@@ -3,15 +3,16 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-DEPS = [
-    'depot_tools/gitiles',
-    'recipe_engine/buildbucket',
-    'recipe_engine/context',
-    'recipe_engine/file',
-    'recipe_engine/path',
-    'recipe_engine/step',
-    'easy',
-]
+DEPS = {
+    'buildbucket': 'recipe_engine/buildbucket',
+    'context': 'recipe_engine/context',
+    'step': 'recipe_engine/step',
+    'depot_gitiles': 'depot_tools/gitiles',
+
+    # Our modules.
+    'easy': 'easy',
+    'gitiles': 'gitiles',
+}
 
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)

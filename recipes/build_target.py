@@ -15,7 +15,6 @@ DEPS = [
     'recipe_engine/step',
     'bot_cost',
     'chrome',
-    'config_util',
     'cros_artifacts',
     'cros_bisect',
     'cros_build_api',
@@ -86,7 +85,7 @@ def RunSteps(api, properties):
   build_target = properties.build_target
   force_relevant_build = properties.force_relevant_build
 
-  config = api.config_util.configure_builder(
+  config = api.cros_infra_config.configure_builder(
       api.buildbucket.gitiles_commit,
       api.buildbucket.build.input.gerrit_changes)
   if not config:
@@ -96,8 +95,8 @@ def RunSteps(api, properties):
   api.cros_bisect.set_bisect_builder(build_target.name)
   api.cros_sdk.set_use_flags(config.build.use_flags)
   with api.workspace_util.setup_workspace():
-    DoRunSteps(api, build_target, config, api.config_util.gitiles_commit,
-               api.config_util.gerrit_changes, force_relevant_build)
+    DoRunSteps(api, build_target, config, api.cros_infra_config.gitiles_commit,
+               api.cros_infra_config.gerrit_changes, force_relevant_build)
 
 
 def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,

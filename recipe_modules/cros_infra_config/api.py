@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
+
 from google.protobuf import json_format
 from recipe_engine import recipe_api
 from util import exponential_retry
@@ -12,9 +14,17 @@ from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.testplans.test_retry import SuiteRetryCfg
 
-REPO_URL = "https://chrome-internal.googlesource.com/chromeos/infra/config"
+REPO_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
+
+
+def ConvertPB(inpb, typ):
+  """Convert |inpb| to |typ|."""
+  outpb = typ()
+  outpb.ParseFromString(inpb.SerializeToString())
+  return outpb
 
 
 class CrosInfraConfigApi(recipe_api.RecipeApi):
@@ -30,6 +40,43 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     # Parse properties.config_ref
     self._config_ref = properties.config_ref or 'master'
+
+    # Gitiles commit and gerrit changes for this builder.
+    self._gitiles_commit = None
+    self._gerrit_changes = []
+
+  @property
+  def gitiles_commit(self):
+    return self._gitiles_commit
+
+  @property
+  def gerrit_changes(self):
+    return self._gerrit_changes
+
+  @property
+  def config(self):
+    """Return the config for this builder.
+
+    This convenience property wraps cros_infra_config.get_builder_config,
+    which caches the data.
+
+    Returns:
+      BuilderConfig for this builder.
+    """
+    return self.get_builder_config(self.m.buildbucket.build.builder.builder,
+                                   missing_ok=True)
+
+  @property
+  def fresh_config(self):
+    """Return a freshly loaded config for this builder.
+
+    Returns:
+      BuilderConfig for this builder, freshly reloaded.
+    """
+    # Have cros_infra_config reload its configs.
+    self.force_reload()
+    # Now we can just return self.config.
+    return self.config
 
   @property
   def props_for_child_build(self):
@@ -53,8 +100,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     # Step nesting needs to happen here or it shows up many times in Milo,
     # once for each builder.
-    return self.m.gitiles.download_file(
-        REPO_URL, "generated/builder_configs.binaryproto",
+    return self.m.depot_gitiles.download_file(
+        REPO_URL, 'generated/builder_configs.binaryproto',
         branch=self._config_ref,
         step_test_data=self.test_api.builder_configs_step_test_data,
         timeout=self.test_api.gitiles_timeout_seconds)
@@ -104,7 +151,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     config = self._get_name_to_builder_config().get(builder_name)
     if not config and not missing_ok:
-      raise LookupError("No BuilderConfig for builder {}".format(builder_name))
+      raise LookupError('No BuilderConfig for builder {}'.format(builder_name))
     return config
 
   def safe_get_builder_configs(self, builder_names):
@@ -145,8 +192,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       BotPolicyCfg as defined in the config repo.
     """
-    bot_policy_file = self.m.gitiles.download_file(
-        REPO_URL, "bot_scaling/generated/bot_policy.binaryproto",
+    bot_policy_file = self.m.depot_gitiles.download_file(
+        REPO_URL, 'bot_scaling/generated/bot_policy.binaryproto',
         step_test_data=self.test_api.bot_policy_test_data,
         timeout=self.test_api.gitiles_timeout_seconds)
     return BotPolicyCfg.FromString(bot_policy_file)
@@ -157,8 +204,103 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       SuiteRetryCfg as defined in the config repo.
     """
-    vm_retry_config_file = self.m.gitiles.download_file(
-        REPO_URL, "testingconfig/generated/vm_retry.binaryproto",
+    vm_retry_config_file = self.m.depot_gitiles.download_file(
+        REPO_URL, 'testingconfig/generated/vm_retry.binaryproto',
         step_test_data=self.test_api.vm_retry_test_data,
         timeout=self.test_api.gitiles_timeout_seconds)
     return SuiteRetryCfg.FromString(vm_retry_config_file)
+
+  def _determine_repo_state(self, config, commit, changes):
+    """Set _gitiles_commit and _gerrit_changes.
+
+    If the commit and/or changes are other than what was given, that is added as
+    an output property in a nested step.
+
+    Args:
+      config (BuilderConfig): The builder config, or None.
+      commit (GitilesCommit): The gitiles commit to use.  Default:
+          common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
+      changes: (GerritChanges): The gerrit changes to apply.  Default: [].
+    """
+    if not commit or not commit.project:
+      # No gitiles_commit: we were (likely) launched directly by either
+      # luci-scheduler (no changes), luci-cq (changes), or a user.
+      if not changes and config:
+        # If there were also no changes, then use the hardcoded default from the
+        # configuration.
+        changes = [
+            ConvertPB(x, common_pb2.GerritChange)
+            for x in config.orchestrator.gerrit_changes
+        ]
+
+      # Use the default gitiles_commit from the config.
+      commit = None if not config else ConvertPB(
+          config.orchestrator.gitiles_commit, common_pb2.GitilesCommit)
+      # Which may not be there.  In that case, use refs/heads/snapshot.
+      if not commit or not commit.project:
+        commit = common_pb2.GitilesCommit(
+            host='chrome-internal.googlesource.com',
+            project='chromeos/manifest-internal', ref='refs/heads/snapshot')
+      # We will need commit.id later.  Add it if necessary.
+      if not commit.id:
+        commit = common_pb2.GitilesCommit(
+            host=commit.host, project=commit.project,
+            ref=commit.ref, id=self.m.gitiles.fetch_revision(
+                commit.host, commit.project, commit.ref))
+
+      # Log what we chose to use (rather than what we were given.)
+      step = self.m.step('repo state', cmd=None)
+      step.presentation.properties['commit'] = json_format.MessageToDict(commit)
+      step.presentation.properties['changes'] = json.dumps(
+          [json_format.MessageToDict(x) for x in changes])
+
+    # When there is a commit, commit and changes are used unchanged.
+
+    # Record the decision for later.
+    self._gitiles_commit = commit
+    self._gerrit_changes = changes or []
+
+  def configure_builder(self, commit=None, changes=None,
+                        name='configure builder'):
+    """Configure the builder.
+
+    Fetch the builder config.
+    Determine the actual commit and changes to use.
+    Set the bisect_builder and use_flags.
+
+    Args:
+      commit (GitilesCommit): The gitiles commit to use.  Default:
+          common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
+      changes: (GerritChanges): The gerrit changes to apply.  Default: [].
+      name (string): Step name.  Default: "configure builder".
+
+    Returns:
+      BuilderConfig
+    """
+    with self.m.step.nest(name) as presentation:
+      config = self.config
+      if not config:
+        presentation.step_text = 'config not found, assuming deleted'
+        return None
+      presentation.logs['builder config'] = [str(config)]
+      self.m.easy.set_property_step('builder_config',
+                                    json_format.MessageToDict(config))
+
+      parent = [
+          x.value
+          for x in self.m.buildbucket.build.tags
+          if x.key == 'parent_buildbucket_id'
+      ]
+      if parent:
+        presentation.links['parent link'] = (
+            self.m.buildbucket.build_url(build_id=parent[0]))
+
+      # TODO(crbug/1053073): once changes is being stripped by callers, we can
+      # drop the check of apply_gerrit_changes.
+      # For now, we need to handle this here.
+      if not config.build.apply_gerrit_changes:
+        changes = []
+
+      self._determine_repo_state(config, commit, changes)
+
+    return config
