@@ -15,12 +15,16 @@ def RunSteps(api):
   snapshot = bbcommon_pb2.GitilesCommit(id='deadbeef')
   expected_tags = [
       {
+          'key': 'parent_buildbucket_id',
           'value': str(api.buildbucket.build.id),
-          'key': 'parent_buildbucket_id'
       },
       {
+          'key': 'snapshot',
           'value': snapshot.id,
-          'key': 'snapshot'
+      },
+      {
+          'key': 'commit_position',
+          'value': str(snapshot.position),
       },
   ]
 
@@ -40,6 +44,9 @@ def RunSteps(api):
       api.cros_tags.has_entry('snapshot', snapshot.id + 'x', tags))
   api.assertions.assertFalse(
       api.cros_tags.has_entry('snapshotx', snapshot.id, tags))
+
+  api.assertions.assertTrue(
+      api.cros_tags.has_entry('commit_position', str(snapshot.position), tags))
 
 def GenTests(api):
   yield (api.test('basic') + #

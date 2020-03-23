@@ -1666,7 +1666,7 @@ API for generating tags.
 
 A module for generating tags.
 
-&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#34)(self, key, value, tags):**
+&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#35)(self, key, value, tags):**
 
 Returns whether tags contains a tag with key and value.
 

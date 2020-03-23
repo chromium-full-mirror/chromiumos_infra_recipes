@@ -23,6 +23,7 @@ class CrosTagsApi(recipe_api.RecipeApi):
     tags.append(self._key_value('parent_buildbucket_id',
                                 str(self.m.buildbucket.build.id)))
     tags.append(self._key_value('snapshot', snapshot.id))
+    tags.append(self._key_value('commit_position', str(snapshot.position)))
     return tags;
 
   def _key_value(self, key, value):
