@@ -168,13 +168,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       empty_result(bool): Were the results empty?
     """
     with self.m.step.nest('print results') as presentation:
-      if empty_result:
-        presentation.status = self.m.step.EXCEPTION
-        presentation.step_text = 'empty result'
-        # Ensure the recipe fails as well.
-        raise self.m.step.InfraFailure(
-            'No results dumped; Likely a tast crash')
-      elif not failures:
+      if not failures:
         presentation.step_text = 'all tests passed!'
       else:
         presentation.status = self.m.step.FAILURE
@@ -184,6 +178,12 @@ class TastResultsApi(recipe_api.RecipeApi):
             for text, log in failure.link_map.items():
               presentation.links['logs'] = log
               presentation.step_text = text
+
+      if empty_result:
+        presentation.status = self.m.step.EXCEPTION
+        presentation.step_text = 'empty result'
+        # Ensure the recipe fails as well.
+        raise self.m.step.InfraFailure('No results dumped; Likely a tast crash')
 
   def record_logs(self, sys_log_dir):
     """Print system logs to MILO.
