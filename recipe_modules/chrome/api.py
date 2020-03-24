@@ -110,24 +110,35 @@ class ChromeApi(recipe_api.RecipeApi):
         if version:
           sync_cmd.extend(['--revision', 'src@%s' % version])
 
-        with self.m.depot_tools.on_path():
-          # Writes out the .gclient file.
-          self.m.python('gclient config',
-                        self.m.depot_tools.root.join('gclient.py'),
-                        config_cmd,
-                        infra_step=True)
+        for retries in range(self.test_api.gclient_sync_max_retries):
+          try:
+            with self.m.depot_tools.on_path():
+              # Writes out the .gclient file.
+              self.m.python('gclient config',
+                            self.m.depot_tools.root.join('gclient.py'),
+                            config_cmd, infra_step=True)
 
-          # Reads what we just wrote for user consumption.
-          gclient_text = (
-              self.m.file.read_text('gclient contents',
-                                    chrome_root.join('.gclient'),
-                                    test_data='solutions = [ {"name":"src"}]'))
-          pres.logs['gclient configuration'] = gclient_text.splitlines()
+              # Reads what we just wrote for user consumption.
+              gclient_text = (
+                  self.m.file.read_text(
+                      'gclient contents', chrome_root.join('.gclient'),
+                      test_data='solutions = [ {"name":"src"}]'))
+              pres.logs['gclient configuration'] = gclient_text.splitlines()
 
-          # Finally, start the sync.
-          self.m.python('gclient sync',
-                        self.m.depot_tools.root.join('gclient.py'), sync_cmd,
-                        infra_step=True, timeout=60 * 60)
+              # Finally, start the sync.
+              self.m.python('gclient sync',
+                            self.m.depot_tools.root.join('gclient.py'),
+                            sync_cmd, infra_step=True,
+                            timeout=self.test_api.gclient_sync_timeout_seconds)
+              break
+          except recipe_api.StepFailure as ex:
+            if (ex.had_timeout and
+                retries < self.test_api.gclient_sync_max_retries - 1):
+              self.m.file.rmcontents('clean up root path and retry',
+                                     chrome_root)
+              self.m.time.sleep(self.test_api.gclient_sync_sleep_seconds)
+            else:
+              raise
 
   def diffed_files_requires_rebuild(self, patch_sets=None):
     """Returns a bool if patch_sets includes files that require rebuilding.

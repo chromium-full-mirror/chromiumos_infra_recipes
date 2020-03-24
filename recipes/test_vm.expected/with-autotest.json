@@ -2204,7 +2204,7 @@
     },
     "infra_step": true,
     "name": "build autotest packages.sync chrome.gclient sync",
-    "timeout": 3600,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
