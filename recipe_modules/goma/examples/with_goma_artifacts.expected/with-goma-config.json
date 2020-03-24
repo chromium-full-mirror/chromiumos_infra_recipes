@@ -300,19 +300,6 @@
     ]
   },
   {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/bq-insert"
-    ],
-    "infra_step": true,
-    "name": "process_goma_counterz_stats (2).bq-insert",
-    "stdin": "{\"compile_event\": \"{\\n  \\\"stats\\\": {\\n    \\\"timeStats\\\": {\\n      \\\"uptime\\\": \\\"1234\\\"\\n    }\\n  }, \\n  \\\"counterzStats\\\": {}\\n}\", \"dataset_id\": \"client_events\", \"project_id\": \"goma-logs\", \"table_name\": \"compile_events\", \"write_data\": true}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "process_goma_logs (2)",
     "~followup_annotations": [

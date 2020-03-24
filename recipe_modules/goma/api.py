@@ -157,9 +157,6 @@ class GomaApi(recipe_api.RecipeApi):
               test_data=test_counterz_proto.SerializeToString())
           compile_event.counterz_stats.ParseFromString(counterz_bin)
         if stats_filename or counterz_filename:
-          # TODO(crbug.com/1041899): Change from presentation logs to actual
-          # BigQuery upload. Note that BigQuery insert_rows will have a
-          # try/except block and return any error messages as a string.
           presentation.logs['compile_event'] = [str(compile_event)]
           # Call bq-insert support tool.
           input = {
@@ -171,8 +168,13 @@ class GomaApi(recipe_api.RecipeApi):
           }
           test_output_data = {}
           presentation.logs['support_input'] = [str(input)]
-          result = self.m.support.call('bq-insert', input,
-                                       test_output_data=test_output_data)
+          # TODO(crbug.com/1041899): Replace this disable-in-staging with a
+          # BigQuery upload that staging has permission so that staging tests
+          # the same flow and so that we have a non-prod BigQuery table to do
+          # use for pre-prod integration tests.
+          if not is_staging:
+            result = self.m.support.call('bq-insert', input,
+                                         test_output_data=test_output_data)
 
     return None
 
