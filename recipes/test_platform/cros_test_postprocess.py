@@ -4,9 +4,8 @@
 # found in the LICENSE file.
 
 import datetime
-import os
 
-from util import exponential_retry
+from recipe_engine.util import exponential_retry
 
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import CrosTestPostprocessRequest, TestResult
 from PB.test_platform.common.task import TaskLogData
@@ -64,7 +63,7 @@ def _wait(api, gs_path):
 @exponential_retry(retries=4, delay=datetime.timedelta(minutes=2))
 def _wait_for_marker_file(api, gs_path):
   """Poll gs until the offload-finished marker appears for it."""
-  completed_marker = os.path.join(gs_path, '.finished_offload')
+  completed_marker = api.path.join(gs_path, '.finished_offload')
   api.gsutil.cat(completed_marker)
 
 

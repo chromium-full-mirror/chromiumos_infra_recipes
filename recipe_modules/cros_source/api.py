@@ -11,7 +11,7 @@ import json
 from collections import namedtuple
 
 from recipe_engine import recipe_api
-from util import exponential_retry
+from recipe_engine.util import exponential_retry
 
 ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id'])
 

@@ -7,7 +7,7 @@ import json
 
 from google.protobuf import json_format
 from recipe_engine import recipe_api
-from util import exponential_retry
+from recipe_engine.util import exponential_retry
 
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)

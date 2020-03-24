@@ -8,7 +8,7 @@
 import datetime
 
 from recipe_engine import recipe_api
-from util import exponential_retry
+from recipe_engine.util import exponential_retry
 
 
 class CloudPubsubApi(recipe_api.RecipeApi):

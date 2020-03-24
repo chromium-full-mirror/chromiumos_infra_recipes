@@ -6,7 +6,7 @@
 
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
-from util import exponential_retry
+from recipe_engine.util import exponential_retry
 
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState

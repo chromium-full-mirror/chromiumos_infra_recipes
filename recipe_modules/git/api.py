@@ -11,7 +11,7 @@ import types
 from collections import namedtuple
 
 from recipe_engine import recipe_api
-from util import exponential_retry
+from recipe_engine.util import exponential_retry
 
 
 class GitApi(recipe_api.RecipeApi):

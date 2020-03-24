@@ -14,7 +14,7 @@ from google.protobuf import json_format as jsonpb
 from PB.recipes.chromeos.tast_vm import TastVmProperties
 from PB.test_platform.taskstate import TaskState
 
-from util import exponential_retry
+from recipe_engine.util import exponential_retry
 
 DEPS = [
     'depot_tools/gsutil',

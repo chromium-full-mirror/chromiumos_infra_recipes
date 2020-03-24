@@ -10,7 +10,7 @@ import json
 import os
 
 from recipe_engine import recipe_api
-from util import exponential_retry
+from recipe_engine.util import exponential_retry
 
 # Number of seconds to wait on gsutil rsync.
 gsutil_timeout_seconds = 30 * 60
