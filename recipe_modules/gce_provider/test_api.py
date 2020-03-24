@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_test_api
+from google.protobuf import json_format
 
 
 class GceProviderTestApi(recipe_test_api.RecipeTestApi):
@@ -60,3 +61,14 @@ class GceProviderTestApi(recipe_test_api.RecipeTestApi):
         "revision": "4414d646bb94ed7b9129aa980bdf0794cc5ebc59",
         "swarming": "https://chromeos-swarming.appspot.com"
     }
+
+  def get_update_config_data(self, update_config):
+    """Returns a dict of provided config.
+
+    Args:
+      update_config (Config): GCE Provider Config object
+
+    Returns:
+      config(dict): Dictionary of GCE Provider config
+    """
+    return json_format.MessageToDict(update_config)

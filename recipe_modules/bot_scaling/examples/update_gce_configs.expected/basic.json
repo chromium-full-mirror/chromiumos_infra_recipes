@@ -1,0 +1,109 @@
+[
+  {
+    "cmd": [],
+    "name": "find matching builds"
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"robocrop_action\": {\"scalingActions\": [{\"botType\": {\"coresPerBot\": 32, \"botSize\": \"large\"}, \"regionalActions\": [{\"prefix\": \"prefix-first\", \"region\": \"us-central1-b\", \"botsRequested\": 367}, {\"prefix\": \"prefix-second\", \"region\": \"us-central2-d\", \"botsRequested\": 464}, {\"region\": \"prefix-third\", \"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"botsRequested\": 367}, {\"prefix\": \"prefix-fourth\", \"region\": \"us-west1-b\", \"botsRequested\": 300}], \"botGroup\": \"cq\", \"botsRequested\": 1500}]}}}, \"builder\": {\"builder\": \"RoboCrop\"}, \"id\": \"123\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@RoboCrop@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "prpc",
+      "call",
+      "-format=json",
+      "gce-provider.appspot.com",
+      "config.Configuration.Update"
+    ],
+    "infra_step": true,
+    "name": "gce-provider.config.Update",
+    "stdin": "{\"config\": {\"currentAmount\": 25, \"prefix\": \"prefix-first\"}, \"id\": \"prefix-first\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 25, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-first\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "prpc",
+      "call",
+      "-format=json",
+      "gce-provider.appspot.com",
+      "config.Configuration.Update"
+    ],
+    "infra_step": true,
+    "name": "gce-provider.config.Update (2)",
+    "stdin": "{\"config\": {\"currentAmount\": 25, \"prefix\": \"prefix-second\"}, \"id\": \"prefix-second\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 25, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-second\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "prpc",
+      "call",
+      "-format=json",
+      "gce-provider.appspot.com",
+      "config.Configuration.Update"
+    ],
+    "infra_step": true,
+    "name": "gce-provider.config.Update (3)",
+    "stdin": "{\"config\": {\"currentAmount\": 20, \"prefix\": \"prefix-third\"}, \"id\": \"prefix-third\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 20, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-third\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "prpc",
+      "call",
+      "-format=json",
+      "gce-provider.appspot.com",
+      "config.Configuration.Update"
+    ],
+    "infra_step": true,
+    "name": "gce-provider.config.Update (4)",
+    "stdin": "{\"config\": {\"currentAmount\": 30, \"prefix\": \"prefix-fourth\"}, \"id\": \"prefix-fourth\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 30, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-fourth\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

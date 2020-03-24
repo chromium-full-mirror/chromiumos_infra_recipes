@@ -5,6 +5,7 @@
 
 from recipe_engine import recipe_test_api
 
+from PB.chromiumos.bot_scaling import BotPolicy, BotType, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
@@ -38,33 +39,87 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
                 1500,
             "botGroup":
                 "cq",
-            "regionalActions": [
-                {
-                    "prefix": "chromeos-ci-cq-us-central1-b-x32",
-                    "region": "us-central1-b",
-                    "botsRequested": 367
-                },
-                {
-                    "prefix": "chromeos-ci-cq-us-central2-d-x32",
-                    "region": "us-central2-d",
-                    "botsRequested": 464
-                },
-                {
-                    "region": "us-east1-d",
-                    "prefix": "chromeos-ci-cq-us-east1-d-x32",
-                    "botsRequested": 367
-                },
-                {
-                    "prefix": "chromeos-ci-cq-us-west1-b-x32",
-                    "region": "us-west1-b",
-                    "botsRequested": 300
-                }
-            ]
+            "regionalActions": [{
+                "prefix": "prefix-first",
+                "region": "us-central1-b",
+                "botsRequested": 367
+            },
+                                {
+                                    "prefix": "prefix-second",
+                                    "region": "us-central2-d",
+                                    "botsRequested": 464
+                                },
+                                {
+                                    "region": "prefix-third",
+                                    "prefix": "chromeos-ci-cq-us-east1-d-x32",
+                                    "botsRequested": 367
+                                },
+                                {
+                                    "prefix": "prefix-fourth",
+                                    "region": "us-west1-b",
+                                    "botsRequested": 300
+                                }]
         }]
     }
 
-  def gce_provider_stats(self):
+  def gce_provider_config_ceiling(self):
     return Configs(vms=[
         Config(prefix='prefix-first', current_amount=35),
-        Config(prefix='prefix-second', current_amount=35)
+        Config(prefix='prefix-second', current_amount=32),
+        Config(prefix='prefix-third', current_amount=31),
+        Config(prefix='prefix-fourth', current_amount=36),
     ])
+
+  def gce_provider_config_below(self):
+    return Configs(vms=[
+        Config(prefix='prefix-first', current_amount=25),
+        Config(prefix='prefix-second', current_amount=25),
+        Config(prefix='prefix-third', current_amount=20),
+        Config(prefix='prefix-fourth', current_amount=25),
+    ])
+
+  def get_bot_type(self):
+    return BotType(
+        bot_size="small",
+        cores_per_bot=4,
+    )
+
+  def robocrop_bot_policy_config(self):
+    scaling_restriction = BotPolicy.ScalingRestriction(
+        bot_ceiling=100,
+        bot_floor=20,
+        min_idle=0,
+        step_size=10,
+        bot_fallback=45,
+    )
+    bot_type = self.get_bot_type()
+
+    region_restrictions = [
+        BotPolicy.RegionRestriction(
+            region='first',
+            prefix='prefix-first',
+            weight=0.25,
+        ),
+        BotPolicy.RegionRestriction(
+            region='second',
+            prefix='prefix-second',
+            weight=0.25,
+        ),
+        BotPolicy.RegionRestriction(
+            region='third',
+            prefix='prefix-third',
+            weight=0.2,
+        ),
+        BotPolicy.RegionRestriction(
+            region='fourth',
+            prefix='prefix-fourth',
+            weight=0.3,
+        ),
+    ]
+    return BotPolicy(
+        bot_group='cq',
+        bot_type=bot_type,
+        scaling_restriction=scaling_restriction,
+        region_restrictions=region_restrictions,
+        policy_mode=BotPolicy.CONFIGURED,
+    )

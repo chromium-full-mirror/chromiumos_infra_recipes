@@ -24,6 +24,28 @@ class GceProvider(recipe_api.RecipeApi):
 
   """
 
+  def update_gce_config(self, id, config):
+    """Function to update the config in GCE Provider.
+
+    Args:
+      id (str):  bot group prefix to update.
+      config(Config): GCE Provider config object
+
+    Returns:
+      Config, GCE Provider Config defintion with updated values.
+    """
+    req = {
+        'id': id,
+        'config': json_format.MessageToDict(config),
+        'updateMask': {
+            'paths': ['config.current_amount'],
+        },
+    }
+    step = self._run(
+        'Update', req,
+        test_stdout=lambda: self.test_api.get_update_config_data(config))
+    return json_format.ParseDict(step, Config(), ignore_unknown_fields=True)
+
   def get_current_config(self, ids):
     """Function to retrieve the current config from GCE Provider.
 

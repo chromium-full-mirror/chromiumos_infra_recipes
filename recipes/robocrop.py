@@ -41,13 +41,18 @@ def RunSteps(api, properties):
       swarming_counts = api.bot_scaling.get_swarming_stats(bot_policy_config)
       api.easy.set_property_step('swarming_stats', swarming_counts)
     with api.step.nest('get current GCE config') as step:
-      gce_stats = api.bot_scaling.get_current_gce_config(bot_policy_config)
-      api.easy.set_property_step('gce_config', jsonpb.MessageToDict(gce_stats))
+      gce_config = api.bot_scaling.get_current_gce_config(bot_policy_config)
+      api.easy.set_property_step('gce_config', jsonpb.MessageToDict(gce_config))
     with api.step.nest('compute scaling actions'):
       robocrop_action = api.bot_scaling.get_robocrop_action(
-          status_map, bot_policy_config, gce_stats)
+          status_map, bot_policy_config, gce_config)
       api.easy.set_property_step('robocrop_action',
                                  jsonpb.MessageToDict(robocrop_action))
+    with api.step.nest('update GCE Provider configs'):
+      gce_updated_configs = api.bot_scaling.update_gce_configs(
+          robocrop_action, gce_config)
+      api.easy.set_property_step('final_gce_config',
+                                 jsonpb.MessageToDict(gce_updated_configs))
 
 
 def GenTests(api):

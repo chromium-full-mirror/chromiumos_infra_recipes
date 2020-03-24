@@ -6,8 +6,9 @@
 
 from PB.chromiumos.bot_scaling import BotPolicy, RoboCropAction, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.gce.api.config.v1.config import Config
+from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
+from google.protobuf import field_mask_pb2
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
@@ -57,7 +58,8 @@ class BotScalingApi(recipe_api.RecipeApi):
     actionable = ScalingAction.NO
 
     # Check to determine whether bots should be scaled up or down.
-    if (bots_configured + bot_policy.scaling_restriction.step_size <=
+    if (bots_configured > bot_policy.scaling_restriction.bot_ceiling or
+        bots_configured + bot_policy.scaling_restriction.step_size <=
         bots_requested or
         bots_configured - bot_policy.scaling_restriction.step_size >=
         bots_requested):
@@ -191,6 +193,29 @@ class BotScalingApi(recipe_api.RecipeApi):
       config = config_map.get(restriction.prefix, Config())
       policy_count += config.current_amount
     return policy_count
+
+  def update_gce_configs(self, robocrop_actions, configs):
+    """Updates each GCE Provider config that is actionable.
+
+    Args:
+      robocrop_actions(list[ScalingAction]): Repeatable ScalingAction
+        configs to update.
+      configs(Configs): List of GCE Config objects.
+
+    Returns:
+      list(Config), GCE Provider config definitions.
+    """
+    gce_configs = []
+    gce_map = self._get_prefix_to_gce_config(configs)
+    for scaling_action in robocrop_actions.scaling_actions:
+      if scaling_action.actionable == ScalingAction.YES:
+        for action in scaling_action.regional_actions:
+          config = gce_map.get(action.prefix, None)
+          if config is not None:
+            config.current_amount = action.bots_requested
+            gce_configs.append(
+                self.m.gce_provider.update_gce_config(action.prefix, config))
+    return Configs(vms=gce_configs)
 
   def _get_prefix_to_gce_config(self, configs):
     """Helper method that returns the prefix to Config map.

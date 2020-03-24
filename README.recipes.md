@@ -72,6 +72,7 @@
   * [bot_scaling:examples/get_robocrop_action](#recipes-bot_scaling_examples_get_robocrop_action)
   * [bot_scaling:examples/get_scaling_action](#recipes-bot_scaling_examples_get_scaling_action)
   * [bot_scaling:examples/get_swarming_stats](#recipes-bot_scaling_examples_get_swarming_stats)
+  * [bot_scaling:examples/update_gce_configs](#recipes-bot_scaling_examples_update_gce_configs)
   * [branch_create](#recipes-branch_create) &mdash; Creates a branch using `cros branch create`.
   * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
@@ -342,11 +343,11 @@ Returns:
 
 [DEPS](/recipe_modules/bot_scaling/__init__.py#6): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_history](#recipe_modules-cros_history), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that determines how to scale bot groups.
 
-&mdash; **def [calculate\_gce\_totals](/recipe_modules/bot_scaling/api.py#178)(self, region_restrictions, config_map):**
+&mdash; **def [calculate\_gce\_totals](/recipe_modules/bot_scaling/api.py#180)(self, region_restrictions, config_map):**
 
 Sums the total number of configured bots per bot policy.
 
@@ -358,7 +359,7 @@ Args:
 Returns:
   int, sum of the total number of bots in GCE Provider
 
-&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#82)(self, demand, scaling_restriction):**
+&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#84)(self, demand, scaling_restriction):**
 
 Core function that scales bots based on demand.
 
@@ -370,7 +371,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#162)(self, bot_policy_config):**
+&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#164)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
 
@@ -381,14 +382,14 @@ Args:
 Returns:
   list(Config), GCE Provider config definitions.
 
-&mdash; **def [get\_previous\_action](/recipe_modules/bot_scaling/api.py#144)(self):**
+&mdash; **def [get\_previous\_action](/recipe_modules/bot_scaling/api.py#146)(self):**
 
 Determines regional distribution of bot requests.
 
 Returns:
   dict, mapping of bot group to a ScalingAction.
 
-&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#100)(self, bots_requested, region_restrictions):**
+&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#102)(self, bots_requested, region_restrictions):**
 
 Determines regional distribution of bot requests.
 
@@ -400,7 +401,7 @@ Args:
 Returns:
   list[RegionalAction], region wise distribution of bots requested.
 
-&mdash; **def [get\_robocrop\_action](/recipe_modules/bot_scaling/api.py#20)(self, status_map, bot_policy_config, configs):**
+&mdash; **def [get\_robocrop\_action](/recipe_modules/bot_scaling/api.py#21)(self, status_map, bot_policy_config, configs):**
 
 Function to compute all the actions of this RoboCrop.
 
@@ -414,7 +415,7 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#42)(self, demand, bot_policy, configs):**
+&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#43)(self, demand, bot_policy, configs):**
 
 The function that creates a ScalingAction for a bot group.
 
@@ -426,7 +427,7 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#124)(self, bot_policy_config):**
+&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#126)(self, bot_policy_config):**
 
 Determines the current Swarming stats per bot group.
 
@@ -436,6 +437,18 @@ Args:
 
 Returns:
   dict, mapping of bot group, by bot state, to the number of bots.
+
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#197)(self, robocrop_actions, configs):**
+
+Updates each GCE Provider config that is actionable.
+
+Args:
+  robocrop_actions(list[ScalingAction]): Repeatable ScalingAction
+    configs to update.
+  configs(Configs): List of GCE Config objects.
+
+Returns:
+  list(Config), GCE Provider config definitions.
 ### *recipe_modules* / [breakpad](/recipe_modules/breakpad)
 
 [DEPS](/recipe_modules/breakpad/__init__.py#5): [easy](#recipe_modules-easy), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -2134,7 +2147,7 @@ A module that interacts with the GCE Provider config service.
 Depends on 'prpc' binary available in $PATH:
 https://godoc.org/go.chromium.org/luci/grpc/cmd/prpc
 
-&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#27)(self, ids):**
+&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#49)(self, ids):**
 
 Function to retrieve the current config from GCE Provider.
 
@@ -2143,6 +2156,17 @@ Args:
 
 Returns:
   Configs, list of GCE Provide Config objects.
+
+&mdash; **def [update\_gce\_config](/recipe_modules/gce_provider/api.py#27)(self, id, config):**
+
+Function to update the config in GCE Provider.
+
+Args:
+  id (str):  bot group prefix to update.
+  config(Config): GCE Provider config object
+
+Returns:
+  Config, GCE Provider Config defintion with updated values.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3658,6 +3682,11 @@ Returns:
 [DEPS](/recipe_modules/bot_scaling/examples/get_swarming_stats.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_swarming_stats.py#14)(api):**
+### *recipes* / [bot\_scaling:examples/update\_gce\_configs](/recipe_modules/bot_scaling/examples/update_gce_configs.py)
+
+[DEPS](/recipe_modules/bot_scaling/examples/update_gce_configs.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/update_gce_configs.py#18)(api):**
 ### *recipes* / [branch\_create](/recipes/branch_create.py)
 
 [DEPS](/recipes/branch_create.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
@@ -4122,7 +4151,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/gce_provider/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gce_provider/examples/full.py#14)(api):**
 ### *recipes* / [generator](/recipes/generator.py)
 
 [DEPS](/recipes/generator.py#41): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]

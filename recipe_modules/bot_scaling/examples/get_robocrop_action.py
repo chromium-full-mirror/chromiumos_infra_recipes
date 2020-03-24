@@ -18,7 +18,7 @@ def RunSteps(api):
 
   robocrop_action = api.bot_scaling.get_robocrop_action(
       status_map, bot_policy_config,
-      api.bot_scaling.test_api.gce_provider_stats())
+      api.bot_scaling.test_api.gce_provider_config_below())
   api.assertions.assertEqual(len(robocrop_action.scaling_actions), 1)
 
 

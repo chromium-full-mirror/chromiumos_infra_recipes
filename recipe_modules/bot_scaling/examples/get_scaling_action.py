@@ -9,89 +9,32 @@ DEPS = [
     'bot_scaling',
 ]
 
-from PB.chromiumos.bot_scaling import BotPolicy, BotType, ScalingAction
+from PB.chromiumos.bot_scaling import BotPolicy, ScalingAction
 
 
 def RunSteps(api):
-  scaling_restriction = BotPolicy.ScalingRestriction(
-      bot_ceiling=100,
-      bot_floor=20,
-      min_idle=0,
-      step_size=10,
-      bot_fallback=45,
-  )
-  bot_type = BotType(
-      bot_size="small",
-      cores_per_bot=4,
-  )
-  region_restrictions = [
-      BotPolicy.RegionRestriction(
-          region='first',
-          prefix='prefix-first',
-          weight=0.5,
-      ),
-      BotPolicy.RegionRestriction(
-          region='second',
-          prefix='prefix-second',
-          weight=0.5,
-      ),
-  ]
-  bot_policy = BotPolicy(
-      bot_group='cq',
-      bot_type=bot_type,
-      scaling_restriction=scaling_restriction,
-      region_restrictions=region_restrictions,
-      policy_mode=BotPolicy.CONFIGURED,
-  )
-  previous_action = {
-      'cq': {
-          "botType": {
-              "botSize": "small",
-              "coresPerBot": 4
-          },
-          "botsRequested":
-              50,
-          "regionalActions": [
-              {
-                  "botsRequested": 25,
-                  "prefix": "prefix-first",
-                  "region": "first"
-              },
-              {
-                  "botsRequested": 25,
-                  "prefix": "prefix-second",
-                  "region": "second"
-              },
-          ]
-      }
-  }
-
-  test_config = api.bot_scaling.test_api.gce_provider_stats()
-
+  bot_policy = api.bot_scaling.test_api.robocrop_bot_policy_config()
+  test_config = api.bot_scaling.test_api.gce_provider_config_ceiling()
   scaling_action = api.bot_scaling.get_scaling_action(90, bot_policy,
                                                       test_config)
 
   api.assertions.assertEqual(scaling_action.bots_requested, 90)
-  api.assertions.assertEqual(scaling_action.bot_type, bot_type)
+  api.assertions.assertEqual(scaling_action.bot_type,
+                             api.bot_scaling.test_api.get_bot_type())
   api.assertions.assertEqual(scaling_action.bot_group, 'cq')
-  api.assertions.assertEqual(len(scaling_action.regional_actions), 2)
+  api.assertions.assertEqual(len(scaling_action.regional_actions), 4)
   api.assertions.assertEqual(scaling_action.regional_actions[0].region, 'first')
   api.assertions.assertEqual(scaling_action.regional_actions[0].prefix,
                              'prefix-first')
   api.assertions.assertEqual(scaling_action.regional_actions[0].bots_requested,
-                             45)
+                             22)
   api.assertions.assertEqual(scaling_action.regional_actions[1].region,
                              'second')
   api.assertions.assertEqual(scaling_action.regional_actions[1].prefix,
                              'prefix-second')
   api.assertions.assertEqual(scaling_action.regional_actions[1].bots_requested,
-                             45)
+                             22)
   api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
-
-  # Request + step size is not less than configured.
-  scaling_action = api.bot_scaling.get_scaling_action(70, bot_policy,
-                                                      test_config)
-  api.assertions.assertEqual(scaling_action.actionable, ScalingAction.NO)
 
   # Request - step size is less than configured, scaling down.
   scaling_action = api.bot_scaling.get_scaling_action(40, bot_policy,
@@ -102,6 +45,12 @@ def RunSteps(api):
   # Monitored bot group
   bot_policy.policy_mode = BotPolicy.MONITORED
   scaling_action = api.bot_scaling.get_scaling_action(90, bot_policy,
+                                                      test_config)
+  api.assertions.assertEqual(scaling_action.actionable, ScalingAction.NO)
+
+  # Request + step size is not less than configured.
+  test_config = api.bot_scaling.test_api.gce_provider_config_below()
+  scaling_action = api.bot_scaling.get_scaling_action(70, bot_policy,
                                                       test_config)
   api.assertions.assertEqual(scaling_action.actionable, ScalingAction.NO)
 
