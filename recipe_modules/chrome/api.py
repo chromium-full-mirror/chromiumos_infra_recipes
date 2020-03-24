@@ -236,14 +236,17 @@ class ChromeApi(recipe_api.RecipeApi):
     """
     # We'll first query the packages we're going to build out of the dependent
     # packages to get the versions and if it's necessary to build at all.
-    packageInfos = [p for p in packages
-                    if (p.category, p.package_name)
-                    in CHROME_FOLLOWER_PACKAGES]
+    with self.m.step.nest('any followers lack prebuilts') as pres:
+      packageInfos = [p for p in packages
+                      if (p.category, p.package_name)
+                      in CHROME_FOLLOWER_PACKAGES]
 
-    # If any follower packages are lacking prebuilts, return True.
-    return not all([self.m.cros_build_api.PackageService.HasPrebuilt(
-                    HasPrebuiltRequest(
-                        build_target=build_target,
-                        chroot=chroot,
-                        package_info=p)).has_prebuilt
-                     for p in packageInfos])
+      # If any follower packages lack prebuilts, return True.
+      any_lack_pb = any([not self.m.cros_build_api.PackageService.HasPrebuilt(
+                             HasPrebuiltRequest(
+                                 build_target=build_target,
+                                 chroot=chroot,
+                                 package_info=p)).has_prebuilt
+                             for p in packageInfos])
+      pres.step_text = str(any_lack_pb)
+      return any_lack_pb

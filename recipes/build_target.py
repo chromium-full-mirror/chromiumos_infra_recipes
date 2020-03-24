@@ -176,48 +176,50 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
   install_packages = config.build.install_packages
-  chrome_source_build = False
+  chrome_source_needed = False
   if api.cros_infra_config.should_run(install_packages.run_spec):
-    needs_chrome = api.chrome.needs_chrome(build_target=build_target,
-                                           chroot=api.cros_sdk.chroot,
-                                           packages=packages)
-    if needs_chrome:
-      # Only bother to do these checks if the build target needs chrome at all.
-      needs_built = not api.chrome.has_chrome_prebuilt(
-          build_target=build_target, chroot=api.cros_sdk.chroot,
-          ignore_prebuilts=install_packages.compile_source)
-      files_changed = api.chrome.diffed_files_requires_rebuild(
-          patch_sets=api.workspace_util.patch_sets)
+    with api.step.nest('check chrome source needed') as cs_pres:
+      needs_chrome = api.chrome.needs_chrome(build_target=build_target,
+                                            chroot=api.cros_sdk.chroot,
+                                            packages=packages)
+      if needs_chrome:
+        # Only bother to do these checks if the build target needs chrome src.
+        needs_built = not api.chrome.has_chrome_prebuilt(
+            build_target=build_target, chroot=api.cros_sdk.chroot,
+            ignore_prebuilts=install_packages.compile_source)
+        files_changed = api.chrome.diffed_files_requires_rebuild(
+            patch_sets=api.workspace_util.patch_sets)
 
-      # TODO(crbug.com/1063327): Remove this dep_graph access and corresponding
-      # use, we shouldn't be inspecting this, rather, call the build api.
-      # I don't bother breaking this out into a function lest someone use it.
-      flattened_packages = []
-      for package in dep_graph[0].package_deps:  # dep_graph[0] == target deps.
-        for dep_package in package.dependency_packages:
-          flattened_packages.append(dep_package)
+        # TODO(crbug.com/1063327): Remove dep_graph access and corresponding
+        # use, we shouldn't be inspecting this, rather, call the build api.
+        # I don't bother breaking this out into a function lest someone use it.
+        flattened_packages = []
+        for package in dep_graph[0].package_deps:  # dep_graph[0]==target deps.
+          for dep_package in package.dependency_packages:
+            flattened_packages.append(dep_package)
 
-      follower_needs_chrome = api.chrome.follower_needs_chrome(
-          build_target=build_target,
-          chroot=api.cros_sdk.chroot,
-          packages=flattened_packages)
+        follower_needs_chrome = api.chrome.follower_needs_chrome(
+            build_target=build_target,
+            chroot=api.cros_sdk.chroot,
+            packages=flattened_packages)
 
-      # Evaluate the |or| of all the reasons we might want local chrome source.
-      chrome_source_build = (toolchain_changed or
-                             needs_built or
-                             files_changed or
-                             follower_needs_chrome)
+        # Evaluate the |or| of the reasons we might want local chrome source.
+        chrome_source_needed = (toolchain_changed or
+                              needs_built or
+                              files_changed or
+                              follower_needs_chrome)
+      cs_pres.step_text = str(chrome_source_needed)
 
-    if chrome_source_build:
-      chrome_root = api.path['start_dir'].join('chrome')
-      api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
-                      config.chrome.internal)
-      api.cros_sdk.set_chrome_root(str(chrome_root))
-      api.cros_sdk.set_goma_config(
-          str(api.goma.goma_dir),
-          str(api.goma.goma_client_json), api.goma.goma_approach,
-          str(api.path.mkdtemp(prefix='goma-logs-')), 'stats.binaryproto',
-          'counterz.binaryproto')
+      if chrome_source_needed:
+        chrome_root = api.path['start_dir'].join('chrome')
+        api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
+                        config.chrome.internal)
+        api.cros_sdk.set_chrome_root(str(chrome_root))
+        api.cros_sdk.set_goma_config(
+            str(api.goma.goma_dir),
+            str(api.goma.goma_client_json), api.goma.goma_approach,
+            str(api.path.mkdtemp(prefix='goma-logs-')), 'stats.binaryproto',
+            'counterz.binaryproto')
 
     with api.step.nest('install packages') as ip_step:
       if artifacts.artifact_types:
@@ -245,21 +247,21 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       response = api.cros_build_api.SysrootService.InstallPackages(
           install_pkg_request, response_lambda=_failed_pkg_names,
           timeout=(STEP_TIMEOUTS['install_packages']
-                   if not long_timeouts else None))
+                    if not long_timeouts else None))
 
       # Process goma response to upload logs, stats, and counterz.
       api.goma.process_artifacts(response,
-                                 install_pkg_request.goma_config.log_dir.dir,
-                                 build_target.name, is_staging)
+                                  install_pkg_request.goma_config.log_dir.dir,
+                                  build_target.name, is_staging)
 
       step_name = ('install packages|'
-                   'call chromite.api.SysrootService/InstallPackages|'
-                   '{}'.format(
-                       api.cros_build_api.response_step_name(
-                           response, _failed_pkg_names)))
+                    'call chromite.api.SysrootService/InstallPackages|'
+                    '{}'.format(
+                        api.cros_build_api.response_step_name(
+                            response, _failed_pkg_names)))
 
       api.cros_bisect.set_compile_failures(response.failed_packages, step_name,
-                                           config.general.critical.value)
+                                            config.general.critical.value)
       api.failures.set_failed_packages(ip_step, response.failed_packages)
     if api.cros_infra_config.should_exit(install_packages.run_spec):
       return
@@ -502,12 +504,14 @@ def GenTests(api):
          cq_build() +  #
          make_build_not_pointless() +  #
          api.step_data(
+             'check chrome source needed.'
              'call chromite.api.PackageService/BuildsChrome.read output file',
              api.file.read_raw(content='{"builds_chrome": false}')))
 
   yield (api.test('no-has-chrome-prebuilt') +  #
          cq_build() +  #
          api.step_data(
+             'check chrome source needed.'
              'call chromite.api.PackageService/HasChromePrebuilt'
              '.read output file',
              api.file.read_raw(content='{"has_prebuilt": false}')))

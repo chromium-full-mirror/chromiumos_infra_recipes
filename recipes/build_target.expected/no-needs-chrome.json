@@ -2462,8 +2462,16 @@
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/BuildsChrome",
+    "name": "check chrome source needed",
     "~followup_annotations": [
+      "@@@STEP_TEXT@False@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
@@ -2497,9 +2505,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "call chromite.api.PackageService/BuildsChrome.write input file",
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
@@ -2533,9 +2541,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "call chromite.api.PackageService/BuildsChrome.call build API script",
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2556,16 +2564,16 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.PackageService/BuildsChrome.read output file",
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/BuildsChrome.call response",
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]

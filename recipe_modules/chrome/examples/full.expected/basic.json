@@ -989,8 +989,16 @@
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/HasPrebuilt",
+    "name": "any followers lack prebuilts",
     "~followup_annotations": [
+      "@@@STEP_TEXT@True@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
@@ -1017,9 +1025,9 @@
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "infra_step": true,
-    "name": "call chromite.api.PackageService/HasPrebuilt.write input file",
+    "name": "any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
@@ -1046,9 +1054,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "call chromite.api.PackageService/HasPrebuilt.call build API script",
+    "name": "any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1068,16 +1076,16 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.PackageService/HasPrebuilt.read output file",
+    "name": "any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/HasPrebuilt.call response",
+    "name": "any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]

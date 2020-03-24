@@ -2517,8 +2517,16 @@
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/BuildsChrome",
+    "name": "check chrome source needed",
     "~followup_annotations": [
+      "@@@STEP_TEXT@True@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
@@ -2552,9 +2560,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "call chromite.api.PackageService/BuildsChrome.write input file",
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
@@ -2588,9 +2596,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "call chromite.api.PackageService/BuildsChrome.call build API script",
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2611,24 +2619,25 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.PackageService/BuildsChrome.read output file",
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/BuildsChrome.call response",
+    "name": "check chrome source needed.call chromite.api.PackageService/BuildsChrome.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/HasChromePrebuilt",
+    "name": "check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
@@ -2662,9 +2671,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "call chromite.api.PackageService/HasChromePrebuilt.write input file",
+    "name": "check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
@@ -2698,9 +2707,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "call chromite.api.PackageService/HasChromePrebuilt.call build API script",
+    "name": "check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2721,31 +2730,41 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.PackageService/HasChromePrebuilt.read output file",
+    "name": "check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/HasChromePrebuilt.call response",
+    "name": "check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "check if diff requires chrome rebuild",
+    "name": "check chrome source needed.check if diff requires chrome rebuild",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@no file diffs caused rebuild@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/HasPrebuilt",
+    "name": "check chrome source needed.any followers lack prebuilts",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@True@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
@@ -2784,9 +2803,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "call chromite.api.PackageService/HasPrebuilt.write input file",
+    "name": "check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
@@ -2825,9 +2844,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "call chromite.api.PackageService/HasPrebuilt.call build API script",
+    "name": "check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2848,33 +2867,34 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.PackageService/HasPrebuilt.read output file",
+    "name": "check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.PackageService/HasPrebuilt.call response",
+    "name": "check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "sync chrome",
+    "name": "check chrome source needed.sync chrome",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
       "@@@STEP_LOG_END@gclient configuration@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion",
+    "name": "check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
@@ -2908,9 +2928,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
+    "name": "check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
@@ -2945,9 +2965,9 @@
       ]
     },
     "infra_step": true,
-    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "name": "check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2968,25 +2988,25 @@
       ]
     },
     "infra_step": true,
-    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
+    "name": "check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
+    "name": "check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
+    "name": "check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
@@ -3005,7 +3025,7 @@
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:54.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"check chrome source needed|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
@@ -3016,9 +3036,9 @@
   },
   {
     "cmd": [],
-    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "name": "check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3032,10 +3052,10 @@
       ]
     },
     "infra_step": true,
-    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI4oDE/QQQgMq17gEiBgjkgMT9BNAC0OyA2a7xtZJ82gJTc3luYyBjaHJvbWV8Y2FsbCBjaHJv\\nbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hyb21lVmVyc2lvbnxjYWxsIGJ1aWxkIEFQSSBz\\nY3JpcHSCAz0KKgoTW0NBQ0hFXS9jcm9zX2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbBIPCg1h\\nbWQ2NC1nZW5lcmljigMJCgd2ZXJzaW9u\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwI4oDE/QQQgMq17gEiBgjkgMT9BNAC0OyA2a7xtZJ82gJuY2hlY2sgY2hyb21lIHNvdXJjZSBu\\nZWVkZWR8c3luYyBjaHJvbWV8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hy\\nb21lVmVyc2lvbnxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSCAz0KKgoTW0NBQ0hFXS9jcm9zX2Nocm9v\\ndBoTChEKD2Nocm9tZV9pbnRlcm5hbBIPCg1hbWQ2NC1nZW5lcmljigMJCgd2ZXJzaW9u\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -3056,9 +3076,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync chrome.ensure chrome root",
+    "name": "check chrome source needed.sync chrome.ensure chrome root",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -3077,9 +3097,9 @@
       ]
     },
     "infra_step": true,
-    "name": "sync chrome.gclient config",
+    "name": "check chrome source needed.sync chrome.gclient config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -3100,9 +3120,9 @@
       ]
     },
     "infra_step": true,
-    "name": "sync chrome.gclient contents",
+    "name": "check chrome source needed.sync chrome.gclient contents",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
       "@@@STEP_LOG_END@.gclient@@@"
     ]
@@ -3133,15 +3153,18 @@
       ]
     },
     "infra_step": true,
-    "name": "sync chrome.gclient sync",
+    "name": "check chrome source needed.sync chrome.gclient sync",
     "timeout": 5400,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "ensure goma client"
+    "name": "check chrome source needed.ensure goma client",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -3156,9 +3179,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "ensure goma client.ensure_installed",
+    "name": "check chrome source needed.ensure goma client.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
