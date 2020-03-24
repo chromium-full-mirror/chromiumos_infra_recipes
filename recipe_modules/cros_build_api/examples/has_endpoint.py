@@ -10,12 +10,15 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.assertions.assertTrue(api.cros_build_api.has_endpoint(
-      api.cros_build_api.PackageService, 'BuildsChrome'))
-  api.assertions.assertFalse(api.cros_build_api.has_endpoint(
-      api.cros_build_api.PackageService, 'LaunchNukes'))
-  api.assertions.assertFalse(api.cros_build_api.has_endpoint(
-      api.cros_build_api.__init__, 'BuildsChrome'))
+  api.assertions.assertTrue(
+      api.cros_build_api.has_endpoint(api.cros_build_api.PackageService,
+                                      'BuildsChrome'))
+  api.assertions.assertFalse(
+      api.cros_build_api.has_endpoint(api.cros_build_api.PackageService,
+                                      'LaunchNukes'))
+  api.assertions.assertFalse(
+      api.cros_build_api.has_endpoint(api.cros_build_api.__init__,
+                                      'BuildsChrome'))
 
 
 def GenTests(api):

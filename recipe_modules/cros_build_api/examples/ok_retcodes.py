@@ -21,17 +21,22 @@ def RunSteps(api):
   api.assertions.assertTrue(
       output_proto.artifacts[0].path.endswith('/tmp/artifact.tar.gz'))
 
+
 def GenTests(api):
   # 0 and 2 are defined as the two codes where a consumable response is
   # available per the structured return codes of the build API. All other
   # codes would raise a StepFailure.
 
   # Build API success / ordinary success.
-  yield (api.test('retcode-zero-ok') +  #
-         api.step_data('call chromite.api.ArtifactsService/'
-                       'BundleFirmware.call build API script', retcode=0))
+  yield api.test(
+      'retcode-zero-ok',
+      api.step_data(
+          'call chromite.api.ArtifactsService/'
+          'BundleFirmware.call build API script', retcode=0))
 
   # Build API unsuccessful but response available.
-  yield (api.test('retcode-two-ok') +  #
-         api.step_data('call chromite.api.ArtifactsService/'
-                       'BundleFirmware.call build API script', retcode=2))
+  yield api.test(
+      'retcode-two-ok',
+      api.step_data(
+          'call chromite.api.ArtifactsService/'
+          'BundleFirmware.call build API script', retcode=2))

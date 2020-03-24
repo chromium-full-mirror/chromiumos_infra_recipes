@@ -16,12 +16,13 @@ from PB.chromiumos.common import BuildTarget
 from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
     CrosBuildApiProperties)
 
+
 def RunSteps(api):
   input_proto = artifacts.BundleRequest(build_target=BuildTarget(name='target'))
   api.assertions.assertRaises(
-      api.step.StepFailure,
-      api.cros_build_api.ArtifactsService.BundleFirmware,
+      api.step.StepFailure, api.cros_build_api.ArtifactsService.BundleFirmware,
       input_proto)
+
 
 def GenTests(api):
   # 1 and 3 are the two codes defined explicitly as failure codes for the
@@ -30,14 +31,20 @@ def GenTests(api):
   # StepFailure.
 
   # Build API unrecoverable.
-  yield (api.test('retcode-one-bad') +  #
-         api.properties(**{
-             '$chromeos/cros_build_api':
-             CrosBuildApiProperties(capture_stdout_stderr=True)}) + #
-         api.step_data('call chromite.api.ArtifactsService/'
-                       'BundleFirmware.call build API script', retcode=1))
+  yield api.test(
+      'retcode-one-bad',
+      api.properties(
+          **{
+              '$chromeos/cros_build_api':
+                  CrosBuildApiProperties(capture_stdout_stderr=True)
+          }),
+      api.step_data(
+          'call chromite.api.ArtifactsService/'
+          'BundleFirmware.call build API script', retcode=1))
 
   # Build API completed unsuccessfully.
-  yield (api.test('retcode-three-bad') +  #
-         api.step_data('call chromite.api.ArtifactsService/'
-                       'BundleFirmware.call build API script', retcode=3))
+  yield api.test(
+      'retcode-three-bad',
+      api.step_data(
+          'call chromite.api.ArtifactsService/'
+          'BundleFirmware.call build API script', retcode=3))

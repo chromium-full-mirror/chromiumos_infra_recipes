@@ -1,0 +1,12 @@
+[
+  {
+    "cmd": [],
+    "name": "download artifacts",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

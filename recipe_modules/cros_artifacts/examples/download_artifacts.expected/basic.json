@@ -29,13 +29,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "download artifacts (2)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
     "name": "$result"
   }
 ]
