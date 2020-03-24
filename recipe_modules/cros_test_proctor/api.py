@@ -249,30 +249,22 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       MetaTestTuple of lists of tests collected.
     """
-    hw_results = []
-    if test_tasks.skylab:
-      if multi_req:
-        hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab, timeout)
-      else:
-        hw_results = self.m.skylab.wait_on_recipes(test_tasks.skylab, timeout)
-    autotest_vm_results = []
-    if test_tasks.autotest_vm:
-      autotest_vm_results = self.m.buildbucket.collect_builds(
-          [vt.id for vt in test_tasks.autotest_vm],
-          step_name='collect autotest vm tests',
-          timeout=int(timeout.seconds)).values()
-    tast_vm_results = []
-    if test_tasks.tast_vm:
-      tast_vm_results = self.m.buildbucket.collect_builds(
-          [vt.id for vt in test_tasks.tast_vm],
-          step_name='collect tast vm tests',
-          timeout=int(timeout.seconds)).values()
-    moblab_vm_results = []
-    if test_tasks.moblab_vm:
-      moblab_vm_results = self.m.buildbucket.collect_builds(
-          [mvt.id for mvt in test_tasks.moblab_vm],
-          step_name='collect moblab vm tests',
-          timeout=int(timeout.seconds)).values()
+    if multi_req:
+      hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab, timeout)
+    else:
+      hw_results = self.m.skylab.wait_on_recipes(test_tasks.skylab, timeout)
+    autotest_vm_results = self.m.buildbucket.collect_builds(
+        [vt.id for vt in test_tasks.autotest_vm],
+        step_name='collect autotest vm tests',
+        timeout=int(timeout.seconds)).values()
+    tast_vm_results = self.m.buildbucket.collect_builds(
+        [vt.id for vt in test_tasks.tast_vm],
+        step_name='collect tast vm tests',
+        timeout=int(timeout.seconds)).values()
+    moblab_vm_results = self.m.buildbucket.collect_builds(
+        [mvt.id for mvt in test_tasks.moblab_vm],
+        step_name='collect moblab vm tests',
+        timeout=int(timeout.seconds)).values()
     return self.MetaTestTuple(
         skylab=hw_results, autotest_vm=autotest_vm_results,
         tast_vm=tast_vm_results, moblab_vm=moblab_vm_results)

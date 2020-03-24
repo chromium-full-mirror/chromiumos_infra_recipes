@@ -177,9 +177,9 @@ class SkylabApi(recipe_api.RecipeApi):
     Returns:
       list[SkylabResult]: The results for suites from provided tasks.
     """
+    if not tasks:
+      return []
     with self.m.step.nest('collect skylab tasks v2') as presentation:
-      if not tasks:
-        return []
 
       # All the tasks contain the same cros_test_platform build ID.
       task_id = tasks[0].id
