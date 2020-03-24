@@ -1471,7 +1471,7 @@ Args:
 
 &mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#141)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#378)(self, name, cmd, env=None, workspace=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#378)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1481,7 +1481,6 @@ Args:
   * name (str): The name of the step.
   * cmd (list): A command and arguments to run.
   * env (dict): A dict of environment variables to pass to the command.
-  * workspace (Path): A path to mount to the chroot's workspace directory.
   * kwargs: Keyword arguments to pass to __call__.
 
 Returns:
@@ -1544,7 +1543,7 @@ Args:
 Returns:
   (boolean) whether the toolchain was changed.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#399)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#398)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 

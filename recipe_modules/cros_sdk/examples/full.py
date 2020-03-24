@@ -56,8 +56,7 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(goma.counterz_file, 'counterz.file')
 
     api.cros_sdk('get cros_sdk help', ['--help'])
-    api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'},
-                     workspace=workspace)
+    api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'})
 
     api.cros_sdk.link_chroot(workspace)
 

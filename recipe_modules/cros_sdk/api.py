@@ -375,7 +375,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       self.m.step('changing permissions of %s' % self._chroot_path, chmod_cmd,
                   infra_step=True)
 
-  def run(self, name, cmd, env=None, workspace=None, **kwargs):
+  def run(self, name, cmd, env=None, **kwargs):
     """Runs a command in a cros_sdk chroot.
 
     It is assumed the current working directory is within a chromiumos checkout.
@@ -384,7 +384,6 @@ class CrosSdkApi(recipe_api.RecipeApi):
       * name (str): The name of the step.
       * cmd (list): A command and arguments to run.
       * env (dict): A dict of environment variables to pass to the command.
-      * workspace (Path): A path to mount to the chroot's workspace directory.
       * kwargs: Keyword arguments to pass to __call__.
 
     Returns:
