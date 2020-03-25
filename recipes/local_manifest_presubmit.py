@@ -75,7 +75,8 @@ def RunSteps(api, properties):
       # infra_steps set in context take precedence over infra_step passed
       # to a step, so we make a new context here.
       with api.context(infra_steps=False):
-        return api.presubmit()
+        # TODO: catch the exception and produce a better failure.
+        api.presubmit()
 
 
 def GenTests(api):
