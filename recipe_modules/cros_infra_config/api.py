@@ -298,7 +298,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # TODO(crbug/1053073): once changes is being stripped by callers, we can
       # drop the check of apply_gerrit_changes.
       # For now, we need to handle this here.
-      if not config.build.apply_gerrit_changes:
+      if config.HasField('build') and not config.build.apply_gerrit_changes:
         changes = []
 
       self._determine_repo_state(config, commit, changes)

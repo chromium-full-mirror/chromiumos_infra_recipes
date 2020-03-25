@@ -1,8 +1,13 @@
 [
   {
     "cmd": [],
-    "name": "set up orchestrator",
+    "name": "set up orchestrator"
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.configure builder",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"cq-orchestrator\"@@@",
       "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
@@ -32,9 +37,9 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.read builder configs",
+    "name": "set up orchestrator.configure builder.read builder configs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -50,10 +55,18 @@
       "text"
     ],
     "infra_step": true,
-    "name": "set up orchestrator.read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "name": "set up orchestrator.configure builder.read builder configs.fetch master:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.configure builder.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"cq-orchestrator\", \"type\": \"CQ\"}, \"orchestrator\": {\"childSpecs\": [{\"name\": \"amd64-generic-cq\"}, {\"name\": \"arm-generic-cq\"}, {\"name\": \"arm-generic-pointless-cq\"}, {\"name\": \"atlas-cq\"}]}}@@@"
     ]
   },
   {
