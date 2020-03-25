@@ -61,12 +61,12 @@ def RunSteps(api, properties):
   push_manifest_refs = None
   with api.step.nest('set up orchestrator') as presentation:
     validate_refs(properties.update_manifest_refs)
-    api.cros_bisect.set_orchestrator_bisect_builder()
     config = api.cros_infra_config.get_builder_config(
         api.buildbucket.build.builder.builder)
-    presentation.logs['orchestrator config'] = [str(config)]
+    presentation.logs['builder config'] = [str(config)]
 
     snapshot, gerrit_changes = determine_repo_state(api, config)
+    api.cros_bisect.set_orchestrator_bisect_builder()
     intern_snapshot_id = snapshot.id
 
     # clone internal manifest repo

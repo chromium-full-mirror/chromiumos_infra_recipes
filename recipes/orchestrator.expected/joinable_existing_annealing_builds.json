@@ -3,33 +3,25 @@
     "cmd": [],
     "name": "set up orchestrator",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@orchestrator config@id {@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  name: \"postsubmit-orchestrator\"@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  branch: \"master\"@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  type: POSTSUBMIT@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@general {@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  critical {@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@    value: true@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@orchestrator {@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  child_specs {@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@    name: \"amd64-generic-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  child_specs {@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@    name: \"arm-generic-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@  }@@@",
-      "@@@STEP_LOG_LINE@orchestrator config@}@@@",
-      "@@@STEP_LOG_END@orchestrator config@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set up orchestrator.set BISECT_BUILDER",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"bisecting-orchestrator\"@@@"
+      "@@@STEP_LOG_LINE@builder config@id {@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"postsubmit-orchestrator\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  type: POSTSUBMIT@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@general {@@@",
+      "@@@STEP_LOG_LINE@builder config@  critical {@@@",
+      "@@@STEP_LOG_LINE@builder config@    value: true@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@orchestrator {@@@",
+      "@@@STEP_LOG_LINE@builder config@  child_specs {@@@",
+      "@@@STEP_LOG_LINE@builder config@    name: \"amd64-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  child_specs {@@@",
+      "@@@STEP_LOG_LINE@builder config@    name: \"arm-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_END@builder config@@@"
     ]
   },
   {
@@ -56,6 +48,14 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.set BISECT_BUILDER",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"bisecting-orchestrator\"@@@"
     ]
   },
   {
