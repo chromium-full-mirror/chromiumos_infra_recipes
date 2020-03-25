@@ -11,6 +11,7 @@ from PB.recipes.chromeos.robocrop import RoboCropProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'bot_scaling',
     'buildbucket_stats',
@@ -48,15 +49,18 @@ def RunSteps(api, properties):
           status_map, bot_policy_config, gce_config)
       api.easy.set_property_step('robocrop_action',
                                  jsonpb.MessageToDict(robocrop_action))
-    with api.step.nest('update GCE Provider configs'):
-      gce_updated_configs = api.bot_scaling.update_gce_configs(
-          robocrop_action, gce_config)
-      api.easy.set_property_step('final_gce_config',
-                                 jsonpb.MessageToDict(gce_updated_configs))
+    if properties.commit_changes:
+      with api.step.nest('update GCE Provider configs'):
+        gce_updated_configs = api.bot_scaling.update_gce_configs(
+            robocrop_action, gce_config)
+        api.easy.set_property_step('final_gce_config',
+                                   jsonpb.MessageToDict(gce_updated_configs))
 
 
 def GenTests(api):
-  yield (api.test('basic') + api.buildbucket.simulated_search_results(
+  yield (api.test('basic') + #
+       api.properties(commit_changes=True) + #
+       api.buildbucket.simulated_search_results(
       [api.bot_scaling.previous_robocrop()],
       'scale bot groups.compute scaling actions.'
       'find matching builds.buildbucket.search'))
