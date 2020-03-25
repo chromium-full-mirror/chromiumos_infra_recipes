@@ -125,7 +125,8 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
 
   toolchain_changed = api.cros_sdk.update_chroot(
       gitiles_commit, gerrit_changes, toolchain_targets=[build_target],
-      build_source=config.build.sdk_update.compile_source)
+      build_source=config.build.sdk_update.compile_source,
+      **{'timeout_sec': None} if long_timeouts else {})
   long_timeouts |= toolchain_changed
 
   with api.step.nest('create sysroot'):
