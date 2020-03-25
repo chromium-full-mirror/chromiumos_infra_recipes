@@ -9,6 +9,6 @@ package recipes.chromeos.robocrop;
 message RoboCropProperties {
   // The list of the buildbucket pools to monitor and scale.
   repeated string pools_to_monitor = 1;
-  // Boolean as to whether to make call to commit chagnes to GCE Provider.
+  // Boolean as to whether to make call to commit changes to GCE Provider.
   bool commit_changes = 2;
 }

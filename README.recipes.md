@@ -347,19 +347,7 @@ Returns:
 
 A module that determines how to scale bot groups.
 
-&mdash; **def [calculate\_gce\_totals](/recipe_modules/bot_scaling/api.py#180)(self, region_restrictions, config_map):**
-
-Sums the total number of configured bots per bot policy.
-
-Args:
-  region_restrictions(list[RegionRestriction]): Regional preferences
-    from config.
-  config_map(dict|Config): Map of GCE Config to prefix
-
-Returns:
-  int, sum of the total number of bots in GCE Provider
-
-&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#84)(self, demand, scaling_restriction):**
+&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#87)(self, demand, scaling_restriction):**
 
 Core function that scales bots based on demand.
 
@@ -371,7 +359,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#164)(self, bot_policy_config):**
+&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#167)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
 
@@ -382,14 +370,40 @@ Args:
 Returns:
   list(Config), GCE Provider config definitions.
 
-&mdash; **def [get\_previous\_action](/recipe_modules/bot_scaling/api.py#146)(self):**
+&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#183)(self, region_restrictions, config_map):**
+
+Sums the total number of configured bots per bot policy.
+
+Args:
+  region_restrictions(list[RegionRestriction]): Regional preferences
+    from config.
+  config_map(dict|Config): Map of GCE Config to prefix
+
+Returns:
+  int, sum of the total number of bots in GCE Provider
+
+&mdash; **def [get\_gce\_limits](/recipe_modules/bot_scaling/api.py#200)(self, region_restrictions, config_map, scaling_restriction):**
+
+Sums the min and max bot numbers per bot policy.
+
+Args:
+  region_restrictions(list[RegionRestriction]): Regional preferences
+    from config.
+  config_map(dict|Config): Map of GCE Config to prefix
+  scaling_restriction(ScalingRestriction): BotPolicy scaling restriction
+    to update with ceiling and floor calculations.
+
+Returns:
+  ScalingRestriction, restriction containing min and max values.
+
+&mdash; **def [get\_previous\_action](/recipe_modules/bot_scaling/api.py#149)(self):**
 
 Determines regional distribution of bot requests.
 
 Returns:
   dict, mapping of bot group to a ScalingAction.
 
-&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#102)(self, bots_requested, region_restrictions):**
+&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#105)(self, bots_requested, region_restrictions):**
 
 Determines regional distribution of bot requests.
 
@@ -427,7 +441,7 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#126)(self, bot_policy_config):**
+&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#129)(self, bot_policy_config):**
 
 Determines the current Swarming stats per bot group.
 
@@ -438,7 +452,7 @@ Args:
 Returns:
   dict, mapping of bot group, by bot state, to the number of bots.
 
-&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#197)(self, robocrop_actions, configs):**
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#222)(self, robocrop_actions, configs):**
 
 Updates each GCE Provider config that is actionable.
 
