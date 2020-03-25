@@ -70,6 +70,7 @@
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
+    "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
@@ -138,6 +139,7 @@
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,
     "name": "ensure synced checkout.repo init (2)",
+    "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

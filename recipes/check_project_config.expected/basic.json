@@ -69,6 +69,7 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
+    "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

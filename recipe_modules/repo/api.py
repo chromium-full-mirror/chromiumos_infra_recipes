@@ -124,7 +124,7 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--repo-url', repo_url]
     if repo_branch is not None:
       cmd += ['--repo-branch', repo_branch, '--no-repo-verify']
-    self._step(cmd)
+    self._step(cmd, timeout=15 * 60)
     self._clear_git_locks()
 
     if self.m.context.cwd:

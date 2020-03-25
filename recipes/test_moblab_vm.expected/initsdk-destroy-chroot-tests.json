@@ -242,6 +242,7 @@
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
+    "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

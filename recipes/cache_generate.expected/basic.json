@@ -29,6 +29,7 @@
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
     "infra_step": true,
     "name": "repo checkout.repo init",
+    "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
