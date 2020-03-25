@@ -173,11 +173,11 @@ class TastResultsApi(recipe_api.RecipeApi):
       else:
         presentation.status = self.m.step.FAILURE
         for failure in failures:
-          with self.m.step.nest(failure.title) as presentation:
-            presentation.status = self.m.step.FAILURE
+          with self.m.step.nest(failure.title) as test_presentation:
+            test_presentation.status = self.m.step.FAILURE
             for text, log in failure.link_map.items():
-              presentation.links['logs'] = log
-              presentation.step_text = text
+              test_presentation.links['logs'] = log
+              test_presentation.step_text = text
 
       if empty_result:
         presentation.status = self.m.step.EXCEPTION
