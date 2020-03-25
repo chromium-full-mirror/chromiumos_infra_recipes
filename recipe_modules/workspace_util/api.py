@@ -51,42 +51,40 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
                                      self.m.cros_infra_config.gitiles_commit)
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',
-                    cq_depend_fail_message=False):
+                    only_checked_out_projects=False):
     """Apply gerrit changes.
 
     Args:
       changes (list[GerritChanges]): Changes to apply.  Default: changelist
           saved in cros_infra_config.configure_builder().
       name (string): Step name.  Default: "setup source".
-      cq_depend_fail_message (bool): Whether to give Cq-Depend failure
-          advisement on failure to apply patch sets. See below for details.
+      only_checked_out_projects (bool): If true, changes to projects that are
+          not currently checked out (as determined by repo forall) will not be
+          applied. An example of when this is useful: it is possible that
+          changes includes changes to repos this builder is not allowed to read
+          (e.g. because of Cq-Depend grouping); the changes will be discarded
+          instead of failing during application.
     """
     patch_sets = []
     if not changes:
       changes = self.m.cros_infra_config.gerrit_changes
     if changes:
-      with self.m.step.nest(name):
+      with self.m.step.nest(name) as presentation:
+        if only_checked_out_projects:
+          synced_projects = [p.name for p in self.m.repo.project_infos()]
+
+          discarded_change_numbers = [
+              str(c.change) for c in changes if c.project not in synced_projects
+          ]
+          if discarded_change_numbers:
+            presentation.step_text = 'Discarded changes: {}'.format(
+                ', '.join(discarded_change_numbers))
+
+          changes = [c for c in changes if c.project in synced_projects]
+
         patch_sets = self.m.gerrit.fetch_patch_sets(changes, include_files=True)
-        try:
-          self.m.cros_source.apply_gerrit_patch_sets(patch_sets)
-        except self.m.step.StepFailure:
-          if cq_depend_fail_message:
-            # It is possible that changes includes changes to repos
-            # this builder is not allowed to read (e.g. if Cq-Depends groups
-            # together changes that affect multiple project repos). In this
-            # case, apply_gerrit_patch_sets will fail. Catch the failure and
-            # report it as a StepFailure (i.e. not an InfraFailure), with a
-            # message that may help the submitter.
-            #
-            # For now just catch all failures of apply_gerrit_patch_sets. If
-            # needed, we can add more filters (e.g. on stdout, exact step that
-            # failed) for the above case.
-            raise self.m.step.StepFailure(
-                ("Failed to apply patch sets. This may be "
-                 "the result of Cq-Depends that include CLs outside of this "
-                 "builder's read ACLs."))
-          else:
-            raise
+        self.m.cros_source.apply_gerrit_patch_sets(patch_sets)
+
     self._patch_sets = patch_sets
 
   @contextlib.contextmanager

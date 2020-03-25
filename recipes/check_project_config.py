@@ -68,7 +68,7 @@ def RunSteps(api, properties):
           local_manifest,
           api.cros_source.workspace_path):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
-                                     cq_depend_fail_message=True)
+                                     only_checked_out_projects=True)
     chromiumos_config_path = properties.chromiumos_config_checkout_path
 
     generate_path = api.context.cwd.join(chromiumos_config_path, 'generate.sh')
@@ -136,16 +136,42 @@ def GenTests(api):
   def project_config_cq_build(api):
     """Returns a sample buildbucket project config cq build"""
     return api.buildbucket.try_build(
-        project="chromeos", bucket="testprogram-testproject",
-        builder="config-checker-testprogram-testproject")
+        project='chromeos',
+        bucket='testprogram-testproject',
+        builder='config-checker-testprogram-testproject',
+        git_repo='https://chrome-internal.googlesource.com/project1',
+    )
+
+  def checked_out_projects(api):
+    """Returns StepData for the command used to find checked out projects.
+
+    Note that the project name lines up with the project specified by
+    project_config_cq_build.
+    """
+    return api.step_data(
+        'cherry-pick gerrit changes.repo forall',
+        stdout=api.raw_io.output('project1|src/project1|cros|master'))
 
   yield api.test(
       'basic',
       api.properties(**properties_dict()),
       project_config_cq_build(api),
+      # The input GerritChange is in a checked out project.
+      checked_out_projects(api),
       api.post_process(post_process.StepCommandContains,
                        'ensure synced checkout.repo init',
                        ['--groups', 'partner-config,testprogram-testproject']),
+      # The change should be applied.
+      api.post_process(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromium/src',
+              'refs/changes/56/123456/7:',
+          ],
+      ),
   )
 
   yield api.test(
@@ -160,6 +186,18 @@ def GenTests(api):
                   ),
           })),
       project_config_cq_build(api),
+      checked_out_projects(api),
+      # The change should be applied.
+      api.post_process(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromium/src',
+              'refs/changes/56/123456/7:',
+          ],
+      ),
   )
 
   yield api.test(
@@ -206,15 +244,13 @@ def GenTests(api):
       'cannot_access_gerrit_changes',
       api.properties(**properties_dict()),
       project_config_cq_build(api),
-      api.step_data(
-          'cherry-pick gerrit changes.apply gerrit patch sets.repo forall',
-          retcode=1,
-          stdout=api.raw_io.output('error: project othertestproject not found'),
-      ),
+      # The input GerritChange is not in a checked out project. The discarded
+      # changes are logged and the build succeeds.
       api.post_process(
-          post_process.ResultReason,
-          "Failed to apply patch sets. This may be the result of "
-          "Cq-Depends that include CLs outside of this builder's read ACLs."),
-      api.post_process(post_process.StatusFailure),
+          post_process.StepTextEquals,
+          'cherry-pick gerrit changes',
+          'Discarded changes: 123456',
+      ),
+      api.post_process(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

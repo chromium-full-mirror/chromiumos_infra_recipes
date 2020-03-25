@@ -53,7 +53,7 @@ def RunSteps(api, properties):
           local_manifest=local_manifest,
           cache_path_override=api.cros_source.workspace_path):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
-                                     cq_depend_fail_message=True)
+                                     only_checked_out_projects=True)
 
     project = api.repo.project_info(properties.project)
     workspace_path = api.cros_source.workspace_path
@@ -83,8 +83,21 @@ def GenTests(api):
   def project_config_cq_build(api):
     """Returns a sample buildbucket project config cq build"""
     return api.buildbucket.try_build(
-        project="chromeos", bucket="testprogram-testproject",
-        builder="local-manifest-presubmit-testprogram-testproject")
+        project='chromeos',
+        bucket='testprogram-testproject',
+        builder='local-manifest-presubmit-testprogram-testproject',
+        git_repo='https://chrome-internal.googlesource.com/project1',
+    )
+
+  def checked_out_projects(api):
+    """Returns StepData for the command used to find checked out projects.
+
+    Note that the project name lines up with the project specified by
+    project_config_cq_build.
+    """
+    return api.step_data(
+        'cherry-pick gerrit changes.repo forall',
+        stdout=api.raw_io.output('project1|src/project1|cros|master'))
 
   yield api.test(
       'basic',
@@ -93,6 +106,18 @@ def GenTests(api):
           manifest_groups=['partner-config'],
       )),
       project_config_cq_build(api),
+      checked_out_projects(api),
+      # The change should be applied.
+      api.post_process(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromium/src',
+              'refs/changes/56/123456/7:',
+          ],
+      ),
   )
 
   yield api.test(
@@ -142,4 +167,16 @@ def GenTests(api):
               manifest_path='local_manifest.xml',
           ))),
       project_config_cq_build(api),
+      checked_out_projects(api),
+      # The change should be applied.
+      api.post_process(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromium/src',
+              'refs/changes/56/123456/7:',
+          ],
+      ),
   )

@@ -232,7 +232,7 @@
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
-  * [workspace_util:tests/apply_changes_failure](#recipes-workspace_util_tests_apply_changes_failure)
+  * [workspace_util:tests/only_checked_out_projects](#recipes-workspace_util_tests_only_checked_out_projects)
 ## Recipe Modules
 
 ### *recipe_modules* / [analysis\_service](/recipe_modules/analysis_service)
@@ -3535,7 +3535,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#53)(self, changes=None, name='cherry-pick gerrit changes', cq_depend_fail_message=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#53)(self, changes=None, name='cherry-pick gerrit changes', only_checked_out_projects=False):**
 
 Apply gerrit changes.
 
@@ -3543,8 +3543,12 @@ Args:
   changes (list[GerritChanges]): Changes to apply.  Default: changelist
       saved in cros_infra_config.configure_builder().
   name (string): Step name.  Default: "setup source".
-  cq_depend_fail_message (bool): Whether to give Cq-Depend failure
-      advisement on failure to apply patch sets. See below for details.
+  only_checked_out_projects (bool): If true, changes to projects that are
+      not currently checked out (as determined by repo forall) will not be
+      applied. An example of when this is useful: it is possible that
+      changes includes changes to repos this builder is not allowed to read
+      (e.g. because of Cq-Depend grouping); the changes will be discarded
+      instead of failing during application.
 
 &mdash; **def [initialize](/recipe_modules/workspace_util/api.py#21)(self):**
 
@@ -3568,7 +3572,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#92)(self, manifest_groups, local_manifest=None, cache_path_override=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#90)(self, manifest_groups, local_manifest=None, cache_path_override=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -4924,11 +4928,11 @@ Basic tests for the urls recipe module.
 [DEPS](/recipe_modules/workspace_util/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#22)(api, properties):**
-### *recipes* / [workspace\_util:tests/apply\_changes\_failure](/recipe_modules/workspace_util/tests/apply_changes_failure.py)
+### *recipes* / [workspace\_util:tests/only\_checked\_out\_projects](/recipe_modules/workspace_util/tests/only_checked_out_projects.py)
 
-[DEPS](/recipe_modules/workspace_util/tests/apply_changes_failure.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/apply_changes_failure.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#18)(api):**
 
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/ae3586b5380f0c00448c5a056528419b03ddf9b1/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/ae3586b5380f0c00448c5a056528419b03ddf9b1/recipes/README.recipes.md#recipe_modules-gclient
