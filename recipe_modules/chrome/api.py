@@ -22,6 +22,8 @@ CHROMIUM_REBUILD_REGEXES = {
 }
 
 # The following packages need chrome source to be synced to build.
+# Consider adding to chromite/lib/constants.py under OTHER_CHROME_PACKAGES
+# to prevent rebuilds (which may not succeed if chrome source isn't sync'd).
 CHROME_FOLLOWER_PACKAGES = [
   ('chromeos-base', 'chrome-icu'),
   ('chromeos-base', 'ml'),
