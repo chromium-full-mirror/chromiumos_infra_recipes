@@ -120,6 +120,23 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def method_service_responses(self):
+    """Generate responses for MethodService."""
+    methods = []
+    responses_by_service = self.responses_by_service(ignore_method_service=True)
+    for service, responses_by_method in responses_by_service.items():
+      for method in responses_by_method.keys():
+        methods.append({
+            'method': "chromite.api.%s/%s" % (service, method)
+        })
+    methods.append({'method': 'chromite.api.MethodService/Get'})
+    responses = {}
+    responses['Get'] = jsonify(
+        methods=methods,
+    )
+    return responses
+
+  @property
   def package_service_responses(self):
     """Generate responses for PackageService."""
     responses = {}
@@ -233,10 +250,16 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     ])
     return responses
 
-  @property
-  def responses_by_service(self):
-    """Map service name to a dictionary of responses by method name."""
-    return {
+  def responses_by_service(self, ignore_method_service=False):
+    """Map service name to a dictionary of responses by method name.
+
+    Args:
+      ignore_method_service (bool): used to exclude adding the endpoints of the
+          MethodService to this map. This is a hack to allow
+          `method_service_responses` to use this method to generate a full
+          canned response without causing infinite recursion.
+    """
+    result = {
         'ArtifactsService': self.artifact_service_responses,
         'BinhostService': self.binhost_service_responses,
         'DependencyService': self.dependency_service_responses,
@@ -247,6 +270,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'TestService': self.test_service_responses,
         'ToolchainService': self.toolchain_service_responses,
     }
+    if not ignore_method_service:
+      result['MethodService'] = self.method_service_responses
+    return result
 
   def response_for_endpoint(self, endpoint):
     """Return a fake response for the endpoint, if any.
@@ -265,11 +291,12 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'You must either set test_output_data on your call to the build API '
         'or you must edit recipe_modules/cros_build_api/test_api.py to include '
         'test data for your endpoint.')
-    if service not in self.responses_by_service:
+    responses_by_service = self.responses_by_service()
+    if service not in responses_by_service:
       raise KeyError('No default test data for build API service '
                      '%s. %s' % (service, epilog))
-    if method not in self.responses_by_service[service]:
+    if method not in responses_by_service[service]:
       raise KeyError('No default test data for method '
                      '%s in service %s. %s' % (method, service, epilog))
 
-    return self.responses_by_service[service][method]
+    return responses_by_service[service][method]

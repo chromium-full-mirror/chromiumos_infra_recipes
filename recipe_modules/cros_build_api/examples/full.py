@@ -13,6 +13,7 @@ import json
 
 from google.protobuf import empty_pb2
 
+from PB.chromite.api import api as meta_api
 from PB.chromite.api import artifacts
 from PB.chromite.api import binhost
 from PB.chromite.api import depgraph
@@ -97,6 +98,9 @@ def RunSteps(api):
           'Create': image.CreateImageResult,
           'Test': image.TestImageResult,
       },
+      'MethodService': {
+          'Get': meta_api.MethodGetResponse,
+      },
       'PackageService': {
           'BuildsChrome': packages.BuildsChromeResponse,
           'GetBestVisible': packages.GetBestVisibleResponse,
@@ -134,7 +138,7 @@ def RunSteps(api):
           'BundleArtifacts': toolchain.BundleToolchainResponse,
       }
   }
-  responses_by_service = api.cros_build_api.test_api.responses_by_service
+  responses_by_service = api.cros_build_api.test_api.responses_by_service()
   for service, responses_by_method in responses_by_service.iteritems():
     for method, response_json in responses_by_method.iteritems():
       api.assertions.assertIn(service, response_type_by_service)

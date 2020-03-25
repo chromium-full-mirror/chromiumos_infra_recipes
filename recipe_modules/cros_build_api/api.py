@@ -69,6 +69,10 @@ class DependencyService(Stub):
   """Stub for DependencyService."""
 
 
+class MethodService(Stub):
+  """Stub for MethodService."""
+
+
 class PackageService(Stub):
   """Stub for PackageService."""
 
