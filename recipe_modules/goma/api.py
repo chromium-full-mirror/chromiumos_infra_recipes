@@ -164,7 +164,8 @@ class GomaApi(recipe_api.RecipeApi):
               'dataset_id': self._bigquery_dataset_id,
               'table_name': self._bigquery_table_name,
               'write_data': True,
-              'compile_event': json_format.MessageToJson(compile_event)
+              'compile_event': json_format.MessageToJson(
+                  compile_event, preserving_proto_field_name=True)
           }
           test_output_data = {}
           presentation.logs['support_input'] = [str(input)]
