@@ -39,6 +39,7 @@ PROJECT = 'chromeos'
 # Bucket to test in. Only the staging environment should be used.
 BUCKET = 'staging'
 
+# Note: infra/config overrides this by specifying the input property.
 DEFAULT_BUILDERS = [
     'staging-Annealing', 'staging-amd64-generic-postsubmit',
     'staging-chromite-postsubmit', 'staging-test-manifest'
