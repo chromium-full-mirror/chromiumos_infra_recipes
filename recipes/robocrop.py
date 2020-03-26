@@ -36,17 +36,20 @@ def RunSteps(api, properties):
   with api.step.nest('scale bot groups'):
     with api.step.nest('read bot policies'):
       bot_policy_config = api.cros_infra_config.get_bot_policy_config()
-      api.easy.set_property_step('bot_policy_config',
-                                 jsonpb.MessageToDict(bot_policy_config))
     with api.step.nest('get current swarming stats') as step:
       swarming_counts = api.bot_scaling.get_swarming_stats(bot_policy_config)
       api.easy.set_property_step('swarming_stats', swarming_counts)
     with api.step.nest('get current GCE config') as step:
       gce_config = api.bot_scaling.get_current_gce_config(bot_policy_config)
       api.easy.set_property_step('gce_config', jsonpb.MessageToDict(gce_config))
+    with api.step.nest('update bot policies') as step:
+      updated_bot_policy = api.bot_scaling.update_bot_policy_limits(
+          bot_policy_config, gce_config)
+      api.easy.set_property_step('bot_policy_config',
+                                 jsonpb.MessageToDict(updated_bot_policy))
     with api.step.nest('compute scaling actions'):
       robocrop_action = api.bot_scaling.get_robocrop_action(
-          status_map, bot_policy_config, gce_config)
+          status_map, updated_bot_policy, gce_config)
       api.easy.set_property_step('robocrop_action',
                                  jsonpb.MessageToDict(robocrop_action))
     if properties.commit_changes:

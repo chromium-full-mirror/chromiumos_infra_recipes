@@ -37,10 +37,10 @@
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update",
-    "stdin": "{\"config\": {\"currentAmount\": 25, \"prefix\": \"prefix-first\"}, \"id\": \"prefix-first\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "stdin": "{\"config\": {\"currentAmount\": 22, \"prefix\": \"prefix-first\"}, \"id\": \"prefix-first\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 25, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 22, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-first\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -56,10 +56,10 @@
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update (2)",
-    "stdin": "{\"config\": {\"currentAmount\": 25, \"prefix\": \"prefix-second\"}, \"id\": \"prefix-second\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "stdin": "{\"config\": {\"currentAmount\": 22, \"prefix\": \"prefix-second\"}, \"id\": \"prefix-second\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 25, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 22, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-second\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -75,10 +75,10 @@
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update (3)",
-    "stdin": "{\"config\": {\"currentAmount\": 20, \"prefix\": \"prefix-third\"}, \"id\": \"prefix-third\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "stdin": "{\"config\": {\"currentAmount\": 18, \"prefix\": \"prefix-third\"}, \"id\": \"prefix-third\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 20, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 18, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-third\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -94,10 +94,10 @@
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update (4)",
-    "stdin": "{\"config\": {\"currentAmount\": 30, \"prefix\": \"prefix-fourth\"}, \"id\": \"prefix-fourth\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "stdin": "{\"config\": {\"currentAmount\": 27, \"prefix\": \"prefix-fourth\"}, \"id\": \"prefix-fourth\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 30, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 27, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-fourth\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"

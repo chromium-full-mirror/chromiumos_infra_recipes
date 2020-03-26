@@ -51,20 +51,17 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       ScalingAction, comprehensive action to be taken by RoboCrop.
     """
-    scaling_policy = self.get_gce_limits(
-      bot_policy.region_restrictions,
-      self._get_prefix_to_gce_config(configs),
-      bot_policy.scaling_restriction)
-    bots_requested = self.get_bot_request(demand, scaling_policy)
+    bots_requested = self.get_bot_request(demand,
+                                          bot_policy.scaling_restriction)
     bots_configured = self.get_gce_bots_configured(
         bot_policy.region_restrictions, self._get_prefix_to_gce_config(configs))
     actionable = ScalingAction.NO
 
     # Check to determine whether bots should be scaled up or down.
-    if (bots_configured > scaling_policy.bot_ceiling or
-        bots_configured + scaling_policy.step_size <=
+    if (bots_configured > bot_policy.scaling_restriction.bot_ceiling or
+        bots_configured + bot_policy.scaling_restriction.step_size <=
         bots_requested or
-        bots_configured - scaling_policy.step_size >=
+        bots_configured - bot_policy.scaling_restriction.step_size >=
         bots_requested):
       actionable = ScalingAction.YES
 
@@ -77,7 +74,7 @@ class BotScalingApi(recipe_api.RecipeApi):
                                    actionable=actionable)
 
     scaling_action.bots_requested = self.get_bot_request(
-        demand, scaling_policy)
+        demand, bot_policy.scaling_restriction)
 
     scaling_action.regional_actions.extend(
         self.get_regional_actions(scaling_action.bots_requested,
@@ -197,27 +194,26 @@ class BotScalingApi(recipe_api.RecipeApi):
       policy_count += config.current_amount
     return policy_count
 
-  def get_gce_limits(self, region_restrictions, config_map,
-                     scaling_restriction):
+  def update_bot_policy_limits(self, bot_policy_config, configs):
     """Sums the min and max bot numbers per bot policy.
 
     Args:
-      region_restrictions(list[RegionRestriction]): Regional preferences
-        from config.
+      bot_policy_config(BotPolicyCfg): Config define Policy for
+        the RoboCrop.
       config_map(dict|Config): Map of GCE Config to prefix
-      scaling_restriction(ScalingRestriction): BotPolicy scaling restriction
-        to update with ceiling and floor calculations.
 
     Returns:
-      ScalingRestriction, restriction containing min and max values.
+      BotPolicy, updated to reflect ScalingRestriction values.
     """
-    bot_ceiling = 0
-    bot_floor = 0
-    for restriction in region_restrictions:
-      config = config_map.get(restriction.prefix, Config())
-      scaling_restriction.bot_ceiling += config.amount.max
-      scaling_restriction.bot_floor += config.amount.min
-    return scaling_restriction
+    config_map = self._get_prefix_to_gce_config(configs)
+    for policy in bot_policy_config.bot_policies:
+      policy.scaling_restriction.bot_ceiling = 0
+      policy.scaling_restriction.bot_floor = 0
+      for restriction in policy.region_restrictions:
+        config = config_map.get(restriction.prefix, Config())
+        policy.scaling_restriction.bot_ceiling += config.amount.max
+        policy.scaling_restriction.bot_floor += config.amount.min
+    return bot_policy_config
 
   def update_gce_configs(self, robocrop_actions, configs):
     """Updates each GCE Provider config that is actionable.

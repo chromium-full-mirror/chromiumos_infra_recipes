@@ -8,7 +8,7 @@ from recipe_engine import recipe_test_api
 from PB.chromiumos.bot_scaling import BotPolicy, BotType, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
+from PB.go.chromium.org.luci.gce.api.config.v1.config import Amount, Config, Configs
 
 
 class BotScalingTestApi(recipe_test_api.RecipeTestApi):
@@ -62,20 +62,16 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
         }]
     }
 
-  def gce_provider_config_ceiling(self):
+  def gce_provider_config(self):
     return Configs(vms=[
-        Config(prefix='prefix-first', current_amount=35),
-        Config(prefix='prefix-second', current_amount=32),
-        Config(prefix='prefix-third', current_amount=31),
-        Config(prefix='prefix-fourth', current_amount=36),
-    ])
-
-  def gce_provider_config_below(self):
-    return Configs(vms=[
-        Config(prefix='prefix-first', current_amount=25),
-        Config(prefix='prefix-second', current_amount=25),
-        Config(prefix='prefix-third', current_amount=20),
-        Config(prefix='prefix-fourth', current_amount=25),
+        Config(prefix='prefix-first', amount=Amount(min=5, max=20),
+               current_amount=19),
+        Config(prefix='prefix-second', amount=Amount(min=5, max=25),
+               current_amount=23),
+        Config(prefix='prefix-third', amount=Amount(min=5, max=20),
+               current_amount=18),
+        Config(prefix='prefix-fourth', amount=Amount(min=5, max=25),
+               current_amount=25),
     ])
 
   def get_bot_type(self):
@@ -86,10 +82,8 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
 
   def robocrop_bot_policy_config(self):
     scaling_restriction = BotPolicy.ScalingRestriction(
-        bot_ceiling=100,
-        bot_floor=20,
         min_idle=0,
-        step_size=10,
+        step_size=5,
         bot_fallback=45,
     )
     bot_type = self.get_bot_type()
