@@ -1,0 +1,84 @@
+[
+  {
+    "cmd": [],
+    "name": "call chromite.api.MethodService/Get",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"methods\": [{\"method\": \"chromite.api.DependencyService/GetBuildDependencyGraph\"}, {\"method\": \"chromite.api.DependencyService/GetToolchainPaths\"}, {\"method\": \"chromite.api.ArtifactsService/BundleFirmware\"}, {\"method\": \"chromite.api.ArtifactsService/BundleImageArchives\"}, {\"method\": \"chromite.api.ArtifactsService/BundlePinnedGuestImages\"}, {\"method\": \"chromite.api.ArtifactsService/BundleTastFiles\"}, {\"method\": \"chromite.api.ArtifactsService/BundleImageZip\"}, {\"method\": \"chromite.api.ArtifactsService/BundleTestUpdatePayloads\"}, {\"method\": \"chromite.api.ArtifactsService/ExportCpeReport\"}, {\"method\": \"chromite.api.ArtifactsService/BundleEbuildLogs\"}, {\"method\": \"chromite.api.ArtifactsService/BundleChromeOSConfig\"}, {\"method\": \"chromite.api.ArtifactsService/BundleAutotestFiles\"}, {\"method\": \"chromite.api.ToolchainService/PrepareForBuild\"}, {\"method\": \"chromite.api.ToolchainService/BundleArtifacts\"}, {\"method\": \"chromite.api.TestService/DebugInfoTest\"}, {\"method\": \"chromite.api.TestService/ChromitePytest\"}, {\"method\": \"chromite.api.TestService/ChromiteUnitTest\"}, {\"method\": \"chromite.api.TestService/BuildTargetUnitTest\"}, {\"method\": \"chromite.api.TestService/MoblabVmTest\"}, {\"method\": \"chromite.api.TestService/VmTest\"}, {\"method\": \"chromite.api.SdkService/Unmount\"}, {\"method\": \"chromite.api.SdkService/RestoreSnapshot\"}, {\"method\": \"chromite.api.SdkService/Create\"}, {\"method\": \"chromite.api.SdkService/Update\"}, {\"method\": \"chromite.api.SdkService/Clean\"}, {\"method\": \"chromite.api.SdkService/CreateSnapshot\"}, {\"method\": \"chromite.api.SdkService/Delete\"}, {\"method\": \"chromite.api.ImageService/Test\"}, {\"method\": \"chromite.api.ImageService/Create\"}, {\"method\": \"chromite.api.BinhostService/PrepareBinhostUploads\"}, {\"method\": \"chromite.api.BinhostService/GetPrivatePrebuiltAclArgs\"}, {\"method\": \"chromite.api.BinhostService/SetBinhost\"}, {\"method\": \"chromite.api.BinhostService/RegenBuildCache\"}, {\"method\": \"chromite.api.BinhostService/Get\"}, {\"method\": \"chromite.api.SysrootService/Create\"}, {\"method\": \"chromite.api.SysrootService/InstallToolchain\"}, {\"method\": \"chromite.api.SysrootService/InstallPackages\"}, {\"method\": \"chromite.api.PackageService/GetTargetVersions\"}, {\"method\": \"chromite.api.PackageService/GetBestVisible\"}, {\"method\": \"chromite.api.PackageService/HasPrebuilt\"}, {\"method\": \"chromite.api.PackageService/GetChromeVersion\"}, {\"method\": \"chromite.api.PackageService/BuildsChrome\"}, {\"method\": \"chromite.api.PackageService/HasChromePrebuilt\"}, {\"method\": \"chromite.api.PackageService/Uprev\"}, {\"method\": \"chromite.api.PackageService/UprevVersionedPackage\"}, {\"method\": \"chromite.api.MethodService/Get\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.MethodService/Get.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "chromite.api.MethodService/Get"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.MethodService/Get.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "call chromite.api.MethodService/Get.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.MethodService/Get.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

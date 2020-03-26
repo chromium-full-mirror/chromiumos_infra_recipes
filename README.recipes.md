@@ -104,6 +104,7 @@
   * [cros_branch:examples/full](#recipes-cros_branch_examples_full)
   * [cros_build_api:examples/bad_retcodes](#recipes-cros_build_api_examples_bad_retcodes)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
+  * [cros_build_api:examples/has_endpoint](#recipes-cros_build_api_examples_has_endpoint)
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
   * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events)
   * [cros_cache:examples/full](#recipes-cros_cache_examples_full)
@@ -937,7 +938,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#100)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#118)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -954,7 +955,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#127)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#146)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None):**
 
 Call the build API with the given input proto.
 
@@ -981,11 +982,22 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#117)(self):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#262)(self, stub, method):**
+
+Verifies that the given endpoint can be called.
+
+Args:
+  stub (Stub): stub instance to check if `method` can be called on it.
+  method (str): name of method to check for.
+
+Returns:
+  bool: Whether `method` can be called on `stub`.
+
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#135)(self):**
 
 Expose all client stubs defined in this module.
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#240)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#259)(self, output_proto, response_lambda):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
 
 [DEPS](/recipe_modules/cros_cache/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3935,6 +3947,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#34)(api):**
+### *recipes* / [cros\_build\_api:examples/has\_endpoint](/recipe_modules/cros_build_api/examples/has_endpoint.py)
+
+[DEPS](/recipe_modules/cros_build_api/examples/has_endpoint.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/has_endpoint.py#12)(api):**
 ### *recipes* / [cros\_build\_api:examples/ok\_retcodes](/recipe_modules/cros_build_api/examples/ok_retcodes.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/ok_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

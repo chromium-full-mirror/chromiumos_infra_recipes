@@ -14,6 +14,30 @@ from google.protobuf import timestamp_pb2
 
 from recipe_engine import recipe_api
 
+from PB.chromite.api.api import MethodGetRequest
+
+def _verify_proto_endpoint(instance, method):
+  """Verifies that the method exists as proto endpoint.
+
+  Verifies that the method exists as a proto endpoint within the Stub purely
+  from a protocol buffer definition standpoint. If it does not exist a
+  `KeyError` is thrown.
+
+  Args:
+    instance (Stub): The instance to check.
+    method (str): Name of method to check for.
+
+  Returns:
+    service, method_descriptor if found, otherwise throws
+        `KeyError`.
+  """
+  service = 'chromite.api.%s' % type(instance).__name__
+  # Check that the service and method exist.
+  service_descriptor = descriptor_pool.Default().FindServiceByName(service)
+  method_descriptor = service_descriptor.FindMethodByName(method)
+  if method_descriptor is None:
+    raise KeyError('no such method %s in service %s' % (method, service))
+  return service, method_descriptor
 
 class Stub(object):
   """A simple client stub for the build API.
@@ -33,13 +57,7 @@ class Stub(object):
     self._call_build_api = call_build_api
 
   def __call__(self, method, input_proto, **kwargs):
-    service = 'chromite.api.%s' % type(self).__name__
-
-    # Check that the service and method exist.
-    service_descriptor = descriptor_pool.Default().FindServiceByName(service)
-    method_descriptor = service_descriptor.FindMethodByName(method)
-    if method_descriptor is None:
-      raise KeyError('no such method %s in service %s' % (method, service))
+    service, method_descriptor = _verify_proto_endpoint(self, method)
 
     # Check that the input type aligns with what is expected.
     given_input_type = input_proto.DESCRIPTOR.full_name
@@ -123,6 +141,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(CrosBuildApiApi, self).__init__(*args, **kwargs)
     self._capture_stdout_stderr = properties.capture_stdout_stderr
+    self._endpoints = None
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                test_teelog_data=None, name=None, infra_step=False,
@@ -239,3 +258,32 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
 
   def response_step_name(self, output_proto, response_lambda):
     return 'call response%s' % response_lambda(output_proto)
+
+  def has_endpoint(self, stub, method):
+    """Verifies that the given endpoint can be called.
+
+    Args:
+      stub (Stub): stub instance to check if `method` can be called on it.
+      method (str): name of method to check for.
+
+    Returns:
+      bool: Whether `method` can be called on `stub`.
+    """
+    # First check that stub is really a Stub registered with the API.
+    stub_name = type(stub).__name__
+    if not isinstance(stub, Stub) or not getattr(self, stub_name, None) == stub:
+      return False
+
+    # Next make sure that the proto defs exist for the method.
+    try:
+      service_name, _ = _verify_proto_endpoint(stub, method)
+    except:
+      return False
+
+    # Lastly, check that the build API side implements the endpoint.
+    # The list of endpoints is lazily cached here.
+    if not self._endpoints:
+       response = self.MethodService.Get(MethodGetRequest())
+       self._endpoints = [m.method for m in response.methods]
+
+    return "%s/%s" % (service_name, method) in self._endpoints
