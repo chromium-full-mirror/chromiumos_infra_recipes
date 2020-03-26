@@ -171,7 +171,7 @@ def RunSteps(api, properties):
         root = api.path.abs_to_path(repository)
         versions = set([e.version for e in ebuilds])
         versions = (versions.pop() if len(versions) == 1
-                    else ', '.join(sort(versions)))
+                    else ', '.join(sorted(versions)))
         commit_lines = [
             '{}: Automatic uprev to {}.'.format(package.package_name,
                                                 versions),
