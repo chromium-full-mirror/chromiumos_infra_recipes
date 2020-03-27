@@ -215,64 +215,24 @@
   {
     "cmd": [
       "[CLEANUP]/swarming-client/swarming.py",
-      "bots",
+      "query",
       "--swarming",
       "chromeos-swarming.appspot.com",
-      "-b",
-      "-d",
-      "role",
-      "cq",
-      "-d",
-      "bot_size",
-      "large",
-      "--idle"
+      "bots/count?dimensions=role:cq&dimensions=bot_size:large"
     ],
     "infra_step": true,
     "name": "scale bot groups.get current swarming stats.get bot query result",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "bots",
-      "--swarming",
-      "chromeos-swarming.appspot.com",
-      "-b",
-      "-d",
-      "role",
-      "cq",
-      "-d",
-      "bot_size",
-      "large",
-      "--busy"
-    ],
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.get bot query result (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "bots",
-      "--swarming",
-      "chromeos-swarming.appspot.com",
-      "-b",
-      "-d",
-      "role",
-      "cq",
-      "-d",
-      "bot_size",
-      "large",
-      "--dead-only"
-    ],
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.get bot query result (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"busy\": \"21\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"dead\": \"0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"maintenance\": \"0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-26T23:38:02.383828\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"quarantined\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -280,7 +240,7 @@
     "name": "scale bot groups.get current swarming stats.set swarming_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@swarming_stats@{\"cq\": {\"busy\": 2, \"dead-only\": 2, \"idle\": 2}}@@@"
+      "@@@SET_BUILD_PROPERTY@swarming_stats@{\"cq\": {\"busy\": \"21\", \"count\": \"23\", \"dead\": \"0\", \"maintenance\": \"0\", \"now\": \"2020-03-26T23:38:02.383828\", \"quarantined\": \"0\"}}@@@"
     ]
   },
   {

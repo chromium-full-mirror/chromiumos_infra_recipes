@@ -15,27 +15,14 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
     Args:
       dimensions(dict): Dictionary of dimensions
     """
-    test_data = {
-        'cq': [{
-            'bot_size': 'large',
-            'bot_id': 'chromeos-ci-cq-us-central1-b-x1-0-igx0\n',
-        },
-               {
-                   'bot_size': 'large',
-                   'bot_id': 'chromeos-ci-cq-us-central1-b-x1-4-gaf9\n',
-               }],
-        'vmtest': [{
-            'bot_size': 'large',
-            'bot_id': 'chromeos-ci-vm-us-central1-b-x1-0-igx0\n',
-        },
-                   {
-                       'bot_size': 'large',
-                       'bot_id': 'chromeos-ci-vm-us-central1-b-x1-4-gaf9\n',
-                   }],
-    }
-    step_data = ""
-    if dimensions['role'] in test_data.keys():
-      for bots in test_data[dimensions['role']]:
-        if bots['bot_size'] == dimensions['bot_size']:
-          step_data += bots['bot_id']
-    return step_data
+    bot_counts = {}
+    if dimensions.get('role') in ['cq']:
+      bot_counts = {
+          "busy": "21",
+          "count": "23",
+          "dead": "0",
+          "maintenance": "0",
+          "now": "2020-03-26T23:38:02.383828",
+          "quarantined": "0"
+      }
+    return bot_counts

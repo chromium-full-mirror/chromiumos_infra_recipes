@@ -12,8 +12,6 @@ from google.protobuf import field_mask_pb2
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
-BOT_STATES = ['idle', 'busy', 'dead-only']
-
 
 class BotScalingApi(recipe_api.RecipeApi):
   """A module that determines how to scale bot groups."""
@@ -136,11 +134,8 @@ class BotScalingApi(recipe_api.RecipeApi):
     swarming_stats = {}
     for policy in bot_policy_config.bot_policies:
       dimensions = {d.name: d.value for d in policy.swarming_dimensions}
-      state_stats = {}
-      for state in BOT_STATES:
-        state_stats[state] = self.m.swarming_cli.get_bot_count(
-            dimensions=dimensions, state=state)
-      swarming_stats[policy.bot_group] = state_stats
+      swarming_stats[policy.bot_group] = self.m.swarming_cli.get_bot_count(
+          dimensions)
     return swarming_stats
 
   def get_previous_action(self):

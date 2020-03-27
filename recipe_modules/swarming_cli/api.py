@@ -38,38 +38,25 @@ class SwarmingCli(recipe_api.RecipeApi):
       cmd (list[str]): swarming client subcommand to run.
     """
     self._ensure_checkout()
-    return self.m.easy.stdout_step(name,
-                                   [self._client] + list(cmd),
-                                   test_stdout=test_stdout, infra_step=True)
+    return self.m.easy.stdout_json_step(
+        name,
+        [self._client] + list(cmd), test_stdout=test_stdout, infra_step=True)
 
-  def _parse_dimensions(self, dimensions):
-    """Parses dimensions dict into list understood by Swarming CLI.
-
-    Args:
-      dimensions: (dict): key value pair of dimensions to filter against.
-    """
-    parsed_dimensions = []
-    for k, v in dimensions.items():
-      parsed_dimensions.append('-d')
-      kv_list = [k, v]
-      parsed_dimensions.extend(kv_list)
-    return parsed_dimensions
-
-  def get_bot_count(self, dimensions=None, state=None):
+  def get_bot_count(self, dimensions=None):
     """Retrieves the count of bots from Swarming based on dimensions.
 
     Args:
       dimensions (dict): dict containing key, value dimensions to query swarming.
-      state (str): the bot swarming state (busy, idle, or dead-only)
     """
-    dim_args = self._parse_dimensions(dimensions)
-    if state.lower() in ['busy', 'idle', 'dead-only']:
-      dim_args.append('--{}'.format(state.lower()))
-    else:
-      raise ValueError('State must be either "busy", "idle", or "dead-only"')
-    cmd = ['bots', '--swarming', CHROMEOS_SWARMING_URL, '-b'] + dim_args
+    dim_args = []
+    for k, v in dimensions.items():
+      dim_args.append('dimensions={}:{}&'.format(k, v))
+    cmd = [
+        'query', '--swarming', CHROMEOS_SWARMING_URL,
+        'bots/count?' + ''.join(dim_args).rstrip('&')
+    ]
     step = self._run(
         'get bot query result', cmd,
         test_stdout=lambda: self.test_api.swarming_bot_step_test_data(dimensions)
     )
-    return len(step.splitlines())
+    return step
