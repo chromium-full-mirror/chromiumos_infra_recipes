@@ -3579,9 +3579,24 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#90)(self, manifest_groups, local_manifest=None, cache_path_override=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#90)(self, manifest_groups, local_manifest, cache_path_override=None):**
 
 Returns a context with manifest groups checked out to cwd.
+
+The subset of repos in the external manifest + local_manifest matching
+manifest_groups are synced. For example, say the external manifest contains
+repos:
+
+  <project path="a" name="a" groups="g1" />
+  <project path="b" name="b" groups="g1" />
+  <project path="c" name="c" groups="g2" />
+
+and the local manifest contains repos:
+
+  <project path="d" name="d" groups="g3" />
+  <project path="e" name="e" groups="g4" />
+
+and manifest_groups is ["g1", "g4"]. Repos "a", "b", and "e" will be synced.
 
 Note the importance of the `cache_path_override` parameter. For cases
 where the number of repos being synced is much smaller than a full
@@ -3591,7 +3606,7 @@ much larger than the time to sync the used repos.
 
 Args:
   manifest_groups (list[str]): List of manifest groups to checkout.
-  local_manifest (repo.LocalManifest): Optional local manifest to sync to.
+  local_manifest (repo.LocalManifest): Local manifest to sync to.
   cache_path_override (Path): Path to sync into. If None, the default
       caching of cros_source.ensure_synced_cache is used.
 ## Recipes

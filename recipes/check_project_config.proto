@@ -17,13 +17,25 @@ message ConfigBundleCheckoutPath {
 }
 
 message CheckProjectConfigProperties {
-    // Manifest groups to init and sync.
+    // Manifest groups specifying a subset of repos to sync.
     //
-    // The union of repos specified by these groups should contain:
-    // - Exactly one program repo (e.g. "chromeos/program/<program>").
-    // - Exactly one project repo (e.g. "chromeos/project/<program>/<project>").
-    // - All shared config repos needed by the project
-    //   (e.g "chromiumos/config").
+    // The subset of repos in the external manifest + local_manifest matching
+    // manifest_groups are synced. For example, say the external manifest
+    // contains repos:
+    //
+    //   <project path="a" name="a" groups="g1" />
+    //   <project path="b" name="b" groups="g1" />
+    //   <project path="c" name="c" groups="g2" />
+    //
+    // and the local manifest contains repos:
+    //
+    //   <project path="d" name="d" groups="g3" />
+    //   <project path="e" name="e" groups="g4" />
+    //
+    // and manifest_groups is ["g1", "g4"]. Repos "a", "b", and "e" will be
+    // synced.
+    //
+    // If empty, all repos are synced.
     repeated string manifest_groups = 1;
 
     // Local manifest to add to the checkout.

@@ -88,10 +88,24 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     self._patch_sets = patch_sets
 
   @contextlib.contextmanager
-  def sync_to_manifest_groups(self, manifest_groups,
-                              local_manifest=None,
+  def sync_to_manifest_groups(self, manifest_groups, local_manifest,
                               cache_path_override=None):
     """Returns a context with manifest groups checked out to cwd.
+
+    The subset of repos in the external manifest + local_manifest matching
+    manifest_groups are synced. For example, say the external manifest contains
+    repos:
+
+      <project path="a" name="a" groups="g1" />
+      <project path="b" name="b" groups="g1" />
+      <project path="c" name="c" groups="g2" />
+
+    and the local manifest contains repos:
+
+      <project path="d" name="d" groups="g3" />
+      <project path="e" name="e" groups="g4" />
+
+    and manifest_groups is ["g1", "g4"]. Repos "a", "b", and "e" will be synced.
 
     Note the importance of the `cache_path_override` parameter. For cases
     where the number of repos being synced is much smaller than a full
@@ -101,26 +115,18 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     Args:
       manifest_groups (list[str]): List of manifest groups to checkout.
-      local_manifest (repo.LocalManifest): Optional local manifest to sync to.
+      local_manifest (repo.LocalManifest): Local manifest to sync to.
       cache_path_override (Path): Path to sync into. If None, the default
           caching of cros_source.ensure_synced_cache is used.
     """
     init_opts = {
         'groups': manifest_groups,
+        'local_manifest': local_manifest,
     }
-    manifest_url = self.m.cros_source.INTERNAL_MANIFEST_URL
-
-    # If a local manifest is specified, init with the public manifest and local
-    # manifest. Otherwise, init with the private manifest.
-    # TODO(crbug.com/1058171): Require local manifests once they are specified
-    # in config.
-    if local_manifest:
-      manifest_url = self.m.cros_source.EXTERNAL_MANIFEST_URL
-      init_opts['local_manifest'] = local_manifest
 
     self.m.cros_source.ensure_synced_cache(
-        manifest_url=manifest_url, init_opts=init_opts,
-        cache_path_override=cache_path_override)
-    with self.m.context(cwd=cache_path_override or
-                        self.m.cros_source.cache_path):
+        manifest_url=self.m.cros_source.EXTERNAL_MANIFEST_URL,
+        init_opts=init_opts, cache_path_override=cache_path_override)
+    with self.m.context(
+        cwd=cache_path_override or self.m.cros_source.cache_path):
       yield

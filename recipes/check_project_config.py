@@ -49,12 +49,13 @@ def RunSteps(api, properties):
   )):
     raise ValueError('All checkout_paths and config_paths must be specified.')
 
-  local_manifest = None
-  if (properties.local_manifest.repo_url and
-      properties.local_manifest.manifest_path):
-    local_manifest = api.repo.LocalManifest(
-        repo=properties.local_manifest.repo_url,
-        path=properties.local_manifest.manifest_path)
+  if not (properties.local_manifest.repo_url and
+          properties.local_manifest.manifest_path):
+    raise ValueError('local_manifest repo and path must be specified')
+
+  local_manifest = api.repo.LocalManifest(
+      repo=properties.local_manifest.repo_url,
+      path=properties.local_manifest.manifest_path)
 
   # Do work in a context with manifest groups checked out. Most steps are infra
   # steps, so make this the default. Non-infra steps specify this explicitly.
@@ -116,7 +117,13 @@ def GenTests(api):
   def properties_dict(extra_props={}):
     """Returns a dict of basic valid properties, updated with extra_props."""
     props = {
-        'manifest_groups': ['partner-config', 'testprogram-testproject'],
+        'manifest_groups': ['partner-config'],
+        'local_manifest':
+            LocalManifest(
+                repo_url=('https://chrome-internal.googlesource.com'
+                          '/chromeos/project/testproject1'),
+                manifest_path='local_manifest.xml',
+            ),
         'chromiumos_config_checkout_path':
             'src/config',
         'program_config_bundle_checkout_path':
@@ -160,7 +167,7 @@ def GenTests(api):
       checked_out_projects(api),
       api.post_process(post_process.StepCommandContains,
                        'ensure synced checkout.repo init',
-                       ['--groups', 'partner-config,testprogram-testproject']),
+                       ['--groups', 'partner-config']),
       # The change should be applied.
       api.post_process(
           post_process.StepCommandContains,
@@ -175,29 +182,19 @@ def GenTests(api):
   )
 
   yield api.test(
-      'with_local_manifest',
+      'local_manifest_missing',
       api.properties(**properties_dict(
           extra_props={
-              'local_manifest':
-                  LocalManifest(
-                      repo_url=('https://chrome-internal.googlesource.com'
-                                '/chromeos/project/testproject1'),
-                      manifest_path='local_manifest.xml',
-                  ),
+              'local_manifest': LocalManifest(
+                  repo_url='',
+                  manifest_path='',
+              ),
           })),
       project_config_cq_build(api),
-      checked_out_projects(api),
-      # The change should be applied.
-      api.post_process(
-          post_process.StepCommandContains,
-          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
-          [
-              'git',
-              'fetch',
-              'https://chrome-internal.googlesource.com/chromium/src',
-              'refs/changes/56/123456/7:',
-          ],
-      ),
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.ResultReasonRE,
+                       ('.*local_manifest repo and path must be specified.*')),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(

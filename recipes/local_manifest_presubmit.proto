@@ -13,8 +13,25 @@ message LocalManifestPresubmitProperties {
   // (e.g. "chromiumos/config" or "chromeos/project/volteer/halvor")
   string project = 1;
 
-  // TODO(crbug.com/1058171): Update comment once local manifests are used for
-  // all builds
+  // Manifest groups specifying a subset of repos to sync.
+  //
+  // The subset of repos in the external manifest + local_manifest matching
+  // manifest_groups are synced. For example, say the external manifest
+  // contains repos:
+  //
+  //   <project path="a" name="a" groups="g1" />
+  //   <project path="b" name="b" groups="g1" />
+  //   <project path="c" name="c" groups="g2" />
+  //
+  // and the local manifest contains repos:
+  //
+  //   <project path="d" name="d" groups="g3" />
+  //   <project path="e" name="e" groups="g4" />
+  //
+  // and manifest_groups is ["g1", "g4"]. Repos "a", "b", and "e" will be
+  // synced.
+  //
+  // If empty, all repos are synced.
   repeated string manifest_groups = 2;
 
   // Local manifest to add to the checkout.

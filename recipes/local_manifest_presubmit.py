@@ -42,12 +42,13 @@ def RunSteps(api, properties):
   if not api.buildbucket.build.input.gerrit_changes:
     raise ValueError('At least one gerrit_change must be specified.')
 
-  local_manifest = None
-  if (properties.local_manifest.repo_url and
-      properties.local_manifest.manifest_path):
-    local_manifest = api.repo.LocalManifest(
-        repo=properties.local_manifest.repo_url,
-        path=properties.local_manifest.manifest_path)
+  if not (properties.local_manifest.repo_url and
+          properties.local_manifest.manifest_path):
+    raise ValueError('local_manifest repo and path must be specified')
+
+  local_manifest = api.repo.LocalManifest(
+      repo=properties.local_manifest.repo_url,
+      path=properties.local_manifest.manifest_path)
 
   with api.context(infra_steps=True), \
       api.workspace_util.sync_to_manifest_groups(
@@ -112,10 +113,16 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.properties(LocalManifestPresubmitProperties(
-          project='chromeos',
-          manifest_groups=['partner-config'],
-      )),
+      api.properties(
+          LocalManifestPresubmitProperties(
+              project='chromeos',
+              manifest_groups=['partner-config'],
+              local_manifest=LocalManifest(
+                  repo_url=('https://chrome-internal.googlesource.com'
+                            '/chromeos/project/testproject1'),
+                  manifest_path='local_manifest.xml',
+              ),
+          )),
       project_config_cq_build(api),
       checked_out_projects(api),
       # The change should be applied.
@@ -140,10 +147,16 @@ def GenTests(api):
   # used. bot_update blows up if it sees more than one change.
   yield api.test(
       'multiple_changes',
-      api.properties(LocalManifestPresubmitProperties(
-          project='chromeos',
-          manifest_groups=['partner-config'],
-      )),
+      api.properties(
+          LocalManifestPresubmitProperties(
+              project='chromeos',
+              manifest_groups=['partner-config'],
+              local_manifest=LocalManifest(
+                  repo_url=('https://chrome-internal.googlesource.com'
+                            '/chromeos/project/testproject1'),
+                  manifest_path='local_manifest.xml',
+              ),
+          )),
       project_config_cq_build(api, extra_changes=[extra_change]),
       checked_out_projects(api),
       # The change should be applied.
@@ -206,26 +219,15 @@ def GenTests(api):
   )
 
   yield api.test(
-      'with_local_manifest',
-      api.properties(LocalManifestPresubmitProperties(
-          project='chromeos',
-          manifest_groups=['partner-config'],
-          local_manifest=LocalManifest(
-              repo_url=('https://chrome-internal.googlesource.com'
-                        '/chromeos/project/testproject1'),
-              manifest_path='local_manifest.xml',
-          ))),
+      'no_local_manifest',
+      api.properties(
+          LocalManifestPresubmitProperties(
+              project='chromeos',
+              manifest_groups=['partner-config'],
+          )),
       project_config_cq_build(api),
-      checked_out_projects(api),
-      # The change should be applied.
-      api.post_process(
-          post_process.StepCommandContains,
-          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
-          [
-              'git',
-              'fetch',
-              'https://chrome-internal.googlesource.com/chromium/src',
-              'refs/changes/56/123456/7:',
-          ],
-      ),
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.ResultReasonRE,
+                       '.*local_manifest repo and path must be specified.*'),
+      api.post_process(post_process.DropExpectation),
   )
