@@ -4,6 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import datetime
+
 from recipe_engine import recipe_api
 
 CHROMEOS_SWARMING_URL = 'chromeos-swarming.appspot.com'
@@ -42,7 +44,7 @@ class SwarmingCli(recipe_api.RecipeApi):
         name,
         [self._client] + list(cmd), test_stdout=test_stdout, infra_step=True)
 
-  def get_bot_count(self, dimensions=None):
+  def get_bot_counts(self, dimensions=None):
     """Retrieves the count of bots from Swarming based on dimensions.
 
     Args:
@@ -59,4 +61,26 @@ class SwarmingCli(recipe_api.RecipeApi):
         'get bot query result', cmd,
         test_stdout=lambda: self.test_api.swarming_bot_step_test_data(dimensions)
     )
+    return step
+
+  def get_task_counts(self, dimensions=None, state=None):
+    """Retrieves the count of tasks from Swarming based on dimensions.
+
+    Args:
+      dimensions (dict): dict containing key, value dimensions to query swarming.
+      state (str): state of the tasks to query
+    """
+    dim_args = ['state={}&'.format(state)]
+    for k, v in dimensions.items():
+      dim_args.append('tags={}:{}&'.format(k, v))
+    dim_args.append('start={}'.format(
+        ((self.m.time.utcnow() + datetime.timedelta(hours=2)) -
+         datetime.datetime(1970, 1, 1)).total_seconds()))
+    cmd = [
+        'query', '--swarming', CHROMEOS_SWARMING_URL,
+        'tasks/count?' + ''.join(dim_args).rstrip('&')
+    ]
+    step = self._run(
+        'get task query result', cmd, test_stdout=
+        lambda: self.test_api.swarming_task_step_test_data(dimensions))
     return step

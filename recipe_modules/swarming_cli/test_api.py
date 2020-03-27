@@ -26,3 +26,15 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
           "quarantined": "0"
       }
     return bot_counts
+
+  def swarming_task_step_test_data(self, dimensions):
+    """Returns list of bots based on provided dimensions.
+
+    Args:
+      dimensions(dict): Dictionary of dimensions
+    """
+    task_counts = {}
+    if dimensions.get('role') in ['cq']:
+      task_counts = {"count": "23", "now": "2020-03-27T19:08:08.207587"}
+
+    return task_counts

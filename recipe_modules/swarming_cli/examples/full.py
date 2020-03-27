@@ -10,18 +10,24 @@ DEPS = [
 
 
 def RunSteps(api):
-  bot_count = api.swarming_cli.get_bot_count(dimensions={
+  bot_count = api.swarming_cli.get_bot_counts(dimensions={
       'role': 'cq',
       'bot_size': 'large'
   })
   api.assertions.assertEqual(int(bot_count.get('busy'), 0), 21)
   api.assertions.assertEqual(int(bot_count.get('count'), 0), 23)
 
-  bot_count = api.swarming_cli.get_bot_count(dimensions={
+  bot_count = api.swarming_cli.get_bot_counts(dimensions={
       'role': 'foo',
       'bot_size': 'large'
   })
   api.assertions.assertEqual(int(bot_count.get('busy', 0)), 0)
+
+  task_count = api.swarming_cli.get_task_counts(dimensions={
+      'role': 'cq',
+      'bot_size': 'large'
+  })
+  api.assertions.assertEqual(int(task_count.get('count', 0)), 23)
 
 
 def GenTests(api):

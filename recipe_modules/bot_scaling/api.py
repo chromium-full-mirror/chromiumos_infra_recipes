@@ -12,6 +12,8 @@ from google.protobuf import field_mask_pb2
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
+TASK_STATES = ['RUNNING', 'PENDING']
+
 
 class BotScalingApi(recipe_api.RecipeApi):
   """A module that determines how to scale bot groups."""
@@ -129,14 +131,22 @@ class BotScalingApi(recipe_api.RecipeApi):
         the RoboCrop.
 
     Returns:
-      dict, mapping of bot group, by bot state, to the number of bots.
+      dict, bot and task stats, keyed by bot_group.
     """
-    swarming_stats = {}
+    bot_stats = {}
+    task_stats = {}
     for policy in bot_policy_config.bot_policies:
       dimensions = {d.name: d.value for d in policy.swarming_dimensions}
-      swarming_stats[policy.bot_group] = self.m.swarming_cli.get_bot_count(
+      bot_stats[policy.bot_group] = self.m.swarming_cli.get_bot_counts(
           dimensions)
-    return swarming_stats
+      state_stats = {}
+      for state in TASK_STATES:
+        current_state = self.m.swarming_cli.get_task_counts(
+            dimensions=dimensions, state=state)
+        state_stats[state] = {'count': int(current_state.get('count', 0))}
+      task_stats[policy.bot_group] = state_stats
+    # TODO(mikenichols): Refactor to return a message type and not a nested dict.
+    return {'bot_stats': bot_stats, 'task_stats': task_stats}
 
   def get_previous_action(self):
     """Determines regional distribution of bot requests.

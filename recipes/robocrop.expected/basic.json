@@ -236,11 +236,49 @@
     ]
   },
   {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "query",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "tasks/count?state=RUNNING&tags=role:cq&tags=bot_size:large&start=1337007201.5"
+    ],
+    "infra_step": true,
+    "name": "scale bot groups.get current swarming stats.get task query result",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-27T19:08:08.207587\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "query",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "tasks/count?state=PENDING&tags=role:cq&tags=bot_size:large&start=1337007203.0"
+    ],
+    "infra_step": true,
+    "name": "scale bot groups.get current swarming stats.get task query result (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-27T19:08:08.207587\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "scale bot groups.get current swarming stats.set swarming_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@swarming_stats@{\"cq\": {\"busy\": \"21\", \"count\": \"23\", \"dead\": \"0\", \"maintenance\": \"0\", \"now\": \"2020-03-26T23:38:02.383828\", \"quarantined\": \"0\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@swarming_stats@{\"bot_stats\": {\"cq\": {\"busy\": \"21\", \"count\": \"23\", \"dead\": \"0\", \"maintenance\": \"0\", \"now\": \"2020-03-26T23:38:02.383828\", \"quarantined\": \"0\"}}, \"task_stats\": {\"cq\": {\"PENDING\": {\"count\": 23}, \"RUNNING\": {\"count\": 23}}}}@@@"
     ]
   },
   {
@@ -556,7 +594,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}}"
+      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:24Z\"}}"
     ],
     "infra_step": true,
     "name": "scale bot groups.compute scaling actions.find matching builds.buildbucket.search",
