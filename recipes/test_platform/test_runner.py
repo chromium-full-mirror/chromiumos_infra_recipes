@@ -36,6 +36,7 @@ DEPS = [
 PROPERTIES = TestRunnerProperties
 ENV_PROPERTIES = TestRunnerEnvProperties
 
+_SYNC_SUBDIR = "synchronous_subdir"
 
 def validate_request(api, properties):
   """Validate the TestRunnerProperties.
@@ -84,12 +85,14 @@ def prejob(api, config=None, request=None, dut_hostname='',
       return api.phosphorus.prejob(prejob_request)
 
 
-def run_test(api, config=None, request=None, dut_hostname=''):
+def run_test(api,
+             config=None, request=None, output_config=None, dut_hostname=''):
   """Run a test against the DUT via `autoserv`.
 
   Args:
     * config: phosphorus.Config instance.
     * request: skylab_test_runner.Request instance.
+    * output_config: skylab_test_runner.Config.Output instance.
     * dut_hostname: DUT hostname string.
 
   Returns:
@@ -110,6 +113,9 @@ def run_test(api, config=None, request=None, dut_hostname=''):
             keyvals=request.test.autotest.keyvals,
             is_client_test=request.test.autotest.is_client_test,
         ),
+        environment=phosphorus.runtest.RunTestRequest.Environment(
+            gs_root_dir=output_config.gs_root_dir
+        ),
     )
     if request.HasField('deadline'):
       # Must explicitly check for existence of deadline.
@@ -120,12 +126,12 @@ def run_test(api, config=None, request=None, dut_hostname=''):
     return api.phosphorus.run_test(run_test_request)
 
 
-def upload_sync_results_to_gs(api, config=None, target_dir=None):
+def upload_sync_results(api, config=None, output_config=None):
   """Upload synchronously-needed test results to Google Storage.
 
   Args:
     * config: phosphorus.Config instance
-    * target_dir: URL string for GS directory to upload to
+    * output_config: skylab_test_runner.Config.Output instance.
   Returns:
     UploadToGSResponse proto
   Raises:
@@ -135,7 +141,7 @@ def upload_sync_results_to_gs(api, config=None, target_dir=None):
     with api.step.nest('upload results to GS') as step:
       req = phosphorus.upload_to_gs.UploadToGSRequest(
           config=config,
-          gs_directory=target_dir)
+          gs_directory=output_config.gs_root_dir)
       return api.phosphorus.upload_to_gs(req)
 
 
@@ -271,7 +277,7 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
   Returns: phosphorus.Config.
   """
   if set_offload_dir:
-    off_dir = recipe_config.output.gs_root_dir
+    off_dir = _SYNC_SUBDIR
   else:
     off_dir = ""
   subdir = os.path.join(load_response.results_dir, "autoserv_test")
@@ -350,8 +356,10 @@ def RunSteps(api, properties, envvars):
     prejob_response = prejob(
         api, config=phosphorus_config, request=properties.request,
         dut_hostname=dut_hostname, load_response=load_response)
-    run_test_response = run_test(api, config=phosphorus_config,
+    run_test_response = run_test(api,
+                                 config=phosphorus_config,
                                  request=properties.request,
+                                 output_config=properties.config.output,
                                  dut_hostname=dut_hostname)
 
     # In case autoserv fails early, upload_to_tko()reruns tko/parse to extract
@@ -364,9 +372,9 @@ def RunSteps(api, properties, envvars):
     dut_state = result.state_update.dut_state
 
     if properties.request.test.offload.synchronous_gs_enable:
-      upload_response = upload_sync_results_to_gs(
+      upload_response = upload_sync_results(
           api, config=phosphorus_config,
-          target_dir=properties.config.output.gs_root_dir)
+          output_config=properties.config.output)
       result.autotest_result.synchronous_log_data_url = upload_response.gs_url
   finally:
     with api.step.nest('save local DUT state'):
@@ -461,6 +469,8 @@ class SkylabStateStore(object):
       api.skylab_local_state.save(save_request)
 
 
+_GS_ROOT = "gs://bucket/foo/bar"
+
 def GenTests(api):
   # Required for initial module set up.
   def _misc_properties():
@@ -471,7 +481,10 @@ def GenTests(api):
                     'lab': {
                         'admin_service': 'foo-service'},
                     'harness': {
-                        'autotest_dir': '/path/to/autotest'}}),
+                        'autotest_dir': '/path/to/autotest'},
+                    'output': {
+                        'gs_root_dir': _GS_ROOT
+                    }}),
             **{
                 '$chromeos/autotest_status_parser':
                     AutotestStatusParserProperties(
@@ -640,7 +653,9 @@ def GenTests(api):
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
                      phosphorus.upload_to_gs.UploadToGSResponse(
-                         gs_url="gs://dummy-gs-url")))))
+                         gs_url=os.path.join(_GS_ROOT,
+                                             "UUID",
+                                             _SYNC_SUBDIR))))))
   yield (api.test('get_results_crash') +  #
          _misc_properties() +  #
          _request_properties() +  #
