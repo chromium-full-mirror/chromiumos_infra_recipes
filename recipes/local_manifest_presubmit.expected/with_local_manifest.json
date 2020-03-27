@@ -518,11 +518,12 @@
   },
   {
     "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/presubmit_support.py",
+      "presubmit_support.py",
       "--json_output",
-      "/path/to/tmp/json"
+      "/path/to/tmp/json",
+      "--commit",
+      "--verbose",
+      "--recursive"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
     "env_suffixes": {
@@ -530,7 +531,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "prepare and execute presubmit.presubmit",
+    "name": "prepare and execute presubmit.presubmit_support",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@json.output (invalid)@@@",

@@ -9,6 +9,8 @@ import contextlib
 
 from recipe_engine import post_process
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 from PB.project_mgmt.project import LocalManifest
 from PB.recipes.chromeos.local_manifest_presubmit import (
     LocalManifestPresubmitProperties)
@@ -18,11 +20,11 @@ PROPERTIES = LocalManifestPresubmitProperties
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/json',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/depot_tools',
-    'depot_tools/presubmit',
     'cros_source',
     'git',
     'repo',
@@ -74,21 +76,29 @@ def RunSteps(api, properties):
 
       # infra_steps set in context take precedence over infra_step passed
       # to a step, so we make a new context here.
-      with api.context(infra_steps=False):
-        # TODO: catch the exception and produce a better failure.
-        api.presubmit()
+      with api.context(infra_steps=False), api.depot_tools.on_path():
+        cmd = [
+            'presubmit_support.py',
+            '--json_output', api.json.output(),
+            '--commit',
+            '--verbose',
+            '--recursive',
+        ]
+        api.step('presubmit_support', cmd)
 
 
 def GenTests(api):
 
-  def project_config_cq_build(api):
+  def project_config_cq_build(api, extra_changes=None):
     """Returns a sample buildbucket project config cq build"""
-    return api.buildbucket.try_build(
+    message = api.buildbucket.try_build_message(
         project='chromeos',
         bucket='testprogram-testproject',
         builder='local-manifest-presubmit-testprogram-testproject',
         git_repo='https://chrome-internal.googlesource.com/project1',
     )
+    message.input.gerrit_changes.extend(extra_changes or [])
+    return api.buildbucket.build(message)
 
   def checked_out_projects(api):
     """Returns StepData for the command used to find checked out projects.
@@ -117,6 +127,44 @@ def GenTests(api):
               'fetch',
               'https://chrome-internal.googlesource.com/chromium/src',
               'refs/changes/56/123456/7:',
+          ],
+      ),
+  )
+
+  extra_change = common_pb2.GerritChange(
+      host='chrome-internal.googlesource.com',
+      project='project1',
+      change=101)
+
+  # Checks against making sure a bot_update initialization is not being
+  # used. bot_update blows up if it sees more than one change.
+  yield api.test(
+      'multiple_changes',
+      api.properties(LocalManifestPresubmitProperties(
+          project='chromeos',
+          manifest_groups=['partner-config'],
+      )),
+      project_config_cq_build(api, extra_changes=[extra_change]),
+      checked_out_projects(api),
+      # The change should be applied.
+      api.post_process(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromium/src',
+              'refs/changes/56/123456/7:',
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch (2)',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromium/src',
+              'refs/changes/01/101/0:',
           ],
       ),
   )
