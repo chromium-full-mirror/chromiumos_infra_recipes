@@ -88,6 +88,7 @@
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
   * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
   * [check_project_config](#recipes-check_project_config) &mdash; Checks a project conforms to its program's constraints.
+  * [chrome:examples/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_examples_follower_needs_chrome_no_has_prebuilt)
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [chrome:examples/gclient_retry](#recipes-chrome_examples_gclient_retry)
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
@@ -936,7 +937,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#118)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#120)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -953,7 +954,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#146)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#148)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None):**
 
 Call the build API with the given input proto.
 
@@ -980,7 +981,7 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#262)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#264)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -991,11 +992,11 @@ Args:
 Returns:
   bool: Whether `method` can be called on `stub`.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#135)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#137)(self):**
 
 Expose all client stubs defined in this module.
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#259)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#261)(self, output_proto, response_lambda):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
 
 [DEPS](/recipe_modules/cros_cache/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3838,6 +3839,11 @@ Recipe for generating ChromeOS cache payloads.
 Checks a project conforms to its program's constraints.
 
 &mdash; **def [RunSteps](/recipes/check_project_config.py#36)(api, properties):**
+### *recipes* / [chrome:examples/follower\_needs\_chrome\_no\_has\_prebuilt](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py)
+
+[DEPS](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
+
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py#18)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

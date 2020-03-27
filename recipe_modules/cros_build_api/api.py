@@ -91,6 +91,8 @@ class MethodService(Stub):
   """Stub for MethodService."""
 
 
+# Note that HasPrebuilt was exposed in chromite in https://crrev.com/c/2116663
+# and has_endpoint checks should be used.
 class PackageService(Stub):
   """Stub for PackageService."""
 

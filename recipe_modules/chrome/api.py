@@ -236,6 +236,13 @@ class ChromeApi(recipe_api.RecipeApi):
     Returns:
       bool: Whether or not this run needs chrome.
     """
+    # If the synced to chromite build API does not implement HasPrebuilt, we'll
+    # assume we are before the window where such followers existed, and return
+    # false.
+    if not self.m.cros_build_api.has_endpoint(
+        self.m.cros_build_api.PackageService, 'HasPrebuilt'):
+      return False
+
     # We'll first query the packages we're going to build out of the dependent
     # packages to get the versions and if it's necessary to build at all.
     with self.m.step.nest('any followers lack prebuilts') as pres:
