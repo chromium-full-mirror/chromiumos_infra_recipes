@@ -149,7 +149,7 @@ class SkylabApi(recipe_api.RecipeApi):
 
   def _get_ctp_tags(self, test, unit, priority, image_path):
     return {
-        'label-pool': 'DUT_POOL_QUOTA',
+        'label-pool': test.pool,
         'priority': str(priority),
         'build': image_path,
         'label-board': test.skylab_board,

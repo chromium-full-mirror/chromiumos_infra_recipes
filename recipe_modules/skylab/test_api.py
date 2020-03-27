@@ -47,6 +47,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         ),
         suite=suite or 'bvt-cq',
         skylab_board=board or 'target',
+        pool='recipe_test_pool',
     )
 
   def skylab_task(self, id=None, url=None, test=None, unit=None):

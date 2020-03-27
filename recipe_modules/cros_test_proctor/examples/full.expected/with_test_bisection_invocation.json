@@ -63,7 +63,7 @@
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.schedule hardware tests.schedule kip.hw.bvt-cq.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"request\": {\"params\": {\"decorations\": {\"tags\": [\"priority:140\", \"suite:bvt-cq\", \"build:path\", \"label-board:amd64-generic\", \"label-pool:DUT_POOL_QUOTA\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"testMetadataUrl\": \"gs://bucket/path\"}, \"retry\": {\"allow\": true, \"max\": 5}, \"scheduling\": {\"priority\": \"140\", \"quotaAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"amd64-generic\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"path\"}], \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"build\", \"value\": \"path\"}, {\"key\": \"label-board\", \"value\": \"amd64-generic\"}, {\"key\": \"label-pool\", \"value\": \"DUT_POOL_QUOTA\"}, {\"key\": \"priority\", \"value\": \"140\"}, {\"key\": \"suite\", \"value\": \"bvt-cq\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"request\": {\"params\": {\"decorations\": {\"tags\": [\"priority:140\", \"suite:bvt-cq\", \"build:path\", \"label-board:amd64-generic\", \"label-pool:bisect test pool\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"testMetadataUrl\": \"gs://bucket/path\"}, \"retry\": {\"allow\": true, \"max\": 5}, \"scheduling\": {\"priority\": \"140\", \"quotaAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"amd64-generic\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"path\"}], \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"build\", \"value\": \"path\"}, {\"key\": \"label-board\", \"value\": \"amd64-generic\"}, {\"key\": \"label-pool\", \"value\": \"bisect test pool\"}, {\"key\": \"priority\", \"value\": \"140\"}, {\"key\": \"suite\", \"value\": \"bvt-cq\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -99,7 +99,7 @@
       "@@@STEP_LOG_LINE@request@                  \"suite:bvt-cq\", @@@",
       "@@@STEP_LOG_LINE@request@                  \"build:path\", @@@",
       "@@@STEP_LOG_LINE@request@                  \"label-board:amd64-generic\", @@@",
-      "@@@STEP_LOG_LINE@request@                  \"label-pool:DUT_POOL_QUOTA\"@@@",
+      "@@@STEP_LOG_LINE@request@                  \"label-pool:bisect test pool\"@@@",
       "@@@STEP_LOG_LINE@request@                ]@@@",
       "@@@STEP_LOG_LINE@request@              }, @@@",
       "@@@STEP_LOG_LINE@request@              \"hardwareAttributes\": {}, @@@",
@@ -152,7 +152,7 @@
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"label-pool\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"DUT_POOL_QUOTA\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"bisect test pool\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"priority\", @@@",
@@ -195,6 +195,7 @@
       "@@@STEP_LOG_LINE@return value@    value: true@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@pool: \"bisect test pool\"@@@",
       "@@@STEP_LOG_LINE@return value@, unit=common {@@@",
       "@@@STEP_LOG_LINE@return value@  build_target {@@@",
       "@@@STEP_LOG_LINE@return value@    name: \"amd64-generic\"@@@",
@@ -239,6 +240,7 @@
       "@@@STEP_LOG_LINE@return value@        value: true@@@",
       "@@@STEP_LOG_LINE@return value@      }@@@",
       "@@@STEP_LOG_LINE@return value@    }@@@",
+      "@@@STEP_LOG_LINE@return value@    pool: \"bisect test pool\"@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@), status=20, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
@@ -353,7 +355,7 @@
     "name": "check test results.set test_failures",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@test_failures@{\"hw_test_failures\": [{\"failed_step\": \"check test results|hw test results|kip.hw.bvt-cq\", \"suite\": \"bvt-cq\", \"test_spec\": \"{\\n  \\\"hwTestCfg\\\": {\\n    \\\"hwTest\\\": [\\n      {\\n        \\\"suite\\\": \\\"bvt-cq\\\", \\n        \\\"common\\\": {\\n          \\\"critical\\\": true, \\n          \\\"displayName\\\": \\\"kip.hw.bvt-cq\\\"\\n        }, \\n        \\\"skylabBoard\\\": \\\"amd64-generic\\\"\\n      }\\n    ]\\n  }, \\n  \\\"common\\\": {\\n    \\\"buildTarget\\\": {\\n      \\\"name\\\": \\\"amd64-generic\\\"\\n    }, \\n    \\\"buildPayload\\\": {\\n      \\\"artifactsGsBucket\\\": \\\"bucket\\\", \\n      \\\"artifactsGsPath\\\": \\\"path\\\", \\n      \\\"filesByArtifact\\\": {\\n        \\\"TAST_FILES\\\": [\\n          \\\"tast1.zip\\\", \\n          \\\"tast2.zip\\\"\\n        ], \\n        \\\"IMAGE_ZIP\\\": [\\n          \\\"image.zip\\\"\\n        ]\\n      }\\n    }\\n  }\\n}\"}], \"needs_bisection\": false}@@@"
+      "@@@SET_BUILD_PROPERTY@test_failures@{\"hw_test_failures\": [{\"failed_step\": \"check test results|hw test results|kip.hw.bvt-cq\", \"suite\": \"bvt-cq\", \"test_spec\": \"{\\n  \\\"hwTestCfg\\\": {\\n    \\\"hwTest\\\": [\\n      {\\n        \\\"suite\\\": \\\"bvt-cq\\\", \\n        \\\"common\\\": {\\n          \\\"critical\\\": true, \\n          \\\"displayName\\\": \\\"kip.hw.bvt-cq\\\"\\n        }, \\n        \\\"pool\\\": \\\"bisect test pool\\\", \\n        \\\"skylabBoard\\\": \\\"amd64-generic\\\"\\n      }\\n    ]\\n  }, \\n  \\\"common\\\": {\\n    \\\"buildTarget\\\": {\\n      \\\"name\\\": \\\"amd64-generic\\\"\\n    }, \\n    \\\"buildPayload\\\": {\\n      \\\"artifactsGsBucket\\\": \\\"bucket\\\", \\n      \\\"artifactsGsPath\\\": \\\"path\\\", \\n      \\\"filesByArtifact\\\": {\\n        \\\"TAST_FILES\\\": [\\n          \\\"tast1.zip\\\", \\n          \\\"tast2.zip\\\"\\n        ], \\n        \\\"IMAGE_ZIP\\\": [\\n          \\\"image.zip\\\"\\n        ]\\n      }\\n    }\\n  }\\n}\"}], \"needs_bisection\": false}@@@"
     ]
   },
   {

@@ -39,7 +39,8 @@ class CrosBisectTestApi(recipe_test_api.RecipeTestApi):
             display_name='kip.hw.bvt-cq',
             critical={'value': True}),
         suite='bvt-cq',
-        skylab_board=build_target_name
+        skylab_board=build_target_name,
+        pool='bisect test pool',
     )
     return HwTestCfg(hw_test=[hw_test])
 

@@ -51,6 +51,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                                            critical={'value': True}),
                     suite='bvt-cq',
                     skylab_board='target',
+                    pool='another skylab pool',
                 ),
             ],),
     )
@@ -66,6 +67,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                                            critical={'value': True}),
                     suite='bvt-inline',
                     skylab_board='target',
+                    pool='my skylab pool',
                 ),
             ],),
     )
