@@ -123,7 +123,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def method_service_responses(self):
     """Generate responses for MethodService."""
     methods = []
-    responses_by_service = self.responses_by_service(ignore_method_service=True)
+    responses_by_service = self.responses_by_service(
+        include_method_service=False)
     for service, responses_by_method in responses_by_service.items():
       for method in responses_by_method.keys():
         methods.append({
@@ -250,11 +251,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     ])
     return responses
 
-  def responses_by_service(self, ignore_method_service=False):
+  def responses_by_service(self, include_method_service=True):
     """Map service name to a dictionary of responses by method name.
 
     Args:
-      ignore_method_service (bool): used to exclude adding the endpoints of the
+      include_method_service (bool): used to include adding the endpoints of the
           MethodService to this map. This is a hack to allow
           `method_service_responses` to use this method to generate a full
           canned response without causing infinite recursion.
@@ -270,7 +271,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'TestService': self.test_service_responses,
         'ToolchainService': self.toolchain_service_responses,
     }
-    if not ignore_method_service:
+    if include_method_service:
       result['MethodService'] = self.method_service_responses
     return result
 

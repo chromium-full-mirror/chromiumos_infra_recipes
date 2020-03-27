@@ -35,7 +35,7 @@ def _verify_proto_endpoint(instance, method):
   # Check that the service and method exist.
   service_descriptor = descriptor_pool.Default().FindServiceByName(service)
   method_descriptor = service_descriptor.FindMethodByName(method)
-  if method_descriptor is None:
+  if not method_descriptor:
     raise KeyError('no such method %s in service %s' % (method, service))
   return service, method_descriptor
 
