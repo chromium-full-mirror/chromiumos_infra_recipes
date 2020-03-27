@@ -74,7 +74,7 @@ class SwarmingCli(recipe_api.RecipeApi):
     for k, v in dimensions.items():
       dim_args.append('tags={}:{}&'.format(k, v))
     dim_args.append('start={}'.format(
-        ((self.m.time.utcnow() + datetime.timedelta(hours=2)) -
+        ((self.m.time.utcnow() + datetime.timedelta(hours=-2)) -
          datetime.datetime(1970, 1, 1)).total_seconds()))
     cmd = [
         'query', '--swarming', CHROMEOS_SWARMING_URL,
