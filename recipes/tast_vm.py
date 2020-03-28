@@ -145,7 +145,7 @@ def _run_tast(api, expressions, tast_dir, private_key_path, name, tag):
       '-waituntilready', \
       '-continueafterfailure', \
       '-extrauseflags=tast_vm', \
-      '-defaultvarsdir={}'.format(str(tast_dir.join('vars'))), \
+      '-defaultvarsdir={}'.format(str(tast_dir.join('vars', 'private'))), \
       '-resultsdir', str(test_results_dir), \
       '-keyfile={}'.format(private_key_path), \
       '-remotebundledir={}'.format(
