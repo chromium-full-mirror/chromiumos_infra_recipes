@@ -3,6 +3,7 @@
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+from collections import namedtuple
 
 from PB.chromiumos.bot_scaling import BotPolicy, RoboCropAction, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -13,6 +14,12 @@ from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
 TASK_STATES = ['RUNNING', 'PENDING']
+
+BotStats = namedtuple(
+    'BotStats',
+    ['bot_group', 'busy', 'count', 'dead', 'maintenance', 'quarantined'])
+TaskStats = namedtuple('TaskStats', ['bot_group', 'task_state', 'count'])
+SwarmingStats = namedtuple('SwarmingStats', ['bot_stats', 'task_stats'])
 
 
 class BotScalingApi(recipe_api.RecipeApi):
@@ -131,22 +138,22 @@ class BotScalingApi(recipe_api.RecipeApi):
         the RoboCrop.
 
     Returns:
-      dict, bot and task stats, keyed by bot_group.
+      SwarmingStats:  bot and task stats named tuple.
     """
-    bot_stats = {}
-    task_stats = {}
+    bot_stats = []
+    task_stats = []
     for policy in bot_policy_config.bot_policies:
       dimensions = {d.name: d.value for d in policy.swarming_dimensions}
-      bot_stats[policy.bot_group] = self.m.swarming_cli.get_bot_counts(
-          dimensions)
-      state_stats = {}
+      bot_stats.append(
+          self._bot_swarming_stats(
+              policy.bot_group, self.m.swarming_cli.get_bot_counts(dimensions)))
       for state in TASK_STATES:
-        current_state = self.m.swarming_cli.get_task_counts(
-            dimensions=dimensions, state=state)
-        state_stats[state] = {'count': int(current_state.get('count', 0))}
-      task_stats[policy.bot_group] = state_stats
-    # TODO(mikenichols): Refactor to return a message type and not a nested dict.
-    return {'bot_stats': bot_stats, 'task_stats': task_stats}
+        task_stats.append(
+            self._task_swarming_stats(
+                policy.bot_group, state,
+                self.m.swarming_cli.get_task_counts(dimensions=dimensions,
+                                                    state=state)))
+    return SwarmingStats(bot_stats, task_stats)
 
   def get_previous_action(self):
     """Determines regional distribution of bot requests.
@@ -255,3 +262,32 @@ class BotScalingApi(recipe_api.RecipeApi):
       dict, map of prefix to GCE Config
     """
     return {c.prefix: c for c in configs.vms}
+
+  def _bot_swarming_stats(self, bot_group, bot_stats):
+    """Helper method that formats the bot stats into a named tuple.
+
+    Args:
+      bot_group (str): name of bot group associated with stats.
+      bot_stats (dict): swarming CL dict of bot stats.
+
+    Returns:
+      BotStats: Swarming bot stats named tuple.
+    """
+    return BotStats(bot_group, int(bot_stats.get('busy', 0)),
+                    int(bot_stats.get('count', 0)), int(
+                        bot_stats.get('dead', 0)),
+                    int(bot_stats.get('maintenance', 0)),
+                    int(bot_stats.get('quarantined', 0)))
+
+  def _task_swarming_stats(self, bot_group, state, task_stats):
+    """Helper method that formats the bot stats into a named tuple.
+
+    Args:
+      bot_group (str): name of bot group associated with stats.
+      state (str): Swarming task state.
+      task_stats (dict): swarming CL dict of task stats.
+
+    Returns:
+      TaskStats: Swarming task stats named tuple.
+    """
+    return TaskStats(bot_group, state, int(task_stats.get('count', 0)))

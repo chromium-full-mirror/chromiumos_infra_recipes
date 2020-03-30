@@ -278,7 +278,7 @@
     "name": "scale bot groups.get current swarming stats.set swarming_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@swarming_stats@{\"bot_stats\": {\"cq\": {\"busy\": \"21\", \"count\": \"23\", \"dead\": \"0\", \"maintenance\": \"0\", \"now\": \"2020-03-26T23:38:02.383828\", \"quarantined\": \"0\"}}, \"task_stats\": {\"cq\": {\"PENDING\": {\"count\": 23}, \"RUNNING\": {\"count\": 23}}}}@@@"
+      "@@@SET_BUILD_PROPERTY@swarming_stats@[[[\"cq\", 21, 23, 0, 0, 0]], [[\"cq\", \"RUNNING\", 23], [\"cq\", \"PENDING\", 23]]]@@@"
     ]
   },
   {
