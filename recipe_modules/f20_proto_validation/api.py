@@ -16,9 +16,10 @@ exists to generalize cros_test_platform a la F20.
 from recipe_engine import recipe_api
 from google.protobuf import json_format
 
-from PB.test.metadata.v1.metadata import Metadata, Test
-from PB.test.metadata.v1.remote_test_driver import RemoteTestDriver
+from PB.test.metadata.v1.metadata import RemoteTestDriver, Test
+from PB.test.metadata.v1.metadata import Specification as MetadataSpec
 from PB.test.plan.v1.plan import Plan, TestCondition, Unit
+from PB.test.plan.v1.plan import Specification as PlanSpec
 
 
 class F20ProtoValidationAPI(recipe_api.RecipeApi):
@@ -29,25 +30,39 @@ class F20ProtoValidationAPI(recipe_api.RecipeApi):
     self._log_to_nested_step(
         'metadata',
         json_format.MessageToJson(
-            Metadata(
-                remote_test_driver=RemoteTestDriver(
-                    id=RemoteTestDriver.TAUTO,
+            MetadataSpec(remote_test_drivers=[
+                RemoteTestDriver(
+                    name="remoteTestDrivers/tauto",
                     command='echo hello world',
-                ), test=[Test(name='footest')])))
+                    tests=[Test(name='remoteTestDrivers/tauto/tests/foo')],
+                ),
+                RemoteTestDriver(
+                    name="remoteTestDrivers/tast",
+                    command='echo hello world',
+                    tests=[Test(name='remoteTestDrivers/tast/tests/baz')],
+                ),
+            ])),
+    )
 
   def log_sample_plan(self):
     """Log a sample Plan instance."""
     self._log_to_nested_step(
         'plan',
         json_format.MessageToJson(
-            Plan(
-                name='fooplan',
-                units=[Unit(
-                    test_condition=TestCondition(
-                        expression="true",
-                    ),
-                )],
-            )))
+            PlanSpec(plans=[
+                Plan(
+                    name='plans/fake_plan',
+                    units=[
+                        Unit(
+                            name='plans/fake_plan/units/fake_unit',
+                            test_condition=TestCondition(
+                                expression="true",
+                            ),
+                        )
+                    ],
+                )
+            ])),
+    )
 
   def _log_to_nested_step(self, tag, json):
     with self.m.step.nest(tag) as step:
