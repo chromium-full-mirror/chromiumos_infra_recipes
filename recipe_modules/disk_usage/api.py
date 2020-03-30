@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from recipe_engine import recipe_api
+
+import contextlib
+
+
+class DiskUsageApi(recipe_api.RecipeApi):
+  """A module to process tast-results/ directory."""
+
+  @contextlib.contextmanager
+  def tracking_context(self):
+    """A context wrapper for track()."""
+    try:
+      self.track('initial disk usage', depth=0)
+      yield
+    finally:
+      self.track('final disk usage', depth=2)
+
+  def track(self, step_name=None, depth=0, timeout=10 * 60):
+    """Print out the disk usage under the current directory.
+
+    Args:
+      depth(int): The depth to traverse within the subdirs.
+      timeout(int): timeout in seconds.
+    """
+    args = ['--depth', str(depth)]
+    self.m.python(step_name or 'track disk usage',
+                  self.resource('track_disk_usage.py'), args=args, venv=True,
+                  timeout=timeout, ok_ret='any')

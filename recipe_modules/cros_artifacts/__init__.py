@@ -12,5 +12,6 @@ DEPS = [
     'recipe_engine/step',
     'cros_build_api',
     'cros_version',
+    'disk_usage',
     'easy',
 ]

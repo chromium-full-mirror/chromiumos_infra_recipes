@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+# Copyright 2018 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/assertions',
+    'disk_usage',
+]
+
+
+def RunSteps(api):
+  with api.disk_usage.tracking_context():
+    api.disk_usage.track(depth=1)
+
+
+def GenTests(api):
+  yield api.test('basic')

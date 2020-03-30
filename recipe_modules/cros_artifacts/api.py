@@ -269,9 +269,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     files_by_artifact = {}
     funcs_to_call = self._partition_artifacts(artifact_types, _BUNDLE_FUNCS)
-    for func, types in funcs_to_call.items():
-      files_by_artifact.update(
-          func(chroot, sysroot, path, types, additional_args))
+    try:
+      for func, types in funcs_to_call.items():
+        files_by_artifact.update(
+            func(chroot, sysroot, path, types, additional_args))
+    except self.m.step.InfraFailure as e:  # pragma: nocover
+      self.m.disk_usage.track(step_name='track disk usage', depth=2)
+      raise e
+
     return files_by_artifact
 
   def _artifacts_gs_path_dict(self, builder_name, target, kind):
