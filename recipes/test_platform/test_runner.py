@@ -36,8 +36,6 @@ DEPS = [
 PROPERTIES = TestRunnerProperties
 ENV_PROPERTIES = TestRunnerEnvProperties
 
-_SYNC_SUBDIR = "synchronous_subdir"
-
 def validate_request(api, properties):
   """Validate the TestRunnerProperties.
 
@@ -277,7 +275,7 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
   Returns: phosphorus.Config.
   """
   if set_offload_dir:
-    off_dir = _SYNC_SUBDIR
+    off_dir = recipe_config.harness.synch_offload_subdir
   else:
     off_dir = ""
   subdir = os.path.join(load_response.results_dir, "autoserv_test")
@@ -491,9 +489,9 @@ class SkylabStateStore(object):
       api.skylab_local_state.save(save_request)
 
 
-_GS_ROOT = "gs://bucket/foo/bar"
-
 def GenTests(api):
+  _gs_root = "gs://bucket/foo/bar"
+  _sync_subdir = "synchronous_subdir"
   # Required for initial module set up.
   def _misc_properties():
     return (
@@ -501,11 +499,14 @@ def GenTests(api):
             TestRunnerProperties(
                 config={
                     'lab': {
-                        'admin_service': 'foo-service'},
+                        'admin_service': 'foo-service'
+                    },
                     'harness': {
-                        'autotest_dir': '/path/to/autotest'},
+                        'autotest_dir': '/path/to/autotest',
+                        'synch_offload_subdir': _sync_subdir
+                    },
                     'output': {
-                        'gs_root_dir': _GS_ROOT
+                        'gs_root_dir': _gs_root
                     }}),
             **{
                 '$chromeos/autotest_status_parser':
@@ -682,9 +683,9 @@ def GenTests(api):
              stdout=api.raw_io.output(
                  json_format.MessageToJson(
                      phosphorus.upload_to_gs.UploadToGSResponse(
-                         gs_url=os.path.join(_GS_ROOT,
+                         gs_url=os.path.join(_gs_root,
                                              "UUID",
-                                             _SYNC_SUBDIR))))))
+                                             _sync_subdir))))))
   yield (api.test('get_results_crash') +  #
          _misc_properties() +  #
          _request_properties() +  #
