@@ -1,0 +1,24 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.afdo_process;
+
+import "chromiumos/builder_config.proto";
+import "chromiumos/common.proto";
+
+message AfdoProcessProperties {
+  // The build target being built.
+  chromiumos.BuildTarget build_target = 1;
+
+  // Override for pointless build check.
+  bool force_relevant_build = 2;
+
+  // Location information for the original build artifacts.  These are in
+  // addition to those found in the builder config, and provide the location of
+  // build artifacts (IMAGE_ZIP) from the child build that created the image
+  // used to create the perf file.
+  repeated chromiumos.BuilderConfig.Artifacts.InputArtifactInfo input_artifacts = 3;
+}

@@ -1,0 +1,14 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.afdo_orchestrator;
+
+message AfdoOrchestratorProperties {
+    // BuilderConfig.Id.name of the builder that will process the HW Test
+    // results. This is expected to have the same type/branch and
+    // project/bucket/version as the this orchestrator does.
+    string process_child = 1;
+}

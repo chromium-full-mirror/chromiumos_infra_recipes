@@ -65,6 +65,8 @@
   * [workspace_util](#recipe_modules-workspace_util) &mdash; API for various support functions for building.
 
 **[Recipes](#Recipes)**
+  * [afdo_orchestrator](#recipes-afdo_orchestrator) &mdash; Recipe that generates artifacts using HW Test results.
+  * [afdo_process](#recipes-afdo_process) &mdash; Recipe for building an AFDO benchmark profile.
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [autotest_status_parser:examples/full](#recipes-autotest_status_parser_examples_full)
@@ -3785,6 +3787,109 @@ Args:
       caching of cros_source.ensure_synced_cache is used.
 ## Recipes
 
+### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
+
+[DEPS](/recipes/afdo_orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe that generates artifacts using HW Test results.
+
+All builders run against the same source tree.
+
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#48)(api, properties):**
+
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#303)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+
+Find the builds you need, filter those already started, run, and collect.
+
+Most of the heavy lifting is done in get_build_plan.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  parent_step (Step): the calling step, to be used for presentation purposes.
+  child_specs (list(ChildSpec)): A list of child specs.
+  enable_history (bool): Enables history lookup in cq orchestrator.
+  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+  gerrit_changes list(GerritChange): List of patches in the order that they
+    can be cherry-picked.
+
+Returns: A list of build_pb2.Build objects with build results.
+
+&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#290)(api):**
+
+Returns the child specs that should be run for this invocation.
+
+Args:
+  api (RecipeApi): See RunSteps.
+
+Returns:
+  list[ChildSpec] of children to run
+
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#240)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+
+Run and collect any followon orchestrator.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  parent_step (Step): the calling step, to be used for presentation purposes.
+  config (BuilderConfig): the config for this orchestrator.
+  enable_history (bool): Enables history lookup in cq orchestrator.
+  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+  gerrit_changes list(GerritChange): List of patches in the order that they
+    can be cherry-picked.
+
+Returns: A list of build_pb2.Build objects with results.
+
+&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#191)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
+
+Run and collect any process_child.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  parent_step (Step): the calling step, to be used for presentation purposes.
+  name (str): The name of the child builder.
+  input_artifacts (list[InputArtifactInfo]): List of input artifacts to pass.
+  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+  gerrit_changes list(GerritChange): List of patches in the order that they
+    can be cherry-picked.
+
+Returns: A list of (one) build_pb2.Build object with the process_child result.
+
+&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#352)(build, child_specs_dict, child_targets_dict):**
+
+Returns whether the orchestrator should collect the build.
+
+Args:
+  build (build_pb2.Build): the build to check whether to collect.
+  child_specs_dict (dict): mapping of builder name to ChildSpec.
+  child_targets_dict (dict): fuzzy mapping of builder target to to ChildSpec.
+    Fuzzy in the sense that it just chops off from the last '-' to the end
+    of the string. Intended to pick up the *-snapshot cases. See more below.
+
+Returns: A bool whether to collect the build.
+### *recipes* / [afdo\_process](/recipes/afdo_process.py)
+
+[DEPS](/recipes/afdo_process.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for building an AFDO benchmark profile.
+
+&mdash; **def [DoRunSteps](/recipes/afdo_process.py#55)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build, input_artifacts):**
+
+&mdash; **def [RunSteps](/recipes/afdo_process.py#36)(api, properties):**
+
+&mdash; **def [get\_target\_versions](/recipes/afdo_process.py#128)(api, build_target):**
+
+Returns 'target_versions' in dict form.
+
+Returns the 'target_versions' values for this build in a dict form
+suitable for output as a build property. Note that this cannot be
+called until after the creation of the sysroot is finished.
+
+Args:
+  api (RecipeApi): See RunSteps.
+  build_target (chromiumos.BuildTarget): The BuildTarget being built.
+
+Returns:
+  dict of target versions
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
 
 [DEPS](/recipe_modules/analysis_service/examples/full.py#6): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
