@@ -169,9 +169,7 @@ def RunSteps(api, properties):
       for repository, ebuilds in ebuilds_by_repository.iteritems():
         name = api.path.basename(repository)
         root = api.path.abs_to_path(repository)
-        versions = set([e.version for e in ebuilds])
-        versions = (versions.pop() if len(versions) == 1
-                    else ', '.join(sorted(versions)))
+        versions = ', '.join(sorted(set([e.version for e in ebuilds])))
         commit_lines = [
             '{}: Automatic uprev to {}.'.format(package.package_name,
                                                 versions),
