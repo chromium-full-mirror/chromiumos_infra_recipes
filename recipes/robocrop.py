@@ -56,7 +56,7 @@ def RunSteps(api, properties):
       robocrop_alt_action = api.bot_scaling.get_robocrop_action(
           status_map, updated_bot_policy, gce_config,
           swarming_stats=swarming_counts)
-      api.easy.set_property_step('robocrop_action',
+      api.easy.set_property_step('robocrop_swarming_action',
                                  jsonpb.MessageToDict(robocrop_alt_action))
     if properties.commit_changes:
       with api.step.nest('update GCE Provider configs'):
