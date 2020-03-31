@@ -268,7 +268,7 @@
       "@@@STEP_LOG_LINE@planner_output@          value: true@@@",
       "@@@STEP_LOG_LINE@planner_output@        }@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",
-      "@@@STEP_LOG_LINE@planner_output@      pool: \"another skylab pool\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@      pool: \"DUT_POOL_QUOTA\"@@@",
       "@@@STEP_LOG_LINE@planner_output@    }@@@",
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",

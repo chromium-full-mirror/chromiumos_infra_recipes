@@ -65,9 +65,10 @@ class SkylabApi(recipe_api.RecipeApi):
         req.params.metadata.test_metadata_url = gs_url
         req.params.metadata.debug_symbols_archive_url = gs_url
         req.params.scheduling.priority = self._skylab_priority
+        self._set_pool(req.params.scheduling, uht.hw_test.pool)
         sw_dep = req.params.software_dependencies.add()
         sw_dep.chromeos_build = image_path
-        req.params.scheduling.quota_account = self._qs_account
+        req.params.scheduling.qs_account = self._qs_account
         req.params.software_attributes.build_target.name = uht.hw_test.skylab_board
         suite_to_create = req.test_plan.suite.add()
         suite_to_create.name = uht.hw_test.suite
@@ -97,6 +98,13 @@ class SkylabApi(recipe_api.RecipeApi):
                             unit=uht.unit))
       return tasks
 
+  def _set_pool(self, scheduling, pool_name):
+    if pool_name == 'DUT_POOL_QUOTA':
+      scheduling.managed_pool = Request.Params.Scheduling.MANAGED_POOL_QUOTA
+    else:
+      scheduling.unmanaged_pool = pool_name
+    return
+
   def create_recipe(self, test, unit, timeout, name=None):
     """Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -119,9 +127,10 @@ class SkylabApi(recipe_api.RecipeApi):
           'gs://' + unit.common.build_payload.artifacts_gs_bucket + '/' +
           unit.common.build_payload.artifacts_gs_path)
       req.params.scheduling.priority = self._skylab_priority
+      self._set_pool(req.params.scheduling, test.pool)
       sw_dep = req.params.software_dependencies.add()
       sw_dep.chromeos_build = image_path
-      req.params.scheduling.quota_account = self._qs_account
+      req.params.scheduling.qs_account = self._qs_account
       req.params.software_attributes.build_target.name = test.skylab_board
       suite_to_create = req.test_plan.suite.add()
       suite_to_create.name = test.suite

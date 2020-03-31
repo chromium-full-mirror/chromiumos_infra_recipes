@@ -51,7 +51,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                                            critical={'value': True}),
                     suite='bvt-cq',
                     skylab_board='target',
-                    pool='another skylab pool',
+                    pool='DUT_POOL_QUOTA',
                 ),
             ],),
     )
