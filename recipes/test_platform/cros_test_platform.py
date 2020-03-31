@@ -52,12 +52,21 @@ PROPERTIES = CrosTestPlatformProperties
 
 
 def validate_requests(api, requests):
+  validation_errors = []
   with api.step.nest('validate request') as step:
-    _validate_timeouts(api, requests)
-    _validate_scheduling_params(api, requests)
+    validation_errors.append(_validate_timeouts(api, requests))
+    validation_errors.append(_validate_scheduling_params(api, requests))
+  if any(validation_errors):
+    raise api.step.StepFailure(
+        'request validation failed')
 
 
 def _validate_timeouts(api, requests):
+  """Validate timeouts in the requests.
+
+  Returns: True if requests are valid, False otherwise.
+  """
+  validation_error = False
   with api.step.nest('validate timeouts') as step:
     max_timeout = api.buildbucket.build.execution_timeout
     max_timeout_s = max_timeout.ToTimedelta().total_seconds()
@@ -73,15 +82,25 @@ def _validate_timeouts(api, requests):
             (request_timeout.ToTimedelta(), max_timeout.ToTimedelta())
         ]
         step.presentation.status = api.step.FAILURE
+        validation_error = True
+  return validation_error
 
 
 def _validate_scheduling_params(api, requests):
+  """Validate scheduling parameters in the requests.
+
+  Returns: True if requests are valid, False otherwise.
+  """
+  validation_error = False
   with api.step.nest('validate scheduling parameters') as step:
     for t, r in requests.iteritems():
       error = _get_scheduling_error(api, r)
       if error:
+        validation_error = True
         step.presentation.logs[t] = [error]
         step.presentation.status = api.step.FAILURE
+  return validation_error
+
 
 def _get_scheduling_error(api, request):
   qs_account = request.params.scheduling.qs_account
@@ -480,7 +499,8 @@ def GenTests(api):
 
   # Traffic split with no traffic to skylab should cause recipe crash.
   yield (api.test('no traffic') +  #
-         api.properties(CrosTestPlatformProperties(request=Request())) +  #
+         api.properties(
+             CrosTestPlatformProperties(request=_test_request('default'))) +  #
          api.step_data(
              'traffic split.call binary.scheduler-traffic-split',
              stdout=api.raw_io.output(
