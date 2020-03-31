@@ -34,7 +34,7 @@ class ChromeApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(ChromeApi, self).__init__(*args, **kwargs)
-    self._parallel_sync_jobs = 72
+    self._parallel_sync_jobs = 4
     if properties.parallel_sync_jobs > 0:
       self._parallel_sync_jobs = properties.parallel_sync_jobs
     self._deps_isolate = (properties.deps_isolate

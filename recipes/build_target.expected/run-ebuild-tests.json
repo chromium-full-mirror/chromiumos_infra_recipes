@@ -2592,7 +2592,7 @@
       "sync",
       "--verbose",
       "--nohooks",
-      "-j72",
+      "-j4",
       "--reset",
       "--force",
       "--upstream",
