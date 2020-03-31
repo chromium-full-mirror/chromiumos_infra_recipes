@@ -2413,7 +2413,7 @@ and not modified, which you can use `diff_check` to check for.
 Args:
   * paths list[str|Path]: The file paths to stage.
 
-&mdash; **def [checkout](/recipe_modules/git/api.py#166)(self, commit, force=False):**
+&mdash; **def [checkout](/recipe_modules/git/api.py#167)(self, commit, force=False):**
 
 Runs 'git checkout'.
 
@@ -2421,7 +2421,7 @@ Args:
   * commit (str): The commit (technically "tree-like") to checkout.
   * force (bool): If True, throw away local changes (--force).
 
-&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#205)(self, commit, \*\*kwargs):**
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#206)(self, commit, \*\*kwargs):**
 
 Runs 'git cherry-pick'.
 
@@ -2429,7 +2429,7 @@ Args:
   * commit (str): The commit to cherry pick.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#358)(self, repo_url, target_path=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#359)(self, repo_url, target_path=None, timeout_sec=None):**
 
 Clones a Git repo into the current directory.
 
@@ -2437,8 +2437,9 @@ Args:
   * repo_url (str): The URL of the repo to clone.
   * target_path (Path): Path in which to clone the repo, or None to specify
       current directory.
+  * timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [commit](/recipe_modules/git/api.py#218)(self, message, files=None):**
+&mdash; **def [commit](/recipe_modules/git/api.py#219)(self, message, files=None):**
 
 Runs 'git commit' with the given files.
 
@@ -2446,7 +2447,7 @@ Args:
   * message (str): The commit message.
   * files (list[str|Path]): A list of file paths to commit.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#344)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#345)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -2458,7 +2459,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#259)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#260)(self):**
 
 Returns the currently checked out branch name.
 
@@ -2478,7 +2479,7 @@ Returns:
       otherwise.
   
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#390)(self, refspec, default):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#392)(self, refspec, default):**
 
 Splits the branch from the refspec.
 
@@ -2489,21 +2490,23 @@ Args:
   * refspec (str): refspec to split the branch from.
   * default (str): value to return if refspec not of required format.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [fetch](/recipe_modules/git/api.py#136)(self, remote, refspecs=None):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [fetch](/recipe_modules/git/api.py#135)(self, remote, refspecs=None, timeout_sec=None):**
 
 Runs 'git fetch'.
 
 Args:
   * remote (str): The remote repository to fetch from.
   * refspecs (list[str]): The refspecs to fetch.
+  * timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#149)(self, remote, ref):**
+&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#149)(self, remote, ref, timeout_sec=None):**
 
 Fetch a single remote ref with 'git fetch'.
 
 Args:
   * remote (str): The remote repository to fetch from.
   * ref (str): The ref to fetch.
+  * timeout_sec (int): Timeout in seconds.
 
 Returns:
   str: The commit ID of the fetched ref.
@@ -2523,15 +2526,15 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#273)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#274)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#279)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#280)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#314)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#315)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -2541,7 +2544,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#289)(self, from_rev, to_rev, limit=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#290)(self, from_rev, to_rev, limit=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -2553,7 +2556,7 @@ Args:
 Returns:
   List(Commit) A list of commit metas.
 
-&mdash; **def [merge](/recipe_modules/git/api.py#179)(self, ref, message, \*\*kwargs):**
+&mdash; **def [merge](/recipe_modules/git/api.py#180)(self, ref, message, \*\*kwargs):**
 
 Runs `git merge`.
 
@@ -2562,11 +2565,11 @@ Args:
   * message (str): The merge commit message.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [merge\_abort](/recipe_modules/git/api.py#214)(self):**
+&mdash; **def [merge\_abort](/recipe_modules/git/api.py#215)(self):**
 
 Runs 'git merge --abort'.
 
-&mdash; **def [merge\_silent\_fail](/recipe_modules/git/api.py#189)(self, ref, message, \*\*kwargs):**
+&mdash; **def [merge\_silent\_fail](/recipe_modules/git/api.py#190)(self, ref, message, \*\*kwargs):**
 
 Runs `git merge` and returns whether the merge succeeded.
 
@@ -2579,7 +2582,7 @@ Args:
 Returns:
   bool: whether the merge succeeded
 
-&mdash; **def [push](/recipe_modules/git/api.py#237)(self, remote, refspec, dry_run=False, capture_stdout=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#238)(self, remote, refspec, dry_run=False, capture_stdout=False):**
 
 Runs 'git push'.
 
@@ -2592,7 +2595,7 @@ Args:
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#371)(self, force=False):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#373)(self, force=False):**
 
 Run `git rebase` with the given arguments.
 
@@ -2606,14 +2609,14 @@ Return the git repository root for the current directory.
 Returns:
   str: The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#382)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#384)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   * args list[str]: args for `git config`.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#326)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#327)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -4546,7 +4549,7 @@ Args:
 Returns:
   path (Path): path on disk to cloned repo
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#325)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#324)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4563,7 +4566,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#306)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#305)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4573,7 +4576,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#425)(api, repo_name, repo_url, repo_path, ref, commit):**
+&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#424)(api, repo_name, repo_url, repo_path, ref, commit):**
 
 Update a ref in the remote repo to point to a given commit.  If ref
 evaluates as False, then do nothing
@@ -4586,7 +4589,7 @@ Args:
   ref       (str):  ref to push to (possibly empty) or None
   commit    (str):  commit SHA1 to push to ref
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#256)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#255)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4601,7 +4604,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#373)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#372)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4614,7 +4617,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#414)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#413)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4622,7 +4625,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#400)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#399)(refs):**
 
 Assert the given refs start with refs/heads.
 

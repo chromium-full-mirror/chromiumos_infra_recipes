@@ -94,6 +94,7 @@
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
     "name": "set up orchestrator.clone internal manifest repo.git clone",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -121,6 +122,7 @@
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
     "name": "set up orchestrator.clone internal manifest repo.git rev-parse",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -158,6 +160,7 @@
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "set up orchestrator.clone external manifest repo.git clone",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -185,6 +188,7 @@
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "set up orchestrator.clone external manifest repo.git rev-parse",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

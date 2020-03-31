@@ -59,7 +59,7 @@ def RunSteps(api, properties):
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
 
   push_manifest_refs = None
-  with api.step.nest('set up orchestrator') as presentation:
+  with api.step.nest('set up orchestrator'):
     validate_refs(properties.update_manifest_refs)
     config = api.cros_infra_config.configure_builder(
         api.buildbucket.gitiles_commit,
@@ -245,11 +245,10 @@ def clone_repo(api, name, url, fetch=None):
     path (Path): path on disk to cloned repo
   """
   path = api.path.mkdtemp()
-  with api.step.nest('clone %s repo' % name):
-    with api.context(cwd=path):
-      api.git.clone(url)
-      if fetch:
-        api.git.fetch_ref(url, fetch)
+  with api.step.nest('clone %s repo' % name), api.context(cwd=path):
+    api.git.clone(url, timeout_sec=60 * 60)
+    if fetch:
+      api.git.fetch_ref(url, fetch, timeout_sec= 60 * 60)
   return path
 
 

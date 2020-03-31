@@ -132,26 +132,27 @@ other_test.txt
     # Need to strip the diff mode characters, e.g. "?? "
     return [line[2:].strip() for line in step_data.stdout.strip().splitlines()]
 
-
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))
-  def fetch(self, remote, refspecs=None):
+  def fetch(self, remote, refspecs=None, timeout_sec=None):
     """Runs 'git fetch'.
 
     Args:
       * remote (str): The remote repository to fetch from.
       * refspecs (list[str]): The refspecs to fetch.
+      * timeout_sec (int): Timeout in seconds.
     """
     args = ['fetch', remote]
     if refspecs is not None:
       args += refspecs
-    self._step(args)
+    self._step(args, timeout=timeout_sec)
 
-  def fetch_ref(self, remote, ref):
+  def fetch_ref(self, remote, ref, timeout_sec=None):
     """Fetch a single remote ref with 'git fetch'.
 
     Args:
       * remote (str): The remote repository to fetch from.
       * ref (str): The ref to fetch.
+      * timeout_sec (int): Timeout in seconds.
 
     Returns:
       str: The commit ID of the fetched ref.
@@ -159,7 +160,7 @@ other_test.txt
     self.fetch(remote, ['%s:' % ref])
 
     step_data = self._step(['rev-parse', 'FETCH_HEAD'],
-                           stdout=self.m.raw_io.output(),
+                           stdout=self.m.raw_io.output(), timeout=timeout_sec,
                            test_stdout='%s\n' % self.test_api.test_commit_id)
     return step_data.stdout.strip()
 
@@ -355,18 +356,19 @@ other_test.txt
     revs = '%s..%s' % (from_commit, to_ref)
     self._step(['bundle', 'create', output_path, revs])
 
-  def clone(self, repo_url, target_path=None):
+  def clone(self, repo_url, target_path=None, timeout_sec=None):
     """Clones a Git repo into the current directory.
 
     Args:
       * repo_url (str): The URL of the repo to clone.
       * target_path (Path): Path in which to clone the repo, or None to specify
           current directory.
+      * timeout_sec (int): Timeout in seconds.
     """
     if target_path is None:
       # Clone into current directory (no extra subdirectory) by default.
       target_path = '.'
-    self._step(['clone', repo_url, target_path])
+    self._step(['clone', repo_url, target_path], timeout=timeout_sec)
 
   def rebase(self, force=False):
     """Run `git rebase` with the given arguments.
