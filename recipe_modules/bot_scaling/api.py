@@ -25,7 +25,8 @@ SwarmingStats = namedtuple('SwarmingStats', ['bot_stats', 'task_stats'])
 class BotScalingApi(recipe_api.RecipeApi):
   """A module that determines how to scale bot groups."""
 
-  def get_robocrop_action(self, status_map, bot_policy_config, configs):
+  def get_robocrop_action(self, status_map, bot_policy_config, configs,
+                          swarming_stats):
     """Function to compute all the actions of this RoboCrop.
 
     Args:
@@ -34,6 +35,8 @@ class BotScalingApi(recipe_api.RecipeApi):
       bot_policy_config(BotPolicyCfg): Config define Policy for
         the RoboCrop.
       configs(Configs): List of GCE Config objects.
+      swarming_stats(SwarmingStats): Named tuple containing current
+        Swarming bot and task counts.
 
     Returns:
       ScalingAction, comprehensive action to be taken by RoboCrop.
@@ -41,8 +44,11 @@ class BotScalingApi(recipe_api.RecipeApi):
     previous_action = self.get_previous_action()
     scaling_actions = []
     for policy in bot_policy_config.bot_policies:
-      demand = self.m.buildbucket_stats.get_bot_demand(
-          status_map[policy.bot_group])
+      if swarming_stats is None:
+        demand = self.m.buildbucket_stats.get_bot_demand(
+            status_map[policy.bot_group])
+      else:
+        demand = self.get_swarming_demand(swarming_stats, policy.bot_group)
       scaling_actions.append(self.get_scaling_action(demand, policy, configs))
 
     return RoboCropAction(scaling_actions=scaling_actions)
@@ -130,6 +136,25 @@ class BotScalingApi(recipe_api.RecipeApi):
     ]
     return actions
 
+  def get_swarming_demand(self, swarming_stats, bot_group):
+    """Return the demand for bots in a bot group.
+
+    Args:
+      swarming_stats(SwarmingStats): Named tuple containing bot and task
+        Swarming stats.
+      bot_group (str): Name of bot group
+
+    Returns:
+      int, the current demand for bots in the group.
+    """
+    demand = 0
+    for stat in swarming_stats.task_stats:
+      if stat.bot_group == bot_group:
+        if stat.task_state in TASK_STATES:
+          demand += stat.count
+
+    return demand
+
   def get_swarming_stats(self, bot_policy_config):
     """Determines the current Swarming stats per bot group.
 
@@ -163,10 +188,13 @@ class BotScalingApi(recipe_api.RecipeApi):
     """
     # TODO(mikenichols): Refactor logic to ensure that the recipe can
     # recover from previous failed executions.
-    last_successful_run = self.m.cros_history.get_matching_builds(
-        self.m.buildbucket.build,
-        [common_pb2.SUCCESS], limit=1000)[0]
-    action_struct = last_successful_run.output.properties['robocrop_action']
+    try:
+      last_successful_run = self.m.cros_history.get_matching_builds(
+          self.m.buildbucket.build,
+          [common_pb2.SUCCESS], limit=25)[0]
+      action_struct = last_successful_run.output.properties['robocrop_action']
+    except IndexError:
+      action_struct = {}
     previous_actions = {}
     for _, actions in action_struct.items():
       for action in actions:

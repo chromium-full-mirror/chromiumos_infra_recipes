@@ -24,7 +24,7 @@ def RunSteps(api):
   status_map = {'cq': {'STARTED': 1000, 'SCHEDULED': 50}}
 
   robocrop_action = api.bot_scaling.get_robocrop_action(
-      status_map, updated_bot_policy, gce_config)
+      status_map, updated_bot_policy, gce_config, swarming_stats=None)
 
   vms = []
   prefix_map = {
