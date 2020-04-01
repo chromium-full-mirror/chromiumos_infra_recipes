@@ -73,9 +73,7 @@ class SwarmingCli(recipe_api.RecipeApi):
     dim_args = ['state={}&'.format(state)]
     for k, v in dimensions.items():
       dim_args.append('tags={}:{}&'.format(k, v))
-    dim_args.append('start={}'.format(
-        ((self.m.time.utcnow() + datetime.timedelta(hours=-2)) -
-         datetime.datetime(1970, 1, 1)).total_seconds()))
+    dim_args.append('start={}'.format(self._calculate_epoch_start()))
     cmd = [
         'query', '--swarming', CHROMEOS_SWARMING_URL,
         'tasks/count?' + ''.join(dim_args).rstrip('&')
@@ -84,3 +82,14 @@ class SwarmingCli(recipe_api.RecipeApi):
         'get task query result', cmd, test_stdout=
         lambda: self.test_api.swarming_task_step_test_data(dimensions))
     return step
+
+  def _calculate_epoch_start(self):
+    """Determines the epoch time needed for Swarming CL task queries.
+
+    Calculates current epoch time minus two hour delta.
+
+    Returns:
+      float, time since epoch in seconds.
+    """
+    return ((self.m.time.utcnow() + datetime.timedelta(hours=-2)) -
+            datetime.datetime(1970, 1, 1)).total_seconds()
