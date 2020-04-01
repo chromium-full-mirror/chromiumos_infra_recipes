@@ -106,7 +106,7 @@
       "query",
       "--swarming",
       "chromeos-swarming.appspot.com",
-      "tasks/count?state=None&tags=role:cq&tags=bot_size:large&start=1336992801.5"
+      "tasks/count?state=None&tags=role:cq&tags=bot_size:large&start=1336913601.5"
     ],
     "infra_step": true,
     "name": "get task query result",

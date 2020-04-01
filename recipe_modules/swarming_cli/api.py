@@ -86,10 +86,10 @@ class SwarmingCli(recipe_api.RecipeApi):
   def _calculate_epoch_start(self):
     """Determines the epoch time needed for Swarming CL task queries.
 
-    Calculates current epoch time minus two hour delta.
+    Calculates current epoch time minus twenty-four hour delta.
 
     Returns:
       float, time since epoch in seconds.
     """
-    return ((self.m.time.utcnow() + datetime.timedelta(hours=-2)) -
+    return ((self.m.time.utcnow() + datetime.timedelta(hours=-24)) -
             datetime.datetime(1970, 1, 1)).total_seconds()

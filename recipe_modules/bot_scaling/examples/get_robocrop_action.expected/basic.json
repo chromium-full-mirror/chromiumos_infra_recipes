@@ -134,7 +134,7 @@
       "query",
       "--swarming",
       "chromeos-swarming.appspot.com",
-      "tasks/count?state=RUNNING&tags=role:cq&tags=bot_size:large&start=1336992803.0"
+      "tasks/count?state=RUNNING&tags=role:cq&tags=bot_size:large&start=1336913603.0"
     ],
     "infra_step": true,
     "name": "get task query result",
@@ -152,7 +152,7 @@
       "query",
       "--swarming",
       "chromeos-swarming.appspot.com",
-      "tasks/count?state=PENDING&tags=role:cq&tags=bot_size:large&start=1336992804.5"
+      "tasks/count?state=PENDING&tags=role:cq&tags=bot_size:large&start=1336913604.5"
     ],
     "infra_step": true,
     "name": "get task query result (2)",
