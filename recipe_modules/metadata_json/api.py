@@ -41,3 +41,23 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     for dimension in build.infra.swarming.bot_dimensions:  # pragma: nocover
       if dimension.key == 'id':
         self._metadata['bot-hostname'] = dimension.value
+
+  def add_version_entries(self, version_dict):
+    """Update metadata with version info.
+
+    Args:
+      version_dict(dict): Map containing version info.
+    """
+    self._metadata['version'] = {
+        'chrome': version_dict['chromeVersion'],
+        'full': version_dict['fullVersion'],
+        'platform': version_dict['platformVersion'],
+        'milestone': version_dict['milestoneVersion'],
+    }
+
+  def get_metadata(self):
+    """Get the metadata dict. Should only be used for unittesting.
+
+    Returns: dict, metadata info.
+    """
+    return self._metadata

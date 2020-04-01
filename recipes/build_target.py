@@ -28,6 +28,7 @@ DEPS = [
     'failures',
     'gerrit',
     'goma',
+    'metadata_json',
     'sysroot_util',
     'workspace_util',
 ]
@@ -158,12 +159,9 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
     # See https://crrev.com/c/1913895.
     return
 
-  try:
-    api.easy.set_property_step('target_versions',
-                               get_target_versions(api, build_target))
-  except:  # pragma: no cover # pylint: disable=bare-except
-    # Failing on kernel buildtest builders, see https://crbug.com/1017583.
-    pass
+  target_versions = get_target_versions(api, build_target)
+  api.easy.set_property_step('target_versions', target_versions)
+  api.metadata_json.add_version_entries(target_versions)
 
   with api.step.nest('install toolchain') as install_tc_step:
     flags = InstallToolchainRequest.Flags(

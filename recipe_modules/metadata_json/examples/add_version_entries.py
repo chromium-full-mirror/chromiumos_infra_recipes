@@ -12,9 +12,15 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.metadata_json.add_default_entries()
+  version_info = {
+      'chromeVersion': 'version1',
+      'fullVersion': 'version2',
+      'platformVersion': 'version3',
+      'milestoneVersion': 'version4',
+  }
+  api.metadata_json.add_version_entries(version_info)
   metadata = api.metadata_json.get_metadata()
-  api.assertions.assertEqual(metadata['builder-name'], 'amd64-generic-cq')
+  api.assertions.assertEqual(metadata['version']['chrome'], 'version1')
 
 
 def GenTests(api):

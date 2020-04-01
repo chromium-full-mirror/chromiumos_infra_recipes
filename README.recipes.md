@@ -191,6 +191,7 @@
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
+  * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries)
   * [metadata_json:examples/default_entries](#recipes-metadata_json_examples_default_entries)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
@@ -2898,6 +2899,19 @@ A module to write metadata.json into GS for GoldenEye consumption.
 &mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#27)(self):**
 
 These fields are available at the start of the build.
+
+&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#45)(self, version_dict):**
+
+Update metadata with version info.
+
+Args:
+  version_dict(dict): Map containing version info.
+
+&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#58)(self):**
+
+Get the metadata dict. Should only be used for unittesting.
+
+Returns: dict, metadata info.
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
 [DEPS](/recipe_modules/naming/__init__.py#6): [skylab](#recipe_modules-skylab)
@@ -3874,15 +3888,15 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#20)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [bot\_cost](#recipe_modules-bot_cost), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [bot\_cost](#recipe_modules-bot_cost), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [metadata\_json](#recipe_modules-metadata_json), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#100)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#101)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#82)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#83)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#347)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#345)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3898,7 +3912,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#366)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#364)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4489,11 +4503,16 @@ Returns: JSON response with validation result
 Runs the presubmit for a project with checkout per local manifest.
 
 &mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#35)(api, properties):**
+### *recipes* / [metadata\_json:examples/add\_version\_entries](/recipe_modules/metadata_json/examples/add_version_entries.py)
+
+[DEPS](/recipe_modules/metadata_json/examples/add_version_entries.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/add_version_entries.py#14)(api):**
 ### *recipes* / [metadata\_json:examples/default\_entries](/recipe_modules/metadata_json/examples/default_entries.py)
 
-[DEPS](/recipe_modules/metadata_json/examples/default_entries.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/metadata_json/examples/default_entries.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/default_entries.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/default_entries.py#14)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
