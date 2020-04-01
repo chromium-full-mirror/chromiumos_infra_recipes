@@ -1,10 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "validate request",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "validate request"
   },
   {
     "cmd": [],
@@ -17,10 +14,7 @@
     "cmd": [],
     "name": "validate request.validate scheduling parameters",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@default@priority 0 is out of valid range [50, 255]@@@",
-      "@@@STEP_LOG_END@default@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -40,6 +34,9 @@
       "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
+      "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
@@ -109,6 +106,9 @@
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"params\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
@@ -142,7 +142,7 @@
       "-rip-cautotest"
     ],
     "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"request\": {\n        \"params\": {\n          \"scheduling\": {\n            \"qsAccount\": \"foo-qs-account\"\n          }, \n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -263,6 +263,9 @@
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"requestParams\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
@@ -305,7 +308,7 @@
     ],
     "infra_step": true,
     "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"qsAccount\": \"foo-qs-account\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -352,6 +355,9 @@
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"params\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
@@ -394,7 +400,7 @@
     ],
     "infra_step": true,
     "name": "compute backfill.call binary.compute-backfill",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"execution\": {\n        \"state\": {\n          \"verdict\": \"VERDICT_PASSED\", \n          \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n        }, \n        \"taskResults\": [\n          {\n            \"state\": {\n              \"verdict\": \"VERDICT_PASSED\", \n              \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n            }, \n            \"logUrl\": \"logs://bar/baz\", \n            \"taskUrl\": \"foo://bar/baz\", \n            \"name\": \"foo-passed\"\n          }\n        ]\n      }, \n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"execution\": {\n        \"state\": {\n          \"verdict\": \"VERDICT_PASSED\", \n          \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n        }, \n        \"taskResults\": [\n          {\n            \"state\": {\n              \"verdict\": \"VERDICT_PASSED\", \n              \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"\n            }, \n            \"logUrl\": \"logs://bar/baz\", \n            \"taskUrl\": \"foo://bar/baz\", \n            \"name\": \"foo-passed\"\n          }\n        ]\n      }, \n      \"request\": {\n        \"params\": {\n          \"scheduling\": {\n            \"qsAccount\": \"foo-qs-account\"\n          }, \n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

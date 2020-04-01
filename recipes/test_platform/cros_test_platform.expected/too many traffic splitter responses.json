@@ -1,10 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "validate request",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "validate request"
   },
   {
     "cmd": [],
@@ -17,10 +14,7 @@
     "cmd": [],
     "name": "validate request.validate scheduling parameters",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@default@priority 0 is out of valid range [50, 255]@@@",
-      "@@@STEP_LOG_END@default@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -40,6 +34,9 @@
       "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
+      "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
@@ -60,6 +57,9 @@
       "@@@STEP_LOG_LINE@response@    \"one_too_many\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
+      "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
@@ -129,6 +129,9 @@
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"params\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
@@ -162,7 +165,7 @@
       "-rip-cautotest"
     ],
     "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"request\": {\n        \"params\": {\n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"request\": {\n        \"params\": {\n          \"scheduling\": {\n            \"qsAccount\": \"foo-qs-account\"\n          }, \n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -255,11 +258,11 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 235, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 241, in RunSteps",
       "    responses = execute(api, requests, enumerations, properties.config)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 186, in execute",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 192, in execute",
       "    _ensure_all_requests_enumerated(requests, enumerations)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 201, in _ensure_all_requests_enumerated",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 207, in _ensure_all_requests_enumerated",
       "    raise ValueError('No enumerations for requests tagged %s' % missing)",
       "ValueError: No enumerations for requests tagged set([u'default', u'one_too_many'])"
     ]

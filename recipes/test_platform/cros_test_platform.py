@@ -78,15 +78,21 @@ def _validate_timeouts(api, requests):
 def _validate_scheduling_params(api, requests):
   with api.step.nest('validate scheduling parameters') as step:
     for t, r in requests.iteritems():
-      error_logs = []
-      priority = r.params.scheduling.priority
-      if priority < 50 or priority > 255:
-        error_logs.append(
-            'priority %d is out of valid range [50, 255]' % priority)
-      if error_logs:
-        step.presentation.logs[t] = error_logs
+      error = _get_scheduling_error(api, r)
+      if error:
+        step.presentation.logs[t] = [error]
         step.presentation.status = api.step.FAILURE
 
+def _get_scheduling_error(api, request):
+  qs_account = request.params.scheduling.qs_account
+  priority = request.params.scheduling.priority
+  if qs_account:
+    if priority:
+      return ('priority and qs_account should not both be set. ' +
+              'Got priority: %d and qs_account: %s' % (priority, qs_account))
+    return None
+  if priority < 50 or priority > 255:
+    return ('priority %d is out of valid range [50, 255]' % priority)
 
 
 
@@ -433,7 +439,8 @@ def _test_request(tag):
           hardware_attributes=Request.Params.HardwareAttributes(
               model='%s-model' % tag), metadata=Request.Params.Metadata(
                   test_metadata_url='%s-metadata-url' % tag,
-                  debug_symbols_archive_url='%s-metadata-url' % tag)),
+                  debug_symbols_archive_url='%s-metadata-url' % tag),
+          scheduling=Request.Params.Scheduling(qs_account='foo-qs-account')),
       test_plan=Request.TestPlan(suite=[Request.Suite(name='%s-suite' % tag)]),
   )
 
@@ -501,6 +508,16 @@ def GenTests(api):
                  request=Request(
                      params=Request.Params(
                          scheduling=Request.Params.Scheduling(priority=300)),
+                 ))))
+  # Request setting both priority and qs_account should cause build failure.
+  yield (api.test('both priority and qs_account set') +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=Request(
+                     params=Request.Params(
+                         scheduling=Request.Params.Scheduling(
+                             priority=100,
+                             qs_account='foo-qs-account')),
                  ))))
   # An end-to-end run with traffic splitting to skylab.
   yield (
