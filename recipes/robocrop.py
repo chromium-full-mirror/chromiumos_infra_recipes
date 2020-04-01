@@ -47,17 +47,17 @@ def RunSteps(api, properties):
     with api.step.nest('get current swarming stats') as step:
       swarming_counts = api.bot_scaling.get_swarming_stats(bot_policy_config)
       api.easy.set_property_step('swarming_stats', swarming_counts)
+    with api.step.nest('compute buildbucket based scaling actions'):
+      robocrop_alt_action = api.bot_scaling.get_robocrop_action(
+          status_map, updated_bot_policy, gce_config, swarming_stats=None)
+      api.easy.set_property_step('robocrop_buildbucket_action',
+                                 jsonpb.MessageToDict(robocrop_alt_action))
     with api.step.nest('compute scaling actions'):
       robocrop_action = api.bot_scaling.get_robocrop_action(
-          status_map, updated_bot_policy, gce_config, swarming_stats=None)
-      api.easy.set_property_step('robocrop_action',
-                                 jsonpb.MessageToDict(robocrop_action))
-    with api.step.nest('compute swarming based scaling actions'):
-      robocrop_alt_action = api.bot_scaling.get_robocrop_action(
           status_map, updated_bot_policy, gce_config,
           swarming_stats=swarming_counts)
-      api.easy.set_property_step('robocrop_swarming_action',
-                                 jsonpb.MessageToDict(robocrop_alt_action))
+      api.easy.set_property_step('robocrop_action',
+                                 jsonpb.MessageToDict(robocrop_action))
     if properties.commit_changes:
       with api.step.nest('update GCE Provider configs'):
         gce_updated_configs = api.bot_scaling.update_gce_configs(
