@@ -3,14 +3,14 @@
     "cmd": [],
     "name": "validate inputs",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Multiple changes, using fullcheckout-presubmit@@@"
+      "@@@STEP_TEXT@Multiple changes, using infra-fullcheckout-presubmit@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run fullcheckout-presubmit",
+    "name": "run infra-fullcheckout-presubmit",
     "~followup_annotations": [
-      "@@@STEP_LINK@fullcheckout-presubmit@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+      "@@@STEP_LINK@infra-fullcheckout-presubmit@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
     ]
   },
   {
@@ -21,8 +21,8 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "run fullcheckout-presubmit.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"fullcheckout-presubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"1234\"}, {\"change\": \"1235\"}], \"gitilesCommit\": {}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "run infra-fullcheckout-presubmit.buildbucket.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"infra-fullcheckout-presubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"1234\"}, {\"change\": \"1235\"}], \"gitilesCommit\": {}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -30,8 +30,8 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"cq\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"fullcheckout-presubmit\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"infra\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"infra-fullcheckout-presubmit\", @@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
@@ -45,8 +45,8 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"bucket\": \"cq\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"fullcheckout-presubmit\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"bucket\": \"infra\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"infra-fullcheckout-presubmit\", @@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\", @@@",
@@ -93,7 +93,7 @@
   },
   {
     "cmd": [],
-    "name": "run fullcheckout-presubmit.collect",
+    "name": "run infra-fullcheckout-presubmit.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -109,7 +109,7 @@
       "8922054662172514000"
     ],
     "infra_step": true,
-    "name": "run fullcheckout-presubmit.collect.wait",
+    "name": "run infra-fullcheckout-presubmit.collect.wait",
     "timeout": 7200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -123,7 +123,7 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "run fullcheckout-presubmit.collect.get",
+    "name": "run infra-fullcheckout-presubmit.collect.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514000\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

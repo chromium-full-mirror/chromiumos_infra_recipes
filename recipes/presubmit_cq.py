@@ -28,11 +28,11 @@ def RunSteps(api, properties):
   commit = api.buildbucket.build.input.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
   input_props = {}
+  bucket = 'infra'
 
   with api.step.nest('validate inputs') as presentation:
     if len(changes) == 1:
       presentation.step_text = 'One CL, using Infra Presubmit'
-      bucket = 'infra'
       builder = 'Infra Presubmit'
       # Infra Presubmit doesn't have a 'prod' version, it always runs
       # refs/heads/master.
@@ -42,9 +42,9 @@ def RunSteps(api, properties):
       if properties.timeout_s > 0:
         input_props['timeout_s'] = properties.timeout_s
     elif len(changes) > 1:
-      presentation.step_text = 'Multiple changes, using fullcheckout-presubmit'
-      bucket = 'cq'
-      builder = 'fullcheckout-presubmit'
+      presentation.step_text = (
+          'Multiple changes, using infra-fullcheckout-presubmit')
+      builder = 'infra-fullcheckout-presubmit'
       exe_cipd_version = api.buildbucket.INHERIT
     else:
       presentation.step_text = 'No build'
