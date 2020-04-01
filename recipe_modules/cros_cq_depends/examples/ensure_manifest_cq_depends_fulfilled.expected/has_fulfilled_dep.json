@@ -169,7 +169,7 @@
       "--detach",
       "--current-branch",
       "--jobs",
-      "32",
+      "8",
       "--no-tags",
       "--optimized-fetch"
     ],
