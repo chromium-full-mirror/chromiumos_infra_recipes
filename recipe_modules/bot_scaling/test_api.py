@@ -82,7 +82,7 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
 
   def robocrop_bot_policy_config(self):
     scaling_restriction = BotPolicy.ScalingRestriction(
-        min_idle=0,
+        min_idle=1,
         step_size=5,
         bot_fallback=45,
     )

@@ -44,7 +44,7 @@ def RunSteps(api):
     # Request - step size is less than configured, scaling down.
     scaling_action = api.bot_scaling.get_scaling_action(40, policy, test_config)
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
-    api.assertions.assertEqual(scaling_action.bots_requested, 40)
+    api.assertions.assertEqual(scaling_action.bots_requested, 41)
 
     # Monitored bot group
     policy.policy_mode = BotPolicy.MONITORED

@@ -255,6 +255,8 @@ class BotScalingApi(recipe_api.RecipeApi):
         config = config_map.get(restriction.prefix, Config())
         policy.scaling_restriction.bot_ceiling += config.amount.max
         policy.scaling_restriction.bot_floor += config.amount.min
+      if policy.policy_mode == BotPolicy.MONITORED:
+        policy.scaling_restriction.bot_floor = policy.scaling_restriction.min_idle
     return bot_policy_config
 
   def update_gce_configs(self, robocrop_actions, configs):
