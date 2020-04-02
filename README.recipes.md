@@ -2895,22 +2895,22 @@ Raises:
 
 [DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-#### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to write metadata.json into GS for GoldenEye consumption.
 
-&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#27)(self):**
+&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#35)(self):**
 
 These fields are available at the start of the build.
 
-&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#45)(self, version_dict):**
+&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#57)(self, version_dict):**
 
 Update metadata with version info.
 
 Args:
   version_dict(dict): Map containing version info.
 
-&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#58)(self):**
+&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#70)(self):**
 
 Get the metadata dict. Should only be used for unittesting.
 

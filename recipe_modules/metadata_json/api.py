@@ -6,6 +6,9 @@
 
 from recipe_engine import recipe_api
 
+import email.utils
+import time
+
 
 class MetadataJsonApi(recipe_api.RecipeApi):
   """A module to write metadata.json into GS for GoldenEye consumption."""
@@ -24,6 +27,11 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     self._metadata['metadata-version'] = '2'
     self._metadata['child-configs'] = []
 
+  def _print_time(self, time_secs):
+    return '{} ({})'.format(
+        email.utils.formatdate(timeval=time_secs, localtime=True),
+        time.strftime('%Z', time.localtime(time_secs)))
+
   def add_default_entries(self):
     """These fields are available at the start of the build."""
     build = self.m.buildbucket.build
@@ -34,6 +42,10 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     self._metadata['builder_type'] = build.builder.bucket
     # Branch is always master for now.
     self._metadata['branch'] = 'master'
+
+    self._metadata['time'] = {
+        'start': self._print_time(build.start_time.seconds)
+    }
 
     build_target = self.m.cros_history.get_build_target(build)
     self._metadata['boards'] = [build_target]
