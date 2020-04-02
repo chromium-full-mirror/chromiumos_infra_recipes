@@ -1,8 +1,16 @@
 [
   {
     "cmd": [],
-    "name": "validate request",
+    "name": "execution steps",
     "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.validate request",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -18,7 +26,9 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 329, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 404, in RunSteps",
+      "    api, properties, envvars)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 345, in execution_steps",
       "    validate_request(api, properties)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 52, in validate_request",
       "    raise ValueError(\"Test name must be specified\")",

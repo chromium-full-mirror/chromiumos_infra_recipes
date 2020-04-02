@@ -1,21 +1,37 @@
 [
   {
     "cmd": [],
-    "name": "validate request"
-  },
-  {
-    "cmd": [],
-    "name": "Determine target DUT"
-  },
-  {
-    "cmd": [],
-    "name": "load local DUT state"
-  },
-  {
-    "cmd": [],
-    "name": "load local DUT state.call `skylab_local_state`",
+    "name": "execution steps",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.validate request",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.determine target DUT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.load local DUT state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.load local DUT state.call `skylab_local_state`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
@@ -33,9 +49,9 @@
   },
   {
     "cmd": [],
-    "name": "load local DUT state.call `skylab_local_state`.ensure skylab_local_state",
+    "name": "execution steps.load local DUT state.call `skylab_local_state`.ensure skylab_local_state",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -50,9 +66,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "load local DUT state.call `skylab_local_state`.ensure skylab_local_state.ensure_installed",
+    "name": "execution steps.load local DUT state.call `skylab_local_state`.ensure skylab_local_state.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -76,21 +92,24 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "name": "load local DUT state.call `skylab_local_state`.load",
+    "name": "execution steps.load local DUT state.call `skylab_local_state`.load",
     "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Mark local DUT state dirty"
+    "name": "execution steps.mark local DUT state dirty",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "Mark local DUT state dirty.call `skylab_local_state`",
+    "name": "execution steps.mark local DUT state dirty.call `skylab_local_state`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
@@ -112,21 +131,24 @@
       "/dev/stdin"
     ],
     "infra_step": true,
-    "name": "Mark local DUT state dirty.call `skylab_local_state`.save",
+    "name": "execution steps.mark local DUT state dirty.call `skylab_local_state`.save",
     "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"dutName\": \"dummy\"\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run prejob"
+    "name": "execution steps.run prejob",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "run prejob.call `phosphorus`",
+    "name": "execution steps.run prejob.call `phosphorus`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"desiredProvisionableLabels\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"label1\": \"value1\"@@@",
@@ -151,9 +173,9 @@
   },
   {
     "cmd": [],
-    "name": "run prejob.call `phosphorus`.ensure phosphorus",
+    "name": "execution steps.run prejob.call `phosphorus`.ensure phosphorus",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -168,9 +190,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run prejob.call `phosphorus`.ensure phosphorus.ensure_installed",
+    "name": "execution steps.run prejob.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -194,21 +216,24 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "name": "run prejob.call `phosphorus`.prejob",
+    "name": "execution steps.run prejob.call `phosphorus`.prejob",
     "stdin": "{\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  }, \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"dutHostname\": \"dummy\"\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run test"
+    "name": "execution steps.run test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "run test.call `phosphorus`",
+    "name": "execution steps.run test.call `phosphorus`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"environment\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"gsRootDir\": \"gs://bucket/foo/bar\"@@@",
@@ -252,21 +277,24 @@
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "run test.call `phosphorus`.run-test",
+    "name": "execution steps.run test.call `phosphorus`.run-test",
     "stdin": "{\n  \"environment\": {\n    \"gsRootDir\": \"gs://bucket/foo/bar\"\n  }, \n  \"autotest\": {\n    \"keyvals\": {\n      \"key1\": \"value1\"\n    }, \n    \"testArgs\": \"foo=bar\", \n    \"displayName\": \"fancy_name\", \n    \"name\": \"dummy_name\", \n    \"isClientTest\": true\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload to TKO"
+    "name": "execution steps.upload to TKO",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "upload to TKO.call `phosphorus`",
+    "name": "execution steps.upload to TKO.call `phosphorus`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
@@ -289,22 +317,15 @@
       "/dev/stdin"
     ],
     "infra_step": true,
-    "name": "upload to TKO.call `phosphorus`.upload-to-tko",
+    "name": "execution steps.upload to TKO.call `phosphorus`.upload-to-tko",
     "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir/subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "get test results",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "get test results.call `autotest_status_parser`",
+    "name": "execution steps.get test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
@@ -312,9 +333,17 @@
   },
   {
     "cmd": [],
-    "name": "get test results.call `autotest_status_parser`.ensure autotest_status_parser",
+    "name": "execution steps.get test results.call `autotest_status_parser`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.get test results.call `autotest_status_parser`.ensure autotest_status_parser",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -329,9 +358,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "get test results.call `autotest_status_parser`.ensure autotest_status_parser.ensure_installed",
+    "name": "execution steps.get test results.call `autotest_status_parser`.ensure autotest_status_parser.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -352,21 +381,24 @@
       "dummy-results-dir"
     ],
     "infra_step": true,
-    "name": "get test results.call `autotest_status_parser`.parse",
+    "name": "execution steps.get test results.call `autotest_status_parser`.parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "save local DUT state"
+    "name": "execution steps.save local DUT state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "save local DUT state.call `skylab_local_state`",
+    "name": "execution steps.save local DUT state.call `skylab_local_state`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
       "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\", @@@",
@@ -389,15 +421,15 @@
       "/dev/stdin"
     ],
     "infra_step": true,
-    "name": "save local DUT state.call `skylab_local_state`.save",
+    "name": "execution steps.save local DUT state.call `skylab_local_state`.save",
     "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\", \n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutId\": \"dummy-dut-id\"\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('get test results.call `autotest_status_parser`.parse') (retcode: 1)"
+      "humanReason": "Infra Failure: Step('execution steps.get test results.call `autotest_status_parser`.parse') (retcode: 1)"
     },
     "name": "$result"
   }
