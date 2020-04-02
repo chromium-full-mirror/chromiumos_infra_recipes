@@ -45,6 +45,8 @@ class BotScalingApi(recipe_api.RecipeApi):
     scaling_actions = []
     for policy in bot_policy_config.bot_policies:
       if swarming_stats is None:
+        if policy.bot_group not in status_map:
+          continue
         demand = self.m.buildbucket_stats.get_bot_demand(
             status_map[policy.bot_group])
       else:

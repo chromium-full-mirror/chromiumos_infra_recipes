@@ -21,6 +21,12 @@ def RunSteps(api):
       api.bot_scaling.test_api.gce_provider_config(), swarming_stats=None)
   api.assertions.assertEqual(len(robocrop_action.scaling_actions), 1)
 
+  status_map = {'foo': {'STARTED': 23, 'SCHEDULED': 23}}
+  robocrop_action = api.bot_scaling.get_robocrop_action(
+      status_map, bot_policy_config,
+      api.bot_scaling.test_api.gce_provider_config(), swarming_stats=None)
+  api.assertions.assertEqual(len(robocrop_action.scaling_actions), 0)
+
   swarming_stats = api.bot_scaling.get_swarming_stats(bot_policy_config)
   robocrop_swarming_action = api.bot_scaling.get_robocrop_action(
       status_map, bot_policy_config,
