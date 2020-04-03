@@ -1,5 +1,114 @@
 [
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::git]/resources/git_setup.py",
+      "--path",
+      "[CLEANUP]/swarming-client",
+      "--url",
+      "https://chromium.googlesource.com/infra/luci/client-py"
+    ],
+    "infra_step": true,
+    "name": "git setup"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "origin",
+      "master",
+      "--progress"
+    ],
+    "cwd": "[CLEANUP]/swarming-client",
+    "env": {
+      "PATH": "RECIPE_REPO[depot_tools]:<PATH>"
+    },
+    "infra_step": true,
+    "name": "git fetch"
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "-f",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/swarming-client",
+    "infra_step": true,
+    "name": "git checkout"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/swarming-client",
+    "infra_step": true,
+    "name": "read revision",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@<br/>checked out 'deadbeef'<br/>@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clean",
+      "-f",
+      "-d",
+      "-x"
+    ],
+    "cwd": "[CLEANUP]/swarming-client",
+    "infra_step": true,
+    "name": "git clean"
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "query",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "bots/count?"
+    ],
+    "infra_step": true,
+    "name": "get bot query result",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "query",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "tasks/count?state=RUNNING&start=1336913601.5"
+    ],
+    "infra_step": true,
+    "name": "get task query result",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "query",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "tasks/count?state=PENDING&start=1336913603.0"
+    ],
+    "infra_step": true,
+    "name": "get task query result (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "find matching builds"
   },
@@ -16,7 +125,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}}"
+      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:24Z\"}}"
     ],
     "infra_step": true,
     "name": "find matching builds.buildbucket.search",
@@ -37,10 +146,10 @@
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update",
-    "stdin": "{\"config\": {\"currentAmount\": 22, \"prefix\": \"prefix-first\"}, \"id\": \"prefix-first\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "stdin": "{\"config\": {\"currentAmount\": 5, \"prefix\": \"prefix-first\"}, \"id\": \"prefix-first\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 22, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 5, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-first\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -56,10 +165,10 @@
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update (2)",
-    "stdin": "{\"config\": {\"currentAmount\": 22, \"prefix\": \"prefix-second\"}, \"id\": \"prefix-second\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "stdin": "{\"config\": {\"currentAmount\": 5, \"prefix\": \"prefix-second\"}, \"id\": \"prefix-second\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 22, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 5, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-second\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -75,10 +184,10 @@
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update (3)",
-    "stdin": "{\"config\": {\"currentAmount\": 18, \"prefix\": \"prefix-third\"}, \"id\": \"prefix-third\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "stdin": "{\"config\": {\"currentAmount\": 4, \"prefix\": \"prefix-third\"}, \"id\": \"prefix-third\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 18, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 4, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-third\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -94,10 +203,10 @@
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update (4)",
-    "stdin": "{\"config\": {\"currentAmount\": 27, \"prefix\": \"prefix-fourth\"}, \"id\": \"prefix-fourth\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
+    "stdin": "{\"config\": {\"currentAmount\": 6, \"prefix\": \"prefix-fourth\"}, \"id\": \"prefix-fourth\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 27, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"currentAmount\": 6, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-fourth\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"

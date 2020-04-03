@@ -25,13 +25,10 @@ SwarmingStats = namedtuple('SwarmingStats', ['bot_stats', 'task_stats'])
 class BotScalingApi(recipe_api.RecipeApi):
   """A module that determines how to scale bot groups."""
 
-  def get_robocrop_action(self, status_map, bot_policy_config, configs,
-                          swarming_stats):
+  def get_robocrop_action(self, bot_policy_config, configs, swarming_stats):
     """Function to compute all the actions of this RoboCrop.
 
     Args:
-      status_map(str->str->int): A map from bot group to a map of
-        status to task count.
       bot_policy_config(BotPolicyCfg): Config define Policy for
         the RoboCrop.
       configs(Configs): List of GCE Config objects.
@@ -44,13 +41,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     previous_action = self.get_previous_action()
     scaling_actions = []
     for policy in bot_policy_config.bot_policies:
-      if swarming_stats is None:
-        if policy.bot_group not in status_map:
-          continue
-        demand = self.m.buildbucket_stats.get_bot_demand(
-            status_map[policy.bot_group])
-      else:
-        demand = self.get_swarming_demand(swarming_stats, policy.bot_group)
+      demand = self.get_swarming_demand(swarming_stats, policy.bot_group)
       scaling_actions.append(self.get_scaling_action(demand, policy, configs))
 
     return RoboCropAction(scaling_actions=scaling_actions)

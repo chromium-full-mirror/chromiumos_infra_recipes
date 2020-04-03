@@ -18,20 +18,20 @@ from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 def RunSteps(api):
   bot_policy = api.bot_scaling.test_api.robocrop_bot_policy_config()
   bot_policy_config = BotPolicyCfg(bot_policies=[bot_policy])
+  swarming_stats = api.bot_scaling.get_swarming_stats(bot_policy_config)
   gce_config = api.bot_scaling.test_api.gce_provider_config()
   updated_bot_policy = api.bot_scaling.update_bot_policy_limits(
       bot_policy_config, gce_config)
-  status_map = {'cq': {'STARTED': 1000, 'SCHEDULED': 50}}
 
   robocrop_action = api.bot_scaling.get_robocrop_action(
-      status_map, updated_bot_policy, gce_config, swarming_stats=None)
+      updated_bot_policy, gce_config, swarming_stats=swarming_stats)
 
   vms = []
   prefix_map = {
-      'prefix-first': 22,
-      'prefix-second': 22,
-      'prefix-third': 18,
-      'prefix-fourth': 27
+      'prefix-first': 5,
+      'prefix-second': 5,
+      'prefix-third': 4,
+      'prefix-fourth': 6
   }
   for prefix, amount in prefix_map.items():
     vms.append(Config(prefix=prefix, current_amount=amount))

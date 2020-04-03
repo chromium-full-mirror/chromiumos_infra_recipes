@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'buildbucket_stats',
     'cros_history',
     'gce_provider',
     'recipe_engine/buildbucket',
