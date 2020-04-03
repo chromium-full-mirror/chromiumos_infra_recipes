@@ -102,7 +102,7 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	}
 	patchFile := strings.Trim(stdoutBuf.String(), "\n")
 	log.Printf("patching branch")
-	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "am", "--3way", "--ignore-whitespace", patchFile); err != nil {
+	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "apply", "--3way", "--ignore-whitespace", patchFile); err != nil {
 		errStr := stderrBuf.String()
 		if strings.Contains(errStr, "information is lacking or useless") {
 			log.Printf("This looks like a case of https://crbug.com/1031306, in which something in the diff represents a non-existent file. Aborting...")
@@ -116,8 +116,6 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 				errStr += "\n"
 			}
 		}
-		// clean up the am state to reset the repo for the next patch.
-		runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "am", "--abort")
 		return false, errors.New(errStr)
 	}
 	return true, nil
