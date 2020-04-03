@@ -62,6 +62,11 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.urls.get_gs_path_url('gs://bucket/a/b/c'),
       'https://storage.cloud.google.com/bucket/a/b/c')
+  # Test a path where the bucket starts with 'gs', to make sure it doesn't
+  # get stripped as well.
+  api.assertions.assertEqual(
+      api.urls.get_gs_path_url('gs://gs-test/a/b'),
+      'https://storage.cloud.google.com/gs-test/a/b')
   api.assertions.assertRaises(ValueError, api.urls.get_gs_path_url, 'a/b/c')
 
   task_state = TaskState(life_cycle=TaskState.LIFE_CYCLE_ABORTED,

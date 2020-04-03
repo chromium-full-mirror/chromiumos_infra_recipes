@@ -119,4 +119,4 @@ class UrlsApi(recipe_api.RecipeApi):
     if not gs_path.startswith('gs://'):
       raise ValueError('gs_path argument must start with "gs://"')
 
-    return 'https://storage.cloud.google.com/' + gs_path.lstrip('gs://')
+    return 'https://storage.cloud.google.com/' + gs_path[len('gs://'):]
