@@ -159,13 +159,15 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
     # See https://crrev.com/c/1913895.
     return
 
+  target_versions = get_target_versions(api, build_target)
+  api.easy.set_property_step('target_versions', target_versions)
   try:
-    target_versions = get_target_versions(api, build_target)
-    api.easy.set_property_step('target_versions', target_versions)
-    api.metadata_json.add_version_entries(target_versions)
+    if artifacts.artifact_types:
+      api.metadata_json.add_version_entries(target_versions)
+      api.metadata_json.add_default_entries()
+      api.metadata_json.upload_to_gs(
+          artifacts.artifacts_gs_bucket, config, build_target, partial=True)
   except:  # pragma: no cover # pylint: disable=bare-except
-    # Failing on kernel buildtest builders, see https://crbug.com/1017583.
-    # See also https://ci.chromium.org/b/8884106699608600832
     pass
 
   with api.step.nest('install toolchain') as install_tc_step:

@@ -195,6 +195,7 @@
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries)
   * [metadata_json:examples/default_entries](#recipes-metadata_json_examples_default_entries)
+  * [metadata_json:examples/upload_to_gs](#recipes-metadata_json_examples_upload_to_gs)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
@@ -2914,28 +2915,48 @@ Raises:
   matching predicate.
 ### *recipe_modules* / [metadata\_json](/recipe_modules/metadata_json)
 
-[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_history](#recipe_modules-cros_history), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to write metadata.json into GS for GoldenEye consumption.
 
-&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#35)(self):**
+&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#40)(self):**
 
 These fields are available at the start of the build.
 
-&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#57)(self, version_dict):**
+&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#65)(self, version_dict):**
 
 Update metadata with version info.
 
 Args:
   version_dict(dict): Map containing version info.
 
-&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#70)(self):**
+&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#78)(self):**
 
 Get the metadata dict. Should only be used for unittesting.
 
 Returns: dict, metadata info.
+
+&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#100)(self, gs_bucket, config, build_target, partial=False):**
+
+Upload metadata to GS at its current state.
+
+Args:
+  gs_bucket (str): Google storage bucket to upload artifacts to.
+  config(BuilderConfig): builder config of this builder.
+  target (BuildTarget): The build target of this builder.
+  partial(bool): whether the metadata is incomplete.
+
+&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#85)(self, filename):**
+
+Write metadata dict to a tempfile.
+
+Args:
+  filename(str): Filename to write to.
+
+Returns:
+  str, path to the file written.
 ### *recipe_modules* / [naming](/recipe_modules/naming)
 
 [DEPS](/recipe_modules/naming/__init__.py#6): [skylab](#recipe_modules-skylab)
@@ -3920,7 +3941,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#83)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#350)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#352)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -3936,7 +3957,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#369)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#371)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4542,6 +4563,11 @@ Runs the presubmit for a project with checkout per local manifest.
 [DEPS](/recipe_modules/metadata_json/examples/default_entries.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/default_entries.py#14)(api):**
+### *recipes* / [metadata\_json:examples/upload\_to\_gs](/recipe_modules/metadata_json/examples/upload_to_gs.py)
+
+[DEPS](/recipe_modules/metadata_json/examples/upload_to_gs.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/upload_to_gs.py#18)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
