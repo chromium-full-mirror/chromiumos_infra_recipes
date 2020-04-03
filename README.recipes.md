@@ -2846,7 +2846,7 @@ APIs for logging step output to Google Storage.
 
 A module for logging step output to Google Storage.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [log\_step\_to\_gs](/recipe_modules/gs_step_logging/api.py#24)(self, gs_prefix):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [log\_step\_to\_gs](/recipe_modules/gs_step_logging/api.py#23)(self, gs_prefix):**
 
 Returns a context that logs stdout of the final step to GS.
 

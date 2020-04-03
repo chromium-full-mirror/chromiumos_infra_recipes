@@ -537,6 +537,8 @@
       "@@@STEP_LOG_END@json.output (invalid)@@@",
       "@@@STEP_LOG_LINE@json.output (exception)@No JSON object could be decoded@@@",
       "@@@STEP_LOG_END@json.output (exception)@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@Test stdout from presubmit@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LINK@stdout (GS mirror)@https://storage.cloud.google.com/testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout@@@"
     ]
   },
@@ -582,7 +584,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1",
-      "'gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout'"
+      "gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
     "env_suffixes": {

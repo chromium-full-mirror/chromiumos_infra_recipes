@@ -50,7 +50,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1",
-      "'gs://testbucket/testprefix/0/basic with stdout/stdout'"
+      "gs://testbucket/testprefix/0/basic with stdout/stdout"
     ],
     "infra_step": true,
     "name": "nested step.write to gs://testbucket/testprefix/0/basic with stdout/stdout.gsutil cp",

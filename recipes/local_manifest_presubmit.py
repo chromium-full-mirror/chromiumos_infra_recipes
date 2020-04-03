@@ -87,8 +87,8 @@ def RunSteps(api, properties):
             '--verbose',
             '--recursive',
         ]
-        api.step('presubmit_support', cmd, stdout=api.raw_io.output(),
-                 stderr=api.raw_io.output())
+        api.step('presubmit_support', cmd,
+                 stdout=api.raw_io.output(add_output_log=True))
 
 
 def GenTests(api):

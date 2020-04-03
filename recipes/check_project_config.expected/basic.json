@@ -489,6 +489,8 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "check constraints",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@Test stdout from constraint checker@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LINK@stdout (GS mirror)@https://storage.cloud.google.com/testprogram-testproject/cq_logs/8945511751514863184/check constraints/stdout@@@"
     ]
   },
@@ -526,7 +528,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1",
-      "'gs://testprogram-testproject/cq_logs/8945511751514863184/check constraints/stdout'"
+      "gs://testprogram-testproject/cq_logs/8945511751514863184/check constraints/stdout"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,

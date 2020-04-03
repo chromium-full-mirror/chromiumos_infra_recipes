@@ -18,8 +18,7 @@ class GSStepLoggingApi(recipe_api.RecipeApi):
     with self.m.step.nest('write to {}'.format(gs_path)):
       tempfile = self.m.path.mkstemp()
       self.m.file.write_text('write to temp file', tempfile, text)
-      # Put the destination in quotes in case it has spaces.
-      self.m.gsutil(['cp', tempfile, "'{}'".format(gs_path)])
+      self.m.gsutil(['cp', tempfile, gs_path])
 
   @contextlib.contextmanager
   def log_step_to_gs(self, gs_prefix):

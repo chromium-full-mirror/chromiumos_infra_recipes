@@ -114,8 +114,12 @@ def RunSteps(api, properties):
         properties.logging_gs_prefix,
     ):
       checker_args = ['--program', program_path, '--project', project_path]
-      api.python('check constraints', checker_path, checker_args,
-                 stdout=api.raw_io.output(), stderr=api.raw_io.output())
+      api.python(
+          'check constraints',
+          checker_path,
+          checker_args,
+          stdout=api.raw_io.output(add_output_log=True),
+      )
 
 
 def GenTests(api):
