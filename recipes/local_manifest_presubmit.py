@@ -27,6 +27,7 @@ DEPS = [
     'depot_tools/depot_tools',
     'cros_source',
     'git',
+    'gs_step_logging',
     'repo',
     'workspace_util',
 ]
@@ -77,7 +78,8 @@ def RunSteps(api, properties):
 
       # infra_steps set in context take precedence over infra_step passed
       # to a step, so we make a new context here.
-      with api.context(infra_steps=False), api.depot_tools.on_path():
+      with api.context(infra_steps=False), api.depot_tools.on_path(), \
+          api.gs_step_logging.log_step_to_gs(properties.logging_gs_prefix):
         cmd = [
             'presubmit_support.py',
             '--json_output', api.json.output(),
@@ -85,7 +87,8 @@ def RunSteps(api, properties):
             '--verbose',
             '--recursive',
         ]
-        api.step('presubmit_support', cmd)
+        api.step('presubmit_support', cmd, stdout=api.raw_io.output(),
+                 stderr=api.raw_io.output())
 
 
 def GenTests(api):
@@ -111,6 +114,11 @@ def GenTests(api):
         'cherry-pick gerrit changes.repo forall',
         stdout=api.raw_io.output('project1|src/project1|cros|master'))
 
+  def presubmit_with_output():
+    """Returns StepData for a presubmit step with stdout."""
+    return api.step_data('prepare and execute presubmit.presubmit_support',
+                         stdout=api.raw_io.output('Test stdout from presubmit'))
+
   yield api.test(
       'basic',
       api.properties(
@@ -122,9 +130,11 @@ def GenTests(api):
                             '/chromeos/project/testproject1'),
                   manifest_path='local_manifest.xml',
               ),
+              logging_gs_prefix='testprogram-testproject/cq_logs',
           )),
       project_config_cq_build(api),
       checked_out_projects(api),
+      presubmit_with_output(),
       # The change should be applied.
       api.post_process(
           post_process.StepCommandContains,

@@ -27,6 +27,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_source',
     'gerrit',
+    'gs_step_logging',
     'iterutils',
     'repo',
     'workspace_util',
@@ -107,9 +108,14 @@ def RunSteps(api, properties):
     # here is not considered an infra failure. infra_steps set in context takes
     # precedent over infra_step passed to api.step, so need to create a new
     # context here.
-    with api.context(infra_steps=False):
+    with api.context(
+        infra_steps=False,
+    ), api.gs_step_logging.log_step_to_gs(
+        properties.logging_gs_prefix,
+    ):
       checker_args = ['--program', program_path, '--project', project_path]
-      api.python('check constraints', checker_path, checker_args)
+      api.python('check constraints', checker_path, checker_args,
+                 stdout=api.raw_io.output(), stderr=api.raw_io.output())
 
 
 def GenTests(api):
@@ -136,6 +142,8 @@ def GenTests(api):
                 repo_checkout_path='src/project/testproject',
                 config_path='generated/config.binaryproto',
             ),
+        'logging_gs_prefix':
+            'testprogram-testproject/cq_logs',
     }
     props.update(extra_props)
     return props
@@ -159,12 +167,19 @@ def GenTests(api):
         'cherry-pick gerrit changes.repo forall',
         stdout=api.raw_io.output('project1|src/project1|cros|master'))
 
+  def check_constraints_with_output():
+    """Returns StepData for a check constraints step with stdout."""
+    return api.step_data(
+        'check constraints',
+        stdout=api.raw_io.output('Test stdout from constraint checker'))
+
   yield api.test(
       'basic',
       api.properties(**properties_dict()),
       project_config_cq_build(api),
       # The input GerritChange is in a checked out project.
       checked_out_projects(api),
+      check_constraints_with_output(),
       api.post_process(post_process.StepCommandContains,
                        'ensure synced checkout.repo init',
                        ['--groups', 'partner-config']),

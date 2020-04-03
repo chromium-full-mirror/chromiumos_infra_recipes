@@ -48,4 +48,14 @@ message CheckProjectConfigProperties {
     // source tree.
     ConfigBundleCheckoutPath program_config_bundle_checkout_path = 3;
     ConfigBundleCheckoutPath project_config_bundle_checkout_path = 4;
+
+    // Google Storage prefix to log output from steps to.
+    //
+    // Currently, LogDog ACLs are applied at the project level, not the bucket
+    // level. Thus, it is possible an account can view the Milo page for a
+    // build, but not the logs for the step (e.g. stdout). As a workaround, some
+    // logs are mirrored to GS buckets where more granular ACLs can be applied.
+    //
+    // This prefix should contain the bucket name, but not the 'gs://' prefix.
+    string logging_gs_prefix = 6;
 }

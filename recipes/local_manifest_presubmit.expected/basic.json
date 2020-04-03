@@ -536,7 +536,64 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@json.output (invalid)@@@",
       "@@@STEP_LOG_LINE@json.output (exception)@No JSON object could be decoded@@@",
-      "@@@STEP_LOG_END@json.output (exception)@@@"
+      "@@@STEP_LOG_END@json.output (exception)@@@",
+      "@@@STEP_LINK@stdout (GS mirror)@https://storage.cloud.google.com/testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "prepare and execute presubmit.write to gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Test stdout from presubmit",
+      "[CLEANUP]/tmp_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "prepare and execute presubmit.write to gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout.write to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@tmp_tmp_1@Test stdout from presubmit@@@",
+      "@@@STEP_LOG_END@tmp_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_1",
+      "'gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout'"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "prepare and execute presubmit.write to gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout.gsutil cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
