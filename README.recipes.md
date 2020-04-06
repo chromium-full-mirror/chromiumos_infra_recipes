@@ -4979,9 +4979,9 @@ Returns: bool, [test_platform.Request]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#400)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#401)(api, properties, envvars):**
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#325)(api, properties, envvars):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#326)(api, properties, envvars):**
 
 Runs all the non-UI-related steps.
 
@@ -5043,7 +5043,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#235)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#236)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 

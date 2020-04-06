@@ -434,6 +434,8 @@
     "cmd": [],
     "name": "test results",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@JSON output@{}@@@",
+      "@@@STEP_LOG_END@JSON output@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

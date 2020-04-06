@@ -434,7 +434,11 @@
   },
   {
     "cmd": [],
-    "name": "test results"
+    "name": "test results",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@JSON output@{}@@@",
+      "@@@STEP_LOG_END@JSON output@@@"
+    ]
   },
   {
     "name": "$result"

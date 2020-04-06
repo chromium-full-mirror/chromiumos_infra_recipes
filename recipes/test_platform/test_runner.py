@@ -182,7 +182,8 @@ def summarize_results(api, prejob_response, run_test_response, result):
     * run_test_response: phosphorus.runtest.RunTestResponse instance.
     * result: skylab_test_runner.Result instance.
   """
-  with api.step.nest('test results'):
+  with api.step.nest('test results') as step:
+    step.presentation.logs['JSON output'] = json_format.MessageToJson(result)
     for prejob in result.prejob.step:
       with api.step.nest(prejob.name) as step:
         if prejob.verdict != Result.Prejob.Step.VERDICT_PASS:
