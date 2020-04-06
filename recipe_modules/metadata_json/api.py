@@ -57,6 +57,8 @@ class MetadataJsonApi(recipe_api.RecipeApi):
 
     build_target = self.m.cros_history.get_build_target(build)
     self._metadata['boards'] = [build_target]
+    config = self.m.cros_infra_config.get_builder_config(builder_name)
+    self._metadata['unibuild'] = config.general.unibuild
 
     for dimension in build.infra.swarming.bot_dimensions:  # pragma: nocover
       if dimension.key == 'id':

@@ -11,5 +11,6 @@ DEPS = [
     'recipe_engine/step',
     'cros_artifacts',
     'cros_history',
+    'cros_infra_config',
     'urls',
 ]

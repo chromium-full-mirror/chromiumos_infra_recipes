@@ -2260,7 +2260,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"build_id\": 0, \n    \"board-metadata\": {}, \n    \"master_build_id\": 0, \n    \"builder-name\": \"amd64-generic-cq\", \n    \"buildbucket_id\": 8945511751514863184, \n    \"boards\": [\n        null\n    ], \n    \"builder_type\": \"cq\", \n    \"metadata-version\": \"2\", \n    \"child-configs\": [], \n    \"build-number\": 0, \n    \"bot-config\": \"amd64-generic-cq\", \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"platform\": \"platform_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\"\n    }, \n    \"branch\": \"master\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }\n}",
+      "{\n    \"build_id\": 0, \n    \"board-metadata\": {}, \n    \"master_build_id\": 0, \n    \"builder-name\": \"amd64-generic-cq\", \n    \"buildbucket_id\": 8945511751514863184, \n    \"boards\": [\n        null\n    ], \n    \"builder_type\": \"cq\", \n    \"unibuild\": false, \n    \"metadata-version\": \"2\", \n    \"child-configs\": [], \n    \"build-number\": 0, \n    \"bot-config\": \"amd64-generic-cq\", \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"platform\": \"platform_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\"\n    }, \n    \"branch\": \"master\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_11/partial_metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2278,6 +2278,7 @@
       "@@@STEP_LOG_LINE@partial_metadata.json@        null@@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    ], @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"builder_type\": \"cq\", @@@",
+      "@@@STEP_LOG_LINE@partial_metadata.json@    \"unibuild\": false, @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"metadata-version\": \"2\", @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"child-configs\": [], @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"build-number\": 0, @@@",

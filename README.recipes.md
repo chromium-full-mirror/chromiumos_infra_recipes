@@ -2915,7 +2915,7 @@ Raises:
   matching predicate.
 ### *recipe_modules* / [metadata\_json](/recipe_modules/metadata_json)
 
-[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_history](#recipe_modules-cros_history), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -2925,20 +2925,20 @@ A module to write metadata.json into GS for GoldenEye consumption.
 
 These fields are available at the start of the build.
 
-&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#65)(self, version_dict):**
+&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#67)(self, version_dict):**
 
 Update metadata with version info.
 
 Args:
   version_dict(dict): Map containing version info.
 
-&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#78)(self):**
+&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#80)(self):**
 
 Get the metadata dict. Should only be used for unittesting.
 
 Returns: dict, metadata info.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#100)(self, gs_bucket, config, build_target, partial=False):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#102)(self, gs_bucket, config, build_target, partial=False):**
 
 Upload metadata to GS at its current state.
 
@@ -2948,7 +2948,7 @@ Args:
   target (BuildTarget): The build target of this builder.
   partial(bool): whether the metadata is incomplete.
 
-&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#85)(self, filename):**
+&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#87)(self, filename):**
 
 Write metadata dict to a tempfile.
 
