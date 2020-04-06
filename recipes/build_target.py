@@ -118,11 +118,11 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   if relevance == Relevance.POINTLESS:
     return
 
+  api.cros_sdk.uprev_packages(
+      build_targets=[BuildTarget(name=build_target.name)])
   api.cros_sdk.create_chroot(
       version=config.general.sdk_cache_version, use_image=is_staging,
       timeout_sec=None if long_timeouts else STEP_TIMEOUTS['create_sdk'])
-  api.cros_sdk.uprev_packages(
-      build_targets=[BuildTarget(name=build_target.name)])
 
   toolchain_changed = api.cros_sdk.update_chroot(
       gitiles_commit, gerrit_changes, toolchain_targets=[build_target],

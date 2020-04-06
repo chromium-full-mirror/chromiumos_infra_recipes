@@ -411,6 +411,5 @@ class CrosSdkApi(recipe_api.RecipeApi):
     with self.m.step.nest(name):
       return self.m.cros_build_api.PackageService.Uprev(
           UprevPackagesRequest(
-              chroot=self.chroot, build_targets=build_targets,
-              overlay_type=OVERLAYTYPE_BOTH),
+              build_targets=build_targets, overlay_type=OVERLAYTYPE_BOTH),
           timeout=timeout_sec)
