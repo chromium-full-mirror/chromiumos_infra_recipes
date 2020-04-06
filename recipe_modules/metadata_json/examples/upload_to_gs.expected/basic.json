@@ -26,7 +26,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/bucket/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/bucket/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/partial_metadata.json@@@"
     ]
   },
   {
@@ -150,7 +150,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial_metadata.json",
-      "gs://bucket/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184"
+      "gs://bucket/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/partial_metadata.json"
     ],
     "infra_step": true,
     "name": "upload metadata.gsutil cp",
