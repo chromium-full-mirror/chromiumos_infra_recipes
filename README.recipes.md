@@ -193,8 +193,10 @@
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
+  * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results)
   * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries)
   * [metadata_json:examples/default_entries](#recipes-metadata_json_examples_default_entries)
+  * [metadata_json:examples/finalize_build](#recipes-metadata_json_examples_finalize_build)
   * [metadata_json:examples/upload_to_gs](#recipes-metadata_json_examples_upload_to_gs)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
@@ -2915,30 +2917,44 @@ Raises:
   matching predicate.
 ### *recipe_modules* / [metadata\_json](/recipe_modules/metadata_json)
 
-[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to write metadata.json into GS for GoldenEye consumption.
 
-&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#40)(self):**
+&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#45)(self):**
 
 These fields are available at the start of the build.
 
-&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#67)(self, version_dict):**
+&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#146)(self):**
+
+Add stage results for DebugSymbols and Unittest stages.
+
+&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#72)(self, version_dict):**
 
 Update metadata with version info.
 
 Args:
   version_dict(dict): Map containing version info.
 
-&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#80)(self):**
+&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#173)(self, gs_bucket, config, target, success):**
+
+Finish the build stats and upload metadata.json.
+
+Args:
+  gs_bucket (str): Google storage bucket to upload artifacts to.
+  config(BuilderConfig): builder config of this builder.
+  target (BuildTarget): The build target of this builder.
+  success(bool): Did this build pass.
+
+&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#85)(self):**
 
 Get the metadata dict. Should only be used for unittesting.
 
 Returns: dict, metadata info.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#102)(self, gs_bucket, config, build_target, partial=False):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#107)(self, gs_bucket, config, build_target, partial=False):**
 
 Upload metadata to GS at its current state.
 
@@ -2948,7 +2964,7 @@ Args:
   target (BuildTarget): The build target of this builder.
   partial(bool): whether the metadata is incomplete.
 
-&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#87)(self, filename):**
+&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#92)(self, filename):**
 
 Write metadata dict to a tempfile.
 
@@ -4553,6 +4569,11 @@ Returns: JSON response with validation result
 Runs the presubmit for a project with checkout per local manifest.
 
 &mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#36)(api, properties):**
+### *recipes* / [metadata\_json:examples/add\_stage\_results](/recipe_modules/metadata_json/examples/add_stage_results.py)
+
+[DEPS](/recipe_modules/metadata_json/examples/add_stage_results.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/add_stage_results.py#13)(api):**
 ### *recipes* / [metadata\_json:examples/add\_version\_entries](/recipe_modules/metadata_json/examples/add_version_entries.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/add_version_entries.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -4563,6 +4584,11 @@ Runs the presubmit for a project with checkout per local manifest.
 [DEPS](/recipe_modules/metadata_json/examples/default_entries.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/default_entries.py#14)(api):**
+### *recipes* / [metadata\_json:examples/finalize\_build](/recipe_modules/metadata_json/examples/finalize_build.py)
+
+[DEPS](/recipe_modules/metadata_json/examples/finalize_build.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/finalize_build.py#19)(api):**
 ### *recipes* / [metadata\_json:examples/upload\_to\_gs](/recipe_modules/metadata_json/examples/upload_to_gs.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/upload_to_gs.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

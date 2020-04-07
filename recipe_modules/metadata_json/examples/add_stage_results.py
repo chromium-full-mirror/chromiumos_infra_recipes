@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/assertions',
+    'metadata_json',
+]
+
+
+def RunSteps(api):
+  api.metadata_json.add_stage_results()
+  metadata = api.metadata_json.get_metadata()
+  api.assertions.assertEqual(len(metadata['results']), 2)
+
+
+def GenTests(api):
+  yield (api.test('basic'))

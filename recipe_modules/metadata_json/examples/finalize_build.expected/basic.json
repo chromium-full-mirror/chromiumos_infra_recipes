@@ -1,0 +1,173 @@
+[
+  {
+    "cmd": [],
+    "name": "read builder configs"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload metadata",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/bucket/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n    \"build_id\": 0, \n    \"board-metadata\": {}, \n    \"master_build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"boards\": [\n        null\n    ], \n    \"builder_type\": \"cq\", \n    \"unibuild\": false, \n    \"metadata-version\": \"2\", \n    \"child-configs\": [], \n    \"build-number\": 0, \n    \"bot-config\": \"amd64-generic-cq\", \n    \"builder-name\": \"amd64-generic-cq\", \n    \"status\": {\n        \"status\": \"pass\", \n        \"create-time\": null, \n        \"summary\": \"\"\n    }, \n    \"branch\": \"master\", \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:21\", \n        \"start\": \"some start time\", \n        \"finish\": null\n    }\n}",
+      "[CLEANUP]/metadata_tmp_1/metadata.json"
+    ],
+    "infra_step": true,
+    "name": "upload metadata.mwriting ewriting twriting awriting dwriting awriting twriting awriting .writing jwriting swriting owriting n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@metadata.json@{@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"build_id\": 0, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"board-metadata\": {}, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"master_build_id\": 0, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 8945511751514863184, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"boards\": [@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        null@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"cq\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"unibuild\": false, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"metadata-version\": \"2\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"child-configs\": [], @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"build-number\": 0, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"amd64-generic-cq\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"amd64-generic-cq\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"status\": {@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"status\": \"pass\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"create-time\": null, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"branch\": \"master\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:53:21\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    }@@@",
+      "@@@STEP_LOG_LINE@metadata.json@}@@@",
+      "@@@STEP_LOG_END@metadata.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload metadata.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "upload metadata.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload metadata.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "upload metadata.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "upload metadata.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "--position-num"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "upload metadata.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/metadata_tmp_1/metadata.json",
+      "gs://bucket/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata.json"
+    ],
+    "infra_step": true,
+    "name": "upload metadata.gsutil cp",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

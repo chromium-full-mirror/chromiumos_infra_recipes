@@ -4,9 +4,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import step as step_pb2
+from google.protobuf import timestamp_pb2
+
 from recipe_engine import recipe_api
 from recipe_engine.util import exponential_retry
 
+import datetime
 import email.utils
 import time
 
@@ -120,3 +125,70 @@ class MetadataJsonApi(recipe_api.RecipeApi):
   @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
   def _upload(self, source, dest):
     self.m.gsutil(['cp', source, dest], timeout=10 * 60)
+
+  def _get_duration(self, end_secs, start_secs):
+    duration = datetime.timedelta(seconds=(end_secs - start_secs))
+    return str(duration)
+
+  def _get_unittest_step(self, build_steps):
+    if self._test_data.enabled:
+      return step_pb2.Step(
+          status=common_pb2.SUCCESS,
+          start_time=timestamp_pb2.Timestamp(seconds=1586287057),
+          end_time=timestamp_pb2.Timestamp(seconds=1586280057))
+    else:  # pragma: nocover
+      for step in build_steps:
+        if step.name == 'run ebuild tests':
+          return step
+
+      return None
+
+  def add_stage_results(self):
+    """Add stage results for DebugSymbols and Unittest stages."""
+    self._metadata['results'] = [{
+        'status': 'pass',
+        'description': '',
+        'name': 'DebugSymbols',
+        'duration': '00:00:00',
+        'summary': 'stage was successful',
+        'log': '',
+        'board': '',
+    }]
+
+    build = self.m.buildbucket.build
+    unittest_step = self._get_unittest_step(build.steps)
+    if unittest_step:
+      success = unittest_step.status == common_pb2.SUCCESS
+      self._metadata['results'].append({
+          'status': 'pass' if success else 'fail',
+          'description': '',
+          'name': 'UnitTest',
+          'duration': self._get_duration(unittest_step.end_time.seconds,
+                                         unittest_step.start_time.seconds),
+          'summary': ('stage was successful' if success else 'stage failed'),
+          'log': '',
+          'board': '',
+      })
+
+  def finalize_build(self, gs_bucket, config, target, success):
+    """Finish the build stats and upload metadata.json.
+
+    Args:
+      gs_bucket (str): Google storage bucket to upload artifacts to.
+      config(BuilderConfig): builder config of this builder.
+      target (BuildTarget): The build target of this builder.
+      success(bool): Did this build pass.
+    """
+    current_secs = int(self.m.time.time())
+    self._metadata['status'] = {
+        'status': 'pass' if success else 'fail',
+        'create-time': self._print_time(current_secs),
+        'summary': '',
+    }
+
+    build = self.m.buildbucket.build
+    self._metadata['time'].update({
+        'finish': self._print_time(current_secs),
+        'duration': self._get_duration(current_secs, build.start_time.seconds),
+    })
+    self.upload_to_gs(gs_bucket, config, target)
