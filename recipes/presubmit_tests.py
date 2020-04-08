@@ -86,9 +86,15 @@ def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
           projects=[x.project for x in patch_sets])}
       dry_run = api.cq.state == api.cq.DRY
 
+      checked_paths = set()
+
       for patch, commit in zip(patch_sets, new_commits):
+        if commit.path in checked_paths:
+          continue
+        checked_paths.add(commit.path)
         full_path = workpath.join(commit.path)
         with api.step.nest('checking %s' % commit.path) as presentation:
+
           info = path_info[commit.path]
           branch = api.git.extract_branch(info.branch, 'master')
           with api.context(cwd=full_path), api.depot_tools.on_path():
