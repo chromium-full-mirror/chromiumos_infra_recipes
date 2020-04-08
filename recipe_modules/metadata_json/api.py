@@ -11,6 +11,7 @@ from google.protobuf import timestamp_pb2
 from recipe_engine import recipe_api
 from recipe_engine.util import exponential_retry
 
+import contextlib
 import datetime
 import email.utils
 import time
@@ -44,7 +45,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
 
   def add_default_entries(self):
     """These fields are available at the start of the build."""
-    build = self.m.buildbucket.build
+    build = self.m.buildbucket.get(self.m.buildbucket.build.id)
     self._metadata['buildbucket_id'] = build.id
     builder_name = build.builder.builder
     self._metadata['builder-name'] = builder_name
@@ -104,11 +105,10 @@ class MetadataJsonApi(recipe_api.RecipeApi):
                            indent=4)
     return str(file_path)
 
-  def upload_to_gs(self, gs_bucket, config, build_target, partial=False):
+  def upload_to_gs(self, config, build_target, partial=False):
     """Upload metadata to GS at its current state.
 
     Args:
-      gs_bucket (str): Google storage bucket to upload artifacts to.
       config(BuilderConfig): builder config of this builder.
       target (BuildTarget): The build target of this builder.
       partial(bool): whether the metadata is incomplete.
@@ -116,6 +116,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     with self.m.step.nest('upload metadata') as presentation:
       filename = 'partial_metadata.json' if partial else 'metadata.json'
       file_path = self.write_to_file(filename)
+      gs_bucket = config.artifacts.artifacts_gs_bucket
       gs_path = self.m.cros_artifacts.artifacts_gs_path(
           config.id.name, build_target, config.id.type)
       upload_uri = 'gs://{}/{}/{}'.format(gs_bucket, gs_path, filename)
@@ -155,7 +156,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
         'board': '',
     }]
 
-    build = self.m.buildbucket.build
+    build = self.m.buildbucket.get(self.m.buildbucket.build.id)
     unittest_step = self._get_unittest_step(build.steps)
     if unittest_step:
       success = unittest_step.status == common_pb2.SUCCESS
@@ -170,11 +171,10 @@ class MetadataJsonApi(recipe_api.RecipeApi):
           'board': '',
       })
 
-  def finalize_build(self, gs_bucket, config, target, success):
+  def finalize_build(self, config, target, success):
     """Finish the build stats and upload metadata.json.
 
     Args:
-      gs_bucket (str): Google storage bucket to upload artifacts to.
       config(BuilderConfig): builder config of this builder.
       target (BuildTarget): The build target of this builder.
       success(bool): Did this build pass.
@@ -186,9 +186,33 @@ class MetadataJsonApi(recipe_api.RecipeApi):
         'summary': '',
     }
 
-    build = self.m.buildbucket.build
+    build = self.m.buildbucket.get(self.m.buildbucket.build.id)
     self._metadata['time'].update({
         'finish': self._print_time(current_secs),
         'duration': self._get_duration(current_secs, build.start_time.seconds),
     })
-    self.upload_to_gs(gs_bucket, config, target)
+    self.upload_to_gs(config, target, partial=False)
+
+  @contextlib.contextmanager
+  def context(self, config, target):
+    """Returns a context that upload final metadata.json to GS.
+
+    Args:
+      config(BuilderConfig): builder config of this builder.
+      target (BuildTarget): The build target of this builder.
+    """
+    try:
+      with self.m.step.nest('metadata setup'):
+        self.add_default_entries()
+
+      yield
+
+      with self.m.step.nest('finalize metadata'):
+        self.add_stage_results()
+        self.finalize_build(config, target, success=True)
+    except self.m.step.StepFailure:
+      with self.m.step.nest('finalize metadata'):
+        self.add_stage_results()
+        self.finalize_build(config, target, success=False)
+
+      raise

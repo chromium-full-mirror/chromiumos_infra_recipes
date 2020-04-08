@@ -7,6 +7,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/step',
     'cros_infra_config',
     'metadata_json',
 ]
@@ -21,9 +22,7 @@ def RunSteps(api):
   bt = BuildTarget(name='amd64-generic')
   with api.metadata_json.context(config, bt):
     api.metadata_json.add_default_entries()
-
-  metadata = api.metadata_json.get_metadata()
-  api.assertions.assertEqual(len(metadata['status']), 3)
+    raise api.step.StepFailure('something went wrong.')
 
 
 def GenTests(api):
