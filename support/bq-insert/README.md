@@ -16,6 +16,16 @@ go run bq-insert/main.go --input-json=/path/to/sample-input.json
 ```
 
 The following input files are checked in:
+* goma-exp-read.json - Reads data from the goma experimental dataset,
+  which has the same schema as the goma logs dataset but can be modified
+  for tests (see below).
+* goma-exp-write-small.json - Writes a small subset of data to the goma
+  experimental dataset.
+* goma-exp-full.json - Write a large json goma dataset to goma
+  experimental dataset.
+* goma-exp-full-ORIG.json - This large json goma dataset has full raw output
+  from goma, and can be diffed against goma-exp-full.json to see fields
+  that are different between the protos and the database as of April 2020.
 * goma-input.json - For listing data from the goma logs dataset.
 * goma-write-data.json - For writing data to goma. Shows proper format of
   request including sample row data. Should fail since only the
@@ -39,3 +49,14 @@ BigQuery access permissions, etc.
 NOTE: Using goma-input.json requires that the person executing the program
 belong to a group such as chromeos-build-infra@google.com or
 mdb/chromeos-ci-eng.
+
+## Writeable goma BigQuery table for tests
+
+The Goma team created a dataset for which mmortensen@ and others can be granted
+write access.  To create the table from a single entry of the goma data set (so
+that it uses the goma table schema and contains a valid entry), use this command
+in the BigQuery GCP editor:
+```sql
+  CREATE TABLE `goma-logs.experimental_client_events.compile_events`
+  AS  SELECT * FROM `goma-logs.client_events.compile_events` LIMIT 1;
+```

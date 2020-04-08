@@ -75,6 +75,9 @@ func main() {
 		cli.MustMarshalOutput(Output{BqError: ""})
 		return
 	} else if input.WriteData {
+		// This log statement provides an indication that the (often long/verbose) JSON message
+		// unmarshaling is done.
+		log.Print("Writing data to ", input.DatasetId, " ", input.TableName)
 		error_string := insertTableData(ctx, client, input.DatasetId, input.TableName, input.CompileEvent, false)
 		cli.MustMarshalOutput(Output{BqError: error_string})
 		return

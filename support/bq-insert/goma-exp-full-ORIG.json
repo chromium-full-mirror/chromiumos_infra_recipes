@@ -1,0 +1,403 @@
+{
+  "project_id": "goma-logs",
+  "dataset_id": "experimental_client_events",
+  "table_name": "compile_events",
+  "write_data": true,
+  "compile_event": {
+    "build_id": "8883655097013228400",
+    "counterz_stats": {
+      "counterz_stats": [
+      {
+        "total_time_ns": "105570910468",
+        "total_count": "33408141",
+        "location": "../../client/file_stat.cc:52",
+        "name": "FileStat",
+        "function_name": "FileStat"
+      },
+      {
+        "total_time_ns": "96869234867",
+        "total_count": "105",
+        "location": "../../client/compiler_info_builder.cc:84",
+        "name": "",
+        "function_name": "FillFromCompilerOutputs"
+      },
+      {
+        "total_time_ns": "8090092930",
+        "total_count": "105",
+        "location": "../../client/cxx/gcc_compiler_info_builder.cc:187",
+        "name": "ReadCommandOutput(-xc -v)",
+        "function_name": "GetRealClangPath"
+      },
+      {
+        "total_time_ns": "7595830085",
+        "total_count": "105",
+        "location": "../../client/cxx/gcc_compiler_info_builder.cc:92",
+        "name": "ReadCommandOutput(dumpversion)",
+        "function_name": "GetGccVersion"
+      },
+      {
+        "total_time_ns": "7497902434",
+        "total_count": "105",
+        "location": "../../client/cxx/gcc_compiler_info_builder.cc:108",
+        "name": "ReadCommandOutput(version)",
+        "function_name": "GetGccVersion"
+      },
+      {
+        "total_time_ns": "7581140382",
+        "total_count": "105",
+        "location": "../../client/cxx/gcc_compiler_info_builder.cc:148",
+        "name": "ReadCommandOutput(dumpmachine)",
+        "function_name": "GetGccTarget"
+      },
+      {
+        "total_time_ns": "13474591134",
+        "total_count": "171",
+        "location": "../../client/cxx/clang_compiler_info_builder_helper.cc:160",
+        "name": "ReadCommandOutput(-v)",
+        "function_name": "GccDisplayPrograms"
+      },
+      {
+        "total_time_ns": "7394566219",
+        "total_count": "105",
+        "location": "../../client/cxx/clang_compiler_info_builder_helper.cc:211",
+        "name": "ReadCommandOutput(-E -ffreestanding -dM)",
+        "function_name": "GccDisplayPredefinedMacros"
+      },
+      {
+        "total_time_ns": "7792596098",
+        "total_count": "105",
+        "location": "../../client/cxx/clang_compiler_info_builder_helper.cc:757",
+        "name": "ReadCommandOutput(predefined features)",
+        "function_name": "GetPredefinedFeaturesAndExtensions"
+      },
+      {
+        "total_time_ns": "7485763096",
+        "total_count": "105",
+        "location": "../../client/cxx/cxx_compiler_info_builder.cc:107",
+        "name": "ReadCommandOutput(subprogram)",
+        "function_name": "GetSubprograms"
+      },
+      {
+        "total_time_ns": "36163825826",
+        "total_count": "45886",
+        "location": "../../client/cxx/include_processor/include_file_finder.cc:55",
+        "name": "IncludeFileFinder",
+        "function_name": "IncludeFileFinder"
+      },
+      {
+        "total_time_ns": "178536771925",
+        "total_count": "200155645",
+        "location": "../../client/file_stat_cache.cc:67",
+        "name": "Get",
+        "function_name": "Get"
+      },
+      {
+        "total_time_ns": "10500936438",
+        "total_count": "1256471",
+        "location": "../../client/list_dir_cache.cc:28",
+        "name": "total",
+        "function_name": "GetDirEntries"
+      },
+      {
+        "total_time_ns": "4869587564",
+        "total_count": "1812",
+        "location": "../../client/list_dir_cache.cc:41",
+        "name": "miss",
+        "function_name": "GetDirEntries"
+      },
+      {
+        "total_time_ns": "3922579872",
+        "total_count": "1254659",
+        "location": "../../client/list_dir_cache.cc:35",
+        "name": "hit",
+        "function_name": "GetDirEntries"
+      },
+      {
+        "total_time_ns": "1195685889269",
+        "total_count": "2352018",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:113",
+        "name": "ProcessDirectives",
+        "function_name": "ProcessDirectives"
+      },
+      {
+        "total_time_ns": "78027015910",
+        "total_count": "219574833",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:419",
+        "name": "define",
+        "function_name": "ProcessDefine"
+      },
+      {
+        "total_time_ns": "870886383330",
+        "total_count": "125567073",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:386",
+        "name": "include",
+        "function_name": "ProcessInclude"
+      },
+      {
+        "total_time_ns": "209567391648",
+        "total_count": "126527899",
+        "location": "../../client/cxx/include_processor/include_file_finder.cc:132",
+        "name": "Lookup",
+        "function_name": "Lookup"
+      },
+      {
+        "total_time_ns": "485473146599",
+        "total_count": "28932503",
+        "location": "../../client/cxx/include_processor/cpp_include_processor.cc:80",
+        "name": "TryInclude",
+        "function_name": "TryInclude"
+      },
+      {
+        "total_time_ns": "469771739387",
+        "total_count": "28836052",
+        "location": "../../client/cxx/include_processor/include_cache.cc:116",
+        "name": "GetDirectiveList",
+        "function_name": "GetIncludeItem"
+      },
+      {
+        "total_time_ns": "8015788754",
+        "total_count": "35699970",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:440",
+        "name": "ifndef",
+        "function_name": "ProcessIfndef"
+      },
+      {
+        "total_time_ns": "100685893189",
+        "total_count": "74134072",
+        "location": "../../client/cxx/include_processor/cpp_include_processor.cc:257",
+        "name": "handle include try",
+        "function_name": "HandleIncludeInDir"
+      },
+      {
+        "total_time_ns": "2303585794",
+        "total_count": "73682781",
+        "location": "../../client/cxx/include_processor/cpp_include_processor.cc:264",
+        "name": "handle include pruned",
+        "function_name": "HandleIncludeInDir"
+      },
+      {
+        "total_time_ns": "61895006149",
+        "total_count": "27583261",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:447",
+        "name": "if",
+        "function_name": "ProcessIf"
+      },
+      {
+        "total_time_ns": "4538060788",
+        "total_count": "130359428",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:467",
+        "name": "endif",
+        "function_name": "ProcessEndif"
+      },
+      {
+        "total_time_ns": "5594692058",
+        "total_count": "10404360",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:480",
+        "name": "elif",
+        "function_name": "ProcessElif"
+      },
+      {
+        "total_time_ns": "4146307559",
+        "total_count": "34799924",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:433",
+        "name": "ifdef",
+        "function_name": "ProcessIfdef"
+      },
+      {
+        "total_time_ns": "1564367157",
+        "total_count": "41851729",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:454",
+        "name": "else",
+        "function_name": "ProcessElse"
+      },
+      {
+        "total_time_ns": "3394983217",
+        "total_count": "31241903",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:424",
+        "name": "undef",
+        "function_name": "ProcessUndef"
+      },
+      {
+        "total_time_ns": "2322407483",
+        "total_count": "3707452",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:828",
+        "name": "ProcessHasCheckMacro",
+        "function_name": "ProcessHasCheckMacro"
+      },
+      {
+        "total_time_ns": "7831597280",
+        "total_count": "1163687",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:414",
+        "name": "include_next",
+        "function_name": "ProcessIncludeNext"
+      },
+      {
+        "total_time_ns": "2088710189",
+        "total_count": "151979",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:776",
+        "name": "ProcessHasIncludeInternal",
+        "function_name": "ProcessHasIncludeInternal"
+      },
+      {
+        "total_time_ns": "81291821",
+        "total_count": "43458",
+        "location": "../../client/cxx/include_processor/cpp_parser.cc:500",
+        "name": "pragma",
+        "function_name": "ProcessPragma"
+      }
+    ]
+  },
+  "stats": {
+    "subprocess_stats": {
+      "count_burst_by_compiler_disabled": 0,
+      "count_burst_by_network_error": 0
+    },
+    "include_processor_stats": {
+      "total_wait_time": "60514",
+      "skipped": "97894708",
+      "total": "126827211",
+      "total_run_time": "1517799"
+    },
+    "output_stats": {
+      "files": "91538",
+      "rename": "0",
+      "peak_req": "66392307",
+      "buf": "91538"
+    },
+    "mismatch_stats": {
+      "subprogram_mismatch": "0",
+      "command_version_mismatch": "0",
+      "binary_hash_mismatch": "0"
+    },
+    "machine_info": {
+      "memory_size": "67242942464",
+      "ncpus": 32,
+      "os": "LINUX",
+      "goma_revision": "351940cc6e8fdf847e71f6980ba270f9b89e1eae@1586249816"
+    },
+    "file_stats": {
+      "uploaded": "100588",
+      "requested": "23107597",
+      "missed": "1",
+      "dropped": "0"
+    },
+    "error_stats": {
+      "log_warning": "1",
+      "log_error": "2",
+      "user_error": "0"
+    },
+    "request_stats": {
+      "compiler_proxy": {
+        "fail": "0"
+      },
+      "fallback_in_setup": {
+        "failed_to_update_required_files": "0",
+        "fail_to_get_compiler_info": "0",
+        "no_remote_compile_supported": "43",
+        "http_disabled": "0",
+        "compiler_disabled": "0",
+        "failed_to_parse_flags": "0",
+        "requested_by_user": "0"
+      },
+      "success": "46037",
+      "compiler_info": {
+        "fail": "0",
+        "miss": "0",
+        "stores": "105",
+        "loaded_size_bytes": "0",
+        "store_dups": "0"
+      },
+      "goma": {
+        "retry": "1",
+        "finished": "43400",
+        "aborted": "1150",
+        "fail": "0",
+        "cache_hit": "21886",
+        "local_cache_hit": "0"
+      },
+      "failure": "0",
+      "total": "46037",
+      "local": {
+        "finished": "1487",
+        "run": "2682",
+        "killed": "12"
+      }
+    },
+    "depscache_stats": {
+      "updated": "0",
+      "hit": "0",
+      "missed": "45994",
+      "total_entries": "23067159",
+      "deps_table_size": "45886",
+      "idtable_size": "87092",
+      "max_entries": "4405"
+    },
+    "time_stats": {
+      "uptime": "6350"
+    },
+    "http_rpc_stats": {
+      "retry": "0",
+      "ping_status_code": 200,
+      "status_code": [
+        {
+          "count": "45972",
+          "status_code": 200
+        }
+      ],
+      "total_pending": "0",
+      "connect_failed": "0",
+      "network_recovered": "0",
+      "ping_round_trip_time_ms": 200,
+      "peak_pending": "0",
+      "current_pending": "0",
+      "timeout": "0",
+      "error": "0",
+      "active": "0",
+      "query": "45973",
+      "network_error": "0",
+      "throttled": "0"
+    },
+    "includecache_stats": {
+      "updated": "0",
+      "total_entries": "87091",
+      "hit": "28773234",
+      "missed": "62818",
+      "evicted": "0"
+    },
+    "memory_stats": {
+      "virtual_memory_size": "8693444608",
+      "consuming": "4821155840"
+    },
+    "histogram": {
+      "rpc_call_time": {
+        "count": "45535",
+        "logbase": 2.0,
+        "min": "2",
+        "sum_of_squares": 1547114025089.0,
+        "max": "125623",
+        "sum": "136208641",
+        "bucket_value": [
+          "0",
+          "0",
+          "47",
+          "415",
+          "833",
+          "1053",
+          "1672",
+          "3255",
+          "7257",
+          "6593",
+          "2968",
+          "3375",
+          "7565",
+          "5835",
+          "3377",
+          "1188",
+          "94",
+          "8"
+        ]
+      }
+    }
+  }
+  }
+}
