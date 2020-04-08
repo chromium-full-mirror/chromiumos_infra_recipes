@@ -15,6 +15,7 @@ from PB.chromiumos import common
 from PB.goma.compile_events import CompileEvent
 from PB.goma.counterz import CounterzStats
 from PB.goma.goma_stats import GomaStats
+from PB.goma.goma_stats import MachineInfo
 from PB.goma.goma_stats import TimeStats
 
 # GsDestination stores GS bucket and path.
@@ -140,7 +141,15 @@ class GomaApi(recipe_api.RecipeApi):
         compile_event.build_id = self.m.buildbucket.build.id
         # Process stats file.
         if install_pkg_response.goma_artifacts.stats_file:
-          test_goma_stats_proto = GomaStats(time_stats=TimeStats(uptime=1234))
+          # Populate MachineInfo in GomaStats since it has an enum type, which
+          # is important to display for BigQuery type conversion.
+          test_goma_stats_proto = GomaStats(
+              time_stats=TimeStats(uptime=1234),
+              machine_info=MachineInfo(
+                  goma_revision="953240d2c4512d99191488cc98fc6f99@1586141662",
+                  os=MachineInfo.OSType.Value('LINUX'),
+                  ncpus=32,
+                  memory_size=67242942464))
           stats_filename = os.path.join(
               goma_log_dir, install_pkg_response.goma_artifacts.stats_file)
           stats_bin = self.m.file.read_raw(
@@ -158,17 +167,19 @@ class GomaApi(recipe_api.RecipeApi):
           compile_event.counterz_stats.ParseFromString(counterz_bin)
         if stats_filename or counterz_filename:
           presentation.logs['compile_event'] = [str(compile_event)]
+          json_message = json_format.MessageToJson(
+              compile_event, preserving_proto_field_name=True)
           # Call bq-insert support tool.
           input = {
               'project_id': self._bigquery_project_id,
               'dataset_id': self._bigquery_dataset_id,
               'table_name': self._bigquery_table_name,
               'write_data': True,
-              'compile_event': json_format.MessageToJson(
-                  compile_event, preserving_proto_field_name=True)
+              'compile_event': json.loads(json_message)
           }
           test_output_data = {}
           presentation.logs['support_input'] = [str(input)]
+          presentation.logs['compile_event_json'] = json_message
           # TODO(crbug.com/1041899): Replace this disable-in-staging with a
           # BigQuery upload that staging has permission so that staging tests
           # the same flow and so that we have a non-prod BigQuery table to do

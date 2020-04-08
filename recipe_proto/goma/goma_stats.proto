@@ -124,7 +124,7 @@ message FileStats {
   optional int64 missed = 3;
 
   // Number of file content dropped by ShrinkExecReq.
-  optional int64 dropped = 4;
+  // COMMENTED OUT, BigQuery not supporting: optional int64 dropped = 4;
 }
 
 // Statistics of output files.
@@ -296,9 +296,9 @@ message HttpRPCStats {
   // Number of HttpRPC retries.
   optional int64 retry = 4;
   // Number of HttpRPC throttled.
-  optional int64 throttled = 14;
+  // COMMENTED OUT, BigQuery not supporting: optional int64 throttled = 14;
   // Number of HttpRPC connect failed.
-  optional int64 connect_failed = 15;
+  // COMMENTED OUT, BigQuery not supporting: optional int64 connect_failed = 15;
   // Number of HttpRPC timeouts.
   optional int64 timeout = 5;
   // Number of HttpRPC errors.

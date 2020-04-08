@@ -2810,21 +2810,21 @@ Returns:
 
 API for working with goma.
 
-#### **class [GomaApi](/recipe_modules/goma/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GomaApi](/recipe_modules/goma/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for working with goma.
 
-&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#58)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#59)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#45)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#46)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#50)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#51)(self):**
 
 Lazily fetches the goma client and returns its path.
 
-&mdash; **def [initialize](/recipe_modules/goma/api.py#42)(self):**
+&mdash; **def [initialize](/recipe_modules/goma/api.py#43)(self):**
 
-&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#73)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
+&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#74)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
 
 Process goma artifacts, uploading to gsutil if they exist.
 
