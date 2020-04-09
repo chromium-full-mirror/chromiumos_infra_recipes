@@ -87,6 +87,8 @@ def RunSteps(api, properties):
             '--verbose',
             '--recursive',
         ]
+        if properties.presubmit_all_files:
+          cmd.append('--all_files')
         api.step('presubmit_support', cmd,
                  stdout=api.raw_io.output(add_output_log=True))
 
@@ -131,6 +133,7 @@ def GenTests(api):
                   manifest_path='local_manifest.xml',
               ),
               logging_gs_prefix='testprogram-testproject/cq_logs',
+              presubmit_all_files=True,
           )),
       project_config_cq_build(api),
       checked_out_projects(api),

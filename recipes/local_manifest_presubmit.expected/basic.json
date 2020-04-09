@@ -523,7 +523,8 @@
       "/path/to/tmp/json",
       "--commit",
       "--verbose",
-      "--recursive"
+      "--recursive",
+      "--all_files"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
     "env_suffixes": {

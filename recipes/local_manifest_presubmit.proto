@@ -46,4 +46,10 @@ message LocalManifestPresubmitProperties {
   //
   // This prefix should contain the bucket name, but not the 'gs://' prefix.
   string logging_gs_prefix = 4;
+
+  // Whether to consider all the files as changed in the project when
+  // determining relevant presubmit files. If not set this only considers
+  // files from the changes. You need to set this to true for projects where
+  // this fires and could be impacted by changes in other projects.
+  bool presubmit_all_files = 5;
 }
