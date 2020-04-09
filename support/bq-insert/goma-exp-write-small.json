@@ -1,0 +1,122 @@
+{
+  "project_id": "goma-logs",
+  "dataset_id": "experimental_client_events",
+  "table_name": "compile_events",
+  "write_data": true,
+  "compile_event": {
+    "build_id": 8886603865613266928,
+    "stats": {
+      "request_stats": {
+        "total": 45703,
+        "success": 45703,
+        "failure": 0,
+        "compiler_proxy": {
+          "fail": 0
+        },
+        "compiler_info": {
+          "stores": 105,
+          "store_dups": 3,
+          "miss": 0,
+          "fail": 0,
+          "loaded_size_bytes": 0
+        },
+        "goma": {
+          "finished": 44113,
+          "cache_hit": 43288,
+          "aborted": 281,
+          "retry": 1,
+          "fail": 0,
+          "local_cache_hit": 0
+        },
+        "local": {
+          "run": 1667,
+          "killed": 6,
+          "finished": 1309
+        },
+        "fallback_in_setup": {
+          "failed_to_parse_flags": 0,
+          "no_remote_compile_supported": 53,
+          "http_disabled": 0,
+          "fail_to_get_compiler_info": 0,
+          "compiler_disabled": 0,
+          "requested_by_user": 0,
+          "failed_to_update_required_files": 0
+        }
+      },
+      "file_stats": {
+        "requested": 22815481,
+        "uploaded": 128911,
+        "missed": 1
+      },
+      "output_stats": {
+        "files": 93163,
+        "rename": 0,
+        "buf": 93145,
+        "peak_req": 123573667
+      },
+      "memory_stats": {
+        "consuming": 4949487616,
+        "virtual_memory_size": 8965824512
+      },
+      "time_stats": {
+        "uptime": 5863
+      },
+      "include_processor_stats": {
+        "total": 122915431,
+        "skipped": 94301264,
+        "total_wait_time": 476492,
+        "total_run_time": 3045468
+      },
+      "depscache_stats": {
+        "deps_table_size": 45516,
+        "max_entries": 4308,
+        "total_entries": 22743678,
+        "idtable_size": 86859,
+        "hit": 0,
+        "updated": 0,
+        "missed": 45650
+      },
+      "http_rpc_stats": {
+        "ping_status_code": 200,
+        "query": 45842,
+        "active": 0,
+        "retry": 0,
+        "timeout": 0,
+        "error": 0,
+        "network_error": 0,
+        "network_recovered": 0,
+        "ping_round_trip_time_ms": 200,
+        "current_pending": 0,
+        "total_pending": 0,
+        "peak_pending": 0
+      },
+      "machine_info": {
+        "goma_revision": "5e56182cfeae205a8a4a7a4fd4cada4fa6c48b46@1583484919",
+        "os": "LINUX",
+        "ncpus": 32,
+        "memory_size": 67242942464
+      },
+      "error_stats": {
+        "user_error": 0,
+        "log_error": 2,
+        "log_warning": 1
+      },
+      "mismatch_stats": {
+        "command_version_mismatch": 0,
+        "binary_hash_mismatch": 0,
+        "subprogram_mismatch": 0
+      },
+      "includecache_stats": {
+        "total_entries": 86858,
+        "hit": 28460590,
+        "missed": 73771,
+        "updated": 0,
+        "evicted": 0
+      },
+      "subprocess_stats": {
+        "count_burst_by_network_error": 0,
+        "count_burst_by_compiler_disabled": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "project_id": "chromeos-bot",
+  "table_name": "goma-logs.experimental_client_events.compile_events",
+  "read_test": true
+}
