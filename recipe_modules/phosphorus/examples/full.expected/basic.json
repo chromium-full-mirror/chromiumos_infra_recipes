@@ -31,6 +31,8 @@
       "[START_DIR]/cipd/phosphorus",
       "-ensure-file",
       "chromiumos/infra/phosphorus/${platform} some-cipd-label",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

@@ -74,6 +74,8 @@
       "[START_DIR]/cipd/cros_test_platform",
       "-ensure-file",
       "chromiumos/infra/cros_test_platform/${platform} latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

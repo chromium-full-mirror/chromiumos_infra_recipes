@@ -22,6 +22,8 @@
       "[START_DIR]/cipd/stable_version2",
       "-ensure-file",
       "chromiumos/infra/stable_version2/${platform} latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

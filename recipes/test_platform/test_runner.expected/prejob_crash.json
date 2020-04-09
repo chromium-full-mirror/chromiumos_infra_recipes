@@ -62,6 +62,8 @@
       "[START_DIR]/cipd/skylab_local_state",
       "-ensure-file",
       "chromiumos/infra/skylab_local_state/${platform} sls_prod",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -184,6 +186,8 @@
       "[START_DIR]/cipd/phosphorus",
       "-ensure-file",
       "chromiumos/infra/phosphorus/${platform} phosphorus_prod",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

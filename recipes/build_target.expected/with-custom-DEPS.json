@@ -598,6 +598,8 @@
       "[START_DIR]/cros-recipes-support",
       "-ensure-file",
       "pkg inst",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -1449,6 +1451,8 @@
       "[START_DIR]/cipd/test_planner",
       "-ensure-file",
       "chromiumos/infra/test_planner latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -3027,6 +3031,8 @@
       "[CACHE]/isolated_client",
       "-ensure-file",
       "infra/tools/luci/isolated/${platform} git_revision:305e79001db1846906c7136d90a863bee5bd3bfc",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -3160,6 +3166,8 @@
       "[START_DIR]/cipd/goma",
       "-ensure-file",
       "infra_internal/goma/client/${platform} latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

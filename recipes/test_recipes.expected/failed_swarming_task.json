@@ -225,6 +225,8 @@
       "[START_DIR]/cros-recipes-support",
       "-ensure-file",
       "pkg inst",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -409,6 +411,8 @@
       "[CACHE]/led",
       "-ensure-file",
       "infra/tools/luci/led/${platform} latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -532,6 +536,8 @@
       "[CACHE]/swarming_client",
       "-ensure-file",
       "infra/tools/luci/swarming/${platform} git_revision:386eb9fd6a1e21d174824c786a0eee9d883dad56",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

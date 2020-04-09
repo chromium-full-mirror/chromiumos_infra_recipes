@@ -11,6 +11,8 @@
       "[START_DIR]/cipd/ipcpubsub",
       "-ensure-file",
       "chromiumos/infra/ipcpubsub/${version} latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

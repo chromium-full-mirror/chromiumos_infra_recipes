@@ -21,6 +21,8 @@
       "[START_DIR]/breakpad",
       "-ensure-file",
       "chromiumos/infra/tools/breakpad latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

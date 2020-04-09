@@ -29,6 +29,8 @@
       "[START_DIR]/cipd/autotest_status_parser",
       "-ensure-file",
       "chromiumos/infra/autotest_status_parser/${platform} some-cipd-label",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

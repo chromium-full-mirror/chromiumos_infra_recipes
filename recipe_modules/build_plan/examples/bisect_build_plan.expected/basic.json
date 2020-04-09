@@ -113,6 +113,8 @@
       "[START_DIR]/cipd/test_planner",
       "-ensure-file",
       "chromiumos/infra/test_planner latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

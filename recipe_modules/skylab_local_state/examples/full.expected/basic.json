@@ -31,6 +31,8 @@
       "[START_DIR]/cipd/skylab_local_state",
       "-ensure-file",
       "chromiumos/infra/skylab_local_state/${platform} some-cipd-label",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

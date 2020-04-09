@@ -11,6 +11,8 @@
       "[START_DIR]/cipd/goma",
       "-ensure-file",
       "infra_internal/goma/client/${platform} latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -138,6 +140,8 @@
       "[START_DIR]/cros-recipes-support",
       "-ensure-file",
       "pkg inst",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],

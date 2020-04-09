@@ -230,6 +230,8 @@
       "[START_DIR]/cros-recipes-support",
       "-ensure-file",
       "pkg inst",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -414,6 +416,8 @@
       "[CACHE]/led",
       "-ensure-file",
       "infra/tools/luci/led/${platform} latest",
+      "-max-threads",
+      "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
