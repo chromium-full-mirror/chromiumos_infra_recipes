@@ -237,7 +237,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
         # running at least install packages at this point.
         api.cros_artifacts.prepare_for_build(
             artifacts.artifact_types, api.cros_sdk.chroot, sysroot,
-            artifacts.input_artifacts,
+            artifacts.input_artifacts, config.artifacts.artifact_profile_info,
             additional_args=config.build.prepare_for_build.additional_args,
             name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
@@ -330,6 +330,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
         artifacts.artifacts_gs_bucket, artifacts.artifact_types,
         sysroot=sysroot, chroot=api.cros_sdk.chroot,
         publish_info=artifacts.publish_artifacts,
+        artifact_profile_info=artifacts.artifact_profile_info,
         additional_args=config.build.prepare_for_build.additional_args)
 
   prebuilts = artifacts.prebuilts

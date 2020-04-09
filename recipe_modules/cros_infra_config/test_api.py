@@ -611,6 +611,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                           "chromeos-toolchain-artifacts/orderfile/unvetted"
                       }
                     ],
+                    "artifactProfileInfo": {"chromeCwpProfile": "silvermont"},
                     "inputArtifacts": [
                       {
                         "inputArtifactType": "UNVERIFIED_CHROME_LLVM_ORDERFILE",

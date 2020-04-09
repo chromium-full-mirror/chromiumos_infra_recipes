@@ -60,8 +60,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return getattr(self.m.cros_build_api.ArtifactsService,
                    _LEGACY_ENDPOINTS_BY_ARTIFACT[artifact])
 
-  def _bundle_legacy_artifacts(
-      self, chroot, sysroot, path, artifact_types, _additional_args):
+  def _bundle_legacy_artifacts(self, chroot, sysroot, path, artifact_types,
+                               _artifact_profile_info, _additional_args):
     """Bundle legacy artifacts.
 
     Batch handler for legacy artifact types.
@@ -71,6 +71,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot to use.
       path (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
+      _artifact_profile_info (ArtifactProfileInfo): profile information.
       _additional_args (PrepareForBuildAdditionalArgs): The additional_args that
           were passed to prepare_for_build.  Bundling sometimes requires them.
 
@@ -93,7 +94,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return files_by_artifact
 
   def _prepare_pointless(self, _chroot, _sysroot, _artifact_types,
-                         _input_artifacts, _additional_args):
+                         _input_artifacts, _artifact_profile_info,
+                         _additional_args):
     """Declare the build necessity POINTLESS from this artifact's perspective.
 
     Use this prepare_for_build handler for any artifact type which should not
@@ -104,6 +106,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       _sysroot (Sysroot): The sysroot to use, or None if not yet created.
       _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
+      _artifact_profile_info (ArtifactProfileInfo): profile information.
       _additional_args (PrepareForBuildAdditionalArgs): endpoint specific
           arguments, such as the Chrome CWP profile name, or kernel version to
           use.
@@ -114,7 +117,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return PrepareForBuildResponse.POINTLESS
 
   def _prepare_unknown(self, _chroot, _sysroot, _artifact_types,
-                       _input_artifacts, _additional_args):
+                       _input_artifacts, _artifact_profile_info,
+                       _additional_args):
     """Declare the build necessity UNKNOWN from this artifact's perspective.
 
     Use this prepare_for_build handler for any artifact type which has no
@@ -125,6 +129,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       _sysroot (Sysroot): The sysroot to use, or None if not yet created.
       _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
+      _artifact_profile_info (ArtifactProfileInfo): profile information.
       _additional_args (PrepareForBuildAdditionalArgs): endpoint specific
           arguments, such as the Chrome CWP profile name, or kernel version to
           use.
@@ -134,8 +139,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     return PrepareForBuildResponse.UNKNOWN
 
-  def _prepare_toolchain(
-      self, chroot, sysroot, artifact_types, input_artifacts, additional_args):
+  def _prepare_toolchain(self, chroot, sysroot, artifact_types, input_artifacts,
+                         artifact_profile_info, additional_args):
     """Query the ToolchainService about the necessity of this build.
 
     Call ToolchainService.PrepareForBuild to prepare for the build.
@@ -145,6 +150,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot to use, or None if not yet created.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
+      artifact_profile_info (ArtifactProfileInfo): profile information.
       additional_args (PrepareForBuildAdditionalArgs): endpoint specific
           arguments, such as the Chrome CWP profile name, or kernel version to
           use.
@@ -154,7 +160,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     req = toolchain.PrepareForToolchainBuildRequest(
         chroot=chroot, sysroot=sysroot, artifact_types=artifact_types,
-        input_artifacts=input_artifacts, additional_args=additional_args)
+        input_artifacts=input_artifacts, profile_info=artifact_profile_info,
+        additional_args=additional_args)
     resp = self.m.cros_build_api.ToolchainService.PrepareForBuild(
         req, infra_step=True)
     result = resp.build_relevance
@@ -165,8 +172,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       return PrepareForBuildResponse.UNKNOWN
     return PrepareForBuildResponse.POINTLESS
 
-  def _bundle_toolchain(
-      self, chroot, sysroot, path, artifact_types, additional_args):
+  def _bundle_toolchain(self, chroot, sysroot, path, artifact_types,
+                        artifact_profile_info, additional_args):
     """Bundle toolchain artifacts.
 
     Batch handler for toolchain artifact types.
@@ -176,6 +183,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot to use.
       path (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
+      artifact_profile_info (ArtifactProfileInfo): profile information.
       additional_args (PrepareForBuildAdditionalArgs): The additional_args that
           were passed to prepare_for_build.  Bundling sometimes requires them.
 
@@ -184,7 +192,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     req = toolchain.BundleToolchainRequest(
         sysroot=sysroot, chroot=chroot, output_dir=str(path),
-        artifact_types=artifact_types, additional_args=additional_args)
+        artifact_types=artifact_types, profile_info=artifact_profile_info,
+        additional_args=additional_args)
     resp = self.m.cros_build_api.ToolchainService.BundleArtifacts(
         req, infra_step=True)
     ret = {}
@@ -215,7 +224,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return ret
 
   def _bundle_artifacts(
-      self, artifact_types, path, sysroot, chroot, additional_args):
+      self, artifact_types, path, sysroot, chroot, artifact_profile_info,
+      additional_args):
     """Defer to the build API to bundle the given artifact.
 
     Args:
@@ -223,6 +233,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       path (Path): Path to output artifact bundles.
       sysroot (Sysroot): sysroot to use
       chroot (Chroot): chroot to use
+      artifact_profile_info (ArtifactProfileInfo): profile information.
       additional_args PrepareForBuildAdditionalArgs: The additional_args that
           were passed to prepare_for_build.  Bundling sometimes requires them.
 
@@ -272,7 +283,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     try:
       for func, types in funcs_to_call.items():
         files_by_artifact.update(
-            func(chroot, sysroot, path, types, additional_args))
+            func(chroot, sysroot, path, types, artifact_profile_info,
+                 additional_args))
     except self.m.step.InfraFailure as e:  # pragma: nocover
       self.m.disk_usage.track(step_name='track disk usage', depth=2)
       raise e
@@ -392,7 +404,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
   def upload_artifacts(self, builder_name, target, kind, gs_bucket,
                        artifact_types, chroot=None, sysroot=None,
-                       publish_info=None, additional_args=None, name=None):
+                       publish_info=None, artifact_profile_info=None,
+                       additional_args=None, name=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -412,6 +425,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): sysroot to use
       chroot (Chroot): chroot to use
       publish_info (list[PublishInfo]): List of publishing information.
+      artifact_profile_info (ArtifactProfileInfo): profile information.
       additional_args (PrepareForBuildAdditionalArgs): The additional_args that
           were passed to prepare_for_build.  Bundling sometimes requires them.
       name (str): The step name. Defaults to 'upload artifacts'.
@@ -420,7 +434,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
 
       files_by_artifact = self._bundle_artifacts(
-          artifact_types, staging_root, sysroot, chroot, additional_args)
+          artifact_types, staging_root, sysroot, chroot, artifact_profile_info,
+          additional_args)
 
       gs_path = self.artifacts_gs_path(builder_name, target, kind)
       presentation.links['gs upload dir'] = (
@@ -512,9 +527,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           for artifact in artifact_types
       }
 
-  def prepare_for_build(
-      self, artifact_types, chroot, sysroot, input_artifacts,
-      additional_args=None, name=None):
+  def prepare_for_build(self, artifact_types, chroot, sysroot, input_artifacts,
+                        artifact_profile_info=None, additional_args=None,
+                        name=None):
     """Prepare the build for the given artifacts.
 
     This function calls the Build API to have it prepare to build artifacts of
@@ -526,6 +541,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       chroot (Chroot): The chroot to use, or None if not yet created.
       sysroot (Sysroot): The sysroot to use, or None if not yet created.
       input_artifacts (list[InputArtifactInfo]): where to seek input artifacts.
+      artifact_profile_info (ArtifactProfileInfo): profile information.
       additional_args (PrepareForBuildAdditionalArgs): additional arguments.
       name (str): The step name. Defaults to 'prepare artifacts'.
 
@@ -576,7 +592,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       funcs_to_call = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
       for func, types in funcs_to_call.items():
         results.append(
-            func(chroot, sysroot, types, input_artifacts, additional_args))
+            func(chroot, sysroot, types, input_artifacts, artifact_profile_info,
+                 additional_args))
 
       # Return an aggregate response.
       if PrepareForBuildResponse.NEEDED in results:

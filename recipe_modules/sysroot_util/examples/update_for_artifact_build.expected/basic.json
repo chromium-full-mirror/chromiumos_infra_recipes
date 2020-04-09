@@ -57,6 +57,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"profileInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"chromeCwpProfile\": \"silvermont\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"additionalArgs\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"chromeCwpProfile\": \"silvermont\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
@@ -86,7 +89,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"additionalArgs\": {\n    \"chromeCwpProfile\": \"silvermont\"\n  }, \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n        \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n      ]\n    }\n  ], \n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ]\n}",
+      "{\n  \"profileInfo\": {\n    \"chromeCwpProfile\": \"silvermont\"\n  }, \n  \"additionalArgs\": {\n    \"chromeCwpProfile\": \"silvermont\"\n  }, \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n        \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n      ]\n    }\n  ], \n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -94,6 +97,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"profileInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"chromeCwpProfile\": \"silvermont\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"additionalArgs\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeCwpProfile\": \"silvermont\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
@@ -177,6 +183,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"profileInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"chromeCwpProfile\": \"silvermont\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"additionalArgs\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"chromeCwpProfile\": \"silvermont\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
@@ -206,7 +215,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"additionalArgs\": {\n    \"chromeCwpProfile\": \"silvermont\"\n  }, \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n        \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n      ]\n    }\n  ], \n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ]\n}",
+      "{\n  \"profileInfo\": {\n    \"chromeCwpProfile\": \"silvermont\"\n  }, \n  \"additionalArgs\": {\n    \"chromeCwpProfile\": \"silvermont\"\n  }, \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n        \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n      ]\n    }\n  ], \n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
@@ -214,6 +223,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"profileInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"chromeCwpProfile\": \"silvermont\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"additionalArgs\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeCwpProfile\": \"silvermont\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",

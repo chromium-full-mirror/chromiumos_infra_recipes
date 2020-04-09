@@ -39,7 +39,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       # If there are artifacts, always call the Build API.
       resp = self.m.cros_artifacts.prepare_for_build(
           artifacts.artifact_types, chroot, self.sysroot,
-          artifacts.input_artifacts, args)
+          artifacts.input_artifacts, artifacts.artifact_profile_info, args)
 
     # If the build is POINTLESS, then we are done.  This can only happen if
     # all of the artifact_types for this build are handled by some
