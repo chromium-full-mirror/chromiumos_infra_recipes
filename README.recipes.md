@@ -2039,15 +2039,15 @@ to be usable from the infra recipe code while F20 is in early stages.
 TODO(crbug.com/1062307): Delete this recipe module once a real recipe
 exists to generalize cros_test_platform a la F20.
 
-#### **class [F20ProtoValidationAPI](/recipe_modules/f20_proto_validation/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [F20ProtoValidationAPI](/recipe_modules/f20_proto_validation/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A sample module to validate F20 metadata definitions.
 
-&mdash; **def [log\_sample\_metadata](/recipe_modules/f20_proto_validation/api.py#28)(self):**
+&mdash; **def [log\_sample\_metadata](/recipe_modules/f20_proto_validation/api.py#30)(self):**
 
 Log a sample Metadata instance.
 
-&mdash; **def [log\_sample\_plan](/recipe_modules/f20_proto_validation/api.py#47)(self):**
+&mdash; **def [log\_sample\_plan](/recipe_modules/f20_proto_validation/api.py#49)(self):**
 
 Log a sample Plan instance.
 ### *recipe_modules* / [failures](/recipe_modules/failures)

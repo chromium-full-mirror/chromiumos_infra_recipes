@@ -16,8 +16,10 @@ exists to generalize cros_test_platform a la F20.
 from recipe_engine import recipe_api
 from google.protobuf import json_format
 
-from PB.test.metadata.v1.metadata import RemoteTestDriver, Test
-from PB.test.metadata.v1.metadata import Specification as MetadataSpec
+from PB.chromiumos.config.api.test.metadata.v1.metadata import (
+    RemoteTestDriver, Test)
+from PB.chromiumos.config.api.test.metadata.v1.metadata import (Specification as
+                                                                MetadataSpec)
 from PB.test.plan.v1.plan import Plan, TestCondition, Unit
 from PB.test.plan.v1.plan import Specification as PlanSpec
 
