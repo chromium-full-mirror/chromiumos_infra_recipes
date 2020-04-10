@@ -41,7 +41,7 @@ def RunSteps(api):
       'info': {'project': 'chromiumos/overlays/chromiumos-overlay',},
       'revision_info': { 'files': {
           'chromeos-base/chromeos-chrome/'
-          'chromeos-chrome-81.0.4036.0_rc-r1.ebuild': {},
+          'chromeos-chrome-9999.ebuild': {},
           'some/path/that/isnt/important': {},
           },
       },
@@ -65,6 +65,12 @@ def RunSteps(api):
   api.chrome.builds_chrome_from_source(
       build_target, chroot, ignore_prebuilts=True)
   api.chrome.follower_needs_chrome(build_target, chroot, p_list)
+
+  api.chrome.maybe_uprev_local_chrome(build_target, chroot, [ps1])
+  # Blank the files from the ps_info, test not upreving.
+  ps_info['revision_info']['files'] = {}
+  api.chrome.maybe_uprev_local_chrome(build_target, chroot, [ps1])
+
 
 def GenTests(api):
   yield (api.test('basic'))

@@ -9,8 +9,11 @@ from recipe_engine import recipe_api
 
 from PB.chromite.api import packages
 from PB.chromite.api.packages import BuildsChromeRequest
+from PB.chromite.api.packages import GetChromeVersionRequest
 from PB.chromite.api.packages import HasChromePrebuiltRequest
 from PB.chromite.api.packages import HasPrebuiltRequest
+from PB.chromite.api.packages import UprevVersionedPackageRequest
+from PB.chromiumos.common import PackageInfo
 
 CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 
@@ -18,8 +21,11 @@ CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 CHROMIUM_REBUILD_REGEXES = {
   'chromiumos/overlays/chromiumos-overlay':
     [re.compile('chromeos-base/chromeos-chrome/'
-                'chromeos-chrome-.+?\.ebuild$')],
+                'chromeos-chrome-9999\.ebuild$')],
 }
+
+CHROME_PACKAGE  = PackageInfo(category='chromeos-base',
+                              package_name='chromeos-chrome')
 
 # The following packages need chrome source to be synced to build.
 # Consider adding to chromite/lib/constants.py under OTHER_CHROME_PACKAGES
@@ -42,6 +48,14 @@ class ChromeApi(recipe_api.RecipeApi):
                           else None)
     self._version = properties.version
 
+  def _get_local_version(self, chroot, build_target):
+    """Returns chrome version from local chroot (e.g. "84.0.4109.1")."""
+    request = packages.GetChromeVersionRequest(
+        chroot=chroot,
+        build_target=build_target)
+    return self.m.cros_build_api.PackageService.GetChromeVersion(
+        request, infra_step=True).version
+
   def sync(self, chrome_root, chroot, build_target, internal):
     """
     Sync Chrome source code.
@@ -58,11 +72,7 @@ class ChromeApi(recipe_api.RecipeApi):
       if self._version or self._deps_isolate:
         version = self._version
       else:
-        request = packages.GetChromeVersionRequest(
-            chroot=chroot,
-            build_target=build_target)
-        version = self.m.cros_build_api.PackageService.GetChromeVersion(
-            request, infra_step=True).version
+        version = self._get_local_version(chroot, build_target)
 
       self.m.file.ensure_directory('ensure chrome root', chrome_root)
 
@@ -259,3 +269,32 @@ class ChromeApi(recipe_api.RecipeApi):
                              for p in packageInfos])
       pres.step_text = str(any_lack_pb)
       return any_lack_pb
+
+  def maybe_uprev_local_chrome(self, build_target, chroot, patch_sets):
+    """Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
+
+    Args:
+      build_target (chromiumos.BuildTarget): Build target of the build.
+      chroot (chromiumos.Chroot): Information on the chroot for the build.
+      patch_sets ([gerrit.PatchSet]): A list of patch sets to examine.
+
+    Returns:
+      bool: If we upreved the local Chrome.
+    """
+    if self.m.chrome.diffed_files_requires_rebuild(patch_sets=patch_sets):
+      with self.m.step.nest('try uprev chrome'):
+        version = self._get_local_version(chroot, build_target)
+        version_ref = UprevVersionedPackageRequest.GitRef(
+                      repository='/chromium/src',
+                      ref='refs/tags/%s' % version,
+                      revision='deadbeefdeadbeefdeadbeefdeadbeefdeadbeef')
+        request = UprevVersionedPackageRequest(
+                chroot=chroot,
+                package_info=CHROME_PACKAGE,
+                versions=[version_ref],
+                build_targets=[build_target],
+            )
+        response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
+              request, name='uprev local chrome package')
+        return True
+    return False

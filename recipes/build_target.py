@@ -192,8 +192,9 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       needs_built = not api.chrome.has_chrome_prebuilt(
           build_target=build_target, chroot=api.cros_sdk.chroot,
           ignore_prebuilts=install_packages.compile_source)
-      files_changed = api.chrome.diffed_files_requires_rebuild(
-          patch_sets=api.workspace_util.patch_sets)
+
+      local_uprev = api.chrome.maybe_uprev_local_chrome(
+          build_target, api.cros_sdk.chroot, api.workspace_util.patch_sets)
 
       # TODO(crbug.com/1063327): Remove dep_graph access and corresponding
       # use, we shouldn't be inspecting this, rather, call the build api.
@@ -211,7 +212,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       # Evaluate the |or| of the reasons we might want local chrome source.
       chrome_source_needed = (toolchain_changed or
                             needs_built or
-                            files_changed or
+                            local_uprev or
                             follower_needs_chrome)
     cs_pres.step_text = str(chrome_source_needed)
 

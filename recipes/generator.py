@@ -26,10 +26,10 @@ from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import DO_NOTHING
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
-from PB.recipes.chromeos.generator import OutdatedClsPolicy
 from PB.recipes.chromeos.generator import OUTDATED_DO_NOTHING
 from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
 from PB.recipes.chromeos.generator import OUTDATED_ABANDON
+from PB.recipes.chromeos.generator import OutdatedClsPolicy
 from PB.recipes.chromeos.generator import GeneratorProperties
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SendToCqPolicy
