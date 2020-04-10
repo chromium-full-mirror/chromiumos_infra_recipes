@@ -22,12 +22,14 @@ from PB.test_platform.skylab_test_runner.config import Config
 
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
+from posixpath import join as url_join
 
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/uuid',
     'autotest_status_parser',
     'phosphorus',
     'skylab_local_state'
@@ -136,10 +138,12 @@ def upload_sync_results(api, config=None, output_config=None):
     * InfraFailure if binary call fails.
   """
   with api.context(infra_steps=True):
+    root = output_config.gs_root_dir
+    derived = url_join(root, "synchronous_offloads", api.uuid.random())
     with api.step.nest('upload results to GS') as step:
       req = phosphorus.upload_to_gs.UploadToGSRequest(
           config=config,
-          gs_directory=output_config.gs_root_dir)
+          gs_directory=derived)
       return api.phosphorus.upload_to_gs(req)
 
 

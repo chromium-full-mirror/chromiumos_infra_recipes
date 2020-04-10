@@ -398,7 +398,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://bucket/foo/bar\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://bucket/foo/bar/synchronous_offloads/00000000-0000-0000-0000-000000001337\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\", @@@",
@@ -428,7 +428,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.upload results to GS.call `phosphorus`.upload-to-gs",
-    "stdin": "{\n  \"gsDirectory\": \"gs://bucket/foo/bar\", \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
+    "stdin": "{\n  \"gsDirectory\": \"gs://bucket/foo/bar/synchronous_offloads/00000000-0000-0000-0000-000000001337\", \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
