@@ -1764,7 +1764,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload metadata.pwriting awriting rwriting twriting iwriting awriting lwriting _writing mwriting ewriting twriting awriting dwriting awriting twriting awriting .writing jwriting swriting owriting n",
+    "name": "upload metadata.writing partial_metadata.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@{@@@",
@@ -3771,7 +3771,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "finalize metadata.upload metadata.mwriting ewriting twriting awriting dwriting awriting twriting awriting .writing jwriting swriting owriting n",
+    "name": "finalize metadata.upload metadata.writing metadata.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@metadata.json@{@@@",

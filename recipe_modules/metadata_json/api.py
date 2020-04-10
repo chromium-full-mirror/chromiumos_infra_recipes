@@ -101,7 +101,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     """
     temp_dir = self.m.path.mkdtemp(prefix='metadata')
     file_path = temp_dir.join(filename)
-    self.m.file.write_json('writing '.join(filename), file_path, self._metadata,
+    self.m.file.write_json('writing ' + filename, file_path, self._metadata,
                            indent=4)
     return str(file_path)
 
