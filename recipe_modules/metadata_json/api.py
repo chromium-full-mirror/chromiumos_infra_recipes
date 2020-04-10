@@ -208,11 +208,13 @@ class MetadataJsonApi(recipe_api.RecipeApi):
       yield
 
       with self.m.step.nest('finalize metadata'):
-        self.add_stage_results()
-        self.finalize_build(config, target, success=True)
+        if config.artifacts.artifact_types:
+          self.add_stage_results()
+          self.finalize_build(config, target, success=True)
     except self.m.step.StepFailure:
       with self.m.step.nest('finalize metadata'):
-        self.add_stage_results()
-        self.finalize_build(config, target, success=False)
+        if config.artifacts.artifact_types:
+          self.add_stage_results()
+          self.finalize_build(config, target, success=False)
 
       raise
