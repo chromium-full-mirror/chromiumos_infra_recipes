@@ -4,13 +4,13 @@
 	// --filter=module.name` to run a test with the debugger attached. Be
 	// sure to set a breakpoint or the debugger will attach and then just
 	// keep running.
+	// We intentionally put multiple statements on a line to make it fail
+	// lint.
 	"Bootstrap remote debug at point": {
 		"scope": "python",
 		"prefix": "ptvsd",
 		"body": [
-			"import ptvsd",
-			"ptvsd.enable_attach(address=('127.0.0.1', 5678), redirect_output=True)",
-			"ptvsd.wait_for_attach()",
+			"import ptvsd; ptvsd.enable_attach(address=('127.0.0.1', 5678), redirect_output=True); ptvsd.wait_for_attach()",
 		],
 		"description": "Insert PTVSD at cursor position so that when executing, remote debug starts there"
 	}
