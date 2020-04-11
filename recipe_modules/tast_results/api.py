@@ -20,7 +20,7 @@ FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 class TastResultsApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
 
-  @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
+  @exponential_retry(retries=3, condition=lambda e: getattr(e, 'had_timeout', False))
   def archive_dir(self, dir_path, tag):
     """Archive dir to Google Storage.
 

@@ -166,7 +166,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
       return new_commits
 
-  @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
+  @exponential_retry(retries=3, condition=lambda e: getattr(e, 'had_timeout', False))
   def sync_snapshot(self, gitiles_commit):
     """Sync a checkout to the snapshot."""
     with self.m.step.nest('sync to snapshot'):

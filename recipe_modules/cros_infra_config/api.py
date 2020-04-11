@@ -91,7 +91,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return {'$chromeos/cros_infra_config':
             json_format.MessageToDict(msg, preserving_proto_field_name=True)}
 
-  @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
+  @exponential_retry(retries=3, condition=lambda e: getattr(e, 'had_timeout', False))
   def _fetch_builder_configs(self):
     """Helper method to fetch the builder configs file.
 

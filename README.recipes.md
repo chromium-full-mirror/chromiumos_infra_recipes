@@ -1736,7 +1736,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#169)(self, gitiles_commit):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#169)(self, gitiles_commit):**
 
 Sync a checkout to the snapshot.
 
@@ -3557,7 +3557,7 @@ Returns:
 
 A module to process tast-results/ directory.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: e.had_timeout))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#23)(self, dir_path, tag):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#23)(self, dir_path, tag):**
 
 Archive dir to Google Storage.
 

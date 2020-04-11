@@ -123,7 +123,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
       self._upload(file_path, upload_uri)
       presentation.links['gs_link'] = self.m.urls.get_gs_path_url(upload_uri)
 
-  @exponential_retry(retries=3, condition=lambda e: e.had_timeout)
+  @exponential_retry(retries=3, condition=lambda e: getattr(e, 'had_timeout', False))
   def _upload(self, source, dest):
     self.m.gsutil(['cp', source, dest], timeout=10 * 60)
 
