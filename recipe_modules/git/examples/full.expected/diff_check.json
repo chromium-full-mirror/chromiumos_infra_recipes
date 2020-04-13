@@ -113,6 +113,8 @@
       "commit",
       "--file",
       "[CLEANUP]/commit_msg_tmp_1",
+      "--author",
+      "John Doe <john.doe@example.com>",
       "--",
       "README.md"
     ],

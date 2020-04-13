@@ -160,6 +160,7 @@
   * [failures:examples/silences](#recipes-failures_examples_silences)
   * [failures:examples/update_non_critical_failures](#recipes-failures_examples_update_non_critical_failures)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
+  * [forge_commit](#recipes-forge_commit) &mdash; Recipe for forcing forge commit failure.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change)
@@ -2447,7 +2448,7 @@ Args:
   * commit (str): The commit to cherry pick.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#359)(self, repo_url, target_path=None, timeout_sec=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#363)(self, repo_url, target_path=None, timeout_sec=None):**
 
 Clones a Git repo into the current directory.
 
@@ -2457,15 +2458,17 @@ Args:
       current directory.
   * timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [commit](/recipe_modules/git/api.py#219)(self, message, files=None):**
+&mdash; **def [commit](/recipe_modules/git/api.py#219)(self, message, files=None, author=None):**
 
 Runs 'git commit' with the given files.
 
 Args:
   * message (str): The commit message.
   * files (list[str|Path]): A list of file paths to commit.
+  * author (str): The author to use in the commit. Ordinarily not used,
+      added to test permission oddities by forcing forged commit failure.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#345)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#349)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -2477,7 +2480,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#260)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#264)(self):**
 
 Returns the currently checked out branch name.
 
@@ -2497,7 +2500,7 @@ Returns:
       otherwise.
   
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#392)(self, refspec, default):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#396)(self, refspec, default):**
 
 Splits the branch from the refspec.
 
@@ -2544,15 +2547,15 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#274)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#278)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#280)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#284)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#315)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#319)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -2562,7 +2565,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#290)(self, from_rev, to_rev, limit=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#294)(self, from_rev, to_rev, limit=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -2600,7 +2603,7 @@ Args:
 Returns:
   bool: whether the merge succeeded
 
-&mdash; **def [push](/recipe_modules/git/api.py#238)(self, remote, refspec, dry_run=False, capture_stdout=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#242)(self, remote, refspec, dry_run=False, capture_stdout=False):**
 
 Runs 'git push'.
 
@@ -2613,7 +2616,7 @@ Args:
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#373)(self, force=False):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#377)(self, force=False):**
 
 Run `git rebase` with the given arguments.
 
@@ -2627,14 +2630,14 @@ Return the git repository root for the current directory.
 Returns:
   str: The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#384)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#388)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   * args list[str]: args for `git config`.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#327)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#331)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -4392,6 +4395,16 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/vm_test_failures.py#23)(api):**
 
 &mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
+### *recipes* / [forge\_commit](/recipes/forge_commit.py)
+
+Recipe for forcing forge commit failure.
+
+
+Recipe used to force a forge commit failure so the failure response
+can be analyzed to determine what user is being used for the invocation.
+See https://crbug.com/1068743.
+
+&mdash; **def [RunSteps](/recipes/forge_commit.py#18)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

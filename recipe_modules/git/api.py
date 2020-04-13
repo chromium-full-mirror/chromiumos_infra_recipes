@@ -216,12 +216,14 @@ other_test.txt
     """Runs 'git merge --abort'."""
     self._step(['merge', '--abort'], name='git merge --abort')
 
-  def commit(self, message, files=None):
+  def commit(self, message, files=None, author=None):
     """Runs 'git commit' with the given files.
 
     Args:
       * message (str): The commit message.
       * files (list[str|Path]): A list of file paths to commit.
+      * author (str): The author to use in the commit. Ordinarily not used,
+          added to test permission oddities by forcing forged commit failure.
     """
     # Single argument can't exceed 128kiB (crbug/987630), write to temp
     # and pass the argument as a file
@@ -230,7 +232,9 @@ other_test.txt
     self.m.file.write_text('write commit message', commit_msg_path, str_message)
 
     cmd = ['commit', '--file', str(commit_msg_path)]
-    if files is not None:
+    if author:
+      cmd.extend(['--author', author])
+    if files:
       cmd.append('--')
       cmd.extend(files)
     self._step(cmd)

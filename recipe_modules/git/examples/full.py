@@ -22,7 +22,9 @@ def RunSteps(api):
   api.git.merge('branch', 'yeet')
   api.git.merge_abort()
   api.git.cherry_pick('branch')
-  api.git.commit('Updated README\n\nMuch better now.', files=['README.md'])
+  api.git.commit('Updated README\n\nMuch better now.',
+                 files=['README.md'],
+                 author='John Doe <john.doe@example.com>')
   api.git.push('origin', 'HEAD:master', dry_run=True, capture_stdout=True)
 
   with api.step.nest('check diffs') as presentation:
