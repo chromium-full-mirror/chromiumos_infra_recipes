@@ -354,6 +354,7 @@ def filter_schedule_wait_builds(api, parent_step, child_specs,
   if new_build_requests:
     # Implement sleepy builds for GoB smoothing: crbug.com/1063143
     with api.step.nest('schedule new builds') as pres:
+      with api.buildbucket.with_host(api.buildbucket.HOST_PROD):
         for new_build_request in new_build_requests:
             # request new builds and add to total existing.
             existing_builds += api.buildbucket.schedule(

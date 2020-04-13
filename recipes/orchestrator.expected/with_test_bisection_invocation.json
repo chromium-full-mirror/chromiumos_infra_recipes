@@ -380,7 +380,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run builds.schedule new builds.buildbucket.schedule",
@@ -448,7 +448,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@amd64-generic-snapshot@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+      "@@@STEP_LINK@amd64-generic-snapshot@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
     ]
   },
   {

@@ -4682,7 +4682,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#435)(api, repo_name, repo_url, repo_path, ref, commit):**
+&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#436)(api, repo_name, repo_url, repo_path, ref, commit):**
 
 Update a ref in the remote repo to point to a given commit.  If ref
 evaluates as False, then do nothing
@@ -4710,7 +4710,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#383)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#384)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4723,7 +4723,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#424)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#425)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4731,7 +4731,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#410)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#411)(refs):**
 
 Assert the given refs start with refs/heads.
 
