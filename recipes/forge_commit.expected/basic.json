@@ -1,5 +1,101 @@
 [
   {
+    "cmd": [],
+    "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS",
+      "."
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS.git clone",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sed",
+      "-i",
+      "-e",
+      "$a\\n",
+      "DEPS"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS.add trailing whitespace to DEPS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "DEPS"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "expecting rejection for forged commit",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@expecting rejection for forged commit@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2",
+      "--author",
+      "Sean Abraham <seanabraham@google.com>"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS",
+      "master"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
