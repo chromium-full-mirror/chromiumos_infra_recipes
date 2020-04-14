@@ -164,23 +164,6 @@ def RunSteps(api, properties):
                    'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
                    dry_run=not properties.publish_uprevs)
 
-    # We schedule child snapshot builders last so that if a breaking
-    # configuration change occurs between recipe launch and launching the
-    # children, the snapshots are already published and uprevs have already
-    # occurred. A breaking change would be a builder that was in the input
-    # property child_builders that no longer exists. When this happens the
-    # recipe will exit with an infra failure but the necessary children will
-    # have been launched.
-    if properties.child_builders:
-      with api.step.nest('schedule child builds'):
-        tags = api.cros_tags.make_schedule_tags(internal_snapshot_commit)
-        requests = [api.buildbucket.schedule_request(
-            gitiles_commit=internal_snapshot_commit,
-            builder=child, bucket='postsubmit',
-            tags=tags)
-            for child in properties.child_builders
-        ]
-        api.buildbucket.schedule(requests)
 
 def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
                      gerrit_commits=None, disable_gerrit=False, footers=[]):
@@ -314,8 +297,6 @@ def GenTests(api):
   yield (
       api.test('has-manifest-change') +  #
       api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
-      api.properties(
-          AnnealingProperties(child_builders=['eve-postsubmit'])) +  #
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
               '<manifest visibility="external"><project name="NAME" revision="TO_REV"/></manifest>'))
