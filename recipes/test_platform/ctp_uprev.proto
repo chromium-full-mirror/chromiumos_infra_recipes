@@ -1,0 +1,49 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.test_platform.ctp_uprev;
+
+message Properties {
+  // This property is set either by builder properties or by the caller.
+  Config config = 1;
+
+  // This property is set by the recipe execution, not by the caller.
+  Response response = 2;
+}
+
+// Config contains the complete instructions of how to perform the uprev.
+message Config {
+  repeated Instruction instructions = 1;
+}
+
+// Response describes the outcome of the uprev.
+message Response {
+  // Versions of each CTP component before the uprev.
+  repeated PackageInstance old_versions = 1;
+  // Versions of each CTP component after the uprev.
+  repeated PackageInstance new_versions = 2;
+}
+
+// Instruction contain inputs into `cipd set-ref`.
+message Instruction {
+  // CIPD package name, e.g. 'chromiumos/infra/cros_test_platform/linux-amd64'.
+  string package_name = 1;
+  // The label being uprevved (e.g. "prod").
+  string ref = 2;
+  // The new version for the label. Can be either a CIPD instance_id (e.g
+  // "aNJTdkkZzER61Hc0TACV73oLGdlZCQXT2LtVNBFDclAC") or another label (e.g.
+  // "latest").
+  string version = 3;
+}
+
+// PackageInstance is an immutable reference to an instance of a CIPD package.
+message PackageInstance {
+  // CIPD package name, e.g. 'chromiumos/infra/cros_test_platform/linux-amd64'.
+  string package_name = 1;
+  // CIPD instance_id.
+  string id = 2;
+}
+

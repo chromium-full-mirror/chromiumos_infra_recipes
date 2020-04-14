@@ -241,6 +241,7 @@
   * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Moblab VM tests.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
+  * [test_platform/ctp_uprev](#recipes-test_platform_ctp_uprev)
   * [test_platform/multi_bot/follower](#recipes-test_platform_multi_bot_follower)
   * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader)
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
@@ -5147,6 +5148,45 @@ Returns: bool, [test_platform.Request]
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#13): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#70)(api, properties):**
+### *recipes* / [test\_platform/ctp\_uprev](/recipes/test_platform/ctp_uprev.py)
+
+[DEPS](/recipes/test_platform/ctp_uprev.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipes/test_platform/ctp_uprev.py#100)(api, properties):**
+
+&mdash; **def [get\_current\_instance](/recipes/test_platform/ctp_uprev.py#60)(api, instruction):**
+
+Get the current version of the ref.
+
+Args:
+  * instruction (ctp_uprev.Instruction): A complete set of args for
+    `cipd set-ref`.
+Returns:
+  ctp_uprev.Instance
+Raises:
+  A StepFailure if the CIPD tool call fails.
+
+&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#79)(api, instruction):**
+
+Change CIPD ref of a package according to the instructions.
+
+Args:
+  * instruction (ctp_uprev.Instruction): A complete set of args for
+    `cipd set-ref`.
+Returns:
+  ctp_uprev.Instance
+Raises:
+  A StepFailure if the CIPD tool call fails.
+
+&mdash; **def [validate](/recipes/test_platform/ctp_uprev.py#27)(api, instruction):**
+
+Validate instructions for uprevving a specific package.
+
+Args:
+  * instruction (ctp_uprev.Instruction): A complete set of args for
+    `cipd set-ref`.
+Raises:
+  A ValueError if validation fails.
 ### *recipes* / [test\_platform/multi\_bot/follower](/recipes/test_platform/multi_bot/follower.py)
 
 [DEPS](/recipes/test_platform/multi_bot/follower.py#11): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

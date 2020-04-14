@@ -1,0 +1,42 @@
+[
+  {
+    "cmd": [],
+    "name": "package invalid-package",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package invalid-package.validate instructions package_name: \"invalid-package\"\nref: \"foo-ref\"\nversion: \"foo-version\"\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
+      "    recipe_result = self.global_symbols['RunSteps'](*args)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 103, in RunSteps",
+      "    validate(api, instruction)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 47, in validate",
+      "    (instruction.package_name, package_whitelist))",
+      "ValueError: Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/skylab_local_state/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/autotest_status_parser/linux-amd64']"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: ValueError(u\"Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/skylab_local_state/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/autotest_status_parser/linux-amd64']\",)"
+    },
+    "name": "$result"
+  }
+]
