@@ -326,11 +326,11 @@
       "32",
       "-c",
       "find",
-      ".",
+      ".git/",
       "-type",
       "f",
-      "-path",
-      "./.git/*.lock",
+      "-name",
+      "*.lock",
       "-print",
       "-delete"
     ],
@@ -440,76 +440,15 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
+      "[CLEANUP]/manifest_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to snapshot.write manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@tmp_manifest@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
-      "--manifest-name",
-      "../tmp_manifest"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.repo init",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.clear repo locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".",
-      "-type",
-      "f",
-      "-path",
-      "./.git/*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.clear git locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_LOG_LINE@manifest_tmp_1@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@manifest_tmp_1@@@"
     ]
   },
   {
@@ -517,6 +456,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--detach",
+      "--manifest-name",
+      "../../../../[CLEANUP]/manifest_tmp_1",
       "--optimized-fetch"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -656,11 +597,11 @@
       "32",
       "-c",
       "find",
-      ".",
+      ".git/",
       "-type",
       "f",
-      "-path",
-      "./.git/*.lock",
+      "-name",
+      "*.lock",
       "-print",
       "-delete"
     ],

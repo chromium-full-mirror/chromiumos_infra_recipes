@@ -35,11 +35,11 @@
       "32",
       "-c",
       "find",
-      ".",
+      ".git/",
       "-type",
       "f",
-      "-path",
-      "./.git/*.lock",
+      "-name",
+      "*.lock",
       "-print",
       "-delete"
     ],
@@ -95,11 +95,11 @@
       "32",
       "-c",
       "find",
-      ".",
+      ".git/",
       "-type",
       "f",
-      "-path",
-      "./.git/*.lock",
+      "-name",
+      "*.lock",
       "-print",
       "-delete"
     ],
@@ -198,68 +198,21 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[START_DIR]/.repo/tmp_manifest"
+      "[CLEANUP]/manifest_tmp_1"
     ],
     "infra_step": true,
     "name": "write manifest",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@tmp_manifest@@@"
+      "@@@STEP_LOG_LINE@manifest_tmp_1@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@manifest_tmp_1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "http://manifest_url",
-      "--groups",
-      "all",
+      "sync",
       "--manifest-name",
-      "../tmp_manifest"
-    ],
-    "infra_step": true,
-    "name": "repo init (3)",
-    "timeout": 900
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "infra_step": true,
-    "name": "clear repo locks (3)"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".",
-      "-type",
-      "f",
-      "-path",
-      "./.git/*.lock",
-      "-print",
-      "-delete"
-    ],
-    "infra_step": true,
-    "name": "clear git locks (3)"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync"
+      "../../../[CLEANUP]/manifest_tmp_1"
     ],
     "infra_step": true,
     "name": "repo sync (3)"
@@ -486,11 +439,11 @@
       "32",
       "-c",
       "find",
-      ".",
+      ".git/",
       "-type",
       "f",
-      "-path",
-      "./.git/*.lock",
+      "-name",
+      "*.lock",
       "-print",
       "-delete"
     ],

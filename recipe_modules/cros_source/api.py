@@ -167,18 +167,12 @@ class CrosSourceApi(recipe_api.RecipeApi):
       return new_commits
 
   @exponential_retry(retries=3, condition=lambda e: getattr(e, 'had_timeout', False))
-  def sync_snapshot(self, gitiles_commit, manifest_url=INTERNAL_MANIFEST_URL):
-    """Sync a checkout to the snapshot.
-
-    Args:
-      gitiles_commit (GitilesCommit): commit to sync to
-      manifest_url: URL of manifest repo.  Default: internal manifest
-    """
+  def sync_snapshot(self, gitiles_commit):
+    """Sync a checkout to the snapshot."""
     with self.m.step.nest('sync to snapshot'):
       snapshot_xml = self._get_snapshot(gitiles_commit)
-      self.m.repo.sync_manifest(
-          manifest_url, manifest_data=snapshot_xml, detach=True,
-          optimized_fetch=True)
+      self.m.repo.sync_manifest(manifest_data=snapshot_xml, detach=True,
+                                optimized_fetch=True)
 
   def _get_snapshot(self, gitiles_commit):
     """Returns the snapshot to use.

@@ -80,22 +80,22 @@ class RepoApi(recipe_api.RecipeApi):
 
     try:
       git_cmd = [
-          'forall', '--ignore-missing', '-j', '32', '-c', 'find', '.',
-          '-type', 'f', '-path', './.git/*.lock', '-print', '-delete'
+          'forall', '--ignore-missing', '-j', '32', '-c', 'find', '.git/',
+          '-type', 'f', '-name', '*.lock', '-print', '-delete'
       ]
       self._step(git_cmd, 'clear git locks')
     except recipe_api.StepFailure: # pragma: nocover
       # try again without the --ignore-missing
       git_cmd = [
-          'forall', '-j', '32', '-c', 'find', '.',
-          '-type', 'f', '-path', './.git/*.lock', '-print', '-delete'
+          'forall', '-j', '32', '-c', 'find', '.git/',
+          '-type', 'f', '-name', '*.lock', '-print', '-delete'
       ]
       self._step(git_cmd, 'retry clear git locks')
 
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
-           local_manifest=None, manifest_name=None):
+           local_manifest=None):
     """Executes 'repo init' with the given arguments.
 
     Args:
@@ -108,11 +108,10 @@ class RepoApi(recipe_api.RecipeApi):
       * repo_branch (str): Repo binary branch to use.
       * local_manifest (LocalManifest): Local manifest to add. See
       https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.md#local-manifests.
-      * manifest_name (str): Name of manifest file to use.
     """
     assert _kwonly is (), 'init accepts only 1 positional arg'
     cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
-    if manifest_branch:
+    if repo_url is not None:
       cmd += ['--manifest-branch', manifest_branch]
     if reference is not None:
       cmd += ['--reference', reference]
@@ -125,8 +124,6 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--repo-url', repo_url]
     if repo_branch is not None:
       cmd += ['--repo-branch', repo_branch, '--no-repo-verify']
-    if manifest_name:
-      cmd += ['--manifest-name', manifest_name]
     self._step(cmd, timeout=15 * 60)
     self._clear_git_locks()
 
@@ -183,25 +180,23 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--cache-dir', cache_dir]
     self._step(cmd, name=None, timeout=timeout)
 
-  def sync_manifest(self, manifest_url, manifest_data, **kwargs):
+  def sync_manifest(self, manifest_data, **kwargs):
     """Sync to the given manifest file data.
 
     Args:
-      * manifest_url (str): URL of manifest repo to sync to (for repo init)
       * manifest_data (str): Manifest XML data to use for the sync.
       * kwargs: Keyword arguments to pass to 'repo.sync'.
     """
     repo_root = self._find_root()
     assert repo_root is not None, 'no repo root found'
 
-    manifest_path = repo_root.join('.repo', 'tmp_manifest')
+    manifest_path = self.m.path.mkstemp('manifest')
     self.m.file.write_raw('write manifest', manifest_path, manifest_data)
 
     repo_manifests_path = repo_root.join('.repo', 'manifests')
     manifest_relpath = os.path.relpath(
         str(manifest_path), str(repo_manifests_path))
-    self.init(manifest_url, manifest_name=manifest_relpath)
-    self.sync(**kwargs)
+    self.sync(manifest_name=manifest_relpath, **kwargs)
 
   def start(self, branch, projects=None):
     """Start a new branch in the given projects, or all projects if not set.

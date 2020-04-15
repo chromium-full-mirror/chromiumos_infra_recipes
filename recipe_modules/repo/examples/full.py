@@ -35,7 +35,7 @@ def RunSteps(api):
                   manifest_name='snapshot.xml', no_tags=True,
                   optimized_fetch=True, cache_dir='/tmp/cache')
 
-    api.repo.sync_manifest('http://manifest_url', '<manifest></manifest>')
+    api.repo.sync_manifest('<manifest></manifest>')
 
   infos = api.repo.project_infos()
   api.assertions.assertEqual(len(infos), 3)
