@@ -386,7 +386,7 @@ def _log_task_results(api, task_results):
       _emit_links(step, classified_results.unsuccessful)
       step.presentation.status = api.step.FAILURE
   if classified_results.rejected:
-    with api.step.nest('did not run due to DUT shortage') as step:
+    with api.step.nest('rejected due to unsatisfiable dependencies') as step:
       _emit_links(step, classified_results.rejected)
       step.presentation.status = api.step.FAILURE
   if classified_results.other:  # pragma: no cover

@@ -437,7 +437,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.did not run due to DUT shortage",
+    "name": "summarize.default task results.rejected due to unsatisfiable dependencies",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@(task)  foo-rejected did not run@foo://bar/baz@@@",
