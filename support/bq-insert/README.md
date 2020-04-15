@@ -21,6 +21,8 @@ The following input files are checked in:
   for tests (see below).
 * goma-exp-write-small.json - Writes a small subset of data to the goma
   experimental dataset.
+* goma-exp-write-small-verbose.json - Write a small subset of data to the
+  goma experimental dataset with the verbose flag set.
 * goma-exp-full.json - Write a large json goma dataset to goma
   experimental dataset.
 * goma-exp-full-ORIG.json - This large json goma dataset has full raw output
@@ -33,10 +35,12 @@ The following input files are checked in:
   write.
 * sample-addrows.json - For adding data to the chromeos test dataset.
 * sample-addrows-fail.json - Shows that data with unrecognized fields
-    will not be added to an existing dataset.
+  will not be added to an existing dataset.
 * sample-addrows-newlines.json - Showing data with unrecognized fields
-    but with nested json values and newlines to test/display debug print.
+  but with nested json values and newlines to test/display debug print.
 * sample-input.json - For listing data from public dataset
+* sample-input-verbsoe.json - For listing data from public dataset with
+  the verbose flag set, which will enumerate projects in the dataset.
 * sample-input2.json - For listing data from a chromeos test dataset.
 * sample-write-data.json - Uses write-data (non-verbose) path, as a recipe
   would.

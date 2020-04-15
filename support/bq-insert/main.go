@@ -26,6 +26,7 @@ type Input struct {
 	ReadTest     bool            `json:"read_test"`
 	WriteTest    bool            `json:"write_test"`
 	WriteData    bool            `json:"write_data"`
+	Verbose      bool            `json:"verbose"`
 	CompileEvent json.RawMessage `json:"compile_event"`
 }
 
@@ -51,8 +52,10 @@ func main() {
 		log.Fatal("Error creating client: ", err)
 	}
 
-	debugInfo := debugJsonRawMessage(input.CompileEvent)
-	log.Print(debugInfo)
+	if input.Verbose {
+		debugInfo := debugJsonRawMessage(input.CompileEvent)
+		log.Print(debugInfo)
+	}
 
 	if input.ReadTest {
 		var fullTableName string
@@ -70,8 +73,9 @@ func main() {
 		for _, element := range tableData {
 			log.Print("ELEMENT: " + element)
 		}
-
-		enumerateClientContents(ctx, client, input.DatasetId)
+		if input.Verbose {
+			enumerateClientContents(ctx, client, input.DatasetId)
+		}
 		cli.MustMarshalOutput(Output{BqError: ""})
 		return
 	} else if input.WriteData {
