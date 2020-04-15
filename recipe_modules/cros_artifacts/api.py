@@ -276,6 +276,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             self._bundle_toolchain,
         BuilderConfig.Artifacts.VERIFIED_RELEASE_AFDO_FILE:
             self._bundle_toolchain,
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_BENCHMARK_PERF_FILE:
+            self._bundle_toolchain,
+        BuilderConfig.Artifacts.CHROME_DEBUG_BINARY:
+            self._bundle_toolchain,
     }
 
     files_by_artifact = {}
@@ -583,6 +587,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         BuilderConfig.Artifacts.VERIFIED_CHROME_CWP_AFDO_FILE:
             self._prepare_toolchain,
         BuilderConfig.Artifacts.VERIFIED_RELEASE_AFDO_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.UNVERIFIED_CHROME_BENCHMARK_PERF_FILE:
+            self._prepare_toolchain,
+        BuilderConfig.Artifacts.CHROME_DEBUG_BINARY:
             self._prepare_toolchain,
     }
 

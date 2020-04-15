@@ -539,6 +539,66 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                 },
                 {
                   "id": {
+                    "name": "benchmark-afdo-process",
+                    "branch": "master",
+                    "type": "TOOLCHAIN"
+                  },
+                  "general": {
+                    "critical": true,
+                    "environment": "PRODUCTION",
+                    "runWhen": {
+                      "mode": "ALWAYS_RUN"
+                    }
+                  },
+                  "artifacts": {
+                    "prebuilts": "NONE",
+                    "artifactTypes": [
+                      "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"
+                    ],
+                    "artifactsGsBucket": "chromeos-image-archive",
+                    "publishArtifacts": [
+                      {
+                        "publishTypes": [
+                          "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"
+                        ],
+                        "publishGsLocation":
+                          "chromeos-artifacts/afdo/unvetted/benchmark"
+                      }
+                    ],
+                    "artifactProfileInfo": {
+                      "afdoRelease": {
+                        "chromeCwpProfile": "silvermont",
+                        "imageBuildId": 1234
+                      }
+                    },
+                    "inputArtifacts": [
+                      {
+                        "inputArtifactType":
+                          "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE",
+                        "inputArtifactGsLocations": [
+                          "chromeos-artifacts/afdo/unvetted/benchmark",
+                          "chromeos-prebuilt/afdo-job/llvm"
+                        ]
+                      },
+                      {
+                        "inputArtifactType":
+                          "UNVERIFIED_CHROME_BENCHMARK_PERF_FILE",
+                        "inputArtifactGsLocations": [
+                          "chromeos-artifacts/afdo/unvetted/benchmark",
+                          "chromeos-prebuilt/afdo-job/llvm"
+                        ]
+                      }
+                    ]
+                  },
+                  "chrome": {
+                    "internal": true
+                  },
+                  "build": {
+                    "applyGerritChanges": true
+                  }
+                },
+                {
+                  "id": {
                     "name": "atlas-llvm-next",
                     "branch": "master",
                     "type": "TOOLCHAIN"
