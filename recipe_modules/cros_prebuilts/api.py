@@ -154,18 +154,18 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       # Staging doesn't have ACLs to push conf files to the real branch.
       # Instead, use a branch with the last component named 'staging'
       branch = project.branch
+      if branch:
+        if self._use_staging_branch:
+          branch_parts = branch.split('/')
+          branch_parts[-1] = 'staging'
+          branch = '/'.join(branch_parts)
 
-      if self._use_staging_branch:
-        branch_parts = branch.split('/')
-        branch_parts[-1] = 'staging'
-        branch = '/'.join(branch_parts)
-
-      with self.m.context(
-          cwd=self.m.cros_source.workspace_path.join(project.path)):
-        self.m.git_txn.update_ref_write_file(
-            project.remote, branch,
-            'Set %s=%s.' % (binhost.BinhostKey.Name(key), uri), binhost_path,
-            binhost_data, automerge=True)
+        with self.m.context(
+            cwd=self.m.cros_source.workspace_path.join(project.path)):
+          self.m.git_txn.update_ref_write_file(
+              project.remote, branch,
+              'Set %s=%s.' % (binhost.BinhostKey.Name(key), uri), binhost_path,
+              binhost_data, automerge=True)
 
   def _upload(self, root, paths, uri, acls):
     """Upload the paths within root to the GS URI.
