@@ -271,11 +271,11 @@
       "32",
       "-c",
       "find",
-      ".git/",
+      ".",
       "-type",
       "f",
-      "-name",
-      "*.lock",
+      "-path",
+      "./.git/*.lock",
       "-print",
       "-delete"
     ],
@@ -411,15 +411,76 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[CLEANUP]/manifest_tmp_1"
+      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to snapshot.write manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@manifest_tmp_1@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@manifest_tmp_1@@@"
+      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@tmp_manifest@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--groups",
+      "all",
+      "--manifest-name",
+      "../tmp_manifest"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "sync to snapshot.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "sync to snapshot.clear repo locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "sync to snapshot.clear git locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -427,8 +488,6 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--detach",
-      "--manifest-name",
-      "../../../../[CLEANUP]/manifest_tmp_1",
       "--optimized-fetch",
       "--retry-fetches",
       "8"
@@ -583,7 +642,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src"
     ],
     "infra_step": true,
     "name": "create project commits archive.project path",
@@ -596,7 +655,7 @@
       "git",
       "bundle",
       "create",
-      "[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src/bundle",
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
@@ -615,7 +674,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\"project_paths\": [\"src/chromium/src\"]}",
-      "[CLEANUP]/create_project_commits_archive_tmp_2/metadata.json"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json"
     ],
     "infra_step": true,
     "name": "create project commits archive.metadata.json",
@@ -632,7 +691,7 @@
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
     "name": "create project commits archive.create archive",
-    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_2/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_2\"}",
+    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -647,7 +706,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_3/archive\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_2/archive\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -672,7 +731,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_3/archive/metadata.json",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/metadata.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -687,7 +746,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_3/archive/a/b/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b",
@@ -727,7 +786,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_3/archive/a/b/c/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/c/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",

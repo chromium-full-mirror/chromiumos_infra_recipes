@@ -37,7 +37,7 @@ def RunSteps(api):
                   optimized_fetch=True, cache_dir='/tmp/cache',
                   retry_fetches=8)
 
-    api.repo.sync_manifest('<manifest></manifest>')
+    api.repo.sync_manifest('http://manifest_url', '<manifest></manifest>')
 
   infos = api.repo.project_infos()
   api.assertions.assertEqual(len(infos), 3)
