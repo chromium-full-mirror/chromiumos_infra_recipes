@@ -23,4 +23,6 @@ message GomaProperties {
   string bigquery_dataset_id = 6;
   // BigQuery table_name where data is added for stats/counterz upload.
   string bigquery_table_name = 7;
+  // Set the verbose flag in the bq-insert's input json.
+  bool bigquery_verbose = 8;
 }

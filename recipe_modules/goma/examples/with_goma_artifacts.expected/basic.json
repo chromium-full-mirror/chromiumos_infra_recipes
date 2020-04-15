@@ -58,24 +58,7 @@
       "@@@STEP_LOG_LINE@compile_event@}@@@",
       "@@@STEP_LOG_LINE@compile_event@counterz_stats {@@@",
       "@@@STEP_LOG_LINE@compile_event@}@@@",
-      "@@@STEP_LOG_END@compile_event@@@",
-      "@@@STEP_LOG_LINE@support_input@{'compile_event': {u'counterz_stats': {}, u'stats': {u'time_stats': {u'uptime': u'1234'}, u'machine_info': {u'os': u'LINUX', u'ncpus': 32, u'memory_size': u'67242942464', u'goma_revision': u'953240d2c4512d99191488cc98fc6f99@1586141662'}}}, 'dataset_id': 'client_events', 'project_id': 'goma-logs', 'table_name': 'compile_events', 'write_data': True}@@@",
-      "@@@STEP_LOG_END@support_input@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@{@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@  \"counterz_stats\": {}, @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@  \"stats\": {@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@    \"time_stats\": {@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"uptime\": \"1234\"@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@    }, @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@    \"machine_info\": {@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"memory_size\": \"67242942464\", @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"ncpus\": 32, @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"os\": \"LINUX\", @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"goma_revision\": \"953240d2c4512d99191488cc98fc6f99@1586141662\"@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@    }@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@  }@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@}@@@",
-      "@@@STEP_LOG_END@compile_event_json@@@"
+      "@@@STEP_LOG_END@compile_event@@@"
     ]
   },
   {
@@ -167,7 +150,7 @@
     ],
     "infra_step": true,
     "name": "process_goma_counterz_stats.bq-insert",
-    "stdin": "{\"compile_event\": {\"counterz_stats\": {}, \"stats\": {\"machine_info\": {\"goma_revision\": \"953240d2c4512d99191488cc98fc6f99@1586141662\", \"memory_size\": \"67242942464\", \"ncpus\": 32, \"os\": \"LINUX\"}, \"time_stats\": {\"uptime\": \"1234\"}}}, \"dataset_id\": \"client_events\", \"project_id\": \"goma-logs\", \"table_name\": \"compile_events\", \"write_data\": true}",
+    "stdin": "{\"compile_event\": {\"counterz_stats\": {}, \"stats\": {\"machine_info\": {\"goma_revision\": \"953240d2c4512d99191488cc98fc6f99@1586141662\", \"memory_size\": \"67242942464\", \"ncpus\": 32, \"os\": \"LINUX\"}, \"time_stats\": {\"uptime\": \"1234\"}}}, \"dataset_id\": \"client_events\", \"project_id\": \"goma-logs\", \"table_name\": \"compile_events\", \"verbose\": false, \"write_data\": true}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -291,24 +274,7 @@
       "@@@STEP_LOG_LINE@compile_event@}@@@",
       "@@@STEP_LOG_LINE@compile_event@counterz_stats {@@@",
       "@@@STEP_LOG_LINE@compile_event@}@@@",
-      "@@@STEP_LOG_END@compile_event@@@",
-      "@@@STEP_LOG_LINE@support_input@{'compile_event': {u'counterz_stats': {}, u'stats': {u'time_stats': {u'uptime': u'1234'}, u'machine_info': {u'os': u'LINUX', u'ncpus': 32, u'memory_size': u'67242942464', u'goma_revision': u'953240d2c4512d99191488cc98fc6f99@1586141662'}}}, 'dataset_id': 'client_events', 'project_id': 'goma-logs', 'table_name': 'compile_events', 'write_data': True}@@@",
-      "@@@STEP_LOG_END@support_input@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@{@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@  \"counterz_stats\": {}, @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@  \"stats\": {@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@    \"time_stats\": {@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"uptime\": \"1234\"@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@    }, @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@    \"machine_info\": {@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"memory_size\": \"67242942464\", @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"ncpus\": 32, @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"os\": \"LINUX\", @@@",
-      "@@@STEP_LOG_LINE@compile_event_json@      \"goma_revision\": \"953240d2c4512d99191488cc98fc6f99@1586141662\"@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@    }@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@  }@@@",
-      "@@@STEP_LOG_LINE@compile_event_json@}@@@",
-      "@@@STEP_LOG_END@compile_event_json@@@"
+      "@@@STEP_LOG_END@compile_event@@@"
     ]
   },
   {

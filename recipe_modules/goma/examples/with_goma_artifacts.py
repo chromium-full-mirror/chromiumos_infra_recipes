@@ -80,6 +80,7 @@ def GenTests(api):
                 GomaProperties(
                     client_version='staging',
                     goma_approach=common.GomaConfig.RBE_STAGING,
+                    bigquery_verbose=True,
                 )}) +  #
          api.properties(TestInputProperties(
              expected_goma_approach=common.GomaConfig.RBE_STAGING,

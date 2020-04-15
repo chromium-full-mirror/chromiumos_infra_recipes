@@ -39,6 +39,7 @@ class GomaApi(recipe_api.RecipeApi):
         properties.bigquery_dataset_id or 'client_events')
     self._bigquery_table_name = (
         properties.bigquery_table_name or 'compile_events')
+    self._bigquery_verbose = properties.bigquery_verbose
 
   def initialize(self):
     self._goma_dir = None
@@ -175,11 +176,13 @@ class GomaApi(recipe_api.RecipeApi):
               'dataset_id': self._bigquery_dataset_id,
               'table_name': self._bigquery_table_name,
               'write_data': True,
-              'compile_event': json.loads(json_message)
+              'compile_event': json.loads(json_message),
+              'verbose': self._bigquery_verbose
           }
           test_output_data = {}
-          presentation.logs['support_input'] = [str(input)]
-          presentation.logs['compile_event_json'] = json_message
+          if self._bigquery_verbose:
+            presentation.logs['support_input'] = [str(input)]
+            presentation.logs['compile_event_json'] = json_message
           # TODO(crbug.com/1041899): Replace this disable-in-staging with a
           # BigQuery upload that staging has permission so that staging tests
           # the same flow and so that we have a non-prod BigQuery table to do
