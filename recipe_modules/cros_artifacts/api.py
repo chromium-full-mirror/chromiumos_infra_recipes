@@ -55,8 +55,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     assert artifact in _LEGACY_ENDPOINTS_BY_ARTIFACT, (
         'Could not find build API endpoint for bundling artifact %s. '
         'You may need to sync the cros_artifacts recipe endpoint dictionary '
-        'with the current build config.' % (
-            BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)))
+        'with the current build config.' %
+        BuilderConfig.Artifacts.ArtifactTypes.Name(artifact))
     return getattr(self.m.cros_build_api.ArtifactsService,
                    _LEGACY_ENDPOINTS_BY_ARTIFACT[artifact])
 
@@ -83,9 +83,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
       with self.m.step.nest('bundle %s for upload' % name):
         endpoint = self._get_legacy_endpoint(artifact)
-        request = artifacts.BundleRequest(
-            chroot=chroot, sysroot=sysroot, build_target=sysroot.build_target,
-            output_dir=str(path))
+        request = artifacts.BundleRequest(chroot=chroot, sysroot=sysroot,
+                                          build_target=sysroot.build_target,
+                                          output_dir=str(path))
         response = endpoint(request, infra_step=True)
 
         files_by_artifact[name] = [
@@ -223,9 +223,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ret[func_dict[art]].append(art)
     return ret
 
-  def _bundle_artifacts(
-      self, artifact_types, path, sysroot, chroot, artifact_profile_info,
-      additional_args):
+  def _bundle_artifacts(self, artifact_types, path, sysroot, chroot,
+                        artifact_profile_info, additional_args):
     """Defer to the build API to bundle the given artifact.
 
     Args:
@@ -242,18 +241,26 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           relative to |path|.
     """
     _BUNDLE_FUNCS = {
-        BuilderConfig.Artifacts.IMAGE_ZIP: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.IMAGE_ZIP:
+            self._bundle_legacy_artifacts,
         BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD:
             self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.AUTOTEST_FILES: self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.TAST_FILES: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.AUTOTEST_FILES:
+            self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.TAST_FILES:
+            self._bundle_legacy_artifacts,
         BuilderConfig.Artifacts.PINNED_GUEST_IMAGES:
             self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.FIRMWARE: self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.EBUILD_LOGS: self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.CHROMEOS_CONFIG: self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.CPE_REPORT: self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.IMAGE_ARCHIVES: self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.FIRMWARE:
+            self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.EBUILD_LOGS:
+            self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.CHROMEOS_CONFIG:
+            self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.CPE_REPORT:
+            self._bundle_legacy_artifacts,
+        BuilderConfig.Artifacts.IMAGE_ARCHIVES:
+            self._bundle_legacy_artifacts,
         BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE:
             self._bundle_toolchain,
         BuilderConfig.Artifacts.VERIFIED_CHROME_LLVM_ORDERFILE:
@@ -285,7 +292,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     files_by_artifact = {}
     funcs_to_call = self._partition_artifacts(artifact_types, _BUNDLE_FUNCS)
     try:
-      for func, types in funcs_to_call.items():
+      # Sorting is done here only to give us consistency in the expected.json
+      # for our tests.
+      for func, types in sorted(funcs_to_call.items(),
+                                key=lambda x: x[0].__name__):
         files_by_artifact.update(
             func(chroot, sysroot, path, types, artifact_profile_info,
                  additional_args))
@@ -314,8 +324,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         'target': target.name,
         'builder_name': builder_name.lower().replace('_', '-'),
     }
-    ret['gs_path'] = '%s/%s-%d' % (
-        ret['builder_name'], ret['version'], ret['build_id'])
+    ret['gs_path'] = '%s/%s-%d' % (ret['builder_name'], ret['version'],
+                                   ret['build_id'])
     return ret
 
   def artifacts_gs_path(self, builder_name, target, kind):
@@ -378,9 +388,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             location_dict['artifact_name'] = artifact_name
             publish_loc = publish_template.format(location_dict)
             link_name = 'gs publish dir: %s' % artifact_name
-            link_value = (
-                'https://console.cloud.google.com/storage/browser/%s' %
-                publish_loc)
+            link_value = ('https://console.cloud.google.com/storage/browser/%s'
+                          % publish_loc)
             links[link_name] = link_value
             presentation.links[link_name] = link_value
             publish_uri = 'gs://' + publish_loc
@@ -399,10 +408,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                 else:
                   raise
             published[artifact_name].append({
-                'gs_location': publish_loc, 'files': files})
+                'gs_location': publish_loc,
+                'files': files
+            })
 
-      self.m.easy.set_property_step(
-          'published', published, step_name='publish artifact GS paths')
+      self.m.easy.set_property_step('published', published,
+                                    step_name='publish artifact GS paths')
 
       return links
 
@@ -443,8 +454,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       gs_path = self.artifacts_gs_path(builder_name, target, kind)
       presentation.links['gs upload dir'] = (
-          'https://console.cloud.google.com/storage/browser/%s/%s' %
-          (gs_bucket, gs_path))
+          'https://console.cloud.google.com/storage/browser/%s/%s' % (gs_bucket,
+                                                                      gs_path))
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
       for retries in range(3):
         try:
@@ -472,9 +483,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # re-uploading. Publishing is intentionally nested under upload
       # artifacts.
       if publish_info:
-        links = self._publish_artifacts(
-            builder_name,
-            target, kind, publish_info, upload_uri, files_by_artifact)
+        links = self._publish_artifacts(builder_name, target, kind,
+                                        publish_info, upload_uri,
+                                        files_by_artifact)
         for k, v in links.items():
           presentation.links[k] = v
 
@@ -555,17 +566,27 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       build check applies), or POINTLESS (just exit now.)
     """
     _PREPARE_FUNCS = {
-        BuilderConfig.Artifacts.IMAGE_ZIP: self._prepare_unknown,
-        BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD: self._prepare_unknown,
-        BuilderConfig.Artifacts.AUTOTEST_FILES: self._prepare_unknown,
-        BuilderConfig.Artifacts.TAST_FILES: self._prepare_unknown,
-        BuilderConfig.Artifacts.PINNED_GUEST_IMAGES: self._prepare_unknown,
-        BuilderConfig.Artifacts.FIRMWARE: self._prepare_unknown,
+        BuilderConfig.Artifacts.IMAGE_ZIP:
+            self._prepare_unknown,
+        BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD:
+            self._prepare_unknown,
+        BuilderConfig.Artifacts.AUTOTEST_FILES:
+            self._prepare_unknown,
+        BuilderConfig.Artifacts.TAST_FILES:
+            self._prepare_unknown,
+        BuilderConfig.Artifacts.PINNED_GUEST_IMAGES:
+            self._prepare_unknown,
+        BuilderConfig.Artifacts.FIRMWARE:
+            self._prepare_unknown,
         # EBUILD_LOGS never affect the decision.
-        BuilderConfig.Artifacts.EBUILD_LOGS: self._prepare_pointless,
-        BuilderConfig.Artifacts.CHROMEOS_CONFIG: self._prepare_unknown,
-        BuilderConfig.Artifacts.CPE_REPORT: self._prepare_unknown,
-        BuilderConfig.Artifacts.IMAGE_ARCHIVES: self._prepare_unknown,
+        BuilderConfig.Artifacts.EBUILD_LOGS:
+            self._prepare_pointless,
+        BuilderConfig.Artifacts.CHROMEOS_CONFIG:
+            self._prepare_unknown,
+        BuilderConfig.Artifacts.CPE_REPORT:
+            self._prepare_unknown,
+        BuilderConfig.Artifacts.IMAGE_ARCHIVES:
+            self._prepare_unknown,
         BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE:
             self._prepare_toolchain,
         BuilderConfig.Artifacts.VERIFIED_CHROME_LLVM_ORDERFILE:
@@ -598,7 +619,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       results = []
 
       funcs_to_call = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
-      for func, types in funcs_to_call.items():
+      # Sorting is done here only to give us consistency in the expected.json
+      # for our tests.
+      for func, types in sorted(funcs_to_call.items(),
+                                key=lambda x: x[0].__name__):
         results.append(
             func(chroot, sysroot, types, input_artifacts, artifact_profile_info,
                  additional_args))
