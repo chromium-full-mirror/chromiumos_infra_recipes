@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/context',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'repo',
 ]
 
@@ -90,7 +91,13 @@ def RunSteps(api):
 
 
 def GenTests(api):
+  forall_test_data = '\n'.join('%s|src/%s|cros|refs/heads/master|' % (p, p)
+                               for p in ['a', 'b', 'c'])
+
   yield api.test('setup_repo')
+
+  yield (api.test('no-upstream-attribute') +  #
+         api.step_data('repo forall', stdout=api.raw_io.output(forall_test_data)))
 
   yield (api.test('missing-from-XML') +  #
          api.step_data('diff remote and local manifest.git show', retcode=128))

@@ -53,4 +53,4 @@ def GenTests(api):
                                       'chrome-internal:67890\x00')) +  #
          api.step_data(
              'ensure manifest cq-depend fulfilled (2).repo forall (2)',
-             stdout=api.raw_io.output('c|src/c|cros|refs/heads/other-branch')))
+             stdout=api.raw_io.output('c|src/c|cros|refs/heads/other-branch|refs/heads/another-branch')))

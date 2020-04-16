@@ -44,8 +44,8 @@ def GenTests(api):
           'successful apply changes.repo forall',
           stdout=api.raw_io.output(
               '\n'.join([
-                  'chromiumos/config|src/config|cros|refs/heads/master',
-                  'privateproject1|src/privateproject1|cros|refs/heads/master'
+                  'chromiumos/config|src/config|cros|refs/heads/master|refs/heads/master',
+                  'privateproject1|src/privateproject1|cros|refs/heads/master|refs/heads/master'
               ]),
           ),
       ),

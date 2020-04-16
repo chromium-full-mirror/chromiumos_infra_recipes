@@ -169,7 +169,7 @@ def GenTests(api):
     """
     return api.step_data(
         'cherry-pick gerrit changes.repo forall',
-        stdout=api.raw_io.output('project1|src/project1|cros|master'))
+        stdout=api.raw_io.output('project1|src/project1|cros|refs/heads/master|refs/heads/branch'))
 
   def check_constraints_with_output():
     """Returns StepData for a check constraints step with stdout."""

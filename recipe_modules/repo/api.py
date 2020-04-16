@@ -224,22 +224,26 @@ class RepoApi(recipe_api.RecipeApi):
     """
 
     def step_test_data():
-      data = '\n'.join('%s|src/%s|cros|refs/heads/master' % (p, p)
+      data = '\n'.join('%s|src/%s|cros|refs/heads/master|refs/heads/master' % (p, p)
                        for p in projects or ['a', 'b', 'c'])
       return self.m.raw_io.test_api.stream_output(data)
 
     cmd = ['forall'] + projects
-    cmd += ['-c', 'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV']
+    cmd += ['-c', 'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV\|$REPO_UPSTREAM']
     step_data = self._step(cmd,
                            stdout=self.m.raw_io.output(add_output_log=True),
                            step_test_data=step_test_data)
 
     infos = []
     for line in step_data.stdout.strip().split('\n'):
-      name, path, remote, rrev = line.split('|')
+      name, path, remote, rrev, upstream = line.split('|')
+
       branch = None
-      if rrev.startswith('refs/heads/'):
+      if upstream:
+        branch = upstream
+      elif rrev.startswith('refs/heads/'):
         branch = rrev
+
       infos.append(ProjectInfo(name, path, remote, branch))
     return infos
 
