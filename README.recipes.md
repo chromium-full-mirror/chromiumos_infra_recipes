@@ -3918,7 +3918,7 @@ Recipe for building an AFDO benchmark profile.
 
 &mdash; **def [RunSteps](/recipes/afdo_process.py#36)(api, properties):**
 
-&mdash; **def [get\_target\_versions](/recipes/afdo_process.py#128)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/afdo_process.py#127)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

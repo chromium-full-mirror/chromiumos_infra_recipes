@@ -84,11 +84,10 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   # the chroot.  This builder is only appropriate to use if there are no package
   # builds needed prior to making artifacts, and those artifacts will be created
   # by the appropriate Build API Bundle() calls in upload_artifacts (below).
-  # TODO(crbug/1019868): add support for, and name='prepare artifacts final'
   api.sysroot_util.update_for_artifact_build(
       api.cros_sdk.chroot, config.artifacts,
       config.build.prepare_for_build.additional_args,
-      force_relevance=force_relevant_build)
+      force_relevance=force_relevant_build, name='prepare artifacts final')
 
   api.easy.set_property_step('target_versions',
                              get_target_versions(api, build_target))
