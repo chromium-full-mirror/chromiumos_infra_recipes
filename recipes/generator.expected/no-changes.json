@@ -462,6 +462,8 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/UprevVersionedPackage"
     ],
     "env_suffixes": {
@@ -582,6 +584,8 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Clean"
     ],
     "env_suffixes": {
@@ -677,6 +681,8 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Unmount"
     ],
     "env_suffixes": {

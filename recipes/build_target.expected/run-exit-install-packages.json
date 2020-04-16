@@ -606,6 +606,8 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/Uprev"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -853,6 +855,8 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Create"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1061,6 +1065,8 @@
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Update"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1229,6 +1235,8 @@
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SysrootService/Create"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1393,6 +1401,8 @@
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.DependencyService/GetBuildDependencyGraph"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1559,6 +1569,8 @@
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/GetTargetVersions"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1675,6 +1687,8 @@
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SysrootService/InstallToolchain"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1835,6 +1849,8 @@
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/BuildsChrome"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1932,6 +1948,8 @@
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/HasChromePrebuilt"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2023,6 +2041,8 @@
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.MethodService/Get"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2138,6 +2158,8 @@
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/HasPrebuilt"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2244,6 +2266,8 @@
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/GetChromeVersion"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2568,6 +2592,8 @@
       "[CLEANUP]/build_api_messages_tmp_15/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SysrootService/InstallPackages"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2754,6 +2780,8 @@
       "[CLEANUP]/build_api_messages_tmp_16/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_16/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Clean"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2854,6 +2882,8 @@
       "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Unmount"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

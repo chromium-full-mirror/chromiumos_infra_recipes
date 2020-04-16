@@ -78,6 +78,8 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.ArtifactsService/BundleEbuildLogs"
     ],
     "env_suffixes": {
@@ -428,6 +430,8 @@
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.ArtifactsService/BundleFirmware"
     ],
     "env_suffixes": {
@@ -717,6 +721,8 @@
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.ArtifactsService/BundleImageZip"
     ],
     "env_suffixes": {
@@ -895,6 +901,8 @@
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.ArtifactsService/BundleAutotestFiles"
     ],
     "env_suffixes": {
@@ -1073,6 +1081,8 @@
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.ArtifactsService/BundleTastFiles"
     ],
     "env_suffixes": {
@@ -1251,6 +1261,8 @@
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.ArtifactsService/BundlePinnedGuestImages"
     ],
     "env_suffixes": {
@@ -1429,6 +1441,8 @@
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.ArtifactsService/BundleTestUpdatePayloads"
     ],
     "env_suffixes": {
@@ -1712,6 +1726,8 @@
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.ToolchainService/BundleArtifacts"
     ],
     "env_suffixes": {

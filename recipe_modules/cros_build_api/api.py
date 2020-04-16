@@ -143,6 +143,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(CrosBuildApiApi, self).__init__(*args, **kwargs)
     self._capture_stdout_stderr = properties.capture_stdout_stderr
+    self._log_level = properties.log_level or 'debug'
     self._endpoints = None
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
@@ -190,7 +191,8 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
 
       cmd = [
           self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
-          '--input-json', input_path, '--output-json', output_path
+          '--input-json', input_path, '--output-json', output_path,
+          '--log-level', self._log_level
       ]
       if self._capture_stdout_stderr:
         cmd.extend(['--tee-log', logfile_path])

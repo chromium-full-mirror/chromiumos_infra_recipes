@@ -48,6 +48,8 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.BinhostService/GetPrivatePrebuiltAclArgs"
     ],
     "env_suffixes": {
@@ -338,6 +340,8 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.BinhostService/Get"
     ],
     "env_suffixes": {
@@ -558,6 +562,8 @@
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.BinhostService/PrepareBinhostUploads"
     ],
     "env_suffixes": {
@@ -795,6 +801,8 @@
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.BinhostService/SetBinhost"
     ],
     "env_suffixes": {
@@ -1175,6 +1183,8 @@
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.BinhostService/Get"
     ],
     "env_suffixes": {
@@ -1394,6 +1404,8 @@
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.BinhostService/PrepareBinhostUploads"
     ],
     "env_suffixes": {
@@ -1627,6 +1639,8 @@
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.BinhostService/SetBinhost"
     ],
     "env_suffixes": {

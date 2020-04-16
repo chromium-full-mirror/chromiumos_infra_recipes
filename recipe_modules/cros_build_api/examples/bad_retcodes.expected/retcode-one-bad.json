@@ -44,6 +44,8 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
       "--tee-log",
       "[CLEANUP]/build_api_messages_tmp_1/build_log.txt",
       "chromite.api.ArtifactsService/BundleFirmware"

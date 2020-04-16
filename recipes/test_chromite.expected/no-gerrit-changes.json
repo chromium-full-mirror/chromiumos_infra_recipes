@@ -563,6 +563,8 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Create"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -823,6 +825,8 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Update"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -966,6 +970,8 @@
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.TestService/ChromitePytest"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1056,6 +1062,8 @@
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.TestService/ChromiteUnitTest"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1205,6 +1213,8 @@
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Clean"
     ],
     "env_suffixes": {
@@ -1300,6 +1310,8 @@
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Unmount"
     ],
     "env_suffixes": {

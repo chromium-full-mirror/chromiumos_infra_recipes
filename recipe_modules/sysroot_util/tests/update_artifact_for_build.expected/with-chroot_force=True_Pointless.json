@@ -132,6 +132,8 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.ToolchainService/PrepareForBuild"
     ],
     "env_suffixes": {

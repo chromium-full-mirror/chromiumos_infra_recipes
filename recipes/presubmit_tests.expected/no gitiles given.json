@@ -928,6 +928,8 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Clean"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1026,6 +1028,8 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.SdkService/Unmount"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

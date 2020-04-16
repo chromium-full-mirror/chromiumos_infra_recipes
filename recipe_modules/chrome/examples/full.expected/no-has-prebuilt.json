@@ -50,6 +50,8 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/GetChromeVersion"
     ],
     "env_suffixes": {
@@ -349,6 +351,8 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/GetChromeVersion"
     ],
     "env_suffixes": {
@@ -592,6 +596,8 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/BuildsChrome"
     ],
     "env_suffixes": {
@@ -677,6 +683,8 @@
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/HasChromePrebuilt"
     ],
     "env_suffixes": {
@@ -776,6 +784,8 @@
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/BuildsChrome"
     ],
     "env_suffixes": {
@@ -861,6 +871,8 @@
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/HasChromePrebuilt"
     ],
     "env_suffixes": {
@@ -946,6 +958,8 @@
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/BuildsChrome"
     ],
     "env_suffixes": {
@@ -1025,6 +1039,8 @@
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.MethodService/Get"
     ],
     "env_suffixes": {
@@ -1128,6 +1144,8 @@
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/HasPrebuilt"
     ],
     "env_suffixes": {
@@ -1225,6 +1243,8 @@
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/GetChromeVersion"
     ],
     "env_suffixes": {
@@ -1385,6 +1405,8 @@
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
       "--output-json",
       "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "--log-level",
+      "debug",
       "chromite.api.PackageService/UprevVersionedPackage"
     ],
     "env_suffixes": {

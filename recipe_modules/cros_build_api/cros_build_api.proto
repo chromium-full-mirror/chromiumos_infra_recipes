@@ -14,4 +14,10 @@ message CrosBuildApiProperties {
   // * Stdout/err only appear in Milo after the step is complete.
   // * Stdout/err will not appear in Milo if the build is cancelled.
   bool capture_stdout_stderr = 1;
+  // Log level used when calling build_api, currently the following values
+  // supported by build_api: fatal,critical,error,warning,notice,info,debug.
+  // Using a string type because these values are not proto-enums, but are
+  // strings specified in chromite/lib/commandline.py, and the value will be
+  // used as a string by recipe_modules/cros_build_api/api.py.
+  string log_level = 2;
 }
