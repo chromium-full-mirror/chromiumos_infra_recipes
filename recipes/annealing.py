@@ -51,6 +51,9 @@ PROPERTIES = AnnealingProperties
 
 
 def RunSteps(api, properties):
+  # If we're configured not to publish uprev's run as staging.
+  is_staging = not properties.publish_uprevs
+
   manifest_ref = properties.manifest_ref
   if not manifest_ref:
     raise ValueError('must set manifest ref')
@@ -58,7 +61,7 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context():
     with api.context(
         cwd=api.cros_source.workspace_path.join('manifest-internal')):
-      api.cros_source.ensure_synced_cache()
+      api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
       # Generate a public snapshot of the manifest in the manifest/ repo.  We
       # need to do this _first_ so that we can fill in the Cr-External-Snapshot

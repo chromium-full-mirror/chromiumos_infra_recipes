@@ -237,7 +237,10 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
-      "all"
+      "all",
+      "--repo-branch",
+      "master",
+      "--no-repo-verify"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,

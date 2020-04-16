@@ -25,7 +25,7 @@ DEFAULT_CACHE_SYNC_OPTS = dict(
     timeout=3600,
 )
 
-STAGING_INIT_OPTS = dict(repo_branch='next')
+STAGING_INIT_OPTS = dict(repo_branch='master')
 
 
 class CrosSourceApi(recipe_api.RecipeApi):

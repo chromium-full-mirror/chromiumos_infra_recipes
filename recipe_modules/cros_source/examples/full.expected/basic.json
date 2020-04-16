@@ -233,7 +233,7 @@
       "--groups",
       "all",
       "--repo-branch",
-      "next",
+      "master",
       "--no-repo-verify"
     ],
     "cwd": "[CACHE]/chromiumos",
