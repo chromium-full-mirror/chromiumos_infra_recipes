@@ -79,9 +79,9 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 325, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 331, in RunSteps",
       "    non_skipped_builders = _get_non_skipped_builders(api, builders)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 267, in _get_non_skipped_builders",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 273, in _get_non_skipped_builders",
       "    skip_builder, SKIP_BUILDERS_FOOTER, builders))",
       "ValueError: Builder other-builder is specified in the Test-Recipes-Skip-Builder footer, but is not in the builders list ([u'staging-Annealing', u'staging-chromite-postsubmit'])"
     ]

@@ -165,9 +165,15 @@ def _launch_builders(api, builders):
         last_successful_build = _get_last_successful_build(api, builder)
         intermediate_result = api.led('get-build', last_successful_build.id)
 
-        recipe_names = set(
-            job_slice['userland']['recipe_name']
-            for job_slice in intermediate_result.result['job_slices'])
+        # TODO(smcallis): remove 'else' branch once led mock data is updated
+        recipe_names = None
+        buildbucket  = intermediate_result.result.get('buildbucket')
+        if buildbucket:
+          recipe_names = set([buildbucket['bbagent_args']['build']['input']['properties']['recipe']])
+        else:
+          recipe_names = set(
+              job_slice['userland']['recipe_name']
+              for job_slice in intermediate_result.result['job_slices'])
 
         # Every builder should run a single recipe across the slices.
         assert len(recipe_names) == 1, (
@@ -475,6 +481,37 @@ def GenTests(api):
     ])
     return api.buildbucket.build(msg)
 
+  def led_get_build_test_data_new(builder, recipe_name):
+    """Get step data for a 'led get-build' command.
+
+    Args:
+      * builder (str): The name of the builder.
+      * recipe_name (str): The name of the recipe to return in the builder
+        def.
+
+    Returns:
+      A TestData object.
+    """
+    import json
+    return api.step_data(
+        launch_step_name(builder, 'led get-build'), stdout=api.json.output(
+            json.loads(
+"""
+{
+  "buildbucket": {
+    "bbagent_args": {
+      "build": {
+        "input": {
+          "properties": {
+            "recipe": "annealing"
+          }
+        }
+      }
+    }
+  }
+}
+""")))
+
   yield (
       api.test('basic') +  #
       # Specify two builders to run.
@@ -502,6 +539,32 @@ def GenTests(api):
                                recipes=[]) +  #
       # led launch results. Note that only annealing is launched.
       led_get_launch_test_data(builder='staging-Annealing'))
+
+
+  yield (
+      api.test('new led get-build format') +  #
+
+      # Specify builder to run.
+      api.properties(
+          TestRecipesProperties(
+              builders=['staging-Annealing'])
+      ) +  #
+      api.buildbucket.try_build(project='chromeos', bucket='infra',
+                                builder='test-recipes') +  #
+      # No builders are skipped
+      get_non_skipped_builders_test_data() +  #
+      # Buildbucket search results.
+      buildbucket_search_test_data('staging-Annealing') +  #
+      # led get-build results.
+      led_get_build_test_data_new(builder='staging-Annealing',
+                              recipe_name='annealing') +  #
+      # recipe analyze results. Note that the test_chromite recipe isn't
+      # affected.
+      recipe_analyze_test_data(builder='staging-Annealing',
+                               recipes=['annealing']) +  #
+      # led launch results. Note that only annealing is launched.
+      led_get_launch_test_data(builder='staging-Annealing'))
+
 
   yield (
       api.test('two_changes') +  #
