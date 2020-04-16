@@ -46,8 +46,6 @@ from PB.chromiumos.common import PrepareForBuildResponse as Relevance
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.packages import GetTargetVersionsRequest
-from PB.chromite.api.sysroot import Profile
-from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
@@ -132,19 +130,10 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       **{'timeout_sec': None} if long_timeouts else {})
   long_timeouts |= toolchain_changed
 
-  with api.step.nest('create sysroot'):
-    profile = None
-    if config.build.portage_profile.profile:
-      profile = Profile(name=config.build.portage_profile.profile)
-    create_sysroot_response = api.cros_build_api.SysrootService.Create(
-        SysrootCreateRequest(
-            build_target=build_target, profile=profile,
-            chroot=api.cros_sdk.chroot, flags=SysrootCreateRequest.Flags(
-                chroot_current=True, replace=True,
-                toolchain_changed=toolchain_changed)),
-        timeout=(STEP_TIMEOUTS['create_sysroot']
-                 if not long_timeouts else None))
-    sysroot = create_sysroot_response.sysroot
+  sysroot = api.sysroot_util.create_sysroot(
+      build_target, config.build.portage_profile.profile,
+      toolchain_changed=toolchain_changed,
+      timeout_sec=None if long_timeouts else STEP_TIMEOUTS['create_sysroot'])
 
   packages = get_packages(api, config)
   dep_graph = api.cros_relevance.get_dependency_graph(
@@ -232,15 +221,16 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
     with api.step.nest('install packages') as ip_step:
       if artifacts.artifact_types:
         # Final round of preparation to build artifacts.  Some artifacts need
-        # to use portage to fully prepare, so they have to finish preparation
-        # inside the SDK.
+        # to use portage (or a chroot and/or sysroot) in order to fully prepare,
+
+        # so they have to finish preparation inside the SDK.
         #
         # We don't care what the return value is, since we're committed to
         # running at least install packages at this point.
-        api.cros_artifacts.prepare_for_build(
-            artifacts.artifact_types, api.cros_sdk.chroot, sysroot,
-            artifacts.input_artifacts, config.artifacts.artifact_profile_info,
-            additional_args=config.build.prepare_for_build.additional_args,
+        api.sysroot_util.update_for_artifact_build(
+            api.cros_sdk.chroot, config.artifacts,
+            config.build.prepare_for_build.additional_args,
+            force_relevance=force_relevant_build,
             name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
           compile_source=install_packages.compile_source,
