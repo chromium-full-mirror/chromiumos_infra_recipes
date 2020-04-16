@@ -25,18 +25,9 @@ def RunSteps(api, properties):
   name = properties.builder_name or 'orderfile-generate-toolchain'
 
   build_config = api.cros_infra_config.get_builder_config(name)
-  artifacts = build_config.artifacts
-  args = build_config.build.prepare_for_build.additional_args
 
-  # Early check: this can be done before the chroot and sysroot are created.
-  relevance = api.sysroot_util.update_for_artifact_build(None, artifacts, args)
-  # relevance == POINTLESS may cause the recipe to terminate early.
-
-  # Later check, since some artifacts need the chroot and sysroot to be able to
-  # complete their update.
-  relevance = api.sysroot_util.update_for_artifact_build(
-      api.cros_sdk.chroot, artifacts, args, name='final')
-
+  sysroot = api.sysroot_util.create_sysroot(BuildTarget(name='eve'))
+  api.assertions.assertEqual(sysroot, api.sysroot_util.sysroot)
 
 def GenTests(api):
   yield api.test('basic')

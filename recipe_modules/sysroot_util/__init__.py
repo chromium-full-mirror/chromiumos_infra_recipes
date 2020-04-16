@@ -4,6 +4,8 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/step',
+    'cros_build_api',
     'cros_sdk',
     'cros_artifacts',
 ]
