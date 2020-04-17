@@ -307,7 +307,7 @@ _SUCCESSFUL_VERDICTS = (TaskState.VERDICT_PASSED,
 def summarize(api, enumerations, responses):
   # Failures in summarization are non-infra related.
   with api.step.nest('summarize') as step:
-    for tag, response in responses.iteritems():
+    for tag, response in sorted(responses.iteritems()):
       with api.step.nest('%s task results' % tag):
         _log_enumeration_errors(api, enumerations[tag])
         _log_task_results(api, response.task_results)
