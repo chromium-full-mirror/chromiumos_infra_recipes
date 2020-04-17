@@ -16,15 +16,16 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
       dimensions(dict): Dictionary of dimensions
     """
     bot_counts = {}
-    if dimensions.get('role') in ['cq']:
-      bot_counts = {
-          "busy": "21",
-          "count": "23",
-          "dead": "0",
-          "maintenance": "0",
-          "now": "2020-03-26T23:38:02.383828",
-          "quarantined": "0"
-      }
+    for dim in dimensions:
+      if 'cq' in dim:
+        bot_counts = {
+            "busy": "21",
+            "count": "23",
+            "dead": "0",
+            "maintenance": "0",
+            "now": "2020-03-26T23:38:02.383828",
+            "quarantined": "0"
+        }
     return bot_counts
 
   def swarming_task_step_test_data(self, dimensions):
@@ -34,7 +35,7 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
       dimensions(dict): Dictionary of dimensions
     """
     task_counts = {}
-    if dimensions.get('role') in ['cq']:
-      task_counts = {"count": "23", "now": "2020-03-27T19:08:08.207587"}
-
+    for dim in dimensions:
+      if 'cq' in dim:
+        task_counts = {"count": "23", "now": "2020-03-27T19:08:08.207587"}
     return task_counts

@@ -48,11 +48,12 @@ class SwarmingCli(recipe_api.RecipeApi):
     """Retrieves the count of bots from Swarming based on dimensions.
 
     Args:
-      dimensions (dict): dict containing key, value dimensions to query swarming.
+      dimensions (tuple): string containing key, value dimensions to query swarming.
     """
     dim_args = []
-    for k, v in dimensions.items():
-      dim_args.append('dimensions={}:{}&'.format(k, v))
+    for dim in dimensions:
+      dim_args.append('dimensions={}&'.format(dim))
+
     cmd = [
         'query', '--swarming', CHROMEOS_SWARMING_URL,
         'bots/count?' + ''.join(dim_args).rstrip('&')
@@ -67,12 +68,12 @@ class SwarmingCli(recipe_api.RecipeApi):
     """Retrieves the count of tasks from Swarming based on dimensions.
 
     Args:
-      dimensions (dict): dict containing key, value dimensions to query swarming.
+      dimensions (str): string containing key, value dimensions to query swarming.
       state (str): state of the tasks to query
     """
     dim_args = ['state={}&'.format(state)]
-    for k, v in dimensions.items():
-      dim_args.append('tags={}:{}&'.format(k, v))
+    for dim in dimensions:
+      dim_args.append('tags={}&'.format(dim))
     dim_args.append('start={}'.format(self._calculate_epoch_start()))
     cmd = [
         'query', '--swarming', CHROMEOS_SWARMING_URL,

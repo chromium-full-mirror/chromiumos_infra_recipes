@@ -863,11 +863,13 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
 			            "swarmingDimensions": [
 				              {
 					                "name": "role",
-					                "value": "cq"
+					                "value": "cq",
+                          "values": ["cq", "bar"]
 				              },
 				              {
 					                "name": "bot_size",
-					                "value": "large"
+					                "value": "large",
+                          "values": ["large"]
 				              }
 			            ]
             		}

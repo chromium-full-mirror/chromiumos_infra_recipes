@@ -13,6 +13,8 @@ from google.protobuf import field_mask_pb2
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
+import itertools
+
 TASK_STATES = ['RUNNING', 'PENDING']
 
 BotStats = namedtuple(
@@ -144,7 +146,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     for stat in swarming_stats.task_stats:
       if stat.bot_group == bot_group:
         if stat.task_state in TASK_STATES:
-          demand += stat.count
+          demand += int(stat.count)
 
     return demand
 
@@ -161,16 +163,19 @@ class BotScalingApi(recipe_api.RecipeApi):
     bot_stats = []
     task_stats = []
     for policy in bot_policy_config.bot_policies:
-      dimensions = {d.name: d.value for d in policy.swarming_dimensions}
-      bot_stats.append(
-          self._bot_swarming_stats(
-              policy.bot_group, self.m.swarming_cli.get_bot_counts(dimensions)))
-      for state in TASK_STATES:
-        task_stats.append(
-            self._task_swarming_stats(
-                policy.bot_group, state,
-                self.m.swarming_cli.get_task_counts(dimensions=dimensions,
-                                                    state=state)))
+      dimensions = self.unpack_policy_dimensions(policy.swarming_dimensions)
+      bot_stats_hold = BotStats(policy.bot_group, 0, 0, 0, 0, 0)
+      task_stats_hold = []
+      for dim in dimensions:
+        bot_stats_hold = self._bot_swarming_stats(
+            policy.bot_group, bot_stats_hold,
+            self.m.swarming_cli.get_bot_counts(dim))
+        for state in TASK_STATES:
+          task_stats_hold = self._task_swarming_stats(
+              policy.bot_group, state, task_stats_hold,
+              self.m.swarming_cli.get_task_counts(dimensions=dim, state=state))
+      bot_stats.append(bot_stats_hold)
+      task_stats.extend(task_stats_hold)
     return SwarmingStats(bot_stats, task_stats)
 
   def get_previous_action(self):
@@ -273,6 +278,24 @@ class BotScalingApi(recipe_api.RecipeApi):
                 self.m.gce_provider.update_gce_config(action.prefix, config))
     return Configs(vms=gce_configs)
 
+  def unpack_policy_dimensions(self, dimensions):
+    """Method to iterate through dimensions and return possible combinations.
+
+    Args:
+      dimensions (list[dict]): BotPolicy swarming dimensions.
+
+    Returns:
+      list, product of all swarming dimensions for querying.
+    """
+    policy_dimensions = []
+    dims = {d.name: d.values for d in dimensions}
+    for name, value in dims.items():
+      temp_dimensions = []
+      for val in value:
+        temp_dimensions.append('{}:{}'.format(name, val))
+      policy_dimensions.append(temp_dimensions)
+    return list(itertools.product(*policy_dimensions))
+
   def _get_prefix_to_gce_config(self, configs):
     """Helper method that returns the prefix to Config map.
 
@@ -286,31 +309,47 @@ class BotScalingApi(recipe_api.RecipeApi):
     """
     return {c.prefix: c for c in configs.vms}
 
-  def _bot_swarming_stats(self, bot_group, bot_stats):
+  def _bot_swarming_stats(self, bot_group, bot_stats, cli_stats):
     """Helper method that formats the bot stats into a named tuple.
 
     Args:
       bot_group (str): name of bot group associated with stats.
-      bot_stats (dict): swarming CL dict of bot stats.
+      bot_stats (BotStats): current value of accumulated bot stats.
+      cli_stats (dict): swarming CLI dict of bot stats.
 
     Returns:
       BotStats: Swarming bot stats named tuple.
     """
-    return BotStats(bot_group, int(bot_stats.get('busy', 0)),
-                    int(bot_stats.get('count', 0)), int(
-                        bot_stats.get('dead', 0)),
-                    int(bot_stats.get('maintenance', 0)),
-                    int(bot_stats.get('quarantined', 0)))
+    return BotStats(
+        bot_group, bot_stats.busy + int(cli_stats.get('busy', 0)),
+        bot_stats.count + int(cli_stats.get('count', 0)),
+        bot_stats.dead + int(cli_stats.get('dead', 0)),
+        bot_stats.maintenance + int(cli_stats.get('maintenance', 0)),
+        bot_stats.quarantined + int(cli_stats.get('quarantined', 0)))
 
-  def _task_swarming_stats(self, bot_group, state, task_stats):
+  def _task_swarming_stats(self, bot_group, state, task_stats, cli_stats):
     """Helper method that formats the bot stats into a named tuple.
 
     Args:
       bot_group (str): name of bot group associated with stats.
       state (str): Swarming task state.
-      task_stats (dict): swarming CL dict of task stats.
+      task_stats (TaskStats): current value of accumulated task stats.
+      cli_stats (dict): swarming CL dict of task stats.
 
     Returns:
       TaskStats: Swarming task stats named tuple.
     """
-    return TaskStats(bot_group, state, int(task_stats.get('count', 0)))
+    new_task = True
+    updated_stats = []
+    for stat in task_stats:
+      if stat.bot_group == bot_group and stat.task_state == state:
+        updated_stats.append(
+            TaskStats(bot_group, state,
+                      int(stat.count) + int(cli_stats.get('count', 0))))
+        new_task = False
+      else:
+        updated_stats.append(stat)
+    if new_task:
+      updated_stats.append(
+          TaskStats(bot_group, state, int(cli_stats.get('count', 0))))
+    return updated_stats
