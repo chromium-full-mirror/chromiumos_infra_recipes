@@ -80,6 +80,11 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       gitiles_commit, gerrit_changes, toolchain_targets=[build_target],
       build_source=config.build.sdk_update.compile_source, timeout_sec=None)
 
+  sysroot = None
+  if gerrit_changes:
+    sysroot = api.sysroot_util.create_sysroot(
+        build_target, config.build.portage_profile.profile)
+
   # This update_for_artifact_build call will download the input artifacts into
   # the chroot.  This builder is only appropriate to use if there are no package
   # builds needed prior to making artifacts, and those artifacts will be created
@@ -89,16 +94,13 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       config.build.prepare_for_build.additional_args,
       force_relevance=force_relevant_build, name='prepare artifacts final')
 
-  api.easy.set_property_step('target_versions',
-                             get_target_versions(api, build_target))
-
   api.easy.set_property_step('chromeos_version',
                              str(api.cros_version.read_workspace_version()))
 
   api.cros_artifacts.upload_artifacts(
       config.id.name, build_target, config.id.type,
       config.artifacts.artifacts_gs_bucket, config.artifacts.artifact_types,
-      sysroot=None, chroot=api.cros_sdk.chroot,
+      sysroot=sysroot, chroot=api.cros_sdk.chroot,
       publish_info=config.artifacts.publish_artifacts,
       artifact_profile_info=config.artifacts.artifact_profile_info,
       additional_args=config.build.prepare_for_build.additional_args)
@@ -122,26 +124,6 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   api.easy.set_property_step(
       'build_cost',
       api.bot_cost.calculate_build_cost(api.buildbucket.build.id, 'large'))
-
-
-def get_target_versions(api, build_target):
-  """Returns 'target_versions' in dict form.
-
-  Returns the 'target_versions' values for this build in a dict form
-  suitable for output as a build property. Note that this cannot be
-  called until after the creation of the sysroot is finished.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    build_target (chromiumos.BuildTarget): The BuildTarget being built.
-
-  Returns:
-    dict of target versions
-  """
-  response = api.cros_build_api.PackageService.GetTargetVersions(
-      GetTargetVersionsRequest(chroot=api.cros_sdk.chroot,
-                               build_target=build_target))
-  return json_pb.MessageToDict(response)
 
 
 def GenTests(api):

@@ -3917,21 +3917,6 @@ Recipe for building an AFDO benchmark profile.
 &mdash; **def [DoRunSteps](/recipes/afdo_process.py#55)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build, input_artifacts):**
 
 &mdash; **def [RunSteps](/recipes/afdo_process.py#36)(api, properties):**
-
-&mdash; **def [get\_target\_versions](/recipes/afdo_process.py#127)(api, build_target):**
-
-Returns 'target_versions' in dict form.
-
-Returns the 'target_versions' values for this build in a dict form
-suitable for output as a build property. Note that this cannot be
-called until after the creation of the sysroot is finished.
-
-Args:
-  api (RecipeApi): See RunSteps.
-  build_target (chromiumos.BuildTarget): The BuildTarget being built.
-
-Returns:
-  dict of target versions
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
 
 [DEPS](/recipe_modules/analysis_service/examples/full.py#6): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
