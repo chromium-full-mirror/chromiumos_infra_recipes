@@ -23,11 +23,11 @@ The following input files are checked in:
   experimental dataset.
 * goma-exp-write-small-verbose.json - Write a small subset of data to the
   goma experimental dataset with the verbose flag set.
-* goma-exp-full.json - Write a large json goma dataset to goma
-  experimental dataset.
-* goma-exp-full-ORIG.json - This large json goma dataset has full raw output
-  from goma, and can be diffed against goma-exp-full.json to see fields
-  that are different between the protos and the database as of April 2020.
+* goma-exp-full-missing3fields.json - Write a large json goma dataset to goma
+  experimental dataset, which has all fields except 3 that were added to the
+  BQ schema in April 2020.
+* goma-exp-full-allfields.json - This large json goma dataset has full raw output
+  from goma including 3 proto fields that were added to the BQ schema in April 2020.
 * goma-input.json - For listing data from the goma logs dataset.
 * goma-write-data.json - For writing data to goma. Shows proper format of
   request including sample row data. Should fail since only the
