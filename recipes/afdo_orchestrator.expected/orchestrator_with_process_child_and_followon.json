@@ -77,10 +77,126 @@
   },
   {
     "cmd": [],
+    "name": "set up orchestrator.configure builder.repo state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@changes@\"[{\\\"project\\\": \\\"chromiumos/overlays/chromiumos-overlay\\\", \\\"host\\\": \\\"chromium-review.googlesource.com\\\", \\\"patchset\\\": \\\"-1\\\", \\\"change\\\": \\\"1394249\\\"}]\"@@@",
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set up orchestrator.set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"bisecting-orchestrator\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check for merge conflicts",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@confirmed no merge conflicts@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "name": "check for merge conflicts.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "check for merge conflicts.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/git-test-submit"
+    ],
+    "infra_step": true,
+    "name": "check for merge conflicts.git-test-submit",
+    "stdin": "{\"gerrit_changes\": [{\"change_number\": 1394249, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": -1}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"errors\": []@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find inflight orchestrator",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found no inflight run@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find inflight orchestrator.find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "beefy-dot-cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"orderfile-generate-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "find inflight orchestrator.find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -96,6 +212,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@1 relevant, 0 irrelevant builder configs@@@",
+      "@@@STEP_LOG_LINE@planner_input@gerrit_changes {@@@",
+      "@@@STEP_LOG_LINE@planner_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022&chromiumos/overlays/chromiumos-overlay\\030\\311\\214U \\377\\377\\377\\377\\377\\377\\377\\377\\377\\001\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@}@@@",
       "@@@STEP_LOG_LINE@planner_input@manifest_commit: \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"@@@",
       "@@@STEP_LOG_LINE@planner_input@builder_configs {@@@",
       "@@@STEP_LOG_LINE@planner_input@  id {@@@",
@@ -227,14 +346,17 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001a\ufffd\u0003\n(\n\u001corderfile-generate-toolchain\u0012\u0006master\u0018\u0003\u0012\n\n\u0002\b\u0001\u0010\u0001\u001a\u0002\b\u0001\"\ufffd\u0001\b\u0003\u0012\u0001\u000b\"\u0016chromeos-image-archive*4\u0012\u0001\u000b\u001a/chromeos-toolchain-artifacts/orderfile/unvetted2c\b\u000b\u0012/chromeos-toolchain-artifacts/orderfile/unvetted\u0012.chromeos-prebuilt/afdo-job/orderfiles/unvetted:\f\n\nsilvermont*\u0002\b\u00012\ufffd\u0001\n\u0011\n\u000fchrome_internal\n\r\n\u000b-cros-debug\n\u0019\n\u0017strict_toolchain_checks\n\u0010\n\u000e-orderfile_use\n\u0014\n\u0012orderfile_generate\n\u001a\n\u0018-strict_toolchain_checks0\u0001\ufffd\u0001&\b\u0001\u0010\u0002\u001a \n\u000fchromeos-chrome\u0012\rchromeos-base\ufffd\u0001\u000e\n\f\n\nsilvermont:\u0002(\u0001\"d\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
+      "\n[\nY\n chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001a\ufffd\u0003\n(\n\u001corderfile-generate-toolchain\u0012\u0006master\u0018\u0003\u0012\n\n\u0002\b\u0001\u0010\u0001\u001a\u0002\b\u0001\"\ufffd\u0001\b\u0003\u0012\u0001\u000b\"\u0016chromeos-image-archive*4\u0012\u0001\u000b\u001a/chromeos-toolchain-artifacts/orderfile/unvetted2c\b\u000b\u0012/chromeos-toolchain-artifacts/orderfile/unvetted\u0012.chromeos-prebuilt/afdo-job/orderfiles/unvetted:\f\n\nsilvermont*\u0002\b\u00012\ufffd\u0001\n\u0011\n\u000fchrome_internal\n\r\n\u000b-cros-debug\n\u0019\n\u0017strict_toolchain_checks\n\u0010\n\u000e-orderfile_use\n\u0014\n\u0012orderfile_generate\n\u001a\n\u0018-strict_toolchain_checks0\u0001\ufffd\u0001&\b\u0001\u0010\u0002\u001a \n\u000fchromeos-chrome\u0012\rchromeos-base\ufffd\u0001\u000e\n\f\n\nsilvermont:\u0002(\u0001\"d\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
       "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001a\ufffd\u0003@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@[@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@Y@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001a\ufffd\u0003@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@(@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u001corderfile-generate-toolchain\u0012\u0006master\u0018\u0003\u0012@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@@@@",
@@ -297,6 +419,81 @@
   },
   {
     "cmd": [],
+    "name": "run builds.get build history",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found 0 builds to recycle@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.get build history.find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "beefy-dot-cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"orderfile-generate-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:23Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "run builds.get build history.find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.get build history.get completed builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@skip log@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.get build history.get completed builds.get change build history",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@found no completed builds@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "beefy-dot-cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"toolchain\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:24Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "run builds.get build history.get completed builds.get change build history.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds.get snapshot builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -316,7 +513,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromeos/+/2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:26Z\"}, \"gerritChanges\": [{\"change\": \"1394249\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"-1\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}], \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromeos/+/2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
     ],
     "infra_step": true,
     "name": "run builds.get snapshot builds.buildbucket.search",
@@ -344,7 +541,7 @@
     ],
     "infra_step": true,
     "name": "run builds.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"orderfile-generate-toolchain\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"orderfile-generate-toolchain\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"1394249\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"-1\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -374,6 +571,14 @@
       "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\", @@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"1394249\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"patchset\": \"-1\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromiumos/overlays/chromiumos-overlay\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
@@ -705,6 +910,11 @@
       "@@@STEP_LOG_LINE@planner_input@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
       "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNCtpKubruDoexISGhBhbWQ2NC1nZW5lcmljLWNxYAx6NAotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljGgMY0gmCAXoKeApdCglhcnRpZmFjdHMSUCpOCiUKCWdzX2J1Y2tldBIYGhZjaHJvbWVvcy1pbWFnZS1hcmNoaXZlCiUKB2dzX3BhdGgSGhoYQlVJTERFUi9WRVJTSU9OLUJVSUxEX0lEChcKCmJ1aWxkX2Nvc3QSCREAAAAAAAAkQA==\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    }@@@",
+      "@@@STEP_LOG_LINE@planner_input@  ], @@@",
+      "@@@STEP_LOG_LINE@planner_input@  \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@planner_input@    {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CiBjaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbRImY2hyb21pdW1vcy9vdmVybGF5cy9jaHJvbWl1bW9zLW92ZXJsYXkYyYxVIP///////////wE=\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@  ]@@@",
       "@@@STEP_LOG_LINE@planner_input@}@@@",
@@ -2339,7 +2549,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\ufffd\u0001\n\ufffd\u0001\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0012\u001a\u0010amd64-generic-cq`\fz4\n-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a\u0003\u0018\ufffd\t\ufffd\u0001z\nx\n]\n\tartifacts\u0012P*N\n%\n\tgs_bucket\u0012\u0018\u001a\u0016chromeos-image-archive\n%\n\u0007gs_path\u0012\u001a\u001a\u0018BUILDER/VERSION-BUILD_ID\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@:(2d72510e447ab60a9728aeea2362d8be2cbd7789Jd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
+      "*\ufffd\u0001\n\ufffd\u0001\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0012\u001a\u0010amd64-generic-cq`\fz4\n-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a\u0003\u0018\ufffd\t\ufffd\u0001z\nx\n]\n\tartifacts\u0012P*N\n%\n\tgs_bucket\u0012\u0018\u001a\u0016chromeos-image-archive\n%\n\u0007gs_path\u0012\u001a\u001a\u0018BUILDER/VERSION-BUILD_ID\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@:(2d72510e447ab60a9728aeea2362d8be2cbd7789B[\nY\n chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001Jd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
       "[CLEANUP]/test-plan-_tmp_2/input.binaryproto"
     ],
     "infra_step": true,
@@ -2363,7 +2573,9 @@
       "@@@STEP_LOG_LINE@input.binaryproto@\u0007gs_path\u0012\u001a\u001a\u0018BUILDER/VERSION-BUILD_ID@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0017@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@build_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@:(2d72510e447ab60a9728aeea2362d8be2cbd7789Jd@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@build_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@:(2d72510e447ab60a9728aeea2362d8be2cbd7789B[@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@Y@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001Jd@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@b@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
@@ -2399,6 +2611,43 @@
     "name": "run tests.schedule tests.generate test plan.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.get change test history",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found no previously passed tests@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.get change test history.find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "beefy-dot-cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"orderfile-generate-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:27Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.get change test history.find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -4192,7 +4441,7 @@
     ],
     "infra_step": true,
     "name": "run PROCESS.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"PROCESS\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"properties\": {\"input_artifacts\": [{\"input_artifact_gs_locations\": [\"chromeos-image-archive/BUILDER/VERSION-BUILD_ID\"], \"input_artifact_type\": 23}]}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134c\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"PROCESS\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"1394249\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"-1\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"properties\": {\"input_artifacts\": [{\"input_artifact_gs_locations\": [\"chromeos-image-archive/BUILDER/VERSION-BUILD_ID\"], \"input_artifact_type\": 23}]}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134c\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4221,6 +4470,14 @@
       "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\", @@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"1394249\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"patchset\": \"-1\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromiumos/overlays/chromiumos-overlay\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
@@ -4358,7 +4615,7 @@
     ],
     "infra_step": true,
     "name": "run follow on orchestrator.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"orderfile-verify-orchestrator\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134f\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"orderfile-verify-orchestrator\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"1394249\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"-1\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134f\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4387,6 +4644,14 @@
       "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\", @@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"1394249\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"patchset\": \"-1\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromiumos/overlays/chromiumos-overlay\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",

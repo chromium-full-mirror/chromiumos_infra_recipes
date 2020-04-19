@@ -1,0 +1,78 @@
+[
+  {
+    "cmd": [],
+    "name": "configure builder",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@builder config@id {@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"toolchain-orchestrator\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  type: TOOLCHAIN@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@general {@@@",
+      "@@@STEP_LOG_LINE@builder config@  critical {@@@",
+      "@@@STEP_LOG_LINE@builder config@    value: true@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@orchestrator {@@@",
+      "@@@STEP_LOG_LINE@builder config@  gitiles_commit {@@@",
+      "@@@STEP_LOG_LINE@builder config@    host: \"chrome-internal\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    project: \"chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  gerrit_changes {@@@",
+      "@@@STEP_LOG_LINE@builder config@    host: \"chromium-review.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    project: \"chromiumos/overlays/chromiumos-overlay\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    change: 1394249@@@",
+      "@@@STEP_LOG_LINE@builder config@    patchset: -1@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_END@builder config@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "configure builder.read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.set builder_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"toolchain-orchestrator\", \"type\": \"TOOLCHAIN\"}, \"orchestrator\": {\"gerritChanges\": [{\"change\": \"1394249\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"-1\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}], \"gitilesCommit\": {\"host\": \"chrome-internal\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.repo state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@changes@\"[{\\\"project\\\": \\\"chromiumos/overlays/chromiumos-overlay\\\", \\\"host\\\": \\\"chromium-review.googlesource.com\\\", \\\"patchset\\\": \\\"-1\\\", \\\"change\\\": \\\"1394249\\\"}]\"@@@",
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/master\"}@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

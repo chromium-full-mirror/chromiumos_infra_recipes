@@ -14,4 +14,7 @@ message CrosInfraConfigProperties {
   // - 'refs/changes/FG/NNNNNFG/PP': patchset PP of crrev.com/i/NNNNNFG
   // This may be propogated to spawned builders.
   string config_ref = 1;
+
+  // Whether to ignore the changelist in the builder config.
+  bool ignore_config_changelist = 2;
 }

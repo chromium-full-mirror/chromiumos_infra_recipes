@@ -88,10 +88,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       return {}
     msg = CrosInfraConfigProperties()
     msg.CopyFrom(self._properties)
-    return {'$chromeos/cros_infra_config':
-            json_format.MessageToDict(msg, preserving_proto_field_name=True)}
+    return {
+        '$chromeos/cros_infra_config':
+            json_format.MessageToDict(msg, preserving_proto_field_name=True)
+    }
 
-  @exponential_retry(retries=3, condition=lambda e: getattr(e, 'had_timeout', False))
+  @exponential_retry(retries=3,
+                     condition=lambda e: getattr(e, 'had_timeout', False))
   def _fetch_builder_configs(self):
     """Helper method to fetch the builder configs file.
 
@@ -222,16 +225,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
       changes: (GerritChanges): The gerrit changes to apply.  Default: [].
     """
+    changed = False
     if not commit or not commit.project:
       # No gitiles_commit: we were (likely) launched directly by either
       # luci-scheduler (no changes), luci-cq (changes), or a user.
-      if not changes and config:
-        # If there were also no changes, then use the hardcoded default from the
-        # configuration.
-        changes = [
-            ConvertPB(x, common_pb2.GerritChange)
-            for x in config.orchestrator.gerrit_changes
-        ]
 
       # Use the default gitiles_commit from the config.
       commit = None if not config else ConvertPB(
@@ -247,7 +244,20 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
             host=commit.host, project=commit.project,
             ref=commit.ref, id=self.m.gitiles.fetch_revision(
                 commit.host, commit.project, commit.ref))
+      if commit:
+        changed = True
 
+    # If we are not ignoring the changelist in the config then insert any such
+    # to the changelist.
+    if config and not self._properties.ignore_config_changelist:
+      if config.orchestrator.gerrit_changes:
+        changes = [
+            ConvertPB(x, common_pb2.GerritChange)
+            for x in config.orchestrator.gerrit_changes
+        ] + [x for x in changes]
+        changed = True
+
+    if changed:
       # Log what we chose to use (rather than what we were given.)
       step = self.m.step('repo state', cmd=None)
       step.presentation.properties['commit'] = json_format.MessageToDict(commit)
