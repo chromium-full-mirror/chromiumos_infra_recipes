@@ -20,7 +20,7 @@ def RunSteps(api):
   updated_bot_policy = api.bot_scaling.update_bot_policy_limits(
       bot_policy_config, gce_config)
   for policy in updated_bot_policy.bot_policies:
-    api.assertions.assertEqual(policy.scaling_restriction.bot_ceiling, 90)
+    api.assertions.assertEqual(policy.scaling_restriction.bot_ceiling, 150)
     api.assertions.assertEqual(policy.scaling_restriction.bot_floor, 20)
 
   bot_policy.policy_mode = BotPolicy.MONITORED
@@ -28,8 +28,8 @@ def RunSteps(api):
   floor_bot_policy = api.bot_scaling.update_bot_policy_limits(
       bot_policy_config, gce_config)
   for policy in floor_bot_policy.bot_policies:
-    api.assertions.assertEqual(policy.scaling_restriction.bot_ceiling, 90)
-    api.assertions.assertEqual(policy.scaling_restriction.bot_floor, 1)
+    api.assertions.assertEqual(policy.scaling_restriction.bot_ceiling, 150)
+    api.assertions.assertEqual(policy.scaling_restriction.bot_floor, 25)
 
 
 def GenTests(api):

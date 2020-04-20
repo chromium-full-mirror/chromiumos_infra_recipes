@@ -81,9 +81,9 @@ class BotScalingApi(recipe_api.RecipeApi):
                                    bot_type=bot_policy.bot_type,
                                    actionable=actionable)
 
-    scaling_action.bots_requested = self.get_bot_request(
-        demand, bot_policy.scaling_restriction)
-
+    current_num_bots = self.get_current_bot_amount(bot_policy, configs)
+    scaling_action.bots_requested = self._calculate_bot_adjustment(
+        bot_policy, bots_requested, current_num_bots)
     scaling_action.regional_actions.extend(
         self.get_regional_actions(scaling_action.bots_requested,
                                   bot_policy.region_restrictions))
@@ -278,6 +278,23 @@ class BotScalingApi(recipe_api.RecipeApi):
                 self.m.gce_provider.update_gce_config(action.prefix, config))
     return Configs(vms=gce_configs)
 
+  def get_current_bot_amount(self, bot_policy, configs):
+    """Sums the min and max bot numbers per bot policy.
+
+    Args:
+      bot_policy_config(BotPolicy): Group Policy for RoboCrop.
+      config_map(dict|Config): Map of GCE Config to prefix
+
+    Returns:
+      int, the number of bots current configured for bot group.
+    """
+    num_bots = 0
+    config_map = self._get_prefix_to_gce_config(configs)
+    for restriction in bot_policy.region_restrictions:
+      config = config_map.get(restriction.prefix, Config())
+      num_bots += config.current_amount
+    return num_bots
+
   def unpack_policy_dimensions(self, dimensions):
     """Method to iterate through dimensions and return possible combinations.
 
@@ -353,3 +370,28 @@ class BotScalingApi(recipe_api.RecipeApi):
       updated_stats.append(
           TaskStats(bot_group, state, int(cli_stats.get('count', 0))))
     return updated_stats
+
+  def _calculate_bot_adjustment(self, bot_policy, requested, current_amount):
+    """Helper to calculate the number of bots to request.
+
+    Args:
+      bot_policy_config(BotPolicy): Group Policy for RoboCrop.
+      requested (int): number of bots needed.
+      curent_amount (int): current number of bots configured.
+
+    Returns:
+      int, the number of bots to request.
+    """
+    bots_requested = 0
+    if bot_policy.scaling_mode == BotPolicy.STEPPED:
+      if requested >= current_amount:
+        bots_requested = current_amount + min(
+            (requested - current_amount),
+            bot_policy.scaling_restriction.step_size)
+      else:
+        bots_requested = current_amount - min(
+            (current_amount - bots_requested),
+            bot_policy.scaling_restriction.step_size)
+    else:
+      bots_requested = requested
+    return bots_requested

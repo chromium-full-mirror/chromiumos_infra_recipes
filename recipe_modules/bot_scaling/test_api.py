@@ -64,13 +64,13 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
 
   def gce_provider_config(self):
     return Configs(vms=[
-        Config(prefix='prefix-first', amount=Amount(min=5, max=20),
+        Config(prefix='prefix-first', amount=Amount(min=5, max=30),
                current_amount=19),
-        Config(prefix='prefix-second', amount=Amount(min=5, max=25),
+        Config(prefix='prefix-second', amount=Amount(min=5, max=45),
                current_amount=23),
-        Config(prefix='prefix-third', amount=Amount(min=5, max=20),
+        Config(prefix='prefix-third', amount=Amount(min=5, max=30),
                current_amount=18),
-        Config(prefix='prefix-fourth', amount=Amount(min=5, max=25),
+        Config(prefix='prefix-fourth', amount=Amount(min=5, max=45),
                current_amount=25),
     ])
 
@@ -82,8 +82,8 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
 
   def robocrop_bot_policy_config(self):
     scaling_restriction = BotPolicy.ScalingRestriction(
-        min_idle=1,
-        step_size=5,
+        min_idle=25,
+        step_size=25,
         bot_fallback=45,
     )
     bot_type = self.get_bot_type()
@@ -116,4 +116,5 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
         scaling_restriction=scaling_restriction,
         region_restrictions=region_restrictions,
         policy_mode=BotPolicy.CONFIGURED,
+        scaling_mode=BotPolicy.STEPPED,
     )

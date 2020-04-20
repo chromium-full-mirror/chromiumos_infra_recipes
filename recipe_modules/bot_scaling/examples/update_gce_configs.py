@@ -28,10 +28,10 @@ def RunSteps(api):
 
   vms = []
   prefix_map = {
-      'prefix-first': 5,
-      'prefix-second': 5,
-      'prefix-third': 4,
-      'prefix-fourth': 6
+      'prefix-first': 15,
+      'prefix-second': 15,
+      'prefix-third': 12,
+      'prefix-fourth': 18
   }
   for prefix, amount in prefix_map.items():
     vms.append(Config(prefix=prefix, current_amount=amount))

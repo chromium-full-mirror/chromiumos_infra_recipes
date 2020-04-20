@@ -378,6 +378,17 @@ Args:
 Returns:
   int, number of bots to request.
 
+&mdash; **def [get\_current\_bot\_amount](/recipe_modules/bot_scaling/api.py#281)(self, bot_policy, configs):**
+
+Sums the min and max bot numbers per bot policy.
+
+Args:
+  bot_policy_config(BotPolicy): Group Policy for RoboCrop.
+  config_map(dict|Config): Map of GCE Config to prefix
+
+Returns:
+  int, the number of bots current configured for bot group.
+
 &mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#202)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
@@ -469,7 +480,7 @@ Args:
 Returns:
   SwarmingStats:  bot and task stats named tuple.
 
-&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#281)(self, dimensions):**
+&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#298)(self, dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
