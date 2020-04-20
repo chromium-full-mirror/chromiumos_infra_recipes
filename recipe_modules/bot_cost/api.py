@@ -29,6 +29,10 @@ class BotCostApi(recipe_api.RecipeApi):
     Returns:
       A float representing the cost (USD) of building this image.
     """
+    if self.m.led.run_id:  # pragma: nocover
+      # If a led job, use a random id.
+      build_id = 8882749049375545216
+
     build = self.m.buildbucket.get(build_id)
     if build.status > common_pb2.ENDED_MASK:
       build_duration = build.end_time.seconds - build.start_time.seconds

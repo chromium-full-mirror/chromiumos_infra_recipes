@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/led',
     'recipe_engine/properties',
     'recipe_engine/step',
 ]

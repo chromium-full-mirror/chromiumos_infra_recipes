@@ -43,9 +43,18 @@ class MetadataJsonApi(recipe_api.RecipeApi):
         email.utils.formatdate(timeval=time_secs, localtime=True),
         time.strftime('%Z', time.localtime(time_secs)))  # pragma: nocover
 
+  def _safe_buildbucket_get_self(self):
+    # If a led job, use a random id.
+    if self.m.led.run_id:  # pragma: nocover
+      build_id = 8882749049375545216
+    else:
+      build_id = self.m.buildbucket.build.id
+
+    return self.m.buildbucket.get(build_id)
+
   def add_default_entries(self):
     """These fields are available at the start of the build."""
-    build = self.m.buildbucket.get(self.m.buildbucket.build.id)
+    build = self._safe_buildbucket_get_self()
     self._metadata['buildbucket_id'] = build.id
     builder_name = build.builder.builder
     self._metadata['builder-name'] = builder_name
@@ -156,7 +165,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
         'board': '',
     }]
 
-    build = self.m.buildbucket.get(self.m.buildbucket.build.id)
+    build = self._safe_buildbucket_get_self()
     unittest_step = self._get_unittest_step(build.steps)
     if unittest_step:
       success = unittest_step.status == common_pb2.SUCCESS
@@ -186,7 +195,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
         'summary': '',
     }
 
-    build = self.m.buildbucket.get(self.m.buildbucket.build.id)
+    build = self._safe_buildbucket_get_self()
     self._metadata['time'].update({
         'finish': self._print_time(current_secs),
         'duration': self._get_duration(current_secs, build.start_time.seconds),

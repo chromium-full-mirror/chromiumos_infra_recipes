@@ -321,7 +321,7 @@ Args:
 Returns: Result.
 ### *recipe_modules* / [bot\_cost](/recipe_modules/bot_cost)
 
-[DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [BotCostApi](/recipe_modules/bot_cost/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -343,7 +343,7 @@ Args:
 Returns:
   A float representing the cost (USD) of building this image.
 
-&mdash; **def [calculate\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#80)(self, orch_build_id, child_builds, parent_step):**
+&mdash; **def [calculate\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#84)(self, orch_build_id, child_builds, parent_step):**
 
 Calculates the cost of the cq run.
 
@@ -2948,28 +2948,28 @@ Raises:
   matching predicate.
 ### *recipe_modules* / [metadata\_json](/recipe_modules/metadata_json)
 
-[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to write metadata.json into GS for GoldenEye consumption.
 
-&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#46)(self):**
+&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#55)(self):**
 
 These fields are available at the start of the build.
 
-&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#147)(self):**
+&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#156)(self):**
 
 Add stage results for DebugSymbols and Unittest stages.
 
-&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#73)(self, version_dict):**
+&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#82)(self, version_dict):**
 
 Update metadata with version info.
 
 Args:
   version_dict(dict): Map containing version info.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#196)(self, config, target):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#205)(self, config, target):**
 
 Returns a context that upload final metadata.json to GS.
 
@@ -2977,7 +2977,7 @@ Args:
   config(BuilderConfig): builder config of this builder.
   target (BuildTarget): The build target of this builder.
 
-&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#174)(self, config, target, success):**
+&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#183)(self, config, target, success):**
 
 Finish the build stats and upload metadata.json.
 
@@ -2986,13 +2986,13 @@ Args:
   target (BuildTarget): The build target of this builder.
   success(bool): Did this build pass.
 
-&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#86)(self):**
+&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#95)(self):**
 
 Get the metadata dict. Should only be used for unittesting.
 
 Returns: dict, metadata info.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#108)(self, config, build_target, partial=False):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#117)(self, config, build_target, partial=False):**
 
 Upload metadata to GS at its current state.
 
@@ -3001,7 +3001,7 @@ Args:
   target (BuildTarget): The build target of this builder.
   partial(bool): whether the metadata is incomplete.
 
-&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#93)(self, filename):**
+&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#102)(self, filename):**
 
 Write metadata dict to a tempfile.
 
