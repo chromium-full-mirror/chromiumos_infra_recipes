@@ -294,67 +294,80 @@ def make_message(api, manifest_ref, gerrit_commits, disable_gerrit_commits):
 
 
 def GenTests(api):
-  yield (api.test('basic') + #
-         api.properties(AnnealingProperties(manifest_ref='snapshot')))
+  yield api.test(
+      'basic',
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+  )
 
-  yield (
-      api.test('has-manifest-change') +  #
-      api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
+  yield api.test(
+      'has-manifest-change',
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
-              '<manifest visibility="external"><project name="NAME" revision="TO_REV"/></manifest>'))
-      +
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
           'repo manifest (2)', stdout=api.raw_io.output(
-              '<manifest visibility="internal"><project name="NAME" revision="TO_REV"/></manifest>'))
-      +
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )) +  #
+          )),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers',
-          api.gerrit.test_gerrit_change_url()))
+          api.gerrit.test_gerrit_change_url()),
+  )
 
-  yield (
-      api.test('no-gerrit-change') +  #
-      api.properties(AnnealingProperties(manifest_ref='snapshot')) +  #
+  yield api.test(
+      'no-gerrit-change',
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
-              '<manifest visibility="external"><project name="NAME" revision="TO_REV"/></manifest>'))
-      +
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
           'repo manifest (2)', stdout=api.raw_io.output(
-              '<manifest visibility="internal"><project name="NAME" revision="TO_REV"/></manifest>'))
-      +
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )) + #
+          )),
       api.git_footers.step_data(
-          'record new gerrit changes.NAME.read git footers', ''))
+          'record new gerrit changes.NAME.read git footers', ''),
+  )
 
-  yield (
-      api.test('disable-commits-in-commit-message') +  #
+  yield api.test(
+      'disable-commits-in-commit-message',
       api.properties(AnnealingProperties(
           manifest_ref='snapshot',
-          disable_gerrit_commits_in_commit_message=True)) +  #
+          disable_gerrit_commits_in_commit_message=True)),
       api.step_data(
           'repo manifest', stdout=api.raw_io.output(
-              '<manifest visibility="external"><project name="NAME" revision="TO_REV"/></manifest>'))
-      +
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
           'repo manifest (2)', stdout=api.raw_io.output(
-              '<manifest visibility="internal"><project name="NAME" revision="TO_REV"/></manifest>'))
-      +
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )) + #
+          )),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers',
-          api.gerrit.test_gerrit_change_url()))
+          api.gerrit.test_gerrit_change_url()),
+  )
 
-  yield (api.test('missing required properties') +  #
-         api.properties(AnnealingProperties()) + #
-         api.expect_exception('ValueError'))
+  yield api.test(
+      'missing required properties',
+      api.properties(AnnealingProperties()),
+      api.expect_exception('ValueError'),
+  )
