@@ -189,7 +189,8 @@ class GerritApi(recipe_api.RecipeApi):
     if test_output_data is None:
       test_output_data = lambda: self.test_api.test_gerrit_fetch_changes(input)
     return self.m.support.call('gerrit-fetch-changes', input,
-                               test_output_data=test_output_data)
+                               test_output_data=test_output_data,
+                               timeout=10 * 60)
 
   def fetch_patch_sets(self, gerrit_changes, include_files=False,
                        test_output_data=None):

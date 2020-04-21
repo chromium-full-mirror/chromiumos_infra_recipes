@@ -37,7 +37,8 @@ class SupportApi(recipe_api.RecipeApi):
       self.m.cipd.ensure(self._support_root, ensure_file)
     self._ensured = True
 
-  def call(self, tool, input_data, test_output_data=None, infra_step=True):
+  def call(self, tool, input_data, test_output_data=None, infra_step=True,
+           timeout=None):
     """Run a tool from the support package.
 
     Args:
@@ -45,12 +46,14 @@ class SupportApi(recipe_api.RecipeApi):
       input_data: Data to be passed as input to the tool (serialized to JSON).
       test_output_data (dict|list|Callable): Data to return in tests.
       infra_step (bool): Whether or not this is an infrastructure step.
+      timeout (int): Timeout of the step in seconds.
 
     Returns:
       Data passed as output from the tool (deserialized from JSON).
     """
     self.ensure_package_installed()
     tool_path = self._support_root.join('cipd-bin', tool)
-    return self.m.easy.stdout_json_step(
-        tool, [tool_path], stdin_json=input_data, test_stdout=test_output_data,
-        infra_step=infra_step)
+    return self.m.easy.stdout_json_step(tool,
+                                        [tool_path], stdin_json=input_data,
+                                        test_stdout=test_output_data,
+                                        infra_step=infra_step, timeout=timeout)

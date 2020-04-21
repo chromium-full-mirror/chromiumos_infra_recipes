@@ -482,6 +482,7 @@
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 2341, \"host\": \"chrome-internal.googlesource.com\", \"patch_set\": 0}], \"include_files\": false}",
+    "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
