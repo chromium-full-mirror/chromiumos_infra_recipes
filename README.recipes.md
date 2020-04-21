@@ -2972,7 +2972,7 @@ A module to write metadata.json into GS for GoldenEye consumption.
 
 These fields are available at the start of the build.
 
-&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#156)(self):**
+&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#160)(self):**
 
 Add stage results for DebugSymbols and Unittest stages.
 
@@ -2983,7 +2983,7 @@ Update metadata with version info.
 Args:
   version_dict(dict): Map containing version info.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#205)(self, config, target):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#209)(self, config, target):**
 
 Returns a context that upload final metadata.json to GS.
 
@@ -2991,7 +2991,7 @@ Args:
   config(BuilderConfig): builder config of this builder.
   target (BuildTarget): The build target of this builder.
 
-&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#183)(self, config, target, success):**
+&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#187)(self, config, target, success):**
 
 Finish the build stats and upload metadata.json.
 

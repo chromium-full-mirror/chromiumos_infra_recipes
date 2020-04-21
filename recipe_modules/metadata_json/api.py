@@ -126,8 +126,12 @@ class MetadataJsonApi(recipe_api.RecipeApi):
       filename = 'partial_metadata.json' if partial else 'metadata.json'
       file_path = self.write_to_file(filename)
       gs_bucket = config.artifacts.artifacts_gs_bucket
-      gs_path = self.m.cros_artifacts.artifacts_gs_path(
-          config.id.name, build_target, config.id.type)
+      try:
+        gs_path = self.m.cros_artifacts.artifacts_gs_path(
+            config.id.name, build_target, config.id.type)
+      except Exception:  # pragma: nocover
+        presentation.step_text = 'could not get GS path, exiting'
+        return
       upload_uri = 'gs://{}/{}/{}'.format(gs_bucket, gs_path, filename)
       self._upload(file_path, upload_uri)
       presentation.links['gs_link'] = self.m.urls.get_gs_path_url(upload_uri)
