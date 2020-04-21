@@ -57,40 +57,59 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield (api.test('manifest-filename-missing') + api.properties(manifest={}) +
-         api.expect_exception('ValueError'))
-  yield (api.test('manifest-gitiles-host-missing') + api.properties(
-      manifest={'filename': 'foo.xml'}) + api.expect_exception('ValueError'))
-  yield (api.test('manifest-gitiles-project-missing') + api.properties(
-      manifest={
+  yield api.test(
+      'manifest-filename-missing',
+      api.properties(manifest={}),
+      api.expect_exception('ValueError'),
+  )
+
+  yield api.test(
+      'manifest-gitiles-host-missing',
+      api.properties(manifest={'filename': 'foo.xml'}),
+      api.expect_exception('ValueError'),
+  )
+
+  yield api.test(
+      'manifest-gitiles-project-missing',
+      api.properties(manifest={
           'filename': 'foo.xml',
           'gitiles_commit': {
               'host': 'chromium.googlesource.com'
           }
-      }) + api.expect_exception('ValueError'))
-  yield (api.test('manifest-gitiles-id-ref-missing') + api.properties(
-      manifest={
+      }),
+      api.expect_exception('ValueError'),
+  )
+
+  yield api.test(
+      'manifest-gitiles-id-ref-missing',
+      api.properties(manifest={
           'filename': 'foo.xml',
           'gitiles_commit': {
               'host': 'chromium.googlesource.com',
               'project': 'manifest/internal'
           }
-      }) + api.expect_exception('ValueError'))
+      }),
+      api.expect_exception('ValueError'),
+  )
 
-  yield (api.test('manifest-valid') + api.properties(
-      manifest={
-          'filename': 'foo.xml',
-          'gitiles_commit': {
-              'host': 'chromium.googlesource.com',
-              'project': 'manifest/internal',
-              'ref': 'refs/head/master'
-          }
-      },
-      push=True,
-      force=True,
-      branch_info={
-          'name': 'my_custom_branch',
-          'descriptor': 'nami',
-          'type': Branch.CUSTOM
-      }) + api.step_data('fetch manifest.fetch refs/head/master:foo.xml',
-                         api.gitiles.make_encoded_file('foo')))
+  yield api.test(
+      'manifest-valid',
+      api.properties(
+          manifest={
+              'filename': 'foo.xml',
+              'gitiles_commit': {
+                  'host': 'chromium.googlesource.com',
+                  'project': 'manifest/internal',
+                  'ref': 'refs/head/master'
+              }
+          },
+          push=True,
+          force=True,
+          branch_info={
+              'name': 'my_custom_branch',
+              'descriptor': 'nami',
+              'type': Branch.CUSTOM
+          }),
+      api.step_data('fetch manifest.fetch refs/head/master:foo.xml',
+                    api.gitiles.make_encoded_file('foo')),
+  )
