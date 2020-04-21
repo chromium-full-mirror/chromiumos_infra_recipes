@@ -64,17 +64,19 @@ class SwarmingCli(recipe_api.RecipeApi):
     )
     return step
 
-  def get_task_counts(self, dimensions=None, state=None):
+  def get_task_counts(self, policy, dimensions, state):
     """Retrieves the count of tasks from Swarming based on dimensions.
 
     Args:
+      policy (BotPolicy): Config defined Policy for a bot group.
       dimensions (str): string containing key, value dimensions to query swarming.
       state (str): state of the tasks to query
     """
     dim_args = ['state={}&'.format(state)]
     for dim in dimensions:
       dim_args.append('tags={}&'.format(dim))
-    dim_args.append('start={}'.format(self._calculate_epoch_start()))
+    dim_args.append('start={}'.format(
+        self._calculate_epoch_start(policy.lookback_hours)))
     cmd = [
         'query', '--swarming', CHROMEOS_SWARMING_URL,
         'tasks/count?' + ''.join(dim_args).rstrip('&')
@@ -84,13 +86,17 @@ class SwarmingCli(recipe_api.RecipeApi):
         lambda: self.test_api.swarming_task_step_test_data(dimensions))
     return step
 
-  def _calculate_epoch_start(self):
+  def _calculate_epoch_start(self, lookback_hours=-24):
     """Determines the epoch time needed for Swarming CL task queries.
 
     Calculates current epoch time minus twenty-four hour delta.
 
+    Args:
+      lookback_hours (sint): signed int for number of hours to lookback
+        for Swarming tasks.
+
     Returns:
       float, time since epoch in seconds.
     """
-    return ((self.m.time.utcnow() + datetime.timedelta(hours=-24)) -
+    return ((self.m.time.utcnow() + datetime.timedelta(hours=lookback_hours)) -
             datetime.datetime(1970, 1, 1)).total_seconds()

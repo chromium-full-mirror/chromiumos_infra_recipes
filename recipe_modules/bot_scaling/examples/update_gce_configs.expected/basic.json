@@ -84,7 +84,7 @@
       "query",
       "--swarming",
       "chromeos-swarming.appspot.com",
-      "tasks/count?state=RUNNING&start=1336913601.5"
+      "tasks/count?state=RUNNING&start=1337000001.5"
     ],
     "infra_step": true,
     "name": "get task query result",
@@ -99,7 +99,7 @@
       "query",
       "--swarming",
       "chromeos-swarming.appspot.com",
-      "tasks/count?state=PENDING&start=1336913603.0"
+      "tasks/count?state=PENDING&start=1337000003.0"
     ],
     "infra_step": true,
     "name": "get task query result (2)",

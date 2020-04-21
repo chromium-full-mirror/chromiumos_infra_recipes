@@ -38,9 +38,11 @@ def RunSteps(api):
   ]
   query_dim = api.bot_scaling.unpack_policy_dimensions(dimensions)
   TASK_STATES = ['RUNNING', 'PENDING']
+  bot_policy = api.bot_scaling.test_api.robocrop_bot_policy_config()
+  bot_policy.lookback_hours = -48
   for dim in query_dim:
     for state in TASK_STATES:
-      task_count = api.swarming_cli.get_task_counts(dim, state)
+      task_count = api.swarming_cli.get_task_counts(bot_policy, dim, state)
   api.assertions.assertEqual(int(task_count.get('busy', 0)), 0)
 
 

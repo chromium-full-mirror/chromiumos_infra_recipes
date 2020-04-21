@@ -3546,11 +3546,12 @@ Retrieves the count of bots from Swarming based on dimensions.
 Args:
   dimensions (tuple): string containing key, value dimensions to query swarming.
 
-&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#67)(self, dimensions=None, state=None):**
+&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#67)(self, policy, dimensions, state):**
 
 Retrieves the count of tasks from Swarming based on dimensions.
 
 Args:
+  policy (BotPolicy): Config defined Policy for a bot group.
   dimensions (str): string containing key, value dimensions to query swarming.
   state (str): state of the tasks to query
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
