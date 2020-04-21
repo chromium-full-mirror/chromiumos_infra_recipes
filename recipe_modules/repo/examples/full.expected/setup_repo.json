@@ -184,7 +184,9 @@
       "--no-tags",
       "--optimized-fetch",
       "--cache-dir",
-      "/tmp/cache"
+      "/tmp/cache",
+      "--retry-fetches",
+      "8"
     ],
     "infra_step": true,
     "name": "repo sync (2)"

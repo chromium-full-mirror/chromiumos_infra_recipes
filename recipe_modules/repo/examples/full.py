@@ -34,7 +34,8 @@ def RunSteps(api):
     api.repo.sync()
     api.repo.sync(force_sync=True, detach=True, current_branch=True, jobs=99,
                   manifest_name='snapshot.xml', no_tags=True,
-                  optimized_fetch=True, cache_dir='/tmp/cache')
+                  optimized_fetch=True, cache_dir='/tmp/cache',
+                  retry_fetches=8)
 
     api.repo.sync_manifest('<manifest></manifest>')
 

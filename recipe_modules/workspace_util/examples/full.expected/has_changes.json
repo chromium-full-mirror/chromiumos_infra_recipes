@@ -398,12 +398,14 @@
       "--jobs",
       "8",
       "--no-tags",
-      "--optimized-fetch"
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.repo sync",
-    "timeout": 3600,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -458,7 +460,9 @@
       "--detach",
       "--manifest-name",
       "../../../../[CLEANUP]/manifest_tmp_1",
-      "--optimized-fetch"
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -938,12 +942,14 @@
       "--jobs",
       "8",
       "--no-tags",
-      "--optimized-fetch"
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout (2).repo sync",
-    "timeout": 3600,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

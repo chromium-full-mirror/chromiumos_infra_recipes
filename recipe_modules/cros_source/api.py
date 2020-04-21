@@ -23,6 +23,7 @@ DEFAULT_CACHE_SYNC_OPTS = dict(
     jobs=8,
     optimized_fetch=True,
     timeout=3600,
+    retry_fetches=8,
 )
 
 STAGING_INIT_OPTS = dict(repo_branch='master')
@@ -172,7 +173,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
     with self.m.step.nest('sync to snapshot'):
       snapshot_xml = self._get_snapshot(gitiles_commit)
       self.m.repo.sync_manifest(manifest_data=snapshot_xml, detach=True,
-                                optimized_fetch=True)
+                                optimized_fetch=True, retry_fetches=8)
 
   def _get_snapshot(self, gitiles_commit):
     """Returns the snapshot to use.
