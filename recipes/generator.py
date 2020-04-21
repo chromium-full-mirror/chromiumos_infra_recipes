@@ -353,63 +353,112 @@ def GenTests(api):
       ),
   ]
 
-  yield (api.test('with-uprev-do-nothing-policy') + api.properties(
-      existing_cls_policy=DO_NOTHING, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+  yield api.test(
+      'with-uprev-do-nothing-policy',
+      api.properties(existing_cls_policy=DO_NOTHING, **properties),
+      api.scheduler(triggers=gitiles_triggers),
+      api.git.diff_check(True),
+  )
 
-  yield (api.test('with-uprev-do-nothing-policy-init-sdk') + api.properties(
-      existing_cls_policy=DO_NOTHING, init_sdk=True, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+  yield api.test(
+      'with-uprev-do-nothing-policy-init-sdk',
+      api.properties(existing_cls_policy=DO_NOTHING,
+                     init_sdk=True, **properties),
+      api.scheduler(triggers=gitiles_triggers),
+      api.git.diff_check(True),
+  )
 
-  yield (api.test('with-uprev-dry-run-policy') + api.properties(
-      existing_cls_policy=DRY_RUN, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+  yield api.test(
+      'with-uprev-dry-run-policy',
+      api.properties(existing_cls_policy=DRY_RUN, **properties),
+      api.scheduler(triggers=gitiles_triggers),
+      api.git.diff_check(True),
+  )
 
-  yield (api.test('with-uprev-full-run-policy') + api.properties(
-      existing_cls_policy=FULL_RUN, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+  yield api.test(
+      'with-uprev-full-run-policy',
+      api.properties(existing_cls_policy=FULL_RUN, **properties),
+      api.scheduler(triggers=gitiles_triggers),
+      api.git.diff_check(True),
+  )
 
-  yield (api.test('with-uprev-abandon-policy') + api.properties(
-      existing_cls_policy=ABANDON, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+  yield api.test(
+      'with-uprev-abandon-policy',
+      api.properties(existing_cls_policy=ABANDON, **properties),
+      api.scheduler(triggers=gitiles_triggers),
+      api.git.diff_check(True),
+  )
 
-  yield (api.test('with-uprev-abandon-outdated-policy') + api.properties(
-      outdated_cls_policy=OUTDATED_ABANDON, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+  yield api.test(
+      'with-uprev-abandon-outdated-policy',
+      api.properties(outdated_cls_policy=OUTDATED_ABANDON, **properties),
+      api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True),
+  )
 
-  yield (api.test('with-uprev-abandon-no-nothing-policy') + api.properties(
-      outdated_cls_policy=OUTDATED_DO_NOTHING, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+  yield api.test(
+      'with-uprev-abandon-no-nothing-policy',
+      api.properties(outdated_cls_policy=OUTDATED_DO_NOTHING, **properties),
+      api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True),
+  )
 
-  yield (api.test('with-uprev-comment-outdated-policy') + api.properties(
-      outdated_cls_policy=OUTDATED_LEAVE_COMMENT, **properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True))
+  yield api.test(
+      'with-uprev-comment-outdated-policy',
+      api.properties(outdated_cls_policy=OUTDATED_LEAVE_COMMENT, **properties),
+      api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True),
+  )
 
-  yield api.test('no-package-info') + api.expect_exception('ValueError')
+  yield api.test(
+      'no-package-info',
+      api.expect_exception('ValueError'),
+  )
 
-  yield (api.test('no-reviewers') + api.properties(package_info=package) +
-         api.expect_exception('ValueError') + api.git.diff_check(True))
+  yield api.test(
+      'no-reviewers',
+      api.properties(package_info=package),
+      api.expect_exception('ValueError'),
+      api.git.diff_check(True),
+  )
 
-  yield (api.test('blank-reviewer') + api.properties(
-      package_info=package, reviewers=[{}]) + api.expect_exception('ValueError')
-         + api.git.diff_check(True))
+  yield api.test(
+      'blank-reviewer',
+      api.properties(package_info=package, reviewers=[{}]),
+      api.expect_exception('ValueError'),
+      api.git.diff_check(True),
+  )
 
-  yield (api.test('no-triggers') + api.properties(**properties) +
-         api.scheduler(triggers=[]) + api.expect_exception('ValueError') +
-         api.git.diff_check(True))
+  yield api.test(
+      'no-triggers',
+      api.properties(**properties),
+      api.scheduler(triggers=[]),
+      api.expect_exception('ValueError'),
+      api.git.diff_check(True),
+  )
 
-  yield (api.test('non-gitiles-triggers') + api.properties(**properties) +
-         api.scheduler(triggers=[
-             triggers_pb2.Trigger(id='456', webui=triggers_pb2.WebUITrigger()),
-         ]) + api.expect_exception('ValueError') + api.git.diff_check(True))
+  yield api.test(
+      'non-gitiles-triggers',
+      api.properties(**properties),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(id='456', webui=triggers_pb2.WebUITrigger()),
+      ]),
+      api.expect_exception('ValueError'),
+      api.git.diff_check(True),
+  )
 
-  yield (api.test('without-uprev') + api.properties(**properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.step_data(
-             'try uprev chromeos-base/chromite.uprev versioned package'
-             '.read output file', api.file.read_raw(content='{}')))
+  yield api.test(
+      'without-uprev',
+      api.properties(**properties),
+      api.scheduler(triggers=gitiles_triggers),
+      api.step_data(
+          'try uprev chromeos-base/chromite.uprev versioned package'
+          '.read output file', api.file.read_raw(content='{}')),
+  )
 
-  yield (api.test('no-changes') + api.properties(**properties) +
-         api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(False))
+  yield api.test(
+      'no-changes',
+      api.properties(**properties),
+      api.scheduler(triggers=gitiles_triggers),
+      api.git.diff_check(False),
+  )
 
   # Set up for testing chromeos-base/chromeos-chrome trigger filtering.
   package = PackageInfo(category='chromeos-base',
@@ -445,7 +494,9 @@ def GenTests(api):
 
   # Testing direct invocation, that is, not invoked with properties from
   # a gitiles poller through api.scheduler.
-  yield (api.test('invoked-directly') +
-         api.properties(**properties) +
-         api.properties(triggers=[json_format.MessageToDict(t)
-                                  for t in gitiles_triggers]))
+  yield api.test(
+      'invoked-directly',
+      api.properties(**properties),
+      api.properties(triggers=[json_format.MessageToDict(t)
+                               for t in gitiles_triggers]),
+  )
