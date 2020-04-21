@@ -24,10 +24,6 @@ from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitResponse, SchedulerTrafficSplitResponses
 from PB.test_platform.steps.execution import ExecuteRequest, ExecuteRequests
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
-from PB.test_platform.steps.compute_backfill import \
-    ComputeBackfillRequest, ComputeBackfillRequests
-from PB.test_platform.steps.compute_backfill import \
-    ComputeBackfillResponse, ComputeBackfillResponses
 from PB.test_platform.request import Request
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.config.config import Config
@@ -226,27 +222,6 @@ def _ensure_all_requests_enumerated(requests, enumerations):
     raise ValueError('No enumerations for requests tagged %s' % missing)
 
 
-def compute_backfills(api, requests, enumerations, responses):
-  """Compute backfill requests for this build.
-
-  Args:
-  requests: {tag: test_platform.Request} dict.
-  enumerations: {tag: EnumerationResponse} dict.
-  responses: {tag: ExecuteResponse} dict.
-  """
-  with api.step.nest('compute backfill'):
-    reqs = ComputeBackfillRequests(
-        tagged_requests={
-            t: ComputeBackfillRequest(
-                request=r,
-                enumeration=enumerations[t],
-                execution=responses.get(t, ExecuteResponse()),
-            ) for t, r in requests.iteritems()
-        })
-    backfill = api.cros_test_platform.compute_backfill(reqs)
-    return backfill.tagged_responses
-
-
 def RunSteps(api, properties):
   requests = _get_requests_from_properties(properties)
   validate_requests(api, requests)
@@ -259,8 +234,7 @@ def RunSteps(api, properties):
     enumerations = enumerate_tests(api, requests)
     responses = execute(api, requests, enumerations, properties.config)
     tagged_responses = responses.tagged_responses
-    backfills = compute_backfills(api, requests, enumerations, tagged_responses)
-    set_output_properties(api, responses, backfills)
+    set_output_properties(api, responses)
     postprocess(api, requests, tagged_responses)
   summarize(api, enumerations, tagged_responses)
 
@@ -345,7 +319,8 @@ def _base64_compress_proto(proto):
   wire_format = proto.SerializeToString()
   return wire_format.encode('zlib_codec').encode('base64_codec')
 
-def set_output_properties(api, responses, backfills):
+
+def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
     marshalled = {}
@@ -356,13 +331,6 @@ def set_output_properties(api, responses, backfills):
       step.properties['response'] = marshalled['default']
 
     step.properties['compressed_responses'] = _base64_compress_proto(responses)
-    # TODO(crbug.com/1028732) Re-enable once a mitigation has landed on
-    # buildbucket to bump up the limitation on output properties size.
-    #
-    # marshalled = {}
-    # for tag, backfill in backfills.iteritems():
-    #   marshalled[tag] = _marshal_proto_to_json(backfill.request)
-    # step.properties['backfills'] = marshalled
 
 
 def _log_enumeration_errors(api, enumeration):
@@ -664,16 +632,7 @@ def GenTests(api):
                                       ),
                                   ],
                               )
-                      })))) +  #
-      api.step_data(
-          'compute backfill.call binary.compute-backfill',
-          stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  ComputeBackfillResponses(tagged_responses={
-                      'default': ComputeBackfillResponse(
-                          request=Request(),
-                      )
-                  })))))
+                      })))))
 
   yield (
       api.test('end-to-end skylab execution with failed then passed tasks') +  #
