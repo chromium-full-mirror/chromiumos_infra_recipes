@@ -46,7 +46,9 @@ DEFAULT_BUILDERS = [
 ]
 
 # URL for the ChromeOS CI recipes repo.
-RECIPE_REPO_URL = 'https://chromium.googlesource.com/chromiumos/infra/recipes'
+RECIPE_REPO_HOST = 'chromium.googlesource.com'
+RECIPE_REPO_PROJECT = 'chromiumos/infra/recipes'
+RECIPE_REPO_URL = 'https://{}/{}'.format(RECIPE_REPO_HOST, RECIPE_REPO_PROJECT)
 
 # A Git footer than can be included in commit messages to tell the recipe
 # tester to skip builders. See the "Test Recipes Presubmit" in the README for
@@ -95,7 +97,8 @@ def _apply_gerrit_changes(api):
   """
   with api.step.nest('apply gerrit changes'):
     patch_sets = api.gerrit.fetch_patch_sets(
-        api.buildbucket.build.input.gerrit_changes)
+        x for x in api.buildbucket.build.input.gerrit_changes
+        if x.project == RECIPE_REPO_PROJECT)
 
     for patch_set in patch_sets:
       commit_id = api.git.fetch_ref(patch_set.git_fetch_url,
@@ -167,9 +170,12 @@ def _launch_builders(api, builders):
 
         # TODO(smcallis): remove 'else' branch once led mock data is updated
         recipe_names = None
-        buildbucket  = intermediate_result.result.get('buildbucket')
+        buildbucket = intermediate_result.result.get('buildbucket')
         if buildbucket:
-          recipe_names = set([buildbucket['bbagent_args']['build']['input']['properties']['recipe']])
+          recipe_names = set([
+              buildbucket['bbagent_args']['build']['input']['properties']
+              ['recipe']
+          ])
         else:
           recipe_names = set(
               job_slice['userland']['recipe_name']
@@ -466,16 +472,42 @@ def GenTests(api):
                                      failure=True)
         ]))
 
+  def try_build(project, bucket, builder):
+    """Return a tryb_build for the recipes repo.
+
+    Returns:
+      recipe_test_api.TestData object.
+    """
+    return api.buildbucket.try_build(project=project, bucket=bucket,
+                                     builder=builder, git_repo=RECIPE_REPO_URL)
+
   def two_cl_try_build(project, bucket, builder):
     """Return a try_build with two CLs attached to it.
 
     Returns:
       recipe_test_api.TestData object.
     """
-    msg = api.buildbucket.try_build_message(project, bucket, builder)
+    msg = api.buildbucket.try_build_message(project, bucket, builder,
+                                            git_repo=RECIPE_REPO_URL)
     cl1 = msg.input.gerrit_changes[0]
     msg.input.gerrit_changes.extend([
         common_pb2.GerritChange(host=cl1.host, project=cl1.project,
+                                change=cl1.change + 1,
+                                patchset=cl1.patchset + 3)
+    ])
+    return api.buildbucket.build(msg)
+
+  def two_cl_try_build_with_other_repo(project, bucket, builder):
+    """Return a try_build with two CLs attached to it.
+
+    Returns:
+      recipe_test_api.TestData object.
+    """
+    msg = api.buildbucket.try_build_message(project, bucket, builder,
+                                            git_repo=RECIPE_REPO_URL)
+    cl1 = msg.input.gerrit_changes[0]
+    msg.input.gerrit_changes.extend([
+        common_pb2.GerritChange(host=cl1.host, project='chromiumos/chromite',
                                 change=cl1.change + 1,
                                 patchset=cl1.patchset + 3)
     ])
@@ -495,8 +527,7 @@ def GenTests(api):
     import json
     return api.step_data(
         launch_step_name(builder, 'led get-build'), stdout=api.json.output(
-            json.loads(
-"""
+            json.loads("""
 {
   "buildbucket": {
     "bbagent_args": {
@@ -519,8 +550,7 @@ def GenTests(api):
           TestRecipesProperties(
               builders=['staging-Annealing', 'staging-chromite-postsubmit'])
       ) +  #
-      api.buildbucket.try_build(project='chromeos', bucket='infra',
-                                builder='test-recipes') +  #
+      try_build(project='chromeos', bucket='infra', builder='test-recipes') +  #
       # No builders are skipped
       get_non_skipped_builders_test_data() +  #
       # Buildbucket search results.
@@ -540,31 +570,25 @@ def GenTests(api):
       # led launch results. Note that only annealing is launched.
       led_get_launch_test_data(builder='staging-Annealing'))
 
-
   yield (
       api.test('new led get-build format') +  #
 
       # Specify builder to run.
-      api.properties(
-          TestRecipesProperties(
-              builders=['staging-Annealing'])
-      ) +  #
-      api.buildbucket.try_build(project='chromeos', bucket='infra',
-                                builder='test-recipes') +  #
+      api.properties(TestRecipesProperties(builders=['staging-Annealing'])) +  #
+      try_build(project='chromeos', bucket='infra', builder='test-recipes') +  #
       # No builders are skipped
       get_non_skipped_builders_test_data() +  #
       # Buildbucket search results.
       buildbucket_search_test_data('staging-Annealing') +  #
       # led get-build results.
       led_get_build_test_data_new(builder='staging-Annealing',
-                              recipe_name='annealing') +  #
+                                  recipe_name='annealing') +  #
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']) +  #
       # led launch results. Note that only annealing is launched.
       led_get_launch_test_data(builder='staging-Annealing'))
-
 
   yield (
       api.test('two_changes') +  #
@@ -593,14 +617,39 @@ def GenTests(api):
       led_get_launch_test_data(builder='staging-Annealing'))
 
   yield (
+      api.test('two_changes_mixed_repos') +  #
+      # Specify two builders to run.
+      api.properties(
+          TestRecipesProperties(
+              builders=['staging-Annealing', 'staging-chromite-postsubmit'])
+      ) +  #
+      two_cl_try_build_with_other_repo(project='chromeos', bucket='infra',
+                                       builder='test-recipes') +  #
+      # Buildbucket search results.
+      buildbucket_search_test_data('staging-Annealing') +  #
+      buildbucket_search_test_data('staging-chromite-postsubmit') +  #
+      # led get-build results.
+      led_get_build_test_data(builder='staging-Annealing',
+                              recipe_name='annealing') +  #
+      led_get_build_test_data(builder='staging-chromite-postsubmit',
+                              recipe_name='test_chromite') +  #
+      # recipe analyze results. Note that the test_chromite recipe isn't
+      # affected.
+      recipe_analyze_test_data(builder='staging-Annealing',
+                               recipes=['annealing']) +  #
+      recipe_analyze_test_data(builder='staging-chromite-postsubmit',
+                               recipes=[]) +  #
+      # led launch results. Note that only annealing is launched.
+      led_get_launch_test_data(builder='staging-Annealing'))
+
+  yield (
       api.test('skipped_builder') +  #
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
               builders=['staging-Annealing', 'staging-chromite-postsubmit'])
       ) +  #
-      api.buildbucket.try_build(project='chromeos', bucket='infra',
-                                builder='test-recipes') +  #
+      try_build(project='chromeos', bucket='infra', builder='test-recipes') +  #
       # The annealing builder is skipped
       get_non_skipped_builders_test_data(skipped_builders=['staging-Annealing']
                                         ) +  #
@@ -618,8 +667,7 @@ def GenTests(api):
       api.test('failed_swarming_task') +  #
       # Specify one builder to run.
       api.properties(TestRecipesProperties(builders=['staging-Annealing'])) +  #
-      api.buildbucket.try_build(project='chromeos', bucket='infra',
-                                builder='test-recipes') +  #
+      try_build(project='chromeos', bucket='infra', builder='test-recipes') +  #
       # No builders are skipped
       get_non_skipped_builders_test_data() +  #
       # Buildbucket search results
@@ -635,28 +683,24 @@ def GenTests(api):
       # swarming TaskResults contain a failed task.
       collect_results_failed_test_data())
 
-  yield (api.test('invalid_skip_builder_footer') +  #
-         # Specify two builders to run.
-         api.properties(
-             TestRecipesProperties(
-                 builders=['staging-Annealing', 'staging-chromite-postsubmit'])
-         ) +  #
-         # The skipped builder isn't part of the specified builders.
-         get_non_skipped_builders_test_data(skipped_builders=['other-builder'])
-         +  #
-         api.buildbucket.try_build(project='chromeos', bucket='infra',
-                                   builder='test-recipes') +  #
-         api.expect_exception('ValueError'))
+  yield api.test(
+      'invalid_skip_builder_footer',
+      # Specify two builders to run.
+      api.properties(
+          TestRecipesProperties(
+              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
+      # The skipped builder isn't part of the specified builders.
+      get_non_skipped_builders_test_data(skipped_builders=['other-builder']),
+      try_build(project='chromeos', bucket='infra', builder='test-recipes'),
+      api.expect_exception('ValueError'))
 
-  yield (api.test('no_successful_builds') +  #
-         get_non_skipped_builders_test_data() +  #
-         api.buildbucket.try_build(project='chromeos', bucket='infra',
-                                   builder='test-recipes'))
+  yield api.test(
+      'no_successful_builds', get_non_skipped_builders_test_data(),
+      try_build(project='chromeos', bucket='infra', builder='test-recipes'))
 
-  yield (api.test('no_gerrit_changes') +  #
-         api.expect_exception('ValueError'))
+  yield api.test('no_gerrit_changes', api.expect_exception('ValueError'))
 
-  yield (api.test('invalid_builders') +  #
-         api.properties(TestRecipesProperties(builders=['production-builder']))
-         +  #
-         api.expect_exception('ValueError'))
+  yield api.test(
+      'invalid_builders',
+      api.properties(TestRecipesProperties(builders=['production-builder'])),
+      api.expect_exception('ValueError'))
