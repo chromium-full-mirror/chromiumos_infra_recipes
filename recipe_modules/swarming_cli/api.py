@@ -98,5 +98,6 @@ class SwarmingCli(recipe_api.RecipeApi):
     Returns:
       float, time since epoch in seconds.
     """
-    return ((self.m.time.utcnow() + datetime.timedelta(hours=lookback_hours)) -
+    hours_back = lookback_hours or -24
+    return ((self.m.time.utcnow() + datetime.timedelta(hours=hours_back)) -
             datetime.datetime(1970, 1, 1)).total_seconds()
