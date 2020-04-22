@@ -92,6 +92,9 @@ class RepoApi(recipe_api.RecipeApi):
       ]
       self._step(git_cmd, 'retry clear git locks')
 
+  def version(self):
+    """Prints the current version information of repo."""
+    self._step(['version'], 'repo version', infra_step=True)
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
@@ -448,6 +451,8 @@ class RepoApi(recipe_api.RecipeApi):
       * root_path (Path): Path to the repo root.
     """
     with self.m.step.nest('repo binary update'):
+      self.version()
       with self.m.context(cwd=root_path, infra_steps=True):
         cmd = ['selfupdate']
         self._step(cmd, ok_ret='any')
+      self.version()

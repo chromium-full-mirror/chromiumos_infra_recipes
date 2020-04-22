@@ -395,11 +395,35 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "ensure synced checkout.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -421,7 +445,7 @@
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.repo sync",
-    "timeout": 10800,
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
