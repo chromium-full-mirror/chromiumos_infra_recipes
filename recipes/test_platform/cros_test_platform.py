@@ -313,6 +313,14 @@ def _get_requests_from_properties(properties):
   raise ValueError('Must set at least one of request and requests')
 
 
+def _base64_compress_json(proto):
+  # Keep this in sync with recipe_modules/skylab/test_api.py
+  # TODO(jkop, chromium:1067440): refactor both to call the same code
+  responses_dict = json_format.MessageToDict(proto)
+  tagged_responses = json.dumps(responses_dict["taggedResponses"])
+  return tagged_responses.encode('zlib_codec').encode('base64_codec')
+
+
 def _base64_compress_proto(proto):
   # Keep this in sync with recipe_modules/skylab/test_api.py
   # TODO(jkop, chromium:1067440): refactor both to call the same code
@@ -331,6 +339,9 @@ def set_output_properties(api, responses):
       step.properties['response'] = marshalled['default']
 
     step.properties['compressed_responses'] = _base64_compress_proto(responses)
+    step.properties['compressed_json_responses'] = _base64_compress_json(
+        responses
+    )
 
 
 def _log_enumeration_errors(api, enumeration):

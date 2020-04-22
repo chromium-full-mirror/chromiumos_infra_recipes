@@ -79,6 +79,14 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
     return build_pb2.Build(
         id=id, output=build_pb2.Build.Output(properties=prop_struct))
 
+  def _base64_compress_json(self, proto):
+    # Keep this in sync with recipes/test_platform/cros_test_platform.py
+    # TODO(jkop, chromium:1067440): refactor both to call the same code
+    responses_dict = json_format.MessageToDict(proto)
+    tagged_responses = json.dumps(responses_dict["taggedResponses"])
+    return tagged_responses.encode('zlib_codec').encode('base64_codec')
+
+
   def _base64_compress_proto(self, proto):
     # Keep this in sync with recipes/test_platform/cros_test_platform.py
     # TODO(jkop, chromium:1067440): refactor both to call the same code
@@ -105,6 +113,9 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
     comp_string = self._base64_compress_proto(responses_obj)
     overall = {"compressed_responses": comp_string }
     if _json:
+      overall['compressed_json_responses'] = self._base64_compress_json(
+          responses_obj
+      )
       overall["responses"]= responses_blob
     return json_format.Parse(json.dumps(overall), struct_pb2.Struct())
 

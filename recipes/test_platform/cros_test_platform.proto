@@ -47,4 +47,10 @@ message CrosTestPlatformProperties {
   // This consists of an ExecuteResponses proto, compressed and converted to
   // base64 encoding for safe transmission as a string.
   string compressed_responses = 8;
+
+  // This consists of an ExecuteResponses proto in JSON format, compressed and
+  // converted to base64 encoding for safe transmission as a string. It is an
+  // interim measure for switching off the responses field, which has become
+  // an urgent problem for message size. See crbug.com/1073551
+  string compressed_json_responses = 9 [deprecated = true];
 }

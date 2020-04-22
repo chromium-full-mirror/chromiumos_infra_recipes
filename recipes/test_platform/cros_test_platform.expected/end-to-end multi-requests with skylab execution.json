@@ -319,6 +319,7 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkrLLCouUbJSqFYqLkksSQWzylKLUjKTQaJKYa5BLp7OIfEBjsHBri5KOgpKOZlpqc6VyTkg\\npUo+nm6u8c6Rzj5A0t83wMc1BKioFqiqJLE4Oyi1uDSnpBioLprKpufkp4cW5YCUAFnFVvr6SYlF\\nQFylBLUZKpmWn48ql5eYmwqV0C1ILC5OTVGqja2tBQBJGlCe\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuJiTcssKi4RsuQyFOJNy8+30tdPSiwC4iopFo4CAUYlLqCgbkFicXFqihZfTn56MUKFEFgF\\nAGqWEjc=\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@responses@{\"first\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@"
     ]

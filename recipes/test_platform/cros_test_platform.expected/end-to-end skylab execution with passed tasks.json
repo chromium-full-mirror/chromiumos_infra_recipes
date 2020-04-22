@@ -319,6 +319,7 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8QGOwcGuLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKgWqKoksTg7KLUYaHYxUF00lU3PyU8PLcoBKQGyiq309ZMS\\ni4C4SglqM1QyLT8fVS4vMTcVKqFbkFhcnJqiVBtbWwsAC51RWw==\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuFiT0lNSyzNKRGy5DIU4k3Lz7fS109KLALiKikWjgIBRiUuoKBuQWJxcWqKFl9OfnoxQoUQ\\nWAUAnPIS+A==\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@",
       "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}}@@@"
