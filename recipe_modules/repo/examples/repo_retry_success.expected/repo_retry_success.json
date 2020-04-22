@@ -78,17 +78,12 @@
   },
   {
     "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmcontents",
-      "[CLEANUP]/ensure"
+      "sleep",
+      "600"
     ],
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,
-    "name": "ensure synced checkout.clean up root path and retry",
+    "name": "ensure synced checkout.sleep 10 min, try repo again",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

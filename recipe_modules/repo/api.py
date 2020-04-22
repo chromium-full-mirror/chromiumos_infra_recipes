@@ -435,10 +435,9 @@ class RepoApi(recipe_api.RecipeApi):
             self.sync(**(sync_opts or {}))
             break
           except recipe_api.StepFailure:
-            if retries < 1:
-              self.m.file.rmcontents('clean up root path and retry', root_path)
-            else:
+            if retries >= 1:
               raise
+            self.m.step('sleep 10 min, try repo again', ['sleep' ,'600'])
 
       # Sanity check since `repo init` will happily reuse a repository in the
       # cwd's ancestor directories.

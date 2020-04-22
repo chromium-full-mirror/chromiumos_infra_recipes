@@ -19,7 +19,7 @@ def attempt_retry_repo(api, attempt):
     step_text = 'ensure synced checkout.repo init'
     retcode = 128
   elif attempt == 2:
-    step_text = 'ensure synced checkout.clean up root path and retry'
+    step_text = 'ensure synced checkout.sleep 10 min, try repo again'
     retcode = 0
   else:
     step_text = 'ensure synced checkout.repo sync'
