@@ -28,17 +28,25 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield (api.test('valid') + api.properties(
-      manifest_url='http://www.chromium.org/manifest.xml',
-      push=True,
-      force=True,
-      branch_info={'name': 'my_branch'},
-      new_name='renamed_branch'))
+  yield api.test(
+      'valid',
+      api.properties(manifest_url='http://www.chromium.org/manifest.xml',
+                     push=True,
+                     force=True,
+                     branch_info={'name': 'my_branch'},
+                     new_name='renamed_branch'),
+  )
 
-  yield (api.test('missing-branch-name') + api.properties(
-      manifest_url='http://www.chromium.org/manifest.xml',
-      new_name='renamed_branch') + api.expect_exception('ValueError'))
+  yield api.test(
+      'missing-branch-name',
+      api.properties(manifest_url='http://www.chromium.org/manifest.xml',
+                     new_name='renamed_branch'),
+      api.expect_exception('ValueError'),
+  )
 
-  yield (api.test('missing-new-branch-name') + api.properties(
-      manifest_url='http://www.chromium.org/manifest.xml',
-      branch_info={'name': 'my_branch'}) + api.expect_exception('ValueError'))
+  yield api.test(
+      'missing-new-branch-name',
+      api.properties(manifest_url='http://www.chromium.org/manifest.xml',
+                     branch_info={'name': 'my_branch'}),
+      api.expect_exception('ValueError'),
+  )
