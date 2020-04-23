@@ -70,7 +70,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   relevance = api.sysroot_util.update_for_artifact_build(
       None, config.artifacts, config.build.prepare_for_build.additional_args,
       force_relevance=force_relevant_build)
-  if relevance == Relevance.POINTLESS:
+  if relevance == Relevance.POINTLESS and not force_relevant_build:
     return
 
   api.cros_sdk.uprev_packages(build_targets=[build_target])
@@ -166,6 +166,19 @@ def GenTests(api):
           'input_artifact_gs_locations':
               ['chromeos-image-archive/BUILDER/VERSION-BUILD_ID']
       }]))
+
+  yield api.test(
+      'forced-pointless', test_build(),
+      api.properties(force_relevant_build=True, input_artifacts=[{
+          'input_artifact_type':
+              BuilderConfig.Artifacts.IMAGE_ZIP,
+          'input_artifact_gs_locations':
+              ['chromeos-image-archive/BUILDER/VERSION-BUILD_ID']
+      }]),
+      api.step_data(
+          'prepare artifacts.call chromite.api.ToolchainService/'
+          'PrepareForBuild.read output file',
+          api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
 
   yield api.test('builder-no-longer-exists',
                  test_build(builder='no-such-builder'))
