@@ -421,6 +421,7 @@
     "cmd": [],
     "name": "check build results",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@relevant_builds@no relevant builds@@@",
       "@@@STEP_LOG_END@relevant_builds@@@"
     ]
   },

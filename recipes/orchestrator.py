@@ -171,7 +171,8 @@ def RunSteps(api, properties):
       if ('relevant_build' not in build.output.properties or
           build.output.properties['relevant_build']):
         relevant_builds.append(build.builder.builder)
-    presentation.logs['relevant_builds'] = sorted(relevant_builds)
+    presentation.logs['relevant_builds'] = \
+        sorted(relevant_builds or ['no relevant builds'])
     failures = api.failures.get_build_failures(completed_builds)
 
   # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
