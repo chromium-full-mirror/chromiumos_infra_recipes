@@ -312,35 +312,35 @@ def _get_requests_from_properties(properties):
     }
   raise ValueError('Must set at least one of request and requests')
 
+#######################
+# Keep this block in sync with recipe_modules/skylab/test_api.py
+# TODO(jkop, chromium:1067440): refactor both to call the same code
+def _marshal_responses(responses):
+    responses_dict = json_format.MessageToDict(responses)
+    return responses_dict.get("taggedResponses", {})
 
-def _base64_compress_json(proto):
-  # Keep this in sync with recipe_modules/skylab/test_api.py
-  # TODO(jkop, chromium:1067440): refactor both to call the same code
-  responses_dict = json_format.MessageToDict(proto)
-  tagged_responses = json.dumps(responses_dict["taggedResponses"])
-  return tagged_responses.encode('zlib_codec').encode('base64_codec')
-
+def _base64_compress_dict(some_dict):
+  return json.dumps(some_dict).encode('zlib_codec').encode('base64_codec')
 
 def _base64_compress_proto(proto):
-  # Keep this in sync with recipe_modules/skylab/test_api.py
-  # TODO(jkop, chromium:1067440): refactor both to call the same code
   wire_format = proto.SerializeToString()
   return wire_format.encode('zlib_codec').encode('base64_codec')
+# Keep this block in sync with recipe_modules/skylab/test_api.py
+# TODO(jkop, chromium:1067440): refactor both to call the same code
+#######################
 
 
 def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
-    marshalled = {}
-    for tag, response in responses.tagged_responses.iteritems():
-      marshalled[tag] = json_format.MessageToDict(response)
+    marshalled = _marshal_responses(responses)
     step.properties['responses'] = marshalled
     if 'default' in marshalled:
       step.properties['response'] = marshalled['default']
 
     step.properties['compressed_responses'] = _base64_compress_proto(responses)
-    step.properties['compressed_json_responses'] = _base64_compress_json(
-        responses
+    step.properties['compressed_json_responses'] = _base64_compress_dict(
+        marshalled
     )
 
 
