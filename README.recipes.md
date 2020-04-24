@@ -3847,7 +3847,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#48)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#304)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#314)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3864,7 +3864,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#291)(api):**
+&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#301)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -3874,7 +3874,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#241)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#246)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -3904,7 +3904,7 @@ Args:
 
 Returns: A list of (one) build_pb2.Build object with the process_child result.
 
-&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#353)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#363)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4813,7 +4813,7 @@ Args:
 Returns:
   path (Path): path on disk to cloned repo
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#328)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#333)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4832,7 +4832,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#309)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#314)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4842,7 +4842,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#437)(api, repo_name, repo_url, repo_path, ref, commit):**
+&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#442)(api, repo_name, repo_url, repo_path, ref, commit):**
 
 Update a ref in the remote repo to point to a given commit.  If ref
 evaluates as False, then do nothing
@@ -4870,7 +4870,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#385)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#390)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4883,7 +4883,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#426)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#431)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4891,7 +4891,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#412)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#417)(refs):**
 
 Assert the given refs start with refs/heads.
 

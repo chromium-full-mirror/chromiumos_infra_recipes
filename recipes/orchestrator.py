@@ -274,6 +274,12 @@ def schedule_wait_follow_on(api, parent_step, config,
   completed_builds = []
   follow_on = config.orchestrator.follow_on_orchestrator
 
+  # Separate out any project/bucket in the builder name.
+  parts = follow_on.name.split('/', 2)
+  project = api.buildbucket.INHERIT if len(parts) < 3 else parts[-3]
+  bucket = api.buildbucket.INHERIT if len(parts) < 2 else parts[-2]
+  builder = parts[-1]
+
   # Schedule the follow on orchestrator.
   tags = api.cros_tags.make_schedule_tags(snapshot)
   # The follow on orchestrator may or may not be in the same bucket as us, and
@@ -281,10 +287,9 @@ def schedule_wait_follow_on(api, parent_step, config,
   # from our builder config, rather than buildbucket properties.  Pass the
   # actual answers to schedule_request.
   # Pass in empty properties until we determine that we need some.
-  bucket = api.buildbucket.build.builder.bucket
   properties = api.cros_infra_config.props_for_child_build
   req = api.buildbucket.schedule_request(
-      gitiles_commit=snapshot, builder=follow_on.name, bucket=bucket,
+      gitiles_commit=snapshot, project=project, bucket=bucket, builder=builder,
       gerrit_changes=gerrit_changes, critical=True, properties=properties,
       tags=tags)
   title_fn = api.naming.get_build_title
@@ -357,10 +362,10 @@ def filter_schedule_wait_builds(api, parent_step, child_specs,
     with api.step.nest('schedule new builds') as pres:
       with api.buildbucket.with_host(api.buildbucket.HOST_PROD):
         for new_build_request in new_build_requests:
-            # request new builds and add to total existing.
-            existing_builds += api.buildbucket.schedule(
-                [new_build_request], url_title_fn=api.naming.get_build_title)
-            time.sleep(stagger_children_seconds)
+          # request new builds and add to total existing.
+          existing_builds += api.buildbucket.schedule(
+              [new_build_request], url_title_fn=api.naming.get_build_title)
+          time.sleep(stagger_children_seconds)
 
   child_specs_dict = {cs.name:cs for cs in child_specs}
   child_targets_dict = {cs.name[:cs.name.rfind('-')]:cs for cs in child_specs}
