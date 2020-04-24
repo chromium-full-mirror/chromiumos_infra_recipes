@@ -83,7 +83,7 @@ class UrlsApi(recipe_api.RecipeApi):
             task_result.name + self.get_state_suffix(task_result.state))
         if task_result.state.verdict in (TaskState.VERDICT_FAILED,
                                          TaskState.VERDICT_UNSPECIFIED):
-          link_map[task_result.name] = task_result.task_url
+          link_map[task_name] = task_result.task_url
 
       return link_map
 
