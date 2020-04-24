@@ -101,13 +101,14 @@ def _validate_scheduling_params(api, requests):
 def _get_scheduling_error(api, request):
   qs_account = request.params.scheduling.qs_account
   priority = request.params.scheduling.priority
-  if qs_account:
-    if priority:
+  # Requests for which the pool is overridden downstream may have both priority
+  # and quota account unset, see crbug.com/1074373.
+  if priority:
+    if qs_account:
       return ('priority and qs_account should not both be set. ' +
               'Got priority: %d and qs_account: %s' % (priority, qs_account))
-    return None
-  if priority < 50 or priority > 255:
-    return ('priority %d is out of valid range [50, 255]' % priority)
+    if priority < 50 or priority > 255:
+      return ('priority %d is out of valid range [50, 255]' % priority)
 
 
 

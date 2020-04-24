@@ -20,10 +20,7 @@
     "cmd": [],
     "name": "validate request.validate scheduling parameters",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@default@priority 0 is out of valid range [50, 255]@@@",
-      "@@@STEP_LOG_END@default@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
