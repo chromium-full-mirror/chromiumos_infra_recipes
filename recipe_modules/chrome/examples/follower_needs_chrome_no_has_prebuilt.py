@@ -26,7 +26,7 @@ def RunSteps(api):
   # since chromite.api.PackageService/HasPrebuilt is not implemented by build
   # API (per the MethodService override below) we assume we are in the window
   # before follower packages existed and return false.
-  api.assertions.assertFalse(api.chrome.follower_needs_chrome(
+  api.assertions.assertFalse(api.chrome.follower_lacks_prebuilt(
       build_target, chroot, packages))
 
 

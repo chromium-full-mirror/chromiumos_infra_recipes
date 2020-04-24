@@ -64,7 +64,7 @@ def RunSteps(api):
   api.chrome.builds_chrome_from_source(build_target, chroot, p_list)
   api.chrome.builds_chrome_from_source(
       build_target, chroot, ignore_prebuilts=True)
-  api.chrome.follower_needs_chrome(build_target, chroot, p_list)
+  api.chrome.follower_lacks_prebuilt(build_target, chroot, p_list)
 
   api.chrome.maybe_uprev_local_chrome(build_target, chroot, [ps1])
   # Blank the files from the ps_info, test not upreving.

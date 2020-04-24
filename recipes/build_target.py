@@ -171,19 +171,26 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
   install_packages = config.build.install_packages
-  chrome_source_needed = False
 
+  chrome_source_needed = False
   with api.step.nest('check chrome source needed') as cs_pres:
     needs_chrome = api.chrome.needs_chrome(build_target=build_target,
                                           chroot=api.cros_sdk.chroot,
                                           packages=packages)
     if needs_chrome:
+      # AKA: "Chrome Source Needed Reason"
+      csnr = {
+          'toolchain_changed': toolchain_changed,
+          'no_prebuilt': False,
+          'local_uprev': False,
+          'follower_lacks_prebuilt': False,
+      }
       # Only bother to do these checks if the build target needs chrome src.
-      needs_built = not api.chrome.has_chrome_prebuilt(
+      csnr['no_prebuilt'] = not api.chrome.has_chrome_prebuilt(
           build_target=build_target, chroot=api.cros_sdk.chroot,
           ignore_prebuilts=install_packages.compile_source)
 
-      local_uprev = api.chrome.maybe_uprev_local_chrome(
+      csnr['local_uprev'] = api.chrome.maybe_uprev_local_chrome(
           build_target, api.cros_sdk.chroot, api.workspace_util.patch_sets)
 
       # TODO(crbug.com/1063327): Remove dep_graph access and corresponding
@@ -194,17 +201,15 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
         for dep_package in package.dependency_packages:
           flattened_packages.append(dep_package)
 
-      follower_needs_chrome = api.chrome.follower_needs_chrome(
+      csnr['follower_lacks_prebuilt'] = api.chrome.follower_lacks_prebuilt(
           build_target=build_target,
           chroot=api.cros_sdk.chroot,
           packages=flattened_packages)
 
       # Evaluate the |or| of the reasons we might want local chrome source.
-      chrome_source_needed = (toolchain_changed or
-                            needs_built or
-                            local_uprev or
-                            follower_needs_chrome)
-    cs_pres.step_text = str(chrome_source_needed)
+      chrome_source_needed = any([v for k,v in csnr.items()])
+      cs_pres.step_text = ' '.join([k for k,v in csnr.items() if v])
+      api.easy.set_property_step('chrome_source_reasons', csnr)
 
     if chrome_source_needed:
       chrome_root = api.path['start_dir'].join('chrome')

@@ -2542,7 +2542,7 @@
     "cmd": [],
     "name": "check chrome source needed",
     "~followup_annotations": [
-      "@@@STEP_TEXT@True@@@"
+      "@@@STEP_TEXT@follower_lacks_prebuilt no_prebuilt@@@"
     ]
   },
   {
@@ -2952,6 +2952,14 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check chrome source needed.set chrome_source_reasons",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@chrome_source_reasons@{\"follower_lacks_prebuilt\": true, \"local_uprev\": false, \"no_prebuilt\": true, \"toolchain_changed\": false}@@@"
     ]
   },
   {

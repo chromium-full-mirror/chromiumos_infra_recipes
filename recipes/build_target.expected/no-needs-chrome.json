@@ -2698,10 +2698,7 @@
   },
   {
     "cmd": [],
-    "name": "check chrome source needed",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@False@@@"
-    ]
+    "name": "check chrome source needed"
   },
   {
     "cmd": [],

@@ -231,7 +231,7 @@ class ChromeApi(recipe_api.RecipeApi):
             chroot=chroot,
             packages=packages)).builds_chrome
 
-  def follower_needs_chrome(self, build_target, chroot, packages):
+  def follower_lacks_prebuilt(self, build_target, chroot, packages):
     """Returns whether we need the chrome source to be synced.
 
     Returns whether or not this run needs chrome source to be synced locally.
