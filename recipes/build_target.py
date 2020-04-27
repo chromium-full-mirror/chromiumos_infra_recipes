@@ -115,7 +115,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   relevance = api.sysroot_util.update_for_artifact_build(
       None, config.artifacts, config.build.prepare_for_build.additional_args,
       force_relevance=force_relevant_build)
-  if relevance == Relevance.POINTLESS:
+  if relevance == Relevance.POINTLESS and not force_relevant_build:
     return
 
   api.cros_sdk.uprev_packages(
