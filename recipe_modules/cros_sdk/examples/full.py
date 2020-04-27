@@ -5,16 +5,19 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'cros_sdk',
+    'workspace_util',
 ]
 
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
     TestInputProperties)
+from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 PROPERTIES = TestInputProperties
 
@@ -22,6 +25,7 @@ PROPERTIES = TestInputProperties
 def RunSteps(api, properties):
   workspace = api.path['cleanup'].join('workspace')
 
+  api.workspace_util.apply_changes(changes=properties.gerrit_changes or [])
   with api.cros_sdk.cleanup_context(checkout_path=workspace):
     api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
     api.assertions.assertTrue(
@@ -79,6 +83,17 @@ def GenTests(api):
 
   yield api.test(
       'with-changes',
+      api.properties(
+          TestInputProperties(
+              gerrit_changes=[common_pb2.GerritChange(change=1234)])))
+
+  yield api.test(
+      'with-toolchain-changes',
+      api.step_data(
+          'init sdk.detect toolchain change.path relevancy check.'
+          'read output file',
+          api.file.read_raw(
+              content=PointlessBuildCheckResponse().SerializeToString())),
       api.properties(
           TestInputProperties(
               gerrit_changes=[common_pb2.GerritChange(change=1234)])))

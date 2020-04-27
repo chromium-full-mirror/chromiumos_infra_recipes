@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/properties',
     'cros_infra_config',
     'repo',
@@ -14,8 +15,9 @@ DEPS = [
 
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.cros_infra_config.examples.test import (
+from PB.recipe_modules.chromeos.workspace_util.examples.test import (
     TestInputProperties)
+from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 PROPERTIES = TestInputProperties
 
@@ -38,13 +40,17 @@ def RunSteps(api, properties):
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
 
+  api.workspace_util.detect_toolchain_cls(None)
+  api.assertions.assertEqual(properties.toolchain_cls_applied,
+                             api.workspace_util.toolchain_cls_applied)
+
 
 def GenTests(api):
 
   def buildbucket_build(project='chromeos', bucket='cq', builder='atlas-cq',
                         build_target='atlas', tags=None,
                         revision='2d72510e447ab60a9728aeea2362d8be2cbd7789',
-                        cls=None):
+                        cls=None, toolchain_cls_applied=False):
     build = api.buildbucket.ci_build_message(project=project, bucket=bucket,
                                              builder=builder, tags=tags,
                                              revision=revision)
@@ -55,8 +61,14 @@ def GenTests(api):
     ret = api.buildbucket.build(build)
     ret += api.properties(
         TestInputProperties(
-            build_target=common.BuildTarget(name=build_target),
-            builder=builder))
+            build_target=common.BuildTarget(name=build_target), builder=builder,
+            toolchain_cls_applied=toolchain_cls_applied))
+    if cls:
+      resp = PointlessBuildCheckResponse()
+      resp.build_is_pointless.value = not toolchain_cls_applied
+      ret += api.step_data(
+          'detect toolchain change.path relevancy check.read output file',
+          api.file.read_raw(content=resp.SerializeToString()))
     return ret
 
   yield api.test('basic', buildbucket_build())
@@ -71,3 +83,8 @@ def GenTests(api):
 
   yield api.test('has_no_commit_and_no_changes',
                  buildbucket_build(revision=None))
+
+  yield api.test(
+      'has_toolchain_changes',
+      buildbucket_build(cls=[common_pb2.GerritChange(change=1234)],
+                        toolchain_cls_applied=True))

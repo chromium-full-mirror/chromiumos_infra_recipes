@@ -8,7 +8,9 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/step',
     'cros_infra_config',
+    'cros_relevance',
     'cros_source',
+    'easy',
     'gerrit',
     'repo',
 ]

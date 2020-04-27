@@ -1179,6 +1179,7 @@
       ]
     },
     "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
+    "timeout": 86400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_FAILURE@@@"

@@ -101,7 +101,7 @@ def DoRunSteps(api, config, build_target, properties):
   # Short versions of several variables that may have been altered in RunSteps.
   gitiles_commit = api.cros_infra_config.gitiles_commit
   gerrit_changes = api.cros_infra_config.gerrit_changes
-  force_relevant_build = properties.force_relevant_build
+  forced_relevant = properties.force_relevant_build
 
   is_staging = config.general.environment == BuilderConfig.General.STAGING
   # If we have been told to build the sdk or packages from source (rather than
@@ -117,28 +117,26 @@ def DoRunSteps(api, config, build_target, properties):
 
   # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
   relevance = api.sysroot_util.update_for_artifact_build(
-      None, config.artifacts, force_relevance=force_relevant_build)
+      None, config.artifacts, force_relevance=forced_relevant)
   if relevance == Relevance.POINTLESS:
     return
+  # Remember if the the artifact build says it's NEEDED.
+  forced_relevant = forced_relevant or relevance == Relevance.NEEDED
 
   api.cros_sdk.uprev_packages(build_targets=[build_target])
   api.cros_sdk.create_chroot(
       version=config.general.sdk_cache_version, use_image=is_staging,
-      timeout_sec=None if long_timeouts else STEP_TIMEOUTS['create_sdk'])
+      timeout_sec=None if config.build.sdk_update.compile_source else 'DEFAULT')
 
-  # TODO(crbug/1039875): clean up toolchain_changed handling.
-  toolchain_changed = api.cros_sdk.update_chroot(
+  api.cros_sdk.update_chroot(
       gitiles_commit, gerrit_changes, toolchain_targets=[build_target],
-      build_source=config.build.sdk_update.compile_source,
-      timeout_sec=24 * 60 * 60 if long_timeouts else 'DEFAULT')
-  long_timeouts |= toolchain_changed
+      build_source=config.build.sdk_update.compile_source)
 
   sysroot = api.sysroot_util.create_sysroot(
-      build_target, config.build.portage_profile.profile,
-      toolchain_changed=toolchain_changed,
-      timeout_sec=None if long_timeouts else STEP_TIMEOUTS['create_sysroot'])
+      build_target, config.build.portage_profile.profile)
 
   packages = get_packages(api, config)
+  # Note: the dependency graph requires a sysroot.
   dep_graph = api.cros_relevance.get_dependency_graph(
       build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
@@ -150,12 +148,12 @@ def DoRunSteps(api, config, build_target, properties):
 
   # In the cases where force_relevant is True:
   # 1. input_properties.force_relevant_build is True, and/or
-  # 2. output_properties.testing_toolchain is True, and/or
+  # 2. output_properties.testing_toolchain is True (now tracked in
+  #    cros_relevance), and/or
   # 3. output_properties.artifact_prep is True.
   if api.cros_relevance.is_build_pointless(
       gerrit_changes, gitiles_commit, dep_graph=dep_graph.target,
-      force_relevant=(force_relevant_build or toolchain_changed or
-                      relevance == Relevance.NEEDED)):
+      force_relevant=forced_relevant):
     # TODO: When it becomes possible to add tags from the build itself set:
     # "hide-in-gerrit": "pointless"
     # See https://crrev.com/c/1913895.
@@ -169,6 +167,13 @@ def DoRunSteps(api, config, build_target, properties):
       api.metadata_json.upload_to_gs(config, build_target, partial=True)
   except:  # pragma: no cover # pylint: disable=bare-except
     pass
+
+  # TODO(crbug/1039875): clean up toolchain_changed handling.  This should be
+  # hidden from build_target by moving it inside of the sysroot_util etc
+  # methods.  Ditto for long_timeouts, as the calls are moved into sysroot_util,
+  # etc.
+  toolchain_changed = api.workspace_util.toolchain_cls_applied
+  long_timeouts |= toolchain_changed
 
   with api.step.nest('install toolchain') as install_tc_step:
     flags = InstallToolchainRequest.Flags(
@@ -435,12 +440,12 @@ def GenTests(api):
   def toolchain_build(builder='orderfile-generate-toolchain',
                       build_target='eve'):
     """Generate a test build proto."""
-    build = api.buildbucket.ci_build_message(
+    build_msg = api.buildbucket.ci_build_message(
         project='chromeos', bucket='toolchain', builder=builder, tags=[{
             'key': 'parent_buildbucket_id',
             'value': 'parent_id'
         }])
-    ret = api.buildbucket.build(build)
+    ret = api.buildbucket.build(build_msg)
     if build_target:
       ret += api.properties(build_target={'name': build_target})
     return ret
@@ -466,7 +471,7 @@ def GenTests(api):
     resp.build_is_pointless.value = True
     serialized = resp.SerializeToString()
     return api.step_data(
-        'update sdk.detect toolchain change.path relevancy check.'
+        'init sdk.detect toolchain change.path relevancy check.'
         'read output file', api.file.read_raw(content=serialized))
 
   def force_toolchain_change():
@@ -474,7 +479,7 @@ def GenTests(api):
     resp.build_is_pointless.value = False
     serialized = resp.SerializeToString()
     return api.step_data(
-        'update sdk.detect toolchain change.path relevancy check.'
+        'init sdk.detect toolchain change.path relevancy check.'
         'read output file', api.file.read_raw(content=serialized))
 
   yield api.test(

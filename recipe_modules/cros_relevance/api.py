@@ -30,6 +30,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """Initializes the module."""
     self._pointless_build_checker_path = None
     self._build_planner_path = None
+    # Toolchain changes have been detected.
+    self._toolchain_cls_applied = False
+
+  @property
+  def toolchain_cls_applied(self):
+    """Whether there are toolchain CLs applied to the source tree."""
+    return self._toolchain_cls_applied
 
   def get_necessary_builders(self, builder_configs, gerrit_changes,
                              gitiles_commit, name=None, test_builder_ids=[]):
@@ -120,7 +127,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Returns:
       bool: Whether the build can be terminated early.
     """
-    if not gerrit_changes or force_relevant:
+    if not gerrit_changes or force_relevant or self.toolchain_cls_applied:
       # If there are no CLs, then this is not a CQ run and should never be
       # treated as pointless.  Likewise if force_relevant is set.
       return False
@@ -149,12 +156,12 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       name (str): The step name to display, defaults to 'path relevance
           check'.
 
-
     Returns:
       bool: Whether the given Gerrit Change affects any of the relevant paths.
     """
     with self.m.step.nest(name or 'path relevancy check') as presentation:
       self._ensure_binaries()
+      gitiles_commit = gitiles_commit or bbcommon_pb2.GitilesCommit()
       check_request = PointlessBuildCheckRequest(
           gitiles_commit=testplans_proto_bytes(
               serialized_proto=bbcommon_pb2.GitilesCommit.SerializeToString(
@@ -233,9 +240,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         self.m.cros_build_api.DependencyService.GetToolchainPaths(
           GetToolchainPathsRequest(chroot=chroot))
 
-    return self._are_paths_affected(
+    self._toolchain_cls_applied |= self._are_paths_affected(
         gerrit_changes, gitiles_commit,
         relevant_paths=(x.path for x in toolchain_paths_response.paths))
+    return self._toolchain_cls_applied
 
   def get_dependency_graph(self, build_target, chroot, packages=None):
     """Calculates the dependency graph for the build target & SDK

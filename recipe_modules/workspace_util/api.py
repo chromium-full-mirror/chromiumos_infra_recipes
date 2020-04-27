@@ -22,10 +22,17 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     self._patch_sets = []
     # Changes applied in apply_changes().
     self._applied_changes = []
+    # Changes that have been checked for toolchain effects.
+    self.checked_changes = []
 
   @property
   def patch_sets(self):
     return self._patch_sets
+
+  @property
+  def toolchain_cls_applied(self):
+    """Whether there are toolchain CLs applied to the source tree."""
+    return self.m.cros_relevance.toolchain_cls_applied
 
   @contextlib.contextmanager
   def setup_workspace(self):
@@ -96,6 +103,41 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     self._applied_changes.extend(changes)
     self._patch_sets.extend(patch_sets)
+
+  def detect_toolchain_cls(self, chroot, gitiles_commit=None,
+                           gerrit_changes=None, name=None):
+    """Check for toolchain changes.
+
+    If there are any changes that affect the toolchain, set that workspace
+    attribute.
+
+    Args:
+      gitiles_commit (GitilesCommit): The gitiles commit to use, or none to use
+          the value from config.
+      gerrit_changes (list[GerritChange]): The gerrit changes in use, None to
+          use the changes already applied via apply_changes().
+      chroot (Chroot): The chroot for the build.
+      name (str): The name for the step, or None for default.
+
+    Returns:
+      (bool) whether there are toolchain patches applied.
+    """
+    gitiles_commit = gitiles_commit or self.m.cros_infra_config.gitiles_commit
+    gerrit_changes = gerrit_changes or self._applied_changes
+
+    # See if there are any new changes to check.
+    to_check = [c for c in gerrit_changes if not c in self.checked_changes]
+    if not to_check:
+      return self.toolchain_cls_applied
+
+    with self.m.step.nest(name or 'detect toolchain change') as detect:
+      changed = self.m.cros_relevance.check_for_toolchain_change(
+          gitiles_commit=gitiles_commit, gerrit_changes=gerrit_changes,
+          chroot=chroot)
+      self.checked_changes.extend(to_check)
+      self.m.easy.set_property_step('testing_toolchain', changed)
+      detect.step_text = 'change detected' if changed else 'no change'
+      return changed
 
   @contextlib.contextmanager
   def sync_to_manifest_groups(self, manifest_groups, local_manifest,

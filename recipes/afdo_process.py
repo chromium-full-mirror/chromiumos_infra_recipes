@@ -30,14 +30,13 @@ from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
+from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 PROPERTIES = AfdoProcessProperties
 
 
 def RunSteps(api, properties):
   build_target = properties.build_target
-  force_relevant_build = properties.force_relevant_build
-  input_artifacts = properties.input_artifacts
 
   config = api.cros_infra_config.configure_builder(
       api.buildbucket.gitiles_commit,
@@ -48,13 +47,16 @@ def RunSteps(api, properties):
 
   api.cros_sdk.set_use_flags(config.build.use_flags)
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
-    DoRunSteps(api, build_target, config, api.cros_infra_config.gitiles_commit,
-               api.cros_infra_config.gerrit_changes, force_relevant_build,
-               input_artifacts)
+    DoRunSteps(api, config, build_target, properties)
+  api.bot_cost.set_build_cost(api.buildbucket.build.id, 'large')
 
 
-def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
-               force_relevant_build, input_artifacts):
+def DoRunSteps(api, config, build_target, properties):
+  # Short versions of several variables that may have been altered in RunSteps.
+  gitiles_commit = api.cros_infra_config.gitiles_commit
+  gerrit_changes = api.cros_infra_config.gerrit_changes
+
+  is_staging = config.general.environment == BuilderConfig.General.STAGING
 
   # Set up source checkouts.
   api.workspace_util.sync_to_commit(
@@ -65,25 +67,39 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   # If we received any extra input_artifacts, add them to the values
   # from the config.
   config.artifacts.artifacts_info.toolchain.input_artifacts.extend(
-      input_artifacts or [])
+      properties.input_artifacts or [])
 
   # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
   relevance = api.sysroot_util.update_for_artifact_build(
-      None, config.artifacts, force_relevance=force_relevant_build)
+      None, config.artifacts, force_relevance=properties.force_relevant_build)
   if relevance == Relevance.POINTLESS:
     return
 
   api.cros_sdk.uprev_packages(build_targets=[build_target])
   api.cros_sdk.create_chroot(version=config.general.sdk_cache_version,
-                             timeout_sec=None)
-  api.cros_sdk.update_chroot(
-      gitiles_commit, gerrit_changes, toolchain_targets=[build_target],
-      build_source=config.build.sdk_update.compile_source, timeout_sec=None)
+                             use_image=is_staging)
+  api.cros_sdk.update_chroot(gitiles_commit, gerrit_changes,
+                             toolchain_targets=[build_target])
 
   sysroot = None
   if gerrit_changes:
+    # If there are gerrit changes, we need a sysroot to validate the SDK for
+    # reuse.
     sysroot = api.sysroot_util.create_sysroot(
         build_target, config.build.portage_profile.profile)
+
+    with api.step.nest('validate SDK reuse') as presentation:
+      # If there are no gerrit changes, then the SDK remains clean.  If there
+      # are gerrit changes, determine if they affect the SDK.
+      step_text = 'Clean: changes do not affect SDK'
+      if api.cros_relevance.is_depgraph_affected(
+          gerrit_changes, gitiles_commit,
+          dep_graph=api.cros_relevance.get_dependency_graph(
+              build_target=build_target, chroot=api.cros_sdk.chroot,
+              packages=config.build.install_packages.packages).sdk):
+        step_text = 'Dirty: changes affect SDK'
+        api.cros_sdk.mark_sdk_as_dirty()
+      presentation.step_text = step_text
 
   # This update_for_artifact_build call will download the input artifacts into
   # the chroot.  This builder is only appropriate to use if there are no package
@@ -103,22 +119,6 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       artifacts_info=config.artifacts.artifacts_info, sysroot=sysroot,
       chroot=api.cros_sdk.chroot)
 
-  with api.step.nest('validate SDK reuse') as presentation:
-    # If there are no gerrit changes, then the SDK remains clean.  If there are
-    # gerrit changes, determine if they affect the SDK.
-    if gerrit_changes:
-      step_text = 'Clean: changes do not affect SDK'
-      if api.cros_relevance.is_depgraph_affected(
-          gerrit_changes, gitiles_commit,
-          dep_graph=api.cros_relevance.get_dependency_graph(
-              build_target=build_target, chroot=api.cros_sdk.chroot,
-              packages=config.build.install_packages.packages).sdk):
-        step_text = 'Dirty: changes affect SDK'
-        api.cros_sdk.mark_sdk_as_dirty()
-    else:
-      step_text = 'Clean: no changes'
-    presentation.step_text = step_text
-
   api.bot_cost.set_build_cost(api.buildbucket.build.id, 'large')
 
 
@@ -129,23 +129,49 @@ def GenTests(api):
   ]
 
   def test_build(builder='benchmark-afdo-process', build_target='eve',
-                 gerrit_changes=True):
-    """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(
+                 gerrit_changes=False, toolchain=False):
+    """Generate a test build proto with no gitiles commit project.
+
+    The normal state for this recipe is that there are no changes present.
+
+    Args:
+      builder (str): name of the builder.
+      build_target (str): name of the build target.
+      gerrit_changes (bool): whether to attach CLs to the build.
+      toolchain (bool): Response to detect_toolchain_change, or None
+          if it will not be called.
+
+    Returns:
+      recipe_test_api.TestData object.
+    """
+    build_msg = api.buildbucket.ci_build_message(
         project='chromeos', bucket='toolchain', builder=builder, tags=[{
             'key': 'parent_buildbucket_id',
             'value': 'parent_id'
         }])
     if gerrit_changes:
-      build.input.gerrit_changes.extend(mock_CLs)
-    ret = api.buildbucket.build(build)
+      build_msg.input.gerrit_changes.extend(mock_CLs)
+    ret = api.buildbucket.build(build_msg)
+
     if build_target:
       ret += api.properties(build_target={'name': build_target})
+
+    if gerrit_changes and toolchain is not None:
+      ret += api.step_data(
+          'init sdk.detect toolchain change.path relevancy check.'
+          'read output file',
+          api.file.read_raw(
+              content=PointlessBuildCheckResponse(build_is_pointless={
+                  "value": not toolchain
+              }).SerializeToString()))
+
     return ret
 
   yield api.test('basic', test_build())
 
-  yield api.test('no-changes', test_build(gerrit_changes=False))
+  yield api.test('changes', test_build(gerrit_changes=True))
+
+  yield api.test('toolchain', test_build(gerrit_changes=True, toolchain=True))
 
   yield api.test(
       'pointless', test_build(),
@@ -178,4 +204,4 @@ def GenTests(api):
           api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
 
   yield api.test('builder-no-longer-exists',
-                 test_build(builder='no-such-builder'))
+                 test_build(builder='no-such-builder', toolchain=None))

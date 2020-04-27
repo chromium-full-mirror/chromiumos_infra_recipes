@@ -735,7 +735,7 @@
     "cmd": [],
     "name": "detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no change@@@"
+      "@@@STEP_TEXT@change detected@@@"
     ]
   },
   {
@@ -844,7 +844,6 @@
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
-      "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
     ]
@@ -946,7 +945,7 @@
     "name": "detect toolchain change.set testing_toolchain",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
+      "@@@SET_BUILD_PROPERTY@testing_toolchain@true@@@"
     ]
   },
   {
