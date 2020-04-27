@@ -140,6 +140,12 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   dep_graph = api.cros_relevance.get_dependency_graph(
       build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
+  with api.step.nest('validate SDK reuse'):
+    # If any of the changes affect the sdk, mark the sdk as dirty.
+    if api.cros_relevance.is_depgraph_affected(gerrit_changes, gitiles_commit,
+                                               dep_graph=dep_graph.sdk):
+      api.cros_sdk.mark_sdk_as_dirty()
+
   if (not force_relevant_build and not toolchain_changed and
       relevance != Relevance.NEEDED and api.cros_relevance.is_build_pointless(
           gerrit_changes,
@@ -336,11 +342,6 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
     api.cros_prebuilts.upload_target_prebuilts(
         build_target, config.id.type, config.artifacts.prebuilts_gs_bucket,
         private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
-
-  with api.step.nest('validate SDK reuse'):
-    if api.cros_relevance.is_depgraph_affected(gerrit_changes, gitiles_commit,
-                                               dep_graph=dep_graph.sdk):
-      api.cros_sdk.mark_sdk_as_dirty()
 
   api.easy.set_property_step(
       'build_cost',
