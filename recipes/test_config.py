@@ -40,6 +40,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.buildbucket.try_build() +  #
-         api.cq(full_run=True))
+  yield api.test(
+      'basic',
+      api.buildbucket.try_build(),
+      api.cq(full_run=True),
+  )
