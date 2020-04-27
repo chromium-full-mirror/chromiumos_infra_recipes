@@ -124,10 +124,11 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       version=config.general.sdk_cache_version, use_image=is_staging,
       timeout_sec=None if long_timeouts else STEP_TIMEOUTS['create_sdk'])
 
+  # TODO(crbug/1039875): clean up toolchain_changed handling.
   toolchain_changed = api.cros_sdk.update_chroot(
       gitiles_commit, gerrit_changes, toolchain_targets=[build_target],
       build_source=config.build.sdk_update.compile_source,
-      **{'timeout_sec': None} if long_timeouts else {})
+      timeout_sec=24 * 60 * 60 if long_timeouts else 'DEFAULT')
   long_timeouts |= toolchain_changed
 
   sysroot = api.sysroot_util.create_sysroot(
