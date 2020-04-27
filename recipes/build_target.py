@@ -81,7 +81,6 @@ STEP_TIMEOUTS = {
 
 def RunSteps(api, properties):
   build_target = properties.build_target
-  force_relevant_build = properties.force_relevant_build
 
   config = api.cros_infra_config.configure_builder(
       api.buildbucket.gitiles_commit,
@@ -94,16 +93,20 @@ def RunSteps(api, properties):
   api.cros_sdk.set_use_flags(config.build.use_flags)
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context(), \
       api.metadata_json.context(config, build_target):
-    DoRunSteps(api, build_target, config, api.cros_infra_config.gitiles_commit,
-               api.cros_infra_config.gerrit_changes, force_relevant_build)
+    DoRunSteps(api, config, build_target, properties)
 
 
-def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
-               force_relevant_build):
+def DoRunSteps(api, config, build_target, properties):
+  # Short versions of several variables that may have been altered in RunSteps.
+  gitiles_commit = api.cros_infra_config.gitiles_commit
+  gerrit_changes = api.cros_infra_config.gerrit_changes
+  force_relevant_build = properties.force_relevant_build
+
   is_staging = config.general.environment == BuilderConfig.General.STAGING
-  # Toolchain builders compile many large packages from source and need higher
-  # step timeouts to successfully complete.
-  long_timeouts = config.id.type == BuilderConfig.Id.TOOLCHAIN
+  # If we have been told to build the sdk or packages from source (rather than
+  # using prebuilts), then we will need long timeouts.
+  long_timeouts = (config.build.sdk_update.compile_source or
+                   config.build.install_packages.compile_source)
 
   # Set up source checkouts.
   api.workspace_util.sync_to_commit(staging=is_staging)
@@ -111,15 +114,13 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   api.workspace_util.apply_changes()
 
   # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
-  artifacts = config.artifacts
   relevance = api.sysroot_util.update_for_artifact_build(
       None, config.artifacts, config.build.prepare_for_build.additional_args,
       force_relevance=force_relevant_build)
   if relevance == Relevance.POINTLESS and not force_relevant_build:
     return
 
-  api.cros_sdk.uprev_packages(
-      build_targets=[BuildTarget(name=build_target.name)])
+  api.cros_sdk.uprev_packages(build_targets=[build_target])
   api.cros_sdk.create_chroot(
       version=config.general.sdk_cache_version, use_image=is_staging,
       timeout_sec=None if long_timeouts else STEP_TIMEOUTS['create_sdk'])
@@ -160,7 +161,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   target_versions = get_target_versions(api, build_target)
   api.easy.set_property_step('target_versions', target_versions)
   try:
-    if artifacts.artifact_types:
+    if config.artifacts.artifact_types:
       api.metadata_json.add_version_entries(target_versions)
       api.metadata_json.upload_to_gs(config, build_target, partial=True)
   except:  # pragma: no cover # pylint: disable=bare-except
@@ -231,7 +232,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
 
   if api.cros_infra_config.should_run(install_packages.run_spec):
     with api.step.nest('install packages') as ip_step:
-      if artifacts.artifact_types:
+      if config.artifacts.artifact_types:
         # Final round of preparation to build artifacts.  Some artifacts need
         # to use portage (or a chroot and/or sysroot) in order to fully prepare,
 
@@ -328,20 +329,19 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
     if api.cros_infra_config.should_exit(ebuilds_run_spec):
       return
 
-  if artifacts.artifact_types:
+  if config.artifacts.artifact_types:
     api.cros_artifacts.upload_artifacts(
         config.id.name, build_target, config.id.type,
-        artifacts.artifacts_gs_bucket, artifacts.artifact_types,
+        config.artifacts.artifacts_gs_bucket, config.artifacts.artifact_types,
         sysroot=sysroot, chroot=api.cros_sdk.chroot,
-        publish_info=artifacts.publish_artifacts,
-        artifact_profile_info=artifacts.artifact_profile_info,
+        publish_info=config.artifacts.publish_artifacts,
+        artifact_profile_info=config.artifacts.artifact_profile_info,
         additional_args=config.build.prepare_for_build.additional_args)
 
-  prebuilts = artifacts.prebuilts
-  if prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
+  if config.artifacts.prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
     api.cros_prebuilts.upload_target_prebuilts(
         build_target, config.id.type, config.artifacts.prebuilts_gs_bucket,
-        private=(prebuilts == BuilderConfig.Artifacts.PRIVATE))
+        private=(config.artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
   api.easy.set_property_step(
       'build_cost',

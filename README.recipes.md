@@ -4117,7 +4117,7 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#101)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#99)(api, config, build_target, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#82)(api, properties):**
 
