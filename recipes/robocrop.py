@@ -29,25 +29,28 @@ def RunSteps(api, properties):
       bot_policy_config = api.cros_infra_config.get_bot_policy_config()
     with api.step.nest('get current GCE config') as step:
       gce_config = api.bot_scaling.get_current_gce_config(bot_policy_config)
-      step.presentation.logs['gce_config'] = jsonpb.MessageToDict(gce_config)
+      step.presentation.logs['gce_config'] = jsonpb.MessageToJson(gce_config)
     with api.step.nest('update bot policies') as step:
       updated_bot_policy = api.bot_scaling.update_bot_policy_limits(
           bot_policy_config, gce_config)
-      step.presentation.logs['bot_policy_config'] = jsonpb.MessageToDict(
+      step.presentation.logs['bot_policy_config'] = jsonpb.MessageToJson(
           updated_bot_policy)
-    with api.step.nest('get current swarming stats'):
+    with api.step.nest('get current swarming stats') as step:
       swarming_status = api.bot_scaling.get_swarming_stats(bot_policy_config)
       api.easy.set_property_step('swarming_stats', swarming_status)
-    with api.step.nest('compute scaling actions'):
+      step.presentation.logs['swarming_stats'] = str(swarming_status)
+    with api.step.nest('compute scaling actions') as step:
       robocrop_action = api.bot_scaling.get_robocrop_action(
           updated_bot_policy, gce_config, swarming_stats=swarming_status)
       api.easy.set_property_step('robocrop_action',
                                  jsonpb.MessageToDict(robocrop_action))
+      step.presentation.logs['robocrop_action'] = jsonpb.MessageToJson(
+          robocrop_action)
     if properties.commit_changes:
       with api.step.nest('update GCE Provider configs') as step:
         gce_updated_configs = api.bot_scaling.update_gce_configs(
             robocrop_action, gce_config)
-        step.presentation.logs['final_gce_config'] = jsonpb.MessageToDict(
+        step.presentation.logs['final_gce_config'] = jsonpb.MessageToJson(
             gce_updated_configs)
 
 
