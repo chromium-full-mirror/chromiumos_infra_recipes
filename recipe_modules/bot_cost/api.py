@@ -103,10 +103,8 @@ class BotCostApi(recipe_api.RecipeApi):
       for tag in build.tags:
         if tag.key == 'parent_buildbucket_id' and int(
             tag.value) == orch_build_id:
-          for key, value in build.output.properties.fields.items():
-            if key == 'build_cost':
-              total_child_build_cost += value.number_value
-            break
+          if 'build_cost' in build.output.properties:
+            total_child_build_cost += build.output.properties['build_cost']
           else:
             child_builds_missing_cost.append(str(build.id))
 
