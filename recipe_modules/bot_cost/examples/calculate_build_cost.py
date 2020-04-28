@@ -19,14 +19,15 @@ from google.protobuf import timestamp_pb2
 
 def RunSteps(api):
   with api.step.nest('terminal build') as test_step:
-    build_cost = api.bot_cost.calculate_build_cost(123, 'small')
+    build_cost = api.bot_cost._calculate_build_cost(123, 'small')
     api.assertions.assertNotEqual(0, build_cost)
   with api.step.nest('started build') as test_step:
-    build_cost = api.bot_cost.calculate_build_cost(123, 'small')
+    build_cost = api.bot_cost._calculate_build_cost(123, 'small')
     api.assertions.assertNotEqual(0, build_cost)
   with api.step.nest('scheduled build') as test_step:
-    build_cost = api.bot_cost.calculate_build_cost(123, 'small')
+    build_cost = api.bot_cost._calculate_build_cost(123, 'small')
     api.assertions.assertEqual(0, build_cost)
+  api.bot_cost.set_build_cost(123, 'small')
 
 
 def GenTests(api):
@@ -47,8 +48,11 @@ def GenTests(api):
       end_time=timestamp_pb2.Timestamp(seconds=15000))
 
   yield (api.test('basic') + api.buildbucket.simulated_get(
-      terminal_build, step_name='terminal build.buildbucket.get') +
+      terminal_build,
+      step_name='terminal build.calculate build cost.buildbucket.get') +
          api.buildbucket.simulated_get(
-             started_build, step_name='started build.buildbucket.get') +
+             started_build,
+             step_name='started build.calculate build cost.buildbucket.get') +
          api.buildbucket.simulated_get(
-             scheduled_build, step_name='scheduled build.buildbucket.get'))
+             scheduled_build,
+             step_name='scheduled build.calculate build cost.buildbucket.get'))

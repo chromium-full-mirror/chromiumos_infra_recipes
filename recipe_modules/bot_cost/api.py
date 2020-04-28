@@ -14,7 +14,21 @@ BOT_COST = {'small': 4.56, 'large': 8.08}
 class BotCostApi(recipe_api.RecipeApi):
   """A module to calculate the cost of running bots."""
 
-  def calculate_build_cost(self, build_id, bot_size):
+  def set_build_cost(self, build_id, bot_size):
+    """Wrapper function to calculate and set the cost of creating the build.
+
+    Calculate the cost of creating the build and set it as a build output
+    property.
+
+    Args:
+      build_id (int): The build id for this build.
+      bot_size (str): The size of the bot used to create the build.
+    """
+    with self.m.step.nest('set build cost') as presentation:
+      build_cost = self._calculate_build_cost(build_id, bot_size)
+      presentation.properties['build_cost'] = round(build_cost, 4)
+
+  def _calculate_build_cost(self, build_id, bot_size):
     """Calculate the cost of creating a build.
 
     Calculates the cost of creating a build based on the time duration. If
@@ -33,7 +47,8 @@ class BotCostApi(recipe_api.RecipeApi):
       # If a led job, use a random id.
       build_id = 8882749049375545216
 
-    build = self.m.buildbucket.get(build_id)
+    build = self.m.buildbucket.get(
+        build_id, step_name='calculate build cost.buildbucket.get')
     if build.status > common_pb2.ENDED_MASK:
       build_duration = build.end_time.seconds - build.start_time.seconds
     elif build.status == common_pb2.STARTED:
@@ -42,6 +57,25 @@ class BotCostApi(recipe_api.RecipeApi):
       return 0
     bot_days = build_duration / (60.0 * 60.0 * 24.0)
     return bot_days * BOT_COST[bot_size]
+
+  def set_cq_run_cost(self, orch_build_id, child_builds):
+    """Wrapper function to calculate and set the cost of the cq run.
+
+    Calculate the cost of the cq run and set it as a build output property.
+
+    Args:
+      orch_build_id (int): The orchestrator's build id.
+      child_builds (list[build_pb2.Build]): The child builds for this cq run.
+    """
+    with self.m.step.nest('set cq run cost') as presentation:
+      cq_run_cost = self._calculate_cq_run_cost(orch_build_id, child_builds,
+                                                presentation)
+      presentation.properties['cq_run_cost'] = round(cq_run_cost, 4)
+      # TODO(1068359): Log statements for debugging purposes. Remove after issue
+      # is closed.
+      orch_build_cost = self._calculate_build_cost(orch_build_id, 'small')
+      presentation.logs['orch build cost'] = [str(orch_build_cost)]
+      presentation.logs['cq run cost'] = [str(cq_run_cost)]
 
   def _get_child_builds_cost(self, orch_build_id, child_builds, parent_step):
     """Get the cost of building child images during this cq run.
@@ -79,9 +113,12 @@ class BotCostApi(recipe_api.RecipeApi):
     if child_builds_missing_cost:
       parent_step.logs[
           'child builds missing build_cost'] = child_builds_missing_cost
+    # TODO(1068359): Log statement for debugging purposes. Remove after issue
+    # is closed.
+    parent_step.logs['all'] = [str(child_builds)]
     return total_child_build_cost
 
-  def calculate_cq_run_cost(self, orch_build_id, child_builds, parent_step):
+  def _calculate_cq_run_cost(self, orch_build_id, child_builds, parent_step):
     """Calculates the cost of the cq run.
 
     Calculates the total cost of this cq run based on the cost to run the
@@ -96,8 +133,7 @@ class BotCostApi(recipe_api.RecipeApi):
     Returns:
       A float representing the cost (USD) of the cq run.
     """
-    orch_cost = self.calculate_build_cost(orch_build_id, 'small')
+    orch_cost = self._calculate_build_cost(orch_build_id, 'small')
     child_builds_cost = self._get_child_builds_cost(orch_build_id, child_builds,
                                                     parent_step)
-    cq_run_cost = orch_cost + child_builds_cost
-    parent_step.properties['cq_run_cost'] = round(cq_run_cost, 4)
+    return orch_cost + child_builds_cost

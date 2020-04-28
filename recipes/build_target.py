@@ -94,6 +94,7 @@ def RunSteps(api, properties):
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context(), \
       api.metadata_json.context(config, build_target):
     DoRunSteps(api, config, build_target, properties)
+  api.bot_cost.set_build_cost(api.buildbucket.build.id, 'large')
 
 
 def DoRunSteps(api, config, build_target, properties):
@@ -342,10 +343,6 @@ def DoRunSteps(api, config, build_target, properties):
     api.cros_prebuilts.upload_target_prebuilts(
         build_target, config.id.type, config.artifacts.prebuilts_gs_bucket,
         private=(config.artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
-
-  api.easy.set_property_step(
-      'build_cost',
-      api.bot_cost.calculate_build_cost(api.buildbucket.build.id, 'large'))
 
 
 def get_packages(api, config):

@@ -121,9 +121,7 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
       step_text = 'Clean: no changes'
     presentation.step_text = step_text
 
-  api.easy.set_property_step(
-      'build_cost',
-      api.bot_cost.calculate_build_cost(api.buildbucket.build.id, 'large'))
+  api.bot_cost.set_build_cost(api.buildbucket.build.id, 'large')
 
 
 def GenTests(api):

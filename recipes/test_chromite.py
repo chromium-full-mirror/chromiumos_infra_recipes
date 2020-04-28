@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'bot_cost',
     'cros_build_api',
     'cros_infra_config',
     'cros_sdk',
@@ -66,6 +67,7 @@ def RunSteps(api):
       api.cros_build_api.TestService.ChromiteUnitTest(
           ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot),
           name='run chromite unit tests')
+      api.bot_cost.set_build_cost(api.buildbucket.build.id, 'large')
 
 
 def GenTests(api):

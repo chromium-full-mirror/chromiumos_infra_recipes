@@ -18,24 +18,26 @@ from google.protobuf import timestamp_pb2
 
 
 def RunSteps(api):
-  with api.step.nest('calculate cost') as test_step:
-    orch_build_id = 123
-    output = build_pb2.Build.Output()
-    output.properties['build_cost'] = 10.0
-    child_builds = [
-        build_pb2.Build(id=124,
-                        tags=api.buildbucket.tags(parent_buildbucket_id='123'),
-                        output=output),
-        build_pb2.Build(id=125,
-                        tags=api.buildbucket.tags(parent_buildbucket_id='123')),
-        build_pb2.Build(id=126,
-                        tags=api.buildbucket.tags(parent_buildbucket_id='122'))
-    ]
-    api.bot_cost.calculate_cq_run_cost(orch_build_id, child_builds, test_step)
-    cq_run_cost = test_step.properties['cq_run_cost']
+  orch_build_id = 123
+  output = build_pb2.Build.Output()
+  output.properties['build_cost'] = 10.0
+  child_builds = [
+      build_pb2.Build(id=124,
+                      tags=api.buildbucket.tags(parent_buildbucket_id='123'),
+                      output=output),
+      build_pb2.Build(id=125,
+                      tags=api.buildbucket.tags(parent_buildbucket_id='123')),
+      build_pb2.Build(id=126,
+                      tags=api.buildbucket.tags(parent_buildbucket_id='122'))
+  ]
+  with api.step.nest('calculate cq run cost') as test_step:
+    cq_run_cost = api.bot_cost._calculate_cq_run_cost(orch_build_id,
+                                                      child_builds, test_step)
     api.assertions.assertEqual(10.0, cq_run_cost)
     log = test_step.logs['child builds missing build_cost']
     api.assertions.assertEqual(['125'], log)
+
+  api.bot_cost.set_cq_run_cost(orch_build_id, child_builds)
 
 
 def GenTests(api):
@@ -43,4 +45,5 @@ def GenTests(api):
                                start_time=timestamp_pb2.Timestamp(seconds=0),
                                update_time=timestamp_pb2.Timestamp(seconds=0))
   yield (api.test('basic') + api.buildbucket.simulated_get(
-      orch_build, step_name='calculate cost.buildbucket.get'))
+      orch_build,
+      step_name='calculate cq run cost.calculate build cost.buildbucket.get'))

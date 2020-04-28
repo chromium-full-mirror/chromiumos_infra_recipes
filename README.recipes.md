@@ -330,37 +330,26 @@ Returns: Result.
 
 A module to calculate the cost of running bots.
 
-&mdash; **def [calculate\_build\_cost](/recipe_modules/bot_cost/api.py#17)(self, build_id, bot_size):**
+&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#17)(self, build_id, bot_size):**
 
-Calculate the cost of creating a build.
+Wrapper function to calculate and set the cost of creating the build.
 
-Calculates the cost of creating a build based on the time duration. If
-the build status is terminal, the duration is based on the start_time and
-end_time, if the build status is 'STARTED', build durations is based on
-start_time and update_time.
+Calculate the cost of creating the build and set it as a build output
+property.
 
 Args:
   build_id (int): The build id for this build.
   bot_size (str): The size of the bot used to create the build.
 
-Returns:
-  A float representing the cost (USD) of building this image.
+&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#61)(self, orch_build_id, child_builds):**
 
-&mdash; **def [calculate\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#84)(self, orch_build_id, child_builds, parent_step):**
+Wrapper function to calculate and set the cost of the cq run.
 
-Calculates the cost of the cq run.
-
-Calculates the total cost of this cq run based on the cost to run the
-orchestrator and build the child images.
+Calculate the cost of the cq run and set it as a build output property.
 
 Args:
   orch_build_id (int): The orchestrator's build id.
   child_builds (list[build_pb2.Build]): The child builds for this cq run.
-  parent_step (Step): The calling step, to be used for presentation
-  purposes.
-
-Returns:
-  A float representing the cost (USD) of the cq run.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
 [DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3847,7 +3836,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#48)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#314)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#313)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3864,7 +3853,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#301)(api):**
+&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#300)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -3874,7 +3863,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#246)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#245)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -3889,7 +3878,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#192)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#191)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
 
 Run and collect any process_child.
 
@@ -3904,7 +3893,7 @@ Args:
 
 Returns: A list of (one) build_pb2.Build object with the process_child result.
 
-&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#363)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#362)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4117,11 +4106,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#99)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#100)(api, config, build_target, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#82)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#351)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#348)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4137,7 +4126,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#370)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#367)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4800,7 +4789,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#60)(api, properties):**
 
-&mdash; **def [clone\_repo](/recipes/orchestrator.py#239)(api, name, url, fetch=None):**
+&mdash; **def [clone\_repo](/recipes/orchestrator.py#238)(api, name, url, fetch=None):**
 
 Clone a repo into a temporary directory.
 
@@ -4813,7 +4802,7 @@ Args:
 Returns:
   path (Path): path on disk to cloned repo
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#333)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#332)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4832,7 +4821,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#314)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#313)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4842,7 +4831,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#442)(api, repo_name, repo_url, repo_path, ref, commit):**
+&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#441)(api, repo_name, repo_url, repo_path, ref, commit):**
 
 Update a ref in the remote repo to point to a given commit.  If ref
 evaluates as False, then do nothing
@@ -4855,7 +4844,7 @@ Args:
   ref       (str):  ref to push to (possibly empty) or None
   commit    (str):  commit SHA1 to push to ref
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#259)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#258)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4870,7 +4859,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#390)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#389)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4883,7 +4872,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#431)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#430)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4891,7 +4880,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#417)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#416)(refs):**
 
 Assert the given refs start with refs/heads.
 
@@ -5088,14 +5077,14 @@ use tast executable from build_artifacts.
 &mdash; **def [RunSteps](/recipes/tast_vm.py#41)(api, properties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
-[DEPS](/recipes/test_chromite.py#12): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_chromite.py#12): [bot\_cost](#recipe_modules-bot_cost), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that tests chromite.
 
 Though this recipe appears to be almost a subset of build_target, it lives
 on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/test_chromite.py#34)(api):**
+&mdash; **def [RunSteps](/recipes/test_chromite.py#35)(api):**
 ### *recipes* / [test\_config](/recipes/test_config.py)
 
 [DEPS](/recipes/test_config.py#8): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
