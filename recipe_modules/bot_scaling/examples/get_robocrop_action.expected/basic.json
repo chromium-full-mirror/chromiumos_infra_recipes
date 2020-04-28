@@ -142,21 +142,6 @@
       "query",
       "--swarming",
       "chromeos-swarming.appspot.com",
-      "bots/count?dimensions=role:bar&dimensions=bot_size:large"
-    ],
-    "infra_step": true,
-    "name": "get bot query result (2)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
-      "chromeos-swarming.appspot.com",
       "tasks/count?state=RUNNING&tags=role:bar&tags=bot_size:large&start=1336913604.5"
     ],
     "infra_step": true,

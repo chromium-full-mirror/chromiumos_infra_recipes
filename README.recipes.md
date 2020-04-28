@@ -370,7 +370,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_current\_bot\_amount](/recipe_modules/bot_scaling/api.py#281)(self, bot_policy, configs):**
+&mdash; **def [get\_current\_bot\_amount](/recipe_modules/bot_scaling/api.py#283)(self, bot_policy, configs):**
 
 Sums the min and max bot numbers per bot policy.
 
@@ -381,7 +381,7 @@ Args:
 Returns:
   int, the number of bots current configured for bot group.
 
-&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#202)(self, bot_policy_config):**
+&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#204)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
 
@@ -392,7 +392,7 @@ Args:
 Returns:
   list(Config), GCE Provider config definitions.
 
-&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#218)(self, region_restrictions, config_map):**
+&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#220)(self, region_restrictions, config_map):**
 
 Sums the total number of configured bots per bot policy.
 
@@ -404,7 +404,7 @@ Args:
 Returns:
   int, sum of the total number of bots in GCE Provider
 
-&mdash; **def [get\_previous\_action](/recipe_modules/bot_scaling/api.py#181)(self):**
+&mdash; **def [get\_previous\_action](/recipe_modules/bot_scaling/api.py#183)(self):**
 
 Determines regional distribution of bot requests.
 
@@ -472,7 +472,7 @@ Args:
 Returns:
   SwarmingStats:  bot and task stats named tuple.
 
-&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#298)(self, dimensions):**
+&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#300)(self, dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
@@ -482,7 +482,7 @@ Args:
 Returns:
   list, product of all swarming dimensions for querying.
 
-&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#235)(self, bot_policy_config, configs):**
+&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#237)(self, bot_policy_config, configs):**
 
 Sums the min and max bot numbers per bot policy.
 
@@ -494,7 +494,7 @@ Args:
 Returns:
   BotPolicy, updated to reflect ScalingRestriction values.
 
-&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#258)(self, robocrop_actions, configs):**
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#260)(self, robocrop_actions, configs):**
 
 Updates each GCE Provider config that is actionable.
 
