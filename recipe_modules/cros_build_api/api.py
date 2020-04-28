@@ -5,6 +5,7 @@
 
 """API for working with the protobuf-based Build API."""
 
+from collections import namedtuple
 import functools
 
 from google.protobuf import descriptor_pool
@@ -14,7 +15,7 @@ from google.protobuf import timestamp_pb2
 
 from recipe_engine import recipe_api
 
-from PB.chromite.api.api import MethodGetRequest
+from PB.chromite.api import api as meta_api
 
 def _verify_proto_endpoint(instance, method):
   """Verifies that the method exists as proto endpoint.
@@ -114,7 +115,11 @@ class TestService(Stub):
 
 
 class ToolchainService(Stub):
-  """Stub for TestService."""
+  """Stub for ToolchainService."""
+
+
+class VersionService(Stub):
+  """Stub for VersionService."""
 
 
 class CrosBuildApiApi(recipe_api.RecipeApi):
@@ -145,6 +150,20 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
     self._capture_stdout_stderr = properties.capture_stdout_stderr
     self._log_level = properties.log_level or 'debug'
     self._endpoints = None
+    self._version = None
+
+  version_tuple = namedtuple('verison_tuple', ['major', 'minor', 'bug'])
+  @property
+  def version(self):
+    if not self._version:
+      version_resp = self('chromite.api.VersionService/Get',
+                          meta_api.VersionGetRequest(),
+                          meta_api.VersionGetResponse.DESCRIPTOR,
+                          infra_step=True)
+      version = version_resp.version
+      self._version = self.version_tuple(version.major or 0, version.minor or 0,
+                                         version.bug or 0)
+    return self._version
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                test_teelog_data=None, name=None, infra_step=False,
@@ -287,7 +306,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
     # Lastly, check that the build API side implements the endpoint.
     # The list of endpoints is lazily cached here.
     if not self._endpoints:
-       response = self.MethodService.Get(MethodGetRequest())
-       self._endpoints = [m.method for m in response.methods]
+      response = self.MethodService.Get(meta_api.MethodGetRequest())
+      self._endpoints = [m.method for m in response.methods]
 
     return "%s/%s" % (service_name, method) in self._endpoints

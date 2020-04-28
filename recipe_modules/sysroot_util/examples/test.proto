@@ -7,7 +7,6 @@ syntax = "proto3";
 package recipe_modules.chromeos.sysroot_util.examples;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
-import "chromiumos/common.proto";
 
 message TestInputProperties {
   // The name of the builder config to fetch.

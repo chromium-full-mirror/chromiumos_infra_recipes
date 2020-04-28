@@ -5,6 +5,7 @@
 
 """Test responses for build API endpoints."""
 
+from collections import namedtuple
 import json
 
 from recipe_engine import recipe_test_api
@@ -37,6 +38,28 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   @property
   def artifact_service_responses(self):
     """Generate responses for ArtifactsService."""
+    ret = {
+        'FetchPinnedGuestImageUris':
+            jsonify(pinned_images=[
+                dict(filename='filename', uri='https://example.com/filename')
+            ]),
+    }
+    # Endpoints added in 1.1.0
+    ret.update({
+        'PrepareForBuild':
+            jsonify(build_relevance="UNKNOWN"),
+        'BundleArtifacts':
+            jsonify(
+                artifacts=dict(
+                    legacy=dict(artifacts=[
+                        dict(artifact_type="EBUILD_LOGS",
+                             paths=[self.path('log.tar.gz')])
+                    ]), toolchain=dict(artifacts=[
+                        dict(artifact_type="UNVERIFIED_CHROME_LLVM_ORDERFILE",
+                             paths=[self.path('orderfile')])
+                    ]))),
+    })
+    # Legacy, deprecated as of 1.1.0
     bundle_response = jsonify(artifacts=[{
         'path': self.path('tmp/artifact.tar.gz')
     }])
@@ -46,7 +69,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'BundleEbuildLogs', 'BundleChromeOSConfig', 'ExportCpeReport',
         'BundleImageArchives',
     ]
-    return {endpoint: bundle_response for endpoint in bundle_endpoints}
+    ret.update({endpoint: bundle_response for endpoint in bundle_endpoints})
+    return ret
 
   @property
   def binhost_service_responses(self):
@@ -240,16 +264,27 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def toolchain_service_responses(self):
     """Generate responses for ToolchainService."""
     responses = {}
-    responses['PrepareForBuild'] = jsonify(
-        build_relevance="UNKNOWN"
-    )
+    responses['PrepareForBuild'] = jsonify(build_relevance="UNKNOWN")
     responses['BundleArtifacts'] = jsonify(artifacts_info=[
-        dict(
-            artifact_type="UNVERIFIED_CHROME_LLVM_ORDERFILE", artifacts=[
-                {'path': 'my_output_artifact'},
+        dict(artifact_type="UNVERIFIED_CHROME_LLVM_ORDERFILE", artifacts=[
+            {
+                'path': 'my_output_artifact'
+            },
         ])
     ])
     return responses
+
+  @property
+  def test_version(self):
+    return namedtuple('version_tuple', ['major', 'minor', 'bug'])(1, 1, 0)
+
+  @property
+  def version_service_responses(self):
+    """Generate responses for VersionService."""
+    return dict(
+        Get=jsonify(
+            version=dict(major=self.test_version.major, minor=self.test_version
+                         .minor, bug=self.test_version.bug)))
 
   def responses_by_service(self, include_method_service=True):
     """Map service name to a dictionary of responses by method name.
@@ -270,6 +305,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'SysrootService': self.sysroot_service_responses,
         'TestService': self.test_service_responses,
         'ToolchainService': self.toolchain_service_responses,
+        'VersionService': self.version_service_responses,
     }
     if include_method_service:
       result['MethodService'] = self.method_service_responses

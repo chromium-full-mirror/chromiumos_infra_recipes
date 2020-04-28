@@ -67,21 +67,24 @@ def RunSteps(api):
       TypeError, api.cros_build_api.ArtifactsService.BundleFirmware,
       build_api_test.TestRequestMessage())
 
+  api.assertions.assertEqual((1, 1, 0), api.cros_build_api.version)
+
   # Check the test API.
   response_type_by_service = {
       'ArtifactsService': {
-          endpoint: artifacts.BundleResponse for endpoint in [
-              'BundleImageZip',
-              'BundleTestUpdatePayloads',
-              'BundleAutotestFiles',
-              'BundleTastFiles',
-              'BundlePinnedGuestImages',
-              'BundleFirmware',
-              'BundleEbuildLogs',
-              'BundleChromeOSConfig',
-              'ExportCpeReport',
-              'BundleImageArchives',
-          ]
+          'FetchPinnedGuestImageUris': artifacts.PinnedGuestImageUriResponse,
+          # As of 1.1.0, the following ArtifactsService endpoints are
+          # deprecated.
+          'BundleImageZip': artifacts.BundleResponse,
+          'BundleTestUpdatePayloads': artifacts.BundleResponse,
+          'BundleAutotestFiles': artifacts.BundleResponse,
+          'BundleTastFiles': artifacts.BundleResponse,
+          'BundlePinnedGuestImages': artifacts.BundleResponse,
+          'BundleFirmware': artifacts.BundleResponse,
+          'BundleEbuildLogs': artifacts.BundleResponse,
+          'BundleChromeOSConfig': artifacts.BundleResponse,
+          'ExportCpeReport': artifacts.BundleResponse,
+          'BundleImageArchives': artifacts.BundleResponse,
       },
       'BinhostService': {
           'PrepareBinhostUploads': binhost.PrepareBinhostUploadsResponse,
@@ -136,8 +139,18 @@ def RunSteps(api):
       'ToolchainService': {
           'PrepareForBuild': toolchain.PrepareForToolchainBuildResponse,
           'BundleArtifacts': toolchain.BundleToolchainResponse,
-      }
+      },
+      'VersionService': {
+          'Get': meta_api.VersionGetResponse,
+      },
   }
+  # If needed, add the endpoints introduced in API verison 1.1.0.
+  if api.cros_build_api.version >= (1, 1, 0):
+    response_type_by_service['ArtifactsService'].update({
+        'PrepareForBuild': artifacts.PrepareForBuildResponse,
+        'BundleArtifacts': artifacts.BundleArtifactsResponse,
+    })
+
   responses_by_service = api.cros_build_api.test_api.responses_by_service()
   for service, responses_by_method in responses_by_service.iteritems():
     for method, response_json in responses_by_method.iteritems():
