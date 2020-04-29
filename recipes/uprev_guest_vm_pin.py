@@ -187,31 +187,59 @@ def GenTests(api):
                      output=bb_build.Build.Output(properties=build_properties))
   ], step_name='get latest postsubmit build version.buildbucket.search')
 
-  yield (api.test('uprev-sludge') + api.properties(**properties) +
-         api.git.diff_check(True) + mock_build_search)
+  yield api.test(
+      'uprev-sludge',
+      api.properties(**properties),
+      api.git.diff_check(True),
+      mock_build_search,
+  )
 
-  yield (api.test('no-version-file') + api.properties(**properties) +
-         api.properties(versionFile='') + api.expect_exception('ValueError'))
+  yield api.test(
+      'no-version-file',
+      api.properties(**properties),
+      api.properties(versionFile=''),
+      api.expect_exception('ValueError'),
+  )
 
-  yield (api.test('no-board') + api.properties(**properties) +
-         api.properties(board='') + api.expect_exception('ValueError'))
+  yield api.test(
+      'no-board',
+      api.properties(**properties),
+      api.properties(board=''),
+      api.expect_exception('ValueError'),
+  )
 
-  yield (api.test('no-destination-gs-bucket') + api.properties(**properties) +
-         api.properties(destinationGsBucket='') +
-         api.expect_exception('ValueError'))
+  yield api.test(
+      'no-destination-gs-bucket',
+      api.properties(**properties),
+      api.properties(destinationGsBucket=''),
+      api.expect_exception('ValueError'),
+  )
 
-  yield (api.test('no-destination-gs-path') + api.properties(**properties) +
-         api.properties(destinationGsPath='') +
-         api.expect_exception('ValueError'))
+  yield api.test(
+      'no-destination-gs-path',
+      api.properties(**properties),
+      api.properties(destinationGsPath=''),
+      api.expect_exception('ValueError'),
+  )
 
-  yield (api.test('no-version-diff') + api.properties(**properties) +
-         api.git.diff_check(False) + mock_build_search)
+  yield api.test(
+      'no-version-diff',
+      api.properties(**properties),
+      api.git.diff_check(False),
+      mock_build_search,
+  )
 
-  yield (api.test('no-latest-postsubmit-build') + api.properties(
-      **properties) + api.buildbucket.simulated_search_results(
+  yield api.test(
+      'no-latest-postsubmit-build',
+      api.properties(**properties),
+      api.buildbucket.simulated_search_results(
           [],
-          step_name='get latest postsubmit build version.buildbucket.search'))
+          step_name='get latest postsubmit build version.buildbucket.search'),
+  )
 
-  yield (api.test('no-acls') + api.properties(**properties) +
-         api.properties(userAcls=[], groupAcls=[]) + api.git.diff_check(True) +
-         mock_build_search)
+  yield api.test(
+      'no-acls',
+      api.properties(**properties),
+      api.properties(userAcls=[], groupAcls=[]) + api.git.diff_check(True),
+      mock_build_search,
+  )
