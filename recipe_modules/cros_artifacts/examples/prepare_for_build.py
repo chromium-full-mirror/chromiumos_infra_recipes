@@ -11,10 +11,10 @@ DEPS = [
 ]
 
 from PB.chromite.api import sysroot
+from PB.chromite.api.artifacts import PrepareForBuildResponse
 
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import PrepareForBuildResponse
 
 from PB.recipe_modules.chromeos.cros_artifacts.examples.test import (
     TestInputProperties)

@@ -15,7 +15,6 @@ from recipe_engine import recipe_api
 from PB.chromite.api import artifacts
 from PB.chromite.api import toolchain
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import PrepareForBuildResponse
 
 # Legacy artifacts and their handling.
 ARTIFACTS_SERVICE = 'chromite.api.ArtifactsService'
@@ -112,9 +111,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           use.
 
     Returns:
-      (PrepareForBuildResponse.build_relevance) POINTLESS.
+      (artifacts.PrepareForBuildResponse.build_relevance) POINTLESS.
     """
-    return PrepareForBuildResponse.POINTLESS
+    return artifacts.PrepareForBuildResponse.POINTLESS
 
   def _prepare_unknown(self, _chroot, _sysroot, _artifact_types,
                        _input_artifacts, _artifact_profile_info,
@@ -135,9 +134,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           use.
 
     Returns:
-      (PrepareForBuildResponse.build_relevance) UNKNOWN.
+      (artifacts.PrepareForBuildResponse.build_relevance) UNKNOWN.
     """
-    return PrepareForBuildResponse.UNKNOWN
+    return artifacts.PrepareForBuildResponse.UNKNOWN
 
   def _prepare_toolchain(self, chroot, sysroot, artifact_types, input_artifacts,
                          artifact_profile_info, additional_args):
@@ -156,7 +155,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           use.
 
     Returns:
-      (PrepareForBuildResponse) whether build is necessary.
+      (artifacts.PrepareForBuildResponse) whether build is necessary.
     """
     req = toolchain.PrepareForToolchainBuildRequest(
         chroot=chroot, sysroot=sysroot, artifact_types=artifact_types,
@@ -167,10 +166,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     result = resp.build_relevance
 
     if result == toolchain.PrepareForToolchainBuildResponse.NEEDED:
-      return PrepareForBuildResponse.NEEDED
+      return artifacts.PrepareForBuildResponse.NEEDED
     elif result == toolchain.PrepareForToolchainBuildResponse.UNKNOWN:
-      return PrepareForBuildResponse.UNKNOWN
-    return PrepareForBuildResponse.POINTLESS
+      return artifacts.PrepareForBuildResponse.UNKNOWN
+    return artifacts.PrepareForBuildResponse.POINTLESS
 
   def _bundle_toolchain(self, chroot, sysroot, path, artifact_types,
                         artifact_profile_info, additional_args):
@@ -628,11 +627,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                  additional_args))
 
       # Return an aggregate response.
-      if PrepareForBuildResponse.NEEDED in results:
+      if artifacts.PrepareForBuildResponse.NEEDED in results:
         presentation.step_text = 'Build is NEEDED'
-        return PrepareForBuildResponse.NEEDED
-      if PrepareForBuildResponse.UNKNOWN in results:
+        return artifacts.PrepareForBuildResponse.NEEDED
+      if artifacts.PrepareForBuildResponse.UNKNOWN in results:
         presentation.step_text = 'Build need is UNKNOWN'
-        return PrepareForBuildResponse.UNKNOWN
+        return artifacts.PrepareForBuildResponse.UNKNOWN
       presentation.step_text = 'Build is POINTLESS'
-      return PrepareForBuildResponse.POINTLESS
+      return artifacts.PrepareForBuildResponse.POINTLESS

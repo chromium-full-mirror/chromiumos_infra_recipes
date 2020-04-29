@@ -6,9 +6,9 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_artifacts.examples;
 
-import "chromiumos/common.proto";
+import "chromite/api/artifacts.proto";
 
 message TestInputProperties {
-  chromiumos.PrepareForBuildResponse.BuildRelevance relevance = 1;
+  chromite.api.PrepareForBuildResponse.BuildRelevance relevance = 1;
 }
 

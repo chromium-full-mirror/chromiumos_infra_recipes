@@ -7,7 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.sysroot_util.tests;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
-import "chromiumos/common.proto";
+import "chromite/api/artifacts.proto";
 
 message TestInputProperties {
   // The name of the builder config to fetch.
@@ -17,7 +17,7 @@ message TestInputProperties {
   bool force_build_relevance = 2;
 
   // Expected response to update_for_artifact_build
-  chromiumos.PrepareForBuildResponse.BuildRelevance expected_relevance = 3;
+  chromite.api.PrepareForBuildResponse.BuildRelevance expected_relevance = 3;
 
   // Whether to create a chroot first.
   bool with_chroot = 4;

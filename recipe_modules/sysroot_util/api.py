@@ -7,7 +7,7 @@
 
 from recipe_engine import recipe_api
 
-from PB.chromiumos.common import PrepareForBuildResponse
+from PB.chromite.api.artifacts import PrepareForBuildResponse
 from PB.chromite.api.sysroot import Profile
 from PB.chromite.api.sysroot import SysrootCreateRequest
 
