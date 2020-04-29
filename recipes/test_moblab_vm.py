@@ -97,27 +97,31 @@ def RunSteps(api, properties):
     )
 
 def GenTests(api):
-  yield (api.test('basic') +
-         # TODO(evanhernandez): Create a good fake config for moblab vm tests.
-         api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='amd64-generic-cq') +
-         api.cq(full_run=True) +
-         api.properties(
-             name='moblab-vm-name',
-             build_payload=api.cros_test_plan.test_unit_common().build_payload))
-
-  yield (
-      api.test('initsdk-destroy-chroot-tests') +  #
+  yield api.test(
+      'basic',
+      # TODO(evanhernandez): Create a good fake config for moblab vm tests.
       api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq') +  #
+                                builder='amd64-generic-cq'),
+      api.cq(full_run=True),
+      api.properties(
+          name='moblab-vm-name',
+          build_payload=api.cros_test_plan.test_unit_common().build_payload),
+  )
+
+  yield api.test(
+      'initsdk-destroy-chroot-tests',
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='amd64-generic-cq'),
       api.step_data(
           'init sdk.call chromite.api.SdkService/Create.call build API script',
-          retcode=1))
+          retcode=1),
+  )
 
-  yield (
-      api.test('updatesdk-destroy-chroot-tests') +  #
+  yield api.test(
+      'updatesdk-destroy-chroot-tests',
       api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq') +  #
+                                builder='amd64-generic-cq'),
       api.step_data(
           'update sdk.call chromite.api.SdkService/Update.call build API script',
-          retcode=1))
+          retcode=1),
+  )
