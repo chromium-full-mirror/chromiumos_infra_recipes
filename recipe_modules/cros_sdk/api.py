@@ -335,10 +335,11 @@ class CrosSdkApi(recipe_api.RecipeApi):
         self.mark_sdk_as_dirty()
         raise
 
-  def unmount_chroot(self):
+  def unmount_chroot(self, chroot=None):
+    chroot = chroot or self.chroot
     with self.m.step.nest('unmounting chroot'):
       self.m.cros_build_api.SdkService.Unmount(
-          UnmountSdkRequest(chroot=self.chroot))
+          UnmountSdkRequest(chroot=chroot))
 
   def cleanup_sysroot(self):
     with self.m.step.nest('removing sysroot'):
@@ -355,7 +356,20 @@ class CrosSdkApi(recipe_api.RecipeApi):
     with self.m.step.nest('unlink chroot in %s' % checkout_basename):
       chroot_link = checkout_path.join('chroot')
       if self.m.path.exists(chroot_link):
-        self.m.file.remove('remove original chroot link', chroot_link)
+        try:
+          self.m.file.remove('remove original chroot link', chroot_link)
+        except self.m.step.StepFailure:
+          # If we failed to remove the link, it's almost certainly a directory
+          # because the recipe didn't create a chroot, and some Build API step
+          # did it for us.  Unmount and remove the directory that should have
+          # been a symlink.
+          self.m.step.active_result.presentation.status = self.m.step.WARNING
+          chroot = self.chroot
+          chroot.path = str(chroot_link)
+          with self.m.step.nest('clean up rogue chroot'):
+            self.unmount_chroot(chroot=chroot)
+            self.m.step('remove directory',
+                        ['sudo', '-n', 'rmdir', chroot.path])
 
   def swarming_chmod_chroot(self):
     """Chroot is deployed as root, therfore change permissions to

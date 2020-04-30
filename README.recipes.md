@@ -138,6 +138,7 @@
   * [cros_relevance:examples/toolchain_change](#recipes-cros_relevance_examples_toolchain_change)
   * [cros_sdk:examples/existing_sdk_cache](#recipes-cros_sdk_examples_existing_sdk_cache)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
+  * [cros_sdk:tests/rogue_chroot](#recipes-cros_sdk_tests_rogue_chroot)
   * [cros_som:examples/full](#recipes-cros_som_examples_full)
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_tags:examples/full](#recipes-cros_tags_examples_full)
@@ -1494,7 +1495,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#369)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#383)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -1510,7 +1511,7 @@ Args:
   checkout_path (Path): Path to source checkout.  Default:
       cros_source.workspace_path.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#343)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#344)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#33)(self, chroot_parent_path):**
 
@@ -1554,7 +1555,7 @@ Args:
 
 &mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#141)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#378)(self, name, cmd, env=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#392)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1593,19 +1594,19 @@ restore the chroot back to that initial snapshot. If the chroot was
 initially created with 'nouse-image', it will be replaced so that it
 supports the ability to make snapshots.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#360)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#374)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#348)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#349)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
 Args:
  checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#338)(self):**
+&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#338)(self, chroot=None):**
 
 &mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#237)(self, commit, changes, build_source=False, toolchain_changed=False, toolchain_targets=None, timeout_sec='DEFAULT', name=None):**
 
@@ -1626,7 +1627,7 @@ Args:
 Returns:
   (boolean) whether the toolchain was changed.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#398)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#412)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 
@@ -4397,6 +4398,11 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#22)(api, properties):**
+### *recipes* / [cros\_sdk:tests/rogue\_chroot](/recipe_modules/cros_sdk/tests/rogue_chroot.py)
+
+[DEPS](/recipe_modules/cros_sdk/tests/rogue_chroot.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/tests/rogue_chroot.py#16)(api):**
 ### *recipes* / [cros\_som:examples/full](/recipe_modules/cros_som/examples/full.py)
 
 [DEPS](/recipe_modules/cros_som/examples/full.py#6): [cros\_som](#recipe_modules-cros_som), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -4927,7 +4933,7 @@ Launches presubmit tests for CQ.
 
 Recipe for running presubmit on multiple CLs.
 
-&mdash; **def [RunSteps](/recipes/presubmit_tests.py#29)(api, properties):**
+&mdash; **def [RunSteps](/recipes/presubmit_tests.py#30)(api, properties):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

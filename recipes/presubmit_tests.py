@@ -26,6 +26,7 @@ from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
 
 PROPERTIES = PresubmitTestsProperties
 
+
 def RunSteps(api, properties):
   gitiles_commit = api.buildbucket.gitiles_commit
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
@@ -58,13 +59,15 @@ def RunSteps(api, properties):
       if not gitiles_commit.id:
         gitiles_commit = common_pb2.GitilesCommit(
             host=gitiles_commit.host, project=gitiles_commit.project,
-            ref=gitiles_commit.ref, id=api.gitiles.fetch_revision(
-                gitiles_commit.host, gitiles_commit.project,
-                gitiles_commit.ref))
+            ref=gitiles_commit.ref,
+            id=api.gitiles.fetch_revision(gitiles_commit.host,
+                                          gitiles_commit.project,
+                                          gitiles_commit.ref))
 
   # TODO(crbug/1039875): Add an input property to only do the minimal checkouts
   # required.
   _FullCheckout(api, properties, gitiles_commit, gerrit_changes)
+
 
 def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
   # Some of the repos (e.g., crostools) reach into other repos in presubmit
@@ -82,8 +85,10 @@ def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
 
     with api.step.nest('run presubmit checks'):
       # Set up some variables that are used repeatedly in the for loop.
-      path_info = {x.path: x for x in api.repo.project_infos(
-          projects=[x.project for x in patch_sets])}
+      path_info = {
+          x.path: x for x in api.repo.project_infos(
+              projects=[x.project for x in patch_sets])
+      }
       dry_run = api.cq.state == api.cq.DRY
 
       checked_paths = set()
@@ -106,12 +111,13 @@ def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
               api.step('setup', ['git', 'checkout', '-b', '__presubmit'])
               api.step('set tracking', [
                   'git', 'branch', '--set-upstream-to',
-                  '%s/%s' % (info.remote, branch)])
+                  '%s/%s' % (info.remote, branch)
+              ])
               api.path.mock_add_paths(full_path.join(properties.test_filename))
               if api.path.exists(full_path.join('PRESUBMIT.cfg')):
                 api.step('repo presubmit', [
-                    workpath.join('src/repohooks/pre-upload.py'),
-                    '--pre-submit'])
+                    workpath.join('src/repohooks/pre-upload.py'), '--pre-submit'
+                ])
               elif api.path.exists(full_path.join('PRESUBMIT.py')):
                 api.step('git cl presubmit',
                          ['git', 'cl', 'presubmit', '--verbose'])
@@ -120,44 +126,39 @@ def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
             # The branch isn't merged, so we have to use -D.
             api.step('branch cleanup', ['git', 'branch', '-D', '__presubmit'])
 
+
 def GenTests(api):
   mock_CLs = [
-      common_pb2.GerritChange(
-          host='chromium.googlesource.com', project='p1', change=1234),
-      common_pb2.GerritChange(
-          host='chrome-internal.googlesource.com', project='p2', change=2341),
+      common_pb2.GerritChange(host='chromium.googlesource.com', project='p1',
+                              change=1234),
+      common_pb2.GerritChange(host='chrome-internal.googlesource.com',
+                              project='p2', change=2341),
   ]
 
   def test_builder(builder='infra-presubmit', gitiles=True, changes=True):
     """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(
-        project='chromeos', bucket='cq', builder=builder)
+    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
+                                             builder=builder)
     if not gitiles:
       build.input.gitiles_commit.Clear()
     if changes:
       build.input.gerrit_changes.extend(mock_CLs)
     return api.buildbucket.build(build)
 
-  yield (api.test('basic') +  #
-         test_builder())
+  yield api.test('basic', test_builder())
 
-  yield (api.test('missing') +  #
-         test_builder(builder='missing'))
+  yield api.test('missing', test_builder(builder='missing'))
 
-  yield (api.test('no gitiles given') + #
-         test_builder(gitiles=False))
+  yield api.test('no gitiles given', test_builder(gitiles=False))
 
-  yield (api.test('no changes given') + #
-         test_builder(gitiles=False, changes=False))
+  yield api.test('no changes given', test_builder(gitiles=False, changes=False))
 
-  yield (api.test('no config gitiles') + #
-         test_builder(builder='amd64-generic-cq', gitiles=False, changes=False))
+  yield api.test(
+      'no config gitiles',
+      test_builder(builder='amd64-generic-cq', gitiles=False, changes=False))
 
-  yield (api.test('has PRESUBMIT.py') +  #
-         test_builder() + #
-         api.cq(dry_run=True) + #
-         api.properties(test_filename='PRESUBMIT.py'))
+  yield api.test('has PRESUBMIT.py', test_builder(), api.cq(dry_run=True),
+                 api.properties(test_filename='PRESUBMIT.py'))
 
-  yield (api.test('has PRESUBMIT.cfg') +  #
-         test_builder() + #
-         api.properties(test_filename='PRESUBMIT.cfg'))
+  yield api.test('has PRESUBMIT.cfg', test_builder(),
+                 api.properties(test_filename='PRESUBMIT.cfg'))
