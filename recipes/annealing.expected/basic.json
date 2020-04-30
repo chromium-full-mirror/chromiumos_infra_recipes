@@ -435,6 +435,20 @@
   {
     "cmd": [
       "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "publish external snapshot.git symbolic-ref",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
       "FETCH_HEAD"
     ],
@@ -598,6 +612,19 @@
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git rev-parse (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "master"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "publish external snapshot.git checkout (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

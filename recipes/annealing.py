@@ -194,18 +194,20 @@ def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
 
   # fetch and update the ref with the new snapshot file
   api.git.fetch_ref(repo_url, snapshot_ref)
-  api.git.checkout('FETCH_HEAD')
-  commit_message = make_message(
-      api, snapshot_ref, gerrit_commits, disable_gerrit)
 
-  if footers:
-    commit_message += "\n"
-    for key,val in footers:
-      commit_message += "%s: %s\n" % (key,val)
+  with api.git.head_context():
+    api.git.checkout('FETCH_HEAD')
+    commit_message = make_message(
+        api, snapshot_ref, gerrit_commits, disable_gerrit)
 
-  api.git_txn.update_ref_write_file(repo_url, snapshot_ref, commit_message,
-                                    snapshot_file, snapshot_xml)
-  return make_gitiles_commit(api, repo_url, api.git.head_commit())
+    if footers:
+      commit_message += "\n"
+      for key,val in footers:
+        commit_message += "%s: %s\n" % (key,val)
+
+    api.git_txn.update_ref_write_file(repo_url, snapshot_ref, commit_message,
+                                      snapshot_file, snapshot_xml)
+    return make_gitiles_commit(api, repo_url, api.git.head_commit())
 
 def get_gerrit_changes(api, manifest_diffs):
   """Find all Gerrit changes that landed since the last snapshot.
