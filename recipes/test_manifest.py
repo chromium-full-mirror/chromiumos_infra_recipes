@@ -59,21 +59,27 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test('without-gerrit-changes')
 
-  yield (api.test('with-manifest-changes') +  #
-         api.buildbucket.try_build(project='chromeos/manifest') +  #
-         api.cq(full_run=True) +  #
-         api.path.exists(api.path['start_dir'].join(
-             'chromiumos_workspace/src/chromeos/manifest/default.xml')))
+  yield api.test(
+      'with-manifest-changes',
+      api.buildbucket.try_build(project='chromeos/manifest'),
+      api.cq(full_run=True),
+      api.path.exists(api.path['start_dir'].join(
+          'chromiumos_workspace/src/chromeos/manifest/default.xml')),
+  )
 
-  yield (api.test('with-manifest-internal-changes') +  #
-         api.buildbucket.try_build(project='manifest-internal') +  #
-         api.cq(full_run=True) +  #
-         api.path.exists(api.path['start_dir'].join(
-             'chromiumos_workspace/src/manifest-internal/default.xml')) +  #
-         api.properties(test_branch_projects=['manifest-internal']))
+  yield api.test(
+      'with-manifest-internal-changes',
+      api.buildbucket.try_build(project='manifest-internal'),
+      api.cq(full_run=True),
+      api.path.exists(api.path['start_dir'].join(
+          'chromiumos_workspace/src/manifest-internal/default.xml')),
+      api.properties(test_branch_projects=['manifest-internal']),
+  )
 
-  yield (api.test('with-manifest-internal-changes-no-cros-branch') +  #
-         api.buildbucket.try_build(project='manifest-internal') +  #
-         api.cq(full_run=True) +  #
-         api.path.exists(api.path['start_dir'].join(
-             'chromiumos_workspace/src/manifest-internal/default.xml')))
+  yield api.test(
+      'with-manifest-internal-changes-no-cros-branch',
+      api.buildbucket.try_build(project='manifest-internal'),
+      api.cq(full_run=True),
+      api.path.exists(api.path['start_dir'].join(
+          'chromiumos_workspace/src/manifest-internal/default.xml')),
+  )
