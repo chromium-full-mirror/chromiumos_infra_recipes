@@ -742,7 +742,7 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#330)(self, builder_name, target, kind):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#332)(self, builder_name, target, kind):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -757,7 +757,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#491)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#493)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -772,7 +772,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#524)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#526)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -787,7 +787,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#544)(self, artifact_types, chroot, sysroot, input_artifacts, artifact_profile_info=None, additional_args=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#546)(self, artifact_types, chroot, sysroot, input_artifacts, artifact_profile_info=None, additional_args=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -809,7 +809,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#419)(self, builder_name, target, kind, gs_bucket, artifact_types, chroot=None, sysroot=None, publish_info=None, artifact_profile_info=None, additional_args=None, name=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#421)(self, builder_name, target, kind, gs_bucket, artifact_types, chroot=None, sysroot=None, publish_info=None, artifact_profile_info=None, additional_args=None, name=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -1940,13 +1940,14 @@ Raises:
 
 A module to process tast-results/ directory.
 
-&mdash; **def [track](/recipe_modules/disk_usage/api.py#23)(self, step_name=None, depth=0, timeout=(10 \* 60)):**
+&mdash; **def [track](/recipe_modules/disk_usage/api.py#23)(self, step_name=None, depth=0, timeout=(10 \* 60), dir=None):**
 
 Print out the disk usage under the current directory.
 
 Args:
   depth(int): The depth to traverse within the subdirs.
   timeout(int): timeout in seconds.
+  dir(str): absolute dir path to start from. If empty, use cwd.
 
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [tracking\_context](/recipe_modules/disk_usage/api.py#14)(self):**
 

@@ -298,8 +298,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         files_by_artifact.update(
             func(chroot, sysroot, path, types, artifact_profile_info,
                  additional_args))
-    except self.m.step.InfraFailure as e:  # pragma: nocover
-      self.m.disk_usage.track(step_name='track disk usage', depth=2)
+    except Exception as e:  # pragma: nocover
+      self.m.disk_usage.track(step_name='track disk usage', depth=0)
+      self.m.disk_usage.track(step_name='track disk usage', depth=1,
+                              dir='/b/s/w/')
       raise e
 
     return files_by_artifact

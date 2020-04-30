@@ -11,7 +11,7 @@ DEPS = [
 
 def RunSteps(api):
   with api.disk_usage.tracking_context():
-    api.disk_usage.track(depth=1)
+    api.disk_usage.track(depth=1, dir='/')
 
 
 def GenTests(api):
