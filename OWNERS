@@ -1,14 +1,16 @@
 # Chrome OS CI team
 # Most of your recipes CLs should go to this group.
 andrewlamb@chromium.org
+ctmcnamara@chromium.org
 dburger@chromium.org
 dhanyaganesh@chromium.org
 engeg@chromium.org
 engeg@google.com  # engeg sometimes uses his @google account in Gerrit, so add that too.
-jclinton@chromium.org
 lamontjones@chromium.org
 mikenichols@chromium.org
+navil@google.com
 seanabraham@chromium.org
+smcallis@google.com
 
 # Service accounts
 recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
