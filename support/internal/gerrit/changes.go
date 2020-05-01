@@ -110,10 +110,10 @@ func fetchHostChanges(
 		return err
 	}
 	queryParams := changesToQueryParams(changes, options)
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
 	ch := make(chan []*gerrit.Change, 1)
-	shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
+	err = shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
 		results, more, err := client.ChangeQuery(ctx, queryParams)
 		if err != nil {
 			return err
@@ -125,6 +125,9 @@ func fetchHostChanges(
 		ch <- results
 		return nil
 	})
+	if err != nil {
+		return fmt.Errorf("DoWithRetry ChangeQuery: %v", err)
+	}
 	results := <-ch
 	for _, c := range changes {
 		c.updateChangeFromResults(results)
@@ -145,7 +148,7 @@ func (c *Change) fetchFileList(ctx context.Context, httpClient *http.Client) err
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 	defer cancel()
 	ch := make(chan *gerrit2.ListFilesResponse, 1)
-	shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
+	err = shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
 		// The "Parent: 1" is what makes ListFiles able to get file lists for merge commits.
 		// It's a 1-indexed way to reference parent commits, and we always want a value of 1
 		// in order to get the target branch ref.
@@ -156,6 +159,9 @@ func (c *Change) fetchFileList(ctx context.Context, httpClient *http.Client) err
 		ch <- resp
 		return nil
 	})
+	if err != nil {
+		return fmt.Errorf("DoWithRetry ListFiles: %v", err)
+	}
 	results := <-ch
 	c.RevisionInfo.Files = make(map[string]gerrit.FileInfo)
 	for filename, _ := range results.Files {
@@ -179,7 +185,7 @@ func MustFetchChanges(parentCtx context.Context, httpClient *http.Client, change
 	// Error management for parallel requests.
 	var hostErrors sync.Map
 	var wg sync.WaitGroup
-	ctx, cancel := context.WithTimeout(parentCtx, 1*time.Minute)
+	ctx, cancel := context.WithTimeout(parentCtx, 5*time.Minute)
 	defer cancel()
 
 	// Parallel request per host.
