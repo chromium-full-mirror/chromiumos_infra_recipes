@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "set up orchestrator"
+    "name": "set up orchestrator",
+    "~followup_annotations": [
+      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml@@@"
+    ]
   },
   {
     "cmd": [],

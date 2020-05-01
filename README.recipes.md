@@ -4790,7 +4790,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#60)(api, properties):**
 
-&mdash; **def [clone\_repo](/recipes/orchestrator.py#238)(api, name, url, fetch=None):**
+&mdash; **def [clone\_repo](/recipes/orchestrator.py#241)(api, name, url, fetch=None):**
 
 Clone a repo into a temporary directory.
 
@@ -4803,7 +4803,7 @@ Args:
 Returns:
   path (Path): path on disk to cloned repo
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#332)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#335)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4822,7 +4822,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#313)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#316)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4832,7 +4832,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#441)(api, repo_name, repo_url, repo_path, ref, commit):**
+&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#444)(api, repo_name, repo_url, repo_path, ref, commit):**
 
 Update a ref in the remote repo to point to a given commit.  If ref
 evaluates as False, then do nothing
@@ -4845,7 +4845,7 @@ Args:
   ref       (str):  ref to push to (possibly empty) or None
   commit    (str):  commit SHA1 to push to ref
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#258)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#261)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4860,7 +4860,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#389)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#392)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4873,7 +4873,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#430)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#433)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -4881,7 +4881,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#416)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#419)(refs):**
 
 Assert the given refs start with refs/heads.
 

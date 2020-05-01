@@ -61,7 +61,7 @@ def RunSteps(api, properties):
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
 
   push_manifest_refs = None
-  with api.step.nest('set up orchestrator'):
+  with api.step.nest('set up orchestrator') as presentation:
     validate_refs(properties.update_manifest_refs)
     config = api.cros_infra_config.configure_builder(
         api.buildbucket.gitiles_commit,
@@ -74,6 +74,9 @@ def RunSteps(api, properties):
     snapshot = api.cros_infra_config.gitiles_commit
     gerrit_changes = api.cros_infra_config.gerrit_changes
     intern_snapshot_id = snapshot.id
+    presentation.links['manifest snapshot revision'] = (
+        'https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/{}/snapshot.xml'
+        .format(intern_snapshot_id))
 
     # clone internal manifest repo
     intern_repo_path = clone_repo(api, 'internal manifest',
