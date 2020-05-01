@@ -60,6 +60,7 @@ def RunSteps(api):
       publish_info=[
           BuilderConfig.Artifacts.PublishInfo(
               publish_gs_location='publish_gs_location',
+              acl_name='public-read',
               publish_types=[
                   BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE]),
           BuilderConfig.Artifacts.PublishInfo(

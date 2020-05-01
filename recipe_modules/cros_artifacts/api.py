@@ -390,7 +390,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             publish_uri = 'gs://' + publish_loc
             if not publish_uri.endswith('/'):
               publish_uri += '/'
-            cmd = ['cp'] + ['%s/%s' % (upload_uri, path) for path in files]
+            cmd = ['cp']
+            if info.acl_name:
+              cmd += ['-a', info.acl_name]
+            cmd += ['%s/%s' % (upload_uri, path) for path in files]
             cmd.append(publish_uri)
             for retries in range(3):
               try:
