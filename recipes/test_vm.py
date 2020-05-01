@@ -181,38 +181,44 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield (api.test('with-tast') +  #
-         api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='amd64-generic-cq') +  #
-         api.properties(
-             build_target={'name': 'amd64-generic'},
-             test_harness=VmTestRequest.TAST, build_payload={
-                 'artifacts_gs_bucket': 'gs://chromeos-image-archive',
-                 'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
-             }, expressions=['example.Pass']))
-
-  yield (api.test('with-autotest') +  #
-         api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='amd64-generic-cq') +
-         api.properties(
-             build_target={'name': 'amd64-generic'},
-             test_harness=VmTestRequest.AUTOTEST, build_payload={
-                 'artifacts_gs_bucket': 'gs://chromeos-image-archive',
-                 'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
-             }, expressions=['example.Pass']))
-
-  yield (
-      api.test('initsdk-destroy-chroot-tests') +  #
+  yield api.test(
+      'with-tast',
       api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq') +  #
+                                builder='amd64-generic-cq'),
+      api.properties(
+          build_target={'name': 'amd64-generic'},
+          test_harness=VmTestRequest.TAST, build_payload={
+              'artifacts_gs_bucket': 'gs://chromeos-image-archive',
+              'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
+          }, expressions=['example.Pass']),
+  )
+
+  yield api.test(
+      'with-autotest',
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='amd64-generic-cq'),
+      api.properties(
+          build_target={'name': 'amd64-generic'},
+          test_harness=VmTestRequest.AUTOTEST, build_payload={
+              'artifacts_gs_bucket': 'gs://chromeos-image-archive',
+              'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
+          }, expressions=['example.Pass']),
+  )
+
+  yield api.test(
+      'initsdk-destroy-chroot-tests',
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='amd64-generic-cq'),
       api.step_data(
           'init sdk.call chromite.api.SdkService/Create.call build API script',
-          retcode=1))
+          retcode=1),
+  )
 
-  yield (
-      api.test('updatesdk-destroy-chroot-tests') +  #
+  yield api.test(
+      'updatesdk-destroy-chroot-tests',
       api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq') +  #
+                                builder='amd64-generic-cq'),
       api.step_data(
           'update sdk.call chromite.api.SdkService/Update.call build API script',
-          retcode=1))
+          retcode=1),
+  )
