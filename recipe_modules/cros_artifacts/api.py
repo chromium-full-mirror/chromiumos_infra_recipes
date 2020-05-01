@@ -163,13 +163,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         additional_args=additional_args)
     resp = self.m.cros_build_api.ToolchainService.PrepareForBuild(
         req, infra_step=True)
-    result = resp.build_relevance
-
-    if result == toolchain.PrepareForToolchainBuildResponse.NEEDED:
-      return artifacts.PrepareForBuildResponse.NEEDED
-    elif result == toolchain.PrepareForToolchainBuildResponse.UNKNOWN:
-      return artifacts.PrepareForBuildResponse.UNKNOWN
-    return artifacts.PrepareForBuildResponse.POINTLESS
+    return resp.build_relevance
 
   def _bundle_toolchain(self, chroot, sysroot, path, artifact_types,
                         artifact_profile_info, additional_args):

@@ -42,7 +42,7 @@ from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import BASE
-from PB.chromiumos.common import PrepareForBuildResponse as Relevance
+from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.packages import GetTargetVersionsRequest

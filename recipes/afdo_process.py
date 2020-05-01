@@ -25,7 +25,7 @@ DEPS = [
 from google.protobuf import json_format as json_pb
 
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import PrepareForBuildResponse as Relevance
+from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
