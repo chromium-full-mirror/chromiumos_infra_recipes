@@ -6,6 +6,20 @@
   {
     "cmd": [
       "git",
+      "config",
+      "--global",
+      "--list"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS.git config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "clone",
       "https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS",
       "."

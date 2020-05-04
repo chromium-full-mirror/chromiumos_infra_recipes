@@ -24,6 +24,7 @@ def RunSteps(api):
          'chrome/tools/build/internal.DEPS')
   path = api.path.mkdtemp()
   with api.step.nest('attempt forge commit to %s' % url), api.context(cwd=path):
+    api.git.set_global_config(['--list'])
     api.git.clone(url, timeout_sec=5 * 60)
     api.step('add trailing whitespace to DEPS',
              ['sed', '-i', '-e', '$a\\n', 'DEPS'])
