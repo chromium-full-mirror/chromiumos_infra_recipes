@@ -62,9 +62,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """Return a chromiumos.common.Chroot."""
     env = None
     if self._use_flags:
-      env = common.Chroot.ChrootEnv(
-          use_flags=self._use_flags
-      )
+      env = common.Chroot.ChrootEnv(use_flags=self._use_flags)
     return common.Chroot(
         path=str(self._chroot_path),
         chrome_dir=self._chrome_root,
@@ -80,8 +78,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
           self._test_data.enabled):
         version_json = self.m.file.read_json(
             name='read sdk cache version json',
-            source=self._sdk_cache_version_file
-        )
+            source=self._sdk_cache_version_file)
         self._sdk_cache_version = str(version_json['version'])
     return self._sdk_cache_version
 
@@ -105,13 +102,13 @@ class CrosSdkApi(recipe_api.RecipeApi):
         self._sdk_cache_version_file,
     ]
     self.m.step('move sdk cache version file into place', cmd)
-    self._sdk_cache_version = value;
+    self._sdk_cache_version = value
 
   def set_chrome_root(self, chrome_root):
     self._chrome_root = chrome_root
 
-  def set_goma_config(self, goma_dir, goma_client_json, goma_approach,
-                      log_dir, stats_file, counterz_file):
+  def set_goma_config(self, goma_dir, goma_client_json, goma_approach, log_dir,
+                      stats_file, counterz_file):
     self._goma_dir = goma_dir
     self._goma_client_json = goma_client_json
     self._goma_approach = goma_approach
@@ -327,8 +324,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
       try:
         with self.m.step.nest('restoring chroot from snapshot'):
           self.m.cros_build_api.SdkService.RestoreSnapshot(
-              RestoreSnapshotRequest(
-                  chroot=self.chroot, snapshot_token=snapshot_token))
+              RestoreSnapshotRequest(chroot=self.chroot,
+                                     snapshot_token=snapshot_token))
       except:
         # If restoring the snapshot fails for any reason, mark the current SDK
         # for deletion and reraise the exception.
@@ -409,7 +406,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
     args += ['--'] + cmd
     return self(name, args, **kwargs)
 
-  def uprev_packages(self, build_targets=None, timeout_sec = 10 * 60,
+  def uprev_packages(self, build_targets=None, timeout_sec=10 * 60,
                      name='uprev packages'):
     """Uprev packages.
 
@@ -424,6 +421,6 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest(name):
       return self.m.cros_build_api.PackageService.Uprev(
-          UprevPackagesRequest(
-              build_targets=build_targets, overlay_type=OVERLAYTYPE_BOTH),
+          UprevPackagesRequest(build_targets=build_targets,
+                               overlay_type=OVERLAYTYPE_BOTH),
           timeout=timeout_sec)

@@ -72,29 +72,35 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test('basic')
 
-  yield (api.test('versioned') +  #
-         api.properties(TestInputProperties(sdk_version=3)) +  #
-         api.step_data('init sdk.read sdk cache version json',
-                       api.raw_io.output_text('{"version": "1"}')))
+  yield api.test(
+      'versioned', api.properties(TestInputProperties(sdk_version=3)),
+      api.step_data('init sdk.read sdk cache version json',
+                    api.raw_io.output_text('{"version": "1"}')))
 
-  yield (api.test('with changes') +  #
-         api.properties(TestInputProperties(
-             gerrit_changes=[common_pb2.GerritChange(change=1234)])))
+  yield api.test(
+      'with-changes',
+      api.properties(
+          TestInputProperties(
+              gerrit_changes=[common_pb2.GerritChange(change=1234)])))
 
-  yield (api.test('failed-step-init-sdk') +  #
-         api.step_data(
-             'init sdk.call chromite.api.SdkService/'
-             'Create.call build API script', retcode=1))
+  yield api.test(
+      'failed-step-init-sdk',
+      api.step_data(
+          'init sdk.call chromite.api.SdkService/'
+          'Create.call build API script', retcode=1))
 
-  yield (api.test('failed-step-update-sdk') +  #
-         api.step_data(
-             'update sdk.call chromite.api.SdkService/'
-             'Update.call build API script', retcode=1))
+  yield api.test(
+      'failed-step-update-sdk',
+      api.step_data(
+          'update sdk.call chromite.api.SdkService/'
+          'Update.call build API script', retcode=1))
 
-  yield (api.test('failed-step-destroy-chroot-tests') +  #
-         api.step_data('link chroot in workspace.ensure workspace', retcode=1))
+  yield api.test(
+      'failed-step-destroy-chroot-tests',
+      api.step_data('link chroot in workspace.ensure workspace', retcode=1))
 
-  yield (api.test('failed-restore-to-snapshot-test') +  #
-         api.step_data(
-             ('restoring chroot from snapshot.call chromite.api.SdkService/'
-              'RestoreSnapshot.call build API script'), retcode=1))
+  yield api.test(
+      'failed-restore-to-snapshot-test',
+      api.step_data(
+          ('restoring chroot from snapshot.call chromite.api.SdkService/'
+           'RestoreSnapshot.call build API script'), retcode=1))

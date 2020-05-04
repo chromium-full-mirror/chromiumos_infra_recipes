@@ -12,6 +12,7 @@ DEPS = [
 
 from PB.chromiumos import common
 
+
 def RunSteps(api):
   workspace = api.path['cleanup'].join('workspace')
 
@@ -22,7 +23,9 @@ def RunSteps(api):
     api.cros_sdk.sdk_cache_version = '3'
     api.assertions.assertEqual(api.cros_sdk.sdk_cache_version, '3')
 
+
 def GenTests(api):
-  yield (api.test('basic') +
-         api.step_data('read sdk cache version json',
-                       api.raw_io.output_text('{"version": "2"}')))
+  yield api.test(
+      'basic',
+      api.step_data('read sdk cache version json',
+                    api.raw_io.output_text('{"version": "2"}')))
