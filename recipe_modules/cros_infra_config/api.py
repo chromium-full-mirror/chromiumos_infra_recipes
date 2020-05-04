@@ -264,10 +264,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # to the changelist.
     if config and not self._properties.ignore_config_changelist:
       if config.orchestrator.gerrit_changes:
-        changes = [
+        converted_changes = [
             ConvertPB(x, common_pb2.GerritChange)
             for x in config.orchestrator.gerrit_changes
-        ] + [x for x in changes]
+        ]
+        changes = converted_changes + [
+            x for x in changes if x not in converted_changes]
         changed = True
 
     if changed:

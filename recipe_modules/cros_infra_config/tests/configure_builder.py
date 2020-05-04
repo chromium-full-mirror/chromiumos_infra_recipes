@@ -6,24 +6,37 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'cros_infra_config',
 ]
 
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cros_infra_config.tests.test import (
+    TestInputProperties)
+
+PROPERTIES = TestInputProperties
 
 
-def RunSteps(api):
+def RunSteps(api, properties):
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
   config = api.cros_infra_config.configure_builder(commit=commit,
                                                    changes=changes)
   api.assertions.assertEqual(config, api.cros_infra_config.config)
 
+  api.assertions.assertEqual(
+      len(api.cros_infra_config.gerrit_changes),
+      properties.expected_change_count)
+
   expected = [
       json_format.MessageToDict(x) for x in config.orchestrator.gerrit_changes
-  ] + [json_format.MessageToDict(x) for x in changes]
+  ]
+  expected.extend(
+      json_format.MessageToDict(c)
+      for c in changes
+      if json_format.MessageToDict(c) not in expected)
   result = [
       json_format.MessageToDict(x) for x in api.cros_infra_config.gerrit_changes
   ]
@@ -43,7 +56,18 @@ def GenTests(api):
     build.input.gerrit_changes.extend(cls or [])
     return api.buildbucket.build(build)
 
-  yield api.test('basic', buildbucket_build())
+  yield api.test('basic', buildbucket_build(),
+                 api.properties(TestInputProperties(expected_change_count=1)))
 
   yield api.test('with_changes',
-                 buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]))
+                 buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]),
+                 api.properties(TestInputProperties(expected_change_count=2)))
+
+  yield api.test(
+      'with_duplicate_change',
+      buildbucket_build(cls=[
+          common_pb2.GerritChange(
+              host='chromium-review.googlesource.com',
+              project='chromiumos/overlays/chromiumos-overlay', change=1394249,
+              patchset=-1)
+      ]), api.properties(TestInputProperties(expected_change_count=1)))

@@ -1294,7 +1294,7 @@ which caches the data.
 Returns:
   BuilderConfig for this builder.
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#286)(self, commit=None, changes=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#288)(self, commit=None, changes=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -4426,9 +4426,9 @@ Checks a project conforms to its program's constraints.
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/specify_branch.py#19)(api):**
 ### *recipes* / [cros\_infra\_config:tests/configure\_builder](/recipe_modules/cros_infra_config/tests/configure_builder.py)
 
-[DEPS](/recipe_modules/cros_infra_config/tests/configure_builder.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/cros_infra_config/tests/configure_builder.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/configure_builder.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/configure_builder.py#22)(api, properties):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
