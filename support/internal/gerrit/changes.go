@@ -101,6 +101,16 @@ func (c *Change) updateChangeFromResults(results []*gerrit.Change) {
 	c.Info.Revisions = nil
 }
 
+func batchSlice(changes Changes) []Changes{
+	batchSize := 10
+	batches := make([]Changes, 0, (len(changes) + batchSize - 1) / batchSize)
+	for batchSize < len(changes) {
+		changes, batches = changes[batchSize:], append(batches, changes[0:batchSize:batchSize])
+	}
+	batches = append(batches, changes)
+	return batches
+}
+
 func fetchHostChanges(
 	ctx context.Context, httpClient *http.Client,
 	host string, changes Changes, options Options,
@@ -109,32 +119,38 @@ func fetchHostChanges(
 	if err != nil {
 		return err
 	}
-	queryParams := changesToQueryParams(changes, options)
+
+	changesBatches := batchSlice(changes)
+
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
-	ch := make(chan []*gerrit.Change, 1)
-	err = shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
-		results, more, err := client.ChangeQuery(ctx, queryParams)
+
+	for _, batch := range changesBatches {
+		queryParams := changesToQueryParams(batch, options)
+		ch := make(chan []*gerrit.Change, 1)
+		err = shared.DoWithRetry(ctx, shared.DefaultOpts, func() error {
+			results, more, err := client.ChangeQuery(ctx, queryParams)
+			if err != nil {
+				return err
+			}
+			if more {
+				// Shouldn't happen, but log just in case.
+				log.Print("WARNING: more results than expected!")
+			}
+			ch <- results
+			return nil
+		})
 		if err != nil {
-			return err
+			return fmt.Errorf("DoWithRetry ChangeQuery: %v", err)
 		}
-		if more {
-			// Shouldn't happen, but log just in case.
-			log.Print("WARNING: more results than expected!")
-		}
-		ch <- results
-		return nil
-	})
-	if err != nil {
-		return fmt.Errorf("DoWithRetry ChangeQuery: %v", err)
-	}
-	results := <-ch
-	for _, c := range changes {
-		c.updateChangeFromResults(results)
-		// In some cases (e.g. merge commit), GetChange doesn't return a file list.
-		// We thus call into the ListFiles endpoint instead.
-		if options.IncludeFiles && len(c.RevisionInfo.Files) == 0 {
-			c.fetchFileList(ctx, httpClient)
+		results := <-ch
+		for _, c := range batch {
+			c.updateChangeFromResults(results)
+			// In some cases (e.g. merge commit), GetChange doesn't return a file list.
+			// We thus call into the ListFiles endpoint instead.
+			if options.IncludeFiles && len(c.RevisionInfo.Files) == 0 {
+				c.fetchFileList(ctx, httpClient)
+			}
 		}
 	}
 	return nil
