@@ -103,30 +103,40 @@ def GenTests(api):
     return api.buildbucket.build(msg)
 
   # This is the normal case
-  yield (api.test('normal_one_change') +  #
-         make_build(changes=[common_pb2.GerritChange(change=1234)]))
+  yield api.test(
+      'normal_one_change',
+      make_build(changes=[common_pb2.GerritChange(change=1234)]),
+  )
 
-  yield (api.test('normal_one_change_and_props') +  #
-         make_build(changes=[common_pb2.GerritChange(change=1234)]) +  #
-         api.properties(runhooks=True, timeout_s=3))
+  yield api.test(
+      'normal_one_change_and_props',
+      make_build(changes=[common_pb2.GerritChange(change=1234)]),
+      api.properties(runhooks=True, timeout_s=3),
+  )
 
-  yield (api.test('normal_two_changes') +  #
-         make_build(changes=[
-             common_pb2.GerritChange(change=1234),
-             common_pb2.GerritChange(change=1235),
-         ]))
+  yield api.test(
+      'normal_two_changes',
+      make_build(changes=[
+          common_pb2.GerritChange(change=1234),
+          common_pb2.GerritChange(change=1235),
+      ]),
+  )
 
   # LUCI CQ doesn't generally give us a gitiles_commit, but we support that.
-  yield (api.test('commit_with_no_changes') +  #
-         make_build(commit='SHA'))
+  yield api.test(
+      'commit_with_no_changes',
+      make_build(commit='SHA'),
+  )
 
-  yield (
-      api.test('commit_with_one_change') +  #
-      make_build(commit='SHA', changes=[common_pb2.GerritChange(change=1234)]))
+  yield api.test(
+      'commit_with_one_change',
+      make_build(commit='SHA', changes=[common_pb2.GerritChange(change=1234)]),
+  )
 
-  yield (api.test('commit_with_two_changes') +  #
-         make_build(
-             commit='SHA', changes=[
-                 common_pb2.GerritChange(change=1234),
-                 common_pb2.GerritChange(change=1235),
-             ]))
+  yield api.test(
+      'commit_with_two_changes',
+      make_build(commit='SHA', changes=[
+          common_pb2.GerritChange(change=1234),
+          common_pb2.GerritChange(change=1235),
+      ]),
+  )

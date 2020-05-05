@@ -59,4 +59,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic'))
+  yield api.test('basic')
