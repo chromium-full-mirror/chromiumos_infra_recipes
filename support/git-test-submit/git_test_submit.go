@@ -46,15 +46,10 @@ func main() {
 		// Will only happen if parentDir isn't already a dir and it failed to be created.
 		log.Fatalf("%s is not a directory", input.TempDir)
 	}
-	// Temporary hack for https://crbug.com/1039753
-	if len(input.GerritChanges) > 20 {
-		log.Printf("Too many Gerrit changes (%v). Returning early with success.", len(input.GerritChanges))
-	} else {
-		errs := git.CheckCherryPick(ctx, httpClient, input.TempDir, input.GerritChanges)
-		for i, err := range errs {
-			log.Printf("Error %d/%d\n%s", i+1, len(errs), err.Error())
-			output.Errors = append(output.Errors, err.Error())
-		}
+	errs := git.CheckCherryPick(ctx, httpClient, input.TempDir, input.GerritChanges)
+	for i, err := range errs {
+		log.Printf("Error %d/%d\n%s", i+1, len(errs), err.Error())
+		output.Errors = append(output.Errors, err.Error())
 	}
 	cli.MustMarshalOutput(output)
 }
