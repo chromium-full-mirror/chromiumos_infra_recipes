@@ -229,6 +229,7 @@
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
   * [stable_version:examples/full](#recipes-stable_version_examples_full)
+  * [star_doctor](#recipes-star_doctor) &mdash; Recipe for the Star Doctor.
   * [support:examples/full](#recipes-support_examples_full)
   * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full)
   * [sysroot_util:examples/create_sysroot](#recipes-sysroot_util_examples_create_sysroot)
@@ -5030,6 +5031,16 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/stable_version/examples/full.py#6): [stable\_version](#recipe_modules-stable_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/stable_version/examples/full.py#12)(api):**
+### *recipes* / [star\_doctor](/recipes/star_doctor.py)
+
+[DEPS](/recipes/star_doctor.py#12): [git](#recipe_modules-git), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for the Star Doctor.
+
+Automatically updates binary config files and updates Goldeneye config
+json files.
+
+&mdash; **def [RunSteps](/recipes/star_doctor.py#21)(api):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

@@ -1,0 +1,38 @@
+[
+  {
+    "cmd": [],
+    "name": "set up"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config",
+      "[CLEANUP]/tmp_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "set up.git clone",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate binary config"
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/tmp_tmp_1/config/regenerate_configs.sh",
+      "-b"
+    ],
+    "name": "generate binary config.regenerate configs",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
