@@ -19,8 +19,10 @@ def RunSteps(api):
   target.name = 'target'
   api.cros_artifacts.upload_artifacts(
       'target-postsubmit',
-      target, BuilderConfig.Id.POSTSUBMIT,
-      'artifacts_gs_bucket', [BuilderConfig.Artifacts.EBUILD_LOGS],
+      target,
+      BuilderConfig.Id.POSTSUBMIT,
+      'artifacts_gs_bucket',
+      artifact_types=[BuilderConfig.Artifacts.EBUILD_LOGS],
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
@@ -37,7 +39,8 @@ def attempt_download_file(api, attempt):
 
 
 def GenTests(api):
-  yield (api.test('retry_success_gsutil') + attempt_download_file(api, 1) +
-         attempt_download_file(api, 2) + api.buildbucket.ci_build(
-             project='chromeos', bucket='postsubmit',
-             builder='postsubmit-orchestrator'))
+  yield api.test(
+      'retry_success_gsutil', attempt_download_file(api, 1),
+      attempt_download_file(api, 2),
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='postsubmit-orchestrator'))

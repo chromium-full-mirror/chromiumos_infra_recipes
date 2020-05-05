@@ -183,10 +183,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Returns:
       dict(artifact_name: list(artifact paths)).  Paths are relative to |path|.
     """
-    req = toolchain.BundleToolchainRequest(
-        sysroot=sysroot, chroot=chroot, output_dir=str(path),
-        artifact_types=artifact_types, profile_info=artifact_profile_info,
-        additional_args=additional_args)
+    req = toolchain.BundleToolchainRequest(sysroot=sysroot, chroot=chroot,
+                                           output_dir=str(path),
+                                           artifact_types=artifact_types,
+                                           profile_info=artifact_profile_info,
+                                           additional_args=additional_args)
     resp = self.m.cros_build_api.ToolchainService.BundleArtifacts(
         req, infra_step=True)
     ret = {}
@@ -383,8 +384,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             location_dict['artifact_name'] = artifact_name
             publish_loc = publish_template.format(location_dict)
             link_name = 'gs publish dir: %s' % artifact_name
-            link_value = ('https://console.cloud.google.com/storage/browser/%s'
-                          % publish_loc)
+            link_value = (
+                'https://console.cloud.google.com/storage/browser/%s' %
+                publish_loc)
             links[link_name] = link_value
             presentation.links[link_name] = link_value
             publish_uri = 'gs://' + publish_loc
@@ -446,14 +448,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     with self.m.step.nest(name or 'upload artifacts') as presentation:
       staging_root = self.m.path.mkdtemp(prefix='artifacts')
 
-      files_by_artifact = self._bundle_artifacts(
-          artifact_types, staging_root, sysroot, chroot, artifact_profile_info,
-          additional_args)
+      files_by_artifact = self._bundle_artifacts(artifact_types, staging_root,
+                                                 sysroot, chroot,
+                                                 artifact_profile_info,
+                                                 additional_args)
 
       gs_path = self.artifacts_gs_path(builder_name, target, kind)
       presentation.links['gs upload dir'] = (
-          'https://console.cloud.google.com/storage/browser/%s/%s' % (gs_bucket,
-                                                                      gs_path))
+          'https://console.cloud.google.com/storage/browser/%s/%s' %
+          (gs_bucket, gs_path))
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
       for retries in range(3):
         try:

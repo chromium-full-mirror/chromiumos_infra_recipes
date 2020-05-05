@@ -21,6 +21,7 @@ from PB.recipe_modules.chromeos.cros_artifacts.examples.test import (
 
 PROPERTIES = TestInputProperties
 
+
 def RunSteps(api, properties):
   target = common.BuildTarget()
   target.name = 'target'
@@ -32,12 +33,13 @@ def RunSteps(api, properties):
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
-      input_artifacts=[BuilderConfig.Artifacts.InputArtifactInfo(
-          input_artifact_type=(
-              BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE),
-          input_artifact_gs_locations=[
-              "chromeos-toolchain-artifacts/orderfile/unvetted"
-          ]),
+      input_artifacts=[
+          BuilderConfig.Artifacts.InputArtifactInfo(
+              input_artifact_type=(
+                  BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE),
+              input_artifact_gs_locations=[
+                  "chromeos-toolchain-artifacts/orderfile/unvetted"
+              ]),
       ],
   )
   api.assertions.assertEqual(properties.relevance, resp)
@@ -65,22 +67,25 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   # cros_build_api/test_api returns UNKNOWN.
-  yield (api.test('unknown') + #
-         api.properties(
-             TestInputProperties(relevance=PrepareForBuildResponse.UNKNOWN)))
+  yield api.test(
+      'unknown',
+      api.properties(
+          TestInputProperties(relevance=PrepareForBuildResponse.UNKNOWN)))
 
-  yield (api.test('pointless') + #
-         api.step_data('prepare artifacts.call chromite.api.ToolchainService/'
-                       'PrepareForBuild.read output file',
-                       api.file.read_raw(
-                           content='{"build_relevance": "POINTLESS"}')) + #
-         api.properties(
-             TestInputProperties(relevance=PrepareForBuildResponse.POINTLESS)))
+  yield api.test(
+      'pointless',
+      api.step_data(
+          'prepare artifacts.call chromite.api.ToolchainService/'
+          'PrepareForBuild.read output file',
+          api.file.read_raw(content='{"build_relevance": "POINTLESS"}')),
+      api.properties(
+          TestInputProperties(relevance=PrepareForBuildResponse.POINTLESS)))
 
-  yield (api.test('needed') + #
-         api.step_data('prepare artifacts.call chromite.api.ToolchainService/'
-                       'PrepareForBuild.read output file',
-                       api.file.read_raw(
-                           content='{"build_relevance": "NEEDED"}')) + #
-         api.properties(
-             TestInputProperties(relevance=PrepareForBuildResponse.NEEDED)))
+  yield api.test(
+      'needed',
+      api.step_data(
+          'prepare artifacts.call chromite.api.ToolchainService/'
+          'PrepareForBuild.read output file',
+          api.file.read_raw(content='{"build_relevance": "NEEDED"}')),
+      api.properties(
+          TestInputProperties(relevance=PrepareForBuildResponse.NEEDED)))

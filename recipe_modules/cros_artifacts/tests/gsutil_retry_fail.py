@@ -21,16 +21,18 @@ def RunSteps(api):
   target.name = 'target'
   api.assertions.assertRaises(
       api.step.StepFailure, api.cros_artifacts.upload_artifacts,
-      'target-postsubmit',
-      target, BuilderConfig.Id.POSTSUBMIT,
-      'artifacts_gs_bucket', [BuilderConfig.Artifacts.EBUILD_LOGS],
-      chroot=common.Chroot(path='/path/to/chroot'),
+      'target-postsubmit', target, BuilderConfig.Id.POSTSUBMIT,
+      'artifacts_gs_bucket',
+      artifact_types=[BuilderConfig.Artifacts.EBUILD_LOGS
+                     ], chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
       publish_info=[
           BuilderConfig.Artifacts.PublishInfo(
               publish_gs_location='publish_gs_bucket',
-              publish_types=[BuilderConfig.Artifacts.EBUILD_LOGS])])
+              publish_types=[BuilderConfig.Artifacts.EBUILD_LOGS])
+      ])
+
 
 def attempt_download_file(api, attempt):
   step_text = 'upload artifacts.gsutil rsync'
@@ -51,16 +53,14 @@ def attempt_publish_file(api, attempt):
 
 
 def GenTests(api):
-  yield (api.test('retry_fail_gsutil') + #
-         attempt_download_file(api, 1) + #
-         attempt_download_file(api, 2) + #
-         attempt_download_file(api, 3) + #
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='postsubmit-orchestrator'))
+  yield api.test(
+      'retry_fail_gsutil', attempt_download_file(api, 1),
+      attempt_download_file(api, 2), attempt_download_file(api, 3),
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='postsubmit-orchestrator'))
 
-  yield (api.test('retry_fail_gsutil_cp') + #
-         attempt_publish_file(api, 1) + #
-         attempt_publish_file(api, 2) + #
-         attempt_publish_file(api, 3) + #
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='postsubmit-orchestrator'))
+  yield api.test(
+      'retry_fail_gsutil_cp', attempt_publish_file(api, 1),
+      attempt_publish_file(api, 2), attempt_publish_file(api, 3),
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='postsubmit-orchestrator'))
