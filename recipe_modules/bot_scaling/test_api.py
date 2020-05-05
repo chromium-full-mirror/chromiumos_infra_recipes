@@ -33,7 +33,8 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
         "scalingActions": [{
             "botType": {
                 "coresPerBot": 32,
-                "botSize": "large"
+                "botSize": "large",
+                "hourlyCost": 0.337,
             },
             "botsRequested":
                 1500,
@@ -43,22 +44,19 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
                 "prefix": "prefix-first",
                 "region": "us-central1-b",
                 "botsRequested": 367
-            },
-                                {
-                                    "prefix": "prefix-second",
-                                    "region": "us-central2-d",
-                                    "botsRequested": 464
-                                },
-                                {
-                                    "region": "prefix-third",
-                                    "prefix": "chromeos-ci-cq-us-east1-d-x32",
-                                    "botsRequested": 367
-                                },
-                                {
-                                    "prefix": "prefix-fourth",
-                                    "region": "us-west1-b",
-                                    "botsRequested": 300
-                                }]
+            }, {
+                "prefix": "prefix-second",
+                "region": "us-central2-d",
+                "botsRequested": 464
+            }, {
+                "region": "prefix-third",
+                "prefix": "chromeos-ci-cq-us-east1-d-x32",
+                "botsRequested": 367
+            }, {
+                "prefix": "prefix-fourth",
+                "region": "us-west1-b",
+                "botsRequested": 300
+            }]
         }]
     }
 
@@ -78,6 +76,7 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
     return BotType(
         bot_size="small",
         cores_per_bot=4,
+        hourly_cost=.337,
     )
 
   def robocrop_bot_policy_config(self):

@@ -131,7 +131,7 @@
     "name": "find matching builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"robocrop_action\": {\"scalingActions\": [{\"botType\": {\"coresPerBot\": 32, \"botSize\": \"large\"}, \"regionalActions\": [{\"prefix\": \"prefix-first\", \"region\": \"us-central1-b\", \"botsRequested\": 367}, {\"prefix\": \"prefix-second\", \"region\": \"us-central2-d\", \"botsRequested\": 464}, {\"region\": \"prefix-third\", \"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"botsRequested\": 367}, {\"prefix\": \"prefix-fourth\", \"region\": \"us-west1-b\", \"botsRequested\": 300}], \"botGroup\": \"cq\", \"botsRequested\": 1500}]}}}, \"builder\": {\"builder\": \"RoboCrop\"}, \"id\": \"123\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"robocrop_action\": {\"scalingActions\": [{\"botType\": {\"hourlyCost\": 0.337, \"coresPerBot\": 32, \"botSize\": \"large\"}, \"regionalActions\": [{\"prefix\": \"prefix-first\", \"region\": \"us-central1-b\", \"botsRequested\": 367}, {\"prefix\": \"prefix-second\", \"region\": \"us-central2-d\", \"botsRequested\": 464}, {\"region\": \"prefix-third\", \"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"botsRequested\": 367}, {\"prefix\": \"prefix-fourth\", \"region\": \"us-west1-b\", \"botsRequested\": 300}], \"botGroup\": \"cq\", \"botsRequested\": 1500}]}}}, \"builder\": {\"builder\": \"RoboCrop\"}, \"id\": \"123\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@RoboCrop@https://cr-buildbucket.appspot.com/build/123@@@"
     ]
