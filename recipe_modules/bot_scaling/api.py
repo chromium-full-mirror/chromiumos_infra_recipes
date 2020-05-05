@@ -16,6 +16,7 @@ from recipe_engine import recipe_api
 import itertools
 
 TASK_STATES = ['RUNNING', 'PENDING']
+EXECUTION_HOUR_PERCENTILE = .16
 
 BotStats = namedtuple(
     'BotStats',
@@ -85,7 +86,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     scaling_action.bots_requested = self._calculate_bot_adjustment(
         bot_policy, bots_requested, current_num_bots)
     scaling_action.estimated_savings = self._calculate_estimated_savings(
-        bot_policy, scaling_action.bots_requested, bots_configured, actionable)
+        bot_policy, bots_configured)
     scaling_action.regional_actions.extend(
         self.get_regional_actions(scaling_action.bots_requested,
                                   bot_policy.region_restrictions))
@@ -398,19 +399,15 @@ class BotScalingApi(recipe_api.RecipeApi):
       bots_requested = requested
     return bots_requested
 
-  def _calculate_estimated_savings(self, bot_policy, requested, configured,
-                                   actionable):
+  def _calculate_estimated_savings(self, bot_policy, configured):
     """Helper to calculate the estimated cost savings per bot group.
 
     Args:
       bot_policy_config(BotPolicy): Group Policy for RoboCrop.
-      requested (int): number of bots needed.
       configured (int): current number of bots configured.
-      actionable (ScalingAction): enum whether to take action.
 
     Returns:
       float, the estimated bot group savings per execution.
     """
-    bot_base = configured if (actionable == ScalingAction.NO) else requested
-    return (bot_policy.scaling_restriction.bot_ceiling - bot_base) * (
-        bot_policy.bot_type.hourly_cost * .16)
+    return (bot_policy.scaling_restriction.bot_ceiling - configured) * (
+        bot_policy.bot_type.hourly_cost * EXECUTION_HOUR_PERCENTILE)
