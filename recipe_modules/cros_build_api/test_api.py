@@ -9,6 +9,7 @@ from collections import namedtuple
 import json
 
 from recipe_engine import recipe_test_api
+from .api import CrosBuildApiApi
 
 
 def jsonify(**kwargs):
@@ -276,7 +277,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
 
   @property
   def test_version(self):
-    return namedtuple('version_tuple', ['major', 'minor', 'bug'])(1, 1, 0)
+    return CrosBuildApiApi.Version(1, 1, 0)
 
   @property
   def version_service_responses(self):

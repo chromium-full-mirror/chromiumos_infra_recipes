@@ -113,6 +113,7 @@
   * [cros_build_api:examples/has_endpoint](#recipes-cros_build_api_examples_has_endpoint)
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
   * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events)
+  * [cros_build_api:tests/version](#recipes-cros_build_api_tests_version)
   * [cros_cache:examples/full](#recipes-cros_cache_examples_full)
   * [cros_cache:examples/missing_source_dir](#recipes-cros_cache_examples_missing_source_dir)
   * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings)
@@ -984,7 +985,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#125)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#127)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -1001,7 +1002,16 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#168)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None):**
+&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#206)(self, test_data=None):**
+
+Get the Build API version.
+
+The version is always queried, and the result cached.
+
+Returns:
+  CrosBuildApi.Version, the version of the Build API.
+
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#222)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None):**
 
 Call the build API with the given input proto.
 
@@ -1028,7 +1038,7 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#285)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#338)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -1039,13 +1049,25 @@ Args:
 Returns:
   bool: Whether `method` can be called on `stub`.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#142)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#176)(self):**
 
 Expose all client stubs defined in this module.
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#282)(self, output_proto, response_lambda):**
+&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#193)(self, major=1, minor=0, bug=0):**
 
-&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#156)(self):**
+Is the Build API at least |major|.|minor|.|bug|.
+
+Args:
+  major (int): the major version.
+  minor (int): the minor level.
+  bug (int): the bug level.
+
+Returns:
+  bool, whether the version is a least the required value.
+
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#335)(self, output_proto, response_lambda):**
+
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#189)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
 
 [DEPS](/recipe_modules/cros_cache/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4242,7 +4264,7 @@ Checks a project conforms to its program's constraints.
 
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#34)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#35)(api):**
 ### *recipes* / [cros\_build\_api:examples/has\_endpoint](/recipe_modules/cros_build_api/examples/has_endpoint.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/has_endpoint.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -4258,6 +4280,11 @@ Checks a project conforms to its program's constraints.
 [DEPS](/recipe_modules/cros_build_api/examples/publish_events.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/publish_events.py#14)(api):**
+### *recipes* / [cros\_build\_api:tests/version](/recipe_modules/cros_build_api/tests/version.py)
+
+[DEPS](/recipe_modules/cros_build_api/tests/version.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/version.py#12)(api):**
 ### *recipes* / [cros\_cache:examples/full](/recipe_modules/cros_cache/examples/full.py)
 
 [DEPS](/recipe_modules/cros_cache/examples/full.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]

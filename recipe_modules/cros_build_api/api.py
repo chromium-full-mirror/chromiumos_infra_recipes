@@ -17,6 +17,7 @@ from recipe_engine import recipe_api
 
 from PB.chromite.api import api as meta_api
 
+
 def _verify_proto_endpoint(instance, method):
   """Verifies that the method exists as proto endpoint.
 
@@ -39,6 +40,7 @@ def _verify_proto_endpoint(instance, method):
   if not method_descriptor:
     raise KeyError('no such method %s in service %s' % (method, service))
   return service, method_descriptor
+
 
 class Stub(object):
   """A simple client stub for the build API.
@@ -64,8 +66,8 @@ class Stub(object):
     given_input_type = input_proto.DESCRIPTOR.full_name
     method_input_type = method_descriptor.input_type.full_name
     if given_input_type != method_input_type:
-      raise TypeError('expected input type %r, got %r' % (method_input_type,
-                                                          given_input_type))
+      raise TypeError('expected input type %r, got %r' %
+                      (method_input_type, given_input_type))
 
     # We good we good we good. Now we can actually call the build API.
     endpoint = '%s/%s' % (service, method)
@@ -139,6 +141,38 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
   The stub will perform sane validations and then call the build API command.
   """
 
+  class Version(object):
+
+    def __init__(self, major=1, minor=1, bug=0):
+      self.major = major
+      self.minor = minor
+      self.bug = bug
+
+    def __cmp__(self, other):
+      if self.major == other.major:
+        if self.minor == other.minor:
+          return self.bug - other.bug
+        return self.minor - other.minor
+      return self.major - other.major
+
+    def __repr__(self):
+      return '%d.%d.%d' % (self.major, self.minor, self.bug)
+
+    @classmethod
+    def ParseVersion(cls, version):
+      major, minor, bug = version.split('.')
+      return cls(int(major), int(minor), int(bug))
+
+    def FormatResponse(self):
+      """Return the API response for this version.
+
+      Returns:
+        VersionGetResponse, the Build API response for this version.
+      """
+      return json_format.MessageToJson(
+          meta_api.VersionGetResponse(
+              version=dict(major=self.major, minor=self.minor, bug=self.bug)))
+
   def initialize(self):
     """Expose all client stubs defined in this module."""
     stubs = Stub.__subclasses__()
@@ -152,22 +186,42 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
     self._endpoints = None
     self._version = None
 
-  version_tuple = namedtuple('verison_tuple', ['major', 'minor', 'bug'])
   @property
   def version(self):
-    if not self._version:
-      version_resp = self('chromite.api.VersionService/Get',
-                          meta_api.VersionGetRequest(),
-                          meta_api.VersionGetResponse.DESCRIPTOR,
-                          infra_step=True)
-      version = version_resp.version
-      self._version = self.version_tuple(version.major or 0, version.minor or 0,
-                                         version.bug or 0)
+    return self._version or self.GetVersion()
+
+  def is_at_least_version(self, major=1, minor=0, bug=0):
+    """Is the Build API at least |major|.|minor|.|bug|.
+
+    Args:
+      major (int): the major version.
+      minor (int): the minor level.
+      bug (int): the bug level.
+
+    Returns:
+      bool, whether the version is a least the required value.
+    """
+    return self.version >= self.Version(major, minor, bug)
+
+  def GetVersion(self, test_data=None):
+    """Get the Build API version.
+
+    The version is always queried, and the result cached.
+
+    Returns:
+      CrosBuildApi.Version, the version of the Build API.
+    """
+    version_resp = self('chromite.api.VersionService/Get',
+                        meta_api.VersionGetRequest(),
+                        meta_api.VersionGetResponse.DESCRIPTOR, infra_step=True,
+                        test_output_data=test_data)
+    version = version_resp.version
+    self._version = self.Version(version.major, version.minor, version.bug)
     return self._version
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
-               test_teelog_data=None, name=None, infra_step=False,
-               timeout=None, response_lambda=None):
+               test_teelog_data=None, name=None, infra_step=False, timeout=None,
+               response_lambda=None):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -206,7 +260,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       input_json = json_format.MessageToJson(input_proto)
       self.m.file.write_raw('write input file', input_path, input_json)
       presentation.logs['request'] = [input_json]
-      presentation.logs['response'] =  ['{}']
+      presentation.logs['response'] = ['{}']
 
       cmd = [
           self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
@@ -241,12 +295,12 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
                                                  test_data=test_teelog_data)
 
           # If no test data is provided, see if we have our own.
-          test_output_data = (test_output_data or
-                              self.test_api.response_for_endpoint(endpoint))
+          test_output_data = (
+              test_output_data or self.test_api.response_for_endpoint(endpoint))
 
           # Parse the output to a proto and record it in the logs.
           output_json = self.m.file.read_raw('read output file', output_path,
-                                            test_data=test_output_data)
+                                             test_data=test_output_data)
 
           json_format.Parse(output_json, output_proto,
                             ignore_unknown_fields=True)
@@ -260,8 +314,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
                                                    response_lambda)
 
           with self.m.step.nest(resp_step_name) as resp_pres:
-            resp_pres.logs['build api stdout'] = ('' if not file_contents
-                                                  else file_contents)
+            resp_pres.logs['build api stdout'] = file_contents or ''
             if call_step.exc_result.retcode != 0:
               resp_pres.status = self.m.step.FAILURE
 

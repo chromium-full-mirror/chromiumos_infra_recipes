@@ -31,6 +31,7 @@ from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
 from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
     CrosBuildApiProperties)
 
+
 def RunSteps(api):
   # Check dumb build API call works. Use protos defined in
   # chromiumos_infra_proto/src/analysis_service/analysis_service.proto so that
@@ -61,13 +62,15 @@ def RunSteps(api):
       output_proto.artifacts[0].path.endswith('/tmp/artifact.tar.gz'))
 
   # Check stubs throw error on bad method calls.
-  api.assertions.assertRaises(
-      KeyError, api.cros_build_api.ArtifactsService.BundleFoo, input_proto)
+  api.assertions.assertRaises(KeyError,
+                              api.cros_build_api.ArtifactsService.BundleFoo,
+                              input_proto)
   api.assertions.assertRaises(
       TypeError, api.cros_build_api.ArtifactsService.BundleFirmware,
       build_api_test.TestRequestMessage())
 
-  api.assertions.assertEqual((1, 1, 0), api.cros_build_api.version)
+  # Verify that the API is new enough for us.
+  api.assertions.assertTrue(api.cros_build_api.is_at_least_version(1, 1, 0))
 
   # Check the test API.
   response_type_by_service = {
@@ -145,7 +148,7 @@ def RunSteps(api):
       },
   }
   # If needed, add the endpoints introduced in API verison 1.1.0.
-  if api.cros_build_api.version >= (1, 1, 0):
+  if api.cros_build_api.version >= api.cros_build_api.Version(1, 1, 0):
     response_type_by_service['ArtifactsService'].update({
         'PrepareForBuild': artifacts.PrepareForBuildResponse,
         'BundleArtifacts': artifacts.BundleArtifactsResponse,
@@ -170,15 +173,16 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic'))
+  yield api.test('basic')
 
-  yield (api.test('basic_with_output') +  #
-         api.properties(**{
-             # This property is needed to capture tee_log output of build_api.
-             '$chromeos/cros_build_api':
-             CrosBuildApiProperties(capture_stdout_stderr=True),
-             # This property is needed to attach build api output to event.
-             '$chromeos/analysis_service':
-             AnalysisServiceProperties(max_stdout_stderr_bytes=64)
-         })
-  )
+  yield api.test(
+      'basic_with_output',
+      api.properties(
+          **{
+              # This property is needed to capture tee_log output of build_api.
+              '$chromeos/cros_build_api':
+                  CrosBuildApiProperties(capture_stdout_stderr=True),
+              # This property is needed to attach build api output to event.
+              '$chromeos/analysis_service':
+                  AnalysisServiceProperties(max_stdout_stderr_bytes=64)
+          }))
