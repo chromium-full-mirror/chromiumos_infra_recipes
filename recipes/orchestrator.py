@@ -584,330 +584,360 @@ def GenTests(api):
           id=5555, builder={'builder': 'orderfile-verify-orchestrator'},
           status=common_pb2.SUCCESS))])
 
-  yield (
-      api.test('basic') + postsubmit_orchestrator_build() + #
+  yield api.test(
+      'basic',
+      postsubmit_orchestrator_build(),
       api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +  #
+          builds, step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
       api.buildbucket.simulated_schedule_output(
           ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks.buildbucket.collect') +  #
+          'collect skylab tasks.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
           vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests') +
+          step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests') +
+          [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (api.test('no_config') +  #
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='no-such'))
+  yield api.test(
+      'no_config',
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='no-such'),
+  )
 
-  yield (api.test('fails_if_changes_not_submittable') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True) +  #
-         api.gerrit.simulated_changes_are_submittable(submittable=False))
+  yield api.test(
+      'fails_if_changes_not_submittable',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.cq(full_run=True),
+      api.gerrit.simulated_changes_are_submittable(submittable=False),
+  )
 
-  yield (api.test('builds_with_history') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True) +  #
-         api.properties(enable_history=True) +  #
-         api.buildbucket.simulated_search_results(
-             builds, 'run builds.get build history.'
-             'get completed builds.get change build history.'
-             'buildbucket.search') +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield api.test(
+      'builds_with_history',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.cq(full_run=True),
+      api.properties(enable_history=True),
+      api.buildbucket.simulated_search_results(
+          builds, 'run builds.get build history.'
+          'get completed builds.get change build history.'
+          'buildbucket.search'),
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (api.test('pointless_builds') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True) +  #
-         api.properties(enable_history=True) +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield api.test(
+      'pointless_builds',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.cq(full_run=True),
+      api.properties(enable_history=True),
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (api.test('joinable_existing_annealing_builds') +  #
-         postsubmit_orchestrator_build() +  #
-         # api.cq(full_run=True) +  #
-         api.properties(enable_history=True) +  #
-         api.buildbucket.simulated_search_results(
-             existing_annealing_builds, 'run builds.get snapshot builds'
-             '.buildbucket.search') +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield api.test(
+      'joinable_existing_annealing_builds',
+      postsubmit_orchestrator_build(),
+      # api.cq(full_run=True),
+      api.properties(enable_history=True),
+      api.buildbucket.simulated_search_results(
+          existing_annealing_builds, 'run builds.get snapshot builds'
+          '.buildbucket.search'),
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (api.test('join_if_inflight_orchs') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True) +  #
-         api.properties(enable_history=True) +  #
-         api.properties(assert_singleton=True) +  #
-         api.buildbucket.simulated_search_results(
-             builds, step_name='find inflight orchestrator.'
-             'find matching builds.buildbucket.search') +  #
-         api.buildbucket.simulated_collect_output(
-             builds, 'find inflight orchestrator.waiting for existing runs') +
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield api.test(
+      'join_if_inflight_orchs',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.cq(full_run=True),
+      api.properties(enable_history=True),
+      api.properties(assert_singleton=True),
+      api.buildbucket.simulated_search_results(
+          builds, step_name='find inflight orchestrator.'
+          'find matching builds.buildbucket.search'),
+      api.buildbucket.simulated_collect_output(
+          builds, 'find inflight orchestrator.waiting for existing runs'),
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (api.test('runs_if_no_inflight_orchs') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True) +  #
-         api.properties(enable_history=True) +  #
-         api.properties(assert_singleton=True) +  #
-         api.buildbucket.simulated_search_results(
-             [], step_name='find inflight orchestrator.'
-             'find matching builds.buildbucket.search') +
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield api.test(
+      'runs_if_no_inflight_orchs',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.cq(full_run=True),
+      api.properties(enable_history=True),
+      api.properties(assert_singleton=True),
+      api.buildbucket.simulated_search_results(
+          [], step_name='find inflight orchestrator.'
+          'find matching builds.buildbucket.search'),
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (
-      api.test('updates_refs') +  #
-      postsubmit_orchestrator_build() +  #
+  yield api.test(
+      'updates_refs',
+      postsubmit_orchestrator_build(),
       api.properties(update_manifest_refs={
           'start': 'refs/heads/foo',
           'success': 'refs/heads/bar'
-      }) +  #
+      }),
       api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +  #
+          builds, step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
       api.buildbucket.simulated_schedule_output(
           ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks.buildbucket.collect') +  #
+          'collect skylab tasks.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
           vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests') +
+          step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests') +
+          [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (
-      api.test('missing_gitiles_commit') +  #
-      postsubmit_orchestrator_build_with_no_gitiles() +
+  yield api.test(
+      'missing_gitiles_commit',
+      postsubmit_orchestrator_build_with_no_gitiles(),
       api.properties(update_manifest_refs={
           'start': 'refs/heads/foo',
           'success': 'refs/heads/bar'
-      }) +  #
+      }),
       api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +  #
+          builds, step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
       api.buildbucket.simulated_schedule_output(
           ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks.buildbucket.collect') +  #
+          'collect skylab tasks.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
           vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests') +
+          step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests') +
+          [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (api.test('orchestrator_with_follow_on') +  #
-         orderfile_generate_orchestrator() + #
+  yield api.test(
+      'orchestrator_with_follow_on',
+      orderfile_generate_orchestrator(),
       api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +  #
+          builds, step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
       api.buildbucket.simulated_schedule_output(
           ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks.buildbucket.collect') +  #
+          'collect skylab tasks.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
           vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests') +
+          step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests') +
+          [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests') + #
+          step_name='run tests.collect tests.collect moblab vm tests'),
       api.buildbucket.simulated_schedule_output(
-          followon_resp1, 'run follow on orchestrator.buildbucket.schedule'))
+          followon_resp1, 'run follow on orchestrator.buildbucket.schedule'),
+  )
 
-  yield (api.test('missing_gitiles_commit_with_defaults') +  #
-         toolchain_orchestrator_build(gitiles=False) + #
+  yield api.test(
+      'missing_gitiles_commit_with_defaults',
+      toolchain_orchestrator_build(gitiles=False),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
       api.buildbucket.simulated_schedule_output(
           ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks.buildbucket.collect') +  #
+          'collect skylab tasks.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
           vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests') +
+          step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests') +
+          [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (api.test('missing_gitiles_commit_with_changes') +  #
-         toolchain_orchestrator_build(gitiles=False, changes=True) + #
+  yield api.test(
+      'missing_gitiles_commit_with_changes',
+      toolchain_orchestrator_build(gitiles=False, changes=True),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
       api.buildbucket.simulated_schedule_output(
           ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks.buildbucket.collect') +  #
+          'collect skylab tasks.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
           vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests') +
+          step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests') +
+          [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
-  yield (api.test('bad_update_ref') +  #
-         api.properties(update_manifest_refs={'start': 'foo'}) +  #
-         api.expect_exception("ValueError"))
+  yield api.test(
+      'bad_update_ref',
+      api.properties(update_manifest_refs={'start': 'foo'}),
+      api.expect_exception("ValueError"),
+  )
 
-  yield (api.test('dry_run') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(dry_run=True))
+  yield api.test(
+      'dry_run',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.cq(dry_run=True),
+  )
 
-  yield (api.test('quota_scheduler_override') +  #
-         cq_orchestrator_build_with_gerrit_change(
-             tags=[common_pb2.StringPair(
-                 key='cq_cl_tag',
-                 value='pupr:chromeos-base/chromeos-chrome')]) +  #
-         api.cq(full_run=True) +  #
-         api.properties(enable_history=True) +  #
-         api.buildbucket.simulated_search_results(
-             builds, 'run builds.get build history.'
-             'get completed builds.get change build history.'
-             'buildbucket.search') +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield api.test(
+      'quota_scheduler_override',
+      cq_orchestrator_build_with_gerrit_change(
+          tags=[common_pb2.StringPair(
+              key='cq_cl_tag',
+              value='pupr:chromeos-base/chromeos-chrome')]),
+      api.cq(full_run=True),
+      api.properties(enable_history=True),
+      api.buildbucket.simulated_search_results(
+          builds, 'run builds.get build history.'
+          'get completed builds.get change build history.'
+          'buildbucket.search'),
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
   builds = [
       build_pb2.Build(id=8922054662172514000, builder={
@@ -920,32 +950,34 @@ def GenTests(api):
           None, 'arm-generic')),
   ]
 
-  yield (api.test('retry_only_critical_builds') +  #
-         cq_orchestrator_build_with_gerrit_change() +  #
-         api.cq(full_run=True) +  #
-         api.properties(enable_history=True) +  #
-         api.buildbucket.simulated_search_results(
-             builds, step_name='run builds.get build history'
-             '.find matching builds.buildbucket.search') + #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect') +  #
-         api.buildbucket.simulated_collect_output(
-             vm_tests,
-             step_name='run tests.collect tests.collect autotest vm tests') +
-         api.buildbucket.simulated_collect_output(
-             [], step_name='run tests.collect tests.collect tast vm tests') +
-         api.buildbucket.simulated_collect_output(
-             moblab_vm_tests,
-             step_name='run tests.collect tests.collect moblab vm tests'))
+  yield api.test(
+      'retry_only_critical_builds',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.cq(full_run=True),
+      api.properties(enable_history=True),
+      api.buildbucket.simulated_search_results(
+          builds, step_name='run builds.get build history'
+          '.find matching builds.buildbucket.search'),
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output(
+          vm_tests,
+          step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          moblab_vm_tests,
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
@@ -955,28 +987,29 @@ def GenTests(api):
                       builder={'builder': 'arm-generic-postsubmit'},
                       status=common_pb2.SUCCESS, critical=common_pb2.NO),
   ]
-  yield (
-      api.test('critical_child_builder_fails') +  #
-      postsubmit_orchestrator_build() +  #
+  yield api.test(
+      'critical_child_builder_fails',
+      postsubmit_orchestrator_build(),
       api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +  #
+          builds, step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
       api.buildbucket.simulated_schedule_output(
           ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks.buildbucket.collect') +  #
+          'collect skylab tasks.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
           vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests') +
+          step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests') +
+          [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
@@ -986,28 +1019,29 @@ def GenTests(api):
                       builder={'builder': 'arm-generic-postsubmit'},
                       status=common_pb2.FAILURE, critical=common_pb2.NO),
   ]
-  yield (
-      api.test('non-critical_child_builder_fails') +  #
-      postsubmit_orchestrator_build() +  #
+  yield api.test(
+      'non-critical_child_builder_fails',
+      postsubmit_orchestrator_build(),
       api.buildbucket.simulated_collect_output(
-          builds, step_name='run builds.collect') +  #
+          builds, step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-cq.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
       api.buildbucket.simulated_schedule_output(
           ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-inline.buildbucket.schedule') +  #
+          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks.buildbucket.collect') +  #
+          'collect skylab tasks.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
           vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests') +
+          step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests') +
+          [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
+          step_name='run tests.collect tests.collect moblab vm tests'),
+  )
 
   hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
   hw_tests = [
@@ -1020,24 +1054,26 @@ def GenTests(api):
   ]
   api.cros_bisect.add_output_props(builds[0], 'amd64-generic')
 
-  yield (api.test('with_test_bisection_invocation') +  #
-         bisecting_orchestrator_build() +  #
-         api.buildbucket.simulated_collect_output(
-             builds, step_name='run builds.collect') +  #
-         api.properties(
-             **{
-                 '$chromeos/cros_bisect':
-                     CrosBisectProperties(
-                         test={
-                             'hw_test_failures': [{
-                                 'test_spec':
-                                     json_format.MessageToJson(hw_test_unit)
-                             },],
-                         })
-             }) +  #
-         api.buildbucket.simulated_schedule_output(
-             ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-             'schedule kip.hw.bvt-cq.buildbucket.schedule') +  #
-         api.buildbucket.simulated_collect_output(
-             hw_tests, 'run tests.collect tests.'
-             'collect skylab tasks.buildbucket.collect'))
+  yield api.test(
+      'with_test_bisection_invocation',
+      bisecting_orchestrator_build(),
+      api.buildbucket.simulated_collect_output(
+          builds, step_name='run builds.collect'),
+      api.properties(
+          **{
+              '$chromeos/cros_bisect':
+              CrosBisectProperties(
+                  test={
+                      'hw_test_failures': [{
+                          'test_spec':
+                          json_format.MessageToJson(hw_test_unit)
+                      },],
+                  })
+          }),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule kip.hw.bvt-cq.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks.buildbucket.collect'),
+  )
