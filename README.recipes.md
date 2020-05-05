@@ -733,7 +733,7 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#327)(self, builder_name, target, kind):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#367)(self, builder_name, target, kind):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -748,7 +748,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#493)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#545)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -763,7 +763,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#526)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#578)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -778,7 +778,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#546)(self, artifact_types, chroot, sysroot, input_artifacts, artifact_profile_info=None, additional_args=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#598)(self, artifact_types, chroot, sysroot, input_artifacts, artifact_profile_info=None, additional_args=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -800,7 +800,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#420)(self, builder_name, target, kind, gs_bucket, artifact_types, chroot=None, sysroot=None, publish_info=None, artifact_profile_info=None, additional_args=None, name=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#477)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, name=None, test_data=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -816,15 +816,13 @@ Args:
       e.g. POSTSUBMIT. This affects where the artifacts are placed in
       Google Storage.
   gs_bucket (str): Google storage bucket to upload artifacts to.
-  artifact_types (list[ArtifactTypes]): List of artifacts
-      to upload. See build config for options.
-  sysroot (Sysroot): sysroot to use
+  artifacts_info (ArtifactsByService): Information about artifacts.
   chroot (Chroot): chroot to use
-  publish_info (list[PublishInfo]): List of publishing information.
-  artifact_profile_info (ArtifactProfileInfo): profile information.
-  additional_args (PrepareForBuildAdditionalArgs): The additional_args that
-      were passed to prepare_for_build.  Bundling sometimes requires them.
+  sysroot (Sysroot): sysroot to use
   name (str): The step name. Defaults to 'upload artifacts'.
+  test_data (str): Some data for this step to return when running under
+      simulation.  The string "@@DIR@@" is replaced with the output_dir
+      path throughout.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
 
 [DEPS](/recipe_modules/cros_bisect/__init__.py#5): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4125,7 +4123,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#82)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#348)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#346)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4141,7 +4139,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#367)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#365)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4211,9 +4209,9 @@ Checks a project conforms to its program's constraints.
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/download_artifacts.py#17)(api):**
 ### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts)
+[DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#23)(api, properties):**
 ### *recipes* / [cros\_artifacts:examples/prepare\_for\_build](/recipe_modules/cros_artifacts/examples/prepare_for_build.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/prepare_for_build.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -4234,7 +4232,7 @@ Checks a project conforms to its program's constraints.
 
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#17)(api):**
 
-&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#32)(api, attempt):**
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#36)(api, attempt):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

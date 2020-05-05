@@ -99,11 +99,9 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
 
   api.cros_artifacts.upload_artifacts(
       config.id.name, build_target, config.id.type,
-      config.artifacts.artifacts_gs_bucket, config.artifacts.artifact_types,
-      sysroot=sysroot, chroot=api.cros_sdk.chroot,
-      publish_info=config.artifacts.publish_artifacts,
-      artifact_profile_info=config.artifacts.artifact_profile_info,
-      additional_args=config.build.prepare_for_build.additional_args)
+      config.artifacts.artifacts_gs_bucket,
+      artifacts_info=config.artifacts.artifacts_info,
+      sysroot=sysroot, chroot=api.cros_sdk.chroot)
 
   with api.step.nest('validate SDK reuse') as presentation:
     # If there are no gerrit changes, then the SDK remains clean.  If there are

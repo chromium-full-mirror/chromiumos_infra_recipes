@@ -333,11 +333,9 @@ def DoRunSteps(api, config, build_target, properties):
   if config.artifacts.artifact_types:
     api.cros_artifacts.upload_artifacts(
         config.id.name, build_target, config.id.type,
-        config.artifacts.artifacts_gs_bucket, config.artifacts.artifact_types,
+        config.artifacts.artifacts_gs_bucket,
         sysroot=sysroot, chroot=api.cros_sdk.chroot,
-        publish_info=config.artifacts.publish_artifacts,
-        artifact_profile_info=config.artifacts.artifact_profile_info,
-        additional_args=config.build.prepare_for_build.additional_args)
+        artifacts_info = config.artifacts.artifacts_info)
 
   if config.artifacts.prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
     api.cros_prebuilts.upload_target_prebuilts(

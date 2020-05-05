@@ -9,6 +9,10 @@ package recipe_modules.chromeos.cros_artifacts.examples;
 import "chromite/api/artifacts.proto";
 
 message TestInputProperties {
+  // Expected relevance
   chromite.api.PrepareForBuildResponse.BuildRelevance relevance = 1;
+
+  // Override Build API version.
+  string build_api_version = 2;
 }
 

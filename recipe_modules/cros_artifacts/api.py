@@ -60,7 +60,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                    _LEGACY_ENDPOINTS_BY_ARTIFACT[artifact])
 
   def _bundle_legacy_artifacts(self, chroot, sysroot, path, artifact_types,
-                               _artifact_profile_info, _additional_args):
+                               _artifact_profile_info):
     """Bundle legacy artifacts.
 
     Batch handler for legacy artifact types.
@@ -71,11 +71,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       path (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _artifact_profile_info (ArtifactProfileInfo): profile information.
-      _additional_args (PrepareForBuildAdditionalArgs): The additional_args that
-          were passed to prepare_for_build.  Bundling sometimes requires them.
 
     Returns:
-      dict(artifact_name: list(artifact paths)).  Paths are relative to |path|.
+      dict(artifact_name: list(artifact paths)).  Paths are absolute.
     """
     files_by_artifact = {}
     for artifact in artifact_types:
@@ -87,9 +85,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                                           output_dir=str(path))
         response = endpoint(request, infra_step=True)
 
-        files_by_artifact[name] = [
-            os.path.relpath(art.path, str(path)) for art in response.artifacts
-        ]
+        files_by_artifact[name] = [art.path for art in response.artifacts]
     return files_by_artifact
 
   def _prepare_pointless(self, _chroot, _sysroot, _artifact_types,
@@ -166,7 +162,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return resp.build_relevance
 
   def _bundle_toolchain(self, chroot, sysroot, path, artifact_types,
-                        artifact_profile_info, additional_args):
+                        artifact_profile_info):
     """Bundle toolchain artifacts.
 
     Batch handler for toolchain artifact types.
@@ -177,26 +173,21 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       path (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       artifact_profile_info (ArtifactProfileInfo): profile information.
-      additional_args (PrepareForBuildAdditionalArgs): The additional_args that
-          were passed to prepare_for_build.  Bundling sometimes requires them.
 
     Returns:
-      dict(artifact_name: list(artifact paths)).  Paths are relative to |path|.
+      dict(artifact_name: list(artifact paths)).  Paths are absolute.
     """
     req = toolchain.BundleToolchainRequest(sysroot=sysroot, chroot=chroot,
                                            output_dir=str(path),
                                            artifact_types=artifact_types,
-                                           profile_info=artifact_profile_info,
-                                           additional_args=additional_args)
+                                           profile_info=artifact_profile_info)
     resp = self.m.cros_build_api.ToolchainService.BundleArtifacts(
         req, infra_step=True)
     ret = {}
     for art_info in resp.artifacts_info:
       artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(
           art_info.artifact_type)
-      artifact_files = [
-          os.path.relpath(art.path, str(path)) for art in art_info.artifacts
-      ]
+      artifact_files = [art.path for art in art_info.artifacts]
       ret[artifact_name] = artifact_files
     return ret
 
@@ -213,93 +204,142 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     ret = collections.defaultdict(list)
     for art in artifact_types:
-      # Raises KeyError if there is an artifact not found in func_dict.
-      ret[func_dict[art]].append(art)
+      # Some artifact types are only supported in API version 1.1.0, and this
+      # method is only called for API version 1.0.0.
+      if art in func_dict:
+        ret[func_dict[art]].append(art)
     return ret
 
-  def _bundle_artifacts(self, artifact_types, path, sysroot, chroot,
-                        artifact_profile_info, additional_args):
+  def _bundle_artifacts(self, chroot, sysroot, artifacts_info, outpath,
+                        test_data=None):
     """Defer to the build API to bundle the given artifact.
 
     Args:
-      artifact_types (list[ArtifactTypes]): The artifacts to bundle.
-      path (Path): Path to output artifact bundles.
-      sysroot (Sysroot): sysroot to use
       chroot (Chroot): chroot to use
-      artifact_profile_info (ArtifactProfileInfo): profile information.
-      additional_args PrepareForBuildAdditionalArgs: The additional_args that
-          were passed to prepare_for_build.  Bundling sometimes requires them.
+      sysroot (Sysroot): sysroot to use
+      artifacts_info (ArtifactsByService): artifact information.
+      outpath (Path): Path to output artifact bundles.
+      test_data (str): Some data for this step to return when running under
+          simulation.  The string "@@DIR@@" is replaced with the output_dir
+          path throughout.
 
     Returns:
       dict(str: list[str]): Artifact name, list of artifact file paths
-          relative to |path|.
+          relative to |outpath|.
     """
-    _BUNDLE_FUNCS = {
-        BuilderConfig.Artifacts.IMAGE_ZIP:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.AUTOTEST_FILES:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.TAST_FILES:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.PINNED_GUEST_IMAGES:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.FIRMWARE:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.EBUILD_LOGS:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.CHROMEOS_CONFIG:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.CPE_REPORT:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.IMAGE_ARCHIVES:
-            self._bundle_legacy_artifacts,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_CHROME_LLVM_ORDERFILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.CHROME_CLANG_WARNINGS_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_LLVM_PGO_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_CHROME_BENCHMARK_AFDO_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_KERNEL_CWP_AFDO_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_KERNEL_CWP_AFDO_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_CWP_AFDO_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_CHROME_CWP_AFDO_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_RELEASE_AFDO_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_BENCHMARK_PERF_FILE:
-            self._bundle_toolchain,
-        BuilderConfig.Artifacts.CHROME_DEBUG_BINARY:
-            self._bundle_toolchain,
-    }
+    if self.m.cros_build_api.is_at_least_version(1, 1, 0):
+      return self._bundle_artifacts_110(chroot, sysroot, artifacts_info,
+                                        outpath, test_data)
+    else:
+      return self._bundle_artifacts_100(chroot, sysroot, artifacts_info,
+                                        outpath)
 
-    files_by_artifact = {}
-    funcs_to_call = self._partition_artifacts(artifact_types, _BUNDLE_FUNCS)
+  def _bundle_artifacts_110(self, chroot, sysroot, artifacts_info, outpath,
+                            test_data):
+    """Defer to the build API to bundle the given artifact.
+
+    Args:
+      chroot (Chroot): chroot to use
+      sysroot (Sysroot): sysroot to use
+      artifacts_info (ArtifactsByService): artifact information.
+      outpath (Path): Path to output artifact bundles.
+      test_data (str): Some data for this step to return when running under
+          simulation.  The string "@@DIR@@" is replaced with the output_dir
+          path throughout.
+
+    Returns:
+      dict(str: list[str]): Artifact name, list of artifact file paths
+          relative to |outpath|.
+    """
+    outdir = str(outpath)
+    req = artifacts.BundleArtifactsRequest(chroot=chroot, sysroot=sysroot,
+                                           artifact_info=artifacts_info,
+                                           output_dir=outdir)
+
+    test_data = None if not test_data else test_data.replace('@@DIR@@', outdir)
     try:
-      # Sorting is done here only to give us consistency in the expected.json
-      # for our tests.
-      for func, types in sorted(funcs_to_call.items(),
-                                key=lambda x: x[0].__name__):
-        files_by_artifact.update(
-            func(chroot, sysroot, path, types, artifact_profile_info,
-                 additional_args))
+      resp = self.m.cros_build_api.ArtifactsService.BundleArtifacts(
+          req, infra_step=True, test_output_data=test_data)
     except Exception as e:  # pragma: nocover
       self.m.disk_usage.track(step_name='track disk usage', depth=0)
       self.m.disk_usage.track(step_name='track disk usage', depth=1,
                               dir='/b/s/w/')
       raise e
 
+    # Create files_by_artifact.
+    files_by_artifact = {}
+    for service in json_format.MessageToDict(resp.artifacts).values():
+      for paths in service.get('artifacts', []):
+        files_by_artifact[paths['artifactType']] = [
+            os.path.relpath(f, outdir) for f in paths['paths']
+        ]
+
     return files_by_artifact
+
+  def _bundle_artifacts_100(self, chroot, sysroot, artifacts_info, outpath):
+    """Defer to the build API (version 1.0.0) to bundle the given artifact.
+
+    Args:
+      chroot (Chroot): chroot to use
+      sysroot (Sysroot): sysroot to use
+      artifacts_info (ArtifactsByService): artifact information.
+      outpath (Path): Path to output artifact bundles.
+
+    Returns:
+      dict(str: list[str]): Artifact name, list of artifact file paths
+          relative to |outpath|.
+    """
+    atype = BuilderConfig.Artifacts
+    _BUNDLE_FUNCS = {
+        atype.IMAGE_ZIP: self._bundle_legacy_artifacts,
+        atype.TEST_UPDATE_PAYLOAD: self._bundle_legacy_artifacts,
+        atype.AUTOTEST_FILES: self._bundle_legacy_artifacts,
+        atype.TAST_FILES: self._bundle_legacy_artifacts,
+        atype.PINNED_GUEST_IMAGES: self._bundle_legacy_artifacts,
+        atype.FIRMWARE: self._bundle_legacy_artifacts,
+        atype.EBUILD_LOGS: self._bundle_legacy_artifacts,
+        atype.CHROMEOS_CONFIG: self._bundle_legacy_artifacts,
+        atype.CPE_REPORT: self._bundle_legacy_artifacts,
+        atype.IMAGE_ARCHIVES: self._bundle_legacy_artifacts,
+        atype.UNVERIFIED_CHROME_LLVM_ORDERFILE: self._bundle_toolchain,
+        atype.VERIFIED_CHROME_LLVM_ORDERFILE: self._bundle_toolchain,
+        atype.CHROME_CLANG_WARNINGS_FILE: self._bundle_toolchain,
+        atype.UNVERIFIED_LLVM_PGO_FILE: self._bundle_toolchain,
+        atype.UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE: self._bundle_toolchain,
+        atype.VERIFIED_CHROME_BENCHMARK_AFDO_FILE: self._bundle_toolchain,
+        atype.UNVERIFIED_KERNEL_CWP_AFDO_FILE: self._bundle_toolchain,
+        atype.VERIFIED_KERNEL_CWP_AFDO_FILE: self._bundle_toolchain,
+        atype.UNVERIFIED_CHROME_CWP_AFDO_FILE: self._bundle_toolchain,
+        atype.VERIFIED_CHROME_CWP_AFDO_FILE: self._bundle_toolchain,
+        atype.VERIFIED_RELEASE_AFDO_FILE: self._bundle_toolchain,
+        atype.UNVERIFIED_CHROME_BENCHMARK_PERF_FILE: self._bundle_toolchain,
+        atype.CHROME_DEBUG_BINARY: self._bundle_toolchain,
+    }
+
+    # Create artifact_types.
+    artifact_types = []
+    for _, service in artifacts_info.ListFields():
+      for art_info in getattr(service, 'output_artifacts', []):
+        artifact_types.extend(art_info.artifact_types)
+
+    outdir = str(outpath)
+    files = {}
+    funcs = self._partition_artifacts(artifact_types, _BUNDLE_FUNCS)
+    try:
+      # Sorting is done here only to give us consistency in the expected.json
+      # for our tests.
+      for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
+        files.update(
+            func(chroot, sysroot, outpath, types, artifacts_info.profile_info))
+    except Exception as e:  # pragma: nocover
+      self.m.disk_usage.track(step_name='track disk usage', depth=0)
+      self.m.disk_usage.track(step_name='track disk usage', depth=1,
+                              dir='/b/s/w/')
+      raise e
+
+    return {
+        k: [os.path.relpath(f, outdir) for f in v] for k, v in files.items()
+    }
 
   def _artifacts_gs_path_dict(self, builder_name, target, kind):
     """Returns the dictionary tokens for expanding location templates.
@@ -340,7 +380,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     return self._artifacts_gs_path_dict(builder_name, target, kind)['gs_path']
 
-  def _publish_artifacts(self, builder_name, target, kind, publish_info,
+  def _publish_artifacts(self, builder_name, target, kind, artifacts_info,
                          upload_uri, files_by_artifact, name=None):
     """Publish the artifacts that were uploaded.
 
@@ -363,7 +403,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. This affects where the artifacts are placed in
           Google Storage.
-      publish_info (list[PublishInfo]): List of publishing information.
+      artifacts_info (ArtifactsByService): Artifact information.
       upload_uri (string): gs path were the artifacts were uploaded.
       files_by_artifact (dict{name: list[string]}): artifact file dictionary.
       name (str): The step name.  Defaults to 'publish artifacts'.
@@ -373,44 +413,61 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     published = collections.defaultdict(list)
     links = {}
+    # Get a list of all of the artifacts to publish:
+    # [
+    #   {artifact_types: [NAME, ...], gs_locations: [LOC, ...], acl_name=ACL},
+    #   ...
+    # ]
+    to_publish = []
+    for service in json_format.MessageToDict(artifacts_info).values():
+      for out_info in service.get('outputArtifacts', []):
+        if (len(out_info.get('gsLocations', [])) and
+            len(out_info.get('artifactTypes', []))):
+          to_publish.append(out_info)
+    if not to_publish:
+      return links
+
+    # At this point, we know that we have at least one output artifact that has
+    # both artifactTypes and gsLocations for publication.
     with self.m.step.nest(name or 'publish artifacts') as presentation:
-      for info in publish_info:
-        publish_template = info.publish_gs_location
-        location_dict = self._artifacts_gs_path_dict(builder_name, target, kind)
-        for artifact in info.publish_types:
-          artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
-          files = files_by_artifact.get(artifact_name, [])
-          if files:
-            location_dict['artifact_name'] = artifact_name
-            publish_loc = publish_template.format(location_dict)
-            link_name = 'gs publish dir: %s' % artifact_name
-            link_value = (
-                'https://console.cloud.google.com/storage/browser/%s' %
-                publish_loc)
-            links[link_name] = link_value
-            presentation.links[link_name] = link_value
-            publish_uri = 'gs://' + publish_loc
-            if not publish_uri.endswith('/'):
-              publish_uri += '/'
-            cmd = ['cp']
-            if info.acl_name:
-              cmd += ['-a', info.acl_name]
-            cmd += ['%s/%s' % (upload_uri, path) for path in files]
-            cmd.append(publish_uri)
-            for retries in range(3):
-              try:
-                self.m.gsutil(cmd, multithreaded=True,
-                              timeout=self.test_api.gsutil_timeout_seconds)
-                break
-              except recipe_api.StepFailure as ex:
-                if ex.had_timeout and retries < 2:
-                  continue
-                else:
-                  raise
-            published[artifact_name].append({
-                'gs_location': publish_loc,
-                'files': files
-            })
+      # location_dict['artifact_name'] will be set inside the loop.
+      location_dict = self._artifacts_gs_path_dict(builder_name, target, kind)
+      for info in to_publish:
+        for publish_template in info['gsLocations']:
+          for aname in info['artifactTypes']:
+            files = files_by_artifact.get(aname, [])
+            if files:
+              location_dict['artifact_name'] = aname
+              publish_loc = publish_template.format(location_dict)
+              link_name = 'gs publish dir: %s' % aname
+              link_value = (
+                  'https://console.cloud.google.com/storage/browser/%s' %
+                  publish_loc)
+              links[link_name] = link_value
+              presentation.links[link_name] = link_value
+              publish_uri = 'gs://' + publish_loc
+              if not publish_uri.endswith('/'):
+                publish_uri += '/'
+              cmd = ['cp']
+              if info.get('aclName'):
+                cmd += ['-a', info.get('aclName')]
+              cmd += ['%s/%s' % (upload_uri, path) for path in files]
+              cmd.append(publish_uri)
+              max_retries = 3
+              for retries in range(max_retries):
+                try:
+                  self.m.gsutil(cmd, multithreaded=True,
+                                timeout=self.test_api.gsutil_timeout_seconds)
+                  break
+                except recipe_api.StepFailure as ex:
+                  if ex.had_timeout and retries < max_retries - 1:
+                    continue
+                  else:
+                    raise
+              published[aname].append({
+                  'gs_location': publish_loc,
+                  'files': files
+              })
 
       self.m.easy.set_property_step('published', published,
                                     step_name='publish artifact GS paths')
@@ -418,9 +475,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       return links
 
   def upload_artifacts(self, builder_name, target, kind, gs_bucket,
-                       artifact_types, chroot=None, sysroot=None,
-                       publish_info=None, artifact_profile_info=None,
-                       additional_args=None, name=None):
+                       artifacts_info=None, chroot=None, sysroot=None,
+                       name=None, test_data=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -435,24 +491,21 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           e.g. POSTSUBMIT. This affects where the artifacts are placed in
           Google Storage.
       gs_bucket (str): Google storage bucket to upload artifacts to.
-      artifact_types (list[ArtifactTypes]): List of artifacts
-          to upload. See build config for options.
-      sysroot (Sysroot): sysroot to use
+      artifacts_info (ArtifactsByService): Information about artifacts.
       chroot (Chroot): chroot to use
-      publish_info (list[PublishInfo]): List of publishing information.
-      artifact_profile_info (ArtifactProfileInfo): profile information.
-      additional_args (PrepareForBuildAdditionalArgs): The additional_args that
-          were passed to prepare_for_build.  Bundling sometimes requires them.
+      sysroot (Sysroot): sysroot to use
       name (str): The step name. Defaults to 'upload artifacts'.
+      test_data (str): Some data for this step to return when running under
+          simulation.  The string "@@DIR@@" is replaced with the output_dir
+          path throughout.
     """
     with self.m.step.nest(name or 'upload artifacts') as presentation:
-      staging_root = self.m.path.mkdtemp(prefix='artifacts')
+      outpath = self.m.path.mkdtemp(prefix='artifacts')
+      files_by_artifact = self._bundle_artifacts(chroot, sysroot,
+                                                 artifacts_info, outpath,
+                                                 test_data)
 
-      files_by_artifact = self._bundle_artifacts(artifact_types, staging_root,
-                                                 sysroot, chroot,
-                                                 artifact_profile_info,
-                                                 additional_args)
-
+      # Upload all of the artifacts to the archive bucket/path.
       gs_path = self.artifacts_gs_path(builder_name, target, kind)
       presentation.links['gs upload dir'] = (
           'https://console.cloud.google.com/storage/browser/%s/%s' %
@@ -460,8 +513,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
       for retries in range(3):
         try:
-          self.m.gsutil(['rsync', staging_root, upload_uri],
-                        parallel_upload=True, multithreaded=True,
+          self.m.gsutil(['rsync', outpath, upload_uri], parallel_upload=True,
+                        multithreaded=True,
                         timeout=self.test_api.gsutil_timeout_seconds)
           break
         except recipe_api.StepFailure as ex:
@@ -483,12 +536,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # successfully, and can therefore copy them GS->GS, and avoid
       # re-uploading. Publishing is intentionally nested under upload
       # artifacts.
-      if publish_info:
-        links = self._publish_artifacts(builder_name, target, kind,
-                                        publish_info, upload_uri,
-                                        files_by_artifact)
-        for k, v in links.items():
-          presentation.links[k] = v
+      links = self._publish_artifacts(builder_name, target, kind,
+                                      artifacts_info, upload_uri,
+                                      files_by_artifact)
+      for k, v in links.items():
+        presentation.links[k] = v
 
   def download_artifact(self, build_payload, artifact, name=None):
     """Download the given artfiact from the given build payload.
@@ -566,64 +618,41 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
       build check applies), or POINTLESS (just exit now.)
     """
+    atype = BuilderConfig.Artifacts
     _PREPARE_FUNCS = {
-        BuilderConfig.Artifacts.IMAGE_ZIP:
-            self._prepare_unknown,
-        BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD:
-            self._prepare_unknown,
-        BuilderConfig.Artifacts.AUTOTEST_FILES:
-            self._prepare_unknown,
-        BuilderConfig.Artifacts.TAST_FILES:
-            self._prepare_unknown,
-        BuilderConfig.Artifacts.PINNED_GUEST_IMAGES:
-            self._prepare_unknown,
-        BuilderConfig.Artifacts.FIRMWARE:
-            self._prepare_unknown,
-        # EBUILD_LOGS never affect the decision.
-        BuilderConfig.Artifacts.EBUILD_LOGS:
-            self._prepare_pointless,
-        BuilderConfig.Artifacts.CHROMEOS_CONFIG:
-            self._prepare_unknown,
-        BuilderConfig.Artifacts.CPE_REPORT:
-            self._prepare_unknown,
-        BuilderConfig.Artifacts.IMAGE_ARCHIVES:
-            self._prepare_unknown,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_LLVM_ORDERFILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_CHROME_LLVM_ORDERFILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.CHROME_CLANG_WARNINGS_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_LLVM_PGO_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_CHROME_BENCHMARK_AFDO_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_KERNEL_CWP_AFDO_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_KERNEL_CWP_AFDO_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_CWP_AFDO_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_CHROME_CWP_AFDO_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.VERIFIED_RELEASE_AFDO_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.UNVERIFIED_CHROME_BENCHMARK_PERF_FILE:
-            self._prepare_toolchain,
-        BuilderConfig.Artifacts.CHROME_DEBUG_BINARY:
-            self._prepare_toolchain,
+        atype.IMAGE_ZIP: self._prepare_unknown,
+        atype.TEST_UPDATE_PAYLOAD: self._prepare_unknown,
+        atype.AUTOTEST_FILES: self._prepare_unknown,
+        atype.TAST_FILES: self._prepare_unknown,
+        atype.PINNED_GUEST_IMAGES: self._prepare_unknown,
+        atype.FIRMWARE: self._prepare_unknown,
+        # EBUILD_LOGS don't count.
+        atype.EBUILD_LOGS: self._prepare_pointless,
+        atype.CHROMEOS_CONFIG: self._prepare_unknown,
+        atype.CPE_REPORT: self._prepare_unknown,
+        atype.IMAGE_ARCHIVES: self._prepare_unknown,
+        atype.UNVERIFIED_CHROME_LLVM_ORDERFILE: self._prepare_toolchain,
+        atype.VERIFIED_CHROME_LLVM_ORDERFILE: self._prepare_toolchain,
+        atype.CHROME_CLANG_WARNINGS_FILE: self._prepare_toolchain,
+        atype.UNVERIFIED_LLVM_PGO_FILE: self._prepare_toolchain,
+        atype.UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE: self._prepare_toolchain,
+        atype.VERIFIED_CHROME_BENCHMARK_AFDO_FILE: self._prepare_toolchain,
+        atype.UNVERIFIED_KERNEL_CWP_AFDO_FILE: self._prepare_toolchain,
+        atype.VERIFIED_KERNEL_CWP_AFDO_FILE: self._prepare_toolchain,
+        atype.UNVERIFIED_CHROME_CWP_AFDO_FILE: self._prepare_toolchain,
+        atype.VERIFIED_CHROME_CWP_AFDO_FILE: self._prepare_toolchain,
+        atype.VERIFIED_RELEASE_AFDO_FILE: self._prepare_toolchain,
+        atype.UNVERIFIED_CHROME_BENCHMARK_PERF_FILE: self._prepare_toolchain,
+        atype.CHROME_DEBUG_BINARY: self._prepare_toolchain,
     }
 
     with self.m.step.nest(name or 'prepare artifacts') as presentation:
       results = []
 
-      funcs_to_call = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
+      funcs = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
       # Sorting is done here only to give us consistency in the expected.json
       # for our tests.
-      for func, types in sorted(funcs_to_call.items(),
-                                key=lambda x: x[0].__name__):
+      for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
         results.append(
             func(chroot, sysroot, types, input_artifacts, artifact_profile_info,
                  additional_args))

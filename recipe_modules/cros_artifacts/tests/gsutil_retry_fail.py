@@ -22,16 +22,16 @@ def RunSteps(api):
   api.assertions.assertRaises(
       api.step.StepFailure, api.cros_artifacts.upload_artifacts,
       'target-postsubmit', target, BuilderConfig.Id.POSTSUBMIT,
-      'artifacts_gs_bucket',
-      artifact_types=[BuilderConfig.Artifacts.EBUILD_LOGS
-                     ], chroot=common.Chroot(path='/path/to/chroot'),
+      'artifacts_gs_bucket', artifacts_info=common.ArtifactsByService(
+          legacy=dict(output_artifacts=[
+              dict(
+                  artifact_types=[common.ArtifactsByService.Legacy.EBUILD_LOGS],
+                  gs_locations=['publish_gs_bucket']),
+          ])), chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
-      publish_info=[
-          BuilderConfig.Artifacts.PublishInfo(
-              publish_gs_location='publish_gs_bucket',
-              publish_types=[BuilderConfig.Artifacts.EBUILD_LOGS])
-      ])
+      test_data='{"artifacts":{"legacy":{"artifacts":[{"paths":['
+      '"@@DIR@@/foo","@@DIR@@/bar"],"artifactType":"EBUILD_LOGS"}]}}}')
 
 
 def attempt_download_file(api, attempt):
