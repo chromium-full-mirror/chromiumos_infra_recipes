@@ -89,8 +89,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return files_by_artifact
 
   def _prepare_pointless(self, _chroot, _sysroot, _artifact_types,
-                         _input_artifacts, _artifact_profile_info,
-                         _additional_args):
+                         _input_artifacts, _artifact_profile_info, test_data):
     """Declare the build necessity POINTLESS from this artifact's perspective.
 
     Use this prepare_for_build handler for any artifact type which should not
@@ -102,9 +101,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
       _artifact_profile_info (ArtifactProfileInfo): profile information.
-      _additional_args (PrepareForBuildAdditionalArgs): endpoint specific
-          arguments, such as the Chrome CWP profile name, or kernel version to
-          use.
+      _test_data (str): JSON data to use for build API calls.
 
     Returns:
       (artifacts.PrepareForBuildResponse.build_relevance) POINTLESS.
@@ -112,8 +109,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return artifacts.PrepareForBuildResponse.POINTLESS
 
   def _prepare_unknown(self, _chroot, _sysroot, _artifact_types,
-                       _input_artifacts, _artifact_profile_info,
-                       _additional_args):
+                       _input_artifacts, _artifact_profile_info, test_data):
     """Declare the build necessity UNKNOWN from this artifact's perspective.
 
     Use this prepare_for_build handler for any artifact type which has no
@@ -125,9 +121,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
       _artifact_profile_info (ArtifactProfileInfo): profile information.
-      _additional_args (PrepareForBuildAdditionalArgs): endpoint specific
-          arguments, such as the Chrome CWP profile name, or kernel version to
-          use.
+      _test_data (str): JSON data to use for build API calls.
 
     Returns:
       (artifacts.PrepareForBuildResponse.build_relevance) UNKNOWN.
@@ -135,7 +129,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return artifacts.PrepareForBuildResponse.UNKNOWN
 
   def _prepare_toolchain(self, chroot, sysroot, artifact_types, input_artifacts,
-                         artifact_profile_info, additional_args):
+                         artifact_profile_info, test_data):
     """Query the ToolchainService about the necessity of this build.
 
     Call ToolchainService.PrepareForBuild to prepare for the build.
@@ -146,19 +140,16 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
       artifact_profile_info (ArtifactProfileInfo): profile information.
-      additional_args (PrepareForBuildAdditionalArgs): endpoint specific
-          arguments, such as the Chrome CWP profile name, or kernel version to
-          use.
+      test_data (str): JSON data to use for build API calls.
 
     Returns:
       (artifacts.PrepareForBuildResponse) whether build is necessary.
     """
     req = toolchain.PrepareForToolchainBuildRequest(
         chroot=chroot, sysroot=sysroot, artifact_types=artifact_types,
-        input_artifacts=input_artifacts, profile_info=artifact_profile_info,
-        additional_args=additional_args)
+        input_artifacts=input_artifacts, profile_info=artifact_profile_info)
     resp = self.m.cros_build_api.ToolchainService.PrepareForBuild(
-        req, infra_step=True)
+        req, infra_step=True, test_output_data=test_data)
     return resp.build_relevance
 
   def _bundle_toolchain(self, chroot, sysroot, path, artifact_types,
@@ -191,12 +182,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ret[artifact_name] = artifact_files
     return ret
 
-  def _partition_artifacts(self, artifact_types, func_dict):
+  def _partition_artifacts(self, artifact_types, func_dict, default=None):
     """Partition the artifacts by handler.
 
     Args:
       artifact_types: (list[ArtifactTypes]): The artifacts to partition.
       func_dict: (dict(artifact_type: function)) Function dictionary.
+      default: (func) The function to use for missing artifacts.
 
     Returns:
       dict(function: list[ArtifactTypes]): each function should be called with
@@ -206,8 +198,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     for art in artifact_types:
       # Some artifact types are only supported in API version 1.1.0, and this
       # method is only called for API version 1.0.0.
-      if art in func_dict:
-        ret[func_dict[art]].append(art)
+      key = func_dict.get(art, default)
+      if key:
+        ret[key].append(art)
     return ret
 
   def _bundle_artifacts(self, chroot, sysroot, artifacts_info, outpath,
@@ -421,8 +414,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     to_publish = []
     for service in json_format.MessageToDict(artifacts_info).values():
       for out_info in service.get('outputArtifacts', []):
-        if (len(out_info.get('gsLocations', [])) and
-            len(out_info.get('artifactTypes', []))):
+        if out_info.get('gsLocations') and out_info.get('artifactTypes'):
           to_publish.append(out_info)
     if not to_publish:
       return links
@@ -595,8 +587,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           for artifact in artifact_types
       }
 
-  def prepare_for_build(self, artifact_types, chroot, sysroot, input_artifacts,
-                        artifact_profile_info=None, additional_args=None,
+  def prepare_for_build(self, chroot, sysroot, artifacts_info,
+                        forced_build_relevance=False, test_data=None,
                         name=None):
     """Prepare the build for the given artifacts.
 
@@ -604,13 +596,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     the given types.
 
     Args:
-      artifact_types (list[ArtifactTypes]): List of artifact_types
-          to prepare. See build config for options.
       chroot (Chroot): The chroot to use, or None if not yet created.
       sysroot (Sysroot): The sysroot to use, or None if not yet created.
-      input_artifacts (list[InputArtifactInfo]): where to seek input artifacts.
-      artifact_profile_info (ArtifactProfileInfo): profile information.
-      additional_args (PrepareForBuildAdditionalArgs): additional arguments.
+      artifacts_info (ArtifactsByService): artifact information.
+      forced_build_relevance (bool): Whether the builder will be ignoring the
+          response.
+      test_data (str): JSON data to use for ArtifactsService call.
       name (str): The step name. Defaults to 'prepare artifacts'.
 
     Returns:
@@ -618,19 +609,48 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
       build check applies), or POINTLESS (just exit now.)
     """
+    with self.m.step.nest(name or 'prepare artifacts') as presentation:
+      if self.m.cros_build_api.is_at_least_version(1, 1, 0):
+        ret = self.m.cros_build_api.ArtifactsService.PrepareForBuild(
+            artifacts.PrepareForBuildRequest(
+                chroot=chroot, sysroot=sysroot, artifact_info=artifacts_info,
+                forced_build_relevance=forced_build_relevance), infra_step=True,
+            test_output_data=test_data).build_relevance
+      else:
+        ret = self._prepare_for_build_100(chroot, sysroot, artifacts_info,
+                                          test_data=test_data)
+
+      if ret == artifacts.PrepareForBuildResponse.NEEDED:
+        presentation.step_text = 'Build is NEEDED'
+      elif ret == artifacts.PrepareForBuildResponse.UNKNOWN:
+        presentation.step_text = 'Build need is UNKNOWN'
+      else:
+        presentation.step_text = 'Build is POINTLESS'
+    return ret
+
+  def _prepare_for_build_100(self, chroot, sysroot, artifacts_info,
+                             test_data=None):
+    """Prepare the build for the given artifacts, using Build API version 1.0.0.
+
+    This function calls the Build API to have it prepare to build artifacts of
+    the given types.
+
+    Args:
+      chroot (Chroot): The chroot to use, or None if not yet created.
+      sysroot (Sysroot): The sysroot to use, or None if not yet created.
+      artifacts_info (ArtifactsByService): artifact information.
+      test_data (str): JSON data to use for build API calls.
+
+    Returns:
+      PrepareForToolchainBuildResponse.BuildRelevance indicating that the build
+      is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
+      build check applies), or POINTLESS (just exit now.)
+    """
+    # By default, artifacts will get 'UNKNOWN'.
+    # EBUILD_LOGS are not relevant.
     atype = BuilderConfig.Artifacts
     _PREPARE_FUNCS = {
-        atype.IMAGE_ZIP: self._prepare_unknown,
-        atype.TEST_UPDATE_PAYLOAD: self._prepare_unknown,
-        atype.AUTOTEST_FILES: self._prepare_unknown,
-        atype.TAST_FILES: self._prepare_unknown,
-        atype.PINNED_GUEST_IMAGES: self._prepare_unknown,
-        atype.FIRMWARE: self._prepare_unknown,
-        # EBUILD_LOGS don't count.
         atype.EBUILD_LOGS: self._prepare_pointless,
-        atype.CHROMEOS_CONFIG: self._prepare_unknown,
-        atype.CPE_REPORT: self._prepare_unknown,
-        atype.IMAGE_ARCHIVES: self._prepare_unknown,
         atype.UNVERIFIED_CHROME_LLVM_ORDERFILE: self._prepare_toolchain,
         atype.VERIFIED_CHROME_LLVM_ORDERFILE: self._prepare_toolchain,
         atype.CHROME_CLANG_WARNINGS_FILE: self._prepare_toolchain,
@@ -646,23 +666,41 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         atype.CHROME_DEBUG_BINARY: self._prepare_toolchain,
     }
 
-    with self.m.step.nest(name or 'prepare artifacts') as presentation:
-      results = []
+    # We need to use the 1.0.0 method.  Create artifact_types and
+    # input_artifacts for the call.
+    artifact_types = []
+    input_artifacts = []
+    for _, service in artifacts_info.ListFields():
+      # artifact_types is the list of output artifact types.
+      for out_art in getattr(service, 'output_artifacts', []):
+        artifact_types.extend(out_art.artifact_types)
 
-      funcs = self._partition_artifacts(artifact_types, _PREPARE_FUNCS)
-      # Sorting is done here only to give us consistency in the expected.json
-      # for our tests.
-      for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
-        results.append(
-            func(chroot, sysroot, types, input_artifacts, artifact_profile_info,
-                 additional_args))
+      # input_artifacts is the list of input_artifacts, rewritten into the
+      # correct message type.
+      for in_art in getattr(service, 'input_artifacts', []):
+        for atype in in_art.artifact_types:
+          input_artifacts.append(
+              BuilderConfig.Artifacts.InputArtifactInfo(
+                  input_artifact_type=atype,
+                  input_artifact_gs_locations=in_art.gs_locations))
 
-      # Return an aggregate response.
-      if artifacts.PrepareForBuildResponse.NEEDED in results:
-        presentation.step_text = 'Build is NEEDED'
-        return artifacts.PrepareForBuildResponse.NEEDED
-      if artifacts.PrepareForBuildResponse.UNKNOWN in results:
-        presentation.step_text = 'Build need is UNKNOWN'
-        return artifacts.PrepareForBuildResponse.UNKNOWN
-      presentation.step_text = 'Build is POINTLESS'
-      return artifacts.PrepareForBuildResponse.POINTLESS
+    funcs = self._partition_artifacts(artifact_types, _PREPARE_FUNCS,
+                                      self._prepare_unknown)
+
+    # If there are no prepare functions to call: Build need is UNKNOWN.
+    if not funcs:
+      return artifacts.PrepareForBuildResponse.UNKNOWN
+
+    result = artifacts.PrepareForBuildResponse.POINTLESS
+    # Sorting is done here only to give us consistency in the expected.json
+    # for our tests.
+    for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
+      res = func(chroot, sysroot, types, input_artifacts,
+                 artifacts_info.profile_info, test_data=test_data)
+      # If this func says NEEDED, or the result so far is POINTLESS, then the
+      # result is what this func said.
+      if (res == artifacts.PrepareForBuildResponse.NEEDED or
+          result == artifacts.PrepareForBuildResponse.POINTLESS):
+        result = res
+
+    return result

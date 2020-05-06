@@ -68,9 +68,8 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
 
   # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
   relevance = api.sysroot_util.update_for_artifact_build(
-      None, config.artifacts, config.build.prepare_for_build.additional_args,
-      force_relevance=force_relevant_build)
-  if relevance == Relevance.POINTLESS and not force_relevant_build:
+      None, config.artifacts, force_relevance=force_relevant_build)
+  if relevance == Relevance.POINTLESS:
     return
 
   api.cros_sdk.uprev_packages(build_targets=[build_target])
@@ -90,9 +89,8 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   # builds needed prior to making artifacts, and those artifacts will be created
   # by the appropriate Build API Bundle() calls in upload_artifacts (below).
   api.sysroot_util.update_for_artifact_build(
-      api.cros_sdk.chroot, config.artifacts,
-      config.build.prepare_for_build.additional_args,
-      force_relevance=force_relevant_build, name='prepare artifacts final')
+      api.cros_sdk.chroot, config.artifacts, force_relevance=True,
+      name='prepare artifacts final')
 
   api.easy.set_property_step('chromeos_version',
                              str(api.cros_version.read_workspace_version()))
@@ -150,7 +148,7 @@ def GenTests(api):
   yield api.test(
       'pointless', test_build(),
       api.step_data(
-          'prepare artifacts.call chromite.api.ToolchainService/'
+          'prepare artifacts.call chromite.api.ArtifactsService/'
           'PrepareForBuild.read output file',
           api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
 
@@ -172,7 +170,7 @@ def GenTests(api):
               ['chromeos-image-archive/BUILDER/VERSION-BUILD_ID']
       }]),
       api.step_data(
-          'prepare artifacts.call chromite.api.ToolchainService/'
+          'prepare artifacts.call chromite.api.ArtifactsService/'
           'PrepareForBuild.read output file',
           api.file.read_raw(content='{"build_relevance": "POINTLESS"}')))
 

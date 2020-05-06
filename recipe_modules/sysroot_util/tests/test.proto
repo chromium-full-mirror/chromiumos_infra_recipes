@@ -21,4 +21,7 @@ message TestInputProperties {
 
   // Whether to create a chroot first.
   bool with_chroot = 4;
+
+  // Response data for Build API call.
+  string api_response = 5;
 }

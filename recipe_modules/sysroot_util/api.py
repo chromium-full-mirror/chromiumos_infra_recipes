@@ -22,14 +22,13 @@ class SysrootUtilApi(recipe_api.RecipeApi):
   def sysroot(self):
     return self._sysroot
 
-  def update_for_artifact_build(self, chroot, artifacts, args,
-                                force_relevance=False, name=None):
+  def update_for_artifact_build(self, chroot, artifacts, force_relevance=False,
+                                test_data=None, name=None):
     """Update ebuilds for artifact build.
 
     Args:
       chroot (Chroot): Chroot, or None.
       artifacts (BuilderConfig.Artifacts): Artifact Information
-      args (PrepareForBuild.AdditionalArgs): Parameters from config.
       force_relevance (bool): Whether to always claim relevant.
       name (str): Step name to use, or None for default name.
 
@@ -37,13 +36,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       (PrepareForBuildResponse): Whether the build is relevant.
     """
     # Prepare for the build.  If the build is pointless, we are done.
-    resp = PrepareForBuildResponse.UNKNOWN
-    if artifacts.artifact_types:
-      # If there are artifacts, always call the Build API.
-      resp = self.m.cros_artifacts.prepare_for_build(
-          artifacts.artifact_types, chroot, self.sysroot,
-          artifacts.input_artifacts, artifacts.artifact_profile_info, args,
-          name=name)
+    resp = self.m.cros_artifacts.prepare_for_build(
+        chroot, self.sysroot, artifacts.artifacts_info, force_relevance,
+        test_data=test_data, name=name)
 
     # If the build is POINTLESS, then we are done.  This can only happen if
     # all of the artifact_types for this build are handled by some
@@ -51,9 +46,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     #
     # If there are any artifact_types with no PrepareForBuild endpoint
     # defined, then resp will be UNKNOWN.
-    if force_relevance:
-      return PrepareForBuildResponse.NEEDED
-    return resp
+    return PrepareForBuildResponse.NEEDED if force_relevance else resp
 
   def create_sysroot(self, build_target, profile=None, chroot_current=True,
                      replace=True, toolchain_changed=False, timeout_sec=10 * 60,

@@ -25,16 +25,15 @@ def RunSteps(api, properties):
 
   build_config = api.cros_infra_config.get_builder_config(name)
   artifacts = build_config.artifacts
-  args = build_config.build.prepare_for_build.additional_args
 
   # Early check: this can be done before the chroot and sysroot are created.
-  relevance = api.sysroot_util.update_for_artifact_build(None, artifacts, args)
+  relevance = api.sysroot_util.update_for_artifact_build(None, artifacts)
   # relevance == POINTLESS may cause the recipe to terminate early.
 
   # Later check, since some artifacts need the chroot and sysroot to be able to
   # complete their update.
   relevance = api.sysroot_util.update_for_artifact_build(
-      api.cros_sdk.chroot, artifacts, args, name='final')
+      api.cros_sdk.chroot, artifacts, name='final')
 
 
 def GenTests(api):

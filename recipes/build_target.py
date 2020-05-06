@@ -116,9 +116,8 @@ def DoRunSteps(api, config, build_target, properties):
 
   # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
   relevance = api.sysroot_util.update_for_artifact_build(
-      None, config.artifacts, config.build.prepare_for_build.additional_args,
-      force_relevance=force_relevant_build)
-  if relevance == Relevance.POINTLESS and not force_relevant_build:
+      None, config.artifacts, force_relevance=force_relevant_build)
+  if relevance == Relevance.POINTLESS:
     return
 
   api.cros_sdk.uprev_packages(build_targets=[build_target])
@@ -233,19 +232,16 @@ def DoRunSteps(api, config, build_target, properties):
 
   if api.cros_infra_config.should_run(install_packages.run_spec):
     with api.step.nest('install packages') as ip_step:
-      if config.artifacts.artifact_types:
-        # Final round of preparation to build artifacts.  Some artifacts need
-        # to use portage (or a chroot and/or sysroot) in order to fully prepare,
-
-        # so they have to finish preparation inside the SDK.
-        #
-        # We don't care what the return value is, since we're committed to
-        # running at least install packages at this point.
-        api.sysroot_util.update_for_artifact_build(
-            api.cros_sdk.chroot, config.artifacts,
-            config.build.prepare_for_build.additional_args,
-            force_relevance=force_relevant_build,
-            name='prepare artifacts final')
+      # Final round of preparation to build artifacts.  Some artifacts need
+      # to use portage (or a chroot and/or sysroot) in order to fully prepare,
+      # so they have to finish preparation inside the SDK.
+      #
+      # We don't care what the return value is, since we're committed to
+      # running at least install packages at this point.  Let the module know
+      # that we are forcing relevance.
+      api.sysroot_util.update_for_artifact_build(
+          api.cros_sdk.chroot, config.artifacts, force_relevance=True,
+          name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
           compile_source=install_packages.compile_source,
           use_goma=(not install_packages.disable_goma and
@@ -626,7 +622,7 @@ def GenTests(api):
       api.buildbucket.simulated_get(
           md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
-          'prepare artifacts.call chromite.api.ToolchainService/'
+          'prepare artifacts.call chromite.api.ArtifactsService/'
           'PrepareForBuild.read output file',
           api.file.read_raw(content='{"build_relevance": "POINTLESS"}')),
   )
@@ -638,7 +634,7 @@ def GenTests(api):
           md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'install packages.prepare artifacts final.call chromite.api.'
-          'ToolchainService/PrepareForBuild.read output file',
+          'ArtifactsService/PrepareForBuild.read output file',
           api.file.read_raw(content='{"build_relevance": "POINTLESS"}')),
   )
 
@@ -648,7 +644,7 @@ def GenTests(api):
       api.buildbucket.simulated_get(
           md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
-          'prepare artifacts.call chromite.api.ToolchainService/'
+          'prepare artifacts.call chromite.api.ArtifactsService/'
           'PrepareForBuild.read output file',
           api.file.read_raw(content='{"build_relevance": "NEEDED"}')),
   )

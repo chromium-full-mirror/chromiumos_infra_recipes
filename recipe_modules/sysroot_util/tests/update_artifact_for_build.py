@@ -27,8 +27,9 @@ def RunSteps(api, properties):
 
   chroot = api.cros_sdk.chroot if properties.with_chroot else None
   relevance = api.sysroot_util.update_for_artifact_build(
-      chroot, config.artifacts, config.build.prepare_for_build.additional_args,
-      force_relevance=properties.force_build_relevance)
+      chroot, config.artifacts,
+      force_relevance=properties.force_build_relevance,
+      test_data=properties.api_response)
   api.assertions.assertEqual(relevance, properties.expected_relevance)
 
 
@@ -45,10 +46,6 @@ def GenTests(api):
             test_name,
             api.properties(
                 with_chroot=with_chroot, force_build_relevance=force,
+                api_response='{"build_relevance": "%s"}' % name,
                 expected_relevance=PrepareForBuildResponse.NEEDED
-                if force else value),
-            api.step_data(
-                'prepare artifacts.call chromite.api.ToolchainService/'
-                'PrepareForBuild.read output file',
-                api.file.read_raw(content='{"build_relevance": "%s"}' % name)),
-        )
+                if force else value))

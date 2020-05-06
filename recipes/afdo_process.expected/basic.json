@@ -888,38 +888,12 @@
   },
   {
     "cmd": [],
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild",
+    "name": "prepare artifacts.call chromite.api.VersionService/Get",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"profileInfo\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"afdoRelease\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"chromeCwpProfile\": \"silvermont\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"additionalArgs\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@  \"inputArtifacts\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"inputArtifactGsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeos-prebuilt/afdo-job/llvm\"@@@",
-      "@@@STEP_LOG_LINE@request@      ]@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"inputArtifactGsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeos-prebuilt/afdo-job/llvm\"@@@",
-      "@@@STEP_LOG_LINE@request@      ]@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ], @@@",
-      "@@@STEP_LOG_LINE@request@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"build_relevance\": \"UNKNOWN\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": {\"major\": 1, \"bug\": 0, \"minor\": 1}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -931,41 +905,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"profileInfo\": {\n    \"afdoRelease\": {\n      \"chromeCwpProfile\": \"silvermont\"\n    }\n  }, \n  \"additionalArgs\": {}, \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n        \"chromeos-prebuilt/afdo-job/llvm\"\n      ]\n    }, \n    {\n      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n        \"chromeos-prebuilt/afdo-job/llvm\"\n      ]\n    }\n  ], \n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n  ]\n}",
+      "{}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.write input file",
+    "name": "prepare artifacts.call chromite.api.VersionService/Get.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"profileInfo\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"afdoRelease\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"chromeCwpProfile\": \"silvermont\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"additionalArgs\": {}, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"inputArtifacts\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactGsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeos-prebuilt/afdo-job/llvm\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactGsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeos-prebuilt/afdo-job/llvm\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  ]@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
   },
@@ -978,7 +926,7 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "--log-level",
       "debug",
-      "chromite.api.ToolchainService/PrepareForBuild"
+      "chromite.api.VersionService/Get"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -987,7 +935,7 @@
       ]
     },
     "infra_step": true,
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.call build API script",
+    "name": "prepare artifacts.call chromite.api.VersionService/Get.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1010,14 +958,184 @@
       ]
     },
     "infra_step": true,
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.read output file",
+    "name": "prepare artifacts.call chromite.api.VersionService/Get.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.call response",
+    "name": "prepare artifacts.call chromite.api.VersionService/Get.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "prepare artifacts.call chromite.api.ArtifactsService/PrepareForBuild",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"artifactInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"profileInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"afdoRelease\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"chromeCwpProfile\": \"silvermont\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"toolchain\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"inputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@request@          ], @@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@request@          ], @@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ], @@@",
+      "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@request@          ], @@@",
+      "@@@STEP_LOG_LINE@request@          \"aclName\": \"public-read\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"build_relevance\": \"UNKNOWN\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"artifactInfo\": {\n    \"profileInfo\": {\n      \"afdoRelease\": {\n        \"chromeCwpProfile\": \"silvermont\"\n      }\n    }, \n    \"toolchain\": {\n      \"inputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"\n          ]\n        }, \n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ], \n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ]\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "prepare artifacts.call chromite.api.ArtifactsService/PrepareForBuild.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"artifactInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"profileInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"afdoRelease\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeCwpProfile\": \"silvermont\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"toolchain\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"aclName\": \"public-read\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ArtifactsService/PrepareForBuild"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "prepare artifacts.call chromite.api.ArtifactsService/PrepareForBuild.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "prepare artifacts.call chromite.api.ArtifactsService/PrepareForBuild.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "prepare artifacts.call chromite.api.ArtifactsService/PrepareForBuild.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -1055,7 +1173,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"overlayType\": \"OVERLAYTYPE_BOTH\", \n  \"buildTargets\": [\n    {\n      \"name\": \"eve\"\n    }\n  ]\n}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1077,9 +1195,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.PackageService/Uprev"
@@ -1104,7 +1222,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1142,7 +1260,7 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:24.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:27.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"uprev packages|call chromite.api.PackageService/Uprev|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"uprevPackagesResponse\": {@@@",
@@ -1156,7 +1274,7 @@
       "@@@STEP_LOG_LINE@published event@    ], @@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": \"1.2.3\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:26Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:29Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -1180,7 +1298,7 @@
     },
     "infra_step": true,
     "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNAC0OyA2a7xtZJ82gJLdXByZXYgcGFja2FnZXN8Y2FsbCBj\\naHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gIJ\\nEgUKA2V2ZRgB6gJxCi8KLVtTVEFSVF9ESVJdL2Nocm9taXVtb3Mvc3JjL292ZXJsYXkvZm9vLmVi\\ndWlsZAo3CjVbU1RBUlRfRElSXS9jaHJvbWl1bW9zL3NyYy9wcml2YXRlLW92ZXJsYXkvYmFyLmVi\\ndWlsZBIFMS4yLjM=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BNAC0OyA2a7xtZJ82gJLdXByZXYgcGFja2FnZXN8Y2FsbCBj\\naHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gIJ\\nEgUKA2V2ZRgB6gJxCi8KLVtTVEFSVF9ESVJdL2Nocm9taXVtb3Mvc3JjL292ZXJsYXkvZm9vLmVi\\ndWlsZAo3CjVbU1RBUlRfRElSXS9jaHJvbWl1bW9zL3NyYy9wcml2YXRlLW92ZXJsYXkvYmFyLmVi\\ndWlsZBIFMS4yLjM=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1246,7 +1364,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"noReplace\": true\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1275,9 +1393,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Create"
@@ -1301,7 +1419,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1331,7 +1449,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:27.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:30.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"init sdk|call chromite.api.SdkService/Create|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"createResponse\": {@@@",
@@ -1354,7 +1472,7 @@
       "@@@STEP_LOG_LINE@published event@      \"noReplace\": true@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:29Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:32Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -1378,7 +1496,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BMIBMAoCCAESKgoTW0NBQ0hFXS9jcm9zX2Nocm9vdBoTChEK\\nD2Nocm9tZV9pbnRlcm5hbMoBBAoCCHvQAtDsgNmu8bWSfNoCQmluaXQgc2RrfGNhbGwgY2hyb21p\\ndGUuYXBpLlNka1NlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIyoDE/QQQgMq17gEiBgjMgMT9BMIBMAoCCAESKgoTW0NBQ0hFXS9jcm9zX2Nocm9vdBoTChEK\\nD2Nocm9tZV9pbnRlcm5hbMoBBAoCCHvQAtDsgNmu8bWSfNoCQmluaXQgc2RrfGNhbGwgY2hyb21p\\ndGUuYXBpLlNka1NlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1481,7 +1599,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1507,9 +1625,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.DependencyService/GetToolchainPaths"
@@ -1533,7 +1651,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1627,7 +1745,7 @@
       "/path/to/tmp/json",
       "copy",
       "2(2d72510e447ab60a9728aeea2362d8be2cbd7789:\u0005\n\u0003\u0018\ufffd\t:\u0005\n\u0003\u0018\ufffd\u0012Bd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0010\n\u000esome/other/dir",
-      "[CLEANUP]/pointless-build-_tmp_6/input.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_7/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1648,9 +1766,9 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_6/input.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_7/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_6/output.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_7/output.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1667,7 +1785,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/pointless-build-_tmp_6/output.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_7/output.binaryproto",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1724,7 +1842,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"toolchainTargets\": [\n    {\n      \"name\": \"eve\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"toolchainChanged\": true\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1758,9 +1876,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Update"
@@ -1784,7 +1902,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1819,7 +1937,7 @@
       "@@@STEP_LOG_LINE@published event@      \"version\": 123@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:33.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:36.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"update sdk|call chromite.api.SdkService/Update|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"updateRequest\": {@@@",
@@ -1842,7 +1960,7 @@
       "@@@STEP_LOG_LINE@published event@      \"toolchainChanged\": true@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:35Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:38Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -1866,7 +1984,7 @@
     },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BNIBNwoCEAESBQoDZXZlGioKE1tDQUNIRV0vY3Jvc19jaHJv\\nb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWzaAQQKAgh70ALQ7IDZrvG1knzaAkR1cGRhdGUgc2RrfGNh\\nbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI0IDE/QQQgMq17gEiBgjSgMT9BNIBNwoCEAESBQoDZXZlGioKE1tDQUNIRV0vY3Jvc19jaHJv\\nb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWzaAQQKAgh70ALQ7IDZrvG1knzaAkR1cGRhdGUgc2RrfGNh\\nbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1917,7 +2035,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"chrootCurrent\": true, \n    \"replace\": true\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1950,9 +2068,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SysrootService/Create"
@@ -1977,7 +2095,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2007,8 +2125,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:36.500Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:38Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:39.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:41Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"create sysroot|call chromite.api.SysrootService/Create|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"sysrootCreateRequest\": {@@@",
@@ -2061,7 +2179,7 @@
     },
     "infra_step": true,
     "name": "create sysroot.call chromite.api.SysrootService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI0IDE/QQQgMq17gEiBgjSgMT9BOIBOQoFCgNldmUSBAgBEAEiKgoTW0NBQ0hFXS9jcm9zX2No\\ncm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbOoBGwoZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldNAC\\n0OyA2a7xtZJ82gJMY3JlYXRlIHN5c3Jvb3R8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZp\\nY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI04DE/QQQgMq17gEiBgjVgMT9BOIBOQoFCgNldmUSBAgBEAEiKgoTW0NBQ0hFXS9jcm9zX2No\\ncm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbOoBGwoZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldNAC\\n0OyA2a7xtZJ82gJMY3JlYXRlIHN5c3Jvb3R8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZp\\nY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2079,13 +2197,51 @@
   },
   {
     "cmd": [],
-    "name": "prepare artifacts final.call chromite.api.ToolchainService/PrepareForBuild",
+    "name": "prepare artifacts final.call chromite.api.ArtifactsService/PrepareForBuild",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@request@    \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
-      "@@@STEP_LOG_LINE@request@  ], @@@",
+      "@@@STEP_LOG_LINE@request@  \"artifactInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"profileInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"afdoRelease\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"chromeCwpProfile\": \"silvermont\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"toolchain\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"inputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@request@          ], @@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@request@          ], @@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ], @@@",
+      "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@request@          ], @@@",
+      "@@@STEP_LOG_LINE@request@          \"aclName\": \"public-read\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
@@ -2102,28 +2258,7 @@
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"/build/target\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"additionalArgs\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@  \"inputArtifacts\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"inputArtifactGsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeos-prebuilt/afdo-job/llvm\"@@@",
-      "@@@STEP_LOG_LINE@request@      ]@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"inputArtifactGsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeos-prebuilt/afdo-job/llvm\"@@@",
-      "@@@STEP_LOG_LINE@request@      ]@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ], @@@",
-      "@@@STEP_LOG_LINE@request@  \"profileInfo\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"afdoRelease\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"chromeCwpProfile\": \"silvermont\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@  \"forcedBuildRelevance\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"build_relevance\": \"UNKNOWN\"}@@@",
@@ -2138,18 +2273,56 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"additionalArgs\": {}, \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n        \"chromeos-prebuilt/afdo-job/llvm\"\n      ]\n    }, \n    {\n      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\", \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n        \"chromeos-prebuilt/afdo-job/llvm\"\n      ]\n    }\n  ], \n  \"profileInfo\": {\n    \"afdoRelease\": {\n      \"chromeCwpProfile\": \"silvermont\"\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
+      "{\n  \"artifactInfo\": {\n    \"profileInfo\": {\n      \"afdoRelease\": {\n        \"chromeCwpProfile\": \"silvermont\"\n      }\n    }, \n    \"toolchain\": {\n      \"inputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"\n          ]\n        }, \n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ], \n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"forcedBuildRelevance\": true\n}",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "prepare artifacts final.call chromite.api.ToolchainService/PrepareForBuild.write input file",
+    "name": "prepare artifacts final.call chromite.api.ArtifactsService/PrepareForBuild.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"artifactTypes\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"artifactInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"profileInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"afdoRelease\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeCwpProfile\": \"silvermont\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"toolchain\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"chromeos-prebuilt/afdo-job/llvm\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"aclName\": \"public-read\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
@@ -2166,28 +2339,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"/build/target\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"additionalArgs\": {}, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"inputArtifacts\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactGsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeos-prebuilt/afdo-job/llvm\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactType\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"inputArtifactGsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"chromeos-prebuilt/afdo-job/llvm\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"profileInfo\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"afdoRelease\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"chromeCwpProfile\": \"silvermont\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"forcedBuildRelevance\": true@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -2196,12 +2348,12 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "--log-level",
       "debug",
-      "chromite.api.ToolchainService/PrepareForBuild"
+      "chromite.api.ArtifactsService/PrepareForBuild"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -2210,7 +2362,7 @@
       ]
     },
     "infra_step": true,
-    "name": "prepare artifacts final.call chromite.api.ToolchainService/PrepareForBuild.call build API script",
+    "name": "prepare artifacts final.call chromite.api.ArtifactsService/PrepareForBuild.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2223,7 +2375,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2233,14 +2385,14 @@
       ]
     },
     "infra_step": true,
-    "name": "prepare artifacts final.call chromite.api.ToolchainService/PrepareForBuild.read output file",
+    "name": "prepare artifacts final.call chromite.api.ArtifactsService/PrepareForBuild.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "prepare artifacts final.call chromite.api.ToolchainService/PrepareForBuild.call response",
+    "name": "prepare artifacts final.call chromite.api.ArtifactsService/PrepareForBuild.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -2337,92 +2489,6 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.call chromite.api.VersionService/Get",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": {\"major\": 1, \"bug\": 0, \"minor\": 1}}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{}",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "upload artifacts.call chromite.api.VersionService/Get.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.VersionService/Get"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "upload artifacts.call chromite.api.VersionService/Get.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "upload artifacts.call chromite.api.VersionService/Get.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload artifacts.call chromite.api.VersionService/Get.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "upload artifacts.call chromite.api.ArtifactsService/BundleArtifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -2484,7 +2550,7 @@
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"/build/target\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_10\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_11\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"legacy\": {\"artifacts\": [{\"artifact_type\": \"EBUILD_LOGS\", \"paths\": [\"[START_DIR]/log.tar.gz\"]}]}, \"toolchain\": {\"artifacts\": [{\"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \"paths\": [\"[START_DIR]/orderfile\"]}]}}}@@@",
@@ -2499,7 +2565,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"artifactInfo\": {\n    \"profileInfo\": {\n      \"afdoRelease\": {\n        \"chromeCwpProfile\": \"silvermont\"\n      }\n    }, \n    \"toolchain\": {\n      \"inputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"\n          ]\n        }, \n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ], \n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_10\"\n}",
+      "{\n  \"artifactInfo\": {\n    \"profileInfo\": {\n      \"afdoRelease\": {\n        \"chromeCwpProfile\": \"silvermont\"\n      }\n    }, \n    \"toolchain\": {\n      \"inputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"\n          ]\n        }, \n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ], \n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_11\"\n}",
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2565,7 +2631,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"/build/target\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_10\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_11\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -2712,7 +2778,7 @@
       "-m",
       "----",
       "rsync",
-      "[CLEANUP]/artifacts_tmp_10",
+      "[CLEANUP]/artifacts_tmp_11",
       "gs://chromeos-image-archive/benchmark-afdo-process/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
