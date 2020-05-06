@@ -40,6 +40,13 @@
       "@@@STEP_LOG_LINE@builder config@  artifact_types: IMAGE_ZIP@@@",
       "@@@STEP_LOG_LINE@builder config@  prebuilts_gs_bucket: \"chromeos-prebuilt\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-image-archive\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  artifacts_info {@@@",
+      "@@@STEP_LOG_LINE@builder config@    legacy {@@@",
+      "@@@STEP_LOG_LINE@builder config@      output_artifacts {@@@",
+      "@@@STEP_LOG_LINE@builder config@        artifact_types: IMAGE_ZIP@@@",
+      "@@@STEP_LOG_LINE@builder config@      }@@@",
+      "@@@STEP_LOG_LINE@builder config@    }@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@chrome {@@@",
       "@@@STEP_LOG_LINE@builder config@  internal: true@@@",
@@ -63,7 +70,7 @@
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"prebuilts\": \"PRIVATE\", \"prebuiltsGsBucket\": \"chromeos-prebuilt\"}, \"build\": {\"buildImages\": {\"imageTypes\": [\"BASE\", \"TEST\"]}, \"installPackages\": {\"runSpec\": \"RUN\"}, \"portageProfile\": {\"profile\": \"generic_build\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-postsubmit\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsInfo\": {\"legacy\": {\"outputArtifacts\": [{\"artifactTypes\": [\"IMAGE_ZIP\"]}]}}, \"prebuilts\": \"PRIVATE\", \"prebuiltsGsBucket\": \"chromeos-prebuilt\"}, \"build\": {\"buildImages\": {\"imageTypes\": [\"BASE\", \"TEST\"]}, \"installPackages\": {\"runSpec\": \"RUN\"}, \"portageProfile\": {\"profile\": \"generic_build\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-postsubmit\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
     ]
   },
   {
