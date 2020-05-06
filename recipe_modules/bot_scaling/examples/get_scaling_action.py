@@ -64,6 +64,13 @@ def RunSteps(api):
     api.assertions.assertEqual(scaling_action.bots_requested, 125)
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
 
+    # Bots requested equals ceiling but less than step size
+    ceiling_config = api.bot_scaling.test_api.gce_provider_config_ceiling()
+    scaling_action = api.bot_scaling.get_scaling_action(150, policy,
+                                                        ceiling_config)
+    api.assertions.assertEqual(scaling_action.bots_requested, 150)
+    api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
+
     # Monitored bot group
     policy.policy_mode = BotPolicy.MONITORED
     scaling_action = api.bot_scaling.get_scaling_action(90, policy, test_config)

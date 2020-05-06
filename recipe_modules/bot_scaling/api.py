@@ -71,7 +71,9 @@ class BotScalingApi(recipe_api.RecipeApi):
         bots_configured + bot_policy.scaling_restriction.step_size <=
         bots_requested or
         bots_configured - bot_policy.scaling_restriction.step_size >=
-        bots_requested):
+        bots_requested or
+        (bots_requested == bot_policy.scaling_restriction.bot_ceiling and
+         bots_requested != bots_configured)):
       actionable = ScalingAction.YES
 
     # Check whether a bot policy is set as configured, otherwise set to NO.
@@ -82,9 +84,8 @@ class BotScalingApi(recipe_api.RecipeApi):
                                    bot_type=bot_policy.bot_type,
                                    actionable=actionable)
 
-    current_num_bots = self.get_current_bot_amount(bot_policy, configs)
     scaling_action.bots_requested = self._calculate_bot_adjustment(
-        bot_policy, bots_requested, current_num_bots)
+        bot_policy, bots_requested, bots_configured)
     scaling_action.estimated_savings = self._calculate_estimated_savings(
         bot_policy, bots_configured)
     scaling_action.regional_actions.extend(
@@ -282,23 +283,6 @@ class BotScalingApi(recipe_api.RecipeApi):
             gce_configs.append(
                 self.m.gce_provider.update_gce_config(action.prefix, config))
     return Configs(vms=gce_configs)
-
-  def get_current_bot_amount(self, bot_policy, configs):
-    """Sums the min and max bot numbers per bot policy.
-
-    Args:
-      bot_policy_config(BotPolicy): Group Policy for RoboCrop.
-      config_map(dict|Config): Map of GCE Config to prefix
-
-    Returns:
-      int, the number of bots current configured for bot group.
-    """
-    num_bots = 0
-    config_map = self._get_prefix_to_gce_config(configs)
-    for restriction in bot_policy.region_restrictions:
-      config = config_map.get(restriction.prefix, Config())
-      num_bots += config.current_amount
-    return num_bots
 
   def unpack_policy_dimensions(self, dimensions):
     """Method to iterate through dimensions and return possible combinations.

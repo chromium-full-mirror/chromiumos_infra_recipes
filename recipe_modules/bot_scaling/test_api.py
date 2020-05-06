@@ -72,6 +72,18 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
                current_amount=25),
     ])
 
+  def gce_provider_config_ceiling(self):
+    return Configs(vms=[
+        Config(prefix='prefix-first', amount=Amount(min=5, max=30),
+               current_amount=29),
+        Config(prefix='prefix-second', amount=Amount(min=5, max=45),
+               current_amount=44),
+        Config(prefix='prefix-third', amount=Amount(min=5, max=30),
+               current_amount=25),
+        Config(prefix='prefix-fourth', amount=Amount(min=5, max=45),
+               current_amount=42),
+    ])
+
   def get_bot_type(self):
     return BotType(
         bot_size="small",
