@@ -23,6 +23,7 @@
   },
   {
     "cmd": [
+      "/usr/bin/bash",
       "[CLEANUP]/tmp_tmp_1/config/regenerate_configs.sh",
       "-b"
     ],

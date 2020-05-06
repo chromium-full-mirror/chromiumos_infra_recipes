@@ -25,7 +25,8 @@ def RunSteps(api):
     regen_path = workdir.join('config').join('regenerate_configs.sh')
 
   with api.step.nest('generate binary config'):
-    api.step('regenerate configs', [regen_path, '-b'], timeout=3 * 60)
+    api.step('regenerate configs', ['/usr/bin/bash', regen_path, '-b'],
+             timeout=3 * 60)
 
 
 def GenTests(api):
