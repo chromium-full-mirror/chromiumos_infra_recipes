@@ -4541,7 +4541,7 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
 ### *recipes* / [forge\_commit](/recipes/forge_commit.py)
 
-[DEPS](/recipes/forge_commit.py#14): [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/forge_commit.py#14): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for forcing forge commit failure.
 
@@ -4550,7 +4550,7 @@ Recipe used to force a forge commit failure so the failure response
 can be analyzed to determine what user is being used for the invocation.
 See https://crbug.com/1068743.
 
-&mdash; **def [RunSteps](/recipes/forge_commit.py#22)(api):**
+&mdash; **def [RunSteps](/recipes/forge_commit.py#23)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

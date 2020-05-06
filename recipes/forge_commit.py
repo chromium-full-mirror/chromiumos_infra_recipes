@@ -16,6 +16,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
     'git',
+    'git_cl',
 ]
 
 
@@ -31,6 +32,7 @@ def RunSteps(api):
     api.git.add(['DEPS'])
     api.git.commit('expecting rejection for forged commit',
                    author='Sean Abraham <seanabraham@google.com>')
+    api.git_cl.upload(name='git cl upload')
     api.git.push(url, 'master')
 
 

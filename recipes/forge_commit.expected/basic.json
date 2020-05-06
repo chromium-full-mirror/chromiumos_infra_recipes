@@ -97,6 +97,26 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS.git cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "git",
       "push",
       "https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS",
