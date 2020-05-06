@@ -225,4 +225,4 @@ def _test_ssh_conn(api, private_key_path):
 
 
 def GenTests(api):
-  yield (api.test('basic') + api.properties(expressions=['expr']))
+  yield api.test('basic', api.properties(expressions=['expr']))
