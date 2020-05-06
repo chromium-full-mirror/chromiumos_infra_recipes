@@ -754,17 +754,17 @@
       "@@@STEP_LOG_LINE@robocrop_action@        {@@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"region\": \"us-central1-b\", @@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", @@@",
-      "@@@STEP_LOG_LINE@robocrop_action@          \"botsRequested\": 3@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"botsRequested\": 4@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        }, @@@",
       "@@@STEP_LOG_LINE@robocrop_action@        {@@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"region\": \"us-central2-d\", @@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"prefix\": \"chromeos-ci-cq-us-central2-d-x32\", @@@",
-      "@@@STEP_LOG_LINE@robocrop_action@          \"botsRequested\": 4@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"botsRequested\": 5@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        }, @@@",
       "@@@STEP_LOG_LINE@robocrop_action@        {@@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"region\": \"us-east1-d\", @@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", @@@",
-      "@@@STEP_LOG_LINE@robocrop_action@          \"botsRequested\": 3@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"botsRequested\": 4@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        }, @@@",
       "@@@STEP_LOG_LINE@robocrop_action@        {@@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"region\": \"us-west1-b\", @@@",
@@ -814,7 +814,7 @@
     "name": "scale bot groups.compute scaling actions.set robocrop_action",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"scalingActions\": [{\"actionable\": \"NO\", \"botGroup\": \"cq\", \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32}, \"botsRequested\": 15, \"regionalActions\": [{\"botsRequested\": 3, \"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", \"region\": \"us-central1-b\"}, {\"botsRequested\": 4, \"prefix\": \"chromeos-ci-cq-us-central2-d-x32\", \"region\": \"us-central2-d\"}, {\"botsRequested\": 3, \"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"region\": \"us-east1-d\"}, {\"botsRequested\": 3, \"prefix\": \"chromeos-ci-cq-us-west1-b-x32\", \"region\": \"us-west1-b\"}]}]}@@@"
+      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"scalingActions\": [{\"actionable\": \"NO\", \"botGroup\": \"cq\", \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32}, \"botsRequested\": 15, \"regionalActions\": [{\"botsRequested\": 4, \"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", \"region\": \"us-central1-b\"}, {\"botsRequested\": 5, \"prefix\": \"chromeos-ci-cq-us-central2-d-x32\", \"region\": \"us-central2-d\"}, {\"botsRequested\": 4, \"prefix\": \"chromeos-ci-cq-us-east1-d-x32\", \"region\": \"us-east1-d\"}, {\"botsRequested\": 3, \"prefix\": \"chromeos-ci-cq-us-west1-b-x32\", \"region\": \"us-west1-b\"}]}]}@@@"
     ]
   },
   {

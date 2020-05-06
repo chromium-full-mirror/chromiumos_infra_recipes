@@ -67,13 +67,15 @@ class BotScalingApi(recipe_api.RecipeApi):
     actionable = ScalingAction.NO
 
     # Check to determine whether bots should be scaled up or down.
+    # Calculation based on weights can leave a bot group a few bots short,
+    # thus we provide a small allowance when determining actionable.
     if (bots_configured > bot_policy.scaling_restriction.bot_ceiling or
         bots_configured + bot_policy.scaling_restriction.step_size <=
         bots_requested or
         bots_configured - bot_policy.scaling_restriction.step_size >=
         bots_requested or
         (bots_requested == bot_policy.scaling_restriction.bot_ceiling and
-         bots_requested != bots_configured)):
+         abs(bots_requested - bots_configured) > 2)):
       actionable = ScalingAction.YES
 
     # Check whether a bot policy is set as configured, otherwise set to NO.
@@ -130,7 +132,7 @@ class BotScalingApi(recipe_api.RecipeApi):
             region=restriction.region,
             prefix=restriction.prefix,
             bots_requested=int(
-                restriction.weight * bots_requested / total_weight),
+                round(restriction.weight * bots_requested / total_weight)),
         ) for restriction in region_restrictions
     ]
     return actions
