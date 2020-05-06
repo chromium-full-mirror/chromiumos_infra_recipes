@@ -37,7 +37,6 @@
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@  prebuilts: NONE@@@",
-      "@@@STEP_LOG_LINE@builder config@  artifact_types: IMAGE_ZIP@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_info {@@@",
       "@@@STEP_LOG_LINE@builder config@    legacy {@@@",
       "@@@STEP_LOG_LINE@builder config@      output_artifacts {@@@",
@@ -99,7 +98,7 @@
     "name": "configure builder.set builder_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactTypes\": [\"IMAGE_ZIP\"], \"artifactsInfo\": {\"legacy\": {\"outputArtifacts\": [{\"artifactTypes\": [\"IMAGE_ZIP\"]}]}}, \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactsInfo\": {\"legacy\": {\"outputArtifacts\": [{\"artifactTypes\": [\"IMAGE_ZIP\"]}]}}, \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}@@@"
     ]
   },
   {

@@ -42,7 +42,6 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   ]
                 }
               },
-              "artifactTypes": ["IMAGE_ZIP"],
               "artifactsGsBucket": "chromeos-image-archive",
               "prebuiltsGsBucket": "chromeos-prebuilt"
             },
@@ -85,8 +84,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     }
                   ]
                 }
-              },
-              "artifactTypes": ["IMAGE_ZIP"]
+              }
             },
             "chrome": {
               "internal": true
@@ -128,8 +126,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     }
                   ]
                 }
-              },
-              "artifactTypes": ["IMAGE_ZIP"]
+              }
             },
             "chrome": {
               "internal": true
@@ -177,14 +174,6 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                   ]
                 }
               },
-              "artifactTypes": [
-                "IMAGE_ZIP",
-                "AUTOTEST_FILES",
-                "TAST_FILES",
-                "PINNED_GUEST_IMAGES",
-                "EBUILD_LOGS",
-                "TEST_UPDATE_PAYLOAD"
-              ],
               "prebuiltsGsBucket": "chromeos-prebuilt",
               "artifactsGsBucket": "chromeos-image-archive"
             },
@@ -406,8 +395,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                     }
                   ]
                 }
-              },
-              "artifactTypes": ["IMAGE_ZIP"]
+              }
             },
             "chrome": {
               "internal": true
@@ -525,25 +513,6 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             "artifacts": {
               "prebuilts": "NONE",
               "artifactsGsBucket": "chromeos-image-archive",
-              "artifactTypes": [
-                "EBUILD_LOGS",
-                "CHROME_CLANG_WARNINGS_FILE"
-              ],
-              "publishArtifacts": [
-                {
-                  "publishGsLocation":
-                    "chromeos-toolchain-artifacts/clang-tidy-1",
-                  "publishTypes": ["CHROME_CLANG_WARNINGS_FILE"]
-                }
-              ],
-              "inputArtifacts": [
-                {
-                  "inputArtifactType": "CHROME_CLANG_WARNINGS_FILE",
-                  "inputArtifactGsLocations": [
-                    "chromeos-toolchain-artifacts/clang-tidy-1"
-                  ]
-                }
-              ],
               "artifactsInfo": {
                 "legacy": {
                   "outputArtifacts": [
@@ -652,42 +621,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             },
             "artifacts": {
               "prebuilts": "NONE",
-              "artifactTypes": [
-                "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"
-              ],
               "artifactsGsBucket": "chromeos-image-archive",
-              "publishArtifacts": [
-                {
-                  "publishTypes": ["UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"],
-                  "publishGsLocation":
-                    "chromeos-toolchain-artifacts/afdo/unvetted/benchmark",
-                  "aclName": "public-read"
-                },
-                {
-                  "publishTypes": ["UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"],
-                  "publishGsLocation": "chromeos-prebuilt/afdo-job/llvm",
-                  "aclName": "public-read"
-                }
-              ],
-              "inputArtifacts": [
-                {
-                  "inputArtifactType": "UNVERIFIED_CHROME_BENCHMARK_PERF_FILE",
-                  "inputArtifactGsLocations": [
-                    "chromeos-toolchain-artifacts/afdo/unvetted/benchmark",
-                    "chromeos-prebuilt/afdo-job/llvm"
-                  ]
-                },
-                {
-                  "inputArtifactType": "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE",
-                  "inputArtifactGsLocations": [
-                    "chromeos-toolchain-artifacts/afdo/unvetted/benchmark",
-                    "chromeos-prebuilt/afdo-job/llvm"
-                  ]
-                }
-              ],
-              "artifactProfileInfo": {
-                "afdoRelease": {"chromeCwpProfile": "silvermont"}
-              },
               "artifactsInfo": {
                 "toolchain": {
                   "inputArtifacts": [
@@ -808,33 +742,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             },
             "artifacts": {
               "prebuilts": "NONE",
-              "artifactTypes": [
-                "EBUILD_LOGS",
-                "UNVERIFIED_CHROME_LLVM_ORDERFILE"
-              ],
               "artifactsGsBucket": "chromeos-image-archive",
-              "publishArtifacts": [
-                {
-                  "publishTypes": ["UNVERIFIED_CHROME_LLVM_ORDERFILE"],
-                  "publishGsLocation":
-                    "chromeos-toolchain-artifacts/orderfile/unvetted"
-                },
-                {
-                  "publishTypes": ["UNVERIFIED_CHROME_LLVM_ORDERFILE"],
-                  "publishGsLocation":
-                    "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
-                }
-              ],
-              "artifactProfileInfo": {"chromeCwpProfile": "silvermont"},
-              "inputArtifacts": [
-                {
-                  "inputArtifactType": "UNVERIFIED_CHROME_LLVM_ORDERFILE",
-                  "inputArtifactGsLocations": [
-                    "chromeos-toolchain-artifacts/orderfile/unvetted",
-                    "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
-                  ]
-                }
-              ],
               "artifactsInfo": {
                 "legacy": {
                   "outputArtifacts": [
@@ -917,41 +825,6 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             "artifacts": {
               "prebuilts": "NONE",
               "artifactsGsBucket": "chromeos-image-archive",
-              "artifactTypes": [
-                "EBUILD_LOGS",
-                "VERIFIED_CHROME_LLVM_ORDERFILE"
-              ],
-              "publishArtifacts": [
-                {
-                  "publishTypes": ["VERIFIED_CHROME_LLVM_ORDERFILE"],
-                  "publishGsLocation":
-                    "chromeos-toolchain-artifacts/orderfile/vetted",
-                  "aclName": "public-read"
-                },
-                {
-                  "publishTypes": ["VERIFIED_CHROME_LLVM_ORDERFILE"],
-                  "publishGsLocation":
-                    "chromeos-prebuilt/afdo-job/orderfiles/vetted",
-                  "aclName": "public-read"
-                }
-              ],
-              "inputArtifacts": [
-                {
-                  "inputArtifactType": "UNVERIFIED_CHROME_LLVM_ORDERFILE",
-                  "inputArtifactGsLocations": [
-                    "chromeos-toolchain-artifacts/orderfile/unvetted",
-                    "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
-                  ]
-                },
-                {
-                  "inputArtifactType": "VERIFIED_CHROME_LLVM_ORDERFILE",
-                  "inputArtifactGsLocations": [
-                    "chromeos-toolchain-artifacts/orderfile/vetted",
-                    "chromeos-prebuilt/afdo-job/orderfiles/vetted"
-                  ]
-                }
-              ],
-              "artifactProfileInfo": {"chromeCwpProfile": "silvermont"},
               "artifactsInfo": {
                 "legacy": {
                   "outputArtifacts": [
