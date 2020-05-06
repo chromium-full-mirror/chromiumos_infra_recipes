@@ -117,6 +117,8 @@ class ChromeApi(recipe_api.RecipeApi):
             '--with_branch_heads',
             '--with_tags',
             '--delete_unversioned_trees',
+            '--ignore_locks',
+            '--break_repo_locks',
         ]
 
         if version:
