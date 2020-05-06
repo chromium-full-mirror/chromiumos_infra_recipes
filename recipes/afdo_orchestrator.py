@@ -32,6 +32,7 @@ DEPS = [
 ]
 
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import ArtifactsByService
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
@@ -144,16 +145,17 @@ def RunSteps(api, properties):
 
   # Create InputArtifactInfo for the CHROME_DEBUG_BINARY from the creating
   # builder.
-  property_art = lambda b: b.output.properties['artifacts']
+  art_property = lambda b: b.output.properties['artifacts']
   locs = list(
       set('{}/{}'.format(
-          property_art(b)['gs_bucket'],
-          property_art(b)['gs_path'])
+          art_property(b)['gs_bucket'],
+          art_property(b)['gs_path'])
           for b in need_tests_builds
-          if property_art(b)['gs_bucket']))
+          if art_property(b)['gs_bucket']))
   input_artifacts = [
-      dict(input_artifact_type=BuilderConfig.Artifacts.CHROME_DEBUG_BINARY,
-           input_artifact_gs_locations=locs)
+      dict(
+          artifact_types=[ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
+          gs_locations=locs)
   ]
 
   # Schedule and wait for any process_child builder.

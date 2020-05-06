@@ -466,6 +466,23 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       return links
 
+  def has_output_artifacts(self, artifacts_info):
+    """Return whether there are output artifacts.
+
+    Args:
+      artifacts (ArtifactsByService): The artifacts config to check.
+
+    Returns:
+      (bool) whether there are any output artifacts.
+    """
+    # Iterate over the components of artifacts_info, and return true if there
+    # are any output_artifacts with artifact_types.
+    for _, service in artifacts_info.ListFields():
+      for art_info in getattr(service, 'output_artifacts', []):
+        if art_info.artifact_types:
+          return True
+    return False
+
   def upload_artifacts(self, builder_name, target, kind, gs_bucket,
                        artifacts_info=None, chroot=None, sysroot=None,
                        name=None, test_data=None):

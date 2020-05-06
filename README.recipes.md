@@ -104,6 +104,7 @@
   * [cros_artifacts:examples/prepare_for_build](#recipes-cros_artifacts_examples_prepare_for_build)
   * [cros_artifacts:tests/gsutil_retry_fail](#recipes-cros_artifacts_tests_gsutil_retry_fail)
   * [cros_artifacts:tests/gsutil_retry_success](#recipes-cros_artifacts_tests_gsutil_retry_success)
+  * [cros_artifacts:tests/has_artifacts](#recipes-cros_artifacts_tests_has_artifacts)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
   * [cros_bisect:examples/set_test_failures](#recipes-cros_bisect_examples_set_test_failures)
   * [cros_bisect:examples/test_plan_processing](#recipes-cros_bisect_examples_test_plan_processing)
@@ -748,7 +749,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#537)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#554)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -763,7 +764,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#570)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#587)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -778,7 +779,17 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#590)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#469)(self, artifacts_info):**
+
+Return whether there are output artifacts.
+
+Args:
+  artifacts (ArtifactsByService): The artifacts config to check.
+
+Returns:
+  (bool) whether there are any output artifacts.
+
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#607)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -799,7 +810,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#469)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, name=None, test_data=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#486)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, name=None, test_data=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -3845,9 +3856,9 @@ Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#48)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#49)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#313)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#315)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3864,7 +3875,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#300)(api):**
+&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#302)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -3874,7 +3885,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#245)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#247)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -3889,7 +3900,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#191)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#193)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
 
 Run and collect any process_child.
 
@@ -3904,7 +3915,7 @@ Args:
 
 Returns: A list of (one) build_pb2.Build object with the process_child result.
 
-&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#362)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#364)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -3922,9 +3933,9 @@ Returns: A bool whether to collect the build.
 
 Recipe for building an AFDO benchmark profile.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_process.py#55)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build, input_artifacts):**
+&mdash; **def [DoRunSteps](/recipes/afdo_process.py#56)(api, build_target, config, gitiles_commit, gerrit_changes, force_relevant_build, input_artifacts):**
 
-&mdash; **def [RunSteps](/recipes/afdo_process.py#36)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_process.py#37)(api, properties):**
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
 
 [DEPS](/recipe_modules/analysis_service/examples/full.py#6): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4231,6 +4242,11 @@ Checks a project conforms to its program's constraints.
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#17)(api):**
 
 &mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#36)(api, attempt):**
+### *recipes* / [cros\_artifacts:tests/has\_artifacts](/recipe_modules/cros_artifacts/tests/has_artifacts.py)
+
+[DEPS](/recipe_modules/cros_artifacts/tests/has_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/has_artifacts.py#14)(api):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -32,6 +32,19 @@ def RunSteps(api, properties):
         test_data=api.cros_build_api.Version.ParseVersion(
             properties.build_api_version).FormatResponse())
 
+  artifacts_info = common.ArtifactsByService(
+      legacy=common.ArtifactsByService.Legacy(output_artifacts=[
+          common.ArtifactsByService.Legacy.ArtifactInfo(
+              artifact_types=[common.ArtifactsByService.Legacy.EBUILD_LOGS])
+      ]), toolchain=common.ArtifactsByService.Toolchain(output_artifacts=[
+          common.ArtifactsByService.Toolchain.ArtifactInfo(
+              artifact_types=[
+                  common.ArtifactsByService.Toolchain
+                  .UNVERIFIED_CHROME_LLVM_ORDERFILE
+              ], gs_locations=['publish_gs_location', 'pub2/%(gs_path)s'],
+              acl_name='public-read')
+      ]))
+
   # This verifies that we can upload artifacts, some of which get an acl
   # applied.  Legacy and Toolchain artifacts get us coverage of both paths in
   # the API 1.0.0 case.
@@ -40,18 +53,7 @@ def RunSteps(api, properties):
       target,
       BuilderConfig.Id.TOOLCHAIN,
       'artifacts_gs_bucket',
-      artifacts_info=common.ArtifactsByService(
-          legacy=common.ArtifactsByService.Legacy(output_artifacts=[
-              common.ArtifactsByService.Legacy.ArtifactInfo(
-                  artifact_types=[common.ArtifactsByService.Legacy.EBUILD_LOGS])
-          ]), toolchain=common.ArtifactsByService.Toolchain(output_artifacts=[
-              common.ArtifactsByService.Toolchain.ArtifactInfo(
-                  artifact_types=[
-                      common.ArtifactsByService.Toolchain
-                      .UNVERIFIED_CHROME_LLVM_ORDERFILE
-                  ], gs_locations=['publish_gs_location', 'pub2/%(gs_path)s'],
-                  acl_name='public-read')
-          ])),
+      artifacts_info=artifacts_info,
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),

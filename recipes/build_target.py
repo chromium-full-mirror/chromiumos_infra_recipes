@@ -161,7 +161,7 @@ def DoRunSteps(api, config, build_target, properties):
   target_versions = get_target_versions(api, build_target)
   api.easy.set_property_step('target_versions', target_versions)
   try:
-    if config.artifacts.artifact_types:
+    if api.cros_artifacts.has_output_artifacts(config.artifacts.artifacts_info):
       api.metadata_json.add_version_entries(target_versions)
       api.metadata_json.upload_to_gs(config, build_target, partial=True)
   except:  # pragma: no cover # pylint: disable=bare-except
@@ -326,7 +326,7 @@ def DoRunSteps(api, config, build_target, properties):
     if api.cros_infra_config.should_exit(ebuilds_run_spec):
       return
 
-  if config.artifacts.artifact_types:
+  if api.cros_artifacts.has_output_artifacts(config.artifacts.artifacts_info):
     api.cros_artifacts.upload_artifacts(
         config.id.name, build_target, config.id.type,
         config.artifacts.artifacts_gs_bucket,

@@ -25,6 +25,7 @@ DEPS = [
 from google.protobuf import json_format as json_pb
 
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import ArtifactsByService
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -61,10 +62,10 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   # Apply any appropriate gerrit_changes.
   api.workspace_util.apply_changes()
 
-  # If we received any extra input_artifacts, add them to the values from the
-  # config.
-  if input_artifacts:
-    config.artifacts.input_artifacts.extend(input_artifacts)
+  # If we received any extra input_artifacts, add them to the values
+  # from the config.
+  config.artifacts.artifacts_info.toolchain.input_artifacts.extend(
+      input_artifacts or [])
 
   # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
   relevance = api.sysroot_util.update_for_artifact_build(
@@ -155,19 +156,15 @@ def GenTests(api):
   yield api.test(
       'with-input-artifacts', test_build(),
       api.properties(input_artifacts=[{
-          'input_artifact_type':
-              BuilderConfig.Artifacts.IMAGE_ZIP,
-          'input_artifact_gs_locations':
-              ['chromeos-image-archive/BUILDER/VERSION-BUILD_ID']
+          'artifact_types': [ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
+          'gs_locations': ['chromeos-image-archive/BUILDER/VERSION-BUILD_ID']
       }]))
 
   yield api.test(
       'forced-pointless', test_build(),
       api.properties(force_relevant_build=True, input_artifacts=[{
-          'input_artifact_type':
-              BuilderConfig.Artifacts.IMAGE_ZIP,
-          'input_artifact_gs_locations':
-              ['chromeos-image-archive/BUILDER/VERSION-BUILD_ID']
+          'artifact_types': [ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
+          'gs_locations': ['chromeos-image-archive/BUILDER/VERSION-BUILD_ID']
       }]),
       api.step_data(
           'prepare artifacts.call chromite.api.ArtifactsService/'

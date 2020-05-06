@@ -16,9 +16,11 @@ message AfdoProcessProperties {
   // Override for pointless build check.
   bool force_relevant_build = 2;
 
+  reserved 3;
+
   // Location information for the original build artifacts.  These are in
   // addition to those found in the builder config, and provide the location of
   // build artifacts (IMAGE_ZIP) from the child build that created the image
   // used to create the perf file.
-  repeated chromiumos.BuilderConfig.Artifacts.InputArtifactInfo input_artifacts = 3;
+  repeated chromiumos.ArtifactsByService.Toolchain.ArtifactInfo input_artifacts = 4;
 }
