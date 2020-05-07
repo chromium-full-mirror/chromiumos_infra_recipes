@@ -181,7 +181,8 @@ class BotScalingApi(recipe_api.RecipeApi):
         for state in TASK_STATES:
           task_stats_hold = self._task_swarming_stats(
               policy.bot_group, state, task_stats_hold,
-              self.m.swarming_cli.get_task_counts(policy, dim, state))
+              self.m.swarming_cli.get_task_counts(dim, state,
+                                                  policy.lookback_hours))
       bot_stats.append(bot_stats_hold)
       task_stats.extend(task_stats_hold)
     return SwarmingStats(bot_stats, task_stats)

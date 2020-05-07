@@ -375,7 +375,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#210)(self, bot_policy_config):**
+&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#211)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
 
@@ -386,7 +386,7 @@ Args:
 Returns:
   list(Config), GCE Provider config definitions.
 
-&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#226)(self, region_restrictions, config_map):**
+&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#227)(self, region_restrictions, config_map):**
 
 Sums the total number of configured bots per bot policy.
 
@@ -398,7 +398,7 @@ Args:
 Returns:
   int, sum of the total number of bots in GCE Provider
 
-&mdash; **def [get\_previous\_action](/recipe_modules/bot_scaling/api.py#189)(self):**
+&mdash; **def [get\_previous\_action](/recipe_modules/bot_scaling/api.py#190)(self):**
 
 Determines regional distribution of bot requests.
 
@@ -466,7 +466,7 @@ Args:
 Returns:
   SwarmingStats:  bot and task stats named tuple.
 
-&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#289)(self, dimensions):**
+&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#290)(self, dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
@@ -476,7 +476,7 @@ Args:
 Returns:
   list, product of all swarming dimensions for querying.
 
-&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#243)(self, bot_policy_config, configs):**
+&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#244)(self, bot_policy_config, configs):**
 
 Sums the min and max bot numbers per bot policy.
 
@@ -488,7 +488,7 @@ Args:
 Returns:
   BotPolicy, updated to reflect ScalingRestriction values.
 
-&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#266)(self, robocrop_actions, configs):**
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#267)(self, robocrop_actions, configs):**
 
 Updates each GCE Provider config that is actionable.
 
@@ -3573,14 +3573,14 @@ Retrieves the count of bots from Swarming based on dimensions.
 Args:
   dimensions (tuple): string containing key, value dimensions to query swarming.
 
-&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#67)(self, policy, dimensions, state):**
+&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#67)(self, dimensions, state, lookback_hours):**
 
 Retrieves the count of tasks from Swarming based on dimensions.
 
 Args:
-  policy (BotPolicy): Config defined Policy for a bot group.
   dimensions (str): string containing key, value dimensions to query swarming.
   state (str): state of the tasks to query
+  lookback_hours (int): Number of hours to query swarming on.
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
 [DEPS](/recipe_modules/sysroot_util/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4492,14 +4492,14 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 &mdash; **def [RunSteps](/recipes/dupit.py#13)(api):**
 ### *recipes* / [dut\_tracker](/recipes/dut_tracker.py)
 
-[DEPS](/recipes/dut_tracker.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/dut_tracker.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Star Doctor.
 
 Automatically updates binary config files and updates Goldeneye config
 json files.
 
-&mdash; **def [RunSteps](/recipes/dut_tracker.py#18)(api):**
+&mdash; **def [RunSteps](/recipes/dut_tracker.py#22)(api):**
 ### *recipes* / [easy:examples/full](/recipe_modules/easy/examples/full.py)
 
 [DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

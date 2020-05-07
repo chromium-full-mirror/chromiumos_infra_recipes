@@ -64,19 +64,19 @@ class SwarmingCli(recipe_api.RecipeApi):
     )
     return step
 
-  def get_task_counts(self, policy, dimensions, state):
+  def get_task_counts(self, dimensions, state, lookback_hours):
     """Retrieves the count of tasks from Swarming based on dimensions.
 
     Args:
-      policy (BotPolicy): Config defined Policy for a bot group.
       dimensions (str): string containing key, value dimensions to query swarming.
       state (str): state of the tasks to query
+      lookback_hours (int): Number of hours to query swarming on.
     """
     dim_args = ['state={}&'.format(state)]
     for dim in dimensions:
       dim_args.append('tags={}&'.format(dim))
     dim_args.append('start={}'.format(
-        self._calculate_epoch_start(policy.lookback_hours)))
+        self._calculate_epoch_start(lookback_hours)))
     cmd = [
         'query', '--swarming', CHROMEOS_SWARMING_URL,
         'tasks/count?' + ''.join(dim_args).rstrip('&')

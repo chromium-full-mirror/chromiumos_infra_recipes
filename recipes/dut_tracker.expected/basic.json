@@ -22,6 +22,158 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "query swarming"
+  },
+  {
+    "cmd": [],
+    "name": "query swarming.querying atlas",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::git]/resources/git_setup.py",
+      "--path",
+      "[CLEANUP]/swarming-client",
+      "--url",
+      "https://chromium.googlesource.com/infra/luci/client-py"
+    ],
+    "infra_step": true,
+    "name": "query swarming.querying atlas.git setup",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "origin",
+      "master",
+      "--progress"
+    ],
+    "cwd": "[CLEANUP]/swarming-client",
+    "env": {
+      "PATH": "RECIPE_REPO[depot_tools]:<PATH>"
+    },
+    "infra_step": true,
+    "name": "query swarming.querying atlas.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "-f",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/swarming-client",
+    "infra_step": true,
+    "name": "query swarming.querying atlas.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/swarming-client",
+    "infra_step": true,
+    "name": "query swarming.querying atlas.read revision",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@<br/>checked out 'deadbeef'<br/>@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clean",
+      "-f",
+      "-d",
+      "-x"
+    ],
+    "cwd": "[CLEANUP]/swarming-client",
+    "infra_step": true,
+    "name": "query swarming.querying atlas.git clean",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "query",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "bots/count?dimensions=label-board:atlas"
+    ],
+    "infra_step": true,
+    "name": "query swarming.querying atlas.get bot query result",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "query",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "tasks/count?state=RUNNING&tags=label-board:atlas&start=1336913601.5"
+    ],
+    "infra_step": true,
+    "name": "query swarming.querying atlas.get task query result",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "query",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "tasks/count?state=PENDING&tags=label-board:atlas&start=1336913603.0"
+    ],
+    "infra_step": true,
+    "name": "query swarming.querying atlas.get task query result (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "query swarming.set bot_stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@bot_stats@{\"atlas\": {}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "query swarming.set task_stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@task_stats@{\"atlas\": {\"PENDING\": {}, \"RUNNING\": {}}}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
