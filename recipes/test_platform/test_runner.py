@@ -591,123 +591,140 @@ def GenTests(api):
                   state=state)))))
 
 
-  yield (api.test('test_name_missing') + #
-         _misc_properties() + #
-         api.expect_exception('ValueError'))
+  yield api.test(
+      'test_name_missing',
+      _misc_properties(),
+      api.expect_exception('ValueError'),
+  )
 
-  yield (api.test('success') +  #
-         _misc_properties() +  #
-         _request_properties() +  #
-         _mock_load_step() +  #
-         _successful_prejob_step() +  #
-         _successful_run_test_step())
+  yield api.test(
+      'success',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+  )
 
   r = _canned_test_runner_request()
   r['deadline'] = timestamp_pb2.Timestamp(seconds=55)
-  yield (api.test('success with deadline') +  #
-         _misc_properties() +  #
-         api.properties(TestRunnerProperties(request=r)) +  #
-         _mock_load_step() +  #
-         _successful_prejob_step() +  #
-         _successful_run_test_step())
+  yield api.test(
+      'success with deadline',
+      _misc_properties(),
+      api.properties(TestRunnerProperties(request=r)),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+  )
 
-  yield (api.test('prejob_crash') + #
-         _misc_properties() + #
-         _request_properties() + #
-         _mock_load_step() + #
-         api.step_data(
-             'execution steps.run prejob.call `phosphorus`.prejob',
-             retcode=1))
+  yield api.test(
+      'prejob_crash',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      api.step_data(
+          'execution steps.run prejob.call `phosphorus`.prejob',
+          retcode=1),
+  )
 
-  yield (api.test('run_test_crash') + #
-         _misc_properties() + #
-         _request_properties() + #
-         _mock_load_step() + #
-         api.step_data(
-             'execution steps.run test.call `phosphorus`.run-test',
-             retcode=1))
+  yield api.test(
+      'run_test_crash',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      api.step_data(
+          'execution steps.run test.call `phosphorus`.run-test',
+          retcode=1),
+  )
 
-  yield (
-      api.test('upload_to_tko_crash') +  #
-      _misc_properties() +  #
-      _request_properties() +  #
-      _mock_load_step() +  #
-      _successful_prejob_step() +  #
-      _successful_run_test_step() +  #
+  yield api.test(
+      'upload_to_tko_crash',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
       api.step_data(
           'execution steps.upload to TKO.call `phosphorus`.upload-to-tko',
-          retcode=1))
+          retcode=1),
+  )
 
-  yield (
-      api.test('mismatched test result directory') +  #
-      _misc_properties() +  #
-      _request_properties() +  #
+  yield api.test(
+      'mismatched test result directory',
+      _misc_properties(),
+      _request_properties(),
       api.step_data(
           'execution steps.load local DUT state.call `skylab_local_state`.load',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
-                  results_dir='dummy-results-dir')))) + #
-      _successful_prejob_step() +  #
+                      results_dir='dummy-results-dir')))),
+      _successful_prejob_step(),
       api.step_data(
           'execution steps.run test.call `phosphorus`.run-test',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
                   phosphorus.runtest.RunTestResponse(
-                    results_dir='not-a-subdir-of-dummy-results-dir',
-                    state=phosphorus.runtest.RunTestResponse.SUCCEEDED)))))
+                      results_dir='not-a-subdir-of-dummy-results-dir',
+                      state=phosphorus.runtest.RunTestResponse.SUCCEEDED)))),
+  )
 
-  yield (api.test('upload_to_gs') +  #
-         _misc_properties() +  #
-         _mock_load_step() +  #
-         _successful_prejob_step() +  #
-         _successful_run_test_step() +  #
-         api.properties(
-             TestRunnerProperties(
-                 request={
-                     'test': {
-                         'autotest': {
-                             'name': 'dummy_name'
-                         },
-                         'offload': {
-                             'synchronous_gs_enable': True
-                         }
-                     }
-                 })) +  #
-         api.step_data(
-             'execution steps.get test results.'
-             'call `autotest_status_parser`.parse',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     Result(
-                         autotest_result=Result.Autotest(test_cases=[]),
-                     )))) +  #
-         api.step_data(
-             'execution steps.upload results to GS.'
-             'call `phosphorus`.upload-to-gs',
-             stdout=api.raw_io.output(
-                 json_format.MessageToJson(
-                     phosphorus.upload_to_gs.UploadToGSResponse(
-                         gs_url=os.path.join(_gs_root,
-                                             "UUID",
-                                             _sync_subdir))))))
-  yield (api.test('get_results_crash') +  #
-         _misc_properties() +  #
-         _request_properties() +  #
-         _mock_load_step() +  #
-         _successful_prejob_step() +  #
-         _successful_run_test_step() +  #
-         api.step_data('execution steps.get test results.'
-                       'call `autotest_status_parser`.parse',
-                       retcode=1))
+  yield api.test(
+      'upload_to_gs',
+      _misc_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      api.properties(
+          TestRunnerProperties(
+              request={
+                  'test': {
+                      'autotest': {
+                          'name': 'dummy_name'
+                      },
+                      'offload': {
+                          'synchronous_gs_enable': True
+                      }
+                  }
+              })),
+      api.step_data(
+          'execution steps.get test results.'
+          'call `autotest_status_parser`.parse',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(test_cases=[]),
+                  )))),
+      api.step_data(
+          'execution steps.upload results to GS.'
+          'call `phosphorus`.upload-to-gs',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  phosphorus.upload_to_gs.UploadToGSResponse(
+                      gs_url=os.path.join(_gs_root,
+                                          "UUID",
+                                          _sync_subdir))))),
+  )
 
-  yield (
-      api.test('results_summary') +  #
-      _misc_properties() +  #
-      _request_properties() +  #
-      _mock_load_step() +  #
-      _successful_prejob_step() +  #
-      _successful_run_test_step() +  #
+  yield api.test(
+      'get_results_crash',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      api.step_data('execution steps.get test results.'
+                    'call `autotest_status_parser`.parse',
+                    retcode=1),
+  )
+
+  yield api.test(
+      'results_summary',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
       api.step_data(
           'execution steps.get test results.call `autotest_status_parser`.'
           'parse',
@@ -725,18 +742,23 @@ def GenTests(api):
                                   name='failing_test_case',
                                   human_readable_summary='failing test case',
                                   verdict=Result.Autotest.TestCase.VERDICT_FAIL)
-                          ], incomplete=True))))))
+                          ], incomplete=True))))),
+  )
 
-  yield (api.test('failed prejob with missing failures in result') +  #
-         _misc_properties() +  #
-         _request_properties() +  #
-         _mock_load_step() +  #
-         _prejob_step_with_state(phosphorus.prejob.PrejobResponse.FAILED) +  #
-         _successful_run_test_step())
+  yield api.test(
+      'failed prejob with missing failures in result',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _prejob_step_with_state(phosphorus.prejob.PrejobResponse.FAILED),
+      _successful_run_test_step(),
+  )
 
-  yield (api.test('failed run-test with missing failures in result') +  #
-         _misc_properties() +  #
-         _request_properties() +  #
-         _mock_load_step() +  #
-         _successful_prejob_step() +  #
-         _run_test_step_with_state(phosphorus.runtest.RunTestResponse.FAILED))
+  yield api.test(
+      'failed run-test with missing failures in result',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _run_test_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
+  )

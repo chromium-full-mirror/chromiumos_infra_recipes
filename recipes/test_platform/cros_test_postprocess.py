@@ -87,24 +87,28 @@ def GenTests(api):
   )
   dl_step = ('download test results.'
              'download gs://chromeos-autotest-results/swarming-1234')
-  yield (api.test('basic') +  #
-         api.properties(req) +  #
-         api.breakpad.find_dmp_files_test_data(
-             test_result=tr,
-             filenames=['./a/b/c.dmp', './a/b/d.dmp']) +  #
-         api.breakpad.minidump_stackwalk_test_data(
-             test_result=tr,
-             filename='./a/b/c.dmp') +  #
-         api.breakpad.minidump_stackwalk_test_data(
-             test_result=tr,
-             filename='./a/b/d.dmp') + #
-         # A download step should exist; contrast this with the never-offloaded
-         # testcase below.
-         api.post_check(lambda check, steps: check(dl_step in steps)))
+  yield api.test(
+      'basic',
+      api.properties(req),
+      api.breakpad.find_dmp_files_test_data(
+          test_result=tr,
+          filenames=['./a/b/c.dmp', './a/b/d.dmp']),
+      api.breakpad.minidump_stackwalk_test_data(
+          test_result=tr,
+          filename='./a/b/c.dmp'),
+      api.breakpad.minidump_stackwalk_test_data(
+          test_result=tr,
+          filename='./a/b/d.dmp'),
+      # A download step should exist; contrast this with the never-offloaded
+      # testcase below.
+      api.post_check(lambda check, steps: check(dl_step in steps)),
+  )
 
-  yield (api.test('never-offloaded') + #
-         api.properties(req) + #
-         api.step_data('download test results.wait.noop', retcode=1) + #
-         # Failure when waiting for offload means we should not attempt
-         # download.
-         api.post_check(lambda check, steps: check(dl_step not in steps)))
+  yield api.test(
+      'never-offloaded',
+      api.properties(req),
+      api.step_data('download test results.wait.noop', retcode=1),
+      # Failure when waiting for offload means we should not attempt
+      # download.
+      api.post_check(lambda check, steps: check(dl_step not in steps)),
+  )
