@@ -335,8 +335,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
   def unmount_chroot(self, chroot=None):
     chroot = chroot or self.chroot
     with self.m.step.nest('unmounting chroot'):
-      self.m.cros_build_api.SdkService.Unmount(
-          UnmountSdkRequest(chroot=chroot))
+      self.m.cros_build_api.SdkService.Unmount(UnmountSdkRequest(chroot=chroot))
 
   def cleanup_sysroot(self):
     with self.m.step.nest('removing sysroot'):

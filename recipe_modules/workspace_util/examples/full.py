@@ -19,6 +19,7 @@ from PB.recipe_modules.chromeos.cros_infra_config.examples.test import (
 
 PROPERTIES = TestInputProperties
 
+
 def RunSteps(api, properties):
   target = properties.build_target
   commit = api.buildbucket.gitiles_commit
@@ -37,36 +38,42 @@ def RunSteps(api, properties):
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
 
-  with api.workspace_util.sync_to_manifest_groups(
-      ['group1', 'group2'],
-      api.repo.LocalManifest(repo='http://repo.url', path='manifest_path')):
+  with api.workspace_util.sync_to_manifest_groups(['group1', 'group2'],
+                                                  api.repo.LocalManifest(
+                                                      repo='http://repo.url',
+                                                      path='manifest_path')):
     api.workspace_util.apply_changes()
 
 
 def GenTests(api):
-  def buildbucket_build(
-      project='chromeos', bucket='cq', builder='atlas-cq', build_target='atlas',
-      tags=None, revision='2d72510e447ab60a9728aeea2362d8be2cbd7789', cls=None):
-    build = api.buildbucket.ci_build_message(
-        project=project, bucket=bucket, builder=builder, tags=tags,
-        revision=revision)
+
+  def buildbucket_build(project='chromeos', bucket='cq', builder='atlas-cq',
+                        build_target='atlas', tags=None,
+                        revision='2d72510e447ab60a9728aeea2362d8be2cbd7789',
+                        cls=None):
+    build = api.buildbucket.ci_build_message(project=project, bucket=bucket,
+                                             builder=builder, tags=tags,
+                                             revision=revision)
     if not revision:
       build.input.gitiles_commit.Clear()
     if cls:
       build.input.gerrit_changes.extend(cls)
-    return (api.buildbucket.build(build) +  #
-            api.properties(TestInputProperties(
-                build_target=common.BuildTarget(name=build_target),
-                builder=builder)))
+    ret = api.buildbucket.build(build)
+    ret += api.properties(
+        TestInputProperties(
+            build_target=common.BuildTarget(name=build_target),
+            builder=builder))
+    return ret
 
-  yield api.test('basic') + buildbucket_build()
+  yield api.test('basic', buildbucket_build())
 
-  yield (api.test('has_changes') + #
-         buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]))
+  yield api.test('has_changes',
+                 buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]))
 
-  yield (api.test('has_changes_and_no_commit') + #
-         buildbucket_build(
-             revision=None, cls=[common_pb2.GerritChange(change=1234)]))
+  yield api.test(
+      'has_changes_and_no_commit',
+      buildbucket_build(revision=None,
+                        cls=[common_pb2.GerritChange(change=1234)]))
 
-  yield (api.test('has_no_commit_and_no_changes') + #
-         buildbucket_build(revision=None))
+  yield api.test('has_no_commit_and_no_changes',
+                 buildbucket_build(revision=None))

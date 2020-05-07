@@ -16,6 +16,7 @@ DEPS = [
 
 PROPERTIES = CrosInfraConfigProperties
 
+
 def RunSteps(api, properties):
   props = api.cros_infra_config.props_for_child_build
   # Log what we got.
@@ -30,7 +31,11 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test('basic')
 
-  yield (api.test('properties_given') +  #
-         api.properties(**{
-             '$chromeos/cros_infra_config':
-             CrosInfraConfigProperties(config_ref='refs/changes/33/123433/1')}))
+  yield api.test(
+      'properties_given',
+      api.properties(
+          **{
+              '$chromeos/cros_infra_config':
+                  CrosInfraConfigProperties(
+                      config_ref='refs/changes/33/123433/1')
+          }))

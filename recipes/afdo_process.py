@@ -89,9 +89,10 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   # the chroot.  This builder is only appropriate to use if there are no package
   # builds needed prior to making artifacts, and those artifacts will be created
   # by the appropriate Build API Bundle() calls in upload_artifacts (below).
-  api.sysroot_util.update_for_artifact_build(
-      api.cros_sdk.chroot, config.artifacts, force_relevance=True,
-      name='prepare artifacts final')
+  api.sysroot_util.update_for_artifact_build(api.cros_sdk.chroot,
+                                             config.artifacts,
+                                             force_relevance=True,
+                                             name='prepare artifacts final')
 
   api.easy.set_property_step('chromeos_version',
                              str(api.cros_version.read_workspace_version()))
@@ -99,8 +100,8 @@ def DoRunSteps(api, build_target, config, gitiles_commit, gerrit_changes,
   api.cros_artifacts.upload_artifacts(
       config.id.name, build_target, config.id.type,
       config.artifacts.artifacts_gs_bucket,
-      artifacts_info=config.artifacts.artifacts_info,
-      sysroot=sysroot, chroot=api.cros_sdk.chroot)
+      artifacts_info=config.artifacts.artifacts_info, sysroot=sysroot,
+      chroot=api.cros_sdk.chroot)
 
   with api.step.nest('validate SDK reuse') as presentation:
     # If there are no gerrit changes, then the SDK remains clean.  If there are
@@ -162,10 +163,15 @@ def GenTests(api):
 
   yield api.test(
       'forced-pointless', test_build(),
-      api.properties(force_relevant_build=True, input_artifacts=[{
-          'artifact_types': [ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
-          'gs_locations': ['chromeos-image-archive/BUILDER/VERSION-BUILD_ID']
-      }]),
+      api.properties(
+          force_relevant_build=True, input_artifacts=[{
+              'artifact_types': [
+                  ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY
+              ],
+              'gs_locations': [
+                  'chromeos-image-archive/BUILDER/VERSION-BUILD_ID'
+              ]
+          }]),
       api.step_data(
           'prepare artifacts.call chromite.api.ArtifactsService/'
           'PrepareForBuild.read output file',

@@ -41,6 +41,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic') + api.buildbucket.ci_build(
-      project='chromeos', bucket='postsubmit',
-      builder='postsubmit-orchestrator')
+  yield api.test(
+      'basic',
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='postsubmit-orchestrator'))

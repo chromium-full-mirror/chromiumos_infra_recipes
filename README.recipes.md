@@ -1523,7 +1523,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#380)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#379)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -1539,7 +1539,7 @@ Args:
   checkout_path (Path): Path to source checkout.  Default:
       cros_source.workspace_path.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#341)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#340)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#33)(self, chroot_parent_path):**
 
@@ -1583,7 +1583,7 @@ Args:
 
 &mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#138)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#389)(self, name, cmd, env=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#388)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1622,12 +1622,12 @@ restore the chroot back to that initial snapshot. If the chroot was
 initially created with 'nouse-image', it will be replaced so that it
 supports the ability to make snapshots.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#371)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#370)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#346)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#345)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
@@ -1655,7 +1655,7 @@ Args:
 Returns:
   (boolean) whether the toolchain was changed.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#409)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#408)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 
@@ -3591,7 +3591,7 @@ API for various support functions for building.
 
 A module for sysroot setup, manipulation, and use.
 
-&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#51)(self, build_target, profile=None, chroot_current=True, replace=True, toolchain_changed=False, timeout_sec=(10 \* 60), name=None):**
+&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#53)(self, build_target, profile=None, chroot_current=True, replace=True, toolchain_changed=False, timeout_sec=(10 \* 60), name=None):**
 
 Create the sysroot.
 
@@ -4141,7 +4141,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#82)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#342)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#343)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4157,7 +4157,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#361)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#362)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4367,7 +4367,7 @@ Checks a project conforms to its program's constraints.
 
 [DEPS](/recipe_modules/cros_infra_config/examples/config_ref.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/config_ref.py#19)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/config_ref.py#20)(api, properties):**
 ### *recipes* / [cros\_infra\_config:examples/full](/recipe_modules/cros_infra_config/examples/full.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -4417,7 +4417,7 @@ Checks a project conforms to its program's constraints.
 
 [DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#13): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#16)(api):**
 ### *recipes* / [cros\_relevance:examples/toolchain\_change](/recipe_modules/cros_relevance/examples/toolchain_change.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/toolchain_change.py#9): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -4447,7 +4447,7 @@ Checks a project conforms to its program's constraints.
 
 [DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#27)(api, properties):**
 ### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
 
 [DEPS](/recipe_modules/cros_tags/examples/full.py#8): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -5451,7 +5451,7 @@ Basic tests for the urls recipe module.
 
 [DEPS](/recipe_modules/workspace_util/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#23)(api, properties):**
 ### *recipes* / [workspace\_util:tests/only\_checked\_out\_projects](/recipe_modules/workspace_util/tests/only_checked_out_projects.py)
 
 [DEPS](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

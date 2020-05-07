@@ -33,9 +33,10 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def buildbucket_build(
-      project='chromeos', bucket='toolchain', builder='toolchain-orchestrator',
-      tags=None, revision='2d72510e447ab60a9728aeea2362d8be2cbd7789', cls=None):
+  def buildbucket_build(project='chromeos', bucket='toolchain',
+                        builder='toolchain-orchestrator', tags=None,
+                        revision='2d72510e447ab60a9728aeea2362d8be2cbd7789',
+                        cls=None):
     build = api.buildbucket.ci_build_message(project=project, bucket=bucket,
                                              builder=builder, tags=tags,
                                              revision=revision)

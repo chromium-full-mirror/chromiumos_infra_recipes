@@ -22,10 +22,14 @@ def RunSteps(api):
   ]
   bc = [
       BuilderConfig(
-          id=BuilderConfig.Id(name='my little builder',),
+          id=BuilderConfig.Id(
+              name='my little builder',
+          ),
           general=BuilderConfig.General(
               run_when=BuilderConfig.General.RunWhen(
-                  mode=BuilderConfig.General.RunWhen.ALWAYS_RUN,),),
+                  mode=BuilderConfig.General.RunWhen.ALWAYS_RUN,
+              ),
+          ),
       )
   ]
   builders = api.cros_relevance.get_necessary_builders(
@@ -38,4 +42,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('build_plan'))
+  yield api.test('build_plan')

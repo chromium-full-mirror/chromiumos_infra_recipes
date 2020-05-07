@@ -106,8 +106,9 @@ def DoRunSteps(api, config, build_target, properties):
   is_staging = config.general.environment == BuilderConfig.General.STAGING
   # If we have been told to build the sdk or packages from source (rather than
   # using prebuilts), then we will need long timeouts.
-  long_timeouts = (config.build.sdk_update.compile_source or
-                   config.build.install_packages.compile_source)
+  long_timeouts = (
+      config.build.sdk_update.compile_source or
+      config.build.install_packages.compile_source)
 
   # Set up source checkouts.
   api.workspace_util.sync_to_commit(staging=is_staging)
@@ -183,8 +184,8 @@ def DoRunSteps(api, config, build_target, properties):
   chrome_source_needed = False
   with api.step.nest('check chrome source needed') as cs_pres:
     needs_chrome = api.chrome.needs_chrome(build_target=build_target,
-                                          chroot=api.cros_sdk.chroot,
-                                          packages=packages)
+                                           chroot=api.cros_sdk.chroot,
+                                           packages=packages)
     if needs_chrome:
       # AKA: "Chrome Source Needed Reason"
       csnr = {
@@ -210,13 +211,12 @@ def DoRunSteps(api, config, build_target, properties):
           flattened_packages.append(dep_package)
 
       csnr['follower_lacks_prebuilt'] = api.chrome.follower_lacks_prebuilt(
-          build_target=build_target,
-          chroot=api.cros_sdk.chroot,
+          build_target=build_target, chroot=api.cros_sdk.chroot,
           packages=flattened_packages)
 
       # Evaluate the |or| of the reasons we might want local chrome source.
-      chrome_source_needed = any([v for k,v in csnr.items()])
-      cs_pres.step_text = ' '.join([k for k,v in csnr.items() if v])
+      chrome_source_needed = any([v for k, v in csnr.items()])
+      cs_pres.step_text = ' '.join([k for k, v in csnr.items() if v])
       api.easy.set_property_step('chrome_source_reasons', csnr)
 
     if chrome_source_needed:
@@ -239,9 +239,10 @@ def DoRunSteps(api, config, build_target, properties):
       # We don't care what the return value is, since we're committed to
       # running at least install packages at this point.  Let the module know
       # that we are forcing relevance.
-      api.sysroot_util.update_for_artifact_build(
-          api.cros_sdk.chroot, config.artifacts, force_relevance=True,
-          name='prepare artifacts final')
+      api.sysroot_util.update_for_artifact_build(api.cros_sdk.chroot,
+                                                 config.artifacts,
+                                                 force_relevance=True,
+                                                 name='prepare artifacts final')
       flags = InstallPackagesRequest.Flags(
           compile_source=install_packages.compile_source,
           use_goma=(not install_packages.disable_goma and
@@ -255,21 +256,21 @@ def DoRunSteps(api, config, build_target, properties):
       response = api.cros_build_api.SysrootService.InstallPackages(
           install_pkg_request, response_lambda=_failed_pkg_names,
           timeout=(STEP_TIMEOUTS['install_packages']
-                    if not long_timeouts else None))
+                   if not long_timeouts else None))
 
       # Process goma response to upload logs, stats, and counterz.
       api.goma.process_artifacts(response,
-                                  install_pkg_request.goma_config.log_dir.dir,
-                                  build_target.name, is_staging)
+                                 install_pkg_request.goma_config.log_dir.dir,
+                                 build_target.name, is_staging)
 
       step_name = ('install packages|'
-                    'call chromite.api.SysrootService/InstallPackages|'
-                    '{}'.format(
-                        api.cros_build_api.response_step_name(
-                            response, _failed_pkg_names)))
+                   'call chromite.api.SysrootService/InstallPackages|'
+                   '{}'.format(
+                       api.cros_build_api.response_step_name(
+                           response, _failed_pkg_names)))
 
       api.cros_bisect.set_compile_failures(response.failed_packages, step_name,
-                                            config.general.critical.value)
+                                           config.general.critical.value)
       api.failures.set_failed_packages(ip_step, response.failed_packages)
     if api.cros_infra_config.should_exit(install_packages.run_spec):
       return
@@ -329,9 +330,9 @@ def DoRunSteps(api, config, build_target, properties):
   if api.cros_artifacts.has_output_artifacts(config.artifacts.artifacts_info):
     api.cros_artifacts.upload_artifacts(
         config.id.name, build_target, config.id.type,
-        config.artifacts.artifacts_gs_bucket,
-        sysroot=sysroot, chroot=api.cros_sdk.chroot,
-        artifacts_info = config.artifacts.artifacts_info)
+        config.artifacts.artifacts_gs_bucket, sysroot=sysroot,
+        chroot=api.cros_sdk.chroot,
+        artifacts_info=config.artifacts.artifacts_info)
 
   if config.artifacts.prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
     api.cros_prebuilts.upload_target_prebuilts(
@@ -402,8 +403,8 @@ def GenTests(api):
       common_pb2.GerritChange(change=2341),
   ]
   # A fake build to satisfy metadata logic.
-  md_build = api.buildbucket.try_build_message(
-      bucket='cq', builder='amd64-generic-cq')
+  md_build = api.buildbucket.try_build_message(bucket='cq',
+                                               builder='amd64-generic-cq')
 
   def cq_build(builder='amd64-generic-cq', build_target='amd64-generic',
                gerrit_changes=True, no_toolchain=True):
@@ -477,16 +478,14 @@ def GenTests(api):
   yield api.test(
       'basic',
       cq_build(build_target=None),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.properties(build_target={'name': 'amd64-generic'}),
   )
 
   yield api.test(
       'forced',
       cq_build(build_target=None),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.properties(build_target={'name': 'amd64-generic'},
                      force_relevant_build=True),
   )
@@ -494,8 +493,7 @@ def GenTests(api):
   yield api.test(
       'forced-pointless',
       cq_build(builder='amd64-generic-cq', build_target=None),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.properties(build_target={'name': 'amd64-generic'},
                      force_relevant_build=True),
   )
@@ -504,15 +502,14 @@ def GenTests(api):
       'with-goma-props',
       cq_build(build_target=None),
       api.properties(build_target={'name': 'amd64-generic'}),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.properties(
           **{
               '$chromeos/goma':
-              GomaProperties(
-                  client_version='staging',
-                  goma_approach=common.GomaConfig.RBE_PROD,
-              )
+                  GomaProperties(
+                      client_version='staging',
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  )
           }),
   )
 
@@ -520,8 +517,7 @@ def GenTests(api):
       'no-needs-chrome',
       cq_build(),
       make_build_not_pointless(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'check chrome source needed.'
           'call chromite.api.PackageService/BuildsChrome.read output file',
@@ -531,8 +527,7 @@ def GenTests(api):
   yield api.test(
       'no-has-chrome-prebuilt',
       cq_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'check chrome source needed.'
           'call chromite.api.PackageService/HasChromePrebuilt'
@@ -543,84 +538,87 @@ def GenTests(api):
   yield api.test(
       'fails_install_with_many_packages',
       cq_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'install packages'
           '.call chromite.api.SysrootService/InstallPackages'
           '.read output file',
-          api.file.read_raw(content=json.dumps(dict(
-              failedPackages=[{
-                  "category": "chromeos-base",
-                  "packageName": "thislongpackagenameomg",
-                  "version": "0.0.1-r199",
-              }, {
-                  "category": "safari-base",
-                  "packageName": "thisisanexceedinglylongpackage",
-                  "version": "0.0.1-r129",
-              }, {
-                  "category": "edge-base",
-                  "packageName": "shortpackagename",
-                  "version": "0.0.1-r197",
-              }],
-          )))),
+          api.file.read_raw(
+              content=json.dumps(
+                  dict(
+                      failedPackages=[{
+                          "category": "chromeos-base",
+                          "packageName": "thislongpackagenameomg",
+                          "version": "0.0.1-r199",
+                      }, {
+                          "category": "safari-base",
+                          "packageName": "thisisanexceedinglylongpackage",
+                          "version": "0.0.1-r129",
+                      }, {
+                          "category": "edge-base",
+                          "packageName": "shortpackagename",
+                          "version": "0.0.1-r197",
+                      }],
+                  )))),
   )
 
   yield api.test(
       'install_package_no_goma',
       cq_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'install packages'
           '.call chromite.api.SysrootService/InstallPackages'
           '.read output file',
-          api.file.read_raw(content=json.dumps(dict(
-              events=[{
-                  "name": "fake_package-path/fake-package-name-0.0.1-r2",
-                  "durationMilliseconds": "1523",
-                  "timestampMilliseconds": "1580481610805"
-              }],
-          )))),
+          api.file.read_raw(
+              content=json.dumps(
+                  dict(
+                      events=[{
+                          "name":
+                              "fake_package-path/fake-package-name-0.0.1-r2",
+                          "durationMilliseconds":
+                              "1523",
+                          "timestampMilliseconds":
+                              "1580481610805"
+                      }],
+                  )))),
   )
 
+  goma_artifacts = dict(
+      gomaArtifacts={
+          "counterzFile":
+              "counterz.binaryproto",
+          "statsFile":
+              "stats.binaryproto",
+          "logFiles": [
+              "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131"
+              ".84.gz", "compiler_proxy.chromeos-ci.log.INFO.20200131-063322"
+              ".81.gz", "gomacc.chromeos-ci.log.INFO.20200131-073921.1717"
+              ".tar.gz", "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005"
+              ".8.gz"
+          ]
+      },
+      events=[{
+          "name": "fake_package-path/fake-package-name-0.0.1-r2",
+          "durationMilliseconds": "1523",
+          "timestampMilliseconds": "1580481610805"
+      }],
+  )
   yield api.test(
       'install_package_with_goma',
       cq_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'install packages'
           '.call chromite.api.SysrootService/InstallPackages'
           '.read output file',
-          api.file.read_raw(content=json.dumps(dict(
-              gomaArtifacts={
-                  "counterzFile": "counterz.binaryproto",
-                  "statsFile": "stats.binaryproto",
-                  "logFiles": [
-                      "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131"
-                      ".84.gz",
-                      "compiler_proxy.chromeos-ci.log.INFO.20200131-063322"
-                      ".81.gz",
-                      "gomacc.chromeos-ci.log.INFO.20200131-073921.1717"
-                      ".tar.gz",
-                      "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005"
-                      ".8.gz"
-                  ]
-              },
-              events=[{
-                  "name": "fake_package-path/fake-package-name-0.0.1-r2",
-                  "durationMilliseconds": "1523",
-                  "timestampMilliseconds": "1580481610805"
-              }],
-          )))),
+          api.file.read_raw(content=json.dumps(goma_artifacts))),
   )
 
   yield api.test(
       'prepare-for-build',
       toolchain_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'prepare artifacts.call chromite.api.ArtifactsService/'
           'PrepareForBuild.read output file',
@@ -630,8 +628,7 @@ def GenTests(api):
   yield api.test(
       'prepare-for-build-late-pointless',
       toolchain_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'install packages.prepare artifacts final.call chromite.api.'
           'ArtifactsService/PrepareForBuild.read output file',
@@ -641,8 +638,7 @@ def GenTests(api):
   yield api.test(
       'prepare-for-build-verify',
       toolchain_build(builder='orderfile-verify-toolchain'),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'prepare artifacts.call chromite.api.ArtifactsService/'
           'PrepareForBuild.read output file',
@@ -651,75 +647,69 @@ def GenTests(api):
 
   yield api.test(
       'compile-update-sdk',
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       toolchain_build(builder='atlas-llvm-next', build_target='atlas'),
   )
 
   yield api.test(
       'with-findit-bisect',
       cq_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.properties(
           **{
               '$chromeos/cros_bisect':
-              CrosBisectProperties(
-                  compile={
-                      'targets': [
-                          api.cros_bisect.serialized_package_info(
-                              'foo', 'cat1', '1'),
-                          api.cros_bisect.serialized_package_info(
-                              'bar', 'cat1', '2'),
-                          api.cros_bisect.serialized_package_info(
-                              'baz', 'cat2', '3'),
-                      ]
-                  })
+                  CrosBisectProperties(
+                      compile={
+                          'targets': [
+                              api.cros_bisect.serialized_package_info(
+                                  'foo', 'cat1', '1'),
+                              api.cros_bisect.serialized_package_info(
+                                  'bar', 'cat1', '2'),
+                              api.cros_bisect.serialized_package_info(
+                                  'baz', 'cat2', '3'),
+                          ]
+                      })
           }),
   )
 
   yield api.test(
       'with-custom-snapshot',
       cq_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.properties(
           **{
               '$chromeos/cros_source':
-              CrosSourceProperties(
-                  snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-                      isolated_hash='foohash', isolate_server='server.com'),
-              )
+                  CrosSourceProperties(
+                      snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+                          isolated_hash='foohash', isolate_server='server.com'),
+                  )
           }),
   )
 
   yield api.test(
       'with-custom-DEPS',
       cq_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.properties(
           **{
               '$chromeos/chrome':
-              ChromeProperties(
-                  version='2.0',
-                  deps_isolate=ChromeProperties.DepsIsolate(
-                      isolated_hash='moohash', isolate_server='cows.com'),
-              )
+                  ChromeProperties(
+                      version='2.0',
+                      deps_isolate=ChromeProperties.DepsIsolate(
+                          isolated_hash='moohash', isolate_server='cows.com'),
+                  )
           }),
   )
 
   yield api.test(
       'with-gerrit-changes',
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       cq_build(),
   )
 
   yield api.test(
       'run-exit-install-packages',
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='amd64-generic-bisect'),
       api.properties(build_target={'name': 'amd64-generic'}),
@@ -727,8 +717,7 @@ def GenTests(api):
 
   yield api.test(
       'run-ebuild-tests',
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='amd64-generic-postsubmit'),
       api.properties(build_target={'name': 'amd64-generic'}),
@@ -736,8 +725,7 @@ def GenTests(api):
 
   yield api.test(
       'fail-image-tests',
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='amd64-generic-postsubmit'),
       api.properties(build_target={'name': 'amd64-generic'}),
@@ -748,8 +736,7 @@ def GenTests(api):
 
   yield api.test(
       'no-run-ebuild-tests',
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='grunt-postsubmit'),
       api.properties(build_target={'name': 'grunt'}),
@@ -757,8 +744,7 @@ def GenTests(api):
 
   yield api.test(
       'run-exit-ebuild-tests',
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='grunt-unittest-only-postsubmit'),
       api.properties(build_target={'name': 'grunt'}),
@@ -767,23 +753,20 @@ def GenTests(api):
   yield api.test(
       'pointless-build-check',
       cq_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       make_build_pointless(),
   )
 
   yield api.test(
       'toolchain-change-test',
       cq_build(),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       force_toolchain_change(),
   )
 
   yield api.test(
       'with-builder-config-limited-packages',
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       cq_build(builder='orderfile-verify-toolchain',
                build_target='arm-generic'),
   )
@@ -791,8 +774,7 @@ def GenTests(api):
   yield api.test(
       'initsdk-existing-sdk-cache',
       cq_build_no_changes(builder='staging-amd64-generic-cq'),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data('init sdk.read sdk cache version json',
                     api.raw_io.output_text('{"version": "2"}')),
   )
@@ -800,8 +782,7 @@ def GenTests(api):
   yield api.test(
       'initsdk-existing-outdated-sdk-cache',
       cq_build_no_changes(builder='staging-amd64-generic-cq'),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data('init sdk.read sdk cache version json',
                     api.raw_io.output_text('{"version": "1"}')),
   )
@@ -811,8 +792,7 @@ def GenTests(api):
       api.buildbucket.ci_build(project='chromeos', bucket='cq',
                                builder='amd64-generic-cq'),
       api.properties(build_target={'name': 'amd64-generic'}),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'init sdk.call chromite.api.SdkService/Create.call build API script',
           retcode=1),
@@ -821,8 +801,7 @@ def GenTests(api):
   yield api.test(
       'updatesdk-destroy-chroot-tests',
       cq_build_no_changes(builder='amd64-generic-cq'),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'update sdk.call chromite.api.SdkService/'
           'Update.call build API script', retcode=1),
@@ -831,8 +810,7 @@ def GenTests(api):
   yield api.test(
       'destroy-chroot-failed-step-tests',
       cq_build_no_changes(builder='amd64-generic-cq'),
-      api.buildbucket.simulated_get(
-          md_build, 'metadata setup.buildbucket.get'),
+      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'dependency graph calculation.call chromite.api.DependencyService/'
           'GetBuildDependencyGraph.write input file', retcode=1),

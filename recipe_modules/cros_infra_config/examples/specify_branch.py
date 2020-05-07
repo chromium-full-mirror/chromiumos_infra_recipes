@@ -25,10 +25,14 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('specify_CL') + #
-         api.properties(**{'$chromeos/cros_infra_config':
-                           CrosInfraConfigProperties(
-                               config_ref='refs/changes/45/12345/3',
-                           )}) + #
-         api.buildbucket.ci_build(project='chromeos', bucket='toolchain',
-                                  builder='clang-tidy-toolchain'))
+  yield api.test(
+      'specify_CL',
+      api.properties(
+          **{
+              '$chromeos/cros_infra_config':
+                  CrosInfraConfigProperties(
+                      config_ref='refs/changes/45/12345/3',
+                  )
+          }),
+      api.buildbucket.ci_build(project='chromeos', bucket='toolchain',
+                               builder='clang-tidy-toolchain'))

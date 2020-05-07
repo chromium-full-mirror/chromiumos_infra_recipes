@@ -10,11 +10,7 @@ from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
-DEPS = [
-    'cros_relevance',
-    'recipe_engine/properties',
-    'recipe_engine/file'
-]
+DEPS = ['cros_relevance', 'recipe_engine/properties', 'recipe_engine/file']
 
 
 def RunSteps(api):
@@ -22,11 +18,12 @@ def RunSteps(api):
   bt = BuildTarget(name='my_build_target')
   build_config = [dict(build_target=bt.name)]
   chroot = Chroot()
-  dep_graph = depgraph.DepGraph(build_target=bt, package_deps=[
-      depgraph.PackageDepInfo(dependency_source_paths=[
-          depgraph.SourcePath(path='happy/source/dir'),
-      ]),
-  ])
+  dep_graph = depgraph.DepGraph(
+      build_target=bt, package_deps=[
+          depgraph.PackageDepInfo(dependency_source_paths=[
+              depgraph.SourcePath(path='happy/source/dir'),
+          ]),
+      ])
 
   gc = [
       bbcommon_pb2.GerritChange(change=123),
@@ -50,7 +47,6 @@ def GenTests(api):
         'pointless build check.depgraph relevance check.read output file',
         api.file.read_raw(content=serialized))
 
-  yield (api.test('not pointless_check'))
+  yield api.test('not pointless_check')
 
-  yield (api.test('pointless check') +
-         force_pointless_check_response(api, True))
+  yield api.test('pointless check', force_pointless_check_response(api, True))

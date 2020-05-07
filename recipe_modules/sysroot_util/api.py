@@ -36,9 +36,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       (PrepareForBuildResponse): Whether the build is relevant.
     """
     # Prepare for the build.  If the build is pointless, we are done.
-    resp = self.m.cros_artifacts.prepare_for_build(
-        chroot, self.sysroot, artifacts.artifacts_info, force_relevance,
-        test_data=test_data, name=name)
+    resp = self.m.cros_artifacts.prepare_for_build(chroot, self.sysroot,
+                                                   artifacts.artifacts_info,
+                                                   force_relevance,
+                                                   test_data=test_data,
+                                                   name=name)
 
     # If the build is POINTLESS, then we are done.  This can only happen if
     # all of the artifact_types for this build are handled by some

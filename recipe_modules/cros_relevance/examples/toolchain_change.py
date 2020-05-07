@@ -33,4 +33,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('toolchain_change_check'))
+  yield api.test('toolchain_change_check')

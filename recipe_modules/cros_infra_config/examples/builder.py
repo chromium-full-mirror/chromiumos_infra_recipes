@@ -45,9 +45,10 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def buildbucket_build(
-      project='chromeos', bucket='cq', builder='atlas-cq', build_target='atlas',
-      tags=None, revision='2d72510e447ab60a9728aeea2362d8be2cbd7789', cls=None):
+  def buildbucket_build(project='chromeos', bucket='cq', builder='atlas-cq',
+                        build_target='atlas', tags=None,
+                        revision='2d72510e447ab60a9728aeea2362d8be2cbd7789',
+                        cls=None):
     build = api.buildbucket.ci_build_message(project=project, bucket=bucket,
                                              builder=builder, tags=tags,
                                              revision=revision)
@@ -62,29 +63,32 @@ def GenTests(api):
         api.properties(
             TestInputProperties(builder=builder, build_target=build_target)))
 
-  yield api.test('basic') + buildbucket_build()
+  yield api.test('basic', buildbucket_build())
 
-  yield (api.test('has_changes') +  #
-         buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]))
+  yield api.test('has_changes',
+                 buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]))
 
-  yield (api.test('apply_gerrit_changes_false') +  #
-         buildbucket_build(builder='grunt-postsubmit', build_target='grunt',
-                           cls=[common_pb2.GerritChange(change=1234)]))
+  yield api.test(
+      'apply_gerrit_changes_false',
+      buildbucket_build(builder='grunt-postsubmit', build_target='grunt',
+                        cls=[common_pb2.GerritChange(change=1234)]))
 
-  yield (api.test('has_changes_and_no_commit') +  #
-         buildbucket_build(revision=None,
-                           cls=[common_pb2.GerritChange(change=1234)]))
+  yield api.test(
+      'has_changes_and_no_commit',
+      buildbucket_build(revision=None,
+                        cls=[common_pb2.GerritChange(change=1234)]))
 
-  yield (api.test('has_no_commit_and_no_changes') +  #
-         buildbucket_build(revision=None))
+  yield api.test('has_no_commit_and_no_changes',
+                 buildbucket_build(revision=None))
 
-  yield (api.test('has_parent') +  #
-         buildbucket_build(tags=[
-             {
-                 'key': 'parent_buildbucket_id',
-                 'value': 'parent_id'
-             },
-         ]))
+  yield api.test(
+      'has_parent',
+      buildbucket_build(tags=[
+          {
+              'key': 'parent_buildbucket_id',
+              'value': 'parent_id'
+          },
+      ]))
 
-  yield (api.test('missing_config') +  #
-         buildbucket_build(builder='nosuch-cq', build_target='nosuch'))
+  yield api.test('missing_config',
+                 buildbucket_build(builder='nosuch-cq', build_target='nosuch'))

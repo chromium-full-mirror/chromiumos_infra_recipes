@@ -23,6 +23,7 @@ from PB.recipe_modules.chromeos.cros_source.examples.test import (
 
 PROPERTIES = TestInputProperties
 
+
 def RunSteps(api, properties):
   _ = api.cros_source.workspace_path
 
@@ -35,7 +36,6 @@ def RunSteps(api, properties):
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache(is_staging=True)
       api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
-
 
   # Monkey-pack merge to return a StepFailure to test cherry-pick path
   def merge_fail(_a, _b, infra_step=False):
@@ -54,23 +54,24 @@ def RunSteps(api, properties):
   # The test.proto default for string is empty, the api returns a None
   # when this is not set.
   expected_hash = properties.expected_snapshot_isolated_hash or None
-  api.assertions.assertEqual(
-      api.cros_source.snapshot_isolated_hash,
-      expected_hash)
-
+  api.assertions.assertEqual(api.cros_source.snapshot_isolated_hash,
+                             expected_hash)
 
 
 def GenTests(api):
-  yield api.test('basic') +  api.buildbucket.ci_build()
+  yield api.test('basic', api.buildbucket.ci_build())
 
-  yield (api.test('with-custom-snapshot-isolate') +  #
-         api.properties(
-             **{'$chromeos/cros_source':
-                CrosSourceProperties(
-                    snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-                        isolated_hash='xxx',
-                        isolate_server='http://server.com',
-                    ),
-                )}) +  #
-         api.properties(
-             TestInputProperties(expected_snapshot_isolated_hash='xxx')))
+  yield api.test(
+      'with-custom-snapshot-isolate',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  CrosSourceProperties(
+                      snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+                          isolated_hash='xxx',
+                          isolate_server='http://server.com',
+                      ),
+                  )
+          }),
+      api.properties(
+          TestInputProperties(expected_snapshot_isolated_hash='xxx')))
