@@ -4594,7 +4594,7 @@ Recipe used to force a forge commit failure so the failure response
 can be analyzed to determine what user is being used for the invocation.
 See https://crbug.com/1068743.
 
-&mdash; **def [RunSteps](/recipes/forge_commit.py#23)(api):**
+&mdash; **def [RunSteps](/recipes/forge_commit.py#25)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

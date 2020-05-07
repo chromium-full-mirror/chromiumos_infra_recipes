@@ -19,6 +19,8 @@ DEPS = [
     'git_cl',
 ]
 
+import glob
+
 
 def RunSteps(api):
   url = ('https://chrome-internal.googlesource.com/'
@@ -37,8 +39,8 @@ def RunSteps(api):
       api.git_cl.upload(name='git cl upload')
       api.git.push(url, 'master')
   finally:
-    api.step('dump git-cl trace logs',
-             ['zcat', '/b/s/w/ir/kitchen-checkout/depot_tools/traces/*.zip'])
+    zips = glob.glob('/b/s/w/ir/kitchen-checkout/depot_tools/traces/*.zip')
+    api.step('dump git-cl trace logs', ['zcat'] + zips)
 
 
 def GenTests(api):
