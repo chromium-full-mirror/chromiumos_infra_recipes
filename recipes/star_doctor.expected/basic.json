@@ -24,9 +24,14 @@
   {
     "cmd": [
       "/bin/bash",
-      "[CLEANUP]/tmp_tmp_1/config/regenerate_configs.sh",
+      "[CLEANUP]/tmp_tmp_1/regenerate_configs.sh",
       "-b"
     ],
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "name": "generate binary config.regenerate configs",
     "timeout": 180,
     "~followup_annotations": [

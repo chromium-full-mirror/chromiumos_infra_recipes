@@ -12,6 +12,7 @@ json files.
 DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
+    'depot_tools/depot_tools',
     'git',
 ]
 
@@ -22,11 +23,12 @@ def RunSteps(api):
   with api.step.nest('set up'):
     workdir = api.path.mkdtemp()
     api.git.clone(INFRA_CONFIG_URL, target_path=workdir, timeout_sec=3 * 60)
-    regen_path = workdir.join('config').join('regenerate_configs.sh')
+    regen_path = workdir.join('regenerate_configs.sh')
 
   with api.step.nest('generate binary config'):
-    api.step('regenerate configs', ['/bin/bash', regen_path, '-b'],
-             timeout=3 * 60)
+    with api.depot_tools.on_path():
+      api.step('regenerate configs', ['/bin/bash', regen_path, '-b'],
+               timeout=3 * 60)
 
 
 def GenTests(api):
