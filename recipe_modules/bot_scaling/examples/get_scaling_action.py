@@ -39,7 +39,7 @@ def RunSteps(api):
     api.assertions.assertEqual(
         scaling_action.regional_actions[1].bots_requested, 28)
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
-    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 3.5048)
+    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 2.1568)
 
     # Request - step size is less than configured, scaling down.
     scaling_action = api.bot_scaling.get_scaling_action(40, policy, test_config)
