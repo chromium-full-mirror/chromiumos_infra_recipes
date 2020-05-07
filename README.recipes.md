@@ -1423,9 +1423,9 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#224)(self, gerrit_changes, gitiles_commit, chroot):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#226)(self, gerrit_changes, gitiles_commit, chroot):**
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#238)(self, build_target, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#240)(self, build_target, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -1466,7 +1466,7 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#98)(self, gerrit_changes, gitiles_commit, dep_graph):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#98)(self, gerrit_changes, gitiles_commit, dep_graph, force_relevant=False):**
 
 Determines if build(s) can be terminated early.
 
@@ -1481,11 +1481,12 @@ Args:
       snapshot Gitiles commit.
   dep_graph (chromite.api.DepGraph): The dependency graph to compare the
       Gerrit changes against to test for build relevancy.
+  force_relevant (bool): Whether to always declare the build relevant.
 
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#195)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#197)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -4142,7 +4143,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#82)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#343)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#345)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4158,7 +4159,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#362)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#364)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

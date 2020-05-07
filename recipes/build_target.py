@@ -148,12 +148,14 @@ def DoRunSteps(api, config, build_target, properties):
                                                dep_graph=dep_graph.sdk):
       api.cros_sdk.mark_sdk_as_dirty()
 
-  if (not force_relevant_build and not toolchain_changed and
-      relevance != Relevance.NEEDED and api.cros_relevance.is_build_pointless(
-          gerrit_changes,
-          gitiles_commit,
-          dep_graph=dep_graph.target,
-      )):
+  # In the cases where force_relevant is True:
+  # 1. input_properties.force_relevant_build is True, and/or
+  # 2. output_properties.testing_toolchain is True, and/or
+  # 3. output_properties.artifact_prep is True.
+  if api.cros_relevance.is_build_pointless(
+      gerrit_changes, gitiles_commit, dep_graph=dep_graph.target,
+      force_relevant=(force_relevant_build or toolchain_changed or
+                      relevance == Relevance.NEEDED)):
     # TODO: When it becomes possible to add tags from the build itself set:
     # "hide-in-gerrit": "pointless"
     # See https://crrev.com/c/1913895.

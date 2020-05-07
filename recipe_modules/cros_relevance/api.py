@@ -100,6 +100,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       gerrit_changes,
       gitiles_commit,
       dep_graph,
+      force_relevant=False,
   ):
     """Determines if build(s) can be terminated early.
 
@@ -114,13 +115,14 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           snapshot Gitiles commit.
       dep_graph (chromite.api.DepGraph): The dependency graph to compare the
           Gerrit changes against to test for build relevancy.
+      force_relevant (bool): Whether to always declare the build relevant.
 
     Returns:
       bool: Whether the build can be terminated early.
     """
-    if not gerrit_changes:
+    if not gerrit_changes or force_relevant:
       # If there are no CLs, then this is not a CQ run and should never be
-      # treated as pointless.
+      # treated as pointless.  Likewise if force_relevant is set.
       return False
     with self.m.step.nest('pointless build check') as presentation:
       relevant = self.is_depgraph_affected(gerrit_changes, gitiles_commit,
