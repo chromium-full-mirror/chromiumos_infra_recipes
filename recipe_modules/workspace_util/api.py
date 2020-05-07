@@ -20,6 +20,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
   def initialize(self):
     self._patch_sets = []
+    # Changes applied in apply_changes().
+    self._applied_changes = []
 
   @property
   def patch_sets(self):
@@ -66,26 +68,34 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
           instead of failing during application.
     """
     patch_sets = []
+    changes = changes or self.m.cros_infra_config.gerrit_changes
     if not changes:
-      changes = self.m.cros_infra_config.gerrit_changes
-    if changes:
-      with self.m.step.nest(name) as presentation:
-        if only_checked_out_projects:
-          synced_projects = [p.name for p in self.m.repo.project_infos()]
+      return
 
-          discarded_change_numbers = [
-              str(c.change) for c in changes if c.project not in synced_projects
-          ]
-          if discarded_change_numbers:
-            presentation.step_text = 'Discarded changes: {}'.format(
-                ', '.join(discarded_change_numbers))
+    # Only try to apply changes once.
+    discarded_change_numbers = [
+        str(c.change) for c in changes if c in self._applied_changes
+    ]
+    changes = [c for c in changes if c not in self._applied_changes]
 
-          changes = [c for c in changes if c.project in synced_projects]
+    with self.m.step.nest(name) as presentation:
+      if only_checked_out_projects:
+        synced_projects = [p.name for p in self.m.repo.project_infos()]
 
-        patch_sets = self.m.gerrit.fetch_patch_sets(changes, include_files=True)
-        self.m.cros_source.apply_gerrit_patch_sets(patch_sets)
+        discarded_change_numbers.extend([
+            str(c.change) for c in changes if c.project not in synced_projects
+        ])
+        changes = [c for c in changes if c.project in synced_projects]
 
-    self._patch_sets = patch_sets
+      if discarded_change_numbers:
+        presentation.step_text = 'Discarded changes: {}'.format(
+            ', '.join(discarded_change_numbers))
+
+      patch_sets = self.m.gerrit.fetch_patch_sets(changes, include_files=True)
+      self.m.cros_source.apply_gerrit_patch_sets(patch_sets)
+
+    self._applied_changes.extend(changes)
+    self._patch_sets.extend(patch_sets)
 
   @contextlib.contextmanager
   def sync_to_manifest_groups(self, manifest_groups, local_manifest,

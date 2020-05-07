@@ -259,6 +259,7 @@
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
+  * [workspace_util:examples/manifest_groups](#recipes-workspace_util_examples_manifest_groups)
   * [workspace_util:tests/only_checked_out_projects](#recipes-workspace_util_tests_only_checked_out_projects)
 ## Recipe Modules
 
@@ -3788,7 +3789,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#53)(self, changes=None, name='cherry-pick gerrit changes', only_checked_out_projects=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#55)(self, changes=None, name='cherry-pick gerrit changes', only_checked_out_projects=False):**
 
 Apply gerrit changes.
 
@@ -3805,9 +3806,9 @@ Args:
 
 &mdash; **def [initialize](/recipe_modules/workspace_util/api.py#21)(self):**
 
-&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#24)(self):**
+&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#26)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#28)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#30)(self):**
 
 Prepare the source checkout for building.
 
@@ -3816,7 +3817,7 @@ Returns:
   workspace path.  Note that api.cros_source.cleanup_context() is generally
   going to be needed.
 
-&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#41)(self, commit=None, staging=False):**
+&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#43)(self, commit=None, staging=False):**
 
 Sync the source tree.
 
@@ -3825,7 +3826,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#90)(self, manifest_groups, local_manifest, cache_path_override=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#100)(self, manifest_groups, local_manifest, cache_path_override=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -5452,6 +5453,11 @@ Basic tests for the urls recipe module.
 [DEPS](/recipe_modules/workspace_util/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#23)(api, properties):**
+### *recipes* / [workspace\_util:examples/manifest\_groups](/recipe_modules/workspace_util/examples/manifest_groups.py)
+
+[DEPS](/recipe_modules/workspace_util/examples/manifest_groups.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_groups.py#23)(api, properties):**
 ### *recipes* / [workspace\_util:tests/only\_checked\_out\_projects](/recipe_modules/workspace_util/tests/only_checked_out_projects.py)
 
 [DEPS](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

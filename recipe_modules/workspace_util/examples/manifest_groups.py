@@ -30,13 +30,12 @@ def RunSteps(api, properties):
   # builders that have configs.
   config = api.cros_infra_config.configure_builder(commit=commit,
                                                    changes=changes)
-  # Note that any use case involving a chroot (SDK) will say:
-  #   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
-  with api.workspace_util.setup_workspace():
-    api.workspace_util.sync_to_commit()
+
+  with api.workspace_util.sync_to_manifest_groups(['group1', 'group2'],
+                                                  api.repo.LocalManifest(
+                                                      repo='http://repo.url',
+                                                      path='manifest_path')):
     api.workspace_util.apply_changes()
-    want = changes if config.build.apply_gerrit_changes and changes else []
-    api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
 
 
 def GenTests(api):
@@ -52,12 +51,11 @@ def GenTests(api):
       build.input.gitiles_commit.Clear()
     if cls:
       build.input.gerrit_changes.extend(cls)
-    ret = api.buildbucket.build(build)
-    ret += api.properties(
-        TestInputProperties(
-            build_target=common.BuildTarget(name=build_target),
-            builder=builder))
-    return ret
+    return (api.buildbucket.build(build) +  #
+            api.properties(
+                TestInputProperties(
+                    build_target=common.BuildTarget(name=build_target),
+                    builder=builder)))
 
   yield api.test('basic', buildbucket_build())
 
