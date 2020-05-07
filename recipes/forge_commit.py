@@ -24,16 +24,21 @@ def RunSteps(api):
   url = ('https://chrome-internal.googlesource.com/'
          'chrome/tools/build/internal.DEPS')
   path = api.path.mkdtemp()
-  with api.step.nest('attempt forge commit to %s' % url), api.context(cwd=path):
-    api.git.set_global_config(['--list'])
-    api.git.clone(url, timeout_sec=5 * 60)
-    api.step('add trailing whitespace to DEPS',
-             ['sed', '-i', '-e', '$a\\n', 'DEPS'])
-    api.git.add(['DEPS'])
-    api.git.commit('expecting rejection for forged commit',
-                   author='Sean Abraham <seanabraham@google.com>')
-    api.git_cl.upload(name='git cl upload')
-    api.git.push(url, 'master')
+  try:
+    with api.step.nest(
+        'attempt forge commit to %s' % url), api.context(cwd=path):
+      api.git.set_global_config(['--list'])
+      api.git.clone(url, timeout_sec=5 * 60)
+      api.step('add trailing whitespace to DEPS',
+               ['sed', '-i', '-e', '$a\\n', 'DEPS'])
+      api.git.add(['DEPS'])
+      api.git.commit('expecting rejection for forged commit',
+                     author='Sean Abraham <seanabraham@google.com>')
+      api.git_cl.upload(name='git cl upload')
+      api.git.push(url, 'master')
+  finally:
+    api.step('dump git-cl trace logs',
+             ['zcat', '/b/s/w/ir/kitchen-checkout/depot_tools/traces/*.zip'])
 
 
 def GenTests(api):

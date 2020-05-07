@@ -130,6 +130,13 @@
     ]
   },
   {
+    "cmd": [
+      "zcat",
+      "/b/s/w/ir/kitchen-checkout/depot_tools/traces/*.zip"
+    ],
+    "name": "dump git-cl trace logs"
+  },
+  {
     "name": "$result"
   }
 ]
