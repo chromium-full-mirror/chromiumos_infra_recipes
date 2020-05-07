@@ -96,14 +96,17 @@ class UrlsApi(recipe_api.RecipeApi):
     Returns:
       str, denoting more information about the task.
     """
-    if task_state.life_cycle in (TaskState.LIFE_CYCLE_CANCELLED,
-                                 TaskState.LIFE_CYCLE_PENDING,
-                                 TaskState.LIFE_CYCLE_RUNNING,
-                                 TaskState.LIFE_CYCLE_ABORTED,
-                                 TaskState.LIFE_CYCLE_REJECTED):
-      return ' (Did not run)'
-    else:
-      return ''
+    if task_state.life_cycle == TaskState.LIFE_CYCLE_CANCELLED:
+      return ' (was cancelled)'
+    if task_state.life_cycle == TaskState.LIFE_CYCLE_RUNNING:
+      return ' (timed out)'
+    if task_state.life_cycle == TaskState.LIFE_CYCLE_ABORTED:
+      return ' (was aborted)'
+    if task_state.life_cycle == TaskState.LIFE_CYCLE_REJECTED:
+      return ' (was rejected)'
+    if task_state.life_cycle == TaskState.LIFE_CYCLE_PENDING:
+      return ' (timed out waiting for available DUT)'
+    return ''
 
   def get_gs_path_url(self, gs_path):
     """Returns the Cloud Storage Browser URL to the given GS path.

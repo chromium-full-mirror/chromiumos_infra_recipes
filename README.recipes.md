@@ -3726,7 +3726,7 @@ Args:
 Returns:
   str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#108)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#111)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -5439,7 +5439,7 @@ localmirror and then modifies the Guest VM's version pin to match this version.
 
 Basic tests for the urls recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#24)(api):**
 ### *recipes* / [urls:examples/get\_vm\_test\_link\_map](/recipe_modules/urls/examples/get_vm_test_link_map.py)
 
 [DEPS](/recipe_modules/urls/examples/get_vm_test_link_map.py#14): [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

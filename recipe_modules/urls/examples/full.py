@@ -20,6 +20,7 @@ DEPS = [
     'urls',
 ]
 
+
 def RunSteps(api):
   build = build_pb2.Build(id=123)
   api.assertions.assertEqual(
@@ -32,8 +33,8 @@ def RunSteps(api):
       {'test page': api.buildbucket.build_url(build_id=123)})
 
   skylab_task = api.skylab.test_api.skylab_task(url='skylab.whatever')
-  api.assertions.assertEqual(api.urls.get_skylab_task_url(skylab_task),
-                             'skylab.whatever')
+  api.assertions.assertEqual(
+      api.urls.get_skylab_task_url(skylab_task), 'skylab.whatever')
 
   skylab_result = api.skylab.test_api.skylab_result(task=skylab_task)
   api.assertions.assertEqual(
@@ -72,7 +73,14 @@ def RunSteps(api):
   task_state = TaskState(life_cycle=TaskState.LIFE_CYCLE_ABORTED,
                          verdict=TaskState.VERDICT_FAILED)
   api.assertions.assertEqual(
-      api.urls.get_state_suffix(task_state), " (Did not run)")
+      api.urls.get_state_suffix(task_state), " (was aborted)")
+  for life_cycle in [
+      TaskState.LIFE_CYCLE_CANCELLED, TaskState.LIFE_CYCLE_RUNNING,
+      TaskState.LIFE_CYCLE_ABORTED, TaskState.LIFE_CYCLE_REJECTED,
+      TaskState.LIFE_CYCLE_PENDING
+  ]:
+    api.urls.get_state_suffix(
+        TaskState(life_cycle=life_cycle, verdict=TaskState.VERDICT_FAILED))
 
 
 def GenTests(api):
