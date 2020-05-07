@@ -8,6 +8,7 @@ from google.protobuf import json_format as jsonpb
 
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 from PB.testplans.test_retry import SuiteRetryCfg
 
 
@@ -1034,4 +1035,28 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
         }
     """
     configs = jsonpb.Parse(vm_retry_config, SuiteRetryCfg())
+    return self.m.depot_gitiles.make_encoded_file(configs.SerializeToString())
+
+  def dut_tracking_test_data(self):
+    """A fn that can be passed to step_test_data to generate TrackingPolicyCfg."""
+    dut_tracking_config = """
+        {
+        	"policies": [
+            		{
+			            "name": "atlas",
+			            "dimensions": [
+			            	{
+			            		"name": "label-board",
+			            		"value": "atlas"
+			            	}
+			            ],
+			            "modes": [
+			            	"TASK_BOT_COUNT"
+			            ],
+			            "lookbackHours": -24
+		            }
+        	]
+        }
+    """
+    configs = jsonpb.Parse(dut_tracking_config, TrackingPolicyCfg())
     return self.m.depot_gitiles.make_encoded_file(configs.SerializeToString())

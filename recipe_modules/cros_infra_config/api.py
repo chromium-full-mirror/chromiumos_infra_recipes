@@ -14,6 +14,7 @@ from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.testplans.test_retry import SuiteRetryCfg
 
@@ -212,6 +213,18 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         step_test_data=self.test_api.vm_retry_test_data,
         timeout=self.test_api.gitiles_timeout_seconds)
     return SuiteRetryCfg.FromString(vm_retry_config_file)
+
+  def get_dut_tracking_config(self):
+    """Get TrackingPolicyCfg as defined in infra/config.
+
+    Returns:
+      TrackingPolicyCfg as defined in the config repo.
+    """
+    tracking_policy_file = self.m.depot_gitiles.download_file(
+        REPO_URL, 'testingconfig/generated/dut_tracking.binaryproto',
+        step_test_data=self.test_api.dut_tracking_test_data,
+        timeout=self.test_api.gitiles_timeout_seconds)
+    return TrackingPolicyCfg.FromString(tracking_policy_file)
 
   def _determine_repo_state(self, config, commit, changes):
     """Set _gitiles_commit and _gerrit_changes.
