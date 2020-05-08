@@ -3816,7 +3816,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#62)(self, changes=None, name='cherry-pick gerrit changes', only_checked_out_projects=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#66)(self, changes=None, name='cherry-pick gerrit changes', only_checked_out_projects=False):**
 
 Apply gerrit changes.
 
@@ -3831,7 +3831,7 @@ Args:
       (e.g. because of Cq-Depend grouping); the changes will be discarded
       instead of failing during application.
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#107)(self, chroot, gitiles_commit=None, gerrit_changes=None, name=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#111)(self, chroot, gitiles_commit=None, gerrit_changes=None, name=None):**
 
 Check for toolchain changes.
 
@@ -3853,7 +3853,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#28)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#37)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#41)(self):**
 
 Prepare the source checkout for building.
 
@@ -3862,7 +3862,7 @@ Returns:
   workspace path.  Note that api.cros_source.cleanup_context() is generally
   going to be needed.
 
-&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#50)(self, commit=None, staging=False):**
+&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#54)(self, commit=None, staging=False):**
 
 Sync the source tree.
 
@@ -3871,7 +3871,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#142)(self, manifest_groups, local_manifest, cache_path_override=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#146)(self, manifest_groups, local_manifest, cache_path_override=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -3905,6 +3905,8 @@ Args:
 &emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/workspace_util/api.py#32)(self):**
 
 Whether there are toolchain CLs applied to the source tree.
+
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/workspace_util/api.py#37)(self):**
 ## Recipes
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
@@ -5504,9 +5506,9 @@ Basic tests for the urls recipe module.
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#20)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
-[DEPS](/recipe_modules/workspace_util/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/workspace_util/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#26)(api, properties):**
 ### *recipes* / [workspace\_util:examples/manifest\_groups](/recipe_modules/workspace_util/examples/manifest_groups.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/manifest_groups.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

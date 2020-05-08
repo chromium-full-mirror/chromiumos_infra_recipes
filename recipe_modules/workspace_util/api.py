@@ -34,6 +34,10 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     """Whether there are toolchain CLs applied to the source tree."""
     return self.m.cros_relevance.toolchain_cls_applied
 
+  @property
+  def workspace_path(self):
+    return self.m.cros_source.workspace_path
+
   @contextlib.contextmanager
   def setup_workspace(self):
     """Prepare the source checkout for building.

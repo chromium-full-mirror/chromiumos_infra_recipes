@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/properties',
     'cros_infra_config',
@@ -39,6 +40,8 @@ def RunSteps(api, properties):
     api.workspace_util.apply_changes()
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
+    api.assertions.assertEqual(api.context.cwd,
+                               api.workspace_util.workspace_path)
 
   api.workspace_util.detect_toolchain_cls(None)
   api.assertions.assertEqual(properties.toolchain_cls_applied,
