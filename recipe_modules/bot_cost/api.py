@@ -37,6 +37,7 @@ class BotCostApi(recipe_api.RecipeApi):
       build_id (int): The build id for this build.
       bot_size (str): The size of the bot used to create the build.
     """
+    # TODO(crbug.com/1081746): drop bot_size argument and use self._bot_size.
     with self.m.step.nest('set build cost') as presentation:
       build_cost = self._calculate_build_cost(build_id, bot_size)
       presentation.properties['build_cost'] = round(build_cost, 4)

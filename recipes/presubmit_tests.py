@@ -8,18 +8,19 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/cq',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'bot_cost',
+    'cros_infra_config',
     'cros_sdk',
     'cros_source',
     'gerrit',
     'git',
     'gitiles',
     'repo',
+    'workspace_util',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -29,17 +30,23 @@ PROPERTIES = PresubmitTestsProperties
 
 
 def RunSteps(api, properties):
-  gitiles_commit = api.buildbucket.gitiles_commit
-  gerrit_changes = api.buildbucket.build.input.gerrit_changes
+  # This builder doesn't have a builder config, but we want the shared handling
+  # of gitiles_commit and gerrit_changes, and enough of a config to let us work.
+  api.cros_infra_config.configure_builder(
+      api.buildbucket.gitiles_commit,
+      api.buildbucket.build.input.gerrit_changes)
 
-  # There are 3 use cases here:
-  # 1. No gerrit changes: pointless.
-  # 2. No gitiles_commit, with gerrit_changes:
-  #    This build was launched by luci-cq (or a user).
-  #    Use refs/heads/snapshot and the buildbucket-specified gerrit_changes.
-  # 3. Gitiles_commit, with gerrit_changes:
-  #    This build was launched by a user.
-  #    Use the given information.
+  _FullCheckout(api, properties)
+  myname = api.buildbucket.build.builder.builder
+  bot_size = 'medium' if 'infra-' in myname else 'large'
+  api.bot_cost.set_build_cost(api.buildbucket.build.id, bot_size)
+
+
+def _FullCheckout(api, properties):
+  gitiles_commit = api.cros_infra_config.gitiles_commit
+  gerrit_changes = api.cros_infra_config.gerrit_changes
+  is_staging = api.buildbucket.build.builder.builder.startswith('staging-')
+  project_names = properties.project_names
 
   # TODO(crbug/1039875): Look at moving this code to a recipe module and using
   # that both here, and in orchestrator.determine_repo_state.
@@ -49,60 +56,37 @@ def RunSteps(api, properties):
       presentation.step_text = "No changes given:  Build is POINTLESS."
       return
 
-    # If we did not get a gitiles_commit, use refs/heads/snapshot.
-    if not gitiles_commit.project:
-      with api.step.nest('fetch snapshot ref'):
-        gitiles_commit = common_pb2.GitilesCommit(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/manifest-internal', ref='refs/heads/snapshot')
-      # The gitiles_commit we have may not have an id, which will be needed
-      # later.  If we need to, re-create the gitiles_commit with the right id.
-      if not gitiles_commit.id:
-        gitiles_commit = common_pb2.GitilesCommit(
-            host=gitiles_commit.host, project=gitiles_commit.project,
-            ref=gitiles_commit.ref,
-            id=api.gitiles.fetch_revision(gitiles_commit.host,
-                                          gitiles_commit.project,
-                                          gitiles_commit.ref))
-
-  # TODO(crbug/1039875): Add an input property to only do the minimal checkouts
-  # required.
-  _FullCheckout(api, properties, gitiles_commit, gerrit_changes)
-  myname = api.buildbucket.build.builder.builder
-  bot_size = 'medium' if 'infra-' in myname else 'large'
-  api.bot_cost.set_build_cost(api.buildbucket.build.id, bot_size)
-
-
-def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
   # Some of the repos (e.g., crostools) reach into other repos in presubmit
   # checks.  As such, we grab sync the source tree.  Start with a full checkout
   # of the manifest, apply the changes, and then run presubmit checks.
-  workpath = api.cros_source.workspace_path
-  with api.cros_source.checkout_overlays_context(), api.context(cwd=workpath), \
-      api.cros_sdk.cleanup_context(checkout_path=workpath):
-    api.cros_source.ensure_synced_cache()
-    api.cros_source.sync_snapshot(gitiles_commit)
-
-    with api.step.nest('cherry-pick gerrit changes'):
-      patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
-      new_commits = api.cros_source.apply_gerrit_patch_sets(patch_sets)
+  # TODO(crbug/1039875): Update this to only checkout the required repos, as
+  # well as any that are listed as dependencies by the repos being tested,
+  # rather than doing a full checkout every time.
+  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
+    api.workspace_util.sync_to_commit(staging=is_staging)
+    api.workspace_util.apply_changes()
+    workpath = api.workspace_util.workspace_path
 
     with api.step.nest('run presubmit checks'):
       # Set up some variables that are used repeatedly in the for loop.
       path_info = {
           x.path: x for x in api.repo.project_infos(
-              projects=[x.project for x in patch_sets])
+              projects=[x.project for x in api.workspace_util.patch_sets])
       }
-      dry_run = api.cq.state == api.cq.DRY
-
       checked_paths = set()
 
-      for patch, commit in zip(patch_sets, new_commits):
+      for patch, commit in zip(api.workspace_util.patch_sets,
+                               api.workspace_util.commits):
         if commit.path in checked_paths:
           continue
         checked_paths.add(commit.path)
         full_path = workpath.join(commit.path)
         with api.step.nest('checking %s' % commit.path) as presentation:
+          # If we have a list of included projects, then exclude any projects
+          # not on the list.
+          if project_names and patch.project not in project_names:
+            presentation.step_text = 'Excluded by properties.project_names.'
+            continue
 
           info = path_info[commit.path]
           branch = api.git.extract_branch(info.branch, 'master')
@@ -157,11 +141,14 @@ def GenTests(api):
 
   yield api.test('no-changes-given', test_builder(gitiles=False, changes=False))
 
+  yield api.test('excluded-change', test_builder(),
+                 api.properties(project_names=['p1']))
+
   yield api.test(
       'no-config-gitiles',
       test_builder(builder='amd64-generic-cq', gitiles=False, changes=False))
 
-  yield api.test('has-PRESUBMIT.py', test_builder(), api.cq(dry_run=True),
+  yield api.test('has-PRESUBMIT.py', test_builder(),
                  api.properties(test_filename='PRESUBMIT.py'))
 
   yield api.test('has-PRESUBMIT.cfg', test_builder(),

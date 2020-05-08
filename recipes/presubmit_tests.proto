@@ -17,4 +17,10 @@ message PresubmitTestsProperties {
 
   // For testing, pretend that this file exists (e.g., PRESUBMIT.py)
   string test_filename = 3;
+
+  // List of project names (such as 'chromiumos/infra/recipes') which may be
+  // tested.  Tests are run once against each project path with changes, unless
+  // limited by project_names:  If specified, only projects in the list will be
+  // tested.  If empty, then all projects in the CQ run will be tested.
+  repeated string project_names = 4;
 }

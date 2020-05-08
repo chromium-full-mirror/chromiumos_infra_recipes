@@ -350,7 +350,7 @@ Args:
   build_id (int): The build id for this build.
   bot_size (str): The size of the bot used to create the build.
 
-&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#83)(self, orch_build_id, child_builds):**
+&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#84)(self, orch_build_id, child_builds):**
 
 Wrapper function to calculate and set the cost of the cq run.
 
@@ -3816,7 +3816,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#66)(self, changes=None, name='cherry-pick gerrit changes', only_checked_out_projects=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#71)(self, changes=None, name='cherry-pick gerrit changes', only_checked_out_projects=False):**
 
 Apply gerrit changes.
 
@@ -3831,7 +3831,9 @@ Args:
       (e.g. because of Cq-Depend grouping); the changes will be discarded
       instead of failing during application.
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#111)(self, chroot, gitiles_commit=None, gerrit_changes=None, name=None):**
+&emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#33)(self):**
+
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#117)(self, chroot, gitiles_commit=None, gerrit_changes=None, name=None):**
 
 Check for toolchain changes.
 
@@ -3851,9 +3853,9 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/workspace_util/api.py#21)(self):**
 
-&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#28)(self):**
+&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#29)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#41)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#46)(self):**
 
 Prepare the source checkout for building.
 
@@ -3862,7 +3864,7 @@ Returns:
   workspace path.  Note that api.cros_source.cleanup_context() is generally
   going to be needed.
 
-&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#54)(self, commit=None, staging=False):**
+&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#59)(self, commit=None, staging=False):**
 
 Sync the source tree.
 
@@ -3871,7 +3873,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#146)(self, manifest_groups, local_manifest, cache_path_override=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#152)(self, manifest_groups, local_manifest, cache_path_override=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -3902,11 +3904,11 @@ Args:
   cache_path_override (Path): Path to sync into. If None, the default
       caching of cros_source.ensure_synced_cache is used.
 
-&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/workspace_util/api.py#32)(self):**
+&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/workspace_util/api.py#37)(self):**
 
 Whether there are toolchain CLs applied to the source tree.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/workspace_util/api.py#37)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/workspace_util/api.py#42)(self):**
 ## Recipes
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
@@ -5031,11 +5033,11 @@ Launches presubmit tests for CQ.
 &mdash; **def [RunSteps](/recipes/presubmit_cq.py#27)(api, properties):**
 ### *recipes* / [presubmit\_tests](/recipes/presubmit_tests.py)
 
-[DEPS](/recipes/presubmit_tests.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/presubmit_tests.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for running presubmit on multiple CLs.
 
-&mdash; **def [RunSteps](/recipes/presubmit_tests.py#31)(api, properties):**
+&mdash; **def [RunSteps](/recipes/presubmit_tests.py#32)(api, properties):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

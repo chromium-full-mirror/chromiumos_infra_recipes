@@ -23,6 +23,39 @@
   },
   {
     "cmd": [],
+    "name": "configure builder",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@config not found, assuming deleted@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "configure builder.read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "validate inputs"
   },
   {
@@ -509,7 +542,7 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 2341, \"host\": \"chrome-internal.googlesource.com\", \"patch_set\": 0}], \"include_files\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 2341, \"host\": \"chrome-internal.googlesource.com\", \"patch_set\": 0}], \"include_files\": true}",
     "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

@@ -20,6 +20,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
   def initialize(self):
     self._patch_sets = []
+    self._commits = []
     # Changes applied in apply_changes().
     self._applied_changes = []
     # Changes that have been checked for toolchain effects.
@@ -28,6 +29,10 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
   @property
   def patch_sets(self):
     return self._patch_sets
+
+  @property
+  def commits(self):
+    return self._commits
 
   @property
   def toolchain_cls_applied(self):
@@ -103,10 +108,11 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
             ', '.join(discarded_change_numbers))
 
       patch_sets = self.m.gerrit.fetch_patch_sets(changes, include_files=True)
-      self.m.cros_source.apply_gerrit_patch_sets(patch_sets)
+      self._commits.extend(
+          self.m.cros_source.apply_gerrit_patch_sets(patch_sets))
 
-    self._applied_changes.extend(changes)
-    self._patch_sets.extend(patch_sets)
+      self._applied_changes.extend(changes)
+      self._patch_sets.extend(patch_sets)
 
   def detect_toolchain_cls(self, chroot, gitiles_commit=None,
                            gerrit_changes=None, name=None):
