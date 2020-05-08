@@ -25,21 +25,22 @@ def RunSteps(api):
         api.cros_infra_config.get_dut_tracking_config().policies)
 
   with api.step.nest('query swarming'):
-    bot_stats = {}
-    task_stats = {}
+    bot_stats = []
+    task_stats = []
 
     for policy in tracking_policies:
       with api.step.nest('querying ' + policy.name):
         dims = _bind_dimensions(policy.dimensions)
         task_dims = _bind_dimensions(policy.task_dimensions)
         bot_count = api.swarming_cli.get_bot_counts(dims)
-        task_count = {}
+        bot_count['name'] = policy.name
+        task_count = {'name': policy.name}
         for state in TASK_STATES:
           task_count[state] = api.swarming_cli.get_task_counts(
               dims + task_dims, state, policy.lookback_hours)
 
-        bot_stats[policy.name] = bot_count
-        task_stats[policy.name] = task_count
+        bot_stats.append(bot_count)
+        task_stats.append(task_count)
 
     api.easy.set_property_step('bot_stats', bot_stats)
     api.easy.set_property_step('task_stats', task_stats)

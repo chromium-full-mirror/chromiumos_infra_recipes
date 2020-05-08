@@ -162,7 +162,7 @@
     "name": "query swarming.set bot_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@bot_stats@{\"atlas\": {}}@@@"
+      "@@@SET_BUILD_PROPERTY@bot_stats@[{\"name\": \"atlas\"}]@@@"
     ]
   },
   {
@@ -170,7 +170,7 @@
     "name": "query swarming.set task_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@task_stats@{\"atlas\": {\"PENDING\": {}, \"RUNNING\": {}}}@@@"
+      "@@@SET_BUILD_PROPERTY@task_stats@[{\"PENDING\": {}, \"RUNNING\": {}, \"name\": \"atlas\"}]@@@"
     ]
   },
   {
