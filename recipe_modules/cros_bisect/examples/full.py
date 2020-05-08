@@ -42,59 +42,64 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test('basic')
 
-  yield (api.test('with-findit-bisect') +  #
-         api.properties(
-             **{'$chromeos/cros_bisect':
-                CrosBisectProperties(compile={'targets': [
-                    api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
-                    api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
-                    api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
-                ]})}
-         ) + #
-         api.properties(TestInputProperties(expected_packages=[
-               PackageInfo(package_name='foo', category='cat1', version='1'),
-               PackageInfo(package_name='bar', category='cat1', version='2'),
-               PackageInfo(package_name='baz', category='cat2', version='3'),
-           ],
-         )))
+  yield api.test(
+      'with-findit-bisect',
+      api.properties(
+          **{'$chromeos/cros_bisect':
+             CrosBisectProperties(compile={'targets': [
+                 api.cros_bisect.serialized_package_info('foo', 'cat1', '1'),
+                 api.cros_bisect.serialized_package_info('bar', 'cat1', '2'),
+                 api.cros_bisect.serialized_package_info('baz', 'cat2', '3'),
+             ]})}
+      ),
+      api.properties(TestInputProperties(expected_packages=[
+          PackageInfo(package_name='foo', category='cat1', version='1'),
+          PackageInfo(package_name='bar', category='cat1', version='2'),
+          PackageInfo(package_name='baz', category='cat2', version='3'),
+      ])),
+  )
 
-  yield (api.test('with-failed-build') +  #
-         api.properties(TestInputProperties(failed_packages=[
-               PackageInfo(package_name='uno', category='pkg', version='1'),
-               PackageInfo(package_name='dos', category='pkg', version='2'),
-           ],
-         )))
+  yield api.test(
+      'with-failed-build',
+      api.properties(TestInputProperties(failed_packages=[
+          PackageInfo(package_name='uno', category='pkg', version='1'),
+          PackageInfo(package_name='dos', category='pkg', version='2'),
+      ])),
+  )
 
   hw_test_unit1 = api.cros_bisect.serialized_hw_test_unit('foo')
   hw_test_unit2 = api.cros_bisect.serialized_hw_test_unit('bar')
   hw_test_unit3 = api.cros_bisect.serialized_hw_test_unit('bar')
 
-  yield (api.test('with-test-child-builders') +  #
-         api.properties(
-             **{'$chromeos/cros_bisect':
-                CrosBisectProperties(test={'hw_test_failures': [
-                    CrosBisectProperties.TestFailures.TestFailure(
-                        test_spec=hw_test_unit1),
-                    CrosBisectProperties.TestFailures.TestFailure(
-                        test_spec=hw_test_unit2),
-                    CrosBisectProperties.TestFailures.TestFailure(
-                        test_spec=hw_test_unit3),
-                ]})}
-         ) + #
-         api.properties(TestInputProperties(expected_test_child_builders=[
-             'bar-snapshot',
-             'foo-snapshot',
-           ],
-         )))
+  yield api.test(
+      'with-test-child-builders',
+      api.properties(
+          **{'$chromeos/cros_bisect':
+             CrosBisectProperties(test={'hw_test_failures': [
+                 CrosBisectProperties.TestFailures.TestFailure(
+                     test_spec=hw_test_unit1),
+                 CrosBisectProperties.TestFailures.TestFailure(
+                     test_spec=hw_test_unit2),
+                 CrosBisectProperties.TestFailures.TestFailure(
+                     test_spec=hw_test_unit3),
+             ]})}
+      ),
+      api.properties(TestInputProperties(expected_test_child_builders=[
+          'bar-snapshot',
+          'foo-snapshot',
+      ])),
+  )
 
-  yield (api.test('with-validation-props') +  #
-         api.properties(
-             **{'$chromeos/cros_bisect':
-                CrosBisectProperties(
-                    test_bisection_percent=20,
-                    test_bisection_count=10
-                )}) +  #
-         api.properties(TestInputProperties(
-             expected_test_bisection_percent=20,
-             expected_test_bisection_count=10,
-         )))
+  yield api.test(
+      'with-validation-props',
+      api.properties(
+          **{'$chromeos/cros_bisect':
+             CrosBisectProperties(
+                 test_bisection_percent=20,
+                 test_bisection_count=10
+             )}),
+      api.properties(TestInputProperties(
+          expected_test_bisection_percent=20,
+          expected_test_bisection_count=10,
+      )),
+  )

@@ -86,15 +86,17 @@ def GenTests(api):
   hw_test_unit2 = api.cros_bisect.hw_test_unit('bar')
   hw_test_unit3 = api.cros_bisect.hw_test_unit('bar')
 
-  yield (api.test('with-test-plan') +  #
-         api.properties(
-             **{'$chromeos/cros_bisect':
-                CrosBisectProperties(test={'hw_test_failures': [
-                    CrosBisectProperties.TestFailures.TestFailure(
-                        test_spec=jsonpb.MessageToJson(hw_test_unit1)),
-                    CrosBisectProperties.TestFailures.TestFailure(
-                        test_spec=jsonpb.MessageToJson(hw_test_unit2)),
-                    CrosBisectProperties.TestFailures.TestFailure(
-                        test_spec=jsonpb.MessageToJson(hw_test_unit3)),
-                ]})}
-         ))
+  yield api.test(
+      'with-test-plan',
+      api.properties(
+          **{'$chromeos/cros_bisect':
+             CrosBisectProperties(test={'hw_test_failures': [
+                 CrosBisectProperties.TestFailures.TestFailure(
+                     test_spec=jsonpb.MessageToJson(hw_test_unit1)),
+                 CrosBisectProperties.TestFailures.TestFailure(
+                     test_spec=jsonpb.MessageToJson(hw_test_unit2)),
+                 CrosBisectProperties.TestFailures.TestFailure(
+                     test_spec=jsonpb.MessageToJson(hw_test_unit3)),
+             ]})}
+      ),
+  )
