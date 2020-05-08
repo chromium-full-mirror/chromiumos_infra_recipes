@@ -238,6 +238,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
       changes: (GerritChanges): The gerrit changes to apply.  Default: [].
     """
+    changes = changes or []
     changed = False
     if not commit or not commit.project:
       # No gitiles_commit: we were (likely) launched directly by either
@@ -296,20 +297,20 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Args:
       commit (GitilesCommit): The gitiles commit to use.  Default:
           common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
-      changes: (GerritChanges): The gerrit changes to apply.  Default: [].
+      changes (GerritChanges): The gerrit changes to apply.  Default: [].
       name (string): Step name.  Default: "configure builder".
 
     Returns:
-      BuilderConfig
+      BuilderConfig or None
     """
     with self.m.step.nest(name) as presentation:
       config = self.config
-      if not config:
+      if config:
+        presentation.logs['builder config'] = [str(config)]
+        self.m.easy.set_property_step('builder_config',
+                                      json_format.MessageToDict(config))
+      else:
         presentation.step_text = 'config not found, assuming deleted'
-        return None
-      presentation.logs['builder config'] = [str(config)]
-      self.m.easy.set_property_step('builder_config',
-                                    json_format.MessageToDict(config))
 
       parent = [
           x.value
@@ -323,7 +324,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # TODO(crbug/1053073): once changes is being stripped by callers, we can
       # drop the check of apply_gerrit_changes.
       # For now, we need to handle this here.
-      if config.HasField('build') and not config.build.apply_gerrit_changes:
+      if (config and config.HasField('build') and
+          not config.build.apply_gerrit_changes):
         changes = []
 
       self._determine_repo_state(config, commit, changes)

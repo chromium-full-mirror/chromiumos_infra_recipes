@@ -25,7 +25,8 @@
     "cmd": [],
     "name": "configure builder",
     "~followup_annotations": [
-      "@@@STEP_TEXT@config not found, assuming deleted@@@"
+      "@@@STEP_TEXT@config not found, assuming deleted@@@",
+      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/parent_id@@@"
     ]
   },
   {

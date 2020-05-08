@@ -1297,7 +1297,7 @@ which caches the data.
 Returns:
   BuilderConfig for this builder.
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#288)(self, commit=None, changes=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#289)(self, commit=None, changes=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1308,11 +1308,11 @@ Set the bisect_builder and use_flags.
 Args:
   commit (GitilesCommit): The gitiles commit to use.  Default:
       common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
-  changes: (GerritChanges): The gerrit changes to apply.  Default: [].
+  changes (GerritChanges): The gerrit changes to apply.  Default: [].
   name (string): Step name.  Default: "configure builder".
 
 Returns:
-  BuilderConfig
+  BuilderConfig or None
 
 &mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#183)(self):**
 
