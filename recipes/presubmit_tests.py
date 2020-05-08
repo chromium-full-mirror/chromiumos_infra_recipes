@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'depot_tools/depot_tools',
+    'bot_cost',
     'cros_sdk',
     'cros_source',
     'gerrit',
@@ -67,6 +68,9 @@ def RunSteps(api, properties):
   # TODO(crbug/1039875): Add an input property to only do the minimal checkouts
   # required.
   _FullCheckout(api, properties, gitiles_commit, gerrit_changes)
+  myname = api.buildbucket.build.builder.builder
+  bot_size = 'medium' if 'infra-' in myname else 'large'
+  api.bot_cost.set_build_cost(api.buildbucket.build.id, bot_size)
 
 
 def _FullCheckout(api, properties, gitiles_commit, gerrit_changes):
