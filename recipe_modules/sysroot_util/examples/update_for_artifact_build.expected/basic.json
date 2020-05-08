@@ -297,6 +297,14 @@
   },
   {
     "cmd": [],
+    "name": "prepare artifacts.set artifact_prep",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@artifact_prep@{\"buildRelevance\": \"UNKNOWN\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "final",
     "~followup_annotations": [
       "@@@STEP_TEXT@Build need is UNKNOWN@@@"
@@ -467,6 +475,14 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final.set artifact_prep",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@artifact_prep@{\"buildRelevance\": \"UNKNOWN\"}@@@"
     ]
   },
   {

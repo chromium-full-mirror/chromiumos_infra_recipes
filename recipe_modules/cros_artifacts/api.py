@@ -637,6 +637,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         ret = self._prepare_for_build_100(chroot, sysroot, artifacts_info,
                                           test_data=test_data)
 
+      self.m.easy.set_property_step('artifact_prep',
+                                    json_format.MessageToDict(
+                                        artifacts.PrepareForBuildResponse(
+                                            build_relevance=ret)),
+                                    step_name='set artifact_prep')
       if ret == artifacts.PrepareForBuildResponse.NEEDED:
         presentation.step_text = 'Build is NEEDED'
       elif ret == artifacts.PrepareForBuildResponse.UNKNOWN:
