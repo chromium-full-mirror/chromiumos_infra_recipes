@@ -31,11 +31,12 @@ def RunSteps(api):
     for policy in tracking_policies:
       with api.step.nest('querying ' + policy.name):
         dims = _bind_dimensions(policy.dimensions)
+        task_dims = _bind_dimensions(policy.task_dimensions)
         bot_count = api.swarming_cli.get_bot_counts(dims)
         task_count = {}
         for state in TASK_STATES:
           task_count[state] = api.swarming_cli.get_task_counts(
-              dims, state, policy.lookback_hours)
+              dims + task_dims, state, policy.lookback_hours)
 
         bot_stats[policy.name] = bot_count
         task_stats[policy.name] = task_count
