@@ -13,46 +13,58 @@ DEPS = [
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.bot_cost.examples.test import TestProperties
 
 from google.protobuf import timestamp_pb2
 
+PROPERTIES = TestProperties
 
-def RunSteps(api):
-  with api.step.nest('terminal build') as test_step:
-    build_cost = api.bot_cost._calculate_build_cost(123, 'small')
-    api.assertions.assertNotEqual(0, build_cost)
-  with api.step.nest('started build') as test_step:
-    build_cost = api.bot_cost._calculate_build_cost(123, 'small')
-    api.assertions.assertNotEqual(0, build_cost)
-  with api.step.nest('scheduled build') as test_step:
-    build_cost = api.bot_cost._calculate_build_cost(123, 'small')
-    api.assertions.assertEqual(0, build_cost)
-  api.bot_cost.set_build_cost(123, 'small')
+
+def RunSteps(api, properties):
+  with api.step.nest(properties.name) as test_step:
+    build_cost = api.bot_cost._calculate_build_cost(123, properties.bot_size)
+    if properties.expect_cost:
+      api.assertions.assertNotEqual(0, build_cost)
+    else:
+      api.assertions.assertEqual(0, build_cost)
+  api.bot_cost.set_build_cost(123, properties.bot_size)
 
 
 def GenTests(api):
-  terminal_build = build_pb2.Build(
-      id=123, status=common_pb2.SUCCESS,
-      start_time=timestamp_pb2.Timestamp(seconds=5000),
-      end_time=timestamp_pb2.Timestamp(seconds=15000))
 
-  started_build = build_pb2.Build(
-      id=123, status=common_pb2.STARTED,
-      start_time=timestamp_pb2.Timestamp(seconds=5000),
-      update_time=timestamp_pb2.Timestamp(seconds=15000))
+  def test(name, status, start_time=None, end_time=None, update_time=None,
+           bot_size='small', expect_cost=True, extra=None):
+    if start_time:
+      start_time = timestamp_pb2.Timestamp(seconds=start_time)
+    if end_time:
+      end_time = timestamp_pb2.Timestamp(seconds=end_time)
+    if update_time:
+      update_time = timestamp_pb2.Timestamp(seconds=update_time)
+    bld_msg = build_pb2.Build(id=123, status=status, start_time=start_time,
+                              end_time=end_time, update_time=update_time)
+    bld_msg.infra.swarming.bot_dimensions.extend(
+        [common_pb2.StringPair(key='bot_size', value=bot_size)])
+    return api.test(
+        name, api.buildbucket.build(bld_msg),
+        api.buildbucket.simulated_get(
+            bld_msg,
+            step_name='%s.calculate build cost.buildbucket.get' % name),
+        api.properties(
+            TestProperties(name=name, bot_size=bot_size,
+                           expect_cost=expect_cost)), *(extra or []))
 
-  scheduled_build = build_pb2.Build(
-      id=123, status=common_pb2.SCHEDULED,
-      start_time=timestamp_pb2.Timestamp(seconds=5000),
-      update_time=timestamp_pb2.Timestamp(seconds=15000),
-      end_time=timestamp_pb2.Timestamp(seconds=15000))
+  yield test('terminal-build', status='SUCCESS', start_time=5000,
+             end_time=15000)
 
-  yield (api.test('basic') + api.buildbucket.simulated_get(
-      terminal_build,
-      step_name='terminal build.calculate build cost.buildbucket.get') +
-         api.buildbucket.simulated_get(
-             started_build,
-             step_name='started build.calculate build cost.buildbucket.get') +
-         api.buildbucket.simulated_get(
-             scheduled_build,
-             step_name='scheduled build.calculate build cost.buildbucket.get'))
+  yield test('started-build', status='STARTED', start_time=5000,
+             update_time=15000)
+
+  yield test('scheduled-build', status='SCHEDULED', start_time=5000,
+             end_time=15000, update_time=15000, expect_cost=False)
+
+  yield test('medium-bot', status='SUCCESS', start_time=5000,
+             end_time=15000, bot_size='medium')
+
+  yield test('bad-botsize', status='SUCCESS', start_time=5000, end_time=15000,
+             bot_size='small',
+             extra=[api.properties(TestProperties(bot_size='large'))])

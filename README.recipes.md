@@ -332,11 +332,13 @@ Returns: Result.
 
 [DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate the cost of running bots.
 
-&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#17)(self, build_id, bot_size):**
+&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#23)(self):**
+
+&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#30)(self, build_id, bot_size):**
 
 Wrapper function to calculate and set the cost of creating the build.
 
@@ -347,7 +349,7 @@ Args:
   build_id (int): The build id for this build.
   bot_size (str): The size of the bot used to create the build.
 
-&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#61)(self, orch_build_id, child_builds):**
+&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#83)(self, orch_build_id, child_builds):**
 
 Wrapper function to calculate and set the cost of the cq run.
 
@@ -4060,7 +4062,7 @@ Returns:
 
 [DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#6): [bot\_cost](#recipe_modules-bot_cost), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#23)(api, properties):**
 ### *recipes* / [bot\_cost:examples/calculate\_cq\_run\_cost](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py)
 
 [DEPS](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#6): [bot\_cost](#recipe_modules-bot_cost), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

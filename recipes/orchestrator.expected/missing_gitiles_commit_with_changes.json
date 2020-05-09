@@ -4058,12 +4058,6 @@
     "name": "clean up orchestrator.set cq run cost",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@all@[]@@@",
-      "@@@STEP_LOG_END@all@@@",
-      "@@@STEP_LOG_LINE@orch build cost@0.0@@@",
-      "@@@STEP_LOG_END@orch build cost@@@",
-      "@@@STEP_LOG_LINE@cq run cost@0.0@@@",
-      "@@@STEP_LOG_END@cq run cost@@@",
       "@@@SET_BUILD_PROPERTY@cq_run_cost@0.0@@@"
     ]
   },

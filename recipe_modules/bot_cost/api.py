@@ -8,11 +8,24 @@ from recipe_engine import recipe_api
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 # Cost is in USD per day as calculated in go/cros-infra-sizing on 2018-12-12.
-BOT_COST = {'small': 4.56, 'large': 8.08}
+# With an estimate for medium, since postdates that doc.
+BOT_COST = {'small': 0.342, 'medium': 1.93, 'large': 8.08}
+
+# Real builds always have the bot_dimension "bot_size".  The test api does
+# not generally provide that, so we have a default for a better testing
+# experience.
+UNKNOWN_BOT_SIZE='UNKNOWN'
 
 
 class BotCostApi(recipe_api.RecipeApi):
   """A module to calculate the cost of running bots."""
+
+  def initialize(self):
+    self._bot_size = UNKNOWN_BOT_SIZE
+    for dimension in self.m.buildbucket.build.infra.swarming.bot_dimensions:
+      if dimension.key == 'bot_size':
+        self._bot_size = dimension.value
+        break
 
   def set_build_cost(self, build_id, bot_size):
     """Wrapper function to calculate and set the cost of creating the build.
@@ -38,7 +51,8 @@ class BotCostApi(recipe_api.RecipeApi):
 
     Args:
       build_id (int): The build id for this build.
-      bot_size (str): The size of the bot used to create the build.
+      bot_size (str): The size of the bot used to create the build, or None to
+          query swarming dimensions.
 
     Returns:
       A float representing the cost (USD) of building this image.
@@ -46,6 +60,14 @@ class BotCostApi(recipe_api.RecipeApi):
     if self.m.led.run_id:  # pragma: nocover
       # If a led job, use a random id.
       build_id = 8882749049375545216
+
+    if self._bot_size not in (bot_size, UNKNOWN_BOT_SIZE):
+      with self.m.step.nest('unexpected bot_size') as presentation:
+        # For now, run this as an experiment while we confirm that we are
+        # getting the bot_size from the swarming dimensions correctly.
+        presentation.properties['discovered_bot_size'] = self._bot_size
+        presentation.step_text = 'expected bot_size "%s" got "%s"' % (
+            self._bot_size, bot_size)
 
     build = self.m.buildbucket.get(
         build_id, step_name='calculate build cost.buildbucket.get')
@@ -71,11 +93,7 @@ class BotCostApi(recipe_api.RecipeApi):
       cq_run_cost = self._calculate_cq_run_cost(orch_build_id, child_builds,
                                                 presentation)
       presentation.properties['cq_run_cost'] = round(cq_run_cost, 4)
-      # TODO(1068359): Log statements for debugging purposes. Remove after issue
-      # is closed.
       orch_build_cost = self._calculate_build_cost(orch_build_id, 'small')
-      presentation.logs['orch build cost'] = [str(orch_build_cost)]
-      presentation.logs['cq run cost'] = [str(cq_run_cost)]
 
   def _get_child_builds_cost(self, orch_build_id, child_builds, parent_step):
     """Get the cost of building child images during this cq run.
@@ -111,9 +129,6 @@ class BotCostApi(recipe_api.RecipeApi):
     if child_builds_missing_cost:
       parent_step.logs[
           'child builds missing build_cost'] = child_builds_missing_cost
-    # TODO(1068359): Log statement for debugging purposes. Remove after issue
-    # is closed.
-    parent_step.logs['all'] = [str(child_builds)]
     return total_child_build_cost
 
   def _calculate_cq_run_cost(self, orch_build_id, child_builds, parent_step):
