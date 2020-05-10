@@ -48,31 +48,38 @@ def GenTests(api):
   # These tests use the compressed wire format for actual testing of live code
   #  paths, but also the JSON format so that the expectation files are
   #  human-legible. The JSON path is no longer used in production.
-  yield (api.test('basic') +  #
-         api.buildbucket.simulated_collect_output([
-             api.skylab.test_with_multi_response(
-                 1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
-                 task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
-         ], step_name='collect skylab tasks v2.buildbucket.collect'))
+  yield api.test(
+      'basic',
+      api.buildbucket.simulated_collect_output([
+          api.skylab.test_with_multi_response(
+              1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
+              task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
+      ], step_name='collect skylab tasks v2.buildbucket.collect'),
+  )
 
-  yield (api.test('basic_without_JSON_output') +  #
-         api.buildbucket.simulated_collect_output([
-             api.skylab.test_with_multi_response(
-                 1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
-                 task_state=TaskState(verdict=TaskState.VERDICT_PASSED),
-                 exclude_json=True,
-             ),
-         ], step_name='collect skylab tasks v2.buildbucket.collect'))
+  yield api.test(
+      'basic_without_JSON_output',
+      api.buildbucket.simulated_collect_output([
+          api.skylab.test_with_multi_response(
+              1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
+              task_state=TaskState(verdict=TaskState.VERDICT_PASSED),
+              exclude_json=True,
+          ),
+      ], step_name='collect skylab tasks v2.buildbucket.collect'),
+  )
 
-  yield (
-      api.test('infra_failure') +  #
+  yield api.test(
+      'infra_failure',
       api.buildbucket.simulated_collect_output([
           api.skylab.test_with_multi_response(
               1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
               task_state=TaskState(life_cycle=TaskState.LIFE_CYCLE_CANCELLED)),
-      ], step_name='collect skylab tasks v2.buildbucket.collect'))
+      ], step_name='collect skylab tasks v2.buildbucket.collect'),
+  )
 
-  yield (api.test('build_without_responses') +  #
-         api.buildbucket.simulated_collect_output(
-             [build_pb2.Build(id=1234)],
-             step_name='collect skylab tasks v2.buildbucket.collect'))
+  yield api.test(
+      'build_without_responses',
+      api.buildbucket.simulated_collect_output(
+          [build_pb2.Build(id=1234)],
+          step_name='collect skylab tasks v2.buildbucket.collect'),
+  )

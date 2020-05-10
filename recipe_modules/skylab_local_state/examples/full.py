@@ -29,10 +29,12 @@ def RunSteps(api):
   api.skylab_local_state.save(save_req)
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.properties(
-             **{'$chromeos/skylab_local_state':
-                 SkylabLocalStateProperties(
-                     version=SkylabLocalStateProperties.Version(
-                         cipd_label='some-cipd-label',
-        ))}))
+  yield api.test(
+      'basic',
+      api.properties(
+          **{'$chromeos/skylab_local_state':
+             SkylabLocalStateProperties(
+                 version=SkylabLocalStateProperties.Version(
+                     cipd_label='some-cipd-label',
+                 ))}),
+  )

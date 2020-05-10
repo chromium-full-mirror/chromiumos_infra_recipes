@@ -97,8 +97,12 @@ def GenTests(api):
 
   yield api.test('setup_repo')
 
-  yield (api.test('no-upstream-attribute') +  #
-         api.step_data('repo forall', stdout=api.raw_io.output(forall_test_data)))
+  yield api.test(
+      'no-upstream-attribute',
+      api.step_data('repo forall', stdout=api.raw_io.output(forall_test_data)),
+  )
 
-  yield (api.test('missing-from-XML') +  #
-         api.step_data('diff remote and local manifest.git show', retcode=128))
+  yield api.test(
+      'missing-from-XML',
+      api.step_data('diff remote and local manifest.git show', retcode=128),
+  )

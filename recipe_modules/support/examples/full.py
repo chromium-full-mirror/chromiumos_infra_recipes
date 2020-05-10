@@ -16,5 +16,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.step_data('my-tool', stdout=api.json.output(dict(output='data'))))
+  yield api.test(
+      'basic',
+      api.step_data('my-tool', stdout=api.json.output(dict(output='data'))),
+  )

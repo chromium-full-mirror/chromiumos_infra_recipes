@@ -23,18 +23,24 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  yield (api.test('basic') +  #
-         api.buildbucket.simulated_collect_output([
-             api.skylab.test_with_execute_response_json(
-                 1234, TaskState(verdict=TaskState.VERDICT_PASSED))
-         ], step_name='collect skylab tasks.buildbucket.collect'))
+  yield api.test(
+      'basic',
+      api.buildbucket.simulated_collect_output([
+          api.skylab.test_with_execute_response_json(
+              1234, TaskState(verdict=TaskState.VERDICT_PASSED))
+      ], step_name='collect skylab tasks.buildbucket.collect'),
+  )
 
-  yield (api.test('infra_failure') +  #
-         api.buildbucket.simulated_collect_output([
-             api.skylab.test_with_execute_response_json(
-                 1234, TaskState(life_cycle=TaskState.LIFE_CYCLE_PENDING))
-         ], step_name='collect skylab tasks.buildbucket.collect'))
+  yield api.test(
+      'infra_failure',
+      api.buildbucket.simulated_collect_output([
+          api.skylab.test_with_execute_response_json(
+              1234, TaskState(life_cycle=TaskState.LIFE_CYCLE_PENDING))
+      ], step_name='collect skylab tasks.buildbucket.collect'),
+  )
 
-  yield (api.test('build_without_response') +  #
-         api.buildbucket.simulated_collect_output([build_pb2.Build(
-             id=1234)], step_name='collect skylab tasks.buildbucket.collect'))
+  yield api.test(
+      'build_without_response',
+      api.buildbucket.simulated_collect_output([build_pb2.Build(
+          id=1234)], step_name='collect skylab tasks.buildbucket.collect'),
+  )

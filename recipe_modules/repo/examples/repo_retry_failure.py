@@ -28,5 +28,9 @@ def attempt_retry_repo(api, attempt):
 
 
 def GenTests(api):
-  yield (api.test('repo_retry_failure') + attempt_retry_repo(api, 1) +
-         attempt_retry_repo(api, 2) + attempt_retry_repo(api, 3))
+  yield api.test(
+      'repo_retry_failure',
+      attempt_retry_repo(api, 1),
+      attempt_retry_repo(api, 2),
+      attempt_retry_repo(api, 3),
+  )
