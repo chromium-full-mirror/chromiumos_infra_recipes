@@ -149,16 +149,16 @@ def GenTests(api):
 
   yield api.test('missing', test_builder(builder='missing'))
 
-  yield api.test('no gitiles given', test_builder(gitiles=False))
+  yield api.test('no-gitiles-given', test_builder(gitiles=False))
 
-  yield api.test('no changes given', test_builder(gitiles=False, changes=False))
+  yield api.test('no-changes-given', test_builder(gitiles=False, changes=False))
 
   yield api.test(
-      'no config gitiles',
+      'no-config-gitiles',
       test_builder(builder='amd64-generic-cq', gitiles=False, changes=False))
 
-  yield api.test('has PRESUBMIT.py', test_builder(), api.cq(dry_run=True),
+  yield api.test('has-PRESUBMIT.py', test_builder(), api.cq(dry_run=True),
                  api.properties(test_filename='PRESUBMIT.py'))
 
-  yield api.test('has PRESUBMIT.cfg', test_builder(),
+  yield api.test('has-PRESUBMIT.cfg', test_builder(),
                  api.properties(test_filename='PRESUBMIT.cfg'))
