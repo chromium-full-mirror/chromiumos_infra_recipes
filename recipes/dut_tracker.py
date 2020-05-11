@@ -16,6 +16,8 @@ DEPS = [
     'swarming_cli',
 ]
 
+from PB.chromiumos.dut_tracking import MAX_PEND_TIME
+
 TASK_STATES = ['RUNNING', 'PENDING']
 
 
@@ -27,6 +29,7 @@ def RunSteps(api):
   with api.step.nest('query swarming'):
     bot_stats = []
     task_stats = []
+    pend_stats = []
 
     for policy in tracking_policies:
       with api.step.nest('querying ' + policy.name):
@@ -39,11 +42,22 @@ def RunSteps(api):
           task_count[state] = api.swarming_cli.get_task_counts(
               dims + task_dims, state, policy.lookback_hours)
 
+        if MAX_PEND_TIME in policy.modes:
+          pend_time = {
+              'name':
+                  policy.name,
+              'pend':
+                  api.swarming_cli.get_max_pending_time(dims + task_dims,
+                                                        policy.lookback_hours)
+          }
+          pend_stats.append(pend_time)
         bot_stats.append(bot_count)
         task_stats.append(task_count)
 
     api.easy.set_property_step('bot_stats', bot_stats)
     api.easy.set_property_step('task_stats', task_stats)
+    if pend_stats:
+      api.easy.set_property_step('pend_stats', pend_stats)
 
 
 def _bind_dimensions(dimensions):

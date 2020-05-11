@@ -158,6 +158,34 @@
     ]
   },
   {
+    "cmd": [
+      "[CLEANUP]/swarming-client/swarming.py",
+      "query",
+      "--swarming",
+      "chromeos-swarming.appspot.com",
+      "tasks/list?state=PENDING&tags=label-board:atlas&start=1336913604.5",
+      "--limit",
+      "1000"
+    ],
+    "infra_step": true,
+    "name": "query swarming.querying atlas.get task query result (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"items\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"created_ts\": \"2020-05-11T20:37:01.648454\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"created_ts\": \"2020-05-11T15:35:01.648454\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ], @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-05-11T20:48:03.437543\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "query swarming.set bot_stats",
     "~followup_annotations": [
@@ -171,6 +199,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@task_stats@[{\"PENDING\": {}, \"RUNNING\": {}, \"name\": \"atlas\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "query swarming.set pend_stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@pend_stats@[{\"name\": \"atlas\", \"pend\": 5.216944444444445}]@@@"
     ]
   },
   {

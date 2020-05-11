@@ -4,7 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import datetime
+from datetime import datetime
+from datetime import timedelta
 
 from recipe_engine import recipe_api
 
@@ -64,6 +65,53 @@ class SwarmingCli(recipe_api.RecipeApi):
     )
     return step
 
+  def _swarming_time_to_datetime(self, time_str):
+    format_str = '%Y-%m-%dT%H:%M:%S.%f'
+    return datetime.strptime(time_str, format_str)
+
+  def get_max_pending_time(self, dimensions, lookback_hours):
+    """Retrieves the list of tasks from Swarming based on dimensions.
+
+    Args:
+      dimensions (str): string containing key, value dimensions to query swarming.
+      lookback_hours (int): Number of hours to query swarming on.
+
+    Returns:
+      (float) Max pending time in hours.
+    """
+    task_list = self.get_task_list(dimensions, 'PENDING', lookback_hours,
+                                   limit=1000)
+    now = self._swarming_time_to_datetime(task_list['now'])
+    oldest_time = self._swarming_time_to_datetime(
+        task_list['items'][-1]['created_ts'])
+    # Hopefully there won't be tasks pending for days.
+    return (now - oldest_time).seconds / 3600.0
+
+  def get_task_list(self, dimensions, state, lookback_hours, limit=None):
+    """Retrieves the list of tasks from Swarming based on dimensions.
+
+    Args:
+      dimensions (str): string containing key, value dimensions to query swarming.
+      state (str): state of the tasks to query
+      lookback_hours (int): Number of hours to query swarming on.
+      limit (int): Number of tasks to return.
+    """
+    dim_args = ['state={}&'.format(state)]
+    for dim in dimensions:
+      dim_args.append('tags={}&'.format(dim))
+    dim_args.append('start={}'.format(
+        self._calculate_epoch_start(lookback_hours)))
+    cmd = [
+        'query', '--swarming', CHROMEOS_SWARMING_URL,
+        'tasks/list?' + ''.join(dim_args).rstrip('&')
+    ]
+    if limit:
+      cmd += ['--limit', str(limit)]
+    step = self._run(
+        'get task query result', cmd, test_stdout=lambda: self.test_api.
+        swarming_task_list_test_data(dimensions))
+    return step
+
   def get_task_counts(self, dimensions, state, lookback_hours):
     """Retrieves the count of tasks from Swarming based on dimensions.
 
@@ -99,5 +147,5 @@ class SwarmingCli(recipe_api.RecipeApi):
       float, time since epoch in seconds.
     """
     hours_back = lookback_hours or -24
-    return ((self.m.time.utcnow() + datetime.timedelta(hours=hours_back)) -
-            datetime.datetime(1970, 1, 1)).total_seconds()
+    return ((self.m.time.utcnow() + timedelta(hours=hours_back)) -
+            datetime(1970, 1, 1)).total_seconds()

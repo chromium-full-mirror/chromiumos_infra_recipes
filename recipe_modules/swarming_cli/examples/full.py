@@ -43,6 +43,10 @@ def RunSteps(api):
       task_count = api.swarming_cli.get_task_counts(dim, state, -48)
   api.assertions.assertEqual(int(task_count.get('busy', 0)), 0)
 
+  pend_time = api.swarming_cli.get_max_pending_time(query_dim, -48)
+  api.assertions.assertTrue(pend_time < 5.3)
+  api.assertions.assertTrue(pend_time > 5.2)
+
 
 def GenTests(api):
   yield api.test('basic')

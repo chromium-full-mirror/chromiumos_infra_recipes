@@ -1051,7 +1051,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
 			            	}
 			            ],
 			            "modes": [
-			            	"TASK_BOT_COUNT"
+			            	"TASK_BOT_COUNT",
+			            	"MAX_PEND_TIME"
 			            ],
 			            "lookbackHours": -24
 		            }

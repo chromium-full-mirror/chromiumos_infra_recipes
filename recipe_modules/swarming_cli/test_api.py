@@ -39,3 +39,20 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
       if 'cq' in dim:
         task_counts = {"count": "23", "now": "2020-03-27T19:08:08.207587"}
     return task_counts
+
+  def swarming_task_list_test_data(self, dimensions):
+    """Returns list of bots based on provided dimensions.
+
+    Args:
+      dimensions(dict): Dictionary of dimensions
+    """
+    task_counts = {"now": "2020-05-11T20:48:03.437543"}
+    task_counts["items"] = [
+        {
+            "created_ts": "2020-05-11T20:37:01.648454",
+        },
+        {
+            "created_ts": "2020-05-11T15:35:01.648454",
+        },
+    ]
+    return task_counts
