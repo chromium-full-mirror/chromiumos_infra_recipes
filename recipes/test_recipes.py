@@ -274,9 +274,11 @@ def _get_non_skipped_builders(api, builders):
 
     for skip_builder in skip_builders:
       if skip_builder not in builders:
-        raise ValueError(('Builder {} is specified in the {} footer, but is '
-                          'not in the builders list ({})').format(
-                              skip_builder, SKIP_BUILDERS_FOOTER, builders))
+        raise ValueError(
+            ('Builder {} is specified in the {} footer, but is '
+             'not in the builders list ({})').format(skip_builder,
+                                                     SKIP_BUILDERS_FOOTER,
+                                                     builders))
 
       builders.remove(skip_builder)
 
@@ -382,7 +384,7 @@ def GenTests(api):
 {}
 '''.format('\n'.join(footers))
 
-    return (api.step_data(
+    ret = api.step_data(
         'get non-skipped builders.gerrit changes',
         api.json.output([{
             'revisions': {
@@ -393,12 +395,12 @@ def GenTests(api):
                     }
                 }
             }
-        }])) +  #
-            api.step_data(
-                'get non-skipped builders.parse description',
-                api.json.output({
-                    SKIP_BUILDERS_FOOTER: skipped_builders
-                } if skipped_builders else {})))
+        }]))
+    ret += api.step_data(
+        'get non-skipped builders.parse description',
+        api.json.output({SKIP_BUILDERS_FOOTER: skipped_builders}
+                        if skipped_builders else {}))
+    return ret
 
   def buildbucket_search_test_data(builder):
     return api.buildbucket.simulated_search_results(
@@ -417,13 +419,12 @@ def GenTests(api):
       A TestData object.
     """
     return api.step_data(
-        launch_step_name(builder, 'led get-build'), stdout=api.json.output({
-            'job_slices': [{
+        launch_step_name(builder, 'led get-build'), stdout=api.json.output(
+            {'job_slices': [{
                 'userland': {
                     'recipe_name': recipe_name
                 }
-            }]
-        }))
+            }]}))
 
   def led_get_launch_test_data(builder):
     """Get step data for a 'led launch' command.
@@ -455,9 +456,7 @@ def GenTests(api):
     """
     return api.step_data(
         launch_step_name(builder, 'recipe analyze'),
-        api.json.output({
-            'recipes': recipes
-        }))
+        api.json.output({'recipes': recipes}))
 
   def collect_results_failed_test_data():
     """Get step data for failures in a 'swarming.collect' command.
@@ -479,7 +478,8 @@ def GenTests(api):
       recipe_test_api.TestData object.
     """
     return api.buildbucket.try_build(project=project, bucket=bucket,
-                                     builder=builder, git_repo=RECIPE_REPO_URL)
+                                     builder=builder, git_repo=RECIPE_REPO_URL,
+                                     priority=30)
 
   def two_cl_try_build(project, bucket, builder):
     """Return a try_build with two CLs attached to it.
@@ -543,143 +543,139 @@ def GenTests(api):
 }
 """)))
 
-  yield (
-      api.test('basic') +  #
+  yield api.test(
+      'basic',
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
-              builders=['staging-Annealing', 'staging-chromite-postsubmit'])
-      ) +  #
-      try_build(project='chromeos', bucket='infra', builder='test-recipes') +  #
+              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
+      try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # No builders are skipped
-      get_non_skipped_builders_test_data() +  #
+      get_non_skipped_builders_test_data(),
       # Buildbucket search results.
-      buildbucket_search_test_data('staging-Annealing') +  #
-      buildbucket_search_test_data('staging-chromite-postsubmit') +  #
+      buildbucket_search_test_data('staging-Annealing'),
+      buildbucket_search_test_data('staging-chromite-postsubmit'),
       # led get-build results.
       led_get_build_test_data(builder='staging-Annealing',
-                              recipe_name='annealing') +  #
+                              recipe_name='annealing'),
       led_get_build_test_data(builder='staging-chromite-postsubmit',
-                              recipe_name='test_chromite') +  #
+                              recipe_name='test_chromite'),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
-                               recipes=['annealing']) +  #
+                               recipes=['annealing']),
       recipe_analyze_test_data(builder='staging-chromite-postsubmit',
-                               recipes=[]) +  #
+                               recipes=[]),
       # led launch results. Note that only annealing is launched.
       led_get_launch_test_data(builder='staging-Annealing'))
 
-  yield (
-      api.test('new led get-build format') +  #
+  yield api.test(
+      'new led get-build format',
 
       # Specify builder to run.
-      api.properties(TestRecipesProperties(builders=['staging-Annealing'])) +  #
-      try_build(project='chromeos', bucket='infra', builder='test-recipes') +  #
+      api.properties(TestRecipesProperties(builders=['staging-Annealing'])),
+      try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # No builders are skipped
-      get_non_skipped_builders_test_data() +  #
+      get_non_skipped_builders_test_data(),
       # Buildbucket search results.
-      buildbucket_search_test_data('staging-Annealing') +  #
+      buildbucket_search_test_data('staging-Annealing'),
       # led get-build results.
       led_get_build_test_data_new(builder='staging-Annealing',
-                                  recipe_name='annealing') +  #
+                                  recipe_name='annealing'),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
-                               recipes=['annealing']) +  #
+                               recipes=['annealing']),
       # led launch results. Note that only annealing is launched.
       led_get_launch_test_data(builder='staging-Annealing'))
 
-  yield (
-      api.test('two_changes') +  #
+  yield api.test(
+      'two_changes',
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
-              builders=['staging-Annealing', 'staging-chromite-postsubmit'])
-      ) +  #
+              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
       two_cl_try_build(project='chromeos', bucket='infra',
-                       builder='test-recipes') +  #
+                       builder='test-recipes'),
       # Buildbucket search results.
-      buildbucket_search_test_data('staging-Annealing') +  #
-      buildbucket_search_test_data('staging-chromite-postsubmit') +  #
+      buildbucket_search_test_data('staging-Annealing'),
+      buildbucket_search_test_data('staging-chromite-postsubmit'),
       # led get-build results.
       led_get_build_test_data(builder='staging-Annealing',
-                              recipe_name='annealing') +  #
+                              recipe_name='annealing'),
       led_get_build_test_data(builder='staging-chromite-postsubmit',
-                              recipe_name='test_chromite') +  #
+                              recipe_name='test_chromite'),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
-                               recipes=['annealing']) +  #
+                               recipes=['annealing']),
       recipe_analyze_test_data(builder='staging-chromite-postsubmit',
-                               recipes=[]) +  #
+                               recipes=[]),
       # led launch results. Note that only annealing is launched.
       led_get_launch_test_data(builder='staging-Annealing'))
 
-  yield (
-      api.test('two_changes_mixed_repos') +  #
+  yield api.test(
+      'two_changes_mixed_repos',
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
-              builders=['staging-Annealing', 'staging-chromite-postsubmit'])
-      ) +  #
+              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
       two_cl_try_build_with_other_repo(project='chromeos', bucket='infra',
-                                       builder='test-recipes') +  #
+                                       builder='test-recipes'),
       # Buildbucket search results.
-      buildbucket_search_test_data('staging-Annealing') +  #
-      buildbucket_search_test_data('staging-chromite-postsubmit') +  #
+      buildbucket_search_test_data('staging-Annealing'),
+      buildbucket_search_test_data('staging-chromite-postsubmit'),
       # led get-build results.
       led_get_build_test_data(builder='staging-Annealing',
-                              recipe_name='annealing') +  #
+                              recipe_name='annealing'),
       led_get_build_test_data(builder='staging-chromite-postsubmit',
-                              recipe_name='test_chromite') +  #
+                              recipe_name='test_chromite'),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
-                               recipes=['annealing']) +  #
+                               recipes=['annealing']),
       recipe_analyze_test_data(builder='staging-chromite-postsubmit',
-                               recipes=[]) +  #
+                               recipes=[]),
       # led launch results. Note that only annealing is launched.
       led_get_launch_test_data(builder='staging-Annealing'))
 
-  yield (
-      api.test('skipped_builder') +  #
+  yield api.test(
+      'skipped_builder',
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
-              builders=['staging-Annealing', 'staging-chromite-postsubmit'])
-      ) +  #
-      try_build(project='chromeos', bucket='infra', builder='test-recipes') +  #
+              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
+      try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # The annealing builder is skipped
       get_non_skipped_builders_test_data(skipped_builders=['staging-Annealing']
-                                        ) +  #
+                                        ),
       # Buildbucket search results.
-      buildbucket_search_test_data('staging-chromite-postsubmit') +  #
+      buildbucket_search_test_data('staging-chromite-postsubmit'),
       # led get-build results.
       led_get_build_test_data(builder='staging-chromite-postsubmit',
-                              recipe_name='test_chromite') +  #
+                              recipe_name='test_chromite'),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-chromite-postsubmit',
                                recipes=[]))
 
-  yield (
-      api.test('failed_swarming_task') +  #
+  yield api.test(
+      'failed_swarming_task',
       # Specify one builder to run.
-      api.properties(TestRecipesProperties(builders=['staging-Annealing'])) +  #
-      try_build(project='chromeos', bucket='infra', builder='test-recipes') +  #
+      api.properties(TestRecipesProperties(builders=['staging-Annealing'])),
+      try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # No builders are skipped
-      get_non_skipped_builders_test_data() +  #
+      get_non_skipped_builders_test_data(),
       # Buildbucket search results
-      buildbucket_search_test_data('staging-Annealing') +  #
+      buildbucket_search_test_data('staging-Annealing'),
       # led get-build results
       led_get_build_test_data(builder='staging-Annealing',
-                              recipe_name='annealing') +  #
+                              recipe_name='annealing'),
       # recipe analyze results. Note that the annealing recipe is affected
       recipe_analyze_test_data(builder='staging-Annealing',
-                               recipes=['annealing']) +  #
+                               recipes=['annealing']),
       # led launch results
-      led_get_launch_test_data(builder='staging-Annealing') +  #
+      led_get_launch_test_data(builder='staging-Annealing'),
       # swarming TaskResults contain a failed task.
       collect_results_failed_test_data())
 
