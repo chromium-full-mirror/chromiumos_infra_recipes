@@ -30,12 +30,20 @@ def attempt_upload_file(api, attempt):
 def GenTests(api):
   yield api.test('basic')
 
-  yield (api.test('missing-source-tree') +  #
-         api.step_data('tar up source repo checkout.write version file',
-                       retcode=1))
+  yield api.test(
+      'missing-source-tree',
+      api.step_data('tar up source repo checkout.write version file',
+                    retcode=1),
+  )
 
-  yield (api.test('retry-success-gsutil') + attempt_upload_file(api, 1) +
-         attempt_upload_file(api, 2))
+  yield api.test(
+      'retry-success-gsutil',
+      attempt_upload_file(api, 1),
+      attempt_upload_file(api, 2),
+  )
 
-  yield (api.test('retry-fail-gsutil') + attempt_upload_file(api, 1) +
-         attempt_upload_file(api, 2) + attempt_upload_file(api, 3))
+  yield api.test(
+      'retry-fail-gsutil',
+      attempt_upload_file(api, 1),
+      attempt_upload_file(api, 2) + attempt_upload_file(api, 3),
+  )

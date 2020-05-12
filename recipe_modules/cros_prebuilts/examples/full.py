@@ -34,8 +34,10 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic')
 
-  yield (api.test('staging_branch') +  #
-         api.properties(**{
-             "$chromeos/cros_prebuilts":
-             CrosPrebuiltsProperties(use_staging_branch=True)
-         }))
+  yield api.test(
+      'staging_branch',
+      api.properties(**{
+          "$chromeos/cros_prebuilts":
+          CrosPrebuiltsProperties(use_staging_branch=True)
+      }),
+  )

@@ -24,5 +24,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') + api.buildbucket.simulated_search_results(
-      [build_pb2.Build()], 'find matching builds.buildbucket.search'))
+  yield api.test(
+      'basic',
+      api.buildbucket.simulated_search_results(
+          [build_pb2.Build()], 'find matching builds.buildbucket.search'),
+  )

@@ -27,30 +27,37 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic')
 
-  yield (api.test('has_fulfilled_dep') +  #
-         api.step_data('ensure manifest cq-depend fulfilled (2).git log',
-                       stdout=api.raw_io.output(
-                           'deadbeef\x1ECq-Depend: chromium:12345,'
-                           'chromium:IAmNotAnInteger,'
-                           'chrome-internal:67890\x00')) +  #
-         api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
-                       retcode=0))
+  yield api.test(
+      'has_fulfilled_dep',
+      api.step_data('ensure manifest cq-depend fulfilled (2).git log',
+                    stdout=api.raw_io.output(
+                        'deadbeef\x1ECq-Depend: chromium:12345,'
+                        'chromium:IAmNotAnInteger,'
+                        'chrome-internal:67890\x00')),
+      api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
+                    retcode=0),
+  )
 
-  yield (api.test('has_missing_dep') +  #
-         api.step_data('ensure manifest cq-depend fulfilled (2).git log',
-                       stdout=api.raw_io.output(
-                           'deadbeef\x1ECq-Depend:chromium:12345,'
-                           'chromium:IAmNotAnInteger,'
-                           'chrome-internal:67890\x00')) +  #
-         api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
-                       retcode=128))
+  yield api.test(
+      'has_missing_dep',
+      api.step_data('ensure manifest cq-depend fulfilled (2).git log',
+                    stdout=api.raw_io.output(
+                        'deadbeef\x1ECq-Depend:chromium:12345,'
+                        'chromium:IAmNotAnInteger,'
+                        'chrome-internal:67890\x00')),
+      api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
+                    retcode=128),
+  )
 
-  yield (api.test('find_project_path_fails') +  #
-         api.step_data(
-             'ensure manifest cq-depend fulfilled (2).git log',
-             stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
-                                      'chromium:IAmNotAnInteger,'
-                                      'chrome-internal:67890\x00')) +  #
-         api.step_data(
-             'ensure manifest cq-depend fulfilled (2).repo forall (2)',
-             stdout=api.raw_io.output('c|src/c|cros|refs/heads/other-branch|refs/heads/another-branch')))
+  yield api.test(
+      'find_project_path_fails',
+      api.step_data(
+          'ensure manifest cq-depend fulfilled (2).git log',
+          stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
+                                   'chromium:IAmNotAnInteger,'
+                                   'chrome-internal:67890\x00')),
+      api.step_data(
+          'ensure manifest cq-depend fulfilled (2).repo forall (2)',
+          stdout=api.raw_io.output('c|src/c|cros|refs/heads/other-branch'
+                                   '|refs/heads/another-branch')),
+  )

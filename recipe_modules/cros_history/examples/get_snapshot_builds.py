@@ -34,13 +34,17 @@ def GenTests(api):
       bt: api.cros_history.build_target_property(bt) for bt in build_targets
   }
 
-  yield (api.test('basic') + api.buildbucket.simulated_search_results([
-      build_pb2.Build(id=123,
-                      builder=build_pb2.BuilderID(builder='eve-snapshot'),
-                      input=dict(properties=build_target_props['eve'])),
-      build_pb2.Build(id=231,
-                      builder=build_pb2.BuilderID(builder='bob-snapshot'),
-                      input=dict(properties=build_target_props['bob'])),
-      build_pb2.Build(id=312,
-                      builder=build_pb2.BuilderID(builder='cq-orchestrator')),
-  ], 'get snapshot builds.buildbucket.search'))
+  yield api.test(
+      'basic',
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(id=123,
+                          builder=build_pb2.BuilderID(builder='eve-snapshot'),
+                          input=dict(properties=build_target_props['eve'])),
+          build_pb2.Build(id=231,
+                          builder=build_pb2.BuilderID(builder='bob-snapshot'),
+                          input=dict(properties=build_target_props['bob'])),
+          build_pb2.Build(id=312,
+                          builder=build_pb2.BuilderID(
+                              builder='cq-orchestrator')),
+      ], 'get snapshot builds.buildbucket.search'),
+  )
