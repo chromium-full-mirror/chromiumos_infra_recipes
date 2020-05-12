@@ -5,7 +5,7 @@
 # found in the LICENSE file.
 from collections import namedtuple
 
-from PB.chromiumos.bot_scaling import BotPolicy, RoboCropAction, ScalingAction
+from PB.chromiumos.bot_scaling import BotPolicy, ResourceUsage, RoboCropAction, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
@@ -47,7 +47,10 @@ class BotScalingApi(recipe_api.RecipeApi):
       demand = self.get_swarming_demand(swarming_stats, policy.bot_group)
       scaling_actions.append(self.get_scaling_action(demand, policy, configs))
 
-    return RoboCropAction(scaling_actions=scaling_actions)
+    quota_usage = self._get_quota_usage(scaling_actions, configs)
+
+    return RoboCropAction(scaling_actions=scaling_actions,
+                          resource_usage=quota_usage)
 
   def get_scaling_action(self, demand, bot_policy, configs):
     """The function that creates a ScalingAction for a bot group.
@@ -304,6 +307,31 @@ class BotScalingApi(recipe_api.RecipeApi):
         temp_dimensions.append('{}:{}'.format(name, val))
       policy_dimensions.append(temp_dimensions)
     return list(itertools.product(*policy_dimensions))
+
+  def _get_quota_usage(self, scaling_actions, configs):
+    """Method to calculate quota usage based on scaling actions.
+
+    Args:
+      robocrop_actions(list[ScalingAction]): Repeatable ScalingAction
+        configs.
+      configs(Configs): List of GCE Config objects.
+    Returns:
+      ResourceUsage, total resource usage across all bot groups.
+    """
+    config_map = self._get_prefix_to_gce_config(configs)
+    usage = ResourceUsage(vms=0, cpus=0, memory_gb=0)
+    for action in scaling_actions:
+      if action.actionable == ScalingAction.YES:
+        usage.vms += action.bots_requested
+        usage.cpus += action.bots_requested * action.bot_type.cores_per_bot
+      else:
+        for regional_action in action.regional_actions:
+          config = config_map.get(regional_action.prefix, None)
+          if config:
+            config = config_map[regional_action.prefix]
+            usage.vms += config.current_amount
+            usage.cpus += config.current_amount * action.bot_type.cores_per_bot
+    return usage
 
   def _get_prefix_to_gce_config(self, configs):
     """Helper method that returns the prefix to Config map.

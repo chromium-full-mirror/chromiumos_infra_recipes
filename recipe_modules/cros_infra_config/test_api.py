@@ -976,22 +976,22 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             			"regionRestrictions": [
             				{
             					"region": "us-central1-b",
-            					"prefix": "chromeos-ci-cq-us-central1-b-x32",
+            					"prefix": "prefix-first",
             					"weight": 0.245
             				},
             				{
             					"region": "us-central2-d",
-            					"prefix": "chromeos-ci-cq-us-central2-d-x32",
+            					"prefix": "prefix-second",
             					"weight": 0.31
             				},
             				{
             					"region": "us-east1-d",
-            					"prefix": "chromeos-ci-cq-us-east1-d-x32",
+            					"prefix": "prefix-third",
             					"weight": 0.245
             				},
             				{
             					"region": "us-west1-b",
-            					"prefix": "chromeos-ci-cq-us-west1-b-x32",
+            					"prefix": "prefix-fourth",
             					"weight": 0.2
             				}
             			],

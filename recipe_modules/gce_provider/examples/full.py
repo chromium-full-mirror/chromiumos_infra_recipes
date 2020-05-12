@@ -12,8 +12,7 @@ from PB.go.chromium.org.luci.gce.api.config.v1.config import Config
 
 
 def RunSteps(api):
-  config = api.gce_provider.get_current_config(
-      ['chromeos-ci-cq-us-central1-b-x32'])
+  config = api.gce_provider.get_current_config(['prefix-first'])
   api.assertions.assertEqual(len(config.vms), 1)
 
   prefix_map = {'prefix-first': 20, 'prefix-second': 25}

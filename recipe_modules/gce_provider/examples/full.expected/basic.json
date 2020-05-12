@@ -9,7 +9,7 @@
     ],
     "infra_step": true,
     "name": "gce-provider.config.Get",
-    "stdin": "{\"id\": \"chromeos-ci-cq-us-central1-b-x32\"}",
+    "stdin": "{\"id\": \"prefix-first\"}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"amount\": {@@@",
@@ -55,7 +55,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"lifetime\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"seconds\": \"86400\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"chromeos-ci-cq-us-central1-b-x32\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-first\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"revision\": \"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"swarming\": \"https://chromeos-swarming.appspot.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",

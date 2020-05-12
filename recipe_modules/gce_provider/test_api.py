@@ -26,18 +26,15 @@ class GceProviderTestApi(recipe_test_api.RecipeTestApi):
                 "image": "global/images/chromeos-bionic-20031500-6b26172a85c",
                 "size": "750"
             }],
-            "machineType":
-                "zones/{{.Zone}}/machineTypes/custom-32-65536",
+            "machineType": "zones/{{.Zone}}/machineTypes/custom-32-65536",
             "metadata": [{
                 "fromText": ""
             }],
-            "minCpuPlatform":
-                "Intel Broadwell",
+            "minCpuPlatform": "Intel Broadwell",
             "networkInterface": [{
                 "network": "global/networks/machine-provider-bot-network"
             }],
-            "project":
-                "chromeos-bot",
+            "project": "chromeos-bot",
             "serviceAccount": [{
                 "email":
                     "test-email@developer.gserviceaccount.com",
@@ -50,14 +47,13 @@ class GceProviderTestApi(recipe_test_api.RecipeTestApi):
                     "https://www.googleapis.com/auth/userinfo.email"
                 ]
             }],
-            "zone":
-                "us-central1-b"
+            "zone": "us-central1-b"
         },
         "currentAmount": 15,
         "lifetime": {
             "seconds": "86400"
         },
-        "prefix": "chromeos-ci-cq-us-central1-b-x32",
+        "prefix": "prefix-first",
         "revision": "4414d646bb94ed7b9129aa980bdf0794cc5ebc59",
         "swarming": "https://chromeos-swarming.appspot.com"
     }
