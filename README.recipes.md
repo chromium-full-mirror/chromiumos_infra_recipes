@@ -3591,7 +3591,7 @@ Args:
 Returns:
   (float) Max pending time in hours.
 
-&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#115)(self, dimensions, state, lookback_hours):**
+&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#117)(self, dimensions, state, lookback_hours):**
 
 Retrieves the count of tasks from Swarming based on dimensions.
 
@@ -3600,7 +3600,7 @@ Args:
   state (str): state of the tasks to query
   lookback_hours (int): Number of hours to query swarming on.
 
-&mdash; **def [get\_task\_list](/recipe_modules/swarming_cli/api.py#90)(self, dimensions, state, lookback_hours, limit=None):**
+&mdash; **def [get\_task\_list](/recipe_modules/swarming_cli/api.py#92)(self, dimensions, state, lookback_hours, limit=None):**
 
 Retrieves the list of tasks from Swarming based on dimensions.
 

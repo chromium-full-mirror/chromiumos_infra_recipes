@@ -82,8 +82,10 @@ class SwarmingCli(recipe_api.RecipeApi):
     task_list = self.get_task_list(dimensions, 'PENDING', lookback_hours,
                                    limit=1000)
     now = self._swarming_time_to_datetime(task_list['now'])
-    oldest_time = self._swarming_time_to_datetime(
-        task_list['items'][-1]['created_ts'])
+    oldest_time = now
+    items = task_list.get('items', [])
+    if items:
+      oldest_time = self._swarming_time_to_datetime(items[-1]['created_ts'])
     # Hopefully there won't be tasks pending for days.
     return (now - oldest_time).seconds / 3600.0
 
