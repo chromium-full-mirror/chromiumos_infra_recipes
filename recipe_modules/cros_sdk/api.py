@@ -178,7 +178,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       use_image (boolean): Mount the SDK file as an image.  Default: True.
       bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
       timeout_sec (int): Step timeout (in seconds).  Default: None if
-          bootstrap is True, otherwise 40 minutes.
+          bootstrap is True, otherwise 80 minutes.
       name (str): Step name.  Default: 'init sdk'.
 
     Returns:
@@ -197,7 +197,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
           ]
           replace = str(version) != disk_version
         if timeout_sec == 'DEFAULT':
-          timeout_sec = None if bootstrap else 40 * 60
+          timeout_sec = None if bootstrap else 80 * 60
 
         response = self.m.cros_build_api.SdkService.Create(
             CreateSdkRequest(

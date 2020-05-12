@@ -1567,7 +1567,7 @@ Args:
   use_image (boolean): Mount the SDK file as an image.  Default: True.
   bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
   timeout_sec (int): Step timeout (in seconds).  Default: None if
-      bootstrap is True, otherwise 40 minutes.
+      bootstrap is True, otherwise 80 minutes.
   name (str): Step name.  Default: 'init sdk'.
 
 Returns:
@@ -4187,11 +4187,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#100)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#96)(api, config, build_target, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#82)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#78)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#350)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#346)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4207,7 +4207,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#369)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#365)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

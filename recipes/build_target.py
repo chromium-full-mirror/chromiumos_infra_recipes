@@ -66,12 +66,8 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
     BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
 ]
 
-# All step timeouts are in seconds.
+# All step timeouts are in seconds.  All are moving to modules.
 STEP_TIMEOUTS = {
-    'uprev': 10 * 60,
-    'create_sdk': 40 * 60,
-    'update_sdk': 60 * 60,
-    'create_sysroot': 10 * 60,
     'install_toolchain': 30 * 60,
     'install_packages': 8 * 60 * 60,
     'build_image': 45 * 60,
