@@ -178,7 +178,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       use_image (boolean): Mount the SDK file as an image.  Default: True.
       bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
       timeout_sec (int): Step timeout (in seconds).  Default: None if
-          bootstrap is True, otherwise 80 minutes.
+          bootstrap is True, otherwise 90 minutes.
       name (str): Step name.  Default: 'init sdk'.
 
     Returns:
@@ -197,7 +197,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
           ]
           replace = str(version) != disk_version
         if timeout_sec == 'DEFAULT':
-          timeout_sec = None if bootstrap else 80 * 60
+          timeout_sec = None if bootstrap else 90 * 60
 
         response = self.m.cros_build_api.SdkService.Create(
             CreateSdkRequest(
@@ -256,7 +256,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
           or None.
       timeout_sec (int): Step timeout (in seconds), or None for no step timeout.
           Default: 24 hours if building from source or a toolchain change is
-          detected, otherwise 1 hour.
+          detected, otherwise 90 minutes.
       name (string): Step name.  Default: "update sdk".
     """
     with self.m.step.nest(name or 'update sdk'):
@@ -266,7 +266,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       if toolchain_cls:
         self.mark_sdk_as_dirty()
       if timeout_sec == 'DEFAULT':
-        timeout_sec = 24 * 60 * 60 if toolchain_cls or build_source else 60 * 60
+        timeout_sec = 24 * 60 * 60 if toolchain_cls or build_source else 90 * 60
 
       try:
         self.m.cros_build_api.SdkService.Update(

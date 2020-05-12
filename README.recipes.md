@@ -1567,7 +1567,7 @@ Args:
   use_image (boolean): Mount the SDK file as an image.  Default: True.
   bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
   timeout_sec (int): Step timeout (in seconds).  Default: None if
-      bootstrap is True, otherwise 80 minutes.
+      bootstrap is True, otherwise 90 minutes.
   name (str): Step name.  Default: 'init sdk'.
 
 Returns:
@@ -1659,7 +1659,7 @@ Args:
       or None.
   timeout_sec (int): Step timeout (in seconds), or None for no step timeout.
       Default: 24 hours if building from source or a toolchain change is
-      detected, otherwise 1 hour.
+      detected, otherwise 90 minutes.
   name (string): Step name.  Default: "update sdk".
 
 &mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#411)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
