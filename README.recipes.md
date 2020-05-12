@@ -98,6 +98,7 @@
   * [chrome:examples/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_examples_follower_needs_chrome_no_has_prebuilt)
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [chrome:examples/gclient_retry](#recipes-chrome_examples_gclient_retry)
+  * [cl_factory](#recipes-cl_factory) &mdash; Used to create sweeping changes by creating CLs in many repos.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
@@ -4264,6 +4265,11 @@ Checks a project conforms to its program's constraints.
 [DEPS](/recipe_modules/chrome/examples/gclient_retry.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/chrome/examples/gclient_retry.py#19)(api):**
+### *recipes* / [cl\_factory](/recipes/cl_factory.py)
+
+Used to create sweeping changes by creating CLs in many repos.
+
+&mdash; **def [RunSteps](/recipes/cl_factory.py#9)(api):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)
