@@ -5236,9 +5236,9 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#226)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#224)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#115)(api, requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#113)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -5248,7 +5248,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#199)(api, requests, enumerations, config):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#197)(api, requests, enumerations, config):**
 
 Execute request in the correct backend.
 
@@ -5257,13 +5257,13 @@ Args:
   enumerations: {tag: EnumerationResponse} dict.
   config: test_platform.Config instance.
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#243)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#241)(api, requests, responses):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#334)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#338)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#157)(api, requests, config):**
+&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#155)(api, requests, config):**
 
 Run the almost no-op traffic splitter step.
 
@@ -5281,7 +5281,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#282)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#281)(api, enumerations, responses):**
 
 &mdash; **def [validate\_requests](/recipes/test_platform/cros_test_platform.py#50)(api, requests):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
