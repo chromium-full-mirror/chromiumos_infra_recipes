@@ -41,7 +41,6 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       ScalingAction, comprehensive action to be taken by RoboCrop.
     """
-    previous_action = self.get_previous_action()
     scaling_actions = []
     for policy in bot_policy_config.bot_policies:
       demand = self.get_swarming_demand(swarming_stats, policy.bot_group)
@@ -189,27 +188,6 @@ class BotScalingApi(recipe_api.RecipeApi):
       bot_stats.append(bot_stats_hold)
       task_stats.extend(task_stats_hold)
     return SwarmingStats(bot_stats, task_stats)
-
-  def get_previous_action(self):
-    """Determines regional distribution of bot requests.
-
-    Returns:
-      dict, mapping of bot group to a ScalingAction.
-    """
-    # TODO(mikenichols): Refactor logic to ensure that the recipe can
-    # recover from previous failed executions.
-    try:
-      last_successful_run = self.m.cros_history.get_matching_builds(
-          self.m.buildbucket.build,
-          [common_pb2.SUCCESS], limit=25)[0]
-      action_struct = last_successful_run.output.properties['robocrop_action']
-    except IndexError:
-      action_struct = {}
-    previous_actions = {}
-    for _, actions in action_struct.items():
-      for action in actions:
-        previous_actions.update({action['botGroup']: action})
-    return previous_actions
 
   def get_current_gce_config(self, bot_policy_config):
     """Retrieves the current configuration from GCE Provider service.

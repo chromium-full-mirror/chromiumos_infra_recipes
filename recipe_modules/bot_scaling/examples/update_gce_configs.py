@@ -47,6 +47,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') + api.buildbucket.simulated_search_results(
-      [api.bot_scaling.previous_robocrop()],
-      'find matching builds.buildbucket.search'))
+  yield api.test('basic')

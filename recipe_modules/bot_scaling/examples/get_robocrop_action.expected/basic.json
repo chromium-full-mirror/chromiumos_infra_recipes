@@ -167,32 +167,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "find matching builds"
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "25",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:27Z\"}}"
-    ],
-    "infra_step": true,
-    "name": "find matching builds.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
     "name": "$result"
   }
 ]
