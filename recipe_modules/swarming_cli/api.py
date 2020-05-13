@@ -53,11 +53,11 @@ class SwarmingCli(recipe_api.RecipeApi):
     """
     dim_args = []
     for dim in dimensions:
-      dim_args.append('dimensions={}&'.format(dim))
+      dim_args.append('dimensions={}'.format(dim))
 
     cmd = [
         'query', '--swarming', CHROMEOS_SWARMING_URL,
-        'bots/count?' + ''.join(dim_args).rstrip('&')
+        'bots/count?' + '&'.join(dim_args)
     ]
     step = self._run(
         'get bot query result', cmd,
@@ -98,14 +98,14 @@ class SwarmingCli(recipe_api.RecipeApi):
       lookback_hours (int): Number of hours to query swarming on.
       limit (int): Number of tasks to return.
     """
-    dim_args = ['state={}&'.format(state)]
+    dim_args = ['state={}'.format(state)]
     for dim in dimensions:
-      dim_args.append('tags={}&'.format(dim))
+      dim_args.append('tags={}'.format(dim))
     dim_args.append('start={}'.format(
         self._calculate_epoch_start(lookback_hours)))
     cmd = [
         'query', '--swarming', CHROMEOS_SWARMING_URL,
-        'tasks/list?' + ''.join(dim_args).rstrip('&')
+        'tasks/list?' + '&'.join(dim_args)
     ]
     if limit:
       cmd += ['--limit', str(limit)]
@@ -122,14 +122,14 @@ class SwarmingCli(recipe_api.RecipeApi):
       state (str): state of the tasks to query
       lookback_hours (int): Number of hours to query swarming on.
     """
-    dim_args = ['state={}&'.format(state)]
+    dim_args = ['state={}'.format(state)]
     for dim in dimensions:
-      dim_args.append('tags={}&'.format(dim))
+      dim_args.append('tags={}'.format(dim))
     dim_args.append('start={}'.format(
         self._calculate_epoch_start(lookback_hours)))
     cmd = [
         'query', '--swarming', CHROMEOS_SWARMING_URL,
-        'tasks/count?' + ''.join(dim_args).rstrip('&')
+        'tasks/count?' + '&'.join(dim_args)
     ]
     step = self._run(
         'get task query result', cmd, test_stdout=
