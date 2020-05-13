@@ -44,6 +44,10 @@ def GenTests(api):
   orch_build = build_pb2.Build(id=123, status=common_pb2.STARTED,
                                start_time=timestamp_pb2.Timestamp(seconds=0),
                                update_time=timestamp_pb2.Timestamp(seconds=0))
-  yield (api.test('basic') + api.buildbucket.simulated_get(
-      orch_build,
-      step_name='calculate cq run cost.calculate build cost.buildbucket.get'))
+  yield api.test(
+      'basic',
+      api.buildbucket.simulated_get(
+          orch_build,
+          step_name='calculate cq run cost'
+          '.calculate build cost.buildbucket.get'),
+  )

@@ -21,10 +21,12 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.properties(
-             **{'$chromeos/autotest_status_parser':
-                 AutotestStatusParserProperties(
-                     version=AutotestStatusParserProperties.Version(
-                         cipd_label='some-cipd-label',
-        ))}))
+  yield api.test(
+      'basic',
+      api.properties(
+          **{'$chromeos/autotest_status_parser':
+             AutotestStatusParserProperties(
+                 version=AutotestStatusParserProperties.Version(
+                     cipd_label='some-cipd-label',
+                 ))}),
+  )

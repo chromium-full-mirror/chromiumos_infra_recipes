@@ -103,36 +103,41 @@ def RunSteps(api, properties):
       step_data=test_step_data)
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.buildbucket.ci_build() +  #
-         api.step_data('A test step with retcode', retcode=5) +  #
-         api.step_data('A test step with timeout', times_out_after=5) +  #
-         api.step_data('basic_with_stdout',
-           stdout=api.raw_io.output('Test output'),
-           stderr=api.raw_io.output('Errors')) +  #
-         api.properties(**{
-             '$chromeos/analysis_service':
-             AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
-         })
+  yield api.test(
+      'basic',
+      api.buildbucket.ci_build(),
+      api.step_data('A test step with retcode', retcode=5),
+      api.step_data('A test step with timeout', times_out_after=5),
+      api.step_data('basic_with_stdout',
+                    stdout=api.raw_io.output('Test output'),
+                    stderr=api.raw_io.output('Errors')),
+      api.properties(**{
+          '$chromeos/analysis_service':
+          AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
+      }),
   )
-  yield (api.test('basic-nonascii') +  #
-         api.buildbucket.ci_build() +  #
-         api.step_data('basic_with_stdout',
-           # coding: utf8
-           stdout=api.raw_io.output('國華'),
-           stderr=api.raw_io.output('Errors')) +  #
-         api.properties(**{
-             '$chromeos/analysis_service':
-             AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
-         })
+
+  yield api.test(
+      'basic-nonascii',
+      api.buildbucket.ci_build(),
+      api.step_data('basic_with_stdout',
+                    # coding: utf8
+                    stdout=api.raw_io.output('國華'),
+                    stderr=api.raw_io.output('Errors')),
+      api.properties(**{
+          '$chromeos/analysis_service':
+          AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
+      }),
   )
-  yield (api.test('basic-truncated') +  #
-         api.buildbucket.ci_build() +  #
-         api.step_data('basic_with_stdout',
-           stdout=api.raw_io.output('Test output'),
-           stderr=api.raw_io.output('Errors')) +  #
-         api.properties(**{
-             '$chromeos/analysis_service':
-             AnalysisServiceProperties(max_stdout_stderr_bytes=4)
-         })
+
+  yield api.test(
+      'basic-truncated',
+      api.buildbucket.ci_build(),
+      api.step_data('basic_with_stdout',
+                    stdout=api.raw_io.output('Test output'),
+                    stderr=api.raw_io.output('Errors')),
+      api.properties(**{
+          '$chromeos/analysis_service':
+          AnalysisServiceProperties(max_stdout_stderr_bytes=4)
+      }),
   )
