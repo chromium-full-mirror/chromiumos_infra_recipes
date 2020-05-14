@@ -1,5 +1,12 @@
 [
   {
+    "cmd": [],
+    "name": "running...",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@yes I ran@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

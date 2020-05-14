@@ -1,0 +1,30 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.cl_factory;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message ClFactoryProperties {
+  // Regex specifying repos to operate on.
+  repeated string repo_regex = 1;
+
+  // TODO: WIP, figure out approach.
+  // Command to execute on the repos to create the CL.
+  string command = 2;
+
+  // Template for forming commit messages. Variables interpolated in the
+  // template include those available to 'repo forall' which include
+  // $REPO_PROJECT, $REPO_PATH, $REPO_REMOTE, $REPO_LREV, $REPO_RREV,
+  // $REPO_COUNT. See `repo help forall`.
+  string message_template = 3;
+
+  // Reviewers to add to the created CLs.
+  repeated string reviewers = 4;
+
+  // Hashtags to add to the created CLs.
+  repeated string hashtags = 5;
+}

@@ -4519,9 +4519,11 @@ Return the kwargs as a json string.
 &mdash; **def [RunSteps](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#19)(api):**
 ### *recipes* / [cl\_factory](/recipes/cl_factory.py)
 
+[DEPS](/recipes/cl_factory.py#15): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
 Used to create sweeping changes by creating CLs in many repos.
 
-&mdash; **def [RunSteps](/recipes/cl_factory.py#9)(api):**
+&mdash; **def [RunSteps](/recipes/cl_factory.py#22)(api, properties):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)
