@@ -971,7 +971,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
             			"botGroup": "cq",
             			"botType": {
             				"botSize": "large",
-            				"coresPerBot": 32
+            				"coresPerBot": 32,
+				            "memoryGb": 64
             			},
             			"regionRestrictions": [
             				{

@@ -43,6 +43,7 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
         bot_size="small",
         cores_per_bot=4,
         hourly_cost=.337,
+        memory_gb=16,
     )
 
   def robocrop_bot_policy_config(self):

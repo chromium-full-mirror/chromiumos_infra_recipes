@@ -302,6 +302,7 @@ class BotScalingApi(recipe_api.RecipeApi):
       if action.actionable == ScalingAction.YES:
         usage.vms += action.bots_requested
         usage.cpus += action.bots_requested * action.bot_type.cores_per_bot
+        usage.memory_gb += action.bots_requested * action.bot_type.memory_gb
       else:
         for regional_action in action.regional_actions:
           config = config_map.get(regional_action.prefix, None)
@@ -309,6 +310,7 @@ class BotScalingApi(recipe_api.RecipeApi):
             config = config_map[regional_action.prefix]
             usage.vms += config.current_amount
             usage.cpus += config.current_amount * action.bot_type.cores_per_bot
+            usage.memory_gb += config.current_amount * action.bot_type.memory_gb
     return usage
 
   def _get_prefix_to_gce_config(self, configs):
