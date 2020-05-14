@@ -23,13 +23,48 @@
   },
   {
     "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[CLEANUP]/tmp_tmp_2",
+      "-ensure-file",
+      "infra/tools/protoc/linux-amd64 protobuf_version:v3.11.4",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "generate binary config.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-protobuf_version\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/protoc/linux-amd64\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
       "/bin/bash",
       "[CLEANUP]/tmp_tmp_1/regenerate_configs.sh",
       "-b"
     ],
     "env_suffixes": {
       "PATH": [
-        "RECIPE_REPO[depot_tools]"
+        "RECIPE_REPO[depot_tools]",
+        "[CLEANUP]/tmp_tmp_2"
       ]
     },
     "name": "generate binary config.regenerate configs",
