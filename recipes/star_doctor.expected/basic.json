@@ -74,6 +74,26 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "commit changes",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@not configured to commit changes@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "commit changes.git status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

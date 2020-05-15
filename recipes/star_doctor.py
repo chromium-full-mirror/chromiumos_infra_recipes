@@ -9,6 +9,8 @@ Automatically updates binary config files and updates Goldeneye config
 json files.
 """
 
+from PB.recipes.chromeos.star_doctor import StarDoctorProperties
+
 DEPS = [
     'recipe_engine/cipd',
     'recipe_engine/context',
@@ -20,8 +22,10 @@ DEPS = [
 
 INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
 
+PROPERTIES = StarDoctorProperties
 
-def RunSteps(api):
+
+def RunSteps(api, properties):
   with api.step.nest('set up'):
     workdir = api.path.mkdtemp()
     api.git.clone(INFRA_CONFIG_URL, target_path=workdir, timeout_sec=3 * 60)
@@ -39,6 +43,16 @@ def RunSteps(api):
       with api.context(**{'env_suffixes': {'PATH': [cipd_dir]}}):
         api.step('regenerate configs', ['/bin/bash', regen_path, '-b'],
                  timeout=3 * 60)
+
+  with api.step.nest('commit changes') as presentation:
+    with api.context(cwd=workdir):
+      changed_files = api.git.get_working_dir_diff_files()
+      if not changed_files:  # pragma: nocover
+        presentation.step_text = 'no files changed'
+        return
+      if not properties.commit_changes:
+        presentation.step_text = 'not configured to commit changes'
+      # TODO: Add code to add and commit the change below.
 
 
 def GenTests(api):
