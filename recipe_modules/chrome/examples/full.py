@@ -73,32 +73,40 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic'))
+  yield api.test('basic')
 
-  yield (api.test('with_properties') + #
-         api.properties(**{
-             "$chromeos/chrome":
-             ChromeProperties(parallel_sync_jobs=42)
-         }))
+  yield api.test(
+      'with_properties',
+      api.properties(**{
+          "$chromeos/chrome":
+          ChromeProperties(parallel_sync_jobs=42)
+      }),
+  )
 
-  yield (api.test('with-properties-custom-build') + #
-         api.properties(**{
-             "$chromeos/chrome":
-             ChromeProperties(
-                 version='deadbeef',
-                 deps_isolate=ChromeProperties.DepsIsolate(
-                     isolated_hash='aaa',
-                     isolate_server='aaa.com'
-                 )),
-         }))
+  yield api.test(
+      'with-properties-custom-build',
+      api.properties(**{
+          "$chromeos/chrome":
+          ChromeProperties(
+              version='deadbeef',
+              deps_isolate=ChromeProperties.DepsIsolate(
+                  isolated_hash='aaa',
+                  isolate_server='aaa.com'
+              )),
+      }),
+  )
 
-  yield (api.test('no-needs-chrome') + #
-         api.step_data(
-             'call chromite.api.PackageService/BuildsChrome.read output file',
-             api.file.read_raw(content='{"builds_chrome": false}')))
+  yield api.test(
+      'no-needs-chrome',
+      api.step_data(
+          'call chromite.api.PackageService/BuildsChrome.read output file',
+          api.file.read_raw(content='{"builds_chrome": false}')),
+  )
 
-  yield (api.test('no-has-prebuilt') + #
-         api.step_data(
-             'call chromite.api.PackageService/HasChromePrebuilt'
-             '.read output file',
-             api.file.read_raw(content='{"has_prebuilt": false}')))
+  yield api.test(
+      'no-has-prebuilt',
+      api.step_data(
+          'call chromite.api.PackageService/HasChromePrebuilt'
+          '.read output file',
+          api.file.read_raw(content='{"has_prebuilt": false}')),
+  )

@@ -55,10 +55,12 @@ def GenTests(api):
     return api.step_data(
         step_text, times_out_after=api.chrome.gclient_sync_timeout_seconds + 1)
 
-  yield (api.test('basic') +  #
-         attempt_gclient_sync(api, 1, 'internal checkout fails retry') +  #
-         attempt_gclient_sync(api, 2, 'internal checkout fails retry') +  #
-         attempt_gclient_sync(api, 1, 'external checkout fails retry') +  #
-         attempt_gclient_sync(api, 2, 'external checkout fails retry') +  #
-         attempt_gclient_sync(api, 1, 'internal checkout passes retry') +  #
-         attempt_gclient_sync(api, 1, 'external checkout passes retry'))
+  yield api.test(
+      'basic',
+      attempt_gclient_sync(api, 1, 'internal checkout fails retry'),
+      attempt_gclient_sync(api, 2, 'internal checkout fails retry'),
+      attempt_gclient_sync(api, 1, 'external checkout fails retry'),
+      attempt_gclient_sync(api, 2, 'external checkout fails retry'),
+      attempt_gclient_sync(api, 1, 'internal checkout passes retry'),
+      attempt_gclient_sync(api, 1, 'external checkout passes retry'),
+  )
