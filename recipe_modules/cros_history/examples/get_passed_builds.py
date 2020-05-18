@@ -16,7 +16,8 @@ DEPS = [
     'cros_history',
 ]
 
-from PB.recipe_modules.chromeos.cros_history.examples.get_passed_builds import GetPassedBuildsProperties
+from PB.recipe_modules.chromeos.cros_history.examples.get_passed_builds import (
+    GetPassedBuildsProperties)
 
 PROPERTIES = GetPassedBuildsProperties
 
@@ -33,20 +34,21 @@ def _build_with_changes(build):
 
 
 def GenTests(api):
-  yield (
-      api.test('patch_without_history') +
+  yield api.test(
+      'patch_without_history',
       api.buildbucket.simulated_search_results(
-          [], 'get change build history.buildbucket.search') + api.properties(
-              GetPassedBuildsProperties(input_build_patches=[
-                  common_pb2.GerritChange(change=1234),
-              ])) +
+          [], 'get change build history.buildbucket.search'),
+      api.properties(
+          GetPassedBuildsProperties(input_build_patches=[
+              common_pb2.GerritChange(change=1234),
+          ])),
       api.properties(
           GetPassedBuildsProperties(
               input_target_patches=[common_pb2.GerritChange(change=2341)])))
 
-  yield (
-      api.test('passed_builds_with_history') + api.buildbucket.build(
-          _build_with_changes(build_pb2.Build())) +
+  yield api.test(
+      'passed_builds_with_history',
+      api.buildbucket.build(_build_with_changes(build_pb2.Build())),
       api.buildbucket.simulated_search_results([
           _build_with_changes(
               build_pb2.Build(id=123, builder=build_pb2.BuilderID(
@@ -57,12 +59,13 @@ def GenTests(api):
           _build_with_changes(
               build_pb2.Build(id=312, builder=build_pb2.BuilderID(
                   builder='cq-orch'), status=common_pb2.SUCCESS)),
-      ], 'get change build history.buildbucket.search') + api.buildbucket.build(
+      ], 'get change build history.buildbucket.search'),
+      api.buildbucket.build(
           _build_with_changes(
-              build_pb2.Build(builder=build_pb2.BuilderID(builder='cq-orch'))))
-      + api.properties(
+              build_pb2.Build(builder=build_pb2.BuilderID(builder='cq-orch')))),
+      api.properties(
           GetPassedBuildsProperties(
-              input_build_patches=[common_pb2.GerritChange(change=2341)])) +
+              input_build_patches=[common_pb2.GerritChange(change=2341)])),
       api.properties(
           GetPassedBuildsProperties(output_builds=[
               _build_with_changes(

@@ -11,6 +11,7 @@ DEPS = [
     'cros_tags',
 ]
 
+
 def RunSteps(api):
   snapshot = bbcommon_pb2.GitilesCommit(id='deadbeef')
   expected_tags = [
@@ -32,8 +33,10 @@ def RunSteps(api):
 
   api.assertions.assertEqual(tags, expected_tags)
 
-  tags = [bbcommon_pb2.StringPair(key=d['key'], value=d['value'])
-          for d in expected_tags]
+  tags = [
+      bbcommon_pb2.StringPair(key=d['key'], value=d['value'])
+      for d in expected_tags
+  ]
 
   api.assertions.assertTrue(
       api.cros_tags.has_entry('parent_buildbucket_id',
@@ -48,7 +51,9 @@ def RunSteps(api):
   api.assertions.assertTrue(
       api.cros_tags.has_entry('commit_position', str(snapshot.position), tags))
 
+
 def GenTests(api):
-  yield (api.test('basic') + #
-         api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                  builder='postsubmit-orchestrator'))
+  yield api.test(
+      'basic',
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='postsubmit-orchestrator'))

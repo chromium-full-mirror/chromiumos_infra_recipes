@@ -7,6 +7,7 @@
 
 from recipe_engine import recipe_api
 
+
 class CrosTagsApi(recipe_api.RecipeApi):
   """A module for generating tags."""
 
@@ -20,11 +21,12 @@ class CrosTagsApi(recipe_api.RecipeApi):
       list[{key, value}] to output as buildbucket tags
     """
     tags = []
-    tags.append(self._key_value('parent_buildbucket_id',
-                                str(self.m.buildbucket.build.id)))
+    tags.append(
+        self._key_value('parent_buildbucket_id',
+                        str(self.m.buildbucket.build.id)))
     tags.append(self._key_value('snapshot', snapshot.id))
     tags.append(self._key_value('commit_position', str(snapshot.position)))
-    return tags;
+    return tags
 
   def _key_value(self, key, value):
     return {

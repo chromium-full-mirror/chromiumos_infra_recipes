@@ -43,8 +43,6 @@ def GenTests(api):
           build_pb2.Build(id=231,
                           builder=build_pb2.BuilderID(builder='bob-snapshot'),
                           input=dict(properties=build_target_props['bob'])),
-          build_pb2.Build(id=312,
-                          builder=build_pb2.BuilderID(
-                              builder='cq-orchestrator')),
-      ], 'get snapshot builds.buildbucket.search'),
-  )
+          build_pb2.Build(
+              id=312, builder=build_pb2.BuilderID(builder='cq-orchestrator')),
+      ], 'get snapshot builds.buildbucket.search'))

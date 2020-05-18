@@ -25,8 +25,7 @@ def RunSteps(api):
 
 def GenTests(api):
   expect = ['a', 'b']
-  yield (
-      api.test('basic') +  #
-      api.post_check(
-          lambda check, steps: check(steps['set passed_tests'].output_properties['passed_tests'] == expect)
-      ))
+  yield api.test(
+      'basic',
+      api.post_check(lambda check, steps: check(steps[
+          'set passed_tests'].output_properties['passed_tests'] == expect)))

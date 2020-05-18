@@ -55,9 +55,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
           passed_builders.add(build.builder.builder)
           passed_builds.append(build)
 
-      presentation.step_text = ('some builds already completed'
-                                if passed_builds else
-                                'found no completed builds')
+      presentation.step_text = ('some builds already completed' if passed_builds
+                                else 'found no completed builds')
       passed_builds.sort(key=lambda build: build.builder.builder)
       for build in passed_builds:
         title = self.m.naming.get_build_title(build)
@@ -82,9 +81,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         passed_tests = build_output.get(PASSED_TESTS_KEY, [])
         all_passed_tests |= set(passed_tests)
 
-      presentation.step_text = ('some tests already passed'
-                                if all_passed_tests else
-                                'found no previously passed tests')
+      presentation.step_text = ('some tests already passed' if all_passed_tests
+                                else 'found no previously passed tests')
       if all_passed_tests:
         presentation.logs['list of passed tests'] = sorted(all_passed_tests)
 
@@ -234,9 +232,10 @@ class CrosHistoryApi(recipe_api.RecipeApi):
           value=CrosHistoryApi._buildset_tag_from_snapshot(snapshot))
       tags.append(buildset_tag)
 
-    build_predicate = rpc_pb2.BuildPredicate(
-        builder=builder, gerrit_changes=patches, tags=tags,
-        create_time=create_time, build=build_range)
+    build_predicate = rpc_pb2.BuildPredicate(builder=builder,
+                                             gerrit_changes=patches, tags=tags,
+                                             create_time=create_time,
+                                             build=build_range)
 
     builds = self.m.buildbucket.search(
         build_predicate, limit=limit,
