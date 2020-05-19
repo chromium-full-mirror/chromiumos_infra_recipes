@@ -311,9 +311,7 @@
     "name": "set output properties",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8QGOwcGuLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKi2thYACwQb1w==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgBAAo7wPR\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}}@@@",
-      "@@@SET_BUILD_PROPERTY@responses@{\"default\": {\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}}}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgBAAo7wPR\\n\"@@@"
     ]
   },
   {

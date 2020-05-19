@@ -339,10 +339,6 @@ def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
     marshalled = _marshal_responses(responses)
-    step.properties['responses'] = marshalled
-    if 'default' in marshalled:
-      step.properties['response'] = marshalled['default']
-
     step.properties['compressed_responses'] = _base64_compress_proto(responses)
     step.properties['compressed_json_responses'] = _base64_compress_dict(
         marshalled)
@@ -1073,4 +1069,4 @@ def GenTests(api):
                               )
                       })))) +  #
       api.post_check(lambda check, steps: check(
-          len(GetBuildProperties(steps).get('responses', {})) > 0)))
+          len(GetBuildProperties(steps).get('compressed_responses', {})) > 0)))
