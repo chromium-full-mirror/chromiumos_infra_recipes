@@ -210,7 +210,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         'snapshot' is specified then it will insert 'buildset' tag for SHA1.
 
     Returns:
-      list[Build] which meet the conditions ordered from latest to oldest.
+      list[Build] which meet the conditions ordered from latest to oldest.  The
+        current build is never included in the list.
     """
     tags = [] if not tags else tags
 
@@ -237,9 +238,16 @@ class CrosHistoryApi(recipe_api.RecipeApi):
                                              create_time=create_time,
                                              build=build_range)
 
+    # buildbucket.search returns at most |limit| builds, so we need to ask for
+    # more to be sure that we can detect overflow.  Ask for 2 extra, since we
+    # might strip ourselves from the results.
     builds = self.m.buildbucket.search(
-        build_predicate, limit=limit,
+        build_predicate, limit=limit + 2 if limit > 0 else limit,
         url_title_fn=self.m.naming.get_build_title)
+
+    # We are likely to have found ourselves, due to the group_key.
+    # Remove this after
+    builds = [b for b in builds if b.id != self.m.buildbucket.build.id]
 
     # We'd prefer to stop rather than return truncated results.
     if limit and len(builds) > limit:

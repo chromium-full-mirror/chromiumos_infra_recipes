@@ -4411,9 +4411,9 @@ Used to create sweeping changes by creating CLs in many repos.
 &mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#13)(api):**
 ### *recipes* / [cros\_history:examples/get\_matching\_builds](/recipe_modules/cros_history/examples/get_matching_builds.py)
 
-[DEPS](/recipe_modules/cros_history/examples/get_matching_builds.py#10): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/cros_history/examples/get_matching_builds.py#10): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_matching_builds.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_matching_builds.py#18)(api):**
 ### *recipes* / [cros\_history:examples/get\_passed\_builds](/recipe_modules/cros_history/examples/get_passed_builds.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_passed_builds.py#12): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
