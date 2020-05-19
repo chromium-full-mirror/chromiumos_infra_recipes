@@ -94,9 +94,18 @@
   },
   {
     "cmd": [],
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild",
+    "name": "prepare artifacts.call prepare funcs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@_prepare_toolchain@['VERIFIED_CHROME_LLVM_ORDERFILE'] => NEEDED@@@",
+      "@@@STEP_LOG_END@_prepare_toolchain@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "prepare artifacts.call prepare funcs.call chromite.api.ToolchainService/PrepareForBuild",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"profileInfo\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
@@ -143,9 +152,9 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.write input file",
+    "name": "prepare artifacts.call prepare funcs.call chromite.api.ToolchainService/PrepareForBuild.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"profileInfo\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"sysroot\": {@@@",
@@ -195,9 +204,9 @@
       ]
     },
     "infra_step": true,
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.call build API script",
+    "name": "prepare artifacts.call prepare funcs.call chromite.api.ToolchainService/PrepareForBuild.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -217,16 +226,16 @@
       ]
     },
     "infra_step": true,
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.read output file",
+    "name": "prepare artifacts.call prepare funcs.call chromite.api.ToolchainService/PrepareForBuild.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "prepare artifacts.call chromite.api.ToolchainService/PrepareForBuild.call response",
+    "name": "prepare artifacts.call prepare funcs.call chromite.api.ToolchainService/PrepareForBuild.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
@@ -248,6 +257,15 @@
   },
   {
     "cmd": [],
+    "name": "prepare artifacts (2).call prepare funcs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@_prepare_pointless@['EBUILD_LOGS'] => POINTLESS@@@",
+      "@@@STEP_LOG_END@_prepare_pointless@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "prepare artifacts (2).set artifact_prep",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -259,6 +277,15 @@
     "name": "prepare artifacts (3)",
     "~followup_annotations": [
       "@@@STEP_TEXT@Build need is UNKNOWN@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "prepare artifacts (3).call prepare funcs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@_prepare_unknown@['IMAGE_ZIP'] => UNKNOWN@@@",
+      "@@@STEP_LOG_END@_prepare_unknown@@@"
     ]
   },
   {

@@ -636,11 +636,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         ret = self._prepare_for_build_100(chroot, sysroot, artifacts_info,
                                           test_data=test_data)
 
-      self.m.easy.set_property_step('artifact_prep',
-                                    json_format.MessageToDict(
-                                        artifacts.PrepareForBuildResponse(
-                                            build_relevance=ret)),
-                                    step_name='set artifact_prep')
+      self.m.easy.set_property_step(
+          'artifact_prep',
+          json_format.MessageToDict(
+              artifacts.PrepareForBuildResponse(build_relevance=ret)),
+          step_name='set artifact_prep')
       if ret == artifacts.PrepareForBuildResponse.NEEDED:
         presentation.step_text = 'Build is NEEDED'
       elif ret == artifacts.PrepareForBuildResponse.UNKNOWN:
@@ -715,13 +715,17 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     result = artifacts.PrepareForBuildResponse.POINTLESS
     # Sorting is done here only to give us consistency in the expected.json
     # for our tests.
-    for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
-      res = func(chroot, sysroot, types, input_artifacts,
-                 artifacts_info.profile_info, test_data=test_data)
-      # If this func says NEEDED, or the result so far is POINTLESS, then the
-      # result is what this func said.
-      if (res == artifacts.PrepareForBuildResponse.NEEDED or
-          result == artifacts.PrepareForBuildResponse.POINTLESS):
-        result = res
+    with self.m.step.nest('call prepare funcs') as pres:
+      for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
+        res = func(chroot, sysroot, types, input_artifacts,
+                   artifacts_info.profile_info, test_data=test_data)
+        pres.logs[func.__name__] = '%s => %s' % ([
+            BuilderConfig.Artifacts.ArtifactTypes.Name(x) for x in types
+        ], artifacts.PrepareForBuildResponse.BuildRelevance.Name(res))
+        # If this func says NEEDED, or the result so far is POINTLESS, then the
+        # result is what this func said.
+        if (res == artifacts.PrepareForBuildResponse.NEEDED or
+            result == artifacts.PrepareForBuildResponse.POINTLESS):
+          result = res
 
     return result
