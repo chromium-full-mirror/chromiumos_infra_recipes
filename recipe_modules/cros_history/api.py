@@ -22,6 +22,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosHistoryApi, self).__init__(*args, **kwargs)
+    self._use_group_key = not properties.disable_group_key
     self._lookback_seconds = properties.lookback_seconds or 5 * 24 * 60 * 60
 
   @property
@@ -229,20 +230,36 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       # we can't use the snapshot directly because output_gitiles_commit
       # is not currently implemented, TODO(crbug/990539)
       buildset_tag = common_pb2.StringPair(
-          key='buildset',
-          value=CrosHistoryApi._buildset_tag_from_snapshot(snapshot))
+          key='buildset', value=self._buildset_tag_from_snapshot(snapshot))
       tags.append(buildset_tag)
 
-    build_predicate = rpc_pb2.BuildPredicate(builder=builder,
-                                             gerrit_changes=patches, tags=tags,
-                                             create_time=create_time,
-                                             build=build_range)
+    predicates = [
+        rpc_pb2.BuildPredicate(builder=builder, gerrit_changes=patches,
+                               tags=tags, create_time=create_time,
+                               build=build_range)
+    ]
+
+    # See https://crbug.com/1051623#c13.  If we have a
+    # cq_equivalent_cl_group_key, then LUCI says the builds are effectively for
+    # the same changes, and we can use them.
+    # Per the docstring of buildbucket.search, the predicate argument is either
+    # "a BuildPredicate object, or a list thereof.  If it is a list, the
+    # predicates are connected with logical OR."
+    if self._use_group_key:
+      group_key = self.m.cros_tags.cq_equivalent_cl_group_key
+      if group_key:
+        predicates.append(
+            rpc_pb2.BuildPredicate(
+                builder=builder, gerrit_changes=patches, tags=[
+                    common_pb2.StringPair(key='cq_equivalent_cl_group_key',
+                                          value=group_key)
+                ], create_time=create_time, build=build_range))
 
     # buildbucket.search returns at most |limit| builds, so we need to ask for
     # more to be sure that we can detect overflow.  Ask for 2 extra, since we
     # might strip ourselves from the results.
     builds = self.m.buildbucket.search(
-        build_predicate, limit=limit + 2 if limit > 0 else limit,
+        predicates, limit=limit + 2 if limit > 0 else limit,
         url_title_fn=self.m.naming.get_build_title)
 
     # We are likely to have found ourselves, due to the group_key.

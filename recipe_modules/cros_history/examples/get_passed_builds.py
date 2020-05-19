@@ -12,6 +12,7 @@ from google.protobuf import struct_pb2
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'cros_history',
 ]
@@ -36,6 +37,7 @@ def _build_with_changes(build):
 def GenTests(api):
   yield api.test(
       'patch_without_history',
+      api.cq(full_run=True),
       api.buildbucket.simulated_search_results(
           [], 'get change build history.buildbucket.search'),
       api.properties(
@@ -48,7 +50,14 @@ def GenTests(api):
 
   yield api.test(
       'passed_builds_with_history',
-      api.buildbucket.build(_build_with_changes(build_pb2.Build())),
+      api.cq(full_run=True),
+      api.buildbucket.build(
+          _build_with_changes(
+              build_pb2.Build(
+                  builder=build_pb2.BuilderID(builder='cq-orch'), tags=[{
+                      'key': 'cq_equivalent_cl_group_key',
+                      'value': 'GROUP_KEY'
+                  }]))),
       api.buildbucket.simulated_search_results([
           _build_with_changes(
               build_pb2.Build(id=123, builder=build_pb2.BuilderID(
@@ -60,9 +69,6 @@ def GenTests(api):
               build_pb2.Build(id=312, builder=build_pb2.BuilderID(
                   builder='cq-orch'), status=common_pb2.SUCCESS)),
       ], 'get change build history.buildbucket.search'),
-      api.buildbucket.build(
-          _build_with_changes(
-              build_pb2.Build(builder=build_pb2.BuilderID(builder='cq-orch')))),
       api.properties(
           GetPassedBuildsProperties(
               input_build_patches=[common_pb2.GerritChange(change=2341)])),

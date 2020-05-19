@@ -1195,13 +1195,13 @@ Args:
 &emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#267)(self):**
 ### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
 
-[DEPS](/recipe_modules/cros_history/__init__.py#9): [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#175)(cls, builds):**
+&emsp; **@classmethod**<br>&mdash; **def [build\_target\_dict](/recipe_modules/cros_history/api.py#176)(cls, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -1212,11 +1212,11 @@ Args:
 
 Returns: a dict(str, build_pb2.Build) of build_target names.
 
-&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#167)(cls, build):**
+&emsp; **@classmethod**<br>&mdash; **def [get\_build\_target](/recipe_modules/cros_history/api.py#168)(cls, build):**
 
 Take a build_pb2 and get its build_target name or return None.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#144)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#145)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -1229,7 +1229,7 @@ Args:
 Returns:
   list[Build] which meet the conditions ordered from latest to oldest.
 
-&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#32)(self, tags=None):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#33)(self, tags=None):**
 
 Retrieve passed builds with the same patches as current build.
 
@@ -1239,14 +1239,14 @@ Args:
 Returns:
   list([build_pb2.Build]): Passed builds with at most one build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#68)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#69)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#105)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#106)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -1262,7 +1262,7 @@ Args:
 Returns:
   list[Build] builds with the same snapshot and additional filtering.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#91)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#92)(self, tests):**
 
 Record the tests that passed in the current run.
 
@@ -1272,7 +1272,7 @@ have passed and which have not.
 Args:
   tests (sequence[str]): (Unique) names of the tests that passed.
 
-&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#27)(self):**
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#28)(self):**
 
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
@@ -4430,9 +4430,9 @@ Used to create sweeping changes by creating CLs in many repos.
 &mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_matching_builds.py#18)(api):**
 ### *recipes* / [cros\_history:examples/get\_passed\_builds](/recipe_modules/cros_history/examples/get_passed_builds.py)
 
-[DEPS](/recipe_modules/cros_history/examples/get_passed_builds.py#12): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_history/examples/get_passed_builds.py#12): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_passed_builds.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_passed_builds.py#26)(api, properties):**
 ### *recipes* / [cros\_history:examples/get\_passed\_tests](/recipe_modules/cros_history/examples/get_passed_tests.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_passed_tests.py#10): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

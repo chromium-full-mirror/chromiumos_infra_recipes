@@ -9,4 +9,7 @@ package recipe_modules.chromeos.cros_history;
 message CrosHistoryProperties {
   // Number of seconds to look back for passed builds.
   int64 lookback_seconds = 1;
+
+  // Whether to disable using cq_equivalent_cl_group_key.
+  bool disable_group_key = 2;
 }
