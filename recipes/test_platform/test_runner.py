@@ -368,6 +368,7 @@ def execution_steps(api, properties, envvars):
     dut_state = _DUT_STATE_NEEDS_REPAIR
     prejob_response = None
     run_test_response = None
+    upload_to_gs_response = None
     try:
       # prejob and test failures are detected when parsing results.
       # An exception from the steps here indicates an infrastructure
@@ -375,9 +376,10 @@ def execution_steps(api, properties, envvars):
       prejob_response = prejob(
           api, config=phosphorus_config, request=properties.request,
           dut_hostname=dut_hostname, load_response=load_response)
-      run_test_response = run_test_specific_steps(
-          api, phosphorus_config=phosphorus_config, properties=properties,
-          dut_hostname=dut_hostname)
+      if not _prejob_failed(prejob_response):
+        run_test_response = run_test_specific_steps(
+            api, phosphorus_config=phosphorus_config, properties=properties,
+            dut_hostname=dut_hostname)
       result = get_results(api, load_response.results_dir)
       if _should_upload_to_gs(properties, result):
         upload_to_gs_response = upload_sync_results(
@@ -682,6 +684,7 @@ def GenTests(api):
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
+      _successful_prejob_step(),
       api.step_data(
           'execution steps.run test.call `phosphorus`.run-test',
           retcode=1),
@@ -801,7 +804,6 @@ def GenTests(api):
       _request_properties(),
       _mock_load_step(),
       _prejob_step_with_state(phosphorus.prejob.PrejobResponse.FAILED),
-      _successful_run_test_step(),
   )
 
   yield api.test(
