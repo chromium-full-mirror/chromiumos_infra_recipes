@@ -254,9 +254,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       resp = self.m.cros_build_api.ArtifactsService.BundleArtifacts(
           req, infra_step=True, test_output_data=test_data)
     except Exception as e:  # pragma: nocover
-      self.m.disk_usage.track(step_name='track disk usage', depth=0)
-      self.m.disk_usage.track(step_name='track disk usage', depth=1,
-                              dir='/b/s/w/')
+      self.m.disk_usage.track(step_name='track disk usage', depth=2,
+                              dir='/b/s/w/ir/cache')
       raise e
 
     # Create files_by_artifact.
