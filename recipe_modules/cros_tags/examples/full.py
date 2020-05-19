@@ -5,14 +5,21 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 
+from PB.recipe_modules.chromeos.cros_tags.examples.test import (
+    TestInputProperties)
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
+    'recipe_engine/properties',
     'cros_tags',
 ]
 
+PROPERTIES = TestInputProperties
 
-def RunSteps(api):
+
+def RunSteps(api, properties):
   snapshot = bbcommon_pb2.GitilesCommit(id='deadbeef')
   expected_tags = [
       {
@@ -28,10 +35,27 @@ def RunSteps(api):
           'value': str(snapshot.position),
       },
   ]
+  if properties.cq_cl_group_key:
+    expected_tags.append({
+        'key': 'cq_cl_group_key',
+        'value': str(properties.cq_cl_group_key),
+    })
+
+  if properties.cq_equivalent_cl_group_key:
+    expected_tags.append({
+        'key': 'cq_equivalent_cl_group_key',
+        'value': str(properties.cq_equivalent_cl_group_key),
+    })
 
   tags = api.cros_tags.make_schedule_tags(snapshot)
 
   api.assertions.assertEqual(tags, expected_tags)
+
+  api.assertions.assertEqual(api.cros_tags.cq_equivalent_cl_group_key,
+                             properties.cq_equivalent_cl_group_key or None)
+
+  api.assertions.assertEqual(api.cros_tags.cq_cl_group_key,
+                             properties.cq_cl_group_key or None)
 
   tags = [
       bbcommon_pb2.StringPair(key=d['key'], value=d['value'])
@@ -53,7 +77,31 @@ def RunSteps(api):
 
 
 def GenTests(api):
+  equiv = u'01f806668b9e02978b40f699340d5ad7c0da85fb4446d3421c41e790'
+  group = u'099ed4f822eaff88f1f0d0cae8c40f09e212b0672c2497afe9f88449'
   yield api.test(
-      'basic',
+      'basic', api.cq(full_run=True),
+      api.properties(
+          TestInputProperties(cq_cl_group_key=group,
+                              cq_equivalent_cl_group_key=equiv)),
+      api.buildbucket.ci_build(
+          project='chromeos', bucket='postsubmit',
+          builder='postsubmit-orchestrator', tags=[
+              bbcommon_pb2.StringPair(key='cq_cl_group_key', value=group),
+              bbcommon_pb2.StringPair(key='cq_equivalent_cl_group_key',
+                                      value=equiv)
+          ]))
+
+  yield api.test(
+      'no_group_key_tags', api.cq(full_run=True),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='postsubmit-orchestrator'))
+
+  yield api.test(
+      'cq-inactive',
+      api.buildbucket.ci_build(
+          project='chromeos', bucket='postsubmit',
+          builder='postsubmit-orchestrator', tags=[
+              bbcommon_pb2.StringPair(key='cq_equivalent_cl_group_key',
+                                      value=equiv)
+          ]))

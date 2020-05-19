@@ -1,0 +1,16 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_tags.examples;
+
+message TestInputProperties {
+  // What cq_equivialent_cl_group should this be in.
+  string cq_equivalent_cl_group_key = 1;
+
+  // What cq_cl_group should this be in.
+  string cq_cl_group_key = 2;
+}
+

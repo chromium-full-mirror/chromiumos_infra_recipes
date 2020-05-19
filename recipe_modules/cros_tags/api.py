@@ -26,6 +26,12 @@ class CrosTagsApi(recipe_api.RecipeApi):
                         str(self.m.buildbucket.build.id)))
     tags.append(self._key_value('snapshot', snapshot.id))
     tags.append(self._key_value('commit_position', str(snapshot.position)))
+    group_key = self.cq_cl_group_key
+    if group_key:
+      tags.append(self._key_value('cq_cl_group_key', group_key))
+    group_key = self.cq_equivalent_cl_group_key
+    if group_key:
+      tags.append(self._key_value('cq_equivalent_cl_group_key', group_key))
     return tags
 
   def _key_value(self, key, value):
@@ -40,3 +46,45 @@ class CrosTagsApi(recipe_api.RecipeApi):
       if (key, value) == (t.key, t.value):
         return True
     return False
+
+  @property
+  def cq_equivalent_cl_group_key(self):
+    """Return the cq_equivalent_cl_group_key, if any.
+
+    Returns:
+      (str) cq_equivalent_cl_group_key, or None
+    """
+    # If CQ is not active, then this tag should be ignored.
+    if self.m.cq.state == self.m.cq.INACTIVE:
+      return None
+    # TODO(crbug/1051623): once 2208069 is live, refactor this and add tests.
+    try:
+      # Fixed in crrev.com/c/2208069.
+      return self.m.cq.equivalent_cl_group_key
+    except ValueError:  # pragma: no cover
+      # CQ (more likely, our tests) did not set a value.
+      return None
+    except AttributeError:
+      # Crrev.com/c/2208069 has not landed yet.
+      for t in self.m.buildbucket.build.tags:
+        if t.key == 'cq_equivalent_cl_group_key':
+          return t.value
+    return None
+
+  @property
+  def cq_cl_group_key(self):
+    """Return the cq_cl_group_key, if any.
+
+    Returns:
+      (str) cq_cl_group_key, or None
+    """
+    # If CQ is not active, then this tag should be ignored.
+    if self.m.cq.state == self.m.cq.INACTIVE:
+      return None
+    try:
+      # Fixed in crrev.com/c/2208069.
+      return self.m.cq.cl_group_key
+    except ValueError:
+      # CQ (more likely, our tests) did not set a value.
+      pass
+    return None

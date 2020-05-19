@@ -1803,7 +1803,7 @@ This is where the build is processed. It will contain the target base
 checkout and any modifications made by the build.
 ### *recipe_modules* / [cros\_tags](/recipe_modules/cros_tags)
 
-[DEPS](/recipe_modules/cros_tags/__init__.py#5): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/cros_tags/__init__.py#5): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq]
 
 API for generating tags.
 
@@ -1811,7 +1811,21 @@ API for generating tags.
 
 A module for generating tags.
 
-&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#37)(self, key, value, tags):**
+&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#74)(self):**
+
+Return the cq_cl_group_key, if any.
+
+Returns:
+  (str) cq_cl_group_key, or None
+
+&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#50)(self):**
+
+Return the cq_equivalent_cl_group_key, if any.
+
+Returns:
+  (str) cq_equivalent_cl_group_key, or None
+
+&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#43)(self, key, value, tags):**
 
 Returns whether tags contains a tag with key and value.
 
@@ -4526,9 +4540,9 @@ Used to create sweeping changes by creating CLs in many repos.
 &mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#27)(api, properties):**
 ### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
 
-[DEPS](/recipe_modules/cros_tags/examples/full.py#8): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/cros_tags/examples/full.py#11): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#22)(api, properties):**
 ### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#10): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
