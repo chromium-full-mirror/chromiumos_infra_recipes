@@ -46,7 +46,7 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def buildbucket_build(project='chromeos', bucket='cq', builder='atlas-cq',
-                        build_target='atlas', tags=None,
+                        build_target='atlas', tags=None, recipes_version='prod',
                         revision='2d72510e447ab60a9728aeea2362d8be2cbd7789',
                         cls=None):
     build = api.buildbucket.ci_build_message(project=project, bucket=bucket,
@@ -58,6 +58,9 @@ def GenTests(api):
       build.input.gerrit_changes.extend(cls)
     if build_target:
       build_target = common.BuildTarget(name=build_target)
+    if recipes_version:
+      build.exe.cipd_package = 'CIPD_PACKAGE'
+      build.exe.cipd_version = recipes_version
     return (
         api.buildbucket.build(build) +  #
         api.properties(

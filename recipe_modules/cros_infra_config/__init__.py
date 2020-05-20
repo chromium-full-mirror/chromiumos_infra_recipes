@@ -5,6 +5,7 @@
 
 DEPS = {
     'buildbucket': 'recipe_engine/buildbucket',
+    'cipd': 'recipe_engine/cipd',
     'context': 'recipe_engine/context',
     'step': 'recipe_engine/step',
     'depot_gitiles': 'depot_tools/gitiles',
@@ -18,4 +19,3 @@ from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
 
 PROPERTIES = CrosInfraConfigProperties
-

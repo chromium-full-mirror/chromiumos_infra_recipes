@@ -46,6 +46,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._gitiles_commit = None
     self._gerrit_changes = []
 
+    # The sha of the recipes package from cipd.
+    self._package_git_revision = None
+
+  @property
+  def package_git_revision(self):
+    return self._package_git_revision or self._get_package_git_revision()
+
   @property
   def gitiles_commit(self):
     return self._gitiles_commit
@@ -286,6 +293,19 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._gitiles_commit = commit
     self._gerrit_changes = changes or []
 
+  def _get_package_git_revision(self):
+    """Return the git_revision from our cipd package."""
+    ret = None
+    package = self.m.buildbucket.build.exe.cipd_package
+    if package:
+      version = self.m.buildbucket.build.exe.cipd_version
+      desc = self.m.cipd.describe(package, version)
+      for tag in desc.tags:
+        if tag.tag.startswith('git_revision'):
+          self._package_git_revision = tag.tag.split(':')[1]
+          ret = self._package_git_revision
+    return ret
+
   def configure_builder(self, commit=None, changes=None,
                         name='configure builder'):
     """Configure the builder.
@@ -304,6 +324,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       BuilderConfig or None
     """
     with self.m.step.nest(name) as presentation:
+      self.m.easy.set_property_step('recipes_git_revision',
+                                    self.package_git_revision)
+
       config = self.config
       if config:
         presentation.logs['builder config'] = [str(config)]
