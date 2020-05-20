@@ -8,6 +8,7 @@ from recipe_engine.recipe_api import Property
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/path',
     'recipe_engine/step',
     'cros_build_api',

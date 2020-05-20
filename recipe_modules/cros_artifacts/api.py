@@ -538,6 +538,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
               'files_by_artifact': files_by_artifact,
           }, step_name='output artifact GS paths')
 
+      if self.m.cq.state == self.m.cq.DRY:
+        presentation.step_text = 'Not publishing artifacts in dry run'
+        return
+
       # Now publish any artifacts that have publishing information.  This is
       # done here (rather than adding api.cros_artifacts.publish_artifacts)
       # because we know that we just uploaded all of the artifacts to GS

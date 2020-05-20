@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
@@ -62,6 +63,8 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test('basic')
+
+  yield api.test('dry-run', api.cq(dry_run=True))
 
   yield api.test('api-1.0.0',
                  api.properties(TestInputProperties(build_api_version='1.0.0')))
