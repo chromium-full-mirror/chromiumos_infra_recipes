@@ -236,6 +236,7 @@
   * [portage:examples/full](#recipes-portage_examples_full)
   * [presubmit_cq](#recipes-presubmit_cq) &mdash; Launches presubmit tests for CQ.
   * [presubmit_tests](#recipes-presubmit_tests) &mdash; Recipe for running presubmit on multiple CLs.
+  * [project_migrator](#recipes-project_migrator) &mdash; Run on changes to model.
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [repo:examples/full](#recipes-repo_examples_full)
@@ -5460,6 +5461,20 @@ Launches presubmit tests for CQ.
 Recipe for running presubmit on multiple CLs.
 
 &mdash; **def [RunSteps](/recipes/presubmit_tests.py#32)(api, properties):**
+### *recipes* / [project\_migrator](/recipes/project_migrator.py)
+
+[DEPS](/recipes/project_migrator.py#24): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Run on changes to model.yaml and HWID databases.
+
+Copies the changed files into a project-local location and regenerates merged
+configuration data.
+
+&mdash; **def [RunSteps](/recipes/project_migrator.py#42)(api, properties):**
+
+&mdash; **def [require](/recipes/project_migrator.py#36)(cond, message):**
+
+Require a given condition be true or throw a ValueError.
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

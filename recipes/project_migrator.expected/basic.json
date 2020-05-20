@@ -1,0 +1,276 @@
+[
+  {
+    "cmd": [],
+    "name": "cloning public overlay"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "example.com/public/",
+      "[START_DIR]/public"
+    ],
+    "infra_step": true,
+    "name": "cloning public overlay.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cloning private overlay"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "example.com/private/",
+      "[START_DIR]/private"
+    ],
+    "infra_step": true,
+    "name": "cloning private overlay.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cloning hwid repo"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "chrome-internal.googlesource.com/chromeos/chromeos-hwid",
+      "[START_DIR]/hwid"
+    ],
+    "infra_step": true,
+    "name": "cloning hwid repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Checking files to update"
+  },
+  {
+    "cmd": [],
+    "name": "cloning destination repo"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "example.com/some/project/repo",
+      "[START_DIR]/dest"
+    ],
+    "infra_step": true,
+    "name": "cloning destination repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/dest/dest/imported"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "ensure [START_DIR]/dest/dest/imported directory exists"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/public/some/model.yaml",
+      "[START_DIR]/dest/dest/imported/public_model.yaml"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "copy public model.yaml"
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/dest/dest/imported/public_model.yaml"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git add"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/private/some/model.yaml",
+      "[START_DIR]/dest/dest/imported/private_model.yaml"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "copy private model.yaml"
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/dest/dest/imported/private_model.yaml"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git add (2)"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "../hwid/v3/SOME_KEY",
+      "[START_DIR]/dest/dest/imported/hwid"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "copy HWID database"
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/dest/dest/imported/hwid"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git add (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git diff"
+  },
+  {
+    "cmd": [],
+    "name": "git transaction"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "example.com/some/project/repo",
+      "refs/heads/master:"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Updating model.yaml and HWID database due to external commit.\n\nThis commit was performed automatically by the project_migrator.py recipe.\n",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Updating model.yaml and HWID database due to external commit.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@This commit was performed automatically by the project_migrator.py recipe.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "example.com/some/project/repo",
+      "HEAD:refs/heads/master"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

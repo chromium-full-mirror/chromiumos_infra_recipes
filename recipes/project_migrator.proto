@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package recipes.chromeos.project_migrator;
+
+// Repo and path to model.yaml
+message ModelYamlConfig {
+  string repo = 1; // URL to git repo containing model.yaml
+  string path = 2; // path inside URL to model.yaml
+}
+
+message ProjectMigratorProperties {
+  // Destination repo for changes
+  string dest_repo = 1;
+
+  // Repo and path to public model.yaml
+  ModelYamlConfig public_yaml = 2;
+
+  // Repo and path to private model.yaml
+  ModelYamlConfig private_yaml = 3;
+
+  // Key for HWID database
+  string hwid_key = 4;
+}
