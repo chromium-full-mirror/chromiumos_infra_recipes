@@ -35,30 +35,6 @@ class FailuresApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(FailuresApi, self).__init__(*args, **kwargs)
-    self._disable_silences = properties.disable_silences
-
-  def _get_silence_reason(self, step_name):
-    """Query SoM to see if the step was silenced.
-
-    Args:
-      step_name (str): A full step name, e.g.
-        "build results|[FAILED] chromeos.bucket.builder"
-
-    Return:
-      A str explaining the silence, or None if there is no silence on the step.
-    """
-    if self._disable_silences:
-      return None
-
-    # TODO(crbug.com/903414): Remove ignore exceptions once calling SoM is
-    # stable.
-    with self.ignore_exceptions():
-      annotation = self.m.cros_som.get_annotation(step_name)
-
-      if annotation is None:
-        return None
-
-      return self.m.cros_som.get_silence_reason(annotation)
 
   def _proto_to_step_status(self, proto_status):
     """Convert from common_pb2.Status to api.step status.
@@ -85,19 +61,7 @@ class FailuresApi(recipe_api.RecipeApi):
         presentation.status = self._proto_to_step_status(status)
       for link_text, link_url in link_map.items():
         presentation.links[link_text] = link_url
-
-      silence_reason = self._get_silence_reason(self.m.step.active_result.name)
-      if silence_reason:
-        # Sheriff-o-Matic monitors failed steps, so we cannot modify the
-        # step name because it is silenced. For example, imagine the step
-        # "build results|[FAILED] chromeos.bucket.builder" is failing and
-        # silenced in SoM. If in the next run we change the step name to
-        # "build results|[FAILED BUT SILENCED] chromeos.bucket.builder",
-        # there will be a new (unsilenced) failure, and the old (silenced)
-        # failure will disappear from SoM.
-        presentation.logs['silence reason'] = [silence_reason]
-
-      return silence_reason is not None
+      return
 
   def _get_failures(self, kind, runs, get_status, is_critical, get_title,
                     get_link_map, get_id):
@@ -106,7 +70,6 @@ class FailuresApi(recipe_api.RecipeApi):
       failed_runs = [
           run for run in runs if get_status(run) != common_pb2.SUCCESS
       ]
-      silenced_failure_count = 0
       only_infra_failure = True
 
       for failed_run in sorted(failed_runs, key=get_title):
@@ -116,15 +79,13 @@ class FailuresApi(recipe_api.RecipeApi):
         status = get_status(failed_run)
         critical = is_critical(failed_run)
 
-        silenced = self._present_run(title, link_map, status, critical)
-        if silenced:
-          silenced_failure_count += 1
+        self._present_run(title, link_map, status, critical)
         only_infra_failure &= (status == common_pb2.INFRA_FAILURE)
 
         if critical:
           critical_failures.append(
               self.Failure(kind=kind, title=title, link_map=link_map,
-                           fatal=not silenced, id=fail_id))
+                           fatal=True, id=fail_id))
 
       success_runs = [run for run in runs if run not in failed_runs]
       for success_run in sorted(success_runs, key=get_title):
@@ -134,19 +95,13 @@ class FailuresApi(recipe_api.RecipeApi):
 
         self._present_run(title, link_map, status)
 
-      success_count = len(success_runs)
-
       if not critical_failures:
         status = self.m.step.SUCCESS
         step_text = 'all critical {}s succeeded'.format(kind)
-        if silenced_failure_count:  #pragma: no cover
-          step_text += ' ({} failures were silenced)'.format(
-              silenced_failure_count)
       else:
         status = self.m.step.EXCEPTION if only_infra_failure else self.m.step.FAILURE
-        fail_count = len(failed_runs) - silenced_failure_count
-        step_text = '{} {}s failed, {} succeeded, {} failures silenced'.format(
-            fail_count, kind, success_count, silenced_failure_count)
+        step_text = '{} {}s failed, {} succeeded'.format(
+            len(failed_runs), kind, len(success_runs))
 
       results_pres.status = status
       results_pres.step_text = step_text
@@ -365,26 +320,6 @@ class FailuresApi(recipe_api.RecipeApi):
         self.m.buildbucket.is_critical, self.m.naming.get_vm_test_title,
         self.m.urls.get_vm_test_link_map, get_id)
 
-  def get_moblab_vm_test_failures(self, moblab_vm_tests,
-                                  baseline_moblab_vm_tests=None):
-    """Logs Moblab VM test status to UI, but does not rais on failed tests.
-
-    Args:
-      moblab_vm_tests (list[Build]): List of Moblab VM test buildbucket results.
-      baseline_moblab_vm_tests (list[Build]): List of Moblab VM test
-        buildbucket results from the baseline tests.
-
-    Returns:
-      list[Failure]: All failures discovered in the given runs filtered
-      by baseline failures.
-    """
-    get_id = self.m.naming.get_moblab_vm_test_title
-    return self._get_baseline_validated_failures(
-        'moblab vm test', moblab_vm_tests, baseline_moblab_vm_tests or [],
-        self.get_build_status, self.m.buildbucket.is_critical,
-        self.m.naming.get_moblab_vm_test_title,
-        self.m.urls.get_vm_test_link_map, get_id)
-
   def get_build_status(self, build):
     """Retrieve the status of the build.
 
@@ -406,7 +341,7 @@ class FailuresApi(recipe_api.RecipeApi):
       bool: True if the test is critical and has failed.
     """
     if isinstance(test, build_pb2.Build):
-      return self.is_critical_vm_test_failure(test)
+      return self.is_critical_build_failure(test)
     elif isinstance(test, self.m.skylab.SkylabResult):
       return self.is_critical_hw_test_failure(test)
     else:
@@ -457,28 +392,6 @@ class FailuresApi(recipe_api.RecipeApi):
     """
     return (self.get_hwtest_status(hw_test) != common_pb2.SUCCESS and
             hw_test.task.test.common.critical.value)
-
-  def is_critical_vm_test_failure(self, vm_test):
-    """Determine if the vm test failed and was critical.
-
-    Args:
-      vm_test (Build): The buildbucket build for the VM test.
-
-    Returns:
-      bool: True if the test failed and was critical
-    """
-    return self.is_critical_build_failure(vm_test)
-
-  def is_critical_moblab_vm_test_failure(self, moblab_vm_test):
-    """Determine if the vm test failed and was critical.
-
-    Args:
-      moblab_vm_test (Build): The buildbucket build for the Moblab VM test.
-
-    Returns:
-      bool: True if the test failed and was critical
-    """
-    return self.is_critical_build_failure(moblab_vm_test)
 
   def update_non_critical_failures(self, step, failures, fresh_builder_configs):
     """

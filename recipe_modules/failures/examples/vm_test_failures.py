@@ -26,13 +26,7 @@ def RunSteps(api):
   vm_critical_failure = vm_build(status=common_pb2.FAILURE)
 
   # Check boolean functions.
-  api.assertions.assertFalse(
-      api.failures.is_critical_vm_test_failure(vm_success))
   api.assertions.assertFalse(api.failures.is_critical_test_failure(vm_success))
-  api.assertions.assertFalse(
-      api.failures.is_critical_vm_test_failure(vm_failure))
-  api.assertions.assertTrue(
-      api.failures.is_critical_vm_test_failure(vm_critical_failure))
 
   # Return only critical vm test failures.
   api.assertions.assertFalse(api.failures.get_vm_test_failures([vm_success]))

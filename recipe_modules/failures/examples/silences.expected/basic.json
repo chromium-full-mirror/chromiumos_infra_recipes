@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "build results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 failures silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -17,91 +17,10 @@
     ]
   },
   {
-    "cmd": [
-      "luci-auth",
-      "token",
-      "-lifetime",
-      "3m"
-    ],
-    "infra_step": true,
-    "name": "build results.builder.get access token for default account",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::url]/resources/pycurl.py",
-      "--url",
-      "https://sheriff-o-matic.appspot.com/api/v1/annotations/chromeos",
-      "--status-json",
-      "/path/to/tmp/json",
-      "--outfile",
-      "/path/to/tmp/json",
-      "--headers-json",
-      "{\"Authorization\": \"Bearer extra.secret.token.should.not.be.logged\"}",
-      "--transient-retry",
-      "3"
-    ],
-    "name": "build results.builder.get Sheriff-o-Matic annotations",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@[@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": [@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@      \"1234\"@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    ], @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step with linked bugs\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:snoozed step\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step with no snoozes or linked bugs\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|builder\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (5)|builder\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"Group with snooze\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"123\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"123\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step in group with snooze\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@]@@@",
-      "@@@STEP_LOG_END@json.output[output]@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "build results (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 failures silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -118,7 +37,7 @@
     "cmd": [],
     "name": "build results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 builds failed, 0 succeeded, 0 failures silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -133,41 +52,29 @@
   },
   {
     "cmd": [],
-    "name": "build results (4)",
+    "name": "RECIPE CRASH (Uncaught exception)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@0 builds failed, 0 succeeded, 1 failures silenced@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
+      "    properties_def, api=api)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in invoke_with_properties",
+      "    arg_names, **additional_args)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in _invoke_with_properties",
+      "    return callable_obj(*props, **additional_args)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/failures/examples/silences.py\", line 34, in RunSteps",
+      "    assert_fatality(api, build_critical_failure, api.failures._disable_silences)",
+      "AttributeError: 'FailuresApi' object has no attribute '_disable_silences'"
     ]
   },
   {
-    "cmd": [],
-    "name": "build results (4).builder",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@silence reason@step failure is snoozed by Sheriff-o-Matic.@@@",
-      "@@@STEP_LOG_END@silence reason@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (5)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all critical builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (5).builder",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@silence reason@step failure is snoozed by Sheriff-o-Matic.@@@",
-      "@@@STEP_LOG_END@silence reason@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/0@@@"
-    ]
-  },
-  {
+    "failure": {
+      "humanReason": "Uncaught Exception: AttributeError(\"'FailuresApi' object has no attribute '_disable_silences'\",)"
+    },
     "name": "$result"
   }
 ]

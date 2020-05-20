@@ -760,7 +760,7 @@
     "name": "check build results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@1 builds failed, 2 succeeded, 0 failures silenced@@@",
+      "@@@STEP_TEXT@1 builds failed, 2 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -771,87 +771,6 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@",
       "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "luci-auth",
-      "token",
-      "-lifetime",
-      "3m"
-    ],
-    "infra_step": true,
-    "name": "check build results.build results.arm-generic-cq.get access token for default account",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::url]/resources/pycurl.py",
-      "--url",
-      "https://sheriff-o-matic.appspot.com/api/v1/annotations/chromeos",
-      "--status-json",
-      "/path/to/tmp/json",
-      "--outfile",
-      "/path/to/tmp/json",
-      "--headers-json",
-      "{\"Authorization\": \"Bearer extra.secret.token.should.not.be.logged\"}",
-      "--transient-retry",
-      "3"
-    ],
-    "name": "check build results.build results.arm-generic-cq.get Sheriff-o-Matic annotations",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@[@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": [@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@      \"1234\"@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    ], @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step with linked bugs\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:snoozed step\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step with no snoozes or linked bugs\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (4)|builder\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:build results (5)|builder\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"Group with snooze\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"123\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 9999000000000@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  {@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"bugs\": null, @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"group_id\": \"123\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"key\": \"chromeos.buildbucket:step in group with snooze\", @@@",
-      "@@@STEP_LOG_LINE@json.output[output]@    \"snoozeTime\": 0@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@  }@@@",
-      "@@@STEP_LOG_LINE@json.output[output]@]@@@",
-      "@@@STEP_LOG_END@json.output[output]@@@"
     ]
   },
   {
