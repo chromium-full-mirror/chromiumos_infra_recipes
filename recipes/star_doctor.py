@@ -24,6 +24,7 @@ DEPS = [
 ]
 
 INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
+CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
 
 PROPERTIES = StarDoctorProperties
 
@@ -65,8 +66,21 @@ def RunSteps(api, properties):
       commit_msg = '\n\n'.join(commit_lines)
       api.git.add(changed_files)
       api.git.commit(commit_msg)
-      change = api.gerrit.create_change(workdir,
-                                        reviewers=['dhanyaganesh@google.com'])
+      api.git.push(INFRA_CONFIG_URL,
+                   'HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2')
+
+      # Find the change and link to it.
+      changes = api.gerrit.query_changes(
+          'https://chrome-internal-review.googlesource.com', [
+              ('project', 'chromeos/infra/config'),
+              ('owner', CI_PROD_SERVICE_ACCOUNT),
+              ('status', 'open'),
+          ])
+      if len(changes) < 1:  # pragma: nocover
+        presentation.step_text = 'did not find change'
+        return
+      presentation.logs['link to change'] = 'https://crrev/i/{}'.format(
+          changes[0].change)
 
 
 def GenTests(api):

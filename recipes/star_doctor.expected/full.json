@@ -75,7 +75,11 @@
   },
   {
     "cmd": [],
-    "name": "commit changes"
+    "name": "commit changes",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@link to change@https://crrev/i/91827@@@",
+      "@@@STEP_LOG_END@link to change@@@"
+    ]
   },
   {
     "cmd": [
@@ -144,72 +148,74 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "push",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config",
+      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "commit changes.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
-    "name": "commit changes.create gerrit change for [CLEANUP]/tmp_tmp_1",
+    "name": "commit changes.query https://chrome-internal-review.googlesource.com",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 91827@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[CLEANUP]/tmp_tmp_1",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chrome-internal-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "project=chromeos/infra/config",
+      "-p",
+      "owner=chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com",
+      "-p",
+      "status=open"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
     "infra_step": true,
-    "name": "commit changes.create gerrit change for [CLEANUP]/tmp_tmp_1.repo forall",
+    "name": "commit changes.query https://chrome-internal-review.googlesource.com.gerrit changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/tmp_tmp_1|src/[CLEANUP]/tmp_tmp_1|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--reviewers",
-      "dhanyaganesh@google.com",
-      "--send-mail"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[CLEANUP]/tmp_tmp_1",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "commit changes.create gerrit change for [CLEANUP]/tmp_tmp_1.git_cl upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[CLEANUP]/tmp_tmp_1",
-    "env_suffixes": {
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "commit changes.create gerrit change for [CLEANUP]/tmp_tmp_1.git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"master\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
