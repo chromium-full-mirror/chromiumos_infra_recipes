@@ -4490,9 +4490,9 @@ Used to create sweeping changes by creating CLs in many repos.
 &mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#18)(api):**
 ### *recipes* / [cros\_relevance:examples/pointless\_builds](/recipe_modules/cros_relevance/examples/pointless_builds.py)
 
-[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#13): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#14): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#17)(api):**
 ### *recipes* / [cros\_relevance:examples/toolchain\_change](/recipe_modules/cros_relevance/examples/toolchain_change.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/toolchain_change.py#9): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

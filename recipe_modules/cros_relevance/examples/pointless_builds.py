@@ -8,6 +8,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.chromite.api import depgraph
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
+from PB.chromiumos.common import PackageInfo
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 DEPS = ['cros_relevance', 'recipe_engine/properties', 'recipe_engine/file']
@@ -23,6 +24,13 @@ def RunSteps(api):
           depgraph.PackageDepInfo(dependency_source_paths=[
               depgraph.SourcePath(path='happy/source/dir'),
           ]),
+          depgraph.PackageDepInfo(
+              dependency_source_paths=[
+                  depgraph.SourcePath(path='src/third_party/kernel/v98765'),
+                  depgraph.SourcePath(path='src/something/else'),
+              ],
+              package_info=PackageInfo(package_name='arcvm-kernel-98765'),
+          ),
       ])
 
   gc = [

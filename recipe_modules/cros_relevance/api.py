@@ -221,7 +221,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """
     # Take the union of the relevant paths for the entire dependency graph
     # and pass it as a flat list of paths.
-    relevant_paths = _flatten_depgraph_paths(dep_graph)
+    relevant_paths = _filter_and_flatten_depgraph_paths(dep_graph)
 
     return self._are_paths_affected(
         gerrit_changes,
@@ -285,8 +285,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         self._build_planner_path = (cipd_dir.join('build_plan_generator'))
 
 
-def _flatten_depgraph_paths(depgraph):
+def _filter_and_flatten_depgraph_paths(depgraph):
   """Returns the union of relevant paths of all packages in the depgraph.
+
+  Also removes specific paths that may need to be excluded for arbitrary reasons.
 
   Args:
     depgraph (chromite.api.DepGraph)
@@ -297,6 +299,12 @@ def _flatten_depgraph_paths(depgraph):
   """
   paths = set()
   for package in depgraph.package_deps:
-    for source_path in package.dependency_source_paths:
-      paths.add(source_path.path)
+    # Skip kernel deps from arcvm-kernel packages. See https://crbug.com/1085518.
+    if package.package_info.package_name.startswith('arcvm-kernel-'):
+      for source_path in package.dependency_source_paths:
+        if not source_path.path.startswith('src/third_party/kernel/'):
+          paths.add(source_path.path)
+    else:
+      for source_path in package.dependency_source_paths:
+        paths.add(source_path.path)
   return paths
