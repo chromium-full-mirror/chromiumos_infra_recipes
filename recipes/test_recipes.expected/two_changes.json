@@ -380,7 +380,8 @@
       "git",
       "diff",
       "--name-only",
-      "origin/master...HEAD"
+      "origin/master",
+      "HEAD"
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,

@@ -39,8 +39,13 @@ def RunSteps(api):
   api.git.show_file('deadbeef', 'some/path')
   api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')
   api.assertions.assertEqual(
-      api.git.get_diff_files('master', 'HEAD'),
-      ['a/b/text.txt', 'other_test.txt'])
+      api.git.get_diff_files('master', 'HEAD'), ['a/b/text.txt', 'other_test.txt'])
+  api.assertions.assertEqual(
+      api.git.get_diff_files('master'), ['a/b/text.txt', 'other_test.txt'])
+  api.assertions.assertEqual(
+      api.git.get_diff_files(), ['a/b/text.txt', 'other_test.txt'])
+  api.assertions.assertFalse(
+      api.git.get_diff_files(test_stdout='\n'), [])
   api.assertions.assertEqual(
       api.git.get_working_dir_diff_files(),
       ['changed.txt', 'new.txt'])

@@ -204,10 +204,39 @@
       "git",
       "diff",
       "--name-only",
-      "master...HEAD"
+      "master",
+      "HEAD"
     ],
     "infra_step": true,
     "name": "git diff"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "master"
+    ],
+    "infra_step": true,
+    "name": "git diff (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only"
+    ],
+    "infra_step": true,
+    "name": "git diff (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only"
+    ],
+    "infra_step": true,
+    "name": "git diff (4)"
   },
   {
     "cmd": [

@@ -100,24 +100,36 @@ class GitApi(recipe_api.RecipeApi):
       return self._step(['diff', '--quiet', 'HEAD', path],
                         ok_ret=(0, 1)).retcode != 0
 
-  def get_diff_files(self, from_rev, to_rev):
-    """Runs 'git diff' to find files changed between <from_rev> and <to_rev>.
+  def get_diff_files(self, from_rev=None, to_rev=None, test_stdout=None):
+    """Runs 'git diff' to find files changed between two revs.
+
+    Revs are passed directly to 'git diff', which has the following effect:
+      0 revs - Changes between working directory and index
+      1 revs - Changes between working directory and given commit
+      2 revs - Changes between the two commits
 
     Args:
-      * from_rev (str): Revision to start at. Can be a commit or ref (e.g.
-        'HEAD', 'origin/master').
-      * to_rev (str): Revision to end at.
+      * from_rev (str): First revision  (see 'man 7 gitrevisions')
+      * to_rev (str): Second revision
+
     Returns:
       A list[str] of changed files.
     """
-    test_stdout = """
-a/b/text.txt
-other_test.txt
-"""
+
+    if not test_stdout:
+      test_stdout = '\n'.join(['a/b/text.txt', 'other_test.txt'])
+
+    cmd  = ['diff', '--name-only']
+    cmd += [from_rev] if from_rev else []
+    cmd += [to_rev] if to_rev else []
+
     step_data = self._step(
-        ['diff', '--name-only', '{}...{}'.format(from_rev, to_rev)],
-        stdout=self.m.raw_io.output(), test_stdout=test_stdout)
-    return step_data.stdout.strip().split('\n')
+        cmd, stdout=self.m.raw_io.output(), test_stdout=test_stdout)
+
+    output = step_data.stdout.strip()
+    if not output:
+      return []
+    return output.split('\n')
 
   def get_working_dir_diff_files(self):
     """Finds all changed files (including untracked)."""
