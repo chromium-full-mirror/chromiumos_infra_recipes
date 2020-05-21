@@ -28,6 +28,8 @@ def RunSteps(api, properties):
   sysroot = api.sysroot_util.create_sysroot(BuildTarget(name='eve'))
   api.assertions.assertEqual(sysroot, api.sysroot_util.sysroot)
 
+  api.sysroot_util.bootstrap_sysroot()
+
 
 def GenTests(api):
   yield api.test('basic')

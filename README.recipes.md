@@ -3639,15 +3639,28 @@ Args:
   limit (int): Number of tasks to return.
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
-[DEPS](/recipe_modules/sysroot_util/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/sysroot_util/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [failures](#recipe_modules-failures), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for various support functions for building.
 
-#### **class [SysrootUtilApi](/recipe_modules/sysroot_util/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SysrootUtilApi](/recipe_modules/sysroot_util/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for sysroot setup, manipulation, and use.
 
-&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#53)(self, build_target, profile=None, chroot_current=True, replace=True, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#87)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', name=None):**
+
+Bootstrap the sysroot by calling InstallToolchain.
+
+Args:
+  compile_source (bool): Whether to compile from source.
+  response_lambda (fn(output_proto)->str): A function that appends a string
+      to the build api response step. Used to make failure step names unique
+      across differing root causes.  Default:
+      cros_build_api.failed_pkg_names.
+  timeout_sec (int): Step timeout, in seconds, or None for default.
+  name (str): Step name to use, or None for the default name.
+
+&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#55)(self, build_target, profile=None, chroot_current=True, replace=True, timeout_sec='DEFAULT', name=None):**
 
 Create the sysroot.
 
@@ -3664,11 +3677,11 @@ Args:
 Returns:
   Sysroot
 
-&mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#18)(self):**
+&mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#19)(self):**
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#21)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#23)(self):**
 
-&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#25)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
+&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#27)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
 
 Update ebuilds for artifact build.
 
@@ -4219,11 +4232,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#96)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#95)(api, config, build_target, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#78)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#77)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#341)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#331)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4239,7 +4252,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#360)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#350)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

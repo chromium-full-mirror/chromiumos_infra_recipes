@@ -46,7 +46,6 @@ from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.packages import GetTargetVersionsRequest
-from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -127,7 +126,8 @@ def DoRunSteps(api, config, build_target, properties):
       build_target, config.build.portage_profile.profile)
 
   packages = get_packages(api, config)
-  # Note: the dependency graph requires a sysroot.
+  # Note: the dependency graph requires a sysroot prior to crrev.com/c/2197226.
+  # TODO(crbug/1053703): After 2020-11-12, if there is no sysroot, that's ok.
   dep_graph = api.cros_relevance.get_dependency_graph(
       build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
 
@@ -164,20 +164,10 @@ def DoRunSteps(api, config, build_target, properties):
   # methods.
   toolchain_changed = api.workspace_util.toolchain_cls_applied
 
-  with api.step.nest('install toolchain') as install_tc_step:
-    flags = InstallToolchainRequest.Flags(
-        compile_source=config.build.install_toolchain.compile_source,
-        toolchain_changed=toolchain_changed)
-    response = api.cros_build_api.SysrootService.InstallToolchain(
-        InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
-                                flags=flags),
-        response_lambda=api.cros_build_api.failed_pkg_names,
-        timeout=(STEP_TIMEOUTS['install_toolchain']
-                 if not api.cros_sdk.long_timeouts else None))
-    api.failures.set_failed_packages(install_tc_step, response.failed_packages)
+  api.sysroot_util.bootstrap_sysroot(
+      compile_source=config.build.install_toolchain.compile_source)
 
   install_packages = config.build.install_packages
-
   chrome_source_needed = False
   with api.step.nest('check chrome source needed') as cs_pres:
     needs_chrome = api.chrome.needs_chrome(build_target=build_target,

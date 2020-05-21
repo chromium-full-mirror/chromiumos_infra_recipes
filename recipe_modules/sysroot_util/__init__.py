@@ -8,5 +8,6 @@ DEPS = [
     'cros_build_api',
     'cros_sdk',
     'cros_artifacts',
+    'failures',
     'workspace_util',
 ]
