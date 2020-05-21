@@ -1728,7 +1728,7 @@ of a build and then mounted into the master and/or workspace paths.
 
 Returns a context where chromiumos and workspace overlays are mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#263)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#267)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -1741,7 +1741,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#220)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#224)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -1789,7 +1789,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#170)(self, gitiles_commit, manifest_url=INTERNAL_MANIFEST_URL):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#174)(self, gitiles_commit, manifest_url=INTERNAL_MANIFEST_URL):**
 
 Sync a checkout to the snapshot.
 
@@ -2614,6 +2614,15 @@ Args:
 Returns:
   A list[str] of changed files.
 
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#411)(self, commit_id, test_contents=None):**
+
+Runs `get log` to determine the parents of a git commit.
+
+Args:
+  * commit_id (str): The commit sha.
+
+Returns: list[str] parent commit sha.
+
 &mdash; **def [get\_working\_dir\_diff\_files](/recipe_modules/git/api.py#122)(self):**
 
 Finds all changed files (including untracked).
@@ -2625,6 +2634,15 @@ Returns the HEAD commit ID.
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#284)(self):**
 
 Returns a context that will revert HEAD when it exits.
+
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#425)(self, commit_id):**
+
+Determines if the commit_id is a merge commit.
+
+Args:
+  * commit_id (str): The commit sha.
+
+Returns: Bool if the commit has more than 1 parent.
 
 &mdash; **def [is\_reachable](/recipe_modules/git/api.py#319)(self, revision):**
 
@@ -4537,9 +4555,9 @@ Used to create sweeping changes by creating CLs in many repos.
 &mdash; **def [RunSteps](/recipe_modules/cros_som/examples/full.py#12)(api):**
 ### *recipes* / [cros\_source:examples/full](/recipe_modules/cros_source/examples/full.py)
 
-[DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#28)(api, properties):**
 ### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
 
 [DEPS](/recipe_modules/cros_tags/examples/full.py#11): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

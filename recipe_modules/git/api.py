@@ -407,3 +407,27 @@ other_test.txt
       return refspec.split('/', 2)[2]
     else:
       return default
+
+  def get_parents(self, commit_id, test_contents=None):
+    """Runs `get log` to determine the parents of a git commit.
+
+    Args:
+      * commit_id (str): The commit sha.
+
+    Returns: list[str] parent commit sha.
+    """
+    step_data = self._step(['log', '--pretty=%P', '-n 1', commit_id],
+                           ok_ret=(0,),
+                           stdout=self.m.raw_io.output(),
+                           test_stdout=test_contents)
+    return step_data.stdout.split(' ')
+
+  def is_merge_commit(self, commit_id):
+    """Determines if the commit_id is a merge commit.
+
+    Args:
+      * commit_id (str): The commit sha.
+
+    Returns: Bool if the commit has more than 1 parent.
+    """
+    return len(self.get_parents(commit_id)) > 1

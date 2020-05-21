@@ -391,12 +391,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chromium.googlesource.com/project/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
+      "https:/+//snapshot.xml",
       "--format",
       "text"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "sync to snapshot.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",
+    "name": "sync to snapshot.fetch :snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -529,7 +529,10 @@
   },
   {
     "cmd": [],
-    "name": "apply gerrit patch sets"
+    "name": "apply gerrit patch sets",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [
@@ -614,230 +617,14 @@
     "infra_step": true,
     "name": "apply gerrit patch sets.git log",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@merge failed. will try cherry-pick instead@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "cherry-pick",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "name": "apply gerrit patch sets.git cherry-pick",
-    "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "apply gerrit patch sets.git rev-parse (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create project commits archive"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src"
-    ],
-    "infra_step": true,
-    "name": "create project commits archive.project path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "bundle",
-      "create",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "create project commits archive.git bundle",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\"project_paths\": [\"src/chromium/src\"]}",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json"
-    ],
-    "infra_step": true,
-    "name": "create project commits archive.metadata.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@metadata.json@{\"project_paths\": [\"src/chromium/src\"]}@@@",
-      "@@@STEP_LOG_END@metadata.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
-    ],
-    "name": "create project commits archive.create archive",
-    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "checkout project commits archive"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_2/archive\", \"safe_mode\": true}",
-      "--json-output",
-      "/path/to/tmp/json"
-    ],
-    "name": "checkout project commits archive.extract archive",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/metadata.json",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "checkout project commits archive.metadata.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@metadata.json@{\"project_paths\": [\"a/b\", \"a/b/c\"]}@@@",
-      "@@@STEP_LOG_END@metadata.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/bundle",
-      "HEAD:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
-    "infra_step": true,
-    "name": "checkout project commits archive.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
-    "infra_step": true,
-    "name": "checkout project commits archive.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
-    "infra_step": true,
-    "name": "checkout project commits archive.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/c/bundle",
-      "HEAD:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
-    "infra_step": true,
-    "name": "checkout project commits archive.git fetch (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
-    "infra_step": true,
-    "name": "checkout project commits archive.git rev-parse (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
-    "infra_step": true,
-    "name": "checkout project commits archive.git checkout (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
+    "failure": {
+      "failure": {},
+      "humanReason": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef failed, aborting, this commit is a merge so we can not cherry-pick"
+    },
     "name": "$result"
   }
 ]

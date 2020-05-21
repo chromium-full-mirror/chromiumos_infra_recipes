@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/gitiles',
     'cros_source',
@@ -60,6 +61,10 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test('basic', api.buildbucket.ci_build())
+
+  yield (api.test('merge_commit_fails') +  #
+         api.step_data('apply gerrit patch sets.git log',
+                       api.raw_io.stream_output('commitsha1 commitsha2')))
 
   yield api.test(
       'with-custom-snapshot-isolate',

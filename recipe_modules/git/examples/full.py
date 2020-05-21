@@ -57,6 +57,9 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.git.extract_branch('refs/tags/something', 'whatever'), 'whatever')
 
+  api.assertions.assertEqual(
+      api.git.is_merge_commit(commit_id), False)
+
 def GenTests(api):
   yield api.test('basic')
 
@@ -72,3 +75,6 @@ def GenTests(api):
       'check diffs.diff check.git ls-files',
       retcode=1,
   )
+
+  yield (api.test('is_merge_commit_fails') +  #
+         api.step_data('git log (2)', retcode=1))

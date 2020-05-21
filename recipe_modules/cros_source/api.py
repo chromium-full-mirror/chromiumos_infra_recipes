@@ -156,6 +156,10 @@ class CrosSourceApi(recipe_api.RecipeApi):
               commit_id, 'merge gerrit changes', infra_step=False)
           if not merged:
             self.m.git.merge_abort()
+            if self.m.git.is_merge_commit(commit_id):
+              raise self.m.step.StepFailure('%s failed, aborting, this '
+                                            'commit is a merge so we can '
+                                            'not cherry-pick' % commit_id)
             presentation = self.m.step.active_result.presentation
             presentation.status = self.m.step.SUCCESS
             presentation.step_text = (

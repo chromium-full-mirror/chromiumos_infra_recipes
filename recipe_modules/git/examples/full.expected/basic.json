@@ -294,6 +294,17 @@
     "name": "git config"
   },
   {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "infra_step": true,
+    "name": "git log (2)"
+  },
+  {
     "name": "$result"
   }
 ]

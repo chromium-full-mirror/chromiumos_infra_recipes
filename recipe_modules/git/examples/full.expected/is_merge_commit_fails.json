@@ -150,6 +150,33 @@
   {
     "cmd": [
       "git",
+      "ls-files",
+      "--error-unmatch",
+      "some/file/path"
+    ],
+    "infra_step": true,
+    "name": "check diffs.diff check.git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "some/file/path"
+    ],
+    "infra_step": true,
+    "name": "check diffs.diff check.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "log",
       "--pretty=%H%x1E%B%x00",
       "START_REF...END_REF",
@@ -275,9 +302,15 @@
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "infra_step": true,
-    "name": "git log (2)"
+    "name": "git log (2)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
+    "failure": {
+      "humanReason": "Infra Failure: Step('git log (2)') (retcode: 1)"
+    },
     "name": "$result"
   }
 ]
