@@ -142,9 +142,9 @@ def DoRunSteps(api, config, build_target, properties):
   # 2. output_properties.testing_toolchain is True (now tracked in
   #    cros_relevance), and/or
   # 3. output_properties.artifact_prep is True.
-  if api.cros_relevance.is_build_pointless(
-      gerrit_changes, gitiles_commit, dep_graph=dep_graph.target,
-      force_relevant=forced_relevant):
+  if api.cros_relevance.is_build_pointless(gerrit_changes, gitiles_commit,
+                                           dep_graph=dep_graph.target,
+                                           force_relevant=forced_relevant):
     # TODO: When it becomes possible to add tags from the build itself set:
     # "hide-in-gerrit": "pointless"
     # See https://crrev.com/c/1913895.
@@ -170,7 +170,8 @@ def DoRunSteps(api, config, build_target, properties):
         toolchain_changed=toolchain_changed)
     response = api.cros_build_api.SysrootService.InstallToolchain(
         InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
-                                flags=flags), response_lambda=_failed_pkg_names,
+                                flags=flags),
+        response_lambda=api.cros_build_api.failed_pkg_names,
         timeout=(STEP_TIMEOUTS['install_toolchain']
                  if not api.cros_sdk.long_timeouts else None))
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
@@ -250,7 +251,8 @@ def DoRunSteps(api, config, build_target, properties):
           chroot=api.cros_sdk.chroot, use_flags=config.build.use_flags,
           goma_config=api.cros_sdk.goma_config())
       response = api.cros_build_api.SysrootService.InstallPackages(
-          install_pkg_request, response_lambda=_failed_pkg_names,
+          install_pkg_request,
+          response_lambda=api.cros_build_api.failed_pkg_names,
           timeout=(STEP_TIMEOUTS['install_packages']
                    if not api.cros_sdk.long_timeouts else None))
 
@@ -263,7 +265,7 @@ def DoRunSteps(api, config, build_target, properties):
                    'call chromite.api.SysrootService/InstallPackages|'
                    '{}'.format(
                        api.cros_build_api.response_step_name(
-                           response, _failed_pkg_names)))
+                           response, api.cros_build_api.failed_pkg_names)))
 
       api.cros_bisect.set_compile_failures(response.failed_packages, step_name,
                                            config.general.critical.value)
@@ -285,7 +287,7 @@ def DoRunSteps(api, config, build_target, properties):
               builder_path=api.cros_artifacts.artifacts_gs_path(
                   config.id.name, build_target, config.id.type),
           ), timeout=STEP_TIMEOUTS['build_image'],
-          response_lambda=_failed_pkg_names)
+          response_lambda=api.cros_build_api.failed_pkg_names)
       api.failures.set_failed_packages(bi_step, response.failed_packages)
     with api.step.nest('test images'):
       failed_images = []
@@ -318,7 +320,7 @@ def DoRunSteps(api, config, build_target, properties):
               result_path=str(api.path.mkdtemp()),
               package_blacklist=config.unit_tests.package_blacklist,
               flags=flags), timeout=STEP_TIMEOUTS['unit_tests'],
-          response_lambda=_failed_pkg_names)
+          response_lambda=api.cros_build_api.failed_pkg_names)
       api.failures.set_failed_packages(reb_step, response.failed_packages)
     if api.cros_infra_config.should_exit(ebuilds_run_spec):
       return
@@ -373,24 +375,6 @@ def get_target_versions(api, build_target):
       GetTargetVersionsRequest(chroot=api.cros_sdk.chroot,
                                build_target=build_target))
   return json_pb.MessageToDict(response)
-
-
-# Define a function to append the failure step with the failed packages
-def _failed_pkg_names(output_proto):
-  # sort package names, join them with ',', and limit to 50 chars.
-  failed_packages = ','.join(
-      sorted(p.package_name for p in output_proto.failed_packages))
-
-  # Add to the default response step name like: ": package1,package2"
-  # If it's extremely long add elipsis and a fancy sha to make unique.
-  if len(failed_packages) > 50:
-    fp_sha = hashlib.sha256()
-    fp_sha.update(failed_packages)
-    failed_packages = (
-        failed_packages[:50] + ('...(%s)' % fp_sha.hexdigest()[0:4]))
-  if failed_packages:
-    failed_packages = ': ' + failed_packages
-  return failed_packages
 
 
 def GenTests(api):

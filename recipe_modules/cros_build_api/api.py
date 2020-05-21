@@ -7,6 +7,7 @@
 
 from collections import namedtuple
 import functools
+import hashlib
 
 from google.protobuf import descriptor_pool
 from google.protobuf import json_format
@@ -218,6 +219,36 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
     version = version_resp.version
     self._version = self.Version(version.major, version.minor, version.bug)
     return self._version
+
+  # Define a function to append the failure step with the failed packages
+  @staticmethod
+  def failed_pkg_names(output_proto):
+    """Function to append a list of failed package to the failure step.
+
+    To use this, pass response_lambda=api.cros_build_api.failed_pkg_names to the
+    build api call.
+
+    Args:
+      output_proto (a BuildAPI response): A Response that has a
+          'failed_packages' attribute.
+
+    Returns:
+      A string to append to the response step name.
+    """
+    # sort package names, join them with ',', and limit to 50 chars.
+    failed_packages = ','.join(
+        sorted(p.package_name for p in output_proto.failed_packages))
+
+    # Add to the default response step name like: ": package1,package2"
+    # If it's extremely long add elipsis and a fancy sha to make unique.
+    if len(failed_packages) > 50:
+      fp_sha = hashlib.sha256()
+      fp_sha.update(failed_packages)
+      failed_packages = (
+          failed_packages[:50] + ('...(%s)' % fp_sha.hexdigest()[0:4]))
+    if failed_packages:
+      failed_packages = ': ' + failed_packages
+    return failed_packages
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                test_teelog_data=None, name=None, infra_step=False, timeout=None,

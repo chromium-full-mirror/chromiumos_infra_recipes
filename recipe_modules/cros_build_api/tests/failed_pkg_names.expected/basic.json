@@ -1,0 +1,189 @@
+[
+  {
+    "cmd": [],
+    "name": "call chromite.api.SysrootService/InstallToolchain",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"failed_packages\": []}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.SysrootService/InstallToolchain.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SysrootService/InstallToolchain"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.SysrootService/InstallToolchain.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "call chromite.api.SysrootService/InstallToolchain.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.SysrootService/InstallToolchain.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.SysrootService/InstallToolchain.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.SysrootService/InstallToolchain|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"installToolchainResponse\": {}, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"installToolchainRequest\": {}, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.SysrootService/InstallToolchain.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "call chromite.api.SysrootService/InstallToolchain.publish event.publish message.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "call chromite.api.SysrootService/InstallToolchain.publish event.publish message.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "call chromite.api.SysrootService/InstallToolchain.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BPIBAPoBANoCR2NhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RT\\nZXJ2aWNlL0luc3RhbGxUb29sY2hhaW58Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
