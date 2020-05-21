@@ -18,27 +18,20 @@ class CrosTagsApi(recipe_api.RecipeApi):
       snapshot (GitilesCommit): snapshot the build was synced on
 
     Returns:
-      list[{key, value}] to output as buildbucket tags
+      list[StringPair] to pass as buildbucket tags
     """
-    tags = []
-    tags.append(
-        self._key_value('parent_buildbucket_id',
-                        str(self.m.buildbucket.build.id)))
-    tags.append(self._key_value('snapshot', snapshot.id))
-    tags.append(self._key_value('commit_position', str(snapshot.position)))
-    group_key = self.cq_cl_group_key
-    if group_key:
-      tags.append(self._key_value('cq_cl_group_key', group_key))
-    group_key = self.cq_equivalent_cl_group_key
-    if group_key:
-      tags.append(self._key_value('cq_equivalent_cl_group_key', group_key))
-    return tags
+    # None of these tags is order specific.
+    tag_dict = dict(
+        parent_buildbucket_id=str(self.m.buildbucket.build.id),
+        snapshot=snapshot.id,
+        commit_position=str(snapshot.position),
+    )
 
-  def _key_value(self, key, value):
-    return {
-        'value': value,
-        'key': key,
-    }
+    if self.cq_cl_group_key:
+      tag_dict['cq_cl_group_key'] = self.cq_cl_group_key
+    if self.cq_equivalent_cl_group_key:
+      tag_dict['cq_equivalent_cl_group_key'] = self.cq_equivalent_cl_group_key
+    return self.m.buildbucket.tags(**tag_dict)
 
   def has_entry(self, key, value, tags):
     """Returns whether tags contains a tag with key and value."""
@@ -62,7 +55,7 @@ class CrosTagsApi(recipe_api.RecipeApi):
       # Fixed in crrev.com/c/2208069.
       return self.m.cq.equivalent_cl_group_key
     except ValueError:  # pragma: no cover
-      # CQ (more likely, our tests) did not set a value.
+      # CQ (or more likely, our tests) did not set a value.
       return None
     except AttributeError:
       # Crrev.com/c/2208069 has not landed yet.
@@ -82,9 +75,8 @@ class CrosTagsApi(recipe_api.RecipeApi):
     if self.m.cq.state == self.m.cq.INACTIVE:
       return None
     try:
-      # Fixed in crrev.com/c/2208069.
       return self.m.cq.cl_group_key
     except ValueError:
-      # CQ (more likely, our tests) did not set a value.
+      # CQ (or more likely, our tests) did not set a value.
       pass
     return None

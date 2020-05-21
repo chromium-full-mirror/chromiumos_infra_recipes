@@ -22,45 +22,33 @@ PROPERTIES = TestInputProperties
 def RunSteps(api, properties):
   snapshot = bbcommon_pb2.GitilesCommit(id='deadbeef')
   expected_tags = [
-      {
-          'key': 'parent_buildbucket_id',
-          'value': str(api.buildbucket.build.id),
-      },
-      {
-          'key': 'snapshot',
-          'value': snapshot.id,
-      },
-      {
-          'key': 'commit_position',
-          'value': str(snapshot.position),
-      },
+      bbcommon_pb2.StringPair(key='parent_buildbucket_id',
+                              value=str(api.buildbucket.build.id)),
+      bbcommon_pb2.StringPair(key='snapshot', value=snapshot.id),
+      bbcommon_pb2.StringPair(key='commit_position',
+                              value=str(snapshot.position)),
   ]
   if properties.cq_cl_group_key:
-    expected_tags.append({
-        'key': 'cq_cl_group_key',
-        'value': str(properties.cq_cl_group_key),
-    })
-
+    expected_tags.append(
+        bbcommon_pb2.StringPair(key='cq_cl_group_key',
+                                value=str(properties.cq_cl_group_key)))
   if properties.cq_equivalent_cl_group_key:
-    expected_tags.append({
-        'key': 'cq_equivalent_cl_group_key',
-        'value': str(properties.cq_equivalent_cl_group_key),
-    })
+    expected_tags.append(
+        bbcommon_pb2.StringPair(
+            key='cq_equivalent_cl_group_key',
+            value=str(properties.cq_equivalent_cl_group_key)))
 
   tags = api.cros_tags.make_schedule_tags(snapshot)
 
-  api.assertions.assertEqual(tags, expected_tags)
+  api.assertions.assertEqual(len(tags), len(expected_tags))
+  for tag in tags:
+    api.assertions.assertIn(tag, expected_tags)
 
   api.assertions.assertEqual(api.cros_tags.cq_equivalent_cl_group_key,
                              properties.cq_equivalent_cl_group_key or None)
 
   api.assertions.assertEqual(api.cros_tags.cq_cl_group_key,
                              properties.cq_cl_group_key or None)
-
-  tags = [
-      bbcommon_pb2.StringPair(key=d['key'], value=d['value'])
-      for d in expected_tags
-  ]
 
   api.assertions.assertTrue(
       api.cros_tags.has_entry('parent_buildbucket_id',
@@ -71,7 +59,6 @@ def RunSteps(api, properties):
       api.cros_tags.has_entry('snapshot', snapshot.id + 'x', tags))
   api.assertions.assertFalse(
       api.cros_tags.has_entry('snapshotx', snapshot.id, tags))
-
   api.assertions.assertTrue(
       api.cros_tags.has_entry('commit_position', str(snapshot.position), tags))
 

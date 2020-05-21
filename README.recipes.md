@@ -1811,21 +1811,21 @@ API for generating tags.
 
 A module for generating tags.
 
-&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#74)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#67)(self):**
 
 Return the cq_cl_group_key, if any.
 
 Returns:
   (str) cq_cl_group_key, or None
 
-&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#50)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#43)(self):**
 
 Return the cq_equivalent_cl_group_key, if any.
 
 Returns:
   (str) cq_equivalent_cl_group_key, or None
 
-&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#43)(self, key, value, tags):**
+&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#36)(self, key, value, tags):**
 
 Returns whether tags contains a tag with key and value.
 
@@ -1837,7 +1837,7 @@ Args:
   snapshot (GitilesCommit): snapshot the build was synced on
 
 Returns:
-  list[{key, value}] to output as buildbucket tags
+  list[StringPair] to pass as buildbucket tags
 ### *recipe_modules* / [cros\_test\_plan](/recipe_modules/cros_test_plan)
 
 [DEPS](/recipe_modules/cros_test_plan/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
