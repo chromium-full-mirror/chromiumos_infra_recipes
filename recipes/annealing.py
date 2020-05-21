@@ -29,6 +29,7 @@ from recipe_engine import util
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -63,13 +64,32 @@ def RunSteps(api, properties):
         cwd=api.cros_source.workspace_path.join('manifest-internal')):
       api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
-      # Generate a public snapshot of the manifest in the manifest/ repo.  We
-      # need to do this _first_ so that we can fill in the Cr-External-Snapshot
-      # footer in in the internal snapshot commit.
-      external_snapshot_ref = None
-      with api.context(
-          cwd=api.cros_source.workspace_path.join('manifest')):
+      with api.context(cwd=api.cros_source.workspace_path.join('manifest')):
+        # Sync manifest/full.xml with manifest-internal/full.xml
+        with api.step.nest('sync manifests') as presentation:
 
+          def _update_callback():
+            """Callback function for git_txn to update manifest/full.xml."""
+            commit_message = 'Syncing with internal manifest.'
+            api.git.add(
+                [api.cros_source.workspace_path.join('manifest/full.xml')])
+            api.git.commit(commit_message)
+
+          api.file.copy(
+              'Copy manifest-internal/full.xml',
+              api.cros_source.workspace_path.join('manifest-internal/full.xml'),
+              api.cros_source.workspace_path.join('manifest/full.xml'))
+          if api.git.diff_check(
+              api.cros_source.workspace_path.join('manifest/full.xml')):
+            api.git_txn.update_ref(api.cros_source.EXTERNAL_MANIFEST_URL,
+                                   'master', _update_callback)
+          else:
+            presentation.step_text = 'No diffs'
+
+        # Generate a public snapshot of the manifest in the manifest/ repo.  We
+        # need to do this _first_ so that we can fill in the Cr-External-Snapshot
+        # footer in in the internal snapshot commit.
+        external_snapshot_ref = None
         # Generate the manifest from public repo
         snapshot_xml_extern = api.repo.manifest_snapshot(
             api.cros_source.workspace_path.join(
@@ -275,9 +295,9 @@ def make_message(api, manifest_ref, gerrit_commits, disable_gerrit_commits):
   Returns:
     A string containing the commit message.
   """
-  with api.step.nest('create snapshot commit message'):
+  with api.step.nest('create commit message'):
     position = api.git_footers.position_num('HEAD') + 1
-    lines = ['annealing manifest snapshot %d' % position]
+    lines = ['annealing manifest %s %d' % (manifest_ref, position)]
 
     if disable_gerrit_commits:
       lines.append('**** Writing Gerrit Changes Disabled ****')
@@ -302,18 +322,18 @@ def GenTests(api):
   )
 
   yield api.test(
-      'has-manifest-change',
+      'snapshot-manifest-has-manifest-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'repo manifest', stdout=api.raw_io.output(
-              '<manifest visibility="external">'
-              '<project name="NAME" revision="TO_REV"/>'
-              '</manifest>')),
+          'repo manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
       api.step_data(
-          'repo manifest (2)', stdout=api.raw_io.output(
-              '<manifest visibility="internal">'
-              '<project name="NAME" revision="TO_REV"/>'
-              '</manifest>')),
+          'repo manifest (2)',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
@@ -322,6 +342,10 @@ def GenTests(api):
           'record new gerrit changes.NAME.read git footers',
           api.gerrit.test_gerrit_change_url()),
   )
+
+  yield api.test('sync-manifests-has-manifest-change',
+                 api.properties(AnnealingProperties(manifest_ref='master')),
+                 api.git.diff_check(True))
 
   yield api.test(
       'no-gerrit-change',
