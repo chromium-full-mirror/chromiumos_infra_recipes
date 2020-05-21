@@ -39,7 +39,8 @@ type Change struct {
 type Changes []*Change
 
 type Options struct {
-	IncludeFiles bool `json:"include_files"`
+	IncludeDetailedLabels bool `json:"include_detailed_labels"`
+	IncludeFiles          bool `json:"include_files"`
 }
 
 func changesToQueryParams(changes Changes, options Options) gerrit.ChangeQueryParams {
@@ -64,6 +65,9 @@ func changesToQueryParams(changes Changes, options Options) gerrit.ChangeQueryPa
 	}
 	if options.IncludeFiles {
 		queryOpts = append(queryOpts, "ALL_FILES")
+	}
+	if options.IncludeDetailedLabels {
+		queryOpts = append(queryOpts, "DETAILED_LABELS")
 	}
 	return gerrit.ChangeQueryParams{
 		Query:   strings.Join(queryOrs, " OR "),
@@ -101,9 +105,9 @@ func (c *Change) updateChangeFromResults(results []*gerrit.Change) {
 	c.Info.Revisions = nil
 }
 
-func batchSlice(changes Changes) []Changes{
+func batchSlice(changes Changes) []Changes {
 	batchSize := 10
-	batches := make([]Changes, 0, (len(changes) + batchSize - 1) / batchSize)
+	batches := make([]Changes, 0, (len(changes)+batchSize-1)/batchSize)
 	for batchSize < len(changes) {
 		changes, batches = changes[batchSize:], append(batches, changes[0:batchSize:batchSize])
 	}
