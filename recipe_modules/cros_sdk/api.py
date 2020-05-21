@@ -28,6 +28,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
   def initialize(self):
     """Cache the chroot path."""
+    self._long_timeouts = False
     self.configure(self.m.path['cache'])
 
   def configure(self, chroot_parent_path):
@@ -51,6 +52,22 @@ class CrosSdkApi(recipe_api.RecipeApi):
       self._goma_counterz_file = None
       self._use_flags = None
       self._sdk_is_dirty = False
+
+  @property
+  def long_timeouts(self):
+    """Return whether timeouts should be long.
+
+    This can be caused by either source compile, or toolchain cls.
+    """
+    return self._long_timeouts
+
+  @long_timeouts.setter
+  def long_timeouts(self, value):
+    """Set long_timeouts.
+
+    This boolean is sticky.
+    """
+    self._long_timeouts |= value
 
   @property
   def cros_sdk_path(self):
@@ -265,8 +282,10 @@ class CrosSdkApi(recipe_api.RecipeApi):
           self.chroot, commit, changes)
       if toolchain_cls:
         self.mark_sdk_as_dirty()
+      if build_source or toolchain_cls:
+        self._long_timeouts = True
       if timeout_sec == 'DEFAULT':
-        timeout_sec = 24 * 60 * 60 if toolchain_cls or build_source else 90 * 60
+        timeout_sec = 24 * 60 * 60 if self._long_timeouts else 90 * 60
 
       try:
         self.m.cros_build_api.SdkService.Update(

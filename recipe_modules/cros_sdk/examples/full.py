@@ -40,6 +40,8 @@ def RunSteps(api, properties):
 
     api.cros_sdk.uprev_packages()
 
+    api.assertions.assertEqual(api.cros_sdk.long_timeouts,
+                               api.workspace_util.toolchain_cls_applied)
     api.cros_sdk.set_chrome_root('/chrome_dir')
     api.cros_sdk.set_goma_config('/goma_dir', '/creds/goma.json',
                                  common.GomaConfig.RBE_PROD, '/goma_logs',

@@ -2742,6 +2742,7 @@
       ]
     },
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.call build API script",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -4089,6 +4090,7 @@
       ]
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.call build API script",
+    "timeout": 28800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

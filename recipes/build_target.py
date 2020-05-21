@@ -100,11 +100,6 @@ def DoRunSteps(api, config, build_target, properties):
   forced_relevant = properties.force_relevant_build
 
   is_staging = config.general.environment == BuilderConfig.General.STAGING
-  # If we have been told to build the sdk or packages from source (rather than
-  # using prebuilts), then we will need long timeouts.
-  long_timeouts = (
-      config.build.sdk_update.compile_source or
-      config.build.install_packages.compile_source)
 
   # Set up source checkouts.
   api.workspace_util.sync_to_commit(staging=is_staging)
@@ -166,10 +161,8 @@ def DoRunSteps(api, config, build_target, properties):
 
   # TODO(crbug/1039875): clean up toolchain_changed handling.  This should be
   # hidden from build_target by moving it inside of the sysroot_util etc
-  # methods.  Ditto for long_timeouts, as the calls are moved into sysroot_util,
-  # etc.
+  # methods.
   toolchain_changed = api.workspace_util.toolchain_cls_applied
-  long_timeouts |= toolchain_changed
 
   with api.step.nest('install toolchain') as install_tc_step:
     flags = InstallToolchainRequest.Flags(
@@ -179,7 +172,7 @@ def DoRunSteps(api, config, build_target, properties):
         InstallToolchainRequest(sysroot=sysroot, chroot=api.cros_sdk.chroot,
                                 flags=flags), response_lambda=_failed_pkg_names,
         timeout=(STEP_TIMEOUTS['install_toolchain']
-                 if not long_timeouts else None))
+                 if not api.cros_sdk.long_timeouts else None))
     api.failures.set_failed_packages(install_tc_step, response.failed_packages)
 
   install_packages = config.build.install_packages
@@ -259,7 +252,7 @@ def DoRunSteps(api, config, build_target, properties):
       response = api.cros_build_api.SysrootService.InstallPackages(
           install_pkg_request, response_lambda=_failed_pkg_names,
           timeout=(STEP_TIMEOUTS['install_packages']
-                   if not long_timeouts else None))
+                   if not api.cros_sdk.long_timeouts else None))
 
       # Process goma response to upload logs, stats, and counterz.
       api.goma.process_artifacts(response,
