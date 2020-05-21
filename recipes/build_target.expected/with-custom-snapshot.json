@@ -103,14 +103,6 @@
   },
   {
     "cmd": [],
-    "name": "configure builder.set builder_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactsInfo\": {\"legacy\": {\"outputArtifacts\": [{\"artifactTypes\": [\"IMAGE_ZIP\"]}]}}, \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-cq\", \"type\": \"CQ\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\", \"packageBlacklist\": [{\"category\": \"chromeos-base\", \"packageName\": \"chromite\"}]}}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-bisect\"@@@"

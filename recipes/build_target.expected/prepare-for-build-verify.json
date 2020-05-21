@@ -152,14 +152,6 @@
   },
   {
     "cmd": [],
-    "name": "configure builder.set builder_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsInfo\": {\"legacy\": {\"outputArtifacts\": [{\"artifactTypes\": [\"EBUILD_LOGS\"]}]}, \"profileInfo\": {\"chromeCwpProfile\": \"silvermont\"}, \"toolchain\": {\"inputArtifacts\": [{\"artifactTypes\": [\"UNVERIFIED_CHROME_LLVM_ORDERFILE\"], \"gsLocations\": [\"chromeos-toolchain-artifacts/orderfile/unvetted\", \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"]}, {\"artifactTypes\": [\"VERIFIED_CHROME_LLVM_ORDERFILE\"], \"gsLocations\": [\"chromeos-toolchain-artifacts/orderfile/vetted\", \"chromeos-prebuilt/afdo-job/orderfiles/vetted\"]}], \"outputArtifacts\": [{\"aclName\": \"public-read\", \"artifactTypes\": [\"VERIFIED_CHROME_LLVM_ORDERFILE\"], \"gsLocations\": [\"chromeos-toolchain-artifacts/orderfile/vetted\", \"chromeos-prebuilt/afdo-job/orderfiles/vetted\"]}]}}, \"prebuilts\": \"NONE\"}, \"build\": {\"applyGerritChanges\": true, \"installPackages\": {\"compileSource\": true, \"packages\": [{\"category\": \"app-shells\", \"packageName\": \"bash\"}, {\"category\": \"chromeos-base\", \"packageName\": \"chromeos-chrome\"}], \"runSpec\": \"RUN\"}, \"prepareForBuild\": {\"additionalArgs\": {\"chromeCwpProfile\": \"silvermont\"}}, \"useFlags\": [{\"flag\": \"chrome_internal\"}, {\"flag\": \"-cros-debug\"}, {\"flag\": \"strict_toolchain_checks\"}, {\"flag\": \"orderfile_verify\"}, {\"flag\": \"-reorder_text_sections\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"orderfile-verify-toolchain\", \"type\": \"TOOLCHAIN\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"eve-bisect\"@@@"

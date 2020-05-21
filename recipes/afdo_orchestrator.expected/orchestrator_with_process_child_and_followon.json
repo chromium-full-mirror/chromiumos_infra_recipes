@@ -77,14 +77,6 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.configure builder.set builder_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"orderfile-generate-orchestrator\", \"type\": \"TOOLCHAIN\"}, \"orchestrator\": {\"childSpecs\": [{\"name\": \"orderfile-generate-toolchain\"}], \"followOnOrchestrator\": {\"awaitCompletion\": true, \"name\": \"orderfile-verify-orchestrator\"}, \"gerritChanges\": [{\"change\": \"1394249\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"-1\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}], \"gitilesCommit\": {\"host\": \"chrome-internal\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set up orchestrator.configure builder.repo state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

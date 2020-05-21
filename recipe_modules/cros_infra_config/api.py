@@ -103,6 +103,14 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
+  def _download_file(self, filename, step_test_data, branch='master',
+                     timeout=None):
+    """Helper method to fetch a file from gititles."""
+    return self.m.depot_gitiles.download_file(
+        REPO_URL, filename + '.binaryproto', branch=self._config_ref,
+        step_test_data=step_test_data, timeout=timeout or
+        self.test_api.gitiles_timeout_seconds)
+
   def _fetch_builder_configs(self):
     """Helper method to fetch the builder configs file.
 
@@ -111,11 +119,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     # Step nesting needs to happen here or it shows up many times in Milo,
     # once for each builder.
-    return self.m.depot_gitiles.download_file(
-        REPO_URL, 'generated/builder_configs.binaryproto',
-        branch=self._config_ref,
-        step_test_data=self.test_api.builder_configs_step_test_data,
-        timeout=self.test_api.gitiles_timeout_seconds)
+    return self._download_file('generated/builder_configs',
+                               self.test_api.builder_configs_step_test_data)
 
   def _get_name_to_builder_config(self, force_reload=False):
     """Helper method that returns the name to BuilderConfig map.
@@ -203,11 +208,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       BotPolicyCfg as defined in the config repo.
     """
-    bot_policy_file = self.m.depot_gitiles.download_file(
-        REPO_URL, 'bot_scaling/generated/bot_policy.binaryproto',
-        step_test_data=self.test_api.bot_policy_test_data,
-        timeout=self.test_api.gitiles_timeout_seconds)
-    return BotPolicyCfg.FromString(bot_policy_file)
+    return BotPolicyCfg.FromString(
+        self._download_file('bot_scaling/generated/bot_policy',
+                            self.test_api.bot_policy_test_data))
 
   def get_vm_retry_config(self):
     """Get SuiteRetryCfg as defined in infra/config for tast vm.
@@ -215,11 +218,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       SuiteRetryCfg as defined in the config repo.
     """
-    vm_retry_config_file = self.m.depot_gitiles.download_file(
-        REPO_URL, 'testingconfig/generated/vm_retry.binaryproto',
-        step_test_data=self.test_api.vm_retry_test_data,
-        timeout=self.test_api.gitiles_timeout_seconds)
-    return SuiteRetryCfg.FromString(vm_retry_config_file)
+    return SuiteRetryCfg.FromString(
+        self._download_file('testingconfig/generated/vm_retry',
+                            self.test_api.vm_retry_test_data))
 
   def get_dut_tracking_config(self):
     """Get TrackingPolicyCfg as defined in infra/config.
@@ -227,11 +228,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       TrackingPolicyCfg as defined in the config repo.
     """
-    tracking_policy_file = self.m.depot_gitiles.download_file(
-        REPO_URL, 'testingconfig/generated/dut_tracking.binaryproto',
-        step_test_data=self.test_api.dut_tracking_test_data,
-        timeout=self.test_api.gitiles_timeout_seconds)
-    return TrackingPolicyCfg.FromString(tracking_policy_file)
+    return TrackingPolicyCfg.FromString(
+        self._download_file('testingconfig/generated/dut_tracking',
+                            self.test_api.dut_tracking_test_data))
 
   def _determine_repo_state(self, config, commit, changes):
     """Set _gitiles_commit and _gerrit_changes.
@@ -262,9 +261,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # We will need commit.id later.  Add it if necessary.
       if not commit.id:
         commit = common_pb2.GitilesCommit(
-            host=commit.host, project=commit.project,
-            ref=commit.ref, id=self.m.gitiles.fetch_revision(
-                commit.host, commit.project, commit.ref))
+            host=commit.host, project=commit.project, ref=commit.ref,
+            id=self.m.gitiles.fetch_revision(commit.host, commit.project,
+                                             commit.ref))
       if commit:
         changed = True
 
@@ -277,7 +276,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
             for x in config.orchestrator.gerrit_changes
         ]
         changes = converted_changes + [
-            x for x in changes if x not in converted_changes]
+            x for x in changes if x not in converted_changes
+        ]
         changed = True
 
     if changed:
@@ -329,9 +329,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
       config = self.config
       if config:
+        # The url can be constructed from output.properties.config_ref:
+        # ('+/%s/%s' % (REPO_URL, self._config_ref, filename))
         presentation.logs['builder config'] = [str(config)]
-        self.m.easy.set_property_step('builder_config',
-                                      json_format.MessageToDict(config))
       else:
         presentation.step_text = 'config not found, assuming deleted'
 

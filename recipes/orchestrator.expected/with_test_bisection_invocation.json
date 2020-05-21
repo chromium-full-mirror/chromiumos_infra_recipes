@@ -85,14 +85,6 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.configure builder.set builder_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"artifacts\": {\"prebuilts\": \"NONE\"}, \"build\": {\"buildImages\": {\"imageTypes\": [\"TEST\", \"BASE\"]}, \"installPackages\": {\"runSpec\": \"RUN\"}, \"useFlags\": [{\"flag\": \"chrome_internal\"}]}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true, \"environment\": \"PRODUCTION\", \"runWhen\": {\"mode\": \"ALWAYS_RUN\"}}, \"id\": {\"branch\": \"master\", \"name\": \"bisecting-orchestrator\", \"type\": \"POSTSUBMIT\"}, \"unitTests\": {\"ebuildsRunSpec\": \"RUN\"}}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set up orchestrator.set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

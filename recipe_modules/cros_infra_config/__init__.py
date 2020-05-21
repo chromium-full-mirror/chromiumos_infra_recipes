@@ -8,6 +8,7 @@ DEPS = {
     'cipd': 'recipe_engine/cipd',
     'context': 'recipe_engine/context',
     'step': 'recipe_engine/step',
+    'url': 'recipe_engine/url',
     'depot_gitiles': 'depot_tools/gitiles',
 
     # Our modules.

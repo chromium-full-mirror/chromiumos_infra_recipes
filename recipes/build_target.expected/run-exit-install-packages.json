@@ -82,14 +82,6 @@
   },
   {
     "cmd": [],
-    "name": "configure builder.set builder_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@builder_config@{\"build\": {\"installPackages\": {\"runSpec\": \"RUN_EXIT\"}}, \"chrome\": {\"internal\": true}, \"general\": {\"critical\": true}, \"id\": {\"branch\": \"master\", \"name\": \"amd64-generic-bisect\", \"type\": \"POSTSUBMIT\"}}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set BISECT_BUILDER",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-bisect\"@@@"
