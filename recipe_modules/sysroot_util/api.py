@@ -18,7 +18,6 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
   def initialize(self):
     self._sysroot = None
-    self._long_timeouts = False
 
   @property
   def sysroot(self):

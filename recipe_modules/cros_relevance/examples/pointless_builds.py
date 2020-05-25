@@ -6,6 +6,7 @@
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.chromite.api import depgraph
+from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
@@ -16,10 +17,11 @@ DEPS = ['cros_relevance', 'recipe_engine/properties', 'recipe_engine/file']
 def RunSteps(api):
   builder = 'builder'
   bt = BuildTarget(name='my_build_target')
+  sysroot = Sysroot(path='/build/target', build_target=bt)
   build_config = [dict(build_target=bt.name)]
   chroot = Chroot()
   dep_graph = depgraph.DepGraph(
-      build_target=bt, package_deps=[
+      sysroot=sysroot, build_target=bt, package_deps=[
           depgraph.PackageDepInfo(dependency_source_paths=[
               depgraph.SourcePath(path='happy/source/dir'),
           ]),
@@ -34,7 +36,7 @@ def RunSteps(api):
       gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph)
   api.cros_relevance.is_build_pointless(
       no_gc, bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph=dep_graph)
-  api.cros_relevance.get_dependency_graph(bt, chroot)
+  api.cros_relevance.get_dependency_graph(sysroot, chroot)
 
 
 def GenTests(api):

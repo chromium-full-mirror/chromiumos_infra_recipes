@@ -95,7 +95,7 @@ def DoRunSteps(api, config, build_target, properties):
       if api.cros_relevance.is_depgraph_affected(
           gerrit_changes, gitiles_commit,
           dep_graph=api.cros_relevance.get_dependency_graph(
-              build_target=build_target, chroot=api.cros_sdk.chroot,
+              sysroot=sysroot, chroot=api.cros_sdk.chroot,
               packages=config.build.install_packages.packages).sdk):
         step_text = 'Dirty: changes affect SDK'
         api.cros_sdk.mark_sdk_as_dirty()

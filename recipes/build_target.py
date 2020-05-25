@@ -67,7 +67,6 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 
 # All step timeouts are in seconds.  All are moving to modules.
 STEP_TIMEOUTS = {
-    'install_toolchain': 30 * 60,
     'install_packages': 8 * 60 * 60,
     'build_image': 45 * 60,
     'unit_tests': 2 * 60 * 60,
@@ -129,7 +128,7 @@ def DoRunSteps(api, config, build_target, properties):
   # Note: the dependency graph requires a sysroot prior to crrev.com/c/2197226.
   # TODO(crbug/1053703): After 2020-11-12, if there is no sysroot, that's ok.
   dep_graph = api.cros_relevance.get_dependency_graph(
-      build_target=build_target, chroot=api.cros_sdk.chroot, packages=packages)
+      sysroot=sysroot, chroot=api.cros_sdk.chroot, packages=packages)
 
   with api.step.nest('validate SDK reuse'):
     # If any of the changes affect the sdk, mark the sdk as dirty.
@@ -158,11 +157,6 @@ def DoRunSteps(api, config, build_target, properties):
       api.metadata_json.upload_to_gs(config, build_target, partial=True)
   except:  # pragma: no cover # pylint: disable=bare-except
     pass
-
-  # TODO(crbug/1039875): clean up toolchain_changed handling.  This should be
-  # hidden from build_target by moving it inside of the sysroot_util etc
-  # methods.
-  toolchain_changed = api.workspace_util.toolchain_cls_applied
 
   api.sysroot_util.bootstrap_sysroot(
       compile_source=config.build.install_toolchain.compile_source)

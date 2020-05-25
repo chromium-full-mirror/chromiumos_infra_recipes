@@ -245,11 +245,11 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         relevant_paths=(x.path for x in toolchain_paths_response.paths))
     return self._toolchain_cls_applied
 
-  def get_dependency_graph(self, build_target, chroot, packages=None):
+  def get_dependency_graph(self, sysroot, chroot, packages=None):
     """Calculates the dependency graph for the build target & SDK
 
     Args:
-      build_target (chromiumos.BuildTarget): The BuildTarget being built.
+      sysroot (Sysroot): The Sysroot being used.
       chroot (chromiumos.Chroot): The chroot it is being run in.
       packages (list[chromiumos.PackageInfo]): The packages for which to
           generate the dependency graph.
@@ -262,8 +262,12 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """
     _dep_graph = namedtuple('_dep_graph', ['target', 'sdk'])
     with self.m.step.nest('dependency graph calculation'):
+      # TODO(crbug/1081828): drop build_target once no longer needed by bisect
+      # builders, after 2020-11-30.
+      build_target = None if not sysroot else sysroot.build_target
       resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
-          GetBuildDependencyGraphRequest(build_target=build_target,
+          GetBuildDependencyGraphRequest(sysroot=sysroot,
+                                         build_target=build_target,
                                          chroot=chroot, packages=packages))
       return _dep_graph(target=resp.dep_graph, sdk=resp.sdk_dep_graph)
 

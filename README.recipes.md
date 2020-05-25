@@ -1440,12 +1440,12 @@ A module for determining if a build is unnecessary.
 
 &mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#233)(self, gerrit_changes, gitiles_commit, chroot):**
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#248)(self, build_target, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#248)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
 Args:
-  build_target (chromiumos.BuildTarget): The BuildTarget being built.
+  sysroot (Sysroot): The Sysroot being used.
   chroot (chromiumos.Chroot): The chroot it is being run in.
   packages (list[chromiumos.PackageInfo]): The packages for which to
       generate the dependency graph.
@@ -3647,7 +3647,7 @@ API for various support functions for building.
 
 A module for sysroot setup, manipulation, and use.
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#87)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#86)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot by calling InstallToolchain.
 
@@ -3660,7 +3660,7 @@ Args:
   timeout_sec (int): Step timeout, in seconds, or None for default.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#55)(self, build_target, profile=None, chroot_current=True, replace=True, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#54)(self, build_target, profile=None, chroot_current=True, replace=True, timeout_sec='DEFAULT', name=None):**
 
 Create the sysroot.
 
@@ -3679,9 +3679,9 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#19)(self):**
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#23)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#22)(self):**
 
-&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#27)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
+&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#26)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
 
 Update ebuilds for artifact build.
 
@@ -4237,11 +4237,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#95)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#94)(api, config, build_target, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#77)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#76)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#300)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#294)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4257,7 +4257,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#319)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#313)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4544,9 +4544,9 @@ Used to create sweeping changes by creating CLs in many repos.
 &mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#18)(api):**
 ### *recipes* / [cros\_relevance:examples/pointless\_builds](/recipe_modules/cros_relevance/examples/pointless_builds.py)
 
-[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#13): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#14): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#17)(api):**
 ### *recipes* / [cros\_relevance:examples/toolchain\_change](/recipe_modules/cros_relevance/examples/toolchain_change.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/toolchain_change.py#9): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
