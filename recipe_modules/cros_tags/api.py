@@ -50,18 +50,11 @@ class CrosTagsApi(recipe_api.RecipeApi):
     # If CQ is not active, then this tag should be ignored.
     if self.m.cq.state == self.m.cq.INACTIVE:
       return None
-    # TODO(crbug/1051623): once 2208069 is live, refactor this and add tests.
     try:
-      # Fixed in crrev.com/c/2208069.
       return self.m.cq.equivalent_cl_group_key
-    except ValueError:  # pragma: no cover
+    except ValueError:
       # CQ (or more likely, our tests) did not set a value.
-      return None
-    except AttributeError:
-      # Crrev.com/c/2208069 has not landed yet.
-      for t in self.m.buildbucket.build.tags:
-        if t.key == 'cq_equivalent_cl_group_key':
-          return t.value
+      pass
     return None
 
   @property
