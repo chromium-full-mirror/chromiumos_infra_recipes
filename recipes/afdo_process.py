@@ -81,13 +81,7 @@ def DoRunSteps(api, config, build_target, properties):
   api.cros_sdk.update_chroot(gitiles_commit, gerrit_changes,
                              toolchain_targets=[build_target])
 
-  sysroot = None
   if gerrit_changes:
-    # If there are gerrit changes, we need a sysroot to validate the SDK for
-    # reuse.
-    sysroot = api.sysroot_util.create_sysroot(
-        build_target, config.build.portage_profile.profile)
-
     with api.step.nest('validate SDK reuse') as presentation:
       # If there are no gerrit changes, then the SDK remains clean.  If there
       # are gerrit changes, determine if they affect the SDK.
@@ -95,7 +89,7 @@ def DoRunSteps(api, config, build_target, properties):
       if api.cros_relevance.is_depgraph_affected(
           gerrit_changes, gitiles_commit,
           dep_graph=api.cros_relevance.get_dependency_graph(
-              sysroot=sysroot, chroot=api.cros_sdk.chroot,
+              sysroot=None, chroot=api.cros_sdk.chroot,
               packages=config.build.install_packages.packages).sdk):
         step_text = 'Dirty: changes affect SDK'
         api.cros_sdk.mark_sdk_as_dirty()
@@ -116,7 +110,7 @@ def DoRunSteps(api, config, build_target, properties):
   api.cros_artifacts.upload_artifacts(
       config.id.name, build_target, config.id.type,
       config.artifacts.artifacts_gs_bucket,
-      artifacts_info=config.artifacts.artifacts_info, sysroot=sysroot,
+      artifacts_info=config.artifacts.artifacts_info, sysroot=None,
       chroot=api.cros_sdk.chroot)
 
 
