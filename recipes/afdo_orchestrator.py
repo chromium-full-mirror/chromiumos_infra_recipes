@@ -179,7 +179,7 @@ def RunSteps(api, properties):
                                   gerrit_changes))
 
   with api.step.nest('clean up orchestrator') as presentation:
-    api.bot_cost.set_cq_run_cost(api.buildbucket.build.id, completed_builds)
+    api.bot_cost.set_cq_run_cost(completed_builds)
 
     # Recheck the BuilderConfigs at HEAD, one last time, to see if any failed
     # builders are now noncritical.

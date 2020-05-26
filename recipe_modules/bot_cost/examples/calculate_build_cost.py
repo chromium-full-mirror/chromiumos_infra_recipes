@@ -21,13 +21,13 @@ PROPERTIES = TestProperties
 
 
 def RunSteps(api, properties):
-  with api.step.nest(properties.name) as test_step:
-    build_cost = api.bot_cost._calculate_build_cost(123, properties.bot_size)
-    if properties.expect_cost:
-      api.assertions.assertNotEqual(0, build_cost)
-    else:
-      api.assertions.assertEqual(0, build_cost)
-  api.bot_cost.set_build_cost(123, properties.bot_size)
+  with api.bot_cost.build_cost_context():
+    with api.step.nest(properties.name) as test_step:
+      build_cost = api.bot_cost._calculate_build_cost()
+      if properties.expect_cost:
+        api.assertions.assertNotEqual(0, build_cost)
+      else:
+        api.assertions.assertEqual(0, build_cost)
 
 
 def GenTests(api):
@@ -46,9 +46,6 @@ def GenTests(api):
         [common_pb2.StringPair(key='bot_size', value=bot_size)])
     return api.test(
         name, api.buildbucket.build(bld_msg),
-        api.buildbucket.simulated_get(
-            bld_msg,
-            step_name='%s.calculate build cost.buildbucket.get' % name),
         api.properties(
             TestProperties(name=name, bot_size=bot_size,
                            expect_cost=expect_cost)), *(extra or []))
@@ -65,6 +62,5 @@ def GenTests(api):
   yield test('medium-bot', status='SUCCESS', start_time=5000, end_time=15000,
              bot_size='medium')
 
-  yield test('bad-botsize', status='SUCCESS', start_time=5000, end_time=15000,
-             bot_size='small',
-             extra=[api.properties(TestProperties(bot_size='large'))])
+  # Covers led launched builds, too.
+  yield test('unspecified', status='STATUS_UNSPECIFIED')

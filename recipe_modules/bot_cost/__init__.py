@@ -8,4 +8,5 @@ DEPS = [
     'recipe_engine/led',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/time',
 ]

@@ -175,7 +175,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:23Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}"
     ],
     "infra_step": true,
     "name": "find inflight orchestrator.find matching builds.buildbucket.search",
@@ -509,7 +509,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:23Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:24Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}"
     ],
     "infra_step": true,
     "name": "run builds.get build history.find matching builds.buildbucket.search",
@@ -547,7 +547,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:24Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:26Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}"
     ],
     "infra_step": true,
     "name": "run builds.get build history.get completed builds.get change build history.buildbucket.search",
@@ -577,7 +577,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:26Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}], \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromeos/+/2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:27Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}], \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromeos/+/2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
     ],
     "infra_step": true,
     "name": "run builds.get snapshot builds.buildbucket.search",

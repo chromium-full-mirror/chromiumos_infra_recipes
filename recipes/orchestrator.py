@@ -75,8 +75,8 @@ def RunSteps(api, properties):
     gerrit_changes = api.cros_infra_config.gerrit_changes
     intern_snapshot_id = snapshot.id
     presentation.links['manifest snapshot revision'] = (
-        'https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/{}/snapshot.xml'
-        .format(intern_snapshot_id))
+        'https://chrome-internal.googlesource.com/chromeos/manifest-internal/'
+        '+/{}/snapshot.xml'.format(intern_snapshot_id))
 
     # clone internal manifest repo
     intern_repo_path = clone_repo(api, 'internal manifest',
@@ -226,7 +226,7 @@ def RunSteps(api, properties):
                                   gerrit_changes))
 
   with api.step.nest('clean up orchestrator') as presentation:
-    api.bot_cost.set_cq_run_cost(api.buildbucket.build.id, completed_builds)
+    api.bot_cost.set_cq_run_cost(completed_builds)
 
     # Recheck the BuilderConfigs at HEAD, one last time, to see if any failed
     # builders are now noncritical.

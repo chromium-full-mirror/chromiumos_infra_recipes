@@ -33,6 +33,11 @@ from PB.chromiumos.builder_config import BuilderConfig
 
 
 def RunSteps(api):
+  with api.bot_cost.build_cost_context():
+    DoRunSteps(api)
+
+
+def DoRunSteps(api):
   with api.step.nest('read builder config') as pres:
     try:
       config = api.cros_infra_config.get_builder_config(
@@ -67,7 +72,6 @@ def RunSteps(api):
       api.cros_build_api.TestService.ChromiteUnitTest(
           ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot),
           name='run chromite unit tests')
-      api.bot_cost.set_build_cost(api.buildbucket.build.id, 'large')
 
 
 def GenTests(api):

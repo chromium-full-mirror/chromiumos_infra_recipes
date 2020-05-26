@@ -38,17 +38,17 @@ PROPERTIES = AfdoProcessProperties
 def RunSteps(api, properties):
   build_target = properties.build_target
 
-  config = api.cros_infra_config.configure_builder(
-      api.buildbucket.gitiles_commit,
-      api.buildbucket.build.input.gerrit_changes)
-  if not config:
-    # No config found, already logged.
-    return
+  with api.bot_cost.build_cost_context():
+    config = api.cros_infra_config.configure_builder(
+        api.buildbucket.gitiles_commit,
+        api.buildbucket.build.input.gerrit_changes)
+    if not config:
+      # No config found, already logged.
+      return
 
-  api.cros_sdk.set_use_flags(config.build.use_flags)
-  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
-    DoRunSteps(api, config, build_target, properties)
-  api.bot_cost.set_build_cost(api.buildbucket.build.id, 'large')
+    api.cros_sdk.set_use_flags(config.build.use_flags)
+    with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
+      DoRunSteps(api, config, build_target, properties)
 
 
 def DoRunSteps(api, config, build_target, properties):
@@ -118,8 +118,6 @@ def DoRunSteps(api, config, build_target, properties):
       config.artifacts.artifacts_gs_bucket,
       artifacts_info=config.artifacts.artifacts_info, sysroot=sysroot,
       chroot=api.cros_sdk.chroot)
-
-  api.bot_cost.set_build_cost(api.buildbucket.build.id, 'large')
 
 
 def GenTests(api):

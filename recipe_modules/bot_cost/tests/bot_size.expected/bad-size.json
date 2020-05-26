@@ -1,16 +1,16 @@
 [
   {
     "cmd": [],
-    "name": "started-build"
-  },
-  {
-    "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0396@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "bot_size:bad not supported"
+    },
     "name": "$result"
   }
 ]

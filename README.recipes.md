@@ -72,6 +72,7 @@
   * [autotest_status_parser:examples/full](#recipes-autotest_status_parser_examples_full)
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
   * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost)
+  * [bot_cost:tests/bot_size](#recipes-bot_cost_tests_bot_size)
   * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
   * [bot_scaling:examples/get_gce_config](#recipes-bot_scaling_examples_get_gce_config)
   * [bot_scaling:examples/get_robocrop_action](#recipes-bot_scaling_examples_get_robocrop_action)
@@ -334,33 +335,35 @@ Args:
 Returns: Result.
 ### *recipe_modules* / [bot\_cost](/recipe_modules/bot_cost)
 
-[DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate the cost of running bots.
 
-&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#23)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#26)(self):**
 
-&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#30)(self, build_id, bot_size):**
+Set build cost after running.
+
+Returns:
+  A context that sets build_cost on exit.
+
+&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#20)(self):**
+
+&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#38)(self):**
 
 Wrapper function to calculate and set the cost of creating the build.
 
 Calculate the cost of creating the build and set it as a build output
 property.
 
-Args:
-  build_id (int): The build id for this build.
-  bot_size (str): The size of the bot used to create the build.
-
-&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#84)(self, orch_build_id, child_builds):**
+&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#101)(self, child_builds):**
 
 Wrapper function to calculate and set the cost of the cq run.
 
 Calculate the cost of the cq run and set it as a build output property.
 
 Args:
-  orch_build_id (int): The orchestrator's build id.
   child_builds (list[build_pb2.Build]): The child builds for this cq run.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
@@ -4135,6 +4138,11 @@ Returns:
 [DEPS](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#6): [bot\_cost](#recipe_modules-bot_cost), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#20)(api):**
+### *recipes* / [bot\_cost:tests/bot\_size](/recipe_modules/bot_cost/tests/bot_size.py)
+
+[DEPS](/recipe_modules/bot_cost/tests/bot_size.py#6): [bot\_cost](#recipe_modules-bot_cost), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/tests/bot_size.py#16)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_bot\_request](/recipe_modules/bot_scaling/examples/get_bot_request.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_bot_request.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -5258,6 +5266,8 @@ Recipe that tests chromite.
 
 Though this recipe appears to be almost a subset of build_target, it lives
 on its own because it is agnostic of ChromeOS build targets.
+
+&mdash; **def [DoRunSteps](/recipes/test_chromite.py#40)(api):**
 
 &mdash; **def [RunSteps](/recipes/test_chromite.py#35)(api):**
 ### *recipes* / [test\_config](/recipes/test_config.py)

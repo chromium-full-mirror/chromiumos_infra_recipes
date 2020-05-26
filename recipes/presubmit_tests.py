@@ -30,16 +30,15 @@ PROPERTIES = PresubmitTestsProperties
 
 
 def RunSteps(api, properties):
-  # This builder doesn't have a builder config, but we want the shared handling
-  # of gitiles_commit and gerrit_changes, and enough of a config to let us work.
-  api.cros_infra_config.configure_builder(
-      api.buildbucket.gitiles_commit,
-      api.buildbucket.build.input.gerrit_changes)
+  with api.bot_cost.build_cost_context():
+    # This builder doesn't have a builder config, but we want the shared
+    # handling of gitiles_commit and gerrit_changes, and enough of a config to
+    # let us work.
+    api.cros_infra_config.configure_builder(
+        api.buildbucket.gitiles_commit,
+        api.buildbucket.build.input.gerrit_changes)
 
-  _FullCheckout(api, properties)
-  myname = api.buildbucket.build.builder.builder
-  bot_size = 'medium' if 'infra-' in myname else 'large'
-  api.bot_cost.set_build_cost(api.buildbucket.build.id, bot_size)
+    _FullCheckout(api, properties)
 
 
 def _FullCheckout(api, properties):
