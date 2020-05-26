@@ -57,9 +57,9 @@ def RunSteps(api):
           api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
       api.cros_sdk.create_chroot(version=config.general.sdk_cache_version,
-                               use_image=False, timeout_sec=None)
-      api.cros_sdk.update_chroot(
-          api.buildbucket.gitiles_commit, gerrit_changes, timeout_sec=None)
+                                 use_image=False, timeout_sec=None)
+      api.cros_sdk.update_chroot(api.buildbucket.gitiles_commit, gerrit_changes,
+                                 timeout_sec=None)
 
       api.cros_build_api.TestService.ChromitePytest(
           ChromitePytestRequest(chroot=api.cros_sdk.chroot),
@@ -95,7 +95,7 @@ def GenTests(api):
   yield api.test(
       'updatesdk-destroy-chroot-tests',
       api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                   builder='chromite-cq'),
+                                builder='chromite-cq'),
       api.step_data(
           'update sdk.call chromite.api.SdkService/Update.'
           'call build API script', retcode=1),

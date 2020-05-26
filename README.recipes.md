@@ -618,9 +618,9 @@ Returns:
 
 [DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [portage](#recipe_modules-portage), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#39)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#183)(self, build_target, chroot, packages=None, internal=False, ignore_prebuilts=False):**
+&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#184)(self, build_target, chroot, packages=None, internal=False, ignore_prebuilts=False):**
 
 Returns whether this run should build Chrome from source.
 
@@ -637,7 +637,7 @@ Args:
 Returns:
   bool: Whether or not this run needs to build Chrome from source.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#157)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#158)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -650,7 +650,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#236)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#235)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -666,7 +666,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#207)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#208)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
 &mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#275)(self, build_target, chroot, patch_sets):**
 
@@ -680,7 +680,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#215)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#216)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -696,7 +696,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#59)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#60)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -1700,13 +1700,13 @@ Returns:
 
 A module for interacting with the ChromeOS Sheriff-o-Matic.
 
-&mdash; **def [get\_annotation](/recipe_modules/cros_som/api.py#74)(self, step_name):**
+&mdash; **def [get\_annotation](/recipe_modules/cros_som/api.py#73)(self, step_name):**
 
 Return a `SomAnnotation` for `step_name`.
 
 None if there is no annotation for the step.
 
-&mdash; **def [get\_silence\_reason](/recipe_modules/cros_som/api.py#99)(self, annotation):**
+&mdash; **def [get\_silence\_reason](/recipe_modules/cros_som/api.py#98)(self, annotation):**
 
 Return the reason an annotation is silenced, None if there is no silence.
 
@@ -2028,7 +2028,7 @@ Args:
 A context wrapper for track().
 ### *recipe_modules* / [easy](/recipe_modules/easy)
 
-[DEPS](/recipe_modules/easy/__init__.py#1): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/easy/__init__.py#6): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for easy steps.
 
@@ -3193,7 +3193,7 @@ Returns:
   str: A string describing the VM test.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
-[DEPS](/recipe_modules/overlayfs/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/overlayfs/__init__.py#6): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
 
@@ -3962,7 +3962,7 @@ All builders run against the same source tree.
 
 &mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#49)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#315)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#324)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -3979,7 +3979,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#302)(api):**
+&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#311)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -3989,7 +3989,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#247)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#253)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4004,7 +4004,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#193)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#195)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
 
 Run and collect any process_child.
 
@@ -4019,7 +4019,7 @@ Args:
 
 Returns: A list of (one) build_pb2.Build object with the process_child result.
 
-&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#364)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#375)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4299,12 +4299,12 @@ Checks a project conforms to its program's constraints.
 
 [DEPS](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py#19)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#24)(api):**
 ### *recipes* / [chrome:examples/gclient\_retry](/recipe_modules/chrome/examples/gclient_retry.py)
 
 [DEPS](/recipe_modules/chrome/examples/gclient_retry.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4567,7 +4567,7 @@ Used to create sweeping changes by creating CLs in many repos.
 
 [DEPS](/recipe_modules/cros_som/examples/full.py#6): [cros\_som](#recipe_modules-cros_som), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_som/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_som/examples/full.py#13)(api):**
 ### *recipes* / [cros\_source:examples/full](/recipe_modules/cros_source/examples/full.py)
 
 [DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4629,7 +4629,7 @@ json files.
 
 [DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#16)(api):**
 ### *recipes* / [easy:examples/stdout\_json\_step](/recipe_modules/easy/examples/stdout_json_step.py)
 
 [DEPS](/recipe_modules/easy/examples/stdout_json_step.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -4639,7 +4639,7 @@ json files.
 
 [DEPS](/recipe_modules/easy/examples/stdout_jsonpb_step.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#14)(api):**
 ### *recipes* / [f20\_proto\_validation:examples/full](/recipe_modules/f20_proto_validation/examples/full.py)
 
 [DEPS](/recipe_modules/f20_proto_validation/examples/full.py#6): [f20\_proto\_validation](#recipe_modules-f20_proto_validation)
@@ -4967,7 +4967,7 @@ Args:
 Returns:
   path (Path): path on disk to cloned repo
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#335)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#340)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4986,7 +4986,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#316)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#319)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4996,7 +4996,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#444)(api, repo_name, repo_url, repo_path, ref, commit):**
+&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#451)(api, repo_name, repo_url, repo_path, ref, commit):**
 
 Update a ref in the remote repo to point to a given commit.  If ref
 evaluates as False, then do nothing
@@ -5024,7 +5024,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#392)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#399)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -5037,7 +5037,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#433)(ref, name):**
+&mdash; **def [validate\_ref](/recipes/orchestrator.py#440)(ref, name):**
 
 Assert the given ref starts with refs/heads.
 
@@ -5045,7 +5045,7 @@ Args:
   ref (string): the ref to validate, if any.
   name (string): name of ref to validate.
 
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#419)(refs):**
+&mdash; **def [validate\_refs](/recipes/orchestrator.py#426)(refs):**
 
 Assert the given refs start with refs/heads.
 

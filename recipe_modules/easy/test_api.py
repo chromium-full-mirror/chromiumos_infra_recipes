@@ -7,6 +7,7 @@ from recipe_engine import recipe_test_api
 
 from google.protobuf import json_format
 
+
 class EasyTestApi(recipe_test_api.RecipeTestApi):
   """Simulate test data for easy api."""
 
@@ -14,5 +15,5 @@ class EasyTestApi(recipe_test_api.RecipeTestApi):
     return self.step_data(step_name, self.m.json.output_stream(data))
 
   def simulate_jsonpb_step(self, step_name, data):
-    return self.step_data(step_name,
-        self.m.raw_io.stream_output(json_format.MessageToJson(data)))
+    return self.step_data(
+        step_name, self.m.raw_io.stream_output(json_format.MessageToJson(data)))

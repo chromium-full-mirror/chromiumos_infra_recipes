@@ -9,6 +9,7 @@ DEPS = [
     'cros_som',
 ]
 
+
 def RunSteps(api):
   annotation = api.cros_som.get_annotation('step with linked bugs')
   api.assertions.assertIsNotNone(annotation)
@@ -44,5 +45,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-
   yield api.test('basic')

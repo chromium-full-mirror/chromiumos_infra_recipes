@@ -19,22 +19,24 @@ CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 
 # The following project->regexes should trigger a chrome rebuild.
 CHROMIUM_REBUILD_REGEXES = {
-  'chromiumos/overlays/chromiumos-overlay':
-    [re.compile('chromeos-base/chromeos-chrome/'
-                'chromeos-chrome-9999\.ebuild$')],
+    'chromiumos/overlays/chromiumos-overlay': [
+        re.compile('chromeos-base/chromeos-chrome/'
+                   'chromeos-chrome-9999\.ebuild$')
+    ],
 }
 
-CHROME_PACKAGE  = PackageInfo(category='chromeos-base',
-                              package_name='chromeos-chrome')
+CHROME_PACKAGE = PackageInfo(category='chromeos-base',
+                             package_name='chromeos-chrome')
 
 # The following packages need chrome source to be synced to build.
 # Consider adding to chromite/lib/constants.py under OTHER_CHROME_PACKAGES
 # to prevent rebuilds (which may not succeed if chrome source isn't sync'd).
 CHROME_FOLLOWER_PACKAGES = [
-  ('chromeos-base', 'chrome-icu'),
-  ('chromeos-base', 'ml'),
-  ('dev-libs', 'libtextclassifier'),
+    ('chromeos-base', 'chrome-icu'),
+    ('chromeos-base', 'ml'),
+    ('dev-libs', 'libtextclassifier'),
 ]
+
 
 class ChromeApi(recipe_api.RecipeApi):
 
@@ -43,16 +45,15 @@ class ChromeApi(recipe_api.RecipeApi):
     self._parallel_sync_jobs = 4
     if properties.parallel_sync_jobs > 0:
       self._parallel_sync_jobs = properties.parallel_sync_jobs
-    self._deps_isolate = (properties.deps_isolate
-                          if properties.HasField('deps_isolate')
-                          else None)
+    self._deps_isolate = (
+        properties.deps_isolate
+        if properties.HasField('deps_isolate') else None)
     self._version = properties.version
 
   def _get_local_version(self, chroot, build_target):
     """Returns chrome version from local chroot (e.g. "84.0.4109.1")."""
-    request = packages.GetChromeVersionRequest(
-        chroot=chroot,
-        build_target=build_target)
+    request = packages.GetChromeVersionRequest(chroot=chroot,
+                                               build_target=build_target)
     return self.m.cros_build_api.PackageService.GetChromeVersion(
         request, infra_step=True).version
 
@@ -228,10 +229,8 @@ class ChromeApi(recipe_api.RecipeApi):
       bool: Whether or not this run needs chrome.
     """
     return self.m.cros_build_api.PackageService.BuildsChrome(
-        BuildsChromeRequest(
-            build_target=build_target,
-            chroot=chroot,
-            packages=packages)).builds_chrome
+        BuildsChromeRequest(build_target=build_target, chroot=chroot,
+                            packages=packages)).builds_chrome
 
   def follower_lacks_prebuilt(self, build_target, chroot, packages):
     """Returns whether we need the chrome source to be synced.
@@ -258,17 +257,18 @@ class ChromeApi(recipe_api.RecipeApi):
     # We'll first query the packages we're going to build out of the dependent
     # packages to get the versions and if it's necessary to build at all.
     with self.m.step.nest('any followers lack prebuilts') as pres:
-      packageInfos = [p for p in packages
-                      if (p.category, p.package_name)
-                      in CHROME_FOLLOWER_PACKAGES]
+      packageInfos = [
+          p for p in packages
+          if (p.category, p.package_name) in CHROME_FOLLOWER_PACKAGES
+      ]
 
       # If any follower packages lack prebuilts, return True.
-      any_lack_pb = any([not self.m.cros_build_api.PackageService.HasPrebuilt(
-                             HasPrebuiltRequest(
-                                 build_target=build_target,
-                                 chroot=chroot,
+      any_lack_pb = any([
+          not self.m.cros_build_api.PackageService.HasPrebuilt(
+              HasPrebuiltRequest(build_target=build_target, chroot=chroot,
                                  package_info=p)).has_prebuilt
-                             for p in packageInfos])
+          for p in packageInfos
+      ])
       pres.step_text = str(any_lack_pb)
       return any_lack_pb
 
@@ -287,16 +287,15 @@ class ChromeApi(recipe_api.RecipeApi):
       with self.m.step.nest('try uprev chrome'):
         version = self._get_local_version(chroot, build_target)
         version_ref = UprevVersionedPackageRequest.GitRef(
-                      repository='/chromium/src',
-                      ref='refs/tags/%s' % version,
-                      revision='deadbeefdeadbeefdeadbeefdeadbeefdeadbeef')
+            repository='/chromium/src', ref='refs/tags/%s' % version,
+            revision='deadbeefdeadbeefdeadbeefdeadbeefdeadbeef')
         request = UprevVersionedPackageRequest(
-                chroot=chroot,
-                package_info=CHROME_PACKAGE,
-                versions=[version_ref],
-                build_targets=[build_target],
-            )
+            chroot=chroot,
+            package_info=CHROME_PACKAGE,
+            versions=[version_ref],
+            build_targets=[build_target],
+        )
         response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
-              request, name='uprev local chrome package')
+            request, name='uprev local chrome package')
         return True
     return False

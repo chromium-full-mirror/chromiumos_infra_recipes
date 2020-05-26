@@ -47,7 +47,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.buildbucket.simulated_get(
-          orch_build,
-          step_name='calculate cq run cost'
+          orch_build, step_name='calculate cq run cost'
           '.calculate build cost.buildbucket.get'),
   )

@@ -14,7 +14,7 @@ BOT_COST = {'small': 0.342, 'medium': 1.93, 'large': 8.08}
 # Real builds always have the bot_dimension "bot_size".  The test api does
 # not generally provide that, so we have a default for a better testing
 # experience.
-UNKNOWN_BOT_SIZE='UNKNOWN'
+UNKNOWN_BOT_SIZE = 'UNKNOWN'
 
 
 class BotCostApi(recipe_api.RecipeApi):

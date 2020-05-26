@@ -50,8 +50,7 @@ class CrosSomApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(CrosSomApi, self).__init__(*args, **kwargs)
     som_url = properties.som_url or 'https://sheriff-o-matic.appspot.com/chromeos'
-    self._annotations_url = urljoin(som_url,
-                                    '/api/v1/annotations/chromeos')
+    self._annotations_url = urljoin(som_url, '/api/v1/annotations/chromeos')
     # A map from 'key' to `SomAnnotation`. Lazily loaded.
     self._key_to_annotation = {}
 
@@ -61,9 +60,9 @@ class CrosSomApi(recipe_api.RecipeApi):
       token = self.m.service_account.default().get_access_token()
       response = self.m.url.get_json(
           self._annotations_url, transient_retry=3, log=True,
-          step_name='get Sheriff-o-Matic annotations', headers={
-              'Authorization': 'Bearer {}'.format(token)
-          }, default_test_data=self.test_api.test_annotation_response)
+          step_name='get Sheriff-o-Matic annotations',
+          headers={'Authorization': 'Bearer {}'.format(token)},
+          default_test_data=self.test_api.test_annotation_response)
       response.raise_on_error()
 
       for annotation in response.output:

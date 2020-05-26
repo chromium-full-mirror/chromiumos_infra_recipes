@@ -16,5 +16,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.easy.simulate_json_step('json', {'b': 2}))
+  yield api.test('basic', api.easy.simulate_json_step('json', {'b': 2}))

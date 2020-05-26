@@ -127,8 +127,8 @@ class EasyApi(recipe_api.RecipeApi):
       test_output_str = json_format.MessageToJson(test_output)
 
     output = message_type()
-    step_data = self.stdout_step(
-        name, cmd, test_stdout=test_output_str, **kwargs)
+    step_data = self.stdout_step(name, cmd, test_stdout=test_output_str,
+                                 **kwargs)
     return json_format.Parse(step_data, output, ignore_unknown_fields=True)
 
 

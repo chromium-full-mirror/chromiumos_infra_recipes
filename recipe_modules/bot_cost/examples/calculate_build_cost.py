@@ -62,8 +62,8 @@ def GenTests(api):
   yield test('scheduled-build', status='SCHEDULED', start_time=5000,
              end_time=15000, update_time=15000, expect_cost=False)
 
-  yield test('medium-bot', status='SUCCESS', start_time=5000,
-             end_time=15000, bot_size='medium')
+  yield test('medium-bot', status='SUCCESS', start_time=5000, end_time=15000,
+             bot_size='medium')
 
   yield test('bad-botsize', status='SUCCESS', start_time=5000, end_time=15000,
              bot_size='small',

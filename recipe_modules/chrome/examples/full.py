@@ -20,6 +20,7 @@ from PB.chromiumos.common import PackageInfo
 
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
+
 def RunSteps(api):
   chroot = Chroot()
   build_target = BuildTarget()
@@ -38,21 +39,28 @@ def RunSteps(api):
 
   ps_info = {
       'host': 'test',
-      'info': {'project': 'chromiumos/overlays/chromiumos-overlay',},
-      'revision_info': { 'files': {
-          'chromeos-base/chromeos-chrome/'
-          'chromeos-chrome-9999.ebuild': {},
-          'some/path/that/isnt/important': {},
+      'info': {
+          'project': 'chromiumos/overlays/chromiumos-overlay',
+      },
+      'revision_info': {
+          'files': {
+              'chromeos-base/chromeos-chrome/'
+              'chromeos-chrome-9999.ebuild': {},
+              'some/path/that/isnt/important': {},
           },
       },
-    'patch_set': '3',}
+      'patch_set': '3',
+  }
   ps1 = api.gerrit.PatchSet(ps_info)
-  p_list = [PackageInfo(package_name='chrome-icu',
-                        category='chromeos-base',
-                        version='1.01')]
+  p_list = [
+      PackageInfo(package_name='chrome-icu', category='chromeos-base',
+                  version='1.01')
+  ]
 
   ps_info2 = deepcopy(ps_info)
-  ps_info2['revision_info']['files'] = {'some/path/that/isnt/important': {},}
+  ps_info2['revision_info']['files'] = {
+      'some/path/that/isnt/important': {},
+  }
   ps2 = api.gerrit.PatchSet(ps_info2)
 
   api.assertions.assertTrue(
@@ -62,8 +70,8 @@ def RunSteps(api):
 
   api.chrome.builds_chrome_from_source(build_target, chroot)
   api.chrome.builds_chrome_from_source(build_target, chroot, p_list)
-  api.chrome.builds_chrome_from_source(
-      build_target, chroot, ignore_prebuilts=True)
+  api.chrome.builds_chrome_from_source(build_target, chroot,
+                                       ignore_prebuilts=True)
   api.chrome.follower_lacks_prebuilt(build_target, chroot, p_list)
 
   api.chrome.maybe_uprev_local_chrome(build_target, chroot, [ps1])
@@ -77,23 +85,20 @@ def GenTests(api):
 
   yield api.test(
       'with_properties',
-      api.properties(**{
-          "$chromeos/chrome":
-          ChromeProperties(parallel_sync_jobs=42)
-      }),
+      api.properties(
+          **{"$chromeos/chrome": ChromeProperties(parallel_sync_jobs=42)}),
   )
 
   yield api.test(
       'with-properties-custom-build',
-      api.properties(**{
-          "$chromeos/chrome":
-          ChromeProperties(
-              version='deadbeef',
-              deps_isolate=ChromeProperties.DepsIsolate(
-                  isolated_hash='aaa',
-                  isolate_server='aaa.com'
-              )),
-      }),
+      api.properties(
+          **{
+              "$chromeos/chrome":
+                  ChromeProperties(
+                      version='deadbeef',
+                      deps_isolate=ChromeProperties.DepsIsolate(
+                          isolated_hash='aaa', isolate_server='aaa.com')),
+          }),
   )
 
   yield api.test(
