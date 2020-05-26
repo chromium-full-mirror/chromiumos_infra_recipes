@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*-
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/assertions',
+    'build_menu',
+    'test_util',
+]
+
+from PB.chromiumos import common
+
+
+def RunSteps(api):
+  build_target = common.BuildTarget(name='eve')
+
+  with api.build_menu.configure_builder(build_target) as config:
+    api.build_menu.setup_workspace_and_chroot()
+
+  # If we never call setup_sysroot_and_determine_relevance, we still get a
+  # dep_graph (and therefore have validated the SDK for reuse.)
+  api.assertions.assertIsNotNone(api.build_menu.dep_graph)
+
+
+def GenTests(api):
+
+  yield api.test('cq-build', api.test_util.test_build(cq=True).build)

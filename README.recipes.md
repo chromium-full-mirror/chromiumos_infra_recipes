@@ -8,6 +8,7 @@
   * [bot_cost](#recipe_modules-bot_cost)
   * [bot_scaling](#recipe_modules-bot_scaling)
   * [breakpad](#recipe_modules-breakpad)
+  * [build_menu](#recipe_modules-build_menu) &mdash; API providing a menu for build steps.
   * [build_plan](#recipe_modules-build_plan)
   * [buildbucket_stats](#recipe_modules-buildbucket_stats)
   * [chrome](#recipe_modules-chrome)
@@ -87,6 +88,8 @@
   * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
+  * [build_menu:examples/full](#recipes-build_menu_examples_full)
+  * [build_menu:tests/no-dep-graph](#recipes-build_menu_tests_no-dep-graph)
   * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan)
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
   * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
@@ -531,6 +534,76 @@ Args:
 
 Returns:
   A list[Path] of symbolicated files written.
+### *recipe_modules* / [build\_menu](/recipe_modules/build_menu)
+
+[DEPS](/recipe_modules/build_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [metadata\_json](#recipe_modules-metadata_json), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API providing a menu for build steps
+
+#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module with steps used by image builders.
+
+Image builders do not call other recipe modules directly: they always get
+there via this module, and be a simple sequence of steps.
+
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#50)(self):**
+
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#30)(self):**
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#58)(self, build_target, missing_ok=False):**
+
+Initial setup steps for the builder.
+
+This context manager returns with all of the contexts that build_target
+needs to have when it runs, for cleanup to happen properly.
+
+Args:
+  build_target (BuildTarget): build_target for the build, or None if the
+      builder is build_target agnostic.
+  missing_ok (bool): Whether it is OK if no config is found.
+
+Returns:
+  BuilderConfig or None, with an active context.
+
+&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#54)(self):**
+
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#38)(self):**
+
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#34)(self):**
+
+&mdash; **def [initialize](/recipe_modules/build_menu/api.py#27)(self):**
+
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#42)(self):**
+
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#149)(self, with_sysroot=True, packages=None):**
+
+Setup the sysroot for the builder and determine build relevance.
+
+Args:
+  with_sysroot (bool): Whether to create a sysroot.  Default: True.
+      (Some builders do not require a sysroot.)
+  packages (list[PackageInfo]): Used to override the list of packages.
+
+Returns:
+  An object containing:
+    pointless (bool): Whether the build is pointless.
+    packages (list[PackageInfo]): The packages for this build, or an empty
+      list.
+
+&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#101)(self, artifact_build=False, forced_relevant=False):**
+
+Setup the workspace and chroot for the builder.
+
+Args:
+  artifact_build (bool): Whether to call update_for_artifact_build and
+      terminate early if POINTLESS.
+  forced_relevant (bool): Whether to force relevance for artifact_builds.
+
+Returns:
+  PrepareForBuildResponse.BuildRelevance
+
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#46)(self):**
 ### *recipe_modules* / [build\_plan](/recipe_modules/build_plan)
 
 [DEPS](/recipe_modules/build_plan/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -4308,6 +4381,16 @@ Renames a branch using `cros branch rename`.
 [DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/breakpad/examples/full.py#19)(api):**
+### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
+
+[DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#21)(api, properties):**
+### *recipes* / [build\_menu:tests/no-dep-graph](/recipe_modules/build_menu/tests/no-dep-graph.py)
+
+[DEPS](/recipe_modules/build_menu/tests/no-dep-graph.py#6): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/no-dep-graph.py#15)(api):**
 ### *recipes* / [build\_plan:examples/bisect\_build\_plan](/recipe_modules/build_plan/examples/bisect_build_plan.py)
 
 [DEPS](/recipe_modules/build_plan/examples/bisect_build_plan.py#10): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

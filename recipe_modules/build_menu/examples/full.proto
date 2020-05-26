@@ -1,0 +1,30 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.build_menu.examples;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+import "chromiumos/common.proto";
+
+message FullProperties {
+  // The build target for the build.
+  chromiumos.BuildTarget build_target = 1;
+
+  // Is this an artifact builder (needs to prepare).
+  bool artifact_build = 2;
+
+  // Is this forced_relevant (pointless builds still build.)
+  bool forced_relevant = 3;
+
+  // Whether to disable sysroot creation.
+  bool no_sysroot = 4;
+
+  // Whether no config is OK.
+  bool missing_config_ok = 5;
+
+  // Whether we expect to find no config.
+  bool expect_missing_config = 6;
+}
