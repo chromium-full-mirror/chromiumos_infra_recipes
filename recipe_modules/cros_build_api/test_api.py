@@ -187,14 +187,12 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         milestone_version='milestone_version',
         platform_version='platform_version',
     )
-    responses['HasChromePrebuilt'] = jsonify(
-        has_prebuilt=False,
+    responses['HasChromePrebuilt'] = jsonify(has_prebuilt=False)
+    responses['HasPrebuilt'] = jsonify(has_prebuilt=False)
+    responses['NeedsChromeSource'] = jsonify(
+        needs_chrome_source=True,
+        reasons=["LOCAL_UPREV", "NO_PREBUILT"],
     )
-
-    responses['HasPrebuilt'] = jsonify(
-        has_prebuilt=False,
-    )
-
     responses['Uprev'] = jsonify(
         version='1.2.3', modified_ebuilds=[
             {

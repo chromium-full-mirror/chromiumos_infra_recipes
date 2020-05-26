@@ -96,9 +96,9 @@
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
   * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
   * [check_project_config](#recipes-check_project_config) &mdash; Checks a project conforms to its program's constraints.
-  * [chrome:examples/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_examples_follower_needs_chrome_no_has_prebuilt)
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [chrome:examples/gclient_retry](#recipes-chrome_examples_gclient_retry)
+  * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt)
   * [cl_factory](#recipes-cl_factory) &mdash; Used to create sweeping changes by creating CLs in many repos.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
@@ -619,11 +619,11 @@ Returns:
   The number of builds (int) in the given bucket with given status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
-[DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [portage](#recipe_modules-portage), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#39)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#156)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#158)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -631,12 +631,12 @@ The patch_sets object supplied must have been constructed with the file
 information populated.
 
 Args:
-  patch_sets (List[gerrit.PatchSet]): List of patch sets (with FileInfo).
+  patch_sets (list[gerrit.PatchSet]): List of patch sets (with FileInfo).
 
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#209)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#211)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -652,21 +652,21 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#182)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#184)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#249)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#251)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
 Args:
   build_target (chromiumos.BuildTarget): Build target of the build.
   chroot (chromiumos.Chroot): Information on the chroot for the build.
-  patch_sets ([gerrit.PatchSet]): A list of patch sets to examine.
+  patch_sets (list[gerrit.PatchSet]): A list of patch sets to examine.
 
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#190)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#192)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -682,7 +682,21 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#58)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#279)(self, request, dep_graph, presentation, patch_sets=None):**
+
+Checks whether chrome source is needed.
+
+Args:
+  request (InstallPackagesRequest): InstallPackagesRequest for the build.
+  dep_graph (DepGraph): From cros_relevance.get_dependency_graph.
+  presentation (StepPresentation): Step to update.
+  patch_sets (list[gerrit.PatchSet]): Applied patchsets.  Default: the list
+    from workspace_util.
+
+Returns:
+  bool: Whether Chrome source is needed.
+
+&mdash; **def [sync](/recipe_modules/chrome/api.py#60)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -4227,7 +4241,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#77)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#331)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#300)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4243,7 +4257,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#350)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#319)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4286,21 +4300,25 @@ Recipe for generating ChromeOS cache payloads.
 Checks a project conforms to its program's constraints.
 
 &mdash; **def [RunSteps](/recipes/check_project_config.py#37)(api, properties):**
-### *recipes* / [chrome:examples/follower\_needs\_chrome\_no\_has\_prebuilt](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py)
-
-[DEPS](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
-
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py#19)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
-[DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#40)(api, properties):**
+
+&mdash; **def [jsonify](/recipe_modules/chrome/examples/full.py#35)(\*\*kwargs):**
+
+Return the kwargs as a json string.
 ### *recipes* / [chrome:examples/gclient\_retry](/recipe_modules/chrome/examples/gclient_retry.py)
 
 [DEPS](/recipe_modules/chrome/examples/gclient_retry.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/chrome/examples/gclient_retry.py#19)(api):**
+### *recipes* / [chrome:tests/follower\_needs\_chrome\_no\_has\_prebuilt](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py)
+
+[DEPS](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
+
+&mdash; **def [RunSteps](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#19)(api):**
 ### *recipes* / [cl\_factory](/recipes/cl_factory.py)
 
 Used to create sweeping changes by creating CLs in many repos.

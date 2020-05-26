@@ -13,6 +13,8 @@ from PB.chromite.api.packages import GetChromeVersionRequest
 from PB.chromite.api.packages import HasChromePrebuiltRequest
 from PB.chromite.api.packages import HasPrebuiltRequest
 from PB.chromite.api.packages import UprevVersionedPackageRequest
+from PB.chromite.api.packages import NeedsChromeSourceRequest
+from PB.chromite.api.packages import NeedsChromeSourceResponse
 from PB.chromiumos.common import PackageInfo
 
 CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
@@ -160,7 +162,7 @@ class ChromeApi(recipe_api.RecipeApi):
     information populated.
 
     Args:
-      patch_sets (List[gerrit.PatchSet]): List of patch sets (with FileInfo).
+      patch_sets (list[gerrit.PatchSet]): List of patch sets (with FileInfo).
 
     Returns:
       A bool that indicates a rebuild should be triggered.
@@ -252,7 +254,7 @@ class ChromeApi(recipe_api.RecipeApi):
     Args:
       build_target (chromiumos.BuildTarget): Build target of the build.
       chroot (chromiumos.Chroot): Information on the chroot for the build.
-      patch_sets ([gerrit.PatchSet]): A list of patch sets to examine.
+      patch_sets (list[gerrit.PatchSet]): A list of patch sets to examine.
 
     Returns:
       bool: If we upreved the local Chrome.
@@ -273,3 +275,68 @@ class ChromeApi(recipe_api.RecipeApi):
             request, name='uprev local chrome package')
         return True
     return False
+
+  def needs_chrome_source(self, request, dep_graph, presentation,
+                          patch_sets=None):
+    """Checks whether chrome source is needed.
+
+    Args:
+      request (InstallPackagesRequest): InstallPackagesRequest for the build.
+      dep_graph (DepGraph): From cros_relevance.get_dependency_graph.
+      presentation (StepPresentation): Step to update.
+      patch_sets (list[gerrit.PatchSet]): Applied patchsets.  Default: the list
+        from workspace_util.
+
+    Returns:
+      bool: Whether Chrome source is needed.
+    """
+    patch_sets = patch_sets or self.m.workspace_util.patch_sets
+
+    # If there is a NeedChromeSource endpoint, use that.
+    if self.m.cros_build_api.has_endpoint(self.m.cros_build_api.PackageService,
+                                          'NeedsChromeSource'):
+      response = self.m.cros_build_api.PackageService.NeedsChromeSource(
+          NeedsChromeSourceRequest(install_request=request))
+    else:
+      # Here we implement a (buggy) version of NeedsChromeSource.
+      # TODO(crbug/1086714): Drop this (incomplete) code once bisection does not
+      # need us to keep it.
+      _type = NeedsChromeSourceResponse
+      response = _type()
+      chroot = request.chroot
+      target = request.sysroot.build_target
+      ignore_prebuilts = request.flags.compile_source
+
+      # Only bother to do these checks if the build target needs chrome src.
+      if self.needs_chrome(target, chroot, packages=request.packages):
+
+        # TODO(crbug.com/1086714): Remove dep_graph access and corresponding
+        # use, we shouldn't be inspecting this, rather, call the build api.
+        flattened_packages = []
+        for package in dep_graph.target.package_deps:
+          for dep_package in package.dependency_packages:
+            flattened_packages.append(dep_package)
+
+        raw_reasons = [
+            _type.NO_PREBUILT if not self.has_chrome_prebuilt(
+                target, chroot, ignore_prebuilts=ignore_prebuilts) else None,
+            _type.LOCAL_UPREV if self.maybe_uprev_local_chrome(
+                target, chroot, patch_sets) else None,
+            _type.FOLLOWER_LACKS_PREBUILT if self.follower_lacks_prebuilt(
+                target, chroot, flattened_packages) else None,
+        ]
+        response.reasons.extend([r for r in raw_reasons if r])
+        response.needs_chrome_source = response.reasons != []
+
+    # AKA: "Chrome Source Needed Reason".  Create the dictionary of all possible
+    # reasons (ignoring UNSPECIFIED), which we will then
+    csnr = {
+        k.lower(): v in response.reasons
+        for k, v in NeedsChromeSourceResponse.Reason.items()
+        if v
+    }
+    presentation.step_text = (' '.join(k for k, v in csnr.items() if v) or
+                              'not needed')
+    self.m.easy.set_property_step('chrome_source_reasons', csnr)
+
+    return response.needs_chrome_source

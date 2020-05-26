@@ -21,9 +21,12 @@ message TestInputProperties {
   // What packages to build.
   repeated chromiumos.PackageInfo packages = 4;
 
-  // Whether to ignore prebuilts
+  // Whether to ignore prebuilts.
   bool ignore_prebuilts = 5;
 
+  // Whether to disable chromite.api.PackageService/NeedsChromeSource.
+  bool disable_needs_chrome = 6;
+
   // Expected builds_from_source result.
-  bool expected_builds_from = 6;
+  bool expected_builds_from = 7;
 }

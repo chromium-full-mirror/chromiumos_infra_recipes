@@ -168,48 +168,26 @@ def DoRunSteps(api, config, build_target, properties):
       compile_source=config.build.install_toolchain.compile_source)
 
   install_packages = config.build.install_packages
-  chrome_source_needed = False
+  chrome_root = api.path['start_dir'].join('chrome')
+
+  def _InstallPackagesRequest():
+    """Helper to make InstallPackagesRequest."""
+    return InstallPackagesRequest(
+        chroot=api.cros_sdk.chroot, sysroot=sysroot, packages=packages,
+        flags=InstallPackagesRequest.Flags(
+            compile_source=install_packages.compile_source,
+            use_goma=(not install_packages.disable_goma and
+                      api.cros_sdk.has_goma_config()),
+            toolchain_changed=api.workspace_util.toolchain_cls_applied),
+        use_flags=config.build.use_flags,
+        goma_config=api.cros_sdk.goma_config())
+
   with api.step.nest('check chrome source needed') as cs_pres:
-    needs_chrome = api.chrome.needs_chrome(build_target=build_target,
-                                           chroot=api.cros_sdk.chroot,
-                                           packages=packages)
-    if needs_chrome:
-      # AKA: "Chrome Source Needed Reason"
-      csnr = {
-          'toolchain_changed': toolchain_changed,
-          'no_prebuilt': False,
-          'local_uprev': False,
-          'follower_lacks_prebuilt': False,
-      }
-      # Only bother to do these checks if the build target needs chrome src.
-      csnr['no_prebuilt'] = not api.chrome.has_chrome_prebuilt(
-          build_target=build_target, chroot=api.cros_sdk.chroot,
-          ignore_prebuilts=install_packages.compile_source)
-
-      csnr['local_uprev'] = api.chrome.maybe_uprev_local_chrome(
-          build_target, api.cros_sdk.chroot, api.workspace_util.patch_sets)
-
-      # TODO(crbug.com/1063327): Remove dep_graph access and corresponding
-      # use, we shouldn't be inspecting this, rather, call the build api.
-      # I don't bother breaking this out into a function lest someone use it.
-      flattened_packages = []
-      for package in dep_graph[0].package_deps:  # dep_graph[0]==target deps.
-        for dep_package in package.dependency_packages:
-          flattened_packages.append(dep_package)
-
-      csnr['follower_lacks_prebuilt'] = api.chrome.follower_lacks_prebuilt(
-          build_target=build_target, chroot=api.cros_sdk.chroot,
-          packages=flattened_packages)
-
-      # Evaluate the |or| of the reasons we might want local chrome source.
-      chrome_source_needed = any([v for k, v in csnr.items()])
-      cs_pres.step_text = ' '.join([k for k, v in csnr.items() if v])
-      api.easy.set_property_step('chrome_source_reasons', csnr)
-
-    if chrome_source_needed:
-      chrome_root = api.path['start_dir'].join('chrome')
+    if api.chrome.needs_chrome_source(_InstallPackagesRequest(), dep_graph,
+                                      cs_pres):
       api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
                       config.chrome.internal)
+      # This will change the return from _InstallPackagesRequest().
       api.cros_sdk.set_chrome_root(str(chrome_root))
       api.cros_sdk.set_goma_config(
           str(api.goma.goma_dir),
@@ -230,16 +208,7 @@ def DoRunSteps(api, config, build_target, properties):
                                                  config.artifacts,
                                                  force_relevance=True,
                                                  name='prepare artifacts final')
-      flags = InstallPackagesRequest.Flags(
-          compile_source=install_packages.compile_source,
-          use_goma=(not install_packages.disable_goma and
-                    api.cros_sdk.has_goma_config()),
-          toolchain_changed=toolchain_changed)
-
-      install_pkg_request = InstallPackagesRequest(
-          sysroot=sysroot, flags=flags, packages=packages,
-          chroot=api.cros_sdk.chroot, use_flags=config.build.use_flags,
-          goma_config=api.cros_sdk.goma_config())
+      install_pkg_request = _InstallPackagesRequest()
       response = api.cros_build_api.SysrootService.InstallPackages(
           install_pkg_request,
           response_lambda=api.cros_build_api.failed_pkg_names,
@@ -490,19 +459,8 @@ def GenTests(api):
       api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data(
           'check chrome source needed.'
-          'call chromite.api.PackageService/BuildsChrome.read output file',
-          api.file.read_raw(content='{"builds_chrome": false}')),
-  )
-
-  yield api.test(
-      'no-has-chrome-prebuilt',
-      cq_build(),
-      api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
-      api.step_data(
-          'check chrome source needed.'
-          'call chromite.api.PackageService/HasChromePrebuilt'
-          '.read output file',
-          api.file.read_raw(content='{"has_prebuilt": false}')),
+          'call chromite.api.PackageService/NeedsChromeSource.read output file',
+          api.file.read_raw(content='{"needs_chrome_source": false}')),
   )
 
   yield api.test(

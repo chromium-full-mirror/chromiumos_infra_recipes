@@ -14,7 +14,9 @@ DEPS = [
     'depot_tools/depot_tools',
     'depot_tools/gclient',
     'cros_build_api',
+    'easy',
     'portage',
+    'workspace_util',
 ]
 
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties

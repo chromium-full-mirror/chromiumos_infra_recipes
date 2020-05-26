@@ -9,15 +9,22 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/step',
     'chrome',
     'gerrit',
 ]
 
 from copy import deepcopy
+from collections import namedtuple
+import json
 
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
+from PB.chromiumos.common import UseFlag
+from PB.chromite.api import depgraph
+from PB.chromite.api.sysroot import InstallPackagesRequest
+from PB.chromite.api.sysroot import Sysroot
 
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.chrome.examples.test import TestInputProperties
@@ -25,118 +32,179 @@ from PB.recipe_modules.chromeos.chrome.examples.test import TestInputProperties
 PROPERTIES = TestInputProperties
 
 
+def jsonify(**kwargs):
+  """Return the kwargs as a json string."""
+  return json.dumps(kwargs)
+
+
 def RunSteps(api, properties):
+
+  def patch_set(files):
+    """Return a patchset.
+
+    Args:
+      files (list[str]): list of modified files.
+
+    Returns:
+      A gerrit.PatchSet.
+    """
+    project = 'chromiumos/overlays/chromiumos-overlay'
+    return api.gerrit.PatchSet(
+        dict(host='test', info=dict(project=project), patch_set='3',
+             revision_info=dict(files={f: {} for f in files})))
+
   chroot = Chroot()
-  build_target = BuildTarget()
+  build_target = BuildTarget(name='target')
+  sysroot = Sysroot(path='/build/sysroot', build_target=build_target)
 
   # There isn't a protobuf definition for PatchSet, so we create it here.
-  need_ps = api.gerrit.PatchSet(
-      dict(
-          host='test',
-          info=dict(project='chromiumos/overlays/chromiumos-overlay'),
-          revision_info=dict(
-              files={
-                  'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild': {
-                  },
-                  'some/path/that/isnt/important': {},
-              }), patch_set='3'))
+  need_ps = patch_set([
+      'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild',
+      'some/path/that/isnt/important'
+  ])
+  no_need_ps = patch_set(['some/path/that/isnt/important'])
 
-  no_need_ps = api.gerrit.PatchSet(
-      dict(host='test',
-           info=dict(project='chromiumos/overlays/chromiumos-overlay'),
-           revision_info=dict(files={
-               'some/path/that/isnt/important': {},
-           }), patch_set='3'))
   ps_list = [need_ps if properties.changes else no_need_ps]
 
-  needs_chrome = api.chrome.needs_chrome(build_target=build_target,
-                                         chroot=chroot,
-                                         packages=properties.packages)
-  api.assertions.assertEqual(properties.needs_chrome, needs_chrome)
-  if needs_chrome:
-    no_prebuilt = not api.chrome.has_chrome_prebuilt(
-        build_target=build_target, chroot=chroot,
-        ignore_prebuilts=properties.ignore_prebuilts)
+  dep_graph = namedtuple('_dep_graph', ['target', 'sdk'])(depgraph.DepGraph(
+      sysroot=sysroot, build_target=build_target, package_deps=[
+          depgraph.PackageDepInfo(
+              package_info=PackageInfo(category='chromeos-base',
+                                       package_name='chromeos-chrome',
+                                       version='85.0.4148.0_rc-r1'),
+              dependency_packages=[
+                  PackageInfo(category='chromeos-base',
+                              package_name='chrome-icu',
+                              version='85.0.4148.0_rc-r1'),
+              ]),
+          depgraph.PackageDepInfo(
+              package_info=PackageInfo(category='virtual',
+                                       package_name='chromeos-interface',
+                                       version='1-r5'),
+              dependency_packages=[
+                  PackageInfo(category='chromeos-base',
+                              package_name='chromeos-chrome',
+                              version='85.0.4148.0_rc-r1'),
+                  PackageInfo(category='chromeos-base',
+                              package_name='chromeos-login',
+                              version='0.0.2-r4356')
+              ]),
+      ]), depgraph.DepGraph())
 
-    local_uprev = api.chrome.maybe_uprev_local_chrome(build_target, chroot,
-                                                      ps_list)
+  internal = UseFlag(flag='chrome_internal')
+  request = InstallPackagesRequest(
+      chroot=chroot, sysroot=sysroot, packages=properties.packages,
+      use_flags=None if properties.external else [internal],
+      flags=InstallPackagesRequest.Flags(
+          compile_source=properties.ignore_prebuilts))
 
-    follower_lacks_prebuilt = api.chrome.follower_lacks_prebuilt(
-        build_target=build_target, chroot=chroot, packages=properties.packages)
-
-    source_needed = no_prebuilt or local_uprev or follower_lacks_prebuilt
-    api.assertions.assertEqual(source_needed, properties.expected_builds_from)
-    if source_needed:
-      api.chrome.sync(
-          chrome_root=api.path['start_dir'].join('chrome'),
-          chroot=chroot,
-          build_target=build_target,
-          internal=not properties.external,
-      )
+  with api.step.nest('check chrome source needed') as step:
+    source_needed = api.chrome.needs_chrome_source(request, dep_graph, step,
+                                                   patch_sets=ps_list)
+  api.assertions.assertEqual(source_needed, properties.expected_builds_from)
+  if source_needed:
+    api.chrome.sync(
+        chrome_root=api.path['start_dir'].join('chrome'),
+        chroot=chroot,
+        build_target=build_target,
+        internal=not properties.external,
+    )
 
 
 def GenTests(api):
 
-  def test_props(skips_chrome_prebuilt=False, needs_chrome=True, changes=True,
-                 expected_builds_from=True, chrome_prebuilt=True, **kwargs):
+  def test_data(skips_chrome_prebuilt=False, needs_chrome=True, changes=True,
+                expected_builds_from=True, chrome_prebuilt=False, **kwargs):
     props = TestInputProperties(needs_chrome=needs_chrome, changes=changes,
                                 expected_builds_from=expected_builds_from,
                                 **kwargs)
-    ret = api.step_data(
-        'call chromite.api.PackageService/BuildsChrome.read output file',
-        api.file.read_raw(content='{"builds_chrome": %s}' %
-                          str(needs_chrome).lower()))
-    if not props.ignore_prebuilts and not skips_chrome_prebuilt:
-      ret += api.step_data(
-          'call chromite.api.PackageService/HasChromePrebuilt.read output file',
-          api.file.read_raw(content='{"has_prebuilt": %s}' %
-                            str(chrome_prebuilt).lower()))
-    return ret + api.properties(props)
 
-  yield api.test('basic', test_props())
+    def api_response(name, data, step_name=None):
+      """Add Build API response.
 
-  yield api.test('no-changes',
-                 test_props(changes=False, expected_builds_from=False))
+      Args:
+        name (str): API name, such as 'PackageService/HasPrebuilt'.
+        data (str): JSON data to return from Build API.
+        step_name (str): Name of the sub-step, or None.
 
-  yield api.test('ignore-prebuilts', test_props(ignore_prebuilts=True))
+      Returns:
+        StepTestData
+      """
+      return api.step_data(
+          'check chrome source needed%s.call chromite.api.'
+          '%s.read output file' % ('.' + step_name if step_name else '', name),
+          api.file.read_raw(content=data))
 
-  yield api.test('external', test_props(external=True))
+    ret = api.properties(props)
+    if props.disable_needs_chrome:
+      ret += api_response(
+          'MethodService/Get',
+          jsonify(
+              methods=[dict(method='chromite.api.PackageService/HasPrebuilt')]))
+      ret += api_response('PackageService/BuildsChrome',
+                          jsonify(builds_chrome=needs_chrome))
+      if needs_chrome:
+        ret += api_response('PackageService/HasPrebuilt',
+                            jsonify(has_prebuilt=not expected_builds_from),
+                            step_name='any followers lack prebuilts')
+
+      if not props.ignore_prebuilts and not skips_chrome_prebuilt:
+        ret += api_response('PackageService/HasChromePrebuilt',
+                            jsonify(has_prebuilt=chrome_prebuilt))
+    else:
+      reasons = []
+      if props.needs_chrome:
+        reasons.extend(['COMPILE_SOURCE'] if props.ignore_prebuilts else [])
+        reasons.extend(['LOCAL_UPREV'] if props.changes else [])
+        reasons.extend([] if chrome_prebuilt else ['NO_PREBUILT'])
+      ret += api_response(
+          'PackageService/NeedsChromeSource',
+          jsonify(needsChromeSource=(len(reasons) > 0), reasons=reasons))
+
+    return ret
+
+  yield api.test(
+      'basic',
+      test_data(chrome_prebuilt=False),
+  )
+
+  yield api.test(
+      'no-changes',
+      test_data(changes=False, chrome_prebuilt=True,
+                expected_builds_from=False),
+  )
 
   yield api.test(
       'with_properties',
-      test_props(),
+      test_data(),
       api.properties(
-          **{"$chromeos/chrome": ChromeProperties(parallel_sync_jobs=42)}),
+          **{'$chromeos/chrome': ChromeProperties(parallel_sync_jobs=42)}),
   )
 
-  yield api.test(
-      'with-chrome-icu',
-      test_props(packages=[
-          PackageInfo(package_name='chrome-icu', category='chromeos-base',
-                      version='1.01')
-      ]),
-  )
-
+  chrome_isolate = ChromeProperties(
+      version='deadbeef',
+      deps_isolate=ChromeProperties.DepsIsolate(isolated_hash='aaa',
+                                                isolate_server='aaa.com'))
   yield api.test(
       'with-properties-custom-build',
-      test_props(skips_chrome_prebuilt=True),
-      api.properties(
-          **{
-              "$chromeos/chrome":
-                  ChromeProperties(
-                      version='deadbeef',
-                      deps_isolate=ChromeProperties.DepsIsolate(
-                          isolated_hash='aaa', isolate_server='aaa.com')),
-          }),
+      test_data(skips_chrome_prebuilt=True),
+      api.properties(**{'$chromeos/chrome': chrome_isolate}),
+  )
+
+  # TODO(crbug/1086714): _old_test_data and test cases that follow should be
+  # removed once they are no longer needed. (Sometime after 2021-01-01.)
+  def _old_test_data(**kwargs):
+    """Helper to reduce the need for typing."""
+    return test_data(disable_needs_chrome=True, **kwargs)
+
+  yield api.test(
+      'no-changes-old',
+      _old_test_data(changes=False, chrome_prebuilt=True,
+                     expected_builds_from=False),
   )
 
   yield api.test(
-      'no-needs-chrome',
-      test_props(skips_chrome_prebuilt=True, needs_chrome=False,
-                 expected_builds_from=False),
+      'ignore-prebuilts-old',
+      _old_test_data(ignore_prebuilts=True),
   )
 
-  yield api.test(
-      'has-no-prebuilt',
-      test_props(chrome_prebuilt=False),
-  )
