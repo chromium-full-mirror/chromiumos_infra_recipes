@@ -49,18 +49,22 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(gs_tuple.bucket, 'chrome-goma-log')
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.properties(TestInputProperties(
-             expected_goma_approach=common.GomaConfig.DEFAULT,
-         )))
+  yield api.test(
+      'basic',
+      api.properties(TestInputProperties(
+          expected_goma_approach=common.GomaConfig.DEFAULT,
+      )),
+  )
 
-  yield (api.test('with-goma-config') +  #
-         api.properties(
-             **{'$chromeos/goma':
-                GomaProperties(
-                    client_version='staging',
-                    goma_approach=common.GomaConfig.RBE_STAGING,
-                )}) +  #
-         api.properties(TestInputProperties(
-             expected_goma_approach=common.GomaConfig.RBE_STAGING,
-         )))
+  yield api.test(
+      'with-goma-config',
+      api.properties(
+          **{'$chromeos/goma':
+             GomaProperties(
+                 client_version='staging',
+                 goma_approach=common.GomaConfig.RBE_STAGING,
+             )}),
+      api.properties(TestInputProperties(
+          expected_goma_approach=common.GomaConfig.RBE_STAGING,
+      )),
+  )

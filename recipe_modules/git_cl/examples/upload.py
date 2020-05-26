@@ -15,5 +15,7 @@ def RunSteps(api):
   api.assertions.assertEqual(output, 'pytorch forever')
 
 def GenTests(api):
-  yield (api.test('basic') +
-         api.git_cl.output('git_cl upload', 'pytorch forever'))
+  yield api.test(
+      'basic',
+      api.git_cl.output('git_cl upload', 'pytorch forever'),
+  )

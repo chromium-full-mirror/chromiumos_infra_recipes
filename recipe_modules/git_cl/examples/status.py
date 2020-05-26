@@ -14,5 +14,7 @@ def RunSteps(api):
   api.assertions.assertEqual(output, 'foo')
 
 def GenTests(api):
-  yield (api.test('basic') +
-         api.git_cl.output('git cl status', 'foo'))
+  yield api.test(
+      'basic',
+      api.git_cl.output('git cl status', 'foo'),
+  )

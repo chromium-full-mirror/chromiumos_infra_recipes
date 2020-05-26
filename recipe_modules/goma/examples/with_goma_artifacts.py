@@ -69,19 +69,23 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.properties(TestInputProperties(
-             expected_goma_approach=common.GomaConfig.DEFAULT,
-         )))
+  yield api.test(
+      'basic',
+      api.properties(TestInputProperties(
+          expected_goma_approach=common.GomaConfig.DEFAULT,
+      )),
+  )
 
-  yield (api.test('with-goma-config') +  #
-         api.properties(
-             **{'$chromeos/goma':
-                GomaProperties(
-                    client_version='staging',
-                    goma_approach=common.GomaConfig.RBE_STAGING,
-                    bigquery_verbose=True,
-                )}) +  #
-         api.properties(TestInputProperties(
-             expected_goma_approach=common.GomaConfig.RBE_STAGING,
-         )))
+  yield api.test(
+      'with-goma-config',
+      api.properties(
+          **{'$chromeos/goma':
+             GomaProperties(
+                 client_version='staging',
+                 goma_approach=common.GomaConfig.RBE_STAGING,
+                 bigquery_verbose=True,
+             )}),
+      api.properties(TestInputProperties(
+          expected_goma_approach=common.GomaConfig.RBE_STAGING,
+      )),
+  )
