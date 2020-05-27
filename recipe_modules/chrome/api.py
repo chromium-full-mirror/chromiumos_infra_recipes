@@ -33,8 +33,6 @@ CHROME_PACKAGE = PackageInfo(category='chromeos-base',
 # to prevent rebuilds (which may not succeed if chrome source isn't sync'd).
 CHROME_FOLLOWER_PACKAGES = [
     ('chromeos-base', 'chrome-icu'),
-    ('chromeos-base', 'ml'),
-    ('dev-libs', 'libtextclassifier'),
 ]
 
 

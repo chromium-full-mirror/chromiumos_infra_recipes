@@ -618,9 +618,9 @@ Returns:
 
 [DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [portage](#recipe_modules-portage), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#39)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#184)(self, build_target, chroot, packages=None, internal=False, ignore_prebuilts=False):**
+&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#182)(self, build_target, chroot, packages=None, internal=False, ignore_prebuilts=False):**
 
 Returns whether this run should build Chrome from source.
 
@@ -637,7 +637,7 @@ Args:
 Returns:
   bool: Whether or not this run needs to build Chrome from source.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#158)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#156)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -650,7 +650,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#235)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#233)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -666,9 +666,9 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#208)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#206)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#275)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#273)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -680,7 +680,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#216)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#214)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -696,7 +696,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#60)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#58)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
