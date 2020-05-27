@@ -623,23 +623,6 @@ Returns:
 
 #### **class [ChromeApi](/recipe_modules/chrome/api.py#39)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [builds\_chrome\_from\_source](/recipe_modules/chrome/api.py#182)(self, build_target, chroot, packages=None, internal=False, ignore_prebuilts=False):**
-
-Returns whether this run should build Chrome from source.
-
-Args:
-  build_target (chromiumos.BuildTarget): Build target of the build.
-  chroot (chromiumos.Chroot): Information on the chroot for the build.
-  packages (list[chromiumos.PackageInfo]): Packages that the builder needs
-      to build, or empty / None for default packages.
-  internal (bool): Check for the internal version of chrome.
-  ignore_prebuilts (bool): Whether to ignore prebuilts.  Setting this to
-      true will cause Chrome to be built from source, rather than use a
-      prebuilt.
-
-Returns:
-  bool: Whether or not this run needs to build Chrome from source.
-
 &mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#156)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
@@ -653,7 +636,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#233)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#209)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -669,9 +652,9 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#206)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#182)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#273)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#249)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -683,7 +666,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#214)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#190)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -4310,9 +4293,9 @@ Checks a project conforms to its program's constraints.
 &mdash; **def [RunSteps](/recipe_modules/chrome/examples/follower_needs_chrome_no_has_prebuilt.py#19)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
-[DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#28)(api, properties):**
 ### *recipes* / [chrome:examples/gclient\_retry](/recipe_modules/chrome/examples/gclient_retry.py)
 
 [DEPS](/recipe_modules/chrome/examples/gclient_retry.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

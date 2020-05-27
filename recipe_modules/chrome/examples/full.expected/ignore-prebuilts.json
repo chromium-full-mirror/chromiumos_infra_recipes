@@ -505,6 +505,142 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"version\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/GetChromeVersion"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:33.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:35Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
+      "@@@STEP_LOG_LINE@published event@  }@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BNoCU3N5bmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBh\\nY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgAS\\nAIoDCQoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -523,86 +659,13 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "sync chrome.install isolated",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cipd/infra/tools/luci/isolated/isolated_module_pin"
-    ],
-    "infra_step": true,
-    "name": "sync chrome.install isolated.ensure package directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CACHE]/cipd/infra/tools/luci/isolated/isolated_module_pin",
-      "-ensure-file",
-      "infra/tools/luci/isolated/${platform} isolated_module_pin",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "sync chrome.install isolated.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-isolated_module_\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/isolated/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/cipd/infra/tools/luci/isolated/isolated_module_pin/isolated",
-      "download",
-      "-verbose",
-      "-isolate-server",
-      "aaa.com",
-      "-isolated",
-      "aaa",
-      "-output-dir",
-      "[START_DIR]/chrome"
-    ],
-    "infra_step": true,
-    "name": "sync chrome.download DEPS from isolate",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
-      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '[START_DIR]/chrome/DEPS', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
+      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
     ],
     "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
@@ -660,7 +723,7 @@
       "--ignore_locks",
       "--break_repo_locks",
       "--revision",
-      "src@deadbeef"
+      "src@version"
     ],
     "cwd": "[START_DIR]/chrome",
     "env_suffixes": {

@@ -1,0 +1,29 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.chrome.examples;
+
+import "chromiumos/common.proto";
+
+message TestInputProperties {
+  // Whether to use external Chrome.
+  bool external = 1;
+
+  // Whether this run needs Chrome.
+  bool needs_chrome = 2;
+
+  // Whether the patchsets cause a a rebuild.
+  bool changes = 3;
+
+  // What packages to build.
+  repeated chromiumos.PackageInfo packages = 4;
+
+  // Whether to ignore prebuilts
+  bool ignore_prebuilts = 5;
+
+  // Expected builds_from_source result.
+  bool expected_builds_from = 6;
+}

@@ -179,30 +179,6 @@ class ChromeApi(recipe_api.RecipeApi):
       pres.step_text = 'no file diffs caused rebuild'
     return False
 
-  def builds_chrome_from_source(self, build_target, chroot, packages=None,
-                                internal=False, ignore_prebuilts=False):
-    """Returns whether this run should build Chrome from source.
-
-    Args:
-      build_target (chromiumos.BuildTarget): Build target of the build.
-      chroot (chromiumos.Chroot): Information on the chroot for the build.
-      packages (list[chromiumos.PackageInfo]): Packages that the builder needs
-          to build, or empty / None for default packages.
-      internal (bool): Check for the internal version of chrome.
-      ignore_prebuilts (bool): Whether to ignore prebuilts.  Setting this to
-          true will cause Chrome to be built from source, rather than use a
-          prebuilt.
-
-    Returns:
-      bool: Whether or not this run needs to build Chrome from source.
-    """
-    if not self.needs_chrome(build_target, chroot, packages):
-      return False
-    else:
-      return not self.has_chrome_prebuilt(build_target, chroot,
-                                          internal=internal,
-                                          ignore_prebuilts=ignore_prebuilts)
-
   def has_chrome_prebuilt(self, build_target, chroot, internal=False,
                           ignore_prebuilts=False):
     if ignore_prebuilts or self._deps_isolate:
@@ -281,7 +257,7 @@ class ChromeApi(recipe_api.RecipeApi):
     Returns:
       bool: If we upreved the local Chrome.
     """
-    if self.m.chrome.diffed_files_requires_rebuild(patch_sets=patch_sets):
+    if self.diffed_files_requires_rebuild(patch_sets=patch_sets):
       with self.m.step.nest('try uprev chrome'):
         version = self._get_local_version(chroot, build_target)
         version_ref = UprevVersionedPackageRequest.GitRef(
