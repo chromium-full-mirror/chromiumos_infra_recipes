@@ -58,9 +58,10 @@
   {
     "cmd": [
       "/bin/bash",
-      "[CLEANUP]/tmp_tmp_1/regenerate_configs.sh",
+      "regenerate_configs.sh",
       "-b"
     ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]",

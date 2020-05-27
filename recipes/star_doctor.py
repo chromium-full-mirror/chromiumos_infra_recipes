@@ -33,7 +33,6 @@ def RunSteps(api, properties):
   with api.step.nest('set up'):
     workdir = api.path.mkdtemp()
     api.git.clone(INFRA_CONFIG_URL, target_path=workdir, timeout_sec=3 * 60)
-    regen_path = workdir.join('regenerate_configs.sh')
 
   with api.step.nest('generate binary config'):
     # We need lucicfg from depot_tools.
@@ -45,8 +44,9 @@ def RunSteps(api, properties):
                        'protobuf_version:v3.11.4')
       api.cipd.ensure(cipd_dir, pkgs)
       with api.context(**{'env_suffixes': {'PATH': [cipd_dir]}}):
-        api.step('regenerate configs', ['/bin/bash', regen_path, '-b'],
-                 timeout=3 * 60)
+        with api.context(cwd=workdir):
+          api.step('regenerate configs',
+                   ['/bin/bash', 'regenerate_configs.sh', '-b'], timeout=3 * 60)
 
   with api.step.nest('commit changes') as presentation:
     with api.context(cwd=workdir):
