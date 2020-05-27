@@ -319,7 +319,8 @@
     "name": "set output properties",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJx1jMEKwjAMhl9l5Kzsvpt0HUwqSpmCiIy6ZTKtDtoq6Oi7m0oFPXhI+Mn/5RuhxU7dtIMsGcE6\\n5fCd7mjavglX2HCZl6yqi1kpeA6TBHTfIXs0OqAgyoLXbMsE7eViJXhFkCfKKXuWaMltidt92/8J\\nJJ9z9vnXw3FtdCAo2SxND8rQPCG6Y9kNw293VReMxdTgCRuHLfi99y/Ax0lg\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuFiT0lNSyzNKRGy5DIU4k3Lz7fS109KLALiKikmDiclHqCQblFqVmpySWqKFl9OfnoxQoUQ\\nC0eBABMAriYTgA==\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuFiT0lNSyzNKRGy5DIU4k3Lz7fS109KLALiKikmDiclHqCQblFqVmpySWqKFl9OfnoxQoUQ\\nC0eBABMAriYTgA==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-rejected\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@"
     ]
   },
   {
