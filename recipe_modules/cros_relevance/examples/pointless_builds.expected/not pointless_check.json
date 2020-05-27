@@ -24,9 +24,6 @@
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\032\\007my hash\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  path: \"src/something/else\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"happy/source/dir\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
@@ -79,7 +76,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0007my hash:\u0004\n\u0002\u0018{:\u0005\n\u0003\u0018\ufffd\u0003B\u000b\n\t\u001a\u0007my hashJ\u0014\n\u0012src/something/elseJ\u0012\n\u0010happy/source/dir",
+      "2\u0007my hash:\u0004\n\u0002\u0018{:\u0005\n\u0003\u0018\ufffd\u0003B\u000b\n\t\u001a\u0007my hashJ\u0012\n\u0010happy/source/dir",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -89,8 +86,7 @@
       "@@@STEP_LOG_LINE@input.binaryproto@2\u0007my hash:\u0004@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0018{:\u0005@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\u0003B\u000b@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\t\u001a\u0007my hashJ\u0014@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0012src/something/elseJ\u0012@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\t\u001a\u0007my hashJ\u0012@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0010happy/source/dir@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
