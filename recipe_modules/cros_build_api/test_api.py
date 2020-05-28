@@ -65,9 +65,15 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'path': self.path('tmp/artifact.tar.gz')
     }])
     bundle_endpoints = [
-        'BundleImageZip', 'BundleTestUpdatePayloads', 'BundleAutotestFiles',
-        'BundleTastFiles', 'BundlePinnedGuestImages', 'BundleFirmware',
-        'BundleEbuildLogs', 'BundleChromeOSConfig', 'ExportCpeReport',
+        'BundleImageZip',
+        'BundleTestUpdatePayloads',
+        'BundleAutotestFiles',
+        'BundleTastFiles',
+        'BundlePinnedGuestImages',
+        'BundleFirmware',
+        'BundleEbuildLogs',
+        'BundleChromeOSConfig',
+        'ExportCpeReport',
         'BundleImageArchives',
     ]
     ret.update({endpoint: bundle_response for endpoint in bundle_endpoints})
@@ -82,13 +88,25 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'path': 'foo.tbz2'
         }])
     responses['SetBinhost'] = jsonify(output_file=self.path('BINHOST.conf'))
-    responses['Get'] = jsonify(binhosts = [
-        {'uri': 'gs://bucket1/some/path', 'package_index': 'PackageIndex'},
-        {'uri': 'gs://bucket2/diff/path', 'package_index': 'PackageIndex'},
+    responses['Get'] = jsonify(binhosts=[
+        {
+            'uri': 'gs://bucket1/some/path',
+            'package_index': 'PackageIndex'
+        },
+        {
+            'uri': 'gs://bucket2/diff/path',
+            'package_index': 'PackageIndex'
+        },
     ])
     responses['GetPrivatePrebuiltAclArgs'] = jsonify(args=[
-        {'arg': 'arg1', 'value': 'value1'},
-        {'arg': 'arg2', 'value': 'value2'},
+        {
+            'arg': 'arg1',
+            'value': 'value1'
+        },
+        {
+            'arg': 'arg2',
+            'value': 'value2'
+        },
     ])
     responses['RegenBuildCache'] = jsonify(modified_overlays=[{
         'path': self.path('chromiumos/src/overlay')
@@ -101,18 +119,16 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses = {}
     responses['GetBuildDependencyGraph'] = jsonify(
         dep_graph={
-          'package_deps': [{
-            "dependency_packages": [
-              {
-                "category": "chromeos-base",
-                "package_name": "chrome-icu",
-                "version": "1-r52"
-              }
-            ],
-            'dependency_source_paths': [{
-              'path': 'some/source/dir',
+            'package_deps': [{
+                "dependency_packages": [{
+                    "category": "chromeos-base",
+                    "package_name": "chrome-icu",
+                    "version": "1-r52"
+                }],
+                'dependency_source_paths': [{
+                    'path': 'some/source/dir',
+                }],
             }],
-          }],
         },
     )
     responses['GetToolchainPaths'] = jsonify(
@@ -120,7 +136,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             {
                 'path': 'some/other/dir'
             },
-        ],)
+        ],
+    )
     return responses
 
   @property
@@ -152,32 +169,23 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         include_method_service=False)
     for service, responses_by_method in responses_by_service.items():
       for method in responses_by_method.keys():
-        methods.append({
-            'method': "chromite.api.%s/%s" % (service, method)
-        })
+        methods.append({'method': "chromite.api.%s/%s" % (service, method)})
     methods.append({'method': 'chromite.api.MethodService/Get'})
     responses = {}
-    responses['Get'] = jsonify(
-        methods=methods,
-    )
+    responses['Get'] = jsonify(methods=methods,)
     return responses
 
   @property
   def package_service_responses(self):
     """Generate responses for PackageService."""
     responses = {}
-    responses['BuildsChrome'] = jsonify(
-        builds_chrome=True,
-    )
-    responses['GetBestVisible'] = jsonify(
-        package_info={
-            'package_name': 'package',
-            'category': 'category',
-            'version': 'version'
-        })
-    responses['GetChromeVersion'] = jsonify(
-        version='version',
-    )
+    responses['BuildsChrome'] = jsonify(builds_chrome=True,)
+    responses['GetBestVisible'] = jsonify(package_info={
+        'package_name': 'package',
+        'category': 'category',
+        'version': 'version'
+    })
+    responses['GetChromeVersion'] = jsonify(version='version',)
     responses['GetTargetVersions'] = jsonify(
         android_version='android_version',
         android_branch_version='android_branch_version',
@@ -237,7 +245,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['Create'] = jsonify(
         sysroot={
             'path': self.path('/build/target'),
-            'build_target': {'name': 'target'},
+            'build_target': {
+                'name': 'target'
+            },
         },
     )
     responses['InstallToolchain'] = jsonify(failed_packages=[])
