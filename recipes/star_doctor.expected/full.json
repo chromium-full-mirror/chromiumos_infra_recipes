@@ -78,8 +78,7 @@
     "cmd": [],
     "name": "commit changes",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@link to change@https://crrev/i/91827@@@",
-      "@@@STEP_LOG_END@link to change@@@"
+      "@@@STEP_LINK@link to change@https://crrev.com/i/91827@@@"
     ]
   },
   {

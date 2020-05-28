@@ -79,7 +79,7 @@ def RunSteps(api, properties):
       if len(changes) < 1:  # pragma: nocover
         presentation.step_text = 'did not find change'
         return
-      presentation.logs['link to change'] = 'https://crrev/i/{}'.format(
+      presentation.links['link to change'] = 'https://crrev.com/i/{}'.format(
           changes[0].change)
 
 
