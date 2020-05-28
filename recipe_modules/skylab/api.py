@@ -83,7 +83,11 @@ class SkylabApi(recipe_api.RecipeApi):
       bb_request = self.m.buildbucket.schedule_request(
           'cros_test_platform', bucket='testplatform', properties={
               'requests': reqs,
-          }, gerrit_changes=[], swarming_parent_run_id=self.m.swarming.task_id)
+          },
+          gerrit_changes=[],
+          swarming_parent_run_id=self.m.swarming.task_id,
+          # Disable inheriting the version from the parent builder.
+          exe_cipd_version='')
       build = self.m.buildbucket.schedule([bb_request])[0]
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
@@ -143,10 +147,16 @@ class SkylabApi(recipe_api.RecipeApi):
 
       request_dict = json_format.MessageToDict(req)
       bb_request = self.m.buildbucket.schedule_request(
-          'cros_test_platform', bucket='testplatform', properties={
+          'cros_test_platform',
+          bucket='testplatform',
+          properties={
               'request': request_dict,
-          }, tags=bb_tags, gerrit_changes=[],
-          swarming_parent_run_id=self.m.swarming.task_id)
+          },
+          tags=bb_tags,
+          gerrit_changes=[],
+          swarming_parent_run_id=self.m.swarming.task_id,
+          # Disable inheriting the version from the parent builder.
+          exe_cipd_version='')
       build = self.m.buildbucket.schedule([bb_request])[0]
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
