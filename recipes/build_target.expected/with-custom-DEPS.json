@@ -3356,7 +3356,7 @@
       "0777",
       "[CACHE]/cipd/infra/tools/luci/isolated/isolated_module_pin"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chrome",
     "infra_step": true,
     "name": "check chrome source needed.sync chrome.install isolated.ensure package directory",
     "~followup_annotations": [
@@ -3376,7 +3376,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chrome",
     "infra_step": true,
     "name": "check chrome source needed.sync chrome.install isolated.ensure_installed",
     "~followup_annotations": [
@@ -3406,9 +3406,9 @@
       "-output-dir",
       "[START_DIR]/chrome"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chrome",
     "infra_step": true,
-    "name": "check chrome source needed.sync chrome.download DEPS from isolate",
+    "name": "check chrome source needed.sync chrome.download DEPS from isolated",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

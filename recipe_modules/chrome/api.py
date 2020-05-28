@@ -58,8 +58,7 @@ class ChromeApi(recipe_api.RecipeApi):
         request, infra_step=True).version
 
   def sync(self, chrome_root, chroot, build_target, internal):
-    """
-    Sync Chrome source code.
+    """Sync Chrome source code.
 
     Must be run with cwd inside a chromiumos source root.
 
@@ -77,13 +76,6 @@ class ChromeApi(recipe_api.RecipeApi):
 
       self.m.file.ensure_directory('ensure chrome root', chrome_root)
 
-      if self._deps_isolate:
-        di = self._deps_isolate
-        self.m.isolated.download('download DEPS from isolate',
-                                 isolated_hash=di.isolated_hash,
-                                 isolate_server=di.isolate_server,
-                                 output_dir=chrome_root)
-
       # Similar to what you would get with self.m.gclient.checkout approach
       # but here we up the job parallelism for a speed boost.
       with self.m.context(cwd=chrome_root):
@@ -96,7 +88,11 @@ class ChromeApi(recipe_api.RecipeApi):
             'checkout_src_internal': internal,
         }
         if self._deps_isolate:
+          self.m.isolated.download(
+              'download DEPS from isolated', self._deps_isolate.isolated_hash,
+              chrome_root, isolate_server=self._deps_isolate.isolate_server)
           soln.deps_file = str(chrome_root) + '/DEPS'
+
         if version:
           soln.revision = version
 

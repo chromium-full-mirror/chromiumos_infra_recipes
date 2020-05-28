@@ -82,9 +82,13 @@ class CrosSdkApi(recipe_api.RecipeApi):
       env = common.Chroot.ChrootEnv(use_flags=self._use_flags)
     return common.Chroot(
         path=str(self._chroot_path),
-        chrome_dir=self._chrome_root,
+        chrome_dir=self.chrome_root,
         env=env,
     )
+
+  @property
+  def chrome_root(self):
+    return str(self._chrome_root) if self._chrome_root else None
 
   @property
   def sdk_cache_version(self):
@@ -121,15 +125,39 @@ class CrosSdkApi(recipe_api.RecipeApi):
     self.m.step('move sdk cache version file into place', cmd)
     self._sdk_cache_version = value
 
-  def set_chrome_root(self, chrome_root):
+  def configure_goma(self, chrome_root):
+    """Configure goma for Chrome.
+
+    This is a helper function to do the various bits of cros_sdk configuration
+    needed for Chrome to be built with goma.
+
+    Must be run with cwd inside a chromiumos source root.
+
+    Args:
+      chrome_root (Path): Directory with the Chrome source.
+    """
     self._chrome_root = chrome_root
+    self.set_goma_config(self.m.goma.goma_dir, self.m.goma.goma_client_json,
+                         self.m.goma.goma_approach,
+                         self.m.path.mkdtemp(prefix='goma-logs-'),
+                         'stats.binaryproto', 'counterz.binaryproto')
 
   def set_goma_config(self, goma_dir, goma_client_json, goma_approach, log_dir,
                       stats_file, counterz_file):
-    self._goma_dir = goma_dir
-    self._goma_client_json = goma_client_json
+    """Set the goma config.
+
+    Args:
+      goma_dir (Path): Path to the goma install location.
+      goma_client_json (Path): Path to the goma client credentials file.
+      goma_approach (chromiumos.GomaConfig.GomaApproach): Goma Approach.
+      log_dir (Path): Path to the log directory.
+      stats_file (str): Name of the goma stats file, relative to log_dir.
+      counterz_file (str): Name of the goma counterz file, relative to log_dir.
+    """
+    self._goma_dir = str(goma_dir)
+    self._goma_client_json = str(goma_client_json)
     self._goma_approach = goma_approach
-    self._goma_log_dir = log_dir
+    self._goma_log_dir = str(log_dir)
     self._goma_stats_file = stats_file
     self._goma_counterz_file = counterz_file
 

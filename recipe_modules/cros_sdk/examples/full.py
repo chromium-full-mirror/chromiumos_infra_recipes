@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'cros_sdk',
+    'goma',
     'workspace_util',
 ]
 
@@ -42,10 +43,7 @@ def RunSteps(api, properties):
 
     api.assertions.assertEqual(api.cros_sdk.long_timeouts,
                                api.workspace_util.toolchain_cls_applied)
-    api.cros_sdk.set_chrome_root('/chrome_dir')
-    api.cros_sdk.set_goma_config('/goma_dir', '/creds/goma.json',
-                                 common.GomaConfig.RBE_PROD, '/goma_logs',
-                                 'stats.file', 'counterz.file')
+    api.cros_sdk.configure_goma('/chrome_dir')
     api.cros_sdk.set_use_flags([common.UseFlag(flag='goma')])
     chroot = api.cros_sdk.chroot
     with api.cros_sdk.snapshot():
@@ -55,11 +53,10 @@ def RunSteps(api, properties):
                                       [common.UseFlag(flag='goma')])
 
     goma = api.cros_sdk.goma_config()
-    api.assertions.assertEqual(goma.goma_dir, '/goma_dir')
-    api.assertions.assertEqual(goma.goma_client_json, '/creds/goma.json')
-    api.assertions.assertEqual(goma.log_dir, common.SyncedDir(dir='/goma_logs'))
-    api.assertions.assertEqual(goma.stats_file, 'stats.file')
-    api.assertions.assertEqual(goma.counterz_file, 'counterz.file')
+    api.assertions.assertEqual(goma.goma_dir, str(api.goma.goma_dir))
+    api.assertions.assertEqual(goma.goma_client_json, str(api.goma.goma_client_json))
+    api.assertions.assertEqual(goma.stats_file, 'stats.binaryproto')
+    api.assertions.assertEqual(goma.counterz_file, 'counterz.binaryproto')
 
     api.cros_sdk('get cros_sdk help', ['--help'])
     api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'})

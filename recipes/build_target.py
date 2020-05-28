@@ -162,7 +162,6 @@ def DoRunSteps(api, config, build_target, properties):
       compile_source=config.build.install_toolchain.compile_source)
 
   install_packages = config.build.install_packages
-  chrome_root = api.path['start_dir'].join('chrome')
 
   def _InstallPackagesRequest():
     """Helper to make InstallPackagesRequest."""
@@ -170,8 +169,7 @@ def DoRunSteps(api, config, build_target, properties):
         chroot=api.cros_sdk.chroot, sysroot=sysroot, packages=packages,
         flags=InstallPackagesRequest.Flags(
             compile_source=install_packages.compile_source,
-            use_goma=(not install_packages.disable_goma and
-                      api.cros_sdk.has_goma_config()),
+            use_goma=api.cros_sdk.has_goma_config(),
             toolchain_changed=api.workspace_util.toolchain_cls_applied),
         use_flags=config.build.use_flags,
         goma_config=api.cros_sdk.goma_config())
@@ -179,15 +177,12 @@ def DoRunSteps(api, config, build_target, properties):
   with api.step.nest('check chrome source needed') as cs_pres:
     if api.chrome.needs_chrome_source(_InstallPackagesRequest(), dep_graph,
                                       cs_pres):
+      # This will change the return from _InstallPackagesRequest().
+      chrome_root = api.path['start_dir'].join('chrome')
       api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
                       config.chrome.internal)
-      # This will change the return from _InstallPackagesRequest().
-      api.cros_sdk.set_chrome_root(str(chrome_root))
-      api.cros_sdk.set_goma_config(
-          str(api.goma.goma_dir),
-          str(api.goma.goma_client_json), api.goma.goma_approach,
-          str(api.path.mkdtemp(prefix='goma-logs-')), 'stats.binaryproto',
-          'counterz.binaryproto')
+      if not install_packages.disable_goma:
+        api.cros_sdk.configure_goma(chrome_root)
 
   if api.cros_infra_config.should_run(install_packages.run_spec):
     with api.step.nest('install packages') as ip_step:

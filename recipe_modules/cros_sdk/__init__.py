@@ -12,5 +12,6 @@ DEPS = [
     'cros_relevance',
     'cros_source',
     'easy',
+    'goma',
     'workspace_util',
 ]
