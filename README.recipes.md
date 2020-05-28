@@ -1544,7 +1544,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#401)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#417)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -1552,7 +1552,7 @@ Chroot needs to be tightened to 755 for the build process.
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#302)(self, checkout_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#308)(self, checkout_path=None):**
 
 Returns a context that cleans the SDK chroot named cache.
 
@@ -1560,7 +1560,7 @@ Args:
   checkout_path (Path): Path to source checkout.  Default:
       cros_source.workspace_path.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#362)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#378)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#34)(self, chroot_parent_path):**
 
@@ -1569,7 +1569,7 @@ Configure CrosSdkApi.
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#188)(self, version=None, use_image=True, bootstrap=False, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#188)(self, version=None, use_image=True, bootstrap=False, timeout_sec='DEFAULT', test_data=None, name=None):**
 
 Initialize the chroot and link it into the workspace.
 
@@ -1580,6 +1580,8 @@ Args:
   bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
   timeout_sec (int): Step timeout (in seconds).  Default: None if
       bootstrap is True, otherwise 90 minutes.
+  test_data (str): test response (JSON) from the SdkService.Create call, or
+      None to use the default in cros_build_api/test_api.py.
   name (str): Step name.  Default: 'init sdk'.
 
 Returns:
@@ -1597,7 +1599,7 @@ Returns a Path to the cros_sdk script.
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#246)(self, checkout_path):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#249)(self, checkout_path):**
 
 Link the chroot to a chromiumos checkout.
 
@@ -1612,7 +1614,7 @@ This boolean is sticky.
 
 &mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#155)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#410)(self, name, cmd, env=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#426)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1640,7 +1642,7 @@ Args:
 
 &mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#152)(self, use_flags):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#325)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#331)(self, create_test_data=None, restore_test_data=None):**
 
 Returns a context that snapshots and restores the SDK chroot state.
 
@@ -1651,21 +1653,29 @@ restore the chroot back to that initial snapshot. If the chroot was
 initially created with 'nouse-image', it will be replaced so that it
 supports the ability to make snapshots.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#392)(self):**
+Args:
+  create_test_data (str): test response (JSON) from the
+      SdkService.CreateSnapshot call, or None to use the default in
+      cros_build_api/test_api.py.
+  restore_test_data (str): test response (JSON) from the
+      SdkService.RestoreSnapshot call, or None to use the default in
+      cros_build_api/test_api.py.
+
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#408)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#367)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#383)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
 Args:
  checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#357)(self, chroot=None):**
+&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#373)(self, chroot=None):**
 
-&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#264)(self, commit, changes, build_source=False, toolchain_targets=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#267)(self, commit, changes, build_source=False, toolchain_targets=None, timeout_sec='DEFAULT', test_data=None, name=None):**
 
 Update the chroot.
 
@@ -1678,9 +1688,11 @@ Args:
   timeout_sec (int): Step timeout (in seconds), or None for no step timeout.
       Default: 24 hours if building from source or a toolchain change is
       detected, otherwise 90 minutes.
+  test_data (str): test response (JSON) from the SdkService.Update call, or
+      None to use the default in cros_build_api/test_api.py.
   name (string): Step name.  Default: "update sdk".
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#430)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#446)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 
@@ -3643,11 +3655,11 @@ Args:
 
 API for various support functions for building.
 
-#### **class [SysrootUtilApi](/recipe_modules/sysroot_util/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SysrootUtilApi](/recipe_modules/sysroot_util/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for sysroot setup, manipulation, and use.
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#86)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#101)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', test_data=None, name=None):**
 
 Bootstrap the sysroot by calling InstallToolchain.
 
@@ -3658,9 +3670,12 @@ Args:
       across differing root causes.  Default:
       cros_build_api.failed_pkg_names.
   timeout_sec (int): Step timeout, in seconds, or None for default.
+  test_data (str): test response (JSON) from the
+      SysrootService/InstallToolchain call, or None to use the default in
+      cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#54)(self, build_target, profile=None, chroot_current=True, replace=True, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#61)(self, build_target, profile=None, chroot_current=True, replace=True, timeout_sec='DEFAULT', test_data=None, name=None):**
 
 Create the sysroot.
 
@@ -3672,16 +3687,18 @@ Args:
   replace (bool): Whether to replace an existing sysroot.
   timeout_sec (int): Step timeout (in seconds).  Default: None if a
       toolchain change is detected, otherwise 10 minutes.
+  test_data (str): test response (JSON) from the SysrootService/Create
+      call, or None to generate a default response based on the input data.
   name (str): Step name to use, or None for the default name.
 
 Returns:
   Sysroot
 
-&mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#19)(self):**
+&mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#24)(self):**
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#22)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#27)(self):**
 
-&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#26)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
+&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#31)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
 
 Update ebuilds for artifact build.
 
@@ -3689,6 +3706,8 @@ Args:
   chroot (Chroot): Chroot, or None.
   artifacts (BuilderConfig.Artifacts): Artifact Information
   force_relevance (bool): Whether to always claim relevant.
+  test_data (str): test response (JSON) from the
+      ArtifactsService/PrepareForBuild call, or None.
   name (str): Step name to use, or None for default name.
 
 Returns:

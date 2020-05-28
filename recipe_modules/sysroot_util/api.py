@@ -7,10 +7,15 @@
 
 from recipe_engine import recipe_api
 
+from google.protobuf import json_format
+
 from PB.chromite.api.artifacts import PrepareForBuildResponse
 from PB.chromite.api.sysroot import InstallToolchainRequest
+from PB.chromite.api.sysroot import InstallToolchainResponse
 from PB.chromite.api.sysroot import Profile
+from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.sysroot import SysrootCreateRequest
+from PB.chromite.api.sysroot import SysrootCreateResponse
 
 
 class SysrootUtilApi(recipe_api.RecipeApi):
@@ -31,6 +36,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       chroot (Chroot): Chroot, or None.
       artifacts (BuilderConfig.Artifacts): Artifact Information
       force_relevance (bool): Whether to always claim relevant.
+      test_data (str): test response (JSON) from the
+          ArtifactsService/PrepareForBuild call, or None.
       name (str): Step name to use, or None for default name.
 
     Returns:
@@ -52,7 +59,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     return PrepareForBuildResponse.NEEDED if force_relevance else resp
 
   def create_sysroot(self, build_target, profile=None, chroot_current=True,
-                     replace=True, timeout_sec='DEFAULT', name=None):
+                     replace=True, timeout_sec='DEFAULT', test_data=None,
+                     name=None):
     """Create the sysroot.
 
     Args:
@@ -63,14 +71,21 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       replace (bool): Whether to replace an existing sysroot.
       timeout_sec (int): Step timeout (in seconds).  Default: None if a
           toolchain change is detected, otherwise 10 minutes.
+      test_data (str): test response (JSON) from the SysrootService/Create
+          call, or None to generate a default response based on the input data.
       name (str): Step name to use, or None for the default name.
 
     Returns:
       Sysroot
     """
-    toolchain_cls = self.m.workspace_util.toolchain_cls_applied
+    test_data = test_data or json_format.MessageToJson(
+        SysrootCreateResponse(
+            sysroot=Sysroot(path='/build/%s' %
+                            build_target.name, build_target=build_target)))
     if timeout_sec == 'DEFAULT':
       timeout_sec = None if self.m.cros_sdk.long_timeouts else 10 * 60
+
+    toolchain_cls = self.m.workspace_util.toolchain_cls_applied
     with self.m.step.nest(name or 'create sysroot'):
       profile = Profile(name=profile) if profile else None
       flags = SysrootCreateRequest.Flags(chroot_current=chroot_current,
@@ -79,12 +94,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       create_sysroot_response = self.m.cros_build_api.SysrootService.Create(
           SysrootCreateRequest(build_target=build_target, profile=profile,
                                chroot=self.m.cros_sdk.chroot, flags=flags),
-          timeout=timeout_sec)
+          timeout=timeout_sec, test_output_data=test_data)
       self._sysroot = create_sysroot_response.sysroot
       return self.sysroot
 
   def bootstrap_sysroot(self, compile_source=False, response_lambda=None,
-                        timeout_sec='DEFAULT', name=None):
+                        timeout_sec='DEFAULT', test_data=None, name=None):
     """Bootstrap the sysroot by calling InstallToolchain.
 
     Args:
@@ -94,19 +109,24 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           across differing root causes.  Default:
           cros_build_api.failed_pkg_names.
       timeout_sec (int): Step timeout, in seconds, or None for default.
+      test_data (str): test response (JSON) from the
+          SysrootService/InstallToolchain call, or None to use the default in
+          cros_build_api/test_api.py.
       name (str): Step name to use, or None for the default name.
     """
-    toolchain_cls = self.m.workspace_util.toolchain_cls_applied
     # If no timeout was given, it is either unlimited, or 30 minutes.
     if timeout_sec == 'DEFAULT':
       timeout_sec = None if self.m.cros_sdk.long_timeouts else 30 * 60
     response_lambda = response_lambda or self.m.cros_build_api.failed_pkg_names
-    flags = InstallToolchainRequest.Flags(compile_source=compile_source,
-                                          toolchain_changed=toolchain_cls)
+
+    flags = InstallToolchainRequest.Flags(
+        compile_source=compile_source,
+        toolchain_changed=self.m.workspace_util.toolchain_cls_applied)
 
     with self.m.step.nest(name or 'install toolchain') as pres:
       response = self.m.cros_build_api.SysrootService.InstallToolchain(
           InstallToolchainRequest(sysroot=self.sysroot,
                                   chroot=self.m.cros_sdk.chroot, flags=flags),
-          response_lambda=response_lambda, timeout=timeout_sec)
+          response_lambda=response_lambda, timeout=timeout_sec,
+          test_output_data=test_data)
       self.m.failures.set_failed_packages(pres, response.failed_packages)

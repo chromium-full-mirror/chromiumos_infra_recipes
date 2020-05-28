@@ -186,7 +186,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
           DeleteSdkRequest(chroot=self.chroot))
 
   def create_chroot(self, version=None, use_image=True, bootstrap=False,
-                    timeout_sec='DEFAULT', name=None):
+                    timeout_sec='DEFAULT', test_data=None, name=None):
     """Initialize the chroot and link it into the workspace.
 
     Args:
@@ -196,6 +196,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
       bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
       timeout_sec (int): Step timeout (in seconds).  Default: None if
           bootstrap is True, otherwise 90 minutes.
+      test_data (str): test response (JSON) from the SdkService.Create call, or
+          None to use the default in cros_build_api/test_api.py.
       name (str): Step name.  Default: 'init sdk'.
 
     Returns:
@@ -221,7 +223,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
                 flags=CreateSdkRequest.Flags(no_replace=not replace,
                                              no_use_image=not use_image,
                                              bootstrap=bootstrap),
-                chroot=self.chroot), timeout=timeout_sec)
+                chroot=self.chroot), timeout=timeout_sec,
+            test_output_data=test_data)
         presentation.logs['sdk version'] = str(response.version.version)
         if version:
           self.sdk_cache_version = version
@@ -262,7 +265,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
                           self._chroot_path, chroot_link)
 
   def update_chroot(self, commit, changes, build_source=False,
-                    toolchain_targets=None, timeout_sec='DEFAULT', name=None):
+                    toolchain_targets=None, timeout_sec='DEFAULT',
+                    test_data=None, name=None):
     """Update the chroot.
 
     Args:
@@ -274,6 +278,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
       timeout_sec (int): Step timeout (in seconds), or None for no step timeout.
           Default: 24 hours if building from source or a toolchain change is
           detected, otherwise 90 minutes.
+      test_data (str): test response (JSON) from the SdkService.Update call, or
+          None to use the default in cros_build_api/test_api.py.
       name (string): Step name.  Default: "update sdk".
     """
     with self.m.step.nest(name or 'update sdk'):
@@ -323,7 +329,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
         self.swarming_chmod_chroot()
 
   @contextlib.contextmanager
-  def snapshot(self):
+  def snapshot(self, create_test_data=None, restore_test_data=None):
     """Returns a context that snapshots and restores the SDK chroot state.
 
     When this context manager is entered, a snapshot is made of the chroot
@@ -332,10 +338,19 @@ class CrosSdkApi(recipe_api.RecipeApi):
     restore the chroot back to that initial snapshot. If the chroot was
     initially created with 'nouse-image', it will be replaced so that it
     supports the ability to make snapshots.
+
+    Args:
+      create_test_data (str): test response (JSON) from the
+          SdkService.CreateSnapshot call, or None to use the default in
+          cros_build_api/test_api.py.
+      restore_test_data (str): test response (JSON) from the
+          SdkService.RestoreSnapshot call, or None to use the default in
+          cros_build_api/test_api.py.
     """
     with self.m.step.nest('creating chroot snapshot'):
       snapshot_response = self.m.cros_build_api.SdkService.CreateSnapshot(
-          CreateSnapshotRequest(chroot=self.chroot))
+          CreateSnapshotRequest(chroot=self.chroot),
+          test_output_data=create_test_data)
       snapshot_token = snapshot_response.snapshot_token
 
     try:
@@ -347,7 +362,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
         with self.m.step.nest('restoring chroot from snapshot'):
           self.m.cros_build_api.SdkService.RestoreSnapshot(
               RestoreSnapshotRequest(chroot=self.chroot,
-                                     snapshot_token=snapshot_token))
+                                     snapshot_token=snapshot_token),
+              test_output_data=restore_test_data)
       except:
         # If restoring the snapshot fails for any reason, mark the current SDK
         # for deletion and reraise the exception.
