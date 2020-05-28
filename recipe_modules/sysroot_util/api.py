@@ -10,12 +10,17 @@ from recipe_engine import recipe_api
 from google.protobuf import json_format
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse
+from PB.chromite.api.image import CreateImageRequest
+from PB.chromite.api.image import CreateImageResult
+from PB.chromite.api.image import Image
+from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
-from PB.chromite.api.sysroot import InstallToolchainResponse
 from PB.chromite.api.sysroot import Profile
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateResponse
+from PB.chromiumos.common import BASE
+from PB.chromiumos.common import ImageType
 
 
 class SysrootUtilApi(recipe_api.RecipeApi):
@@ -130,3 +135,59 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           response_lambda=response_lambda, timeout=timeout_sec,
           test_output_data=test_data)
       self.m.failures.set_failed_packages(pres, response.failed_packages)
+
+  def build_images(self, image_types, builder_path, timeout_sec=45 * 60,
+                   build_test_data=None, test_test_data=None, name=None):
+    """Build and validate images.
+
+    Args:
+      image_types (list[ImageType]): Image types to build.
+      builder_path (str): Builder path in GS for artifacts.
+      timeout_sec (int): Step timeout (in seconds).
+      build_test_data (str): test response (JSON) from the ImageService/Create
+          call, or None.
+      test_test_data (str): test response (JSON) from the ImageService/Test
+          call, or None.
+      name (str): name for the step.
+    """
+    if image_types:
+      build_test_data = build_test_data or json_format.MessageToJson(
+          CreateImageResult(
+              success=True, images=[
+                  Image(
+                      type=x, path=str(self.m.path['start_dir'].join(
+                          '/build/images/%s.bin' % ImageType.Name(x).lower())),
+                      build_target=self.sysroot.build_target)
+                  for x in image_types
+              ]))
+      with self.m.step.nest(name or 'build images') as pres:
+        response = self.m.cros_build_api.ImageService.Create(
+            CreateImageRequest(
+                build_target=self.sysroot.build_target,
+                chroot=self.m.cros_sdk.chroot,
+                image_types=image_types,
+                builder_path=builder_path,
+            ), timeout=timeout_sec,
+            response_lambda=self.m.cros_build_api.failed_pkg_names,
+            test_output_data=build_test_data)
+        self.m.failures.set_failed_packages(pres, response.failed_packages)
+
+        to_test = [image for image in response.images if image.type == BASE]
+        if BASE not in image_types or not to_test:
+          # For now, as in legacy CQ, we only test base images. Images created
+          # as a sideeffect (not explicitly requested in image_types) are not
+          # tested.
+          return
+
+        with self.m.step.nest('test images'):
+          failed_images = []
+          for image in to_test:
+            result_dir = self.m.path.mkdtemp(prefix='image-test-result-')
+            if not self.m.cros_build_api.ImageService.Test(
+                TestImageRequest(
+                    image=image, build_target=self.sysroot.build_target,
+                    result=TestImageRequest.Result(directory=str(result_dir)),
+                    chroot=self.m.cros_sdk.chroot),
+                test_output_data=test_test_data).success:
+              failed_images.append(image)
+          self.m.failures.raise_failed_image_tests(failed_images)

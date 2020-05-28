@@ -9,10 +9,10 @@ package recipe_modules.chromeos.sysroot_util.examples;
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 import "chromiumos/common.proto";
 
-message TestInputProperties {
-  // The name of the builder config to fetch.
-  string builder_name = 1;
+message FullTestProperties {
+  // Image types to build.
+  repeated chromiumos.ImageType image_types = 1;
 
-  // The build_target
-  chromiumos.BuildTarget build_target = 2;
+  // ImageService.Test response JSON.
+  string image_test_json = 2;
 }

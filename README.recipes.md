@@ -241,6 +241,7 @@
   * [support:examples/full](#recipes-support_examples_full)
   * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full)
   * [sysroot_util:examples/create_sysroot](#recipes-sysroot_util_examples_create_sysroot)
+  * [sysroot_util:examples/full](#recipes-sysroot_util_examples_full)
   * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build)
   * [sysroot_util:tests/update_artifact_for_build](#recipes-sysroot_util_tests_update_artifact_for_build)
   * [tast_results:examples/archive_dir](#recipes-tast_results_examples_archive_dir)
@@ -3673,15 +3674,15 @@ Args:
   limit (int): Number of tasks to return.
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
-[DEPS](/recipe_modules/sysroot_util/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [failures](#recipe_modules-failures), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/sysroot_util/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [failures](#recipe_modules-failures), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for various support functions for building.
 
-#### **class [SysrootUtilApi](/recipe_modules/sysroot_util/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SysrootUtilApi](/recipe_modules/sysroot_util/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for sysroot setup, manipulation, and use.
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#101)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', test_data=None, name=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#106)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', test_data=None, name=None):**
 
 Bootstrap the sysroot by calling InstallToolchain.
 
@@ -3697,7 +3698,21 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#61)(self, build_target, profile=None, chroot_current=True, replace=True, timeout_sec='DEFAULT', test_data=None, name=None):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#139)(self, image_types, builder_path, timeout_sec=(45 \* 60), build_test_data=None, test_test_data=None, name=None):**
+
+Build and validate images.
+
+Args:
+  image_types (list[ImageType]): Image types to build.
+  builder_path (str): Builder path in GS for artifacts.
+  timeout_sec (int): Step timeout (in seconds).
+  build_test_data (str): test response (JSON) from the ImageService/Create
+      call, or None.
+  test_test_data (str): test response (JSON) from the ImageService/Test
+      call, or None.
+  name (str): name for the step.
+
+&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#66)(self, build_target, profile=None, chroot_current=True, replace=True, timeout_sec='DEFAULT', test_data=None, name=None):**
 
 Create the sysroot.
 
@@ -3716,11 +3731,11 @@ Args:
 Returns:
   Sysroot
 
-&mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#24)(self):**
+&mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#29)(self):**
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#27)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#32)(self):**
 
-&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#31)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
+&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#36)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
 
 Update ebuilds for artifact build.
 
@@ -4278,11 +4293,11 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#94)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#91)(api, config, build_target, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#76)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#73)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#289)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#259)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4298,7 +4313,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#308)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#278)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -5261,6 +5276,11 @@ json files.
 [DEPS](/recipe_modules/sysroot_util/examples/create_sysroot.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/create_sysroot.py#23)(api, properties):**
+### *recipes* / [sysroot\_util:examples/full](/recipe_modules/sysroot_util/examples/full.py)
+
+[DEPS](/recipe_modules/sysroot_util/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/full.py#20)(api, properties):**
 ### *recipes* / [sysroot\_util:examples/update\_for\_artifact\_build](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

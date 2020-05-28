@@ -3796,13 +3796,8 @@
   },
   {
     "cmd": [],
-    "name": "build images"
-  },
-  {
-    "cmd": [],
-    "name": "build images.read chromeos version",
+    "name": "read chromeos version (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
     ]
   },
@@ -3819,16 +3814,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build images.read chromeos version.read chromeos_version.sh",
+    "name": "read chromeos version (2).read chromeos_version.sh",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build images.read chromeos version.read snapshot",
+    "name": "read chromeos version (2).read snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -3840,9 +3835,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "build images.read chromeos version.read snapshot.git fetch",
+    "name": "read chromeos version (2).read snapshot.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -3853,9 +3848,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "build images.read chromeos version.read snapshot.git rev-parse",
+    "name": "read chromeos version (2).read snapshot.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -3868,10 +3863,14 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "build images.read chromeos version.read snapshot.read git footers",
+    "name": "read chromeos version (2).read snapshot.read git footers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "build images"
   },
   {
     "cmd": [],
@@ -3912,7 +3911,25 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"images\": [{\"path\": \"[START_DIR]/cros/src/build/images/base.bin\", \"type\": \"BASE\"}, {\"path\": \"[START_DIR]/cros/src/build/images/test.bin\", \"type\": \"TEST\"}], \"failed_packages\": [], \"success\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"images\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"name\": \"atlas\"@@@",
+      "@@@STEP_LOG_LINE@response@      }, @@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"/build/images/test.bin\", @@@",
+      "@@@STEP_LOG_LINE@response@      \"type\": \"TEST\"@@@",
+      "@@@STEP_LOG_LINE@response@    }, @@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"name\": \"atlas\"@@@",
+      "@@@STEP_LOG_LINE@response@      }, @@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"/build/images/base.bin\", @@@",
+      "@@@STEP_LOG_LINE@response@      \"type\": \"BASE\"@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ], @@@",
+      "@@@STEP_LOG_LINE@response@  \"success\": true@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -4032,12 +4049,18 @@
       "@@@STEP_LOG_LINE@published event@  \"createImageResult\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"images\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/cros/src/build/images/base.bin\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"type\": \"BASE\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"name\": \"atlas\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }, @@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"/build/images/test.bin\", @@@",
+      "@@@STEP_LOG_LINE@published event@        \"type\": \"TEST\"@@@",
       "@@@STEP_LOG_LINE@published event@      }, @@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/cros/src/build/images/test.bin\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"type\": \"TEST\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"name\": \"atlas\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }, @@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"/build/images/base.bin\", @@@",
+      "@@@STEP_LOG_LINE@published event@        \"type\": \"BASE\"@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ], @@@",
       "@@@STEP_LOG_LINE@published event@    \"success\": true@@@",
@@ -4102,7 +4125,7 @@
     },
     "infra_step": true,
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI7YDE/QQiDAjugMT9BBCAyrXuAaIBxwEKBwoFYXRsYXMSAgMBMjVhdGxhcy1sbHZtLW5leHQv\\nUjk5LTEyMzQuNTYuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NDqAAQoTW0NBQ0hFXS9jcm9zX2No\\ncm9vdBpVChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZwoZChdzdHJpY3RfdG9vbGNo\\nYWluX2NoZWNrcwoLCglsbHZtLW5leHQKCQoHdGhpbmx0byISW1NUQVJUX0RJUl0vY2hyb21lqgFi\\nCAESLgoqW1NUQVJUX0RJUl0vY3Jvcy9zcmMvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAESLgoqW1NU\\nQVJUX0RJUl0vY3Jvcy9zcmMvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAPQAtDsgNmu8bWSfNoCSGJ1\\naWxkIGltYWdlc3xjYWxsIGNocm9taXRlLmFwaS5JbWFnZVNlcnZpY2UvQ3JlYXRlfGNhbGwgYnVp\\nbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI7YDE/QQiDAjugMT9BBCAyrXuAaIBxwEKBwoFYXRsYXMSAgMBMjVhdGxhcy1sbHZtLW5leHQv\\nUjk5LTEyMzQuNTYuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NDqAAQoTW0NBQ0hFXS9jcm9zX2No\\ncm9vdBpVChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZwoZChdzdHJpY3RfdG9vbGNo\\nYWluX2NoZWNrcwoLCglsbHZtLW5leHQKCQoHdGhpbmx0byISW1NUQVJUX0RJUl0vY2hyb21lqgFM\\nCAESIwoWL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgcKBWF0bGFzEiMKFi9idWlsZC9pbWFnZXMv\\nYmFzZS5iaW4QARoHCgVhdGxhc9AC0OyA2a7xtZJ82gJIYnVpbGQgaW1hZ2VzfGNhbGwgY2hyb21p\\ndGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4113,19 +4136,25 @@
   },
   {
     "cmd": [],
-    "name": "test images"
+    "name": "build images.test images",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "test images.call chromite.api.ImageService/Test",
+    "name": "build images.test images.call chromite.api.ImageService/Test",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"atlas\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"image\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[START_DIR]/cros/src/build/images/base.bin\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"atlas\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/build/images/base.bin\", @@@",
       "@@@STEP_LOG_LINE@request@    \"type\": \"BASE\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -4168,20 +4197,23 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  }, \n  \"image\": {\n    \"path\": \"[START_DIR]/cros/src/build/images/base.bin\", \n    \"type\": \"BASE\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"llvm-next\"\n        }, \n        {\n          \"flag\": \"thinlto\"\n        }\n      ]\n    }\n  }, \n  \"result\": {\n    \"directory\": \"[CLEANUP]/image-test-result-_tmp_18\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  }, \n  \"image\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    }, \n    \"path\": \"/build/images/base.bin\", \n    \"type\": \"BASE\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"llvm-next\"\n        }, \n        {\n          \"flag\": \"thinlto\"\n        }\n      ]\n    }\n  }, \n  \"result\": {\n    \"directory\": \"[CLEANUP]/image-test-result-_tmp_18\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_19/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "test images.call chromite.api.ImageService/Test.write input file",
+    "name": "build images.test images.call chromite.api.ImageService/Test.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"image\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[START_DIR]/cros/src/build/images/base.bin\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"name\": \"atlas\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"/build/images/base.bin\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"type\": \"BASE\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
@@ -4231,9 +4263,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "test images.call chromite.api.ImageService/Test.call build API script",
+    "name": "build images.test images.call chromite.api.ImageService/Test.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -4254,32 +4286,35 @@
       ]
     },
     "infra_step": true,
-    "name": "test images.call chromite.api.ImageService/Test.read output file",
+    "name": "build images.test images.call chromite.api.ImageService/Test.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test images.call chromite.api.ImageService/Test.call response",
+    "name": "build images.test images.call chromite.api.ImageService/Test.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test images.call chromite.api.ImageService/Test.publish event",
+    "name": "build images.test images.call chromite.api.ImageService/Test.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"testImageRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"atlas\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"image\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[START_DIR]/cros/src/build/images/base.bin\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": \"atlas\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }, @@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"/build/images/base.bin\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"type\": \"BASE\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
@@ -4311,7 +4346,7 @@
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:08Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"test images|call chromite.api.ImageService/Test|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"build images|test images|call chromite.api.ImageService/Test|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"testImageResult\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"success\": true@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
@@ -4322,9 +4357,9 @@
   },
   {
     "cmd": [],
-    "name": "test images.call chromite.api.ImageService/Test.publish event.publish message",
+    "name": "build images.test images.call chromite.api.ImageService/Test.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -4338,10 +4373,10 @@
       ]
     },
     "infra_step": true,
-    "name": "test images.call chromite.api.ImageService/Test.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI8IDE/QQiDAjxgMT9BBCAyrXuAbIB4wEKLgoqW1NUQVJUX0RJUl0vY3Jvcy9zcmMvYnVpbGQv\\naW1hZ2VzL2Jhc2UuYmluEAESBwoFYXRsYXMaJQojW0NMRUFOVVBdL2ltYWdlLXRlc3QtcmVzdWx0\\nLV90bXBfMTgigAEKE1tDQUNIRV0vY3Jvc19jaHJvb3QaVQoRCg9jaHJvbWVfaW50ZXJuYWwKDQoL\\nLWNyb3MtZGVidWcKGQoXc3RyaWN0X3Rvb2xjaGFpbl9jaGVja3MKCwoJbGx2bS1uZXh0CgkKB3Ro\\naW5sdG8iEltTVEFSVF9ESVJdL2Nocm9tZboBAggB0ALQ7IDZrvG1knzaAkV0ZXN0IGltYWdlc3xj\\nYWxsIGNocm9taXRlLmFwaS5JbWFnZVNlcnZpY2UvVGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "build images.test images.call chromite.api.ImageService/Test.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYI8IDE/QQiDAjxgMT9BBCAyrXuAbIB2AEKIwoWL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgcK\\nBWF0bGFzEgcKBWF0bGFzGiUKI1tDTEVBTlVQXS9pbWFnZS10ZXN0LXJlc3VsdC1fdG1wXzE4IoAB\\nChNbQ0FDSEVdL2Nyb3NfY2hyb290GlUKEQoPY2hyb21lX2ludGVybmFsCg0KCy1jcm9zLWRlYnVn\\nChkKF3N0cmljdF90b29sY2hhaW5fY2hlY2tzCgsKCWxsdm0tbmV4dAoJCgd0aGlubHRvIhJbU1RB\\nUlRfRElSXS9jaHJvbWW6AQIIAdAC0OyA2a7xtZJ82gJSYnVpbGQgaW1hZ2VzfHRlc3QgaW1hZ2Vz\\nfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9UZXN0fGNhbGwgYnVpbGQgQVBJIHNjcmlw\\ndA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -4350,9 +4385,9 @@
   },
   {
     "cmd": [],
-    "name": "test images.image test results",
+    "name": "build images.test images.image test results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@all images passed@@@"
     ]
   },

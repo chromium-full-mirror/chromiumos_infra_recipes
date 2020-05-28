@@ -41,10 +41,7 @@ from google.protobuf import json_format as json_pb
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
-from PB.chromiumos.common import BASE
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
-from PB.chromite.api.image import CreateImageRequest
-from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
@@ -225,37 +222,10 @@ def DoRunSteps(api, config, build_target, properties):
   api.easy.set_property_step('chromeos_version', str(version))
 
   image_types = config.build.build_images.image_types
-  if image_types:
-    with api.step.nest('build images') as bi_step:
-      response = api.cros_build_api.ImageService.Create(
-          CreateImageRequest(
-              build_target=build_target,
-              chroot=api.cros_sdk.chroot,
-              image_types=image_types,
-              builder_path=api.cros_artifacts.artifacts_gs_path(
-                  config.id.name, build_target, config.id.type),
-          ), timeout=STEP_TIMEOUTS['build_image'],
-          response_lambda=api.cros_build_api.failed_pkg_names)
-      api.failures.set_failed_packages(bi_step, response.failed_packages)
-    with api.step.nest('test images'):
-      failed_images = []
+  builder_path = api.cros_artifacts.artifacts_gs_path(
+      config.id.name, build_target, config.id.type)
 
-      # For now, as in legacy CQ, we only test base images. Images created as a
-      # sideeffect (not explicitly requested in image_types) are not tested.
-      for image in response.images:
-        if image.type != BASE or image.type not in image_types:
-          # This continue statement is not correctly caught by coveragepy:
-          # https://bitbucket.org/ned/coveragepy/issues/198/continue-marked-as-not-covered
-          continue  # pragma: no cover
-
-        result_dir = api.path.mkdtemp(prefix='image-test-result-')
-        if not api.cros_build_api.ImageService.Test(
-            TestImageRequest(
-                image=image, build_target=build_target,
-                result=TestImageRequest.Result(directory=str(result_dir)),
-                chroot=api.cros_sdk.chroot)).success:
-          failed_images.append(image)
-      api.failures.raise_failed_image_tests(failed_images)
+  api.sysroot_util.build_images(image_types, builder_path)
 
   ebuilds_run_spec = config.unit_tests.ebuilds_run_spec
   if api.cros_infra_config.should_run(ebuilds_run_spec):
@@ -647,7 +617,7 @@ def GenTests(api):
                                builder='amd64-generic-postsubmit'),
       api.properties(build_target={'name': 'amd64-generic'}),
       api.step_data(
-          'test images.call chromite.api.ImageService/Test.read output file',
+          'build images.test images.call chromite.api.ImageService/Test.read output file',
           api.file.read_raw(content='{"success": false}')),
   )
 
