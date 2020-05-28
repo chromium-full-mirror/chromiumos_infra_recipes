@@ -40,7 +40,8 @@ def RunSteps(api):
       api.git.push(url, 'master')
   finally:
     zips = glob.glob('/b/s/w/ir/kitchen-checkout/depot_tools/traces/*.zip')
-    api.step('dump git-cl trace logs', ['zcat'] + zips)
+    zips = (['zcat'] + zips) if zips else None
+    not zips or api.step('dump git-cl trace logs', zips)
 
 
 def GenTests(api):

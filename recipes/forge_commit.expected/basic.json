@@ -130,12 +130,6 @@
     ]
   },
   {
-    "cmd": [
-      "zcat"
-    ],
-    "name": "dump git-cl trace logs"
-  },
-  {
     "name": "$result"
   }
 ]
