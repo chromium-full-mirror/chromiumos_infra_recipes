@@ -16,8 +16,7 @@ from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
 
 def RunSteps(api):
-  bot_policy = api.bot_scaling.test_api.robocrop_bot_policy_config()
-  bot_policy_config = BotPolicyCfg(bot_policies=[bot_policy])
+  bot_policy_config = api.bot_scaling.test_api.robocrop_bot_policy_config()
   swarming_stats = api.bot_scaling.get_swarming_stats(bot_policy_config)
   gce_config = api.bot_scaling.test_api.gce_provider_config()
   updated_bot_policy = api.bot_scaling.update_bot_policy_limits(

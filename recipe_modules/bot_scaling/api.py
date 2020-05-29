@@ -3,9 +3,9 @@
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 
-from PB.chromiumos.bot_scaling import BotPolicy, ResourceUsage, RoboCropAction, ScalingAction
+from PB.chromiumos.bot_scaling import BotPolicy, ResourceUtilization, RoboCropAction, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
@@ -49,7 +49,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     quota_usage = self._get_quota_usage(scaling_actions, configs)
 
     return RoboCropAction(scaling_actions=scaling_actions,
-                          resource_usage=quota_usage)
+                          resource_utilization=quota_usage)
 
   def get_scaling_action(self, demand, bot_policy, configs):
     """The function that creates a ScalingAction for a bot group.
@@ -294,24 +294,35 @@ class BotScalingApi(recipe_api.RecipeApi):
         configs.
       configs(Configs): List of GCE Config objects.
     Returns:
-      ResourceUsage, total resource usage across all bot groups.
+      ResourceUtilization, total resource usage across all bot groups.
     """
     config_map = self._get_prefix_to_gce_config(configs)
-    usage = ResourceUsage(vms=0, cpus=0, memory_gb=0)
+    resource_utilization = defaultdict(ResourceUtilization)
+    global_usage = ResourceUtilization(region='global', vms=0, cpus=0,
+                                       memory_gb=0)
     for action in scaling_actions:
+      for regional_action in action.regional_actions:
+        config = config_map.get(regional_action.prefix, None)
+        if config:
+          config = config_map[regional_action.prefix]
+          region_util = resource_utilization.get(
+              regional_action.region,
+              ResourceUtilization(vms=0, cpus=0, memory_gb=0))
+          region_util.region = regional_action.region
+          region_util.vms += config.current_amount
+          region_util.memory_gb = config.current_amount * action.bot_type.memory_gb
+          region_util.cpus = config.current_amount * action.bot_type.cores_per_bot
+          if action.actionable == ScalingAction.NO:
+            global_usage.vms += config.current_amount
+            global_usage.cpus += config.current_amount * action.bot_type.cores_per_bot
+            global_usage.memory_gb += config.current_amount * action.bot_type.memory_gb
+          resource_utilization[regional_action.region] = region_util
       if action.actionable == ScalingAction.YES:
-        usage.vms += action.bots_requested
-        usage.cpus += action.bots_requested * action.bot_type.cores_per_bot
-        usage.memory_gb += action.bots_requested * action.bot_type.memory_gb
-      else:
-        for regional_action in action.regional_actions:
-          config = config_map.get(regional_action.prefix, None)
-          if config:
-            config = config_map[regional_action.prefix]
-            usage.vms += config.current_amount
-            usage.cpus += config.current_amount * action.bot_type.cores_per_bot
-            usage.memory_gb += config.current_amount * action.bot_type.memory_gb
-    return usage
+        global_usage.vms += action.bots_requested
+        global_usage.cpus += action.bots_requested * action.bot_type.cores_per_bot
+        global_usage.memory_gb += action.bots_requested * action.bot_type.memory_gb
+    resource_utilization['global'] = global_usage
+    return resource_utilization.values()
 
   def _get_prefix_to_gce_config(self, configs):
     """Helper method that returns the prefix to Config map.

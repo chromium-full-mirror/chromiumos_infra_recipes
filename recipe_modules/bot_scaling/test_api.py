@@ -5,7 +5,7 @@
 
 from recipe_engine import recipe_test_api
 
-from PB.chromiumos.bot_scaling import BotPolicy, BotType, ScalingAction
+from PB.chromiumos.bot_scaling import BotPolicy, BotPolicyCfg, BotType, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Amount, Config, Configs
@@ -46,7 +46,8 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
         memory_gb=16,
     )
 
-  def robocrop_bot_policy_config(self):
+  def robocrop_bot_policy_config(self, policy_mode=BotPolicy.CONFIGURED,
+                                 repeated=1):
     scaling_restriction = BotPolicy.ScalingRestriction(
         min_idle=25,
         step_size=25,
@@ -76,11 +77,11 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
             weight=0.3,
         ),
     ]
-    return BotPolicy(
-        bot_group='cq',
-        bot_type=bot_type,
-        scaling_restriction=scaling_restriction,
-        region_restrictions=region_restrictions,
-        policy_mode=BotPolicy.CONFIGURED,
-        scaling_mode=BotPolicy.STEPPED,
-    )
+    bot_policy_cfg = []
+    for x in range(repeated):
+      bot_policy_cfg.append(
+          BotPolicy(bot_group='cq{}'.format(x), bot_type=bot_type,
+                    scaling_restriction=scaling_restriction,
+                    region_restrictions=region_restrictions,
+                    policy_mode=policy_mode, scaling_mode=BotPolicy.STEPPED))
+    return BotPolicyCfg(bot_policies=bot_policy_cfg)

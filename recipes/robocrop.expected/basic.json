@@ -778,11 +778,20 @@
       "@@@STEP_LOG_LINE@robocrop_action@      \"botsRequested\": 15@@@",
       "@@@STEP_LOG_LINE@robocrop_action@    }@@@",
       "@@@STEP_LOG_LINE@robocrop_action@  ], @@@",
-      "@@@STEP_LOG_LINE@robocrop_action@  \"resourceUsage\": {@@@",
-      "@@@STEP_LOG_LINE@robocrop_action@    \"vms\": 15, @@@",
-      "@@@STEP_LOG_LINE@robocrop_action@    \"memoryGb\": 960.0, @@@",
-      "@@@STEP_LOG_LINE@robocrop_action@    \"cpus\": 480.0@@@",
-      "@@@STEP_LOG_LINE@robocrop_action@  }@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@  \"resourceUtilization\": [@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@    {@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"region\": \"global\", @@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"vms\": 15, @@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"memoryGb\": 960.0, @@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"cpus\": 480.0@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@    }, @@@",
+      "@@@STEP_LOG_LINE@robocrop_action@    {@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"region\": \"us-central1-b\", @@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"vms\": 15, @@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"memoryGb\": 960.0, @@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"cpus\": 480@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@    }@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@  ]@@@",
       "@@@STEP_LOG_LINE@robocrop_action@}@@@",
       "@@@STEP_LOG_END@robocrop_action@@@"
     ]
@@ -792,7 +801,7 @@
     "name": "scale bot groups.compute scaling actions.set robocrop_action",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"resourceUsage\": {\"cpus\": 480.0, \"memoryGb\": 960.0, \"vms\": 15}, \"scalingActions\": [{\"actionable\": \"NO\", \"botGroup\": \"cq\", \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32, \"memoryGb\": 64.0}, \"botsRequested\": 15, \"regionalActions\": [{\"botsRequested\": 4, \"prefix\": \"prefix-first\", \"region\": \"us-central1-b\"}, {\"botsRequested\": 5, \"prefix\": \"prefix-second\", \"region\": \"us-central2-d\"}, {\"botsRequested\": 4, \"prefix\": \"prefix-third\", \"region\": \"us-east1-d\"}, {\"botsRequested\": 3, \"prefix\": \"prefix-fourth\", \"region\": \"us-west1-b\"}]}]}@@@"
+      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"resourceUtilization\": [{\"cpus\": 480.0, \"memoryGb\": 960.0, \"region\": \"global\", \"vms\": 15}, {\"cpus\": 480, \"memoryGb\": 960.0, \"region\": \"us-central1-b\", \"vms\": 15}], \"scalingActions\": [{\"actionable\": \"NO\", \"botGroup\": \"cq\", \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32, \"memoryGb\": 64.0}, \"botsRequested\": 15, \"regionalActions\": [{\"botsRequested\": 4, \"prefix\": \"prefix-first\", \"region\": \"us-central1-b\"}, {\"botsRequested\": 5, \"prefix\": \"prefix-second\", \"region\": \"us-central2-d\"}, {\"botsRequested\": 4, \"prefix\": \"prefix-third\", \"region\": \"us-east1-d\"}, {\"botsRequested\": 3, \"prefix\": \"prefix-fourth\", \"region\": \"us-west1-b\"}]}]}@@@"
     ]
   },
   {

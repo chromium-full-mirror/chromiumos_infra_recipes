@@ -75,6 +75,7 @@
   * [bot_cost:tests/bot_size](#recipes-bot_cost_tests_bot_size)
   * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
   * [bot_scaling:examples/get_gce_config](#recipes-bot_scaling_examples_get_gce_config)
+  * [bot_scaling:examples/get_quota_usage](#recipes-bot_scaling_examples_get_quota_usage)
   * [bot_scaling:examples/get_robocrop_action](#recipes-bot_scaling_examples_get_robocrop_action)
   * [bot_scaling:examples/get_scaling_action](#recipes-bot_scaling_examples_get_scaling_action)
   * [bot_scaling:examples/get_swarming_demand](#recipes-bot_scaling_examples_get_swarming_demand)
@@ -4206,6 +4207,11 @@ Returns:
 [DEPS](/recipe_modules/bot_scaling/examples/get_gce_config.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_gce_config.py#16)(api):**
+### *recipes* / [bot\_scaling:examples/get\_quota\_usage](/recipe_modules/bot_scaling/examples/get_quota_usage.py)
+
+[DEPS](/recipe_modules/bot_scaling/examples/get_quota_usage.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_quota_usage.py#17)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_robocrop\_action](/recipe_modules/bot_scaling/examples/get_robocrop_action.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_robocrop_action.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

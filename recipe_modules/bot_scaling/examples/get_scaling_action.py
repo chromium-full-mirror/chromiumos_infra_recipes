@@ -13,8 +13,7 @@ from PB.chromiumos.bot_scaling import BotPolicy, BotPolicyCfg, ScalingAction
 
 
 def RunSteps(api):
-  bot_policy = api.bot_scaling.test_api.robocrop_bot_policy_config()
-  bot_policy_config = BotPolicyCfg(bot_policies=[bot_policy])
+  bot_policy_config = api.bot_scaling.test_api.robocrop_bot_policy_config()
   test_config = api.bot_scaling.test_api.gce_provider_config()
   updated_bot_policy = api.bot_scaling.update_bot_policy_limits(
       bot_policy_config, test_config)
@@ -24,7 +23,7 @@ def RunSteps(api):
     api.assertions.assertEqual(scaling_action.bots_requested, 110)
     api.assertions.assertEqual(scaling_action.bot_type,
                                api.bot_scaling.test_api.get_bot_type())
-    api.assertions.assertEqual(scaling_action.bot_group, 'cq')
+    api.assertions.assertEqual(scaling_action.bot_group, 'cq0')
     api.assertions.assertEqual(len(scaling_action.regional_actions), 4)
     api.assertions.assertEqual(scaling_action.regional_actions[0].region,
                                'first')
