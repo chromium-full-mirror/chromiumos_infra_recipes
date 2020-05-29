@@ -182,27 +182,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ret[artifact_name] = artifact_files
     return ret
 
-  def _partition_artifacts(self, artifact_types, func_dict, default=None):
-    """Partition the artifacts by handler.
-
-    Args:
-      artifact_types: (list[ArtifactTypes]): The artifacts to partition.
-      func_dict: (dict(artifact_type: function)) Function dictionary.
-      default: (func) The function to use for missing artifacts.
-
-    Returns:
-      dict(function: list[ArtifactTypes]): each function should be called with
-      the given list of artifact types.
-    """
-    ret = collections.defaultdict(list)
-    for art in artifact_types:
-      # Some artifact types are only supported in API version 1.1.0, and this
-      # method is only called for API version 1.0.0.
-      key = func_dict.get(art, default)
-      if key:
-        ret[key].append(art)
-    return ret
-
   def _bundle_artifacts(self, chroot, sysroot, artifacts_info, outpath,
                         test_data=None):
     """Defer to the build API to bundle the given artifact.
@@ -281,42 +260,18 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       dict(str: list[str]): Artifact name, list of artifact file paths
           relative to |outpath|.
     """
-    atype = BuilderConfig.Artifacts
-    _BUNDLE_FUNCS = {
-        atype.IMAGE_ZIP: self._bundle_legacy_artifacts,
-        atype.TEST_UPDATE_PAYLOAD: self._bundle_legacy_artifacts,
-        atype.AUTOTEST_FILES: self._bundle_legacy_artifacts,
-        atype.TAST_FILES: self._bundle_legacy_artifacts,
-        atype.PINNED_GUEST_IMAGES: self._bundle_legacy_artifacts,
-        atype.FIRMWARE: self._bundle_legacy_artifacts,
-        atype.EBUILD_LOGS: self._bundle_legacy_artifacts,
-        atype.CHROMEOS_CONFIG: self._bundle_legacy_artifacts,
-        atype.CPE_REPORT: self._bundle_legacy_artifacts,
-        atype.IMAGE_ARCHIVES: self._bundle_legacy_artifacts,
-        atype.UNVERIFIED_CHROME_LLVM_ORDERFILE: self._bundle_toolchain,
-        atype.VERIFIED_CHROME_LLVM_ORDERFILE: self._bundle_toolchain,
-        atype.CHROME_CLANG_WARNINGS_FILE: self._bundle_toolchain,
-        atype.UNVERIFIED_LLVM_PGO_FILE: self._bundle_toolchain,
-        atype.UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE: self._bundle_toolchain,
-        atype.VERIFIED_CHROME_BENCHMARK_AFDO_FILE: self._bundle_toolchain,
-        atype.UNVERIFIED_KERNEL_CWP_AFDO_FILE: self._bundle_toolchain,
-        atype.VERIFIED_KERNEL_CWP_AFDO_FILE: self._bundle_toolchain,
-        atype.UNVERIFIED_CHROME_CWP_AFDO_FILE: self._bundle_toolchain,
-        atype.VERIFIED_CHROME_CWP_AFDO_FILE: self._bundle_toolchain,
-        atype.VERIFIED_RELEASE_AFDO_FILE: self._bundle_toolchain,
-        atype.UNVERIFIED_CHROME_BENCHMARK_PERF_FILE: self._bundle_toolchain,
-        atype.CHROME_DEBUG_BINARY: self._bundle_toolchain,
-    }
-
-    # Create artifact_types.
-    artifact_types = []
+    funcs = collections.defaultdict(list)
     for _, service in artifacts_info.ListFields():
       for art_info in getattr(service, 'output_artifacts', []):
-        artifact_types.extend(art_info.artifact_types)
+        if service.DESCRIPTOR.name == 'Toolchain':
+          funcs[self._bundle_toolchain].extend(art_info.artifact_types)
+        else:
+          # If it's not Toolchain, then it's legacy.  1.0.0 only supports those
+          # two services having artifacts.
+          funcs[self._bundle_legacy_artifacts].extend(art_info.artifact_types)
 
     outdir = str(outpath)
     files = {}
-    funcs = self._partition_artifacts(artifact_types, _BUNDLE_FUNCS)
     try:
       # Sorting is done here only to give us consistency in the expected.json
       # for our tests.
@@ -674,31 +629,22 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     # By default, artifacts will get 'UNKNOWN'.
     # EBUILD_LOGS are not relevant.
     atype = BuilderConfig.Artifacts
-    _PREPARE_FUNCS = {
-        atype.EBUILD_LOGS: self._prepare_pointless,
-        atype.UNVERIFIED_CHROME_LLVM_ORDERFILE: self._prepare_toolchain,
-        atype.VERIFIED_CHROME_LLVM_ORDERFILE: self._prepare_toolchain,
-        atype.CHROME_CLANG_WARNINGS_FILE: self._prepare_toolchain,
-        atype.UNVERIFIED_LLVM_PGO_FILE: self._prepare_toolchain,
-        atype.UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE: self._prepare_toolchain,
-        atype.VERIFIED_CHROME_BENCHMARK_AFDO_FILE: self._prepare_toolchain,
-        atype.UNVERIFIED_KERNEL_CWP_AFDO_FILE: self._prepare_toolchain,
-        atype.VERIFIED_KERNEL_CWP_AFDO_FILE: self._prepare_toolchain,
-        atype.UNVERIFIED_CHROME_CWP_AFDO_FILE: self._prepare_toolchain,
-        atype.VERIFIED_CHROME_CWP_AFDO_FILE: self._prepare_toolchain,
-        atype.VERIFIED_RELEASE_AFDO_FILE: self._prepare_toolchain,
-        atype.UNVERIFIED_CHROME_BENCHMARK_PERF_FILE: self._prepare_toolchain,
-        atype.CHROME_DEBUG_BINARY: self._prepare_toolchain,
-    }
+    _POINTLESS_ARTIFACT_TYPES = [atype.EBUILD_LOGS]
 
-    # We need to use the 1.0.0 method.  Create artifact_types and
-    # input_artifacts for the call.
-    artifact_types = []
+    funcs = collections.defaultdict(list)
     input_artifacts = []
     for _, service in artifacts_info.ListFields():
-      # artifact_types is the list of output artifact types.
-      for out_art in getattr(service, 'output_artifacts', []):
-        artifact_types.extend(out_art.artifact_types)
+      for art_info in getattr(service, 'output_artifacts', []):
+        if service.DESCRIPTOR.name == 'Toolchain':
+          funcs[self._prepare_toolchain].extend(art_info.artifact_types)
+        else:
+          # If it's not Toolchain, then it's legacy.  1.0.0 only supports those
+          # two services having artifacts.
+          for art in art_info.artifact_types:
+            if art in _POINTLESS_ARTIFACT_TYPES:
+              funcs[self._prepare_pointless].append(art)
+            else:
+              funcs[self._prepare_unknown].append(art)
 
       # input_artifacts is the list of input_artifacts, rewritten into the
       # correct message type.
@@ -708,9 +654,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
               BuilderConfig.Artifacts.InputArtifactInfo(
                   input_artifact_type=atype,
                   input_artifact_gs_locations=in_art.gs_locations))
-
-    funcs = self._partition_artifacts(artifact_types, _PREPARE_FUNCS,
-                                      self._prepare_unknown)
 
     # If there are no prepare functions to call: Build need is UNKNOWN.
     if not funcs:
