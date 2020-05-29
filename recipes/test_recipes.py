@@ -191,8 +191,10 @@ def _launch_builders(api, builders):
           # Run the child task with priority=20, to put it ahead of actual
           # staging jobs.  We could run it with the dimension 'role=infra',
           # but there are no large role=infra bots.
+          name = '%s %s' % (builder, last_successful_build.id)
           result = intermediate_result.then('edit-recipe-bundle').then(
-              'edit-system', '-p', '20').then('launch').result
+              'edit-system', '-p', '20').then('edit', '-name',
+                                              name).then('launch').result
           url = 'https://{}/task?id={}'.format(result['swarming']['host_name'],
                                                result['swarming']['task_id'])
           launch_pres.links[builder] = url

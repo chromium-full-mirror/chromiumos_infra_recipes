@@ -512,6 +512,22 @@
   {
     "cmd": [
       "[CACHE]/led/led",
+      "edit",
+      "-name",
+      "staging-Annealing 1"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@json.output (invalid)@@@",
+      "@@@STEP_LOG_LINE@json.output (exception)@No JSON object could be decoded@@@",
+      "@@@STEP_LOG_END@json.output (exception)@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/led/led",
       "launch"
     ],
     "cwd": "[CLEANUP]/recipes/src",
