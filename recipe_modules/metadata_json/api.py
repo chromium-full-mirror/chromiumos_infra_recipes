@@ -83,7 +83,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     """Update metadata with version info.
 
     Args:
-      version_dict(dict): Map containing version info.
+      version_dict (dict): Map containing version info.
     """
     self._metadata['version'] = {
         'chrome': version_dict.get('chromeVersion', ''),
@@ -103,7 +103,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     """Write metadata dict to a tempfile.
 
     Args:
-      filename(str): Filename to write to.
+      filename (str): Filename to write to.
 
     Returns:
       str, path to the file written.
@@ -118,9 +118,9 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     """Upload metadata to GS at its current state.
 
     Args:
-      config(BuilderConfig): builder config of this builder.
+      config (BuilderConfig): builder config of this builder.
       target (BuildTarget): The build target of this builder.
-      partial(bool): whether the metadata is incomplete.
+      partial (bool): whether the metadata is incomplete.
     """
     with self.m.step.nest('upload metadata') as presentation:
       filename = 'partial_metadata.json' if partial else 'metadata.json'
@@ -136,7 +136,8 @@ class MetadataJsonApi(recipe_api.RecipeApi):
       self._upload(file_path, upload_uri)
       presentation.links['gs_link'] = self.m.urls.get_gs_path_url(upload_uri)
 
-  @exponential_retry(retries=3, condition=lambda e: getattr(e, 'had_timeout', False))
+  @exponential_retry(retries=3,
+                     condition=lambda e: getattr(e, 'had_timeout', False))
   def _upload(self, source, dest):
     self.m.gsutil(['cp', source, dest], timeout=10 * 60)
 
@@ -173,13 +174,14 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     unittest_step = self._get_unittest_step(build.steps)
     if unittest_step:
       success = unittest_step.status == common_pb2.SUCCESS
+      duration = self._get_duration(unittest_step.end_time.seconds,
+                                    unittest_step.start_time.seconds)
       self._metadata['results'].append({
           'status': 'pass' if success else 'fail',
           'description': '',
           'name': 'UnitTest',
-          'duration': self._get_duration(unittest_step.end_time.seconds,
-                                         unittest_step.start_time.seconds),
-          'summary': ('stage was successful' if success else 'stage failed'),
+          'duration': duration,
+          'summary': 'stage was successful' if success else 'stage failed',
           'log': '',
           'board': '',
       })
@@ -188,9 +190,9 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     """Finish the build stats and upload metadata.json.
 
     Args:
-      config(BuilderConfig): builder config of this builder.
+      config (BuilderConfig): builder config of this builder.
       target (BuildTarget): The build target of this builder.
-      success(bool): Did this build pass.
+      success (bool): Did this build pass.
     """
     current_secs = int(self.m.time.time())
     self._metadata['status'] = {
@@ -211,7 +213,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
     """Returns a context that upload final metadata.json to GS.
 
     Args:
-      config(BuilderConfig): builder config of this builder.
+      config (BuilderConfig): builder config of this builder.
       target (BuildTarget): The build target of this builder.
     """
     try:
