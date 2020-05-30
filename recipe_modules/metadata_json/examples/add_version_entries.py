@@ -6,8 +6,8 @@
 
 DEPS = [
     'recipe_engine/assertions',
-    'recipe_engine/buildbucket',
     'metadata_json',
+    'test_util',
 ]
 
 
@@ -24,7 +24,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'basic',
-      api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                               builder='amd64-generic-cq'))
+  yield api.test('basic', api.test_util.test_build(cq=True).build)

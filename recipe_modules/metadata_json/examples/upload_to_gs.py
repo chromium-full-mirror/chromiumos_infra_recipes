@@ -5,13 +5,10 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'recipe_engine/buildbucket',
     'cros_infra_config',
     'metadata_json',
 ]
 
-from collections import namedtuple
-from google.protobuf import struct_pb2
 from PB.chromiumos.common import BuildTarget
 
 
@@ -23,9 +20,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  md_build = api.buildbucket.try_build_message(bucket='cq',
-                                               builder='amd64-generic-cq')
-  yield api.test(
-      'basic', api.buildbucket.simulated_get(md_build, 'buildbucket.get'),
-      api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                               builder='amd64-generic-cq'))
+  yield api.test('basic', api.metadata_json.test_builder(cq=True))

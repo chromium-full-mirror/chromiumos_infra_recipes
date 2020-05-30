@@ -1,0 +1,25 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from recipe_engine import recipe_test_api
+
+
+class MetadataJsonTestApi(recipe_test_api.RecipeTestApi):
+  """A module for testing metadata_json."""
+
+  led_build_id = 8882749049375545216
+
+  def test_builder(self, **kwargs):
+    """Step data for a test builder.
+
+    Args:
+      kwargs (dict): arguments to pass to test_util.test_build.
+
+    Returns:
+      A step_data object with both the build and the simulated_get response.
+    """
+    build = self.m.test_util.test_build(**kwargs)
+    return build.build + self.m.buildbucket.simulated_get(build.message)

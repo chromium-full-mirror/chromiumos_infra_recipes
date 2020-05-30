@@ -14,5 +14,6 @@ DEPS = [
     'cros_artifacts',
     'cros_history',
     'cros_infra_config',
+    'test_util',
     'urls',
 ]

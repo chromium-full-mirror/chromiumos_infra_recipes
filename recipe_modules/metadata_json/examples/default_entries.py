@@ -6,7 +6,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
-    'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'metadata_json',
 ]
 
@@ -18,9 +18,17 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  md_build = api.buildbucket.try_build_message(bucket='cq',
-                                               builder='amd64-generic-cq')
+
+  yield api.test('basic', api.metadata_json.test_builder(cq=True))
+
+  # The build_id below must match the build_id used for led launched jobs in
+  # api.py.
   yield api.test(
-      'basic', api.buildbucket.simulated_get(md_build, 'buildbucket.get'),
-      api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                               builder='amd64-generic-cq'))
+      'led',
+      api.properties(
+          **{'$recipe_engine/led': {
+              'led_run_id': 'chromeos/led/email/hash'
+          }}),
+      api.metadata_json.test_builder(cq=True,
+                                     build_id=api.metadata_json.led_build_id),
+  )

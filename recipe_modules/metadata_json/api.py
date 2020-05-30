@@ -43,18 +43,36 @@ class MetadataJsonApi(recipe_api.RecipeApi):
         email.utils.formatdate(timeval=time_secs, localtime=True),
         time.strftime('%Z', time.localtime(time_secs)))  # pragma: nocover
 
-  def _safe_buildbucket_get_self(self):
-    # If a led job, use a random id.
-    if self.m.led.run_id:  # pragma: nocover
-      build_id = 8882749049375545216
+  def _safe_buildbucket_get_self(self, initial=False):
+    if self.m.led.run_id:
+      # If this is a led job, do not use the build_id of the cloned builder.
+      # This build_id is for an amd64-generic-cq run from 2020-04-17.
+      build_id = self.test_api.led_build_id
+    elif initial:
+      # If this is the initial call, and start_time is non-zero, use bb.build.
+      # TODO(1053703): revisit after this runs in staging for a while. This is
+      # an experiment to see if start_time is populated before the initial
+      # add_default_entries call.
+      return (self.m.buildbucket.build
+              if self.m.buildbucket.build.start_time.seconds else
+              self.m.buildbucket.get(self.m.buildbucket.build.id))
     else:
+      # Otherwise, we need to call buildbucket.get to have current information.
       build_id = self.m.buildbucket.build.id
 
     return self.m.buildbucket.get(build_id)
 
   def add_default_entries(self):
     """These fields are available at the start of the build."""
-    build = self._safe_buildbucket_get_self()
+    build = self._safe_buildbucket_get_self(initial=True)
+    if self._test_data.enabled:
+      # If we are testing, and the caller didn't setup buildbucket to do a
+      # simulated get, use buildbucket.build for the test, since everything
+      # other than possibly start_time is correct in that record.
+      build = (
+          build
+          if build.builder.builder == self.m.buildbucket.build.builder.builder
+          else self.m.buildbucket.build)
     self._metadata['buildbucket_id'] = build.id
     builder_name = build.builder.builder
     self._metadata['builder-name'] = builder_name
