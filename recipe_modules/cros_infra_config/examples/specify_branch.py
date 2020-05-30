@@ -17,8 +17,7 @@ from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
 
 
 def RunSteps(api):
-  builder_config = api.cros_infra_config.get_builder_config(
-      api.buildbucket.build.builder.builder)
+  builder_config = api.cros_infra_config.config
   api.cros_infra_config.force_reload()
 
   api.assertions.assertEqual(builder_config.id.name, "clang-tidy-toolchain")

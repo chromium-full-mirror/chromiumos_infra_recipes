@@ -18,7 +18,7 @@ from PB.chromiumos.common import BuildTarget
 
 
 def RunSteps(api):
-  config = api.cros_infra_config.get_builder_config('amd64-generic-cq')
+  config = api.cros_infra_config.config
   bt = BuildTarget(name='amd64-generic')
   with api.metadata_json.context(config, bt):
     api.metadata_json.add_default_entries()

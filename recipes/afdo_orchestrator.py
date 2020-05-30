@@ -317,8 +317,7 @@ def get_child_specs(api):
   Returns:
     list[ChildSpec] of children to run
   """
-  return api.cros_infra_config.get_builder_config(
-      api.buildbucket.build.builder.builder).orchestrator.child_specs
+  return api.cros_infra_config.config.orchestrator.child_specs
 
 
 def filter_schedule_wait_builds(api, parent_step, child_specs, enable_history,
