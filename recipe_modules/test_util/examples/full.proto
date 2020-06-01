@@ -1,0 +1,24 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.test_util.examples;
+
+message TestProperties {
+  // Expected project name.
+  string expected_project = 1;
+
+  // The expected bucket name.
+  string expected_bucket = 2;
+
+  // The expected builder name.
+  string expected_builder = 3;
+
+  // Whether we expect a gitiles_commit.
+  bool expect_commit = 4;
+
+  // The expected CL count.
+  int32 expected_cl_count = 5;
+}

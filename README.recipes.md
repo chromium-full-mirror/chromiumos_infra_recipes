@@ -61,6 +61,7 @@
   * [swarming_cli](#recipe_modules-swarming_cli)
   * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
   * [tast_results](#recipe_modules-tast_results)
+  * [test_util](#recipe_modules-test_util) &mdash; API to simpify testing Chrome OS recipes.
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
   * [workspace_util](#recipe_modules-workspace_util) &mdash; API for various support functions for building.
 
@@ -262,6 +263,7 @@
   * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader)
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
+  * [test_util:examples/full](#recipes-test_util_examples_full)
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
@@ -3850,6 +3852,15 @@ Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
+### *recipe_modules* / [test\_util](/recipe_modules/test_util)
+
+[DEPS](/recipe_modules/test_util/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq]
+
+API to simpify testing Chrome OS recipes.
+
+#### **class [TestUtilApi](/recipe_modules/test_util/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module providing test methods to simplify testing Chrome OS recipes.
 ### *recipe_modules* / [urls](/recipe_modules/urls)
 
 [DEPS](/recipe_modules/urls/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -5633,6 +5644,11 @@ Raises:
 Tests a recipe CL by running ChromeOS builders.
 
 &mdash; **def [RunSteps](/recipes/test_recipes.py#332)(api, properties):**
+### *recipes* / [test\_util:examples/full](/recipe_modules/test_util/examples/full.py)
+
+[DEPS](/recipe_modules/test_util/examples/full.py#6): [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/test_util/examples/full.py#21)(api, properties):**
 ### *recipes* / [test\_vm](/recipes/test_vm.py)
 
 [DEPS](/recipes/test_vm.py#36): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [goma](#recipe_modules-goma), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
