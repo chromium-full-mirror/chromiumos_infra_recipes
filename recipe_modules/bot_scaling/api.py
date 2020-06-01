@@ -310,8 +310,8 @@ class BotScalingApi(recipe_api.RecipeApi):
               ResourceUtilization(vms=0, cpus=0, memory_gb=0))
           region_util.region = regional_action.region
           region_util.vms += config.current_amount
-          region_util.memory_gb = config.current_amount * action.bot_type.memory_gb
-          region_util.cpus = config.current_amount * action.bot_type.cores_per_bot
+          region_util.memory_gb += config.current_amount * action.bot_type.memory_gb
+          region_util.cpus += config.current_amount * action.bot_type.cores_per_bot
           if action.actionable == ScalingAction.NO:
             global_usage.vms += config.current_amount
             global_usage.cpus += config.current_amount * action.bot_type.cores_per_bot
