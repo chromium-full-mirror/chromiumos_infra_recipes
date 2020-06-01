@@ -68,18 +68,27 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic')
 
-  yield api.test('diff_check') + api.git.diff_check(True)
-
-  yield (api.test('show_file_path_not_found') +  #
-         api.step_data('git show', retcode=128))
-
-  yield (api.test('detached_HEAD') +  #
-         api.step_data('git symbolic-ref', retcode=1))
-
-  yield api.test('diff_check_has_new_file') + api.step_data(
-      'check diffs.diff check.git ls-files',
-      retcode=1,
+  yield api.test(
+      'diff_check',
+      api.git.diff_check(True),
   )
 
-  yield (api.test('is_merge_commit_fails') +  #
-         api.step_data('git log (2)', retcode=1))
+  yield api.test(
+      'show_file_path_not_found',
+      api.step_data('git show', retcode=128),
+  )
+
+  yield api.test(
+      'detached_HEAD',
+      api.step_data('git symbolic-ref', retcode=1),
+  )
+
+  yield api.test(
+      'diff_check_has_new_file',
+      api.step_data('check diffs.diff check.git ls-files', retcode=1),
+  )
+
+  yield api.test(
+      'is_merge_commit_fails',
+      api.step_data('git log (2)', retcode=1),
+  )

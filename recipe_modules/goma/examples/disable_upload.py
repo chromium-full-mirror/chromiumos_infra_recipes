@@ -26,13 +26,14 @@ def RunSteps(api):
   api.assertions.assertEqual(gs_path, None)
 
 def GenTests(api):
-  yield (api.test('goma-config-property-disable') +  #
-         api.properties(
-             **{'$chromeos/goma':
-                GomaProperties(
-                    client_version='staging',
-                    goma_approach=common.GomaConfig.RBE_STAGING,
-                    disable_goma_logs_upload=True,
-                    disable_stats_counterz_upload=True,
-                )})
-         )
+  yield api.test(
+      'goma-config-property-disable',
+      api.properties(
+          **{'$chromeos/goma':
+             GomaProperties(
+                 client_version='staging',
+                 goma_approach=common.GomaConfig.RBE_STAGING,
+                 disable_goma_logs_upload=True,
+                 disable_stats_counterz_upload=True,
+             )}),
+  )
