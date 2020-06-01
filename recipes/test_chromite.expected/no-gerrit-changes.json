@@ -583,6 +583,9 @@
     "cmd": [],
     "name": "init sdk",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
+      "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
+      "@@@STEP_LOG_END@sdk cache version@@@",
       "@@@STEP_LOG_LINE@sdk version@123@@@",
       "@@@STEP_LOG_END@sdk version@@@"
     ]
@@ -600,6 +603,26 @@
     "name": "init sdk.changing permissions of [CACHE]/cros_chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/cros_chroot/sdk_cache_version.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.read sdk cache version json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@\"\"@@@",
+      "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },
   {
@@ -820,6 +843,39 @@
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"version\": 1}",
+      "[CLEANUP]/sdk_cache_version.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.write sdk cache version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": 1}@@@",
+      "@@@STEP_LOG_END@sdk_cache_version.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mv",
+      "[CLEANUP]/sdk_cache_version.json",
+      "[CACHE]/cros_chroot/sdk_cache_version.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "init sdk.move sdk cache version file into place",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

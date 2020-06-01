@@ -12,6 +12,7 @@ on its own because it is agnostic of ChromeOS build targets.
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'bot_cost',
@@ -111,6 +112,9 @@ def GenTests(api):
                                 builder='staging-amd64-generic-cq'),
       api.step_data('init sdk.read sdk cache version json',
                     api.raw_io.output_text('{"version": "2"}')),
+      api.step_data(
+          'init sdk.call chromite.api.SdkService/Create.read output file',
+          api.file.read_raw(content='{"version": {"version": 2}}')),
   )
 
   yield api.test(
@@ -119,6 +123,9 @@ def GenTests(api):
                                 builder='staging-amd64-generic-cq'),
       api.step_data('init sdk.read sdk cache version json',
                     api.raw_io.output_text('{"version": "1"}')),
+      api.step_data(
+          'init sdk.call chromite.api.SdkService/Create.read output file',
+          api.file.read_raw(content='{"version": {"version": 2}}')),
   )
 
   yield api.test(

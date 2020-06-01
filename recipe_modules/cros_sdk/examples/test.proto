@@ -10,8 +10,8 @@ import "go.chromium.org/luci/buildbucket/proto/common.proto";
 import "chromiumos/common.proto";
 
 message TestInputProperties {
-  // SDK version
-  int32 sdk_version = 1;
+  // SDK cache version
+  int32 sdk_cache_version = 1;
 
   // Gitiles Commit
   buildbucket.v2.GitilesCommit gitiles_commit = 2;

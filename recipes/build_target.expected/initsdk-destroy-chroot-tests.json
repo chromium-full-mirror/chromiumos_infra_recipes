@@ -1104,6 +1104,9 @@
     "cmd": [],
     "name": "init sdk",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
+      "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
+      "@@@STEP_LOG_END@sdk cache version@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -1120,6 +1123,26 @@
     "name": "init sdk.changing permissions of [CACHE]/cros_chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/cros_chroot/sdk_cache_version.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.read sdk cache version json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@\"\"@@@",
+      "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },
   {

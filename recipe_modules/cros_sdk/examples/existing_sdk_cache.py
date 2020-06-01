@@ -18,14 +18,19 @@ def RunSteps(api):
 
   with api.cros_sdk.cleanup_context(checkout_path=workspace):
     api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
-    api.assertions.assertEqual(api.cros_sdk.sdk_cache_version, '2')
+    api.assertions.assertEqual(api.cros_sdk.sdk_cache_version, 2)
 
-    api.cros_sdk.sdk_cache_version = '3'
-    api.assertions.assertEqual(api.cros_sdk.sdk_cache_version, '3')
+    api.cros_sdk.sdk_cache_version = 3
+    api.assertions.assertEqual(api.cros_sdk.sdk_cache_version, 3)
 
 
 def GenTests(api):
   yield api.test(
       'basic',
+      api.step_data('read sdk cache version json',
+                    api.raw_io.output_text('{"version": 2}')))
+
+  yield api.test(
+      'old-string-version',
       api.step_data('read sdk cache version json',
                     api.raw_io.output_text('{"version": "2"}')))

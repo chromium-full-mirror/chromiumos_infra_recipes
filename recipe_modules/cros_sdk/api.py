@@ -94,34 +94,30 @@ class CrosSdkApi(recipe_api.RecipeApi):
   def sdk_cache_version(self):
     """Lazily load from file. Can be None if version file doesn't exist."""
     if self._sdk_cache_version == None:
+      data = None
       # Use os.path because version file pre-exists recipe run.
       if (os.path.exists(str(self._sdk_cache_version_file)) or
           self._test_data.enabled):
-        version_json = self.m.file.read_json(
-            name='read sdk cache version json',
-            source=self._sdk_cache_version_file)
-        self._sdk_cache_version = str(version_json['version'])
+        data = self.m.file.read_json(name='read sdk cache version json',
+                                     source=self._sdk_cache_version_file)
+      self._sdk_cache_version = int(data['version']) if data else 1
     return self._sdk_cache_version
 
   @sdk_cache_version.setter
-  def sdk_cache_version(self, value):
+  def sdk_cache_version(self, value=1):
     """Set sdk cache version and write to file.
 
     Args:
-      * value (str): new sdk cache version to set.
+      * value (int): new sdk cache version to set.
     """
     tmp_file = self.m.path['cleanup'].join('sdk_cache_version.json')
+    value = int(value)
     self.m.file.write_json(
         name='write sdk cache version file',
         dest=tmp_file,
-        data={'version': str(value)},
+        data={'version': value},
     )
-    cmd = [
-        'sudo',
-        'mv',
-        tmp_file,
-        self._sdk_cache_version_file,
-    ]
+    cmd = ['sudo', 'mv', tmp_file, self._sdk_cache_version_file]
     self.m.step('move sdk cache version file into place', cmd)
     self._sdk_cache_version = value
 
@@ -218,8 +214,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """Initialize the chroot and link it into the workspace.
 
     Args:
-      version (int): Required SDK version, if any.  Some recipes do not care
-          what version the SDK is, they just need any SDK.
+      version (int): Required SDK cache version, if any.  Some recipes do not
+          care what version the SDK is, they just need any SDK.  Default: 1.
       use_image (boolean): Mount the SDK file as an image.  Default: True.
       bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
       timeout_sec (int): Step timeout (in seconds).  Default: None if
@@ -231,18 +227,21 @@ class CrosSdkApi(recipe_api.RecipeApi):
     Returns:
       chromiumos_pb2.Chroot protobuf for the chroot.
     """
+    # If the builder's config does not have an sdk_cache_version specified, it
+    # is version 1.  (Once we need to bump the cache version, the config will
+    # have it for everyone.)
+    version = version or 1
     with self.m.step.nest(name or 'init sdk') as presentation:
       try:
         self.build_chmod_chroot()
         # Replace the chroot if necessary.
         replace = False
-        if version:
-          disk_version = self.sdk_cache_version
-          presentation.logs['sdk cache version'] = [
-              'Version in config: %s' % version,
-              'Version on disk: %s' % disk_version,
-          ]
-          replace = str(version) != disk_version
+        disk_version = self.sdk_cache_version
+        presentation.logs['sdk cache version'] = [
+            'Version in config: %d' % version,
+            'Version on disk: %d' % disk_version,
+        ]
+        replace = version != disk_version
         if timeout_sec == 'DEFAULT':
           timeout_sec = None if bootstrap else 90 * 60
 
@@ -254,8 +253,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
                 chroot=self.chroot), timeout=timeout_sec,
             test_output_data=test_data)
         presentation.logs['sdk version'] = str(response.version.version)
-        if version:
-          self.sdk_cache_version = version
+        self.sdk_cache_version = version
         self.link_chroot(self.m.cros_source.workspace_path)
 
         # If there were toolchain changes already applied to the workspace, we

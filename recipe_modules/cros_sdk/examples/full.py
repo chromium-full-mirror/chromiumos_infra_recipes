@@ -34,7 +34,7 @@ def RunSteps(api, properties):
 
     api.assertions.assertIsNone(api.cros_sdk.goma_config())
 
-    chroot = api.cros_sdk.create_chroot(version=properties.sdk_version)
+    chroot = api.cros_sdk.create_chroot(version=properties.sdk_cache_version)
     api.assertions.assertNotEqual(chroot, None)
     api.cros_sdk.update_chroot(properties.gitiles_commit,
                                properties.gerrit_changes)
@@ -54,7 +54,8 @@ def RunSteps(api, properties):
 
     goma = api.cros_sdk.goma_config()
     api.assertions.assertEqual(goma.goma_dir, str(api.goma.goma_dir))
-    api.assertions.assertEqual(goma.goma_client_json, str(api.goma.goma_client_json))
+    api.assertions.assertEqual(goma.goma_client_json,
+                               str(api.goma.goma_client_json))
     api.assertions.assertEqual(goma.stats_file, 'stats.binaryproto')
     api.assertions.assertEqual(goma.counterz_file, 'counterz.binaryproto')
 
@@ -76,9 +77,9 @@ def GenTests(api):
   yield api.test('basic')
 
   yield api.test(
-      'versioned', api.properties(TestInputProperties(sdk_version=3)),
+      'versioned',
       api.step_data('init sdk.read sdk cache version json',
-                    api.raw_io.output_text('{"version": "1"}')))
+                    api.raw_io.output_text('{"version": 1}')))
 
   yield api.test(
       'with-changes',

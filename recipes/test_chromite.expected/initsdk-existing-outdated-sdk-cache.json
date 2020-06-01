@@ -785,7 +785,7 @@
       "@@@STEP_LOG_LINE@sdk cache version@Version in config: 2@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
       "@@@STEP_LOG_END@sdk cache version@@@",
-      "@@@STEP_LOG_LINE@sdk version@123@@@",
+      "@@@STEP_LOG_LINE@sdk version@2@@@",
       "@@@STEP_LOG_END@sdk version@@@"
     ]
   },
@@ -838,7 +838,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 2}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -934,7 +934,7 @@
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"init sdk|call chromite.api.SdkService/Create|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"createResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"version\": 123@@@",
+      "@@@STEP_LOG_LINE@published event@      \"version\": 2@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"createRequest\": {@@@",
@@ -969,7 +969,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBGwoCGAESFQoTW0NBQ0hFXS9jcm9zX2Nocm9vdMoBBAoC\\nCHvQAtDsgNmu8bWSfNoCQmluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvQ3Jl\\nYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBGwoCGAESFQoTW0NBQ0hFXS9jcm9zX2Nocm9vdMoBBAoC\\nCALQAtDsgNmu8bWSfNoCQmluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvQ3Jl\\nYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -986,7 +986,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\"version\": \"2\"}",
+      "{\"version\": 2}",
       "[CLEANUP]/sdk_cache_version.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -994,7 +994,7 @@
     "name": "init sdk.write sdk cache version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": \"2\"}@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": 2}@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },

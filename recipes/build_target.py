@@ -668,6 +668,9 @@ def GenTests(api):
       api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data('init sdk.read sdk cache version json',
                     api.raw_io.output_text('{"version": "2"}')),
+      api.step_data(
+          'init sdk.call chromite.api.SdkService/Create.read output file',
+          api.file.read_raw(content='{"version": {"version": 2}}')),
   )
 
   yield api.test(
@@ -676,6 +679,9 @@ def GenTests(api):
       api.buildbucket.simulated_get(md_build, 'metadata setup.buildbucket.get'),
       api.step_data('init sdk.read sdk cache version json',
                     api.raw_io.output_text('{"version": "1"}')),
+      api.step_data(
+          'init sdk.call chromite.api.SdkService/Create.read output file',
+          api.file.read_raw(content='{"version": {"version": 2}}')),
   )
 
   yield api.test(

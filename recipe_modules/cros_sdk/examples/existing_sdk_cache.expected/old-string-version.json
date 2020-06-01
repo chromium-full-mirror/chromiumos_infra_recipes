@@ -57,7 +57,7 @@
     "infra_step": true,
     "name": "read sdk cache version json",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": 2}@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": \"2\"}@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },
