@@ -2530,7 +2530,8 @@
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\010chromeos\\032(2d72510e447ab60a9728aeea2362d8be2cbd7789\\\"\\021refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
-      "@@@STEP_LOG_LINE@relevance_output@@@@",
+      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
+      "@@@STEP_LOG_LINE@relevance_output@}@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
     ]
   },

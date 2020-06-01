@@ -107,7 +107,9 @@
       "@@@STEP_LOG_LINE@relevance_input@  path: \"some/other/dir\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
-      "@@@STEP_LOG_LINE@relevance_output@@@@",
+      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
+      "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
+      "@@@STEP_LOG_LINE@relevance_output@}@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
     ]
   },

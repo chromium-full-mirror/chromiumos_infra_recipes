@@ -129,8 +129,9 @@ def DoRunSteps(api, config, build_target, properties):
 
   with api.step.nest('validate SDK reuse'):
     # If any of the changes affect the sdk, mark the sdk as dirty.
-    if api.cros_relevance.is_depgraph_affected(gerrit_changes, gitiles_commit,
-                                               dep_graph=dep_graph.sdk):
+    if api.cros_relevance.is_depgraph_affected(
+        gerrit_changes, gitiles_commit, dep_graph=dep_graph.sdk,
+        test_value=api.workspace_util.toolchain_cls_applied):
       api.cros_sdk.mark_sdk_as_dirty()
 
   # In the cases where force_relevant is True:

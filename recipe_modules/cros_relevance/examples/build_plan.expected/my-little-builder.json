@@ -1,0 +1,55 @@
+[
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (_record_step_name([name: \"my little builder\"\n]))",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point '_record_step_name([name: \"my little builder\"\\n])'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in _record_step_name",
+      "    cur_count = cur_state.setdefault(name, 0)",
+      "  File \"PYTHON(site-packages)/google/protobuf/internal/containers.py\", in __hash__",
+      "    raise TypeError('unhashable object')",
+      "TypeError: unhashable object"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Engine Crash)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Engine Crash'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
+      "    recipe_result = self.global_symbols['RunSteps'](*args)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_relevance/examples/build_plan.py\", line 37, in RunSteps",
+      "    properties.test_builder_ids)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
+      "    return func(*a, **kw)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_relevance/api.py\", line 62, in get_necessary_builders",
+      "    with self.m.step.nest(name or 'plan builds') as presentation:",
+      "  File \"PYTHON/lib/python2.7/contextlib.py\", in __enter__",
+      "    return self.gen.next()",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_modules/step/api.py\", in nest",
+      "    with self.step_client.parent_step(name) as (pres, children):",
+      "  File \"PYTHON/lib/python2.7/contextlib.py\", in __enter__",
+      "    return self.gen.next()",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in parent_step",
+      "    name_tokens = self._record_step_name(name)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in _record_step_name",
+      "    raise CrashEngine(\"Getting name tokens for %r failed.\" % (name,))",
+      "CrashEngine: Getting name tokens for [name: \"my little builder\"",
+      "] failed."
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "CrashEngine('Getting name tokens for [name: \"my little builder\"\\n] failed.',)"
+    },
+    "name": "$result"
+  }
+]

@@ -1,0 +1,18 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_relevance.examples;
+
+import "chromiumos/builder_config.proto";
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message PointlessTest {
+  // The gerrit changes to use.
+  repeated buildbucket.v2.GerritChange gerrit_changes = 1;
+
+  // The expected return from is_build_pointless.
+  bool expected = 2;
+}

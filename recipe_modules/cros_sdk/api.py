@@ -210,7 +210,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
           DeleteSdkRequest(chroot=self.chroot))
 
   def create_chroot(self, version=None, use_image=True, bootstrap=False,
-                    timeout_sec='DEFAULT', test_data=None, name=None):
+                    timeout_sec='DEFAULT', test_data=None,
+                    test_toolchain_cls=None, name=None):
     """Initialize the chroot and link it into the workspace.
 
     Args:
@@ -222,6 +223,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
           bootstrap is True, otherwise 90 minutes.
       test_data (str): test response (JSON) from the SdkService.Create call, or
           None to use the default in cros_build_api/test_api.py.
+      test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
       name (str): Step name.  Default: 'init sdk'.
 
     Returns:
@@ -258,7 +260,8 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
         # If there were toolchain changes already applied to the workspace, we
         # can finally detect that.
-        if self.m.workspace_util.detect_toolchain_cls(self.chroot):
+        if self.m.workspace_util.detect_toolchain_cls(
+            self.chroot, test_value=test_toolchain_cls):
           self.mark_sdk_as_dirty()
 
       except self.m.step.StepFailure:
@@ -292,7 +295,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
   def update_chroot(self, commit, changes, build_source=False,
                     toolchain_targets=None, timeout_sec='DEFAULT',
-                    test_data=None, name=None):
+                    test_data=None, test_toolchain_cls=None, name=None):
     """Update the chroot.
 
     Args:
@@ -306,15 +309,15 @@ class CrosSdkApi(recipe_api.RecipeApi):
           detected, otherwise 90 minutes.
       test_data (str): test response (JSON) from the SdkService.Update call, or
           None to use the default in cros_build_api/test_api.py.
+      test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
       name (string): Step name.  Default: "update sdk".
     """
     with self.m.step.nest(name or 'update sdk'):
       # See if any of the changes affect the toolchain.
       toolchain_cls = self.m.workspace_util.detect_toolchain_cls(
-          self.chroot, commit, changes)
-      if toolchain_cls:
-        self.mark_sdk_as_dirty()
+          self.chroot, commit, changes, test_value=test_toolchain_cls)
       if build_source or toolchain_cls:
+        self.mark_sdk_as_dirty()
         self._long_timeouts = True
       if timeout_sec == 'DEFAULT':
         timeout_sec = 24 * 60 * 60 if self._long_timeouts else 90 * 60

@@ -90,7 +90,8 @@ def DoRunSteps(api, config, build_target, properties):
           gerrit_changes, gitiles_commit,
           dep_graph=api.cros_relevance.get_dependency_graph(
               sysroot=None, chroot=api.cros_sdk.chroot,
-              packages=config.build.install_packages.packages).sdk):
+              packages=config.build.install_packages.packages).sdk,
+          test_value=api.workspace_util.toolchain_cls_applied):
         step_text = 'Dirty: changes affect SDK'
         api.cros_sdk.mark_sdk_as_dirty()
       presentation.step_text = step_text

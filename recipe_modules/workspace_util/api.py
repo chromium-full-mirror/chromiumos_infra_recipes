@@ -115,7 +115,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       self._patch_sets.extend(patch_sets)
 
   def detect_toolchain_cls(self, chroot, gitiles_commit=None,
-                           gerrit_changes=None, name=None):
+                           gerrit_changes=None, test_value=None, name=None):
     """Check for toolchain changes.
 
     If there are any changes that affect the toolchain, set that workspace
@@ -128,6 +128,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
           use the changes already applied via apply_changes().
       chroot (Chroot): The chroot for the build.
       name (str): The name for the step, or None for default.
+      test_value (bool): The value to use for tests.  Default: No toolchain
+          changes detected unless step data is provided elsewhere.
 
     Returns:
       (bool) whether there are toolchain patches applied.
@@ -143,7 +145,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     with self.m.step.nest(name or 'detect toolchain change') as detect:
       changed = self.m.cros_relevance.check_for_toolchain_change(
           gitiles_commit=gitiles_commit, gerrit_changes=gerrit_changes,
-          chroot=chroot)
+          chroot=chroot, test_value=test_value)
       self.checked_changes.extend(to_check)
       self.m.easy.set_property_step('testing_toolchain', changed)
       detect.step_text = 'change detected' if changed else 'no change'

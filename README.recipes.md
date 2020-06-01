@@ -144,8 +144,8 @@
   * [cros_infra_config:tests/configure_builder](#recipes-cros_infra_config_tests_configure_builder)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
-  * [cros_relevance:examples/pointless_builds](#recipes-cros_relevance_examples_pointless_builds)
-  * [cros_relevance:examples/toolchain_change](#recipes-cros_relevance_examples_toolchain_change)
+  * [cros_relevance:examples/pointless](#recipes-cros_relevance_examples_pointless)
+  * [cros_relevance:examples/toolchain](#recipes-cros_relevance_examples_toolchain)
   * [cros_sdk:examples/existing_sdk_cache](#recipes-cros_sdk_examples_existing_sdk_cache)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_sdk:tests/long_timeouts](#recipes-cros_sdk_tests_long_timeouts)
@@ -1441,9 +1441,21 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#233)(self, gerrit_changes, gitiles_commit, chroot):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#236)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#248)(self, sysroot, chroot, packages=None):**
+Check for toolchain changes.
+
+Args:
+  gerrit_changes (list[GerritChange]): The gerrit changes for the build.
+  gitiles_commit (GitilesCommit): The gitiles commit for the build.
+  chroot (Chroot): The SDK for the build.
+  test_value (bool): The answer to use for testing, or None.
+  name (str): The step name to display, or None for default.
+
+Returns:
+  (bool): Whether there are toolchain_cls applied.
+
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#265)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -1484,7 +1496,7 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#105)(self, gerrit_changes, gitiles_commit, dep_graph, force_relevant=False):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#105)(self, gerrit_changes, gitiles_commit, dep_graph, force_relevant=False, test_value=None):**
 
 Determines if build(s) can be terminated early.
 
@@ -1500,11 +1512,13 @@ Args:
   dep_graph (chromite.api.DepGraph): The dependency graph to compare the
       Gerrit changes against to test for build relevancy.
   force_relevant (bool): Whether to always declare the build relevant.
+  test_value (bool): The answer to use for testing.  Default: build is not
+      pointless.
 
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#204)(self, gerrit_changes, gitiles_commit, dep_graph, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#211)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -1515,9 +1529,8 @@ Args:
       snapshot Gitiles commit.
   dep_graph (chromite.api.DepGraph): The dependency graph to compare the
       Gerrit changes against to test for build relevancy.
-  name (str): The step name to display, defaults to 'depgraph relevance
-      check'.
-
+  test_value (bool): The answer to use for testing, or None.
+  name (str): The step name to display, or None for default.
 
 Returns:
   bool: Whether the given Gerrit Change affects the given dependency graph.
@@ -1547,7 +1560,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#443)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#446)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -1557,7 +1570,7 @@ Chroot needs to be tightened to 755 for the build process.
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#334)(self, checkout_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#337)(self, checkout_path=None):**
 
 Returns a context that cleans the SDK chroot named cache.
 
@@ -1565,7 +1578,7 @@ Args:
   checkout_path (Path): Path to source checkout.  Default:
       cros_source.workspace_path.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#404)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#407)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#34)(self, chroot_parent_path):**
 
@@ -1586,7 +1599,7 @@ Must be run with cwd inside a chromiumos source root.
 Args:
   chrome_root (Path): Directory with the Chrome source.
 
-&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#212)(self, version=None, use_image=True, bootstrap=False, timeout_sec='DEFAULT', test_data=None, name=None):**
+&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#212)(self, version=None, use_image=True, bootstrap=False, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None):**
 
 Initialize the chroot and link it into the workspace.
 
@@ -1599,6 +1612,7 @@ Args:
       bootstrap is True, otherwise 90 minutes.
   test_data (str): test response (JSON) from the SdkService.Create call, or
       None to use the default in cros_build_api/test_api.py.
+  test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
   name (str): Step name.  Default: 'init sdk'.
 
 Returns:
@@ -1616,7 +1630,7 @@ Returns a Path to the cros_sdk script.
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#275)(self, checkout_path):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#278)(self, checkout_path):**
 
 Link the chroot to a chromiumos checkout.
 
@@ -1631,7 +1645,7 @@ This boolean is sticky.
 
 &mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#179)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#452)(self, name, cmd, env=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#455)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -1667,7 +1681,7 @@ Args:
 
 &mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#176)(self, use_flags):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#357)(self, create_test_data=None, restore_test_data=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#360)(self, create_test_data=None, restore_test_data=None):**
 
 Returns a context that snapshots and restores the SDK chroot state.
 
@@ -1686,21 +1700,21 @@ Args:
       SdkService.RestoreSnapshot call, or None to use the default in
       cros_build_api/test_api.py.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#434)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#437)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#409)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#412)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
 Args:
  checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#399)(self, chroot=None):**
+&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#402)(self, chroot=None):**
 
-&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#293)(self, commit, changes, build_source=False, toolchain_targets=None, timeout_sec='DEFAULT', test_data=None, name=None):**
+&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#296)(self, commit, changes, build_source=False, toolchain_targets=None, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None):**
 
 Update the chroot.
 
@@ -1715,9 +1729,10 @@ Args:
       detected, otherwise 90 minutes.
   test_data (str): test response (JSON) from the SdkService.Update call, or
       None to use the default in cros_build_api/test_api.py.
+  test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
   name (string): Step name.  Default: "update sdk".
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#472)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#475)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 
@@ -3934,7 +3949,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#33)(self):**
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#117)(self, chroot, gitiles_commit=None, gerrit_changes=None, name=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#117)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -3948,6 +3963,8 @@ Args:
       use the changes already applied via apply_changes().
   chroot (Chroot): The chroot for the build.
   name (str): The name for the step, or None for default.
+  test_value (bool): The value to use for tests.  Default: No toolchain
+      changes detected unless step data is provided elsewhere.
 
 Returns:
   (bool) whether there are toolchain patches applied.
@@ -3974,7 +3991,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#152)(self, manifest_groups, local_manifest=None, cache_path_override=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#154)(self, manifest_groups, local_manifest=None, cache_path_override=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -4307,7 +4324,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#73)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#263)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#264)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4323,7 +4340,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#282)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#283)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 
@@ -4610,19 +4627,19 @@ Used to create sweeping changes by creating CLs in many repos.
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#18)(api):**
 ### *recipes* / [cros\_relevance:examples/build\_plan](/recipe_modules/cros_relevance/examples/build_plan.py)
 
-[DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#11): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#18)(api):**
-### *recipes* / [cros\_relevance:examples/pointless\_builds](/recipe_modules/cros_relevance/examples/pointless_builds.py)
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#22)(api, properties):**
+### *recipes* / [cros\_relevance:examples/pointless](/recipe_modules/cros_relevance/examples/pointless.py)
 
-[DEPS](/recipe_modules/cros_relevance/examples/pointless_builds.py#14): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_relevance/examples/pointless.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless_builds.py#17)(api):**
-### *recipes* / [cros\_relevance:examples/toolchain\_change](/recipe_modules/cros_relevance/examples/toolchain_change.py)
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless.py#23)(api, properties):**
+### *recipes* / [cros\_relevance:examples/toolchain](/recipe_modules/cros_relevance/examples/toolchain.py)
 
-[DEPS](/recipe_modules/cros_relevance/examples/toolchain_change.py#9): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_relevance/examples/toolchain.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/toolchain_change.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/toolchain.py#20)(api, properties):**
 ### *recipes* / [cros\_sdk:examples/existing\_sdk\_cache](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

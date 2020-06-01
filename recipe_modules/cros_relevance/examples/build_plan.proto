@@ -1,0 +1,17 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_relevance.examples;
+
+import "chromiumos/builder_config.proto";
+
+message BuildPlanTest {
+  // The builder ids to use.
+  repeated chromiumos.BuilderConfig.Id test_builder_ids = 1;
+
+  // The expected return from get_necessary_builders
+  repeated string expected_builders = 2;
+}
