@@ -3,7 +3,7 @@
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-from collections import defaultdict, namedtuple
+from collections import namedtuple
 
 from PB.chromiumos.bot_scaling import BotPolicy, ResourceUtilization, RoboCropAction, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -297,18 +297,17 @@ class BotScalingApi(recipe_api.RecipeApi):
       ResourceUtilization, total resource usage across all bot groups.
     """
     config_map = self._get_prefix_to_gce_config(configs)
-    resource_utilization = defaultdict(ResourceUtilization)
+    resource_utilization = {}
     global_usage = ResourceUtilization(region='global', vms=0, cpus=0,
                                        memory_gb=0)
     for action in scaling_actions:
       for regional_action in action.regional_actions:
         config = config_map.get(regional_action.prefix, None)
         if config:
-          config = config_map[regional_action.prefix]
           region_util = resource_utilization.get(
               regional_action.region,
-              ResourceUtilization(vms=0, cpus=0, memory_gb=0))
-          region_util.region = regional_action.region
+              ResourceUtilization(region=regional_action.region, vms=0, cpus=0,
+                                  memory_gb=0))
           region_util.vms += config.current_amount
           region_util.memory_gb += config.current_amount * action.bot_type.memory_gb
           region_util.cpus += config.current_amount * action.bot_type.cores_per_bot
