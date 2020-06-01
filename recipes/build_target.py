@@ -220,12 +220,16 @@ def DoRunSteps(api, config, build_target, properties):
 
   version = api.cros_version.read_workspace_version()
   api.easy.set_property_step('chromeos_version', str(version))
-
+  disable_rootfs_verification = config.build.build_images.disable_rootfs_verification
+  disk_layout = config.build.build_images.disk_layout
   image_types = config.build.build_images.image_types
-  builder_path = api.cros_artifacts.artifacts_gs_path(
-      config.id.name, build_target, config.id.type)
 
-  api.sysroot_util.build_images(image_types, builder_path)
+  builder_path = api.cros_artifacts.artifacts_gs_path(config.id.name,
+                                                      build_target,
+                                                      config.id.type)
+
+  api.sysroot_util.build_images(image_types, builder_path,
+                                disable_rootfs_verification, disk_layout)
 
   ebuilds_run_spec = config.unit_tests.ebuilds_run_spec
   if api.cros_infra_config.should_run(ebuilds_run_spec):

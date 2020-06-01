@@ -3699,13 +3699,15 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#139)(self, image_types, builder_path, timeout_sec=(45 \* 60), build_test_data=None, test_test_data=None, name=None):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#139)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, timeout_sec=(45 \* 60), build_test_data=None, test_test_data=None, name=None):**
 
 Build and validate images.
 
 Args:
   image_types (list[ImageType]): Image types to build.
   builder_path (str): Builder path in GS for artifacts.
+  disable_rootfs_verification (bool): whether to disable rootfs verification.
+  disk_layout (str): disk_layout to set, or empty for a sane default.
   timeout_sec (int): Step timeout (in seconds).
   build_test_data (str): test response (JSON) from the ImageService/Create
       call, or None.
@@ -4303,7 +4305,7 @@ Recipe for building a BuildTarget image.
 
 &mdash; **def [RunSteps](/recipes/build_target.py#73)(api, properties):**
 
-&mdash; **def [get\_packages](/recipes/build_target.py#259)(api, config):**
+&mdash; **def [get\_packages](/recipes/build_target.py#263)(api, config):**
 
 Returns the packages that should be built for this invocation.
 
@@ -4319,7 +4321,7 @@ Args:
 Returns:
   list[PackageInfo] of packages to build
 
-&mdash; **def [get\_target\_versions](/recipes/build_target.py#278)(api, build_target):**
+&mdash; **def [get\_target\_versions](/recipes/build_target.py#282)(api, build_target):**
 
 Returns 'target_versions' in dict form.
 

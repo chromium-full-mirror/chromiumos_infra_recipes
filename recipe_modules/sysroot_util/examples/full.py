@@ -31,7 +31,7 @@ def RunSteps(api, properties):
 
   # Eventually: api.sysroot_util.install_packages(...)
 
-  api.sysroot_util.build_images(image_types, 'builder/path',
+  api.sysroot_util.build_images(image_types, 'builder/path', True, "big_disk",
                                 test_test_data=image_test_json)
 
 

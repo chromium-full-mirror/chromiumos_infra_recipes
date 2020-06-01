@@ -136,13 +136,16 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           test_output_data=test_data)
       self.m.failures.set_failed_packages(pres, response.failed_packages)
 
-  def build_images(self, image_types, builder_path, timeout_sec=45 * 60,
-                   build_test_data=None, test_test_data=None, name=None):
+  def build_images(self, image_types, builder_path, disable_rootfs_verification,
+                   disk_layout, timeout_sec=45 * 60, build_test_data=None,
+                   test_test_data=None, name=None):
     """Build and validate images.
 
     Args:
       image_types (list[ImageType]): Image types to build.
       builder_path (str): Builder path in GS for artifacts.
+      disable_rootfs_verification (bool): whether to disable rootfs verification.
+      disk_layout (str): disk_layout to set, or empty for a sane default.
       timeout_sec (int): Step timeout (in seconds).
       build_test_data (str): test response (JSON) from the ImageService/Create
           call, or None.
@@ -167,6 +170,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 chroot=self.m.cros_sdk.chroot,
                 image_types=image_types,
                 builder_path=builder_path,
+                disable_rootfs_verification=disable_rootfs_verification,
+                disk_layout=disk_layout,
             ), timeout=timeout_sec,
             response_lambda=self.m.cros_build_api.failed_pkg_names,
             test_output_data=build_test_data)
