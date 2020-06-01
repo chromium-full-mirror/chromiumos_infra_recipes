@@ -513,7 +513,9 @@
       "--program",
       "[START_DIR]/chromiumos_workspace/src/program/testprogram/generated/config.binaryproto",
       "--project",
-      "[START_DIR]/chromiumos_workspace/src/project/testproject/generated/config.binaryproto"
+      "[START_DIR]/chromiumos_workspace/src/project/testproject/generated/config.binaryproto",
+      "--factory_dir",
+      "[START_DIR]/chromiumos_workspace/src/project/testproject/factory"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "check constraints",

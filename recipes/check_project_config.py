@@ -104,6 +104,11 @@ def RunSteps(api, properties):
         properties.project_config_bundle_checkout_path.repo_checkout_path,
         properties.project_config_bundle_checkout_path.config_path)
 
+    factory_dir = api.context.cwd.join(
+        properties.project_config_bundle_checkout_path.repo_checkout_path,
+        properties.factory_dir,
+    )
+
     # Call checker with checked out program and project. Note that a failure
     # here is not considered an infra failure. infra_steps set in context takes
     # precedent over infra_step passed to api.step, so need to create a new
@@ -113,7 +118,10 @@ def RunSteps(api, properties):
     ), api.gs_step_logging.log_step_to_gs(
         properties.logging_gs_prefix,
     ):
-      checker_args = ['--program', program_path, '--project', project_path]
+      checker_args = [
+          '--program', program_path, '--project', project_path, '--factory_dir',
+          factory_dir
+      ]
       api.python(
           'check constraints',
           checker_path,
@@ -148,6 +156,8 @@ def GenTests(api):
             ),
         'logging_gs_prefix':
             'testprogram-testproject/cq_logs',
+        'factory_dir':
+            'factory',
     }
     props.update(extra_props)
     return props
@@ -168,8 +178,8 @@ def GenTests(api):
     project_config_cq_build.
     """
     return api.step_data(
-        'cherry-pick gerrit changes.repo forall',
-        stdout=api.raw_io.output('project1|src/project1|cros|refs/heads/master|refs/heads/branch'))
+        'cherry-pick gerrit changes.repo forall', stdout=api.raw_io.output(
+            'project1|src/project1|cros|refs/heads/master|refs/heads/branch'))
 
   def check_constraints_with_output():
     """Returns StepData for a check constraints step with stdout."""

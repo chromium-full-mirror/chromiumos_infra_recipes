@@ -58,4 +58,7 @@ message CheckProjectConfigProperties {
     //
     // This prefix should contain the bucket name, but not the 'gs://' prefix.
     string logging_gs_prefix = 6;
+
+    // Path to the factory config directory, relative to the project repo.
+    string factory_dir = 7;
 }
