@@ -32,24 +32,28 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield (api.test('basic') +  #
-         api.step_data('read chromeos version (2).read chromeos_version.sh',
-                       api.file.read_raw('')) +  #
-         api.properties(
-             TestInputProperties(expected_version_snapshot='101')))
+  yield api.test(
+      'basic',
+      api.step_data('read chromeos version (2).read chromeos_version.sh',
+                    api.file.read_raw('')),
+      api.properties(
+          TestInputProperties(expected_version_snapshot='101')),
+  )
 
-  yield (api.test('with-custom-snapshot') +  #
-         api.properties(
-             **{
-                 '$chromeos/cros_source':
-                     CrosSourceProperties(
-                         snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-                             isolated_hash='hash!!!',
-                             isolate_server='server.com'
-                         ),
-                     )
-             }) +  #
-         api.step_data('read chromeos version (2).read chromeos_version.sh',
-                       api.file.read_raw('')) +  #
-         api.properties(
-             TestInputProperties(expected_version_snapshot='hash!!!')))
+  yield api.test(
+      'with-custom-snapshot',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+              CrosSourceProperties(
+                  snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+                      isolated_hash='hash!!!',
+                      isolate_server='server.com'
+                  ),
+              )
+          }),
+      api.step_data('read chromeos version (2).read chromeos_version.sh',
+                    api.file.read_raw('')),
+      api.properties(
+          TestInputProperties(expected_version_snapshot='hash!!!')),
+  )

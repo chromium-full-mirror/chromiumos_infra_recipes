@@ -58,10 +58,12 @@ def GenTests(api):
   # TODO(crbug.com/1030538): Remove once the default label logic is removed.
   yield api.test('default label')
 
-  yield (api.test('custom label') +  #
-         api.properties(
-             **{'$chromeos/cros_test_platform':
-                 CrosTestPlatformModuleProperties(
-                     version=CrosTestPlatformModuleProperties.Version(
-                         cipd_label='some-cipd-label',
-        ))}))
+  yield api.test(
+      'custom label',
+      api.properties(
+          **{'$chromeos/cros_test_platform':
+             CrosTestPlatformModuleProperties(
+                 version=CrosTestPlatformModuleProperties.Version(
+                     cipd_label='some-cipd-label',
+                 ))}),
+  )

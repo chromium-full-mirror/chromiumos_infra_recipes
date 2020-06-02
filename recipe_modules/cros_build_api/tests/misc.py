@@ -167,7 +167,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic'))
+  yield api.test('basic')
 
   yield api.test(
       'basic_with_output',
@@ -179,4 +179,5 @@ def GenTests(api):
               # This property is needed to attach build api output to event.
               '$chromeos/analysis_service':
                   AnalysisServiceProperties(max_stdout_stderr_bytes=64)
-          }))
+          }),
+  )
