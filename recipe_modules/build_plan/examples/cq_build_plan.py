@@ -56,21 +56,27 @@ def GenTests(api):
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return api.buildbucket.build(build)
 
-  yield (api.test('basic') + cq_orchestrator_build_with_gerrit_change() +
-         api.buildbucket.simulated_search_results(
-             builds, 'get build history.get completed builds.'
-             'get change build history.buildbucket.search') +
-         api.buildbucket.simulated_search_results(
-             builds, 'get build history.find matching builds.'
-             'buildbucket.search'))
+  yield api.test(
+      'basic',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+  )
 
-  yield (api.test('with_config') + cq_orchestrator_build_with_gerrit_change() +
-         api.properties(**{
-             '$chromeos/cros_infra_config':
-             CrosInfraConfigProperties(config_ref='refs/changes/33/433/1')}) +
-         api.buildbucket.simulated_search_results(
-             builds, 'get build history.get completed builds.'
-             'get change build history.buildbucket.search') +
-         api.buildbucket.simulated_search_results(
-             builds, 'get build history.find matching builds.'
-             'buildbucket.search'))
+  yield api.test(
+      'with_config',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.properties(**{
+          '$chromeos/cros_infra_config':
+          CrosInfraConfigProperties(config_ref='refs/changes/33/433/1')}),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+  )

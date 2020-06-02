@@ -27,6 +27,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('basic') + \
-         api.buildbucket.ci_build(project='chromeos', bucket='bisect',
-                                  builder='bisect-orchestrator'))
+  yield api.test(
+      'basic',
+      api.buildbucket.ci_build(project='chromeos', bucket='bisect',
+                               builder='bisect-orchestrator'),
+  )
