@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'bot_cost',
+    'build_menu',
     'chrome',
     'cros_artifacts',
     'cros_bisect',
@@ -72,19 +73,8 @@ STEP_TIMEOUTS = {
 
 def RunSteps(api, properties):
   build_target = properties.build_target
-
-  with api.bot_cost.build_cost_context():
-    config = api.cros_infra_config.configure_builder(
-        api.buildbucket.gitiles_commit,
-        api.buildbucket.build.input.gerrit_changes)
-    if not config:
-      # No config found, already logged.
-      return
-
-    api.cros_bisect.set_bisect_builder(build_target.name)
-    api.cros_sdk.set_use_flags(config.build.use_flags)
-    with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context(), \
-        api.metadata_json.context(config, build_target):
+  with api.build_menu.configure_builder(build_target) as config:
+    if config:
       DoRunSteps(api, config, build_target, properties)
 
 
@@ -92,60 +82,21 @@ def DoRunSteps(api, config, build_target, properties):
   # Short versions of several variables that may have been altered in RunSteps.
   gitiles_commit = api.cros_infra_config.gitiles_commit
   gerrit_changes = api.cros_infra_config.gerrit_changes
-  forced_relevant = properties.force_relevant_build
 
-  is_staging = api.cros_infra_config.is_staging
+  # TODO(crbug/1053703): artifact_build is something that we can remove when we
+  # split up build_target.py into individual builders.
+  artifact_build = api.cros_artifacts.has_output_artifacts(
+      config.artifacts.artifacts_info)
 
-  # Set up source checkouts.
-  api.workspace_util.sync_to_commit(staging=is_staging)
-  # Apply any appropriate gerrit_changes.
-  api.workspace_util.apply_changes()
-
-  # Early check to see if the build is pointless. (No chroot nor sysroot yet.)
-  relevance = api.sysroot_util.update_for_artifact_build(
-      None, config.artifacts, force_relevance=forced_relevant)
-  if relevance == Relevance.POINTLESS:
+  if api.build_menu.setup_workspace_and_chroot(
+      artifact_build=artifact_build,
+      forced_relevant=properties.force_relevant_build) == Relevance.POINTLESS:
     return
-  # Remember if the the artifact build says it's NEEDED.
-  forced_relevant = forced_relevant or relevance == Relevance.NEEDED
 
-  api.cros_sdk.uprev_packages(build_targets=[build_target])
-  api.cros_sdk.create_chroot(
-      version=config.general.sdk_cache_version, use_image=is_staging,
-      timeout_sec=None if config.build.sdk_update.compile_source else 'DEFAULT')
-
-  api.cros_sdk.update_chroot(
-      gitiles_commit, gerrit_changes, toolchain_targets=[build_target],
-      build_source=config.build.sdk_update.compile_source)
-
-  sysroot = api.sysroot_util.create_sysroot(
-      build_target, config.build.portage_profile.profile)
-
-  packages = get_packages(api, config)
-  # Note: the dependency graph requires a sysroot prior to crrev.com/c/2197226.
-  # TODO(crbug/1053703): After 2020-11-12, if there is no sysroot, that's ok.
-  dep_graph = api.cros_relevance.get_dependency_graph(
-      sysroot=sysroot, chroot=api.cros_sdk.chroot, packages=packages)
-
-  with api.step.nest('validate SDK reuse'):
-    # If any of the changes affect the sdk, mark the sdk as dirty.
-    if api.cros_relevance.is_depgraph_affected(
-        gerrit_changes, gitiles_commit, dep_graph=dep_graph.sdk,
-        test_value=api.workspace_util.toolchain_cls_applied):
-      api.cros_sdk.mark_sdk_as_dirty()
-
-  # In the cases where force_relevant is True:
-  # 1. input_properties.force_relevant_build is True, and/or
-  # 2. output_properties.testing_toolchain is True (now tracked in
-  #    cros_relevance), and/or
-  # 3. output_properties.artifact_prep is True.
-  if api.cros_relevance.is_build_pointless(gerrit_changes, gitiles_commit,
-                                           dep_graph=dep_graph.target,
-                                           force_relevant=forced_relevant):
-    # TODO: When it becomes possible to add tags from the build itself set:
-    # "hide-in-gerrit": "pointless"
-    # See https://crrev.com/c/1913895.
+  env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+  if env_info.pointless:
     return
+  packages = env_info.packages
 
   target_versions = get_target_versions(api, build_target)
   api.easy.set_property_step('target_versions', target_versions)
@@ -164,8 +115,8 @@ def DoRunSteps(api, config, build_target, properties):
   def _InstallPackagesRequest():
     """Helper to make InstallPackagesRequest."""
     return InstallPackagesRequest(
-        chroot=api.cros_sdk.chroot, sysroot=sysroot, packages=packages,
-        flags=InstallPackagesRequest.Flags(
+        chroot=api.cros_sdk.chroot, sysroot=api.sysroot_util.sysroot,
+        packages=packages, flags=InstallPackagesRequest.Flags(
             compile_source=install_packages.compile_source,
             use_goma=api.cros_sdk.has_goma_config(),
             toolchain_changed=api.workspace_util.toolchain_cls_applied),
@@ -173,8 +124,8 @@ def DoRunSteps(api, config, build_target, properties):
         goma_config=api.cros_sdk.goma_config())
 
   with api.step.nest('check chrome source needed') as cs_pres:
-    if api.chrome.needs_chrome_source(_InstallPackagesRequest(), dep_graph,
-                                      cs_pres):
+    if api.chrome.needs_chrome_source(_InstallPackagesRequest(),
+                                      api.build_menu.dep_graph, cs_pres):
       # This will change the return from _InstallPackagesRequest().
       chrome_root = api.path['start_dir'].join('chrome')
       api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
@@ -205,7 +156,7 @@ def DoRunSteps(api, config, build_target, properties):
       # Process goma response to upload logs, stats, and counterz.
       api.goma.process_artifacts(response,
                                  install_pkg_request.goma_config.log_dir.dir,
-                                 build_target.name, is_staging)
+                                 build_target.name, api.build_menu.is_staging)
 
       step_name = ('install packages|'
                    'call chromite.api.SysrootService/InstallPackages|'
@@ -251,7 +202,7 @@ def DoRunSteps(api, config, build_target, properties):
   if api.cros_artifacts.has_output_artifacts(config.artifacts.artifacts_info):
     api.cros_artifacts.upload_artifacts(
         config.id.name, build_target, config.id.type,
-        config.artifacts.artifacts_gs_bucket, sysroot=sysroot,
+        config.artifacts.artifacts_gs_bucket, sysroot=api.sysroot_util.sysroot,
         chroot=api.cros_sdk.chroot,
         artifacts_info=config.artifacts.artifacts_info)
 
@@ -259,25 +210,6 @@ def DoRunSteps(api, config, build_target, properties):
     api.cros_prebuilts.upload_target_prebuilts(
         build_target, config.id.type, config.artifacts.prebuilts_gs_bucket,
         private=(config.artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
-
-
-def get_packages(api, config):
-  """Returns the packages that should be built for this invocation.
-
-  Returns the list of packages that should be built for this or an
-  empty list if all packages should be built. This will be a subset
-  for cases like FindIt bisection where only prior failed packages
-  are attempted or special builders like kernel builders.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    config (BuilderConfig): builder configuration for the builder
-
-  Returns:
-    list[PackageInfo] of packages to build
-  """
-  return (api.cros_bisect.get_packages() or
-          config.build.install_packages.packages)
 
 
 def get_target_versions(api, build_target):
@@ -316,16 +248,6 @@ def GenTests(api):
     ret = api.buildbucket.build(build)
     if no_toolchain:
       ret += no_toolchain_change()
-    if build_target:
-      ret += api.properties(build_target={'name': build_target})
-    return ret
-
-  def cq_build_no_changes(builder='amd64-generic-cq',
-                          build_target='amd64-generic'):
-    """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                             builder=builder)
-    ret = api.buildbucket.build(build)
     if build_target:
       ret += api.properties(build_target={'name': build_target})
     return ret
@@ -506,29 +428,6 @@ def GenTests(api):
   )
 
   yield api.test(
-      'prepare-for-build-late-pointless',
-      toolchain_build(),
-      api.step_data(
-          'install packages.prepare artifacts final.call chromite.api.'
-          'ArtifactsService/PrepareForBuild.read output file',
-          api.file.read_raw(content='{"build_relevance": "POINTLESS"}')),
-  )
-
-  yield api.test(
-      'prepare-for-build-verify',
-      toolchain_build(builder='orderfile-verify-toolchain'),
-      api.step_data(
-          'prepare artifacts.call chromite.api.ArtifactsService/'
-          'PrepareForBuild.read output file',
-          api.file.read_raw(content='{"build_relevance": "NEEDED"}')),
-  )
-
-  yield api.test(
-      'compile-update-sdk',
-      toolchain_build(builder='atlas-llvm-next', build_target='atlas'),
-  )
-
-  yield api.test(
       'with-findit-bisect',
       cq_build(),
       api.properties(
@@ -548,37 +447,7 @@ def GenTests(api):
           }),
   )
 
-  yield api.test(
-      'with-custom-snapshot',
-      cq_build(),
-      api.properties(
-          **{
-              '$chromeos/cros_source':
-                  CrosSourceProperties(
-                      snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-                          isolated_hash='foohash', isolate_server='server.com'),
-                  )
-          }),
-  )
-
-  yield api.test(
-      'with-custom-DEPS',
-      cq_build(),
-      api.properties(
-          **{
-              '$chromeos/chrome':
-                  ChromeProperties(
-                      version='2.0',
-                      deps_isolate=ChromeProperties.DepsIsolate(
-                          isolated_hash='moohash', isolate_server='cows.com'),
-                  )
-          }),
-  )
-
-  yield api.test(
-      'with-gerrit-changes',
-      cq_build(),
-  )
+  yield api.test('with-gerrit-changes', cq_build())
 
   yield api.test(
       'run-exit-install-packages',
@@ -618,68 +487,13 @@ def GenTests(api):
       api.properties(build_target={'name': 'grunt'}),
   )
 
-  yield api.test(
-      'pointless-build-check',
-      cq_build(),
-      make_build_pointless(),
-  )
+  yield api.test('pointless-build-check', cq_build(), make_build_pointless())
 
-  yield api.test(
-      'toolchain-change-test',
-      cq_build(),
-      force_toolchain_change(),
-  )
+  yield api.test('toolchain-change-test', cq_build(), force_toolchain_change())
 
   yield api.test(
       'with-builder-config-limited-packages',
       cq_build(builder='orderfile-verify-toolchain',
-               build_target='arm-generic'),
-  )
-
-  yield api.test(
-      'initsdk-existing-sdk-cache',
-      cq_build_no_changes(builder='staging-amd64-generic-cq'),
-      api.step_data('init sdk.read sdk cache version json',
-                    api.raw_io.output_text('{"version": "2"}')),
-      api.step_data(
-          'init sdk.call chromite.api.SdkService/Create.read output file',
-          api.file.read_raw(content='{"version": {"version": 2}}')),
-  )
-
-  yield api.test(
-      'initsdk-existing-outdated-sdk-cache',
-      cq_build_no_changes(builder='staging-amd64-generic-cq'),
-      api.step_data('init sdk.read sdk cache version json',
-                    api.raw_io.output_text('{"version": "1"}')),
-      api.step_data(
-          'init sdk.call chromite.api.SdkService/Create.read output file',
-          api.file.read_raw(content='{"version": {"version": 2}}')),
-  )
-
-  yield api.test(
-      'initsdk-destroy-chroot-tests',
-      api.buildbucket.ci_build(project='chromeos', bucket='cq',
-                               builder='amd64-generic-cq'),
-      api.properties(build_target={'name': 'amd64-generic'}),
-      api.step_data(
-          'init sdk.call chromite.api.SdkService/Create.call build API script',
-          retcode=1),
-  )
-
-  yield api.test(
-      'updatesdk-destroy-chroot-tests',
-      cq_build_no_changes(builder='amd64-generic-cq'),
-      api.step_data(
-          'update sdk.call chromite.api.SdkService/'
-          'Update.call build API script', retcode=1),
-  )
-
-  yield api.test(
-      'destroy-chroot-failed-step-tests',
-      cq_build_no_changes(builder='amd64-generic-cq'),
-      api.step_data(
-          'dependency graph calculation.call chromite.api.DependencyService/'
-          'GetBuildDependencyGraph.write input file', retcode=1),
-  )
+               build_target='arm-generic'))
 
   yield api.test('builder-no-longer-exists')

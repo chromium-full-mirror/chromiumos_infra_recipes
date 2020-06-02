@@ -25,8 +25,7 @@
     "cmd": [],
     "name": "configure builder",
     "~followup_annotations": [
-      "@@@STEP_TEXT@config not found, assuming deleted@@@",
-      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/parent_id@@@"
+      "@@@STEP_TEXT@config not found, assuming deleted@@@"
     ]
   },
   {
@@ -67,10 +66,14 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0002@@@"
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "Missing configuration for no-such-builder"
+    },
     "name": "$result"
   }
 ]

@@ -5,8 +5,7 @@
 
 """Recipe that tests chromite.
 
-Though this recipe appears to be almost a subset of build_target, it lives
-on its own because it is agnostic of ChromeOS build targets.
+This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
 DEPS = [
@@ -16,57 +15,19 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'bot_cost',
+    'build_menu',
     'cros_build_api',
-    'cros_infra_config',
     'cros_sdk',
-    'cros_source',
-    'easy',
-    'gerrit',
+    'test_util',
 ]
 
-from google.protobuf import json_format as json_pb
-
-from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
-from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
-from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.test import ChromitePytestRequest, ChromiteUnitTestRequest
-from PB.chromiumos.builder_config import BuilderConfig
 
 
 def RunSteps(api):
-  with api.bot_cost.build_cost_context():
-    DoRunSteps(api)
-
-
-def DoRunSteps(api):
-  with api.step.nest('read builder config') as pres:
-    try:
-      config = api.cros_infra_config.get_builder_config(
-          api.buildbucket.build.builder.builder)
-    except LookupError:
-      pres.step_text = 'config not found, assuming deleted'
-      return
-    pres.logs['builder config'] = [str(config)]
-    pres.properties['builder_config'] = json_pb.MessageToDict(config)
-
-  with api.cros_source.checkout_overlays_context(), \
-      api.cros_sdk.cleanup_context(
-          checkout_path=api.cros_source.workspace_path):
-    with api.context(cwd=api.cros_source.workspace_path):
-      api.cros_source.ensure_synced_cache()
-      api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
-
-      gerrit_changes = api.buildbucket.build.input.gerrit_changes
-      if gerrit_changes and config.build.apply_gerrit_changes:
-        with api.step.nest('cherry-pick gerrit changes'):
-          patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
-          api.cros_source.apply_gerrit_patch_sets(patch_sets)
-
-      api.cros_sdk.create_chroot(version=config.general.sdk_cache_version,
-                                 use_image=False, timeout_sec=None)
-      api.cros_sdk.update_chroot(api.buildbucket.gitiles_commit, gerrit_changes,
-                                 timeout_sec=None)
-
+  with api.build_menu.configure_builder(None) as config:
+    if config:
+      api.build_menu.setup_workspace_and_chroot()
       api.cros_build_api.TestService.ChromitePytest(
           ChromitePytestRequest(chroot=api.cros_sdk.chroot),
           name='run chromite pytest')
@@ -76,59 +37,10 @@ def DoRunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'no-gerrit-changes',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='amd64-generic-postsubmit'),
-  )
+  yield api.test('no-gerrit-changes', api.test_util.test_build().build)
 
-  yield api.test(
-      'one-gerrit-change',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='chromite-cq'),
-  )
+  yield api.test('one-gerrit-change',
+                 api.test_util.test_build(cq=True, builder='chromite-cq').build)
 
-  yield api.test(
-      'initsdk-destroy-chroot-tests',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='chromite-cq'),
-      api.step_data(
-          'init sdk.call chromite.api.SdkService/Create.call build API script',
-          retcode=1),
-  )
-
-  yield api.test(
-      'updatesdk-destroy-chroot-tests',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='chromite-cq'),
-      api.step_data(
-          'update sdk.call chromite.api.SdkService/Update.'
-          'call build API script', retcode=1),
-  )
-
-  yield api.test(
-      'initsdk-existing-sdk-cache',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='staging-amd64-generic-cq'),
-      api.step_data('init sdk.read sdk cache version json',
-                    api.raw_io.output_text('{"version": "2"}')),
-      api.step_data(
-          'init sdk.call chromite.api.SdkService/Create.read output file',
-          api.file.read_raw(content='{"version": {"version": 2}}')),
-  )
-
-  yield api.test(
-      'initsdk-existing-outdated-sdk-cache',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='staging-amd64-generic-cq'),
-      api.step_data('init sdk.read sdk cache version json',
-                    api.raw_io.output_text('{"version": "1"}')),
-      api.step_data(
-          'init sdk.call chromite.api.SdkService/Create.read output file',
-          api.file.read_raw(content='{"version": {"version": 2}}')),
-  )
-
-  yield api.test(
-      'builder-no-longer-exists',
-      api.buildbucket.ci_build(project='chromeos', bucket='cq', builder='none'),
-  )
+  yield api.test('builder-no-longer-exists',
+                 api.test_util.test_build(builder='none').build)

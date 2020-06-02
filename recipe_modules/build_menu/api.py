@@ -56,7 +56,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return self._dep_graph
 
   @contextlib.contextmanager
-  def configure_builder(self, build_target, missing_ok=False):
+  def configure_builder(self, build_target, is_staging=False, missing_ok=False):
     """Initial setup steps for the builder.
 
     This context manager returns with all of the contexts that build_target
@@ -65,6 +65,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       build_target (BuildTarget): build_target for the build, or None if the
           builder is build_target agnostic.
+      is_staging (bool): Whether this is definitely a staging builder.  By
+          default, anything in the 'staging' bucket is considered a staging
+          builder.  Use this to cause other builders to be considered staging.
       missing_ok (bool): Whether it is OK if no config is found.
 
     Returns:
@@ -74,7 +77,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     with self.m.bot_cost.build_cost_context():
       config = self.m.cros_infra_config.configure_builder(
           self.m.buildbucket.gitiles_commit,
-          self.m.buildbucket.build.input.gerrit_changes)
+          self.m.buildbucket.build.input.gerrit_changes, is_staging=is_staging)
       if config and config.id.name and self.build_target.name:
         self.m.cros_bisect.set_bisect_builder(build_target.name)
       if config:

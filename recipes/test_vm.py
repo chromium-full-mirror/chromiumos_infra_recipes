@@ -37,18 +37,16 @@ DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/archive',
     'recipe_engine/buildbucket',
-    'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'build_menu',
     'chrome',
     'cros_build_api',
-    'cros_relevance',
     'cros_sdk',
-    'cros_source',
     'failures',
-    'gerrit',
     'goma',
+    'test_util',
     'workspace_util',
 ]
 
@@ -59,29 +57,12 @@ VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
 
 
 def RunSteps(api, properties):
-  with api.cros_source.checkout_overlays_context(), \
-    api.cros_sdk.cleanup_context(
-        checkout_path=api.cros_source.workspace_path):
+  with api.build_menu.configure_builder(properties.build_target,
+                                        missing_ok=True):
     # Ensure that the workspace aligns with the image that was built.
     # Though this seems wasteful, it will catch bugs introduced to the build
     # API and any scripts it depends on.
-    with api.context(cwd=api.cros_source.workspace_path):
-      api.cros_source.ensure_synced_cache()
-      api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
-      gerrit_changes = api.buildbucket.build.input.gerrit_changes
-      if gerrit_changes:
-        with api.step.nest('cherry-pick gerrit changes'):
-          patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
-          api.cros_source.apply_gerrit_patch_sets(patch_sets)
-
-      api.cros_sdk.create_chroot(version=None, use_image=False,
-                                 timeout_sec=None)
-      api.cros_sdk.uprev_packages(
-          build_targets=[BuildTarget(name=properties.build_target.name)],
-          timeout_sec=None)
-      api.cros_sdk.update_chroot(
-          api.buildbucket.gitiles_commit, gerrit_changes,
-          toolchain_targets=[BuildTarget(name=properties.build_target.name)])
+    api.build_menu.setup_workspace_and_chroot()
 
     with api.step.nest('download vm image'):
       test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
@@ -101,13 +82,12 @@ def RunSteps(api, properties):
     # TODO(evanhernandez): Find a way to stop doing this. It's wasteful.
     if properties.test_harness == VmTestRequest.AUTOTEST:
       with api.step.nest('build autotest packages') as bap_pres:
-        sysroot = api.cros_build_api.SysrootService.Create(
-            SysrootCreateRequest(
-                build_target=properties.build_target,
-                chroot=api.cros_sdk.chroot,
-                flags=SysrootCreateRequest.Flags(chroot_current=True,
-                                                 replace=True)),
-            name='create sysroot').sysroot
+
+        packages = [
+            PackageInfo(category='chromeos-base', package_name='autotest-all')
+        ]
+        api.build_menu.setup_sysroot_and_determine_relevance(packages=packages)
+        sysroot = api.build_menu.sysroot
 
         failed_packages = api.cros_build_api.SysrootService.InstallToolchain(
             InstallToolchainRequest(sysroot=sysroot,
@@ -115,13 +95,9 @@ def RunSteps(api, properties):
             name='install toolchain').failed_packages
         api.failures.set_failed_packages(bap_pres, failed_packages)
 
-        packages = [
-            PackageInfo(category='chromeos-base', package_name='autotest-all')
-        ]
         # Note: the dependency graph requires a sysroot prior to crrev.com/c/2197226.
         # TODO(crbug/1053703): After 2020-11-12, if there is no sysroot, that's ok.
-        dep_graph = api.cros_relevance.get_dependency_graph(
-            sysroot=sysroot, chroot=api.cros_sdk.chroot, packages=packages)
+        dep_graph = api.build_menu.dep_graph
 
         def _InstallPackagesRequest():
           """Helper to make InstallPackagesRequest."""
@@ -178,8 +154,7 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'with-tast',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq'),
+      api.test_util.test_build(cq=True).build,
       api.properties(
           build_target={'name': 'amd64-generic'},
           test_harness=VmTestRequest.TAST, build_payload={
@@ -190,30 +165,11 @@ def GenTests(api):
 
   yield api.test(
       'with-autotest',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq'),
+      api.test_util.test_build(cq=True).build,
       api.properties(
           build_target={'name': 'amd64-generic'},
           test_harness=VmTestRequest.AUTOTEST, build_payload={
               'artifacts_gs_bucket': 'gs://chromeos-image-archive',
               'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
           }, expressions=['example.Pass']),
-  )
-
-  yield api.test(
-      'initsdk-destroy-chroot-tests',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq'),
-      api.step_data(
-          'init sdk.call chromite.api.SdkService/Create.call build API script',
-          retcode=1),
-  )
-
-  yield api.test(
-      'updatesdk-destroy-chroot-tests',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq'),
-      api.step_data(
-          'update sdk.call chromite.api.SdkService/Update.call build API script',
-          retcode=1),
   )
