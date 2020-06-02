@@ -44,7 +44,7 @@ def RunSteps(api, properties):
 def _FullCheckout(api, properties):
   gitiles_commit = api.cros_infra_config.gitiles_commit
   gerrit_changes = api.cros_infra_config.gerrit_changes
-  is_staging = api.buildbucket.build.builder.builder.startswith('staging-')
+  is_staging = api.cros_infra_config.is_staging
   project_names = properties.project_names
 
   # TODO(crbug/1039875): Look at moving this code to a recipe module and using

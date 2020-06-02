@@ -56,11 +56,10 @@ def DoRunSteps(api, config, build_target, properties):
   gitiles_commit = api.cros_infra_config.gitiles_commit
   gerrit_changes = api.cros_infra_config.gerrit_changes
 
-  is_staging = config.general.environment == BuilderConfig.General.STAGING
+  is_staging = api.cros_infra_config.is_staging
 
   # Set up source checkouts.
-  api.workspace_util.sync_to_commit(
-      staging=config.general.environment == BuilderConfig.General.STAGING)
+  api.workspace_util.sync_to_commit(staging=is_staging)
   # Apply any appropriate gerrit_changes.
   api.workspace_util.apply_changes()
 

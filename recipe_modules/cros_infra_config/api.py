@@ -49,6 +49,18 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # The sha of the recipes package from cipd.
     self._package_git_revision = None
 
+    # Is this builder running in the staging bucket?
+    self._is_staging = False
+
+  def initialize(self):
+    # TODO(crbug/1053703): consider other options.
+    builder = self.m.buildbucket.build.builder
+    self._is_staging = (
+        builder.bucket == 'staging' or builder.builder.startswith('staging-'))
+
+    # Hold off on the other fields until they are used, to avoid unnecessary
+    # clutter in the expectations files.
+
   @property
   def package_git_revision(self):
     return self._package_git_revision or self._get_package_git_revision()
@@ -73,6 +85,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     return self.get_builder_config(self.m.buildbucket.build.builder.builder,
                                    missing_ok=True)
+
+  @property
+  def is_staging(self):
+    return self._is_staging
 
   @property
   def fresh_config(self):
@@ -306,7 +322,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           ret = self._package_git_revision
     return ret
 
-  def configure_builder(self, commit=None, changes=None,
+  def configure_builder(self, commit=None, changes=None, is_staging=None,
                         name='configure builder'):
     """Configure the builder.
 
@@ -318,11 +334,15 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       commit (GitilesCommit): The gitiles commit to use.  Default:
           common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
       changes (GerritChanges): The gerrit changes to apply.  Default: [].
+      is_staging (bool): Whether the builder is staging, or None to have
+          configure_builder determine, based on buildbucket bucket and/or
+          config.general.environment.
       name (string): Step name.  Default: "configure builder".
 
     Returns:
       BuilderConfig or None
     """
+    build = self.m.buildbucket.build
     with self.m.step.nest(name) as presentation:
       self.m.easy.set_property_step('recipes_git_revision',
                                     self.package_git_revision)
@@ -335,11 +355,15 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       else:
         presentation.step_text = 'config not found, assuming deleted'
 
-      parent = [
-          x.value
-          for x in self.m.buildbucket.build.tags
-          if x.key == 'parent_buildbucket_id'
-      ]
+      if is_staging is None:
+        is_staging = (
+            build.builder.bucket == 'staging' or
+            build.builder.builder.startswith('staging-') or
+            (config and
+             config.general.environment == BuilderConfig.General.STAGING))
+      self._is_staging = is_staging
+
+      parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
       if parent:
         presentation.links['parent link'] = (
             self.m.buildbucket.build_url(build_id=parent[0]))

@@ -94,7 +94,7 @@ def DoRunSteps(api, config, build_target, properties):
   gerrit_changes = api.cros_infra_config.gerrit_changes
   forced_relevant = properties.force_relevant_build
 
-  is_staging = config.general.environment == BuilderConfig.General.STAGING
+  is_staging = api.cros_infra_config.is_staging
 
   # Set up source checkouts.
   api.workspace_util.sync_to_commit(staging=is_staging)

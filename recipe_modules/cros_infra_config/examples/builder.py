@@ -24,8 +24,11 @@ def RunSteps(api, properties):
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
-  config = api.cros_infra_config.configure_builder(commit=commit,
-                                                   changes=changes)
+  is_staging = None
+  if properties.HasField('is_staging'):
+    is_staging = properties.is_staging.value
+  config = api.cros_infra_config.configure_builder(
+      commit=commit, changes=changes, is_staging=is_staging)
   api.assertions.assertEqual(config, api.cros_infra_config.config)
 
   builder = config.id.name if config else 'nosuch-cq'
@@ -40,6 +43,8 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(commit, api.cros_infra_config.gitiles_commit)
   want = [] if not (changes and config.build.apply_gerrit_changes) else changes
   api.assertions.assertEqual(want, api.cros_infra_config.gerrit_changes)
+  api.assertions.assertEqual(api.cros_infra_config.is_staging,
+                             properties.expected_is_staging)
 
   # Force a reload of the config.
   api.assertions.assertEqual(config, api.cros_infra_config.fresh_config)
@@ -47,13 +52,17 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def builder(build_target='amd64-generic', **kwargs):
+  def builder(build_target='amd64-generic', is_staging=None,
+              expected_is_staging=False, **kwargs):
     kwargs['exe'] = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
                                           cipd_version='prod')
     build = api.test_util.test_build(**kwargs)
-    return build.build + api.properties(
-        BuilderProperties(builder=build.message.builder.builder,
-                          build_target=common.BuildTarget(name=build_target)))
+    props = BuilderProperties(builder=build.message.builder.builder,
+                          build_target=common.BuildTarget(name=build_target),
+                          expected_is_staging=expected_is_staging)
+    if is_staging is not None:
+      props.is_staging.value = is_staging
+    return build.build + api.properties(props)
 
   yield api.test('basic', builder())
 
@@ -82,3 +91,11 @@ def GenTests(api):
 
   yield api.test('missing_config',
                  builder(build_target='nosuch', builder='nosuch-cq'))
+
+  yield api.test(
+      'staging',
+      builder(bucket='staging', builder='staging-amd64-generic-cq',
+              expected_is_staging=True))
+
+  yield api.test('forced-staging',
+                 builder(is_staging=True, expected_is_staging=True))
