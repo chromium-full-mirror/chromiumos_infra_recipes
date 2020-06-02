@@ -390,31 +390,6 @@
     "name": "sync manifests"
   },
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/full.xml",
-      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "sync manifests.Copy manifest-internal/full.xml",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync manifests.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "sync manifests.git transaction",
     "~followup_annotations": [
@@ -458,6 +433,31 @@
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "sync manifests.git transaction.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/full.xml",
+      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git transaction.Copy manifest-internal/full.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifests.git transaction.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

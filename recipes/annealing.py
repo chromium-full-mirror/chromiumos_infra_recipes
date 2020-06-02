@@ -70,20 +70,21 @@ def RunSteps(api, properties):
 
           def _update_callback():
             """Callback function for git_txn to update manifest/full.xml."""
+            api.file.copy(
+                'Copy manifest-internal/full.xml',
+                api.cros_source.workspace_path.join(
+                    'manifest-internal/full.xml'),
+                api.cros_source.workspace_path.join('manifest/full.xml'))
+            if not api.git.diff_check(
+                api.cros_source.workspace_path.join('manifest/full.xml')):
+              return False
             commit_message = 'Syncing with internal manifest.'
             api.git.add(
                 [api.cros_source.workspace_path.join('manifest/full.xml')])
             api.git.commit(commit_message)
 
-          api.file.copy(
-              'Copy manifest-internal/full.xml',
-              api.cros_source.workspace_path.join('manifest-internal/full.xml'),
-              api.cros_source.workspace_path.join('manifest/full.xml'))
-          if api.git.diff_check(
-              api.cros_source.workspace_path.join('manifest/full.xml')):
-            api.git_txn.update_ref(api.cros_source.EXTERNAL_MANIFEST_URL,
-                                   'master', _update_callback)
-          else:
+          if not api.git_txn.update_ref(api.cros_source.EXTERNAL_MANIFEST_URL,
+                                        'master', _update_callback):
             presentation.step_text = 'No diffs'
 
         # Generate a public snapshot of the manifest in the manifest/ repo.  We
