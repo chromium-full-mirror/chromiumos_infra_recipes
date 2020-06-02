@@ -17,6 +17,7 @@ DEPS = [
     'cros_tags',
     'failures',
     'naming',
+    'test_util',
 ]
 
 from PB.recipes.chromeos.presubmit_cq import PresubmitCqProperties
@@ -83,60 +84,29 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def make_build(commit=None, changes=None):
-    """Return a build.
-
-    Args:
-      commit (str): SHA1 hash for gitiles_commit.  Default: None.
-      changes (list[GerritChange]): list of gerrit changes to apply.
-
-    Returns:
-      recipe_test_api.TestData object.
-    """
-    msg = api.buildbucket.ci_build_message(project='chromeos', bucket='infra',
-                                           builder='presubmit-cq',
-                                           revision=commit)
-    if not commit:
-      msg.input.gitiles_commit.Clear()
-    if changes:
-      msg.input.gerrit_changes.extend(changes)
-    return api.buildbucket.build(msg)
-
   # This is the normal case
-  yield api.test(
-      'normal_one_change',
-      make_build(changes=[common_pb2.GerritChange(change=1234)]),
-  )
+  yield api.test('normal_one_change', api.test_util.test_build(cq=True).build)
 
-  yield api.test(
-      'normal_one_change_and_props',
-      make_build(changes=[common_pb2.GerritChange(change=1234)]),
-      api.properties(runhooks=True, timeout_s=3),
-  )
+  yield api.test('normal_one_change_and_props',
+                 api.test_util.test_build(cq=True).build,
+                 api.properties(runhooks=True, timeout_s=3))
 
   yield api.test(
       'normal_two_changes',
-      make_build(changes=[
-          common_pb2.GerritChange(change=1234),
-          common_pb2.GerritChange(change=1235),
-      ]),
-  )
+      api.test_util.test_build(
+          cq=True, extra_changes=[common_pb2.GerritChange(change=1235)]).build)
 
   # LUCI CQ doesn't generally give us a gitiles_commit, but we support that.
-  yield api.test(
-      'commit_with_no_changes',
-      make_build(commit='SHA'),
-  )
+  yield api.test('commit_with_no_changes', api.test_util.test_build().build)
 
   yield api.test(
       'commit_with_one_change',
-      make_build(commit='SHA', changes=[common_pb2.GerritChange(change=1234)]),
-  )
+      api.test_util.test_build(
+          extra_changes=[common_pb2.GerritChange(change=1234)]).build)
 
   yield api.test(
       'commit_with_two_changes',
-      make_build(commit='SHA', changes=[
+      api.test_util.test_build(extra_changes=[
           common_pb2.GerritChange(change=1234),
           common_pb2.GerritChange(change=1235),
-      ]),
-  )
+      ]).build)
