@@ -34,7 +34,7 @@ message LocalManifestPresubmitProperties {
   // If empty, all repos are synced.
   repeated string manifest_groups = 2;
 
-  // Local manifest to add to the checkout.
+  // Local manifest to add to the checkout, if any.
   project_mgmt.LocalManifest local_manifest = 3;
 
   // Google Storage prefix to log output from steps to.

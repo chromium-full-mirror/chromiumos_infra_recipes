@@ -32,6 +32,9 @@ DEPS = [
     'workspace_util',
 ]
 
+# TODO(dburger): Rename this recipe. Initially it centered around syncing to a
+# local manifest, but that is optional now.
+
 
 def RunSteps(api, properties):
   if not properties.project:
@@ -43,13 +46,12 @@ def RunSteps(api, properties):
   if not api.buildbucket.build.input.gerrit_changes:
     raise ValueError('At least one gerrit_change must be specified.')
 
-  if not (properties.local_manifest.repo_url and
-          properties.local_manifest.manifest_path):
-    raise ValueError('local_manifest repo and path must be specified')
-
-  local_manifest = api.repo.LocalManifest(
-      repo=properties.local_manifest.repo_url,
-      path=properties.local_manifest.manifest_path)
+  local_manifest = None
+  if (properties.local_manifest.repo_url and
+      properties.local_manifest.manifest_path):
+    local_manifest = api.repo.LocalManifest(
+        repo=properties.local_manifest.repo_url,
+        path=properties.local_manifest.manifest_path)
 
   with api.context(infra_steps=True), \
       api.workspace_util.sync_to_manifest_groups(
@@ -151,6 +153,31 @@ def GenTests(api):
       ),
   )
 
+  yield api.test(
+      'no_local_manifest',
+      api.properties(
+          LocalManifestPresubmitProperties(
+              project='chromeos',
+              manifest_groups=['partner-config'],
+              logging_gs_prefix='testprogram-testproject/cq_logs',
+              presubmit_all_files=True,
+          )),
+      project_config_cq_build(api),
+      checked_out_projects(api),
+      presubmit_with_output(),
+      # The change should be applied.
+      api.post_process(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromium/src',
+              'refs/changes/56/123456/7:',
+          ],
+      ),
+  )
+
   extra_change = common_pb2.GerritChange(
       host='chrome-internal.googlesource.com',
       project='project1',
@@ -228,19 +255,5 @@ def GenTests(api):
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
                        '.*At least one gerrit_change.*'),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'no_local_manifest',
-      api.properties(
-          LocalManifestPresubmitProperties(
-              project='chromeos',
-              manifest_groups=['partner-config'],
-          )),
-      project_config_cq_build(api),
-      api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
-                       '.*local_manifest repo and path must be specified.*'),
       api.post_process(post_process.DropExpectation),
   )

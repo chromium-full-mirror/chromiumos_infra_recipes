@@ -3973,7 +3973,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#152)(self, manifest_groups, local_manifest, cache_path_override=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#152)(self, manifest_groups, local_manifest=None, cache_path_override=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -4000,7 +4000,8 @@ much larger than the time to sync the used repos.
 
 Args:
   manifest_groups (list[str]): List of manifest groups to checkout.
-  local_manifest (repo.LocalManifest): Local manifest to sync to.
+  local_manifest (repo.LocalManifest): Local manifest to add or None if not
+      syncing a local manifest.
   cache_path_override (Path): Path to sync into. If None, the default
       caching of cros_source.ensure_synced_cache is used.
 
@@ -4976,7 +4977,7 @@ Returns: JSON response with validation result
 
 Runs the presubmit for a project with checkout per local manifest.
 
-&mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#36)(api, properties):**
+&mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#39)(api, properties):**
 ### *recipes* / [metadata\_json:examples/add\_stage\_results](/recipe_modules/metadata_json/examples/add_stage_results.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/add_stage_results.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

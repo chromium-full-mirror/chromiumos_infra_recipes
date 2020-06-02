@@ -150,7 +150,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       return changed
 
   @contextlib.contextmanager
-  def sync_to_manifest_groups(self, manifest_groups, local_manifest,
+  def sync_to_manifest_groups(self, manifest_groups, local_manifest=None,
                               cache_path_override=None):
     """Returns a context with manifest groups checked out to cwd.
 
@@ -177,14 +177,16 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     Args:
       manifest_groups (list[str]): List of manifest groups to checkout.
-      local_manifest (repo.LocalManifest): Local manifest to sync to.
+      local_manifest (repo.LocalManifest): Local manifest to add or None if not
+          syncing a local manifest.
       cache_path_override (Path): Path to sync into. If None, the default
           caching of cros_source.ensure_synced_cache is used.
     """
     init_opts = {
         'groups': manifest_groups,
-        'local_manifest': local_manifest,
     }
+    if local_manifest:
+      init_opts['local_manifest'] = local_manifest
 
     self.m.cros_source.ensure_synced_cache(
         manifest_url=self.m.cros_source.EXTERNAL_MANIFEST_URL,
