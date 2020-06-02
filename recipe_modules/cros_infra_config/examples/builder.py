@@ -8,14 +8,15 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_infra_config',
+    'test_util',
 ]
 
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.cros_infra_config.examples.test import (
-    TestInputProperties)
+from PB.recipe_modules.chromeos.cros_infra_config.examples.builder import (
+    BuilderProperties)
 
-PROPERTIES = TestInputProperties
+PROPERTIES = BuilderProperties
 
 
 def RunSteps(api, properties):
@@ -26,6 +27,7 @@ def RunSteps(api, properties):
   config = api.cros_infra_config.configure_builder(commit=commit,
                                                    changes=changes)
   api.assertions.assertEqual(config, api.cros_infra_config.config)
+
   builder = config.id.name if config else 'nosuch-cq'
   api.assertions.assertEqual(properties.builder, builder)
   if not config:
@@ -45,48 +47,33 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def buildbucket_build(project='chromeos', bucket='cq', builder='atlas-cq',
-                        build_target='atlas', tags=None, recipes_version='prod',
-                        revision='2d72510e447ab60a9728aeea2362d8be2cbd7789',
-                        cls=None):
-    build = api.buildbucket.ci_build_message(project=project, bucket=bucket,
-                                             builder=builder, tags=tags,
-                                             revision=revision)
-    if not revision:
-      build.input.gitiles_commit.Clear()
-    if cls:
-      build.input.gerrit_changes.extend(cls)
-    if build_target:
-      build_target = common.BuildTarget(name=build_target)
-    if recipes_version:
-      build.exe.cipd_package = 'CIPD_PACKAGE'
-      build.exe.cipd_version = recipes_version
-    return (
-        api.buildbucket.build(build) +  #
-        api.properties(
-            TestInputProperties(builder=builder, build_target=build_target)))
+  def builder(build_target='amd64-generic', **kwargs):
+    kwargs['exe'] = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
+                                          cipd_version='prod')
+    build = api.test_util.test_build(**kwargs)
+    return build.build + api.properties(
+        BuilderProperties(builder=build.message.builder.builder,
+                          build_target=common.BuildTarget(name=build_target)))
 
-  yield api.test('basic', buildbucket_build())
+  yield api.test('basic', builder())
 
-  yield api.test('has_changes',
-                 buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]))
+  yield api.test('cq-build', builder(cq=True))
 
   yield api.test(
       'apply_gerrit_changes_false',
-      buildbucket_build(builder='grunt-postsubmit', build_target='grunt',
-                        cls=[common_pb2.GerritChange(change=1234)]))
+      builder(build_target='grunt', builder='grunt-postsubmit',
+              extra_changes=[common_pb2.GerritChange(change=1234)]))
 
   yield api.test(
       'has_changes_and_no_commit',
-      buildbucket_build(revision=None,
-                        cls=[common_pb2.GerritChange(change=1234)]))
+      builder(revision=None,
+              extra_changes=[common_pb2.GerritChange(change=1234)]))
 
-  yield api.test('has_no_commit_and_no_changes',
-                 buildbucket_build(revision=None))
+  yield api.test('has_no_commit_and_no_changes', builder(revision=None))
 
   yield api.test(
       'has_parent',
-      buildbucket_build(tags=[
+      builder(tags=[
           {
               'key': 'parent_buildbucket_id',
               'value': 'parent_id'
@@ -94,4 +81,4 @@ def GenTests(api):
       ]))
 
   yield api.test('missing_config',
-                 buildbucket_build(builder='nosuch-cq', build_target='nosuch'))
+                 builder(build_target='nosuch', builder='nosuch-cq'))

@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_infra_config',
+    'test_util',
 ]
 
 from PB.chromiumos.builder_config import BuilderConfig
@@ -20,7 +21,8 @@ def RunSteps(api):
   builder_config = api.cros_infra_config.config
   api.cros_infra_config.force_reload()
 
-  api.assertions.assertEqual(builder_config.id.name, "clang-tidy-toolchain")
+  api.assertions.assertEqual(builder_config.id.name,
+                             api.buildbucket.build.builder.builder)
 
 
 def GenTests(api):
@@ -33,5 +35,5 @@ def GenTests(api):
                       config_ref='refs/changes/45/12345/3',
                   )
           }),
-      api.buildbucket.ci_build(project='chromeos', bucket='toolchain',
-                               builder='clang-tidy-toolchain'))
+      api.test_util.test_build(bucket='toolchain',
+                               builder='clang-tidy-toolchain').build)

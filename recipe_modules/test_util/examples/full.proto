@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.test_util.examples;
 
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
 message TestProperties {
   // Expected project name.
   string expected_project = 1;
@@ -21,4 +23,7 @@ message TestProperties {
 
   // The expected CL count.
   int32 expected_cl_count = 5;
+
+  // Executable for the builder.
+  buildbucket.v2.Executable expected_executable = 6;
 }

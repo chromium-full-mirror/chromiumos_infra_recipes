@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_infra_config',
+    'test_util',
 ]
 
 from google.protobuf import json_format
@@ -25,6 +26,8 @@ def RunSteps(api, properties):
   config = api.cros_infra_config.configure_builder(commit=commit,
                                                    changes=changes)
   api.assertions.assertEqual(config, api.cros_infra_config.config)
+  api.assertions.assertEqual(
+      api.cros_infra_config.safe_get_builder_configs(['abc']), {})
 
   api.assertions.assertEqual(
       len(api.cros_infra_config.gerrit_changes),
@@ -46,28 +49,27 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def buildbucket_build(project='chromeos', bucket='toolchain',
-                        builder='toolchain-orchestrator', tags=None,
-                        revision='2d72510e447ab60a9728aeea2362d8be2cbd7789',
-                        cls=None):
-    build = api.buildbucket.ci_build_message(project=project, bucket=bucket,
-                                             builder=builder, tags=tags,
-                                             revision=revision)
-    build.input.gerrit_changes.extend(cls or [])
-    return api.buildbucket.build(build)
+  def expected_changes(count):
+    return api.properties(TestInputProperties(expected_change_count=count))
 
-  yield api.test('basic', buildbucket_build(),
-                 api.properties(TestInputProperties(expected_change_count=1)))
+  yield api.test('basic',
+                 api.test_util.test_build(cq=True).build, expected_changes(1))
 
-  yield api.test('with_changes',
-                 buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]),
-                 api.properties(TestInputProperties(expected_change_count=2)))
+  yield api.test('postsubmit', api.test_util.test_build().build)
+
+  yield api.test(
+      'with_changes',
+      api.test_util.test_build(
+          bucket='toolchain', builder='toolchain-orchestrator',
+          extra_changes=[common_pb2.GerritChange(change=1234)]).build,
+      expected_changes(2))
 
   yield api.test(
       'with_duplicate_change',
-      buildbucket_build(cls=[
-          common_pb2.GerritChange(
-              host='chromium-review.googlesource.com',
-              project='chromiumos/overlays/chromiumos-overlay', change=1394249,
-              patchset=-1)
-      ]), api.properties(TestInputProperties(expected_change_count=1)))
+      api.test_util.test_build(
+          bucket='toolchain', builder='toolchain-orchestrator', extra_changes=[
+              common_pb2.GerritChange(
+                  host='chromium-review.googlesource.com',
+                  project='chromiumos/overlays/chromiumos-overlay',
+                  change=1394249, patchset=-1)
+          ]).build, expected_changes(1))

@@ -42,6 +42,10 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(0, api.buildbucket.build.update_time.seconds)
   api.assertions.assertEqual(0, api.buildbucket.build.end_time.seconds)
 
+  if properties.expected_executable:
+    api.assertions.assertEqual(api.buildbucket.build.exe,
+                               properties.expected_executable)
+
 
 def GenTests(api):
 
@@ -98,3 +102,15 @@ def GenTests(api):
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
                          expect_commit=True, expected_cl_count=0)))
+
+  executable = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
+                                     cipd_version='version')
+  yield api.test(
+      'with-executable',
+      api.test_util.test_build(exe=executable).build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expect_commit=True, expected_executable=executable,
+                         expected_cl_count=0)))

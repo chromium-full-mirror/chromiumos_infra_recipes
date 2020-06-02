@@ -6,13 +6,7 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_infra_config.examples;
 
-import "chromiumos/common.proto";
-
-message TestInputProperties {
-  // The build_target for this builder.
-  chromiumos.BuildTarget build_target = 1;
-
-  // Expected builder name, if any.  See BuilderConfig.Id.name.
-  string builder = 2;
+message FullProperties {
+  // Expected children names.
+  repeated string children_names = 1;
 }
-

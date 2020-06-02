@@ -19,8 +19,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing Chrome OS Recipes."""
 
   def test_build(self, cq=False, dry_run=False, bot_size='large',
-                 extra_changes=None, create_time=None, start_time=None,
-                 update_time=None, end_time=None, **kwargs):
+                 extra_changes=None, exe=None, create_time=None,
+                 start_time=None, update_time=None, end_time=None, **kwargs):
     """Return a buildbucket step_data for a typical build.
 
     This differs from the buildbucket/test_api.py ci_build() and try_build() in
@@ -31,6 +31,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       dry_run (bool): Whether this is a dry_run (used only when |cq|=True).
       bot_size (str): Chrome OS bot_size dimension for the builder.
       extra_changes (list[GerritChange]): additional changes to add.
+      exe (common_pb2.Executable): Executable for the build.  (passed to
+          buildbucket.build)
       create_time (seconds): Create time (passed to buildbucket.build).
       start_time (seconds): Start time (only in the returned message).
       update_time (seconds): Update time (only in the returned message).
@@ -61,6 +63,9 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
 
     if create_time:
       msg.create_time.seconds = create_time
+    if exe:
+      msg.exe.cipd_package = exe.cipd_package
+      msg.exe.cipd_version = exe.cipd_version
     ret = self.m.buildbucket.build(msg)
     if cq:
       ret += self.m.cq(dry_run=dry_run, full_run=not dry_run)

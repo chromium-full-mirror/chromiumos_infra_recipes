@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'cros_infra_config',
+    'test_util',
 ]
 
 
@@ -17,7 +18,5 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'no_BuilderConfig_found',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='bad-builder-name'))
+  yield api.test('no_BuilderConfig_found',
+                 api.test_util.test_build(builder='bad-builder-name').build)

@@ -6,42 +6,38 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'cros_infra_config',
+    'test_util',
 ]
 
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipe_modules.chromeos.cros_infra_config.examples.full import (
+    FullProperties)
+
+PROPERTIES = FullProperties
 
 
-def RunSteps(api):
-  builder_config = api.cros_infra_config.get_builder_config(
-      api.buildbucket.build.builder.builder)
+def RunSteps(api, properties):
+  builder = api.buildbucket.build.builder.builder
+  builder_config = api.cros_infra_config.get_builder_config(builder)
   api.cros_infra_config.force_reload()
-  api.cros_infra_config.safe_get_builder_configs(['abc'])
+  api.cros_infra_config.safe_get_builder_configs([builder])
 
-  api.assertions.assertEqual(builder_config.id.name, "postsubmit-orchestrator")
+  api.assertions.assertEqual(builder_config.id.name, builder)
 
   # Sanity check that the jsonpb was parsed.
   child_specs = builder_config.orchestrator.child_specs
-  api.assertions.assertEqual(len(child_specs), 2)
-  api.assertions.assertEqual(child_specs[0].name, "amd64-generic-postsubmit")
-  api.assertions.assertEqual(child_specs[1].name, "arm-generic-postsubmit")
-
-  api.assertions.assertFalse(
-      api.cros_infra_config.should_run(BuilderConfig.NO_RUN))
-  api.assertions.assertTrue(api.cros_infra_config.should_run(BuilderConfig.RUN))
-  api.assertions.assertTrue(
-      api.cros_infra_config.should_run(BuilderConfig.RUN_EXIT))
-
-  api.assertions.assertFalse(
-      api.cros_infra_config.should_exit(BuilderConfig.NO_RUN))
-  api.assertions.assertFalse(
-      api.cros_infra_config.should_exit(BuilderConfig.RUN))
-  api.assertions.assertTrue(
-      api.cros_infra_config.should_exit(BuilderConfig.RUN_EXIT))
+  api.assertions.assertEqual(len(child_specs), len(properties.children_names))
+  api.assertions.assertEqual([x.name for x in child_specs],
+                             properties.children_names)
 
 
 def GenTests(api):
   yield api.test(
       'basic',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='postsubmit-orchestrator'))
+      api.test_util.test_build(builder='postsubmit-orchestrator').build,
+      api.properties(
+          FullProperties(children_names=[
+              'amd64-generic-postsubmit', 'arm-generic-postsubmit'
+          ])))
