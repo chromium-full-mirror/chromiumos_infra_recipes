@@ -125,6 +125,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # Apply any appropriate gerrit changes.
     self.m.workspace_util.apply_changes()
 
+    # The Chrome OS verison can be reported once the workspace is synced.
+    version = self.m.cros_version.read_workspace_version()
+    self.m.easy.set_property_step('chromeos_version', str(version))
+
     relevance = Relevance.UNKNOWN
     if artifact_build:
       # Early check to see if the build is pointless. (No chroot nor

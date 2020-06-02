@@ -56,9 +56,6 @@ def DoRunSteps(api, config, build_target, properties):
                                              force_relevance=True,
                                              name='prepare artifacts final')
 
-  api.easy.set_property_step('chromeos_version',
-                             str(api.cros_version.read_workspace_version()))
-
   api.cros_artifacts.upload_artifacts(
       config.id.name, build_target, config.id.type,
       config.artifacts.artifacts_gs_bucket,

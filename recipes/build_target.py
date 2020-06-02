@@ -170,8 +170,6 @@ def DoRunSteps(api, config, build_target, properties):
     if api.cros_infra_config.should_exit(install_packages.run_spec):
       return
 
-  version = api.cros_version.read_workspace_version()
-  api.easy.set_property_step('chromeos_version', str(version))
   disable_rootfs_verification = config.build.build_images.disable_rootfs_verification
   disk_layout = config.build.build_images.disk_layout
   image_types = config.build.build_images.image_types

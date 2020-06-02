@@ -13,6 +13,8 @@ DEPS = [
     'cros_infra_config',
     'cros_relevance',
     'cros_sdk',
+    'cros_version',
+    'easy',
     'metadata_json',
     'sysroot_util',
     'workspace_util',
