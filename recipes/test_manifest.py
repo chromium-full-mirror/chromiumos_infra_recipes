@@ -50,8 +50,8 @@ def RunSteps(api, properties):
         if project_info.name in properties.test_branch_projects:
           with api.depot_tools.on_path():
             api.step('test cros branch for %s' % project_info.name, [
-                'chromite/bin/cros', 'branch', '--root',
-                api.cros_source.workspace_path, 'create', '--ack-deprecation',
+                'chromite/bin/cros', 'branch', '--ack-deprecation', '--root',
+                api.cros_source.workspace_path, 'create',
                 '--release', '--file', manifest_path, '--yes'
             ])
 
