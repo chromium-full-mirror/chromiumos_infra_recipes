@@ -35,7 +35,8 @@
       "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
       "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\", @@@",
+      "@@@STEP_LOG_LINE@response@            \"managedPool\": \"MANAGED_POOL_CTS\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
@@ -153,7 +154,7 @@
     "cmd": [],
     "name": "redirect to test_runner if applicable",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@decision: send child tasks to skylab_swarming_worker@@@"
+      "@@@STEP_SUMMARY_TEXT@decision: send child tasks to test_runner@@@"
     ]
   },
   {
@@ -178,8 +179,7 @@
       "@@@STEP_LOG_LINE@response@            \"name\": \"foo-test\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
-      "@@@STEP_LOG_LINE@response@      ], @@@",
-      "@@@STEP_LOG_LINE@response@      \"errorSummary\": \"some tests are missing\"@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
@@ -238,16 +238,7 @@
     "name": "execute.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@response@      \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_PASSED\", @@@",
-      "@@@STEP_LOG_LINE@response@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  }@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -263,10 +254,14 @@
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"requestParams\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"qsAccount\": \"foo-qs-account\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"managedPool\": \"MANAGED_POOL_CTS\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"model\": \"foo-model\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"migrations\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"useTestRunner\": true@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"metadata\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"testMetadataUrl\": \"foo-metadata-url\", @@@",
@@ -274,8 +269,16 @@
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"skylabWorker\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"luciProject\": \"foo luci project\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"testRunnerMigration\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"redirectInstructions\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"percentOfRequests\": 100, @@@",
+      "@@@STEP_LOG_LINE@request@              \"constraint\": {@@@",
+      "@@@STEP_LOG_LINE@request@                \"quotaAccount\": \"foo-qs-account\", @@@",
+      "@@@STEP_LOG_LINE@request@                \"dutPool\": \"DUT_POOL_CTS\"@@@",
+      "@@@STEP_LOG_LINE@request@              }@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"enumeration\": {@@@",
@@ -285,8 +288,7 @@
       "@@@STEP_LOG_LINE@request@              \"name\": \"foo-test\"@@@",
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ], @@@",
-      "@@@STEP_LOG_LINE@request@        \"errorSummary\": \"some tests are missing\"@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
@@ -308,7 +310,7 @@
     ],
     "infra_step": true,
     "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"qsAccount\": \"foo-qs-account\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ], \n        \"errorSummary\": \"some tests are missing\"\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"qsAccount\": \"foo-qs-account\", \n          \"managedPool\": \"MANAGED_POOL_CTS\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"migrations\": {\n          \"useTestRunner\": true\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"testRunnerMigration\": {\n          \"redirectInstructions\": [\n            {\n              \"percentOfRequests\": 100, \n              \"constraint\": {\n                \"quotaAccount\": \"foo-qs-account\", \n                \"dutPool\": \"DUT_POOL_CTS\"\n              }\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -317,9 +319,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8QGOwcGuLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKi2thYACwQb1w==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgBAAo7wPR\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\\n\"@@@"
     ]
   },
   {
@@ -328,28 +329,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "summarize.default task results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "summarize.default task results.enumeration error",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@summary@some tests are missing@@@",
-      "@@@STEP_LOG_END@summary@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "summarize"
   },
   {
     "name": "$result"

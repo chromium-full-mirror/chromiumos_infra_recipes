@@ -8,6 +8,7 @@
 TODO: Migrate to a recipes repo owned by the test team.
 """
 
+from PB.chromite.api import test_metadata
 from PB.recipes.chromeos.test_platform.cros_test_platform import \
   CrosTestPlatformProperties
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
@@ -22,6 +23,8 @@ from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitRequest, SchedulerTrafficSplitRequests
 from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitResponse, SchedulerTrafficSplitResponses
+from PB.test_platform import migration
+from PB.test_platform.steps import enumeration
 from PB.test_platform.steps.execution import ExecuteRequest, ExecuteRequests
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
 from PB.test_platform.request import Request
@@ -39,8 +42,12 @@ from google.protobuf import json_format
 from recipe_engine.post_process import GetBuildProperties
 
 DEPS = [
-    'recipe_engine/buildbucket', 'recipe_engine/context',
-    'recipe_engine/properties', 'recipe_engine/raw_io', 'recipe_engine/step',
+    'recipe_engine/buildbucket',
+    'recipe_engine/context',
+    'recipe_engine/properties',
+    'recipe_engine/random',
+    'recipe_engine/raw_io',
+    'recipe_engine/step',
     'cros_test_platform'
 ]
 
@@ -194,6 +201,77 @@ def _is_non_empty_proto(p):
   return bool(p.ByteSize())
 
 
+def redirect_to_test_runner_if_applicable(api, tagged_requests, config):
+  """Decided whether to send traffic to skylab_swarming_worker or test_runner
+  and modify the requests accordingly.
+
+  Args:
+    * requests: {tag: test_platform.Request} dict.
+    * config: test_platform.Config instance.
+
+  Raises: StepFailure if no consistent decision can be achieved.
+  """
+  with api.step.nest('redirect to test_runner if applicable') as step:
+    if _should_redirect_to_test_runner(api, tagged_requests, config):
+      for t, r in tagged_requests.iteritems():
+        r.params.migrations.use_test_runner = True
+      step.presentation.step_summary_text = (
+          'decision: send child tasks to test_runner')
+    else:
+      step.presentation.step_summary_text = (
+          'decision: send child tasks to skylab_swarming_worker')
+
+
+def _should_redirect_to_test_runner(api, requests, config):
+  return (api.random.randint(1, 100) <=
+          _probability_percentage_of_redirecting(api, requests, config))
+
+
+def _probability_percentage_of_redirecting(api, requests, config):
+  for instruction in config.test_runner_migration.redirect_instructions:
+    matches = set(_matches_constraint(request, instruction.constraint)
+                  for request in requests.values())
+    if len(matches) > 1:
+      raise api.step.StepFailure(
+          'Found requests disagreeing whether to redirect to test_runner')
+    # There's always at least one request, since an empty multi-request would
+    # fail validation and would not get this far.
+    if matches.pop():
+      return instruction.percent_of_requests
+  return 0
+
+
+def _matches_constraint(request, constraint):
+  if (constraint.dut_pool and
+      constraint.dut_pool != _get_pool(request.params.scheduling)):
+    return False
+  if (constraint.quota_account and
+      constraint.quota_account != _get_quota_account(request.params.scheduling)):
+    return False
+  return True
+
+
+def _get_pool(scheduling):
+  if scheduling.managed_pool:
+    return _dut_pool_string(scheduling.managed_pool)
+  if scheduling.unmanaged_pool:
+    return scheduling.unmanaged_pool
+  # When 'quota_account' is set instead of 'qs_account', DUT_POOL_QUOTA is the
+  # implicit default.
+  return 'DUT_POOL_QUOTA'
+
+
+def _dut_pool_string(enum_val):
+  """
+  Convert MANAGED_POOL_* enum value to a string of the form DUT_POOL_*.
+  """
+  return 'DUT' + Request.Params.Scheduling.ManagedPool.Name(enum_val)[7:]
+
+
+def _get_quota_account(scheduling):
+  return scheduling.qs_account or scheduling.quota_account
+
+
 def execute(api, requests, enumerations, config):
   """Execute request in the correct backend.
 
@@ -230,6 +308,7 @@ def RunSteps(api, properties):
   # TODO(akeshet) (with the possible exception of certain kinds of execution
   # timeouts; needs revisiting).
   with api.context(infra_steps=True):
+    redirect_to_test_runner_if_applicable(api, requests, properties.config)
     enumerations = enumerate_tests(api, requests)
     responses = execute(api, requests, enumerations, properties.config)
     tagged_responses = responses.tagged_responses
@@ -448,16 +527,20 @@ def _emit_links(step, task_results):
     step.links['(task)  ' + t.name + suffix] = t.task_url
 
 
-def _test_request(tag):
+def _test_scheduling():
+  return Request.Params.Scheduling(qs_account='foo-qs-account')
+
+
+def _test_request(tag, scheduling=_test_scheduling()):
   return Request(
       params=Request.Params(
           hardware_attributes=Request.Params.HardwareAttributes(
               model='%s-model' % tag), metadata=Request.Params.Metadata(
                   test_metadata_url='%s-metadata-url' % tag,
                   debug_symbols_archive_url='%s-metadata-url' % tag),
-          scheduling=Request.Params.Scheduling(qs_account='foo-qs-account')),
+          scheduling=scheduling),
       test_plan=Request.TestPlan(suite=[Request.Suite(name='%s-suite' % tag)]),
-  )
+      )
 
 
 def _test_config(tag):
@@ -477,6 +560,20 @@ def _test_single_enumeration(tag):
       }
     }
   }''' % tag
+
+
+def _test_migration_config(dut_pool='', quota_account=''):
+  return migration.test_runner.config.Config(
+      redirect_instructions=[
+          migration.test_runner.config.RedirectInstruction(
+              constraint=migration.test_runner.config.TrafficConstraint(
+                  dut_pool=dut_pool,
+                  quota_account=quota_account,
+              ),
+              percent_of_requests=100,
+          ),
+      ],
+  )
 
 
 def GenTests(api):
@@ -1076,3 +1173,223 @@ def GenTests(api):
                       })))) +  #
       api.post_check(lambda check, steps: check(
           len(GetBuildProperties(steps).get('compressed_responses', {})) > 0)))
+
+  yield (
+      api.test('test_runer redirection managed pool match') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'),
+              config=Config(
+                  test_runner_migration=_test_migration_config(
+                      dut_pool='DUT_POOL_CTS',
+                      quota_account='foo-qs-account',
+                  ),
+              ),
+          ),
+      ) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request(
+                                      tag='foo',
+                                      scheduling=Request.Params.Scheduling(
+managed_pool=Request.Params.Scheduling.MANAGED_POOL_CTS,
+qs_account='foo-qs-account',
+                                      ),
+                                  ),
+                              ),
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo')))
+  )
+
+  yield (
+      api.test('test_runer redirection unmanaged pool match') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'),
+              config=Config(
+                  test_runner_migration=_test_migration_config(
+                      dut_pool='foo-pool',
+                      quota_account='foo-qs-account',
+                  ),
+              ),
+          ),
+      ) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request(
+                                      tag='foo',
+                                      scheduling=Request.Params.Scheduling(
+                                          unmanaged_pool='foo-pool',
+                                          qs_account='foo-qs-account',
+                                      ),
+                                  ),
+                              ),
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo')))
+  )
+
+
+  yield (
+      api.test('test_runer redirection default pool match') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'),
+              config=Config(
+                  test_runner_migration=_test_migration_config(
+                      dut_pool='DUT_POOL_QUOTA',
+                      quota_account='foo-qs-account',
+                  ),
+              ),
+          ),
+      ) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request(
+                                      tag='foo',
+                                      scheduling=Request.Params.Scheduling(
+                                          qs_account='foo-qs-account',
+                                      ),
+                                  ),
+                              ),
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo')))
+  )
+
+
+
+
+  yield (
+      api.test('test_runer redirection pool mismatch') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'),
+              config=Config(
+                  test_runner_migration=_test_migration_config(
+                      dut_pool='bar-pool',
+                      quota_account='foo-qs-account',
+                  ),
+              ),
+          ),
+      ) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request(
+                                      tag='foo',
+                                      scheduling=Request.Params.Scheduling(
+                                          quota_account='foo-qs-account',
+                                      ),
+                                  ),
+                              ),
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo')))
+  )
+
+  yield (
+      api.test('test_runer redirection quota account mismatch') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'),
+              config=Config(
+                  test_runner_migration=_test_migration_config(
+                      quota_account='bar-qs-account'
+                  ),
+              ),
+          ),
+      ) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request(
+                                      tag='foo',
+                                      scheduling=Request.Params.Scheduling(
+managed_pool=Request.Params.Scheduling.MANAGED_POOL_CTS,
+                                          qs_account='foo-qs-account',
+                                      ),
+                                  ),
+                              ),
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo')))
+  )
+
+  yield (
+      api.test('test_runer redirection crash') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'foo': _test_request('foo'),
+                  'bar': _test_request('bar'),
+              },
+              config=Config(
+                  test_runner_migration=_test_migration_config(
+                      quota_account='foo-qs-account'
+                  ),
+              ),
+          ),
+      ) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'foo':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request(
+                                      tag='foo',
+                                      scheduling=Request.Params.Scheduling(
+managed_pool=Request.Params.Scheduling.MANAGED_POOL_CTS,
+                                          qs_account='foo-qs-account',
+                                      ),
+                                  ),
+                              ),
+                          'bar':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request(
+                                      tag='bar',
+                                      scheduling=Request.Params.Scheduling(
+managed_pool=Request.Params.Scheduling.MANAGED_POOL_CTS,
+                                          qs_account='bar-qs-account',
+                                      ),
+                                  ),
+                              ),
+                      }))))
+  )
