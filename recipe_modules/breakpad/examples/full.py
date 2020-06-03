@@ -33,17 +33,18 @@ def RunSteps(api):
 
 def GenTests(api):
   tr = TestResult(log_data=TaskLogData(gs_url=TEST_RESULT_PATH))
-  yield (
-      api.test('basic') +  #
+  yield api.test(
+      'basic',
       api.breakpad.find_dmp_files_test_data(
           test_result=tr,
-          filenames=['./a/b/c.dmp', './a/b/d.dmp', './a/b/corrupted.dmp']) +  #
+          filenames=['./a/b/c.dmp', './a/b/d.dmp', './a/b/corrupted.dmp']),
       api.breakpad.minidump_stackwalk_test_data(
           test_result=tr,
-          filename='./a/b/c.dmp') +  #
+          filename='./a/b/c.dmp'),
       api.breakpad.minidump_stackwalk_test_data(
           test_result=tr,
-          filename='./a/b/d.dmp') +  #
+          filename='./a/b/d.dmp'),
       api.breakpad.minidump_stackwalk_test_data(
           test_result=tr,
-          filename='./a/b/corrupted.dmp', retcode=1))
+          filename='./a/b/corrupted.dmp', retcode=1),
+  )

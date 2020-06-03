@@ -108,8 +108,8 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield (
-      api.test('basic') + #
+  yield api.test(
+      'basic',
       api.properties(
           ctp_uprev.Properties(
               config=ctp_uprev.Config(
@@ -124,10 +124,11 @@ def GenTests(api):
 'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
                           ref='foo-recipe-ref',
                           version='foo-recipe-version'),
-                      ])))
+                      ]))),
   )
-  yield (
-      api.test('missing ref') + #
+
+  yield api.test(
+      'missing ref',
       api.properties(
           ctp_uprev.Properties(
               config=ctp_uprev.Config(
@@ -135,11 +136,12 @@ def GenTests(api):
                       ctp_uprev.Instruction(
                           package_name=
 'chromiumos/infra/phosphorus/linux-amd64',
-                          version='foo-version')]))) + #
-      api.expect_exception("ValueError")
+                          version='foo-version')]))),
+      api.expect_exception("ValueError"),
   )
-  yield (
-      api.test('missing version') + #
+
+  yield api.test(
+      'missing version',
       api.properties(
           ctp_uprev.Properties(
               config=ctp_uprev.Config(
@@ -147,11 +149,12 @@ def GenTests(api):
                       ctp_uprev.Instruction(
                           package_name=
 'chromiumos/infra/phosphorus/linux-amd64',
-                          ref='foo-ref')]))) + #
-      api.expect_exception("ValueError")
+                          ref='foo-ref')]))),
+      api.expect_exception("ValueError"),
   )
-  yield (
-      api.test('invalid package') + #
+
+  yield api.test(
+      'invalid package',
       api.properties(
           ctp_uprev.Properties(
               config=ctp_uprev.Config(
@@ -159,6 +162,6 @@ def GenTests(api):
                       ctp_uprev.Instruction(
                           package_name='invalid-package',
                           ref='foo-ref',
-                          version='foo-version')]))) + #
-      api.expect_exception("ValueError")
+                          version='foo-version')]))),
+      api.expect_exception("ValueError"),
   )
