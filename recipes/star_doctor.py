@@ -19,12 +19,14 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'depot_tools/depot_tools',
+    'depot_tools/gsutil',
     'gerrit',
     'git',
 ]
 
 INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
 CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
+GE_BUCKET = 'chromeos-build-release-console'
 
 PROPERTIES = StarDoctorProperties
 
@@ -35,6 +37,16 @@ def RunSteps(api, properties):
     api.git.clone(INFRA_CONFIG_URL, target_path=workdir, timeout_sec=3 * 60)
 
   with api.step.nest('generate binary config'):
+    with api.step.nest('copy goldeneye configs') as presentation:
+      try:
+        # Trying to debug this.
+        ge_path = workdir.join('goldeneye')
+        api.gsutil.download(GE_BUCKET, 'build_config.ToT.json',
+                            ge_path.join('ge_build_config.json'))
+      except api.step.InfraFailure:  # pragma:nocover
+        # Will remove this once stable & debugged.
+        pass
+
     # We need lucicfg from depot_tools.
     with api.depot_tools.on_path():
       # We need protoc from cipd.

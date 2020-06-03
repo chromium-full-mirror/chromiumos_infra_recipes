@@ -22,6 +22,31 @@
     "name": "generate binary config"
   },
   {
+    "cmd": [],
+    "name": "generate binary config.copy goldeneye configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-build-release-console/build_config.ToT.json",
+      "[CLEANUP]/tmp_tmp_1/goldeneye/ge_build_config.json"
+    ],
+    "infra_step": true,
+    "name": "generate binary config.copy goldeneye configs.gsutil download",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "cipd",
       "ensure",
