@@ -95,45 +95,48 @@ def RunSteps(api, properties):
             name='install toolchain').failed_packages
         api.failures.set_failed_packages(bap_pres, failed_packages)
 
-        # Note: the dependency graph requires a sysroot prior to crrev.com/c/2197226.
-        # TODO(crbug/1053703): After 2020-11-12, if there is no sysroot, that's ok.
         dep_graph = api.build_menu.dep_graph
 
-        def _InstallPackagesRequest():
-          """Helper to make InstallPackagesRequest."""
-          return InstallPackagesRequest(
-              chroot=api.cros_sdk.chroot, sysroot=sysroot, packages=packages,
-              flags=InstallPackagesRequest.Flags(
-                  compile_source=False, use_goma=api.cros_sdk.has_goma_config(),
-                  toolchain_changed=api.workspace_util.toolchain_cls_applied),
-              use_flags=[UseFlag(flag='chrome_internal')],
-              goma_config=api.cros_sdk.goma_config())
+        with api.step.nest('install packages'):
 
-        # TODO(crbug.com/1011011): sync and goma build chrome if needed
-        # because Autotest VM builders are rebuilding chrome.
-        with api.step.nest('check chrome source needed') as cs_pres:
-          if api.chrome.needs_chrome_source(_InstallPackagesRequest(),
-                                            dep_graph, cs_pres):
+          def _InstallPackagesRequest():
+            """Helper to make InstallPackagesRequest."""
+            return InstallPackagesRequest(
+                chroot=api.cros_sdk.chroot, sysroot=sysroot, packages=packages,
+                flags=InstallPackagesRequest.Flags(
+                    compile_source=False,
+                    use_goma=api.cros_sdk.has_goma_config(),
+                    toolchain_changed=api.workspace_util.toolchain_cls_applied),
+                use_flags=[UseFlag(flag='chrome_internal')],
+                goma_config=api.cros_sdk.goma_config())
 
-            chrome_root = api.path['start_dir'].join('chrome')
-            # Internal or external chrome? In build_target.py we take this
-            # from build_config.chrome.internal. Also forced True in the
-            # builds_chrome_from_source call above to match the force True here.
-            api.chrome.sync(chrome_root, api.cros_sdk.chroot,
-                            properties.build_target, internal=True)
-            api.cros_sdk.configure_goma(chrome_root)
+          # TODO(crbug.com/1011011): sync and goma build chrome if needed
+          # because Autotest VM builders are rebuilding chrome.
+          with api.step.nest('check chrome source needed') as cs_pres:
+            if api.chrome.needs_chrome_source(_InstallPackagesRequest(),
+                                              dep_graph, cs_pres):
 
-        install_pkg_request = _InstallPackagesRequest()
-        response = api.cros_build_api.SysrootService.InstallPackages(
-            install_pkg_request, name='install packages')
+              chrome_root = api.path['start_dir'].join('chrome')
+              # Internal or external chrome? In build_target.py we take this
+              # from build_config.chrome.internal. Also forced True in the
+              # builds_chrome_from_source call above to match the force True
+              # here.
+              api.chrome.sync(chrome_root, api.cros_sdk.chroot,
+                              properties.build_target, internal=True)
+              api.cros_sdk.configure_goma(chrome_root)
 
-        # Process goma response to upload logs, stats, and counterz.
-        api.goma.process_artifacts(response,
-                                   install_pkg_request.goma_config.log_dir.dir,
-                                   properties.build_target.name)
+          install_pkg_request = _InstallPackagesRequest()
+          response = api.cros_build_api.SysrootService.InstallPackages(
+              install_pkg_request,
+              response_lambda=api.cros_build_api.failed_pkg_names)
 
-        # Process goma reponse to upload logs, stats, and counterz.
-        api.failures.set_failed_packages(bap_pres, response.failed_packages)
+          # Process goma response to upload logs, stats, and counterz.
+          api.goma.process_artifacts(
+              response, install_pkg_request.goma_config.log_dir.dir,
+              properties.build_target.name)
+
+          # Process goma reponse to upload logs, stats, and counterz.
+          api.failures.set_failed_packages(bap_pres, response.failed_packages)
 
     # TODO(evanhernandez): Read and present the test results.
     test_harness_name = VmTestRequest.TestHarness.Name(properties.test_harness)

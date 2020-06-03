@@ -98,29 +98,30 @@ def DoRunSteps(api, config, build_target, properties):
 
   install_packages = config.build.install_packages
 
-  def _InstallPackagesRequest():
-    """Helper to make InstallPackagesRequest."""
-    return InstallPackagesRequest(
-        chroot=api.cros_sdk.chroot, sysroot=api.sysroot_util.sysroot,
-        packages=packages, flags=InstallPackagesRequest.Flags(
-            compile_source=install_packages.compile_source,
-            use_goma=api.cros_sdk.has_goma_config(),
-            toolchain_changed=api.workspace_util.toolchain_cls_applied),
-        use_flags=config.build.use_flags,
-        goma_config=api.cros_sdk.goma_config())
-
-  with api.step.nest('check chrome source needed') as cs_pres:
-    if api.chrome.needs_chrome_source(_InstallPackagesRequest(),
-                                      api.build_menu.dep_graph, cs_pres):
-      # This will change the return from _InstallPackagesRequest().
-      chrome_root = api.path['start_dir'].join('chrome')
-      api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
-                      config.chrome.internal)
-      if not install_packages.disable_goma:
-        api.cros_sdk.configure_goma(chrome_root)
-
   if api.cros_infra_config.should_run(install_packages.run_spec):
     with api.step.nest('install packages') as ip_step:
+
+      def _InstallPackagesRequest():
+        """Helper to make InstallPackagesRequest."""
+        return InstallPackagesRequest(
+            chroot=api.cros_sdk.chroot, sysroot=api.sysroot_util.sysroot,
+            packages=packages, flags=InstallPackagesRequest.Flags(
+                compile_source=install_packages.compile_source,
+                use_goma=api.cros_sdk.has_goma_config(),
+                toolchain_changed=api.workspace_util.toolchain_cls_applied),
+            use_flags=config.build.use_flags,
+            goma_config=api.cros_sdk.goma_config())
+
+      with api.step.nest('check chrome source needed') as cs_pres:
+        if api.chrome.needs_chrome_source(_InstallPackagesRequest(),
+                                          api.build_menu.dep_graph, cs_pres):
+          # This will change the return from _InstallPackagesRequest().
+          chrome_root = api.path['start_dir'].join('chrome')
+          api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
+                          config.chrome.internal)
+          if not install_packages.disable_goma:
+            api.cros_sdk.configure_goma(chrome_root)
+
       # Final round of preparation to build artifacts.  Some artifacts need
       # to use portage (or a chroot and/or sysroot) in order to fully prepare,
       # so they have to finish preparation inside the SDK.
@@ -300,7 +301,7 @@ def GenTests(api):
       cq_build(),
       make_build_not_pointless(),
       api.step_data(
-          'check chrome source needed.'
+          'install packages.check chrome source needed.'
           'call chromite.api.PackageService/NeedsChromeSource.read output file',
           api.file.read_raw(content='{"needs_chrome_source": false}')),
   )

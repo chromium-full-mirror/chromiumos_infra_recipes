@@ -2957,17 +2957,24 @@
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed",
+    "name": "build autotest packages.install packages",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build autotest packages.install packages.check chrome source needed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@local_uprev no_prebuilt@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.call chromite.api.MethodService/Get",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.MethodService/Get",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"methods\": [{\"method\": \"chromite.api.DependencyService/GetBuildDependencyGraph\"}, {\"method\": \"chromite.api.DependencyService/GetToolchainPaths\"}, {\"method\": \"chromite.api.ArtifactsService/PrepareForBuild\"}, {\"method\": \"chromite.api.ArtifactsService/BundleArtifacts\"}, {\"method\": \"chromite.api.ArtifactsService/BundleImageArchives\"}, {\"method\": \"chromite.api.ArtifactsService/BundleTastFiles\"}, {\"method\": \"chromite.api.ArtifactsService/BundlePinnedGuestImages\"}, {\"method\": \"chromite.api.ArtifactsService/FetchPinnedGuestImageUris\"}, {\"method\": \"chromite.api.ArtifactsService/BundleImageZip\"}, {\"method\": \"chromite.api.ArtifactsService/BundleTestUpdatePayloads\"}, {\"method\": \"chromite.api.ArtifactsService/ExportCpeReport\"}, {\"method\": \"chromite.api.ArtifactsService/BundleEbuildLogs\"}, {\"method\": \"chromite.api.ArtifactsService/BundleAutotestFiles\"}, {\"method\": \"chromite.api.ArtifactsService/BundleChromeOSConfig\"}, {\"method\": \"chromite.api.ArtifactsService/BundleFirmware\"}, {\"method\": \"chromite.api.ToolchainService/PrepareForBuild\"}, {\"method\": \"chromite.api.ToolchainService/BundleArtifacts\"}, {\"method\": \"chromite.api.TestService/DebugInfoTest\"}, {\"method\": \"chromite.api.TestService/ChromitePytest\"}, {\"method\": \"chromite.api.TestService/ChromiteUnitTest\"}, {\"method\": \"chromite.api.TestService/BuildTargetUnitTest\"}, {\"method\": \"chromite.api.TestService/MoblabVmTest\"}, {\"method\": \"chromite.api.TestService/VmTest\"}, {\"method\": \"chromite.api.SdkService/Unmount\"}, {\"method\": \"chromite.api.SdkService/RestoreSnapshot\"}, {\"method\": \"chromite.api.SdkService/Create\"}, {\"method\": \"chromite.api.SdkService/Update\"}, {\"method\": \"chromite.api.SdkService/Clean\"}, {\"method\": \"chromite.api.SdkService/CreateSnapshot\"}, {\"method\": \"chromite.api.SdkService/Delete\"}, {\"method\": \"chromite.api.ImageService/Test\"}, {\"method\": \"chromite.api.ImageService/Create\"}, {\"method\": \"chromite.api.VersionService/Get\"}, {\"method\": \"chromite.api.BinhostService/PrepareBinhostUploads\"}, {\"method\": \"chromite.api.BinhostService/GetPrivatePrebuiltAclArgs\"}, {\"method\": \"chromite.api.BinhostService/SetBinhost\"}, {\"method\": \"chromite.api.BinhostService/RegenBuildCache\"}, {\"method\": \"chromite.api.BinhostService/Get\"}, {\"method\": \"chromite.api.SysrootService/Create\"}, {\"method\": \"chromite.api.SysrootService/InstallToolchain\"}, {\"method\": \"chromite.api.SysrootService/InstallPackages\"}, {\"method\": \"chromite.api.PackageService/NeedsChromeSource\"}, {\"method\": \"chromite.api.PackageService/GetTargetVersions\"}, {\"method\": \"chromite.api.PackageService/GetBestVisible\"}, {\"method\": \"chromite.api.PackageService/HasPrebuilt\"}, {\"method\": \"chromite.api.PackageService/GetChromeVersion\"}, {\"method\": \"chromite.api.PackageService/BuildsChrome\"}, {\"method\": \"chromite.api.PackageService/HasChromePrebuilt\"}, {\"method\": \"chromite.api.PackageService/Uprev\"}, {\"method\": \"chromite.api.PackageService/UprevVersionedPackage\"}, {\"method\": \"chromite.api.MethodService/Get\"}]}@@@",
@@ -2987,9 +2994,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.call chromite.api.MethodService/Get.write input file",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.MethodService/Get.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -3011,9 +3018,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "build autotest packages.check chrome source needed.call chromite.api.MethodService/Get.call build API script",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.MethodService/Get.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3034,25 +3041,25 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.call chromite.api.MethodService/Get.read output file",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.MethodService/Get.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.call chromite.api.MethodService/Get.call response",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.MethodService/Get.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"installRequest\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"flags\": {}, @@@",
@@ -3103,9 +3110,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.write input file",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"installRequest\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"flags\": {}, @@@",
@@ -3158,9 +3165,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "build autotest packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call build API script",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3181,42 +3188,42 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.read output file",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call response",
+    "name": "build autotest packages.install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.set chrome_source_reasons",
+    "name": "build autotest packages.install packages.check chrome source needed.set chrome_source_reasons",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@chrome_source_reasons@{\"compile_source\": false, \"follower_lacks_prebuilt\": false, \"local_uprev\": true, \"no_prebuilt\": true}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.sync chrome",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
       "@@@STEP_LOG_END@gclient configuration@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
@@ -3250,9 +3257,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
@@ -3289,9 +3296,9 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -3312,25 +3319,25 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
@@ -3349,7 +3356,7 @@
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:53Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"build autotest packages|check chrome source needed|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"build autotest packages|install packages|check chrome source needed|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
@@ -3360,9 +3367,9 @@
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -3376,10 +3383,10 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI4YDE/QQiDAjigMT9BBCAyrXuAdAC0OyA2a7xtZJ82gKGAWJ1aWxkIGF1dG90ZXN0IHBhY2th\\nZ2VzfGNoZWNrIGNocm9tZSBzb3VyY2UgbmVlZGVkfHN5bmMgY2hyb21lfGNhbGwgY2hyb21pdGUu\\nYXBpLlBhY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\nggM9CioKE1tDQUNIRV0vY3Jvc19jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwSDwoNYW1kNjQt\\nZ2VuZXJpY4oDCQoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYI4YDE/QQiDAjigMT9BBCAyrXuAdAC0OyA2a7xtZJ82gKXAWJ1aWxkIGF1dG90ZXN0IHBhY2th\\nZ2VzfGluc3RhbGwgcGFja2FnZXN8Y2hlY2sgY2hyb21lIHNvdXJjZSBuZWVkZWR8c3luYyBjaHJv\\nbWV8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hyb21lVmVyc2lvbnxjYWxs\\nIGJ1aWxkIEFQSSBzY3JpcHSCAz0KKgoTW0NBQ0hFXS9jcm9zX2Nocm9vdBoTChEKD2Nocm9tZV9p\\nbnRlcm5hbBIPCg1hbWQ2NC1nZW5lcmljigMJCgd2ZXJzaW9u\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_NEST_LEVEL@7@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -3400,9 +3407,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.sync chrome.ensure chrome root",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.ensure chrome root",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3421,9 +3428,9 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.sync chrome.gclient config",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.gclient config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3444,9 +3451,9 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.sync chrome.gclient contents",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.gclient contents",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
       "@@@STEP_LOG_END@.gclient@@@"
     ]
@@ -3479,17 +3486,17 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.sync chrome.gclient sync",
+    "name": "build autotest packages.install packages.check chrome source needed.sync chrome.gclient sync",
     "timeout": 5400,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.check chrome source needed.ensure goma client",
+    "name": "build autotest packages.install packages.check chrome source needed.ensure goma client",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3507,9 +3514,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build autotest packages.check chrome source needed.ensure goma client.ensure_installed",
+    "name": "build autotest packages.install packages.check chrome source needed.ensure goma client.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -3525,9 +3532,9 @@
   },
   {
     "cmd": [],
-    "name": "build autotest packages.install packages",
+    "name": "build autotest packages.install packages.call chromite.api.SysrootService/InstallPackages",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
@@ -3589,9 +3596,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build autotest packages.install packages.write input file",
+    "name": "build autotest packages.install packages.call chromite.api.SysrootService/InstallPackages.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
@@ -3655,9 +3662,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "build autotest packages.install packages.call build API script",
+    "name": "build autotest packages.install packages.call chromite.api.SysrootService/InstallPackages.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3678,29 +3685,29 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.install packages.read output file",
+    "name": "build autotest packages.install packages.call chromite.api.SysrootService/InstallPackages.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.install packages.call response",
+    "name": "build autotest packages.install packages.call chromite.api.SysrootService/InstallPackages.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build autotest packages.install packages.publish event",
+    "name": "build autotest packages.install packages.call chromite.api.SysrootService/InstallPackages.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:56Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"build autotest packages|install packages|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"build autotest packages|install packages|call chromite.api.SysrootService/InstallPackages|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
@@ -3752,9 +3759,9 @@
   },
   {
     "cmd": [],
-    "name": "build autotest packages.install packages.publish event.publish message",
+    "name": "build autotest packages.install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3768,10 +3775,10 @@
       ]
     },
     "infra_step": true,
-    "name": "build autotest packages.install packages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"Cr0CCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSAhgBGh0KDGF1dG90\\nZXN0LWFsbBINY2hyb21lb3MtYmFzZSI+ChNbQ0FDSEVdL2Nyb3NfY2hyb290GhMKEQoPY2hyb21l\\nX2ludGVybmFsIhJbU1RBUlRfRElSXS9jaHJvbWUqEQoPY2hyb21lX2ludGVybmFsMpsBChVbU1RB\\nUlRfRElSXS9jaXBkL2dvbWESOC9jcmVkcy9zZXJ2aWNlX2FjY291bnRzL3NlcnZpY2UtYWNjb3Vu\\ndC1nb21hLWNsaWVudC5qc29uIAEqHQobW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzE3MhFzdGF0\\ncy5iaW5hcnlwcm90bzoUY291bnRlcnouYmluYXJ5cHJvdG8SABoGCOSAxP0EIgwI5YDE/QQQgMq1\\n7gHQAtDsgNmu8bWSfNoCPmJ1aWxkIGF1dG90ZXN0IHBhY2thZ2VzfGluc3RhbGwgcGFja2FnZXN8\\nY2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "build autotest packages.install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"Cr0CCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSAhgBGh0KDGF1dG90\\nZXN0LWFsbBINY2hyb21lb3MtYmFzZSI+ChNbQ0FDSEVdL2Nyb3NfY2hyb290GhMKEQoPY2hyb21l\\nX2ludGVybmFsIhJbU1RBUlRfRElSXS9jaHJvbWUqEQoPY2hyb21lX2ludGVybmFsMpsBChVbU1RB\\nUlRfRElSXS9jaXBkL2dvbWESOC9jcmVkcy9zZXJ2aWNlX2FjY291bnRzL3NlcnZpY2UtYWNjb3Vu\\ndC1nb21hLWNsaWVudC5qc29uIAEqHQobW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzE3MhFzdGF0\\ncy5iaW5hcnlwcm90bzoUY291bnRlcnouYmluYXJ5cHJvdG8SABoGCOSAxP0EIgwI5YDE/QQQgMq1\\n7gHQAtDsgNmu8bWSfNoCb2J1aWxkIGF1dG90ZXN0IHBhY2thZ2VzfGluc3RhbGwgcGFja2FnZXN8\\nY2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVp\\nbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -3780,9 +3787,9 @@
   },
   {
     "cmd": [],
-    "name": "build autotest packages.process_goma_artifacts",
+    "name": "build autotest packages.install packages.process_goma_artifacts",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
       "@@@STEP_LOG_END@NoGomaArtifacts@@@"
     ]
