@@ -15,4 +15,7 @@ message FullTestProperties {
 
   // ImageService.Test response JSON.
   string image_test_json = 2;
+
+  // Whether this is an artifact build
+  bool artifact_build = 3;
 }

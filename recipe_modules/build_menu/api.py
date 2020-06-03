@@ -14,6 +14,7 @@ from recipe_engine import recipe_api
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
+from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.builder_config import BuilderConfig
 
@@ -33,6 +34,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
   @property
   def config(self):
     return self.m.cros_infra_config.config
+
+  @property
+  def config_or_default(self):
+    return self.m.cros_infra_config.config_or_default
 
   @property
   def gitiles_commit(self):
@@ -120,7 +125,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._forced_relevant = forced_relevant
 
     # If we do not have a config, use an empty one.
-    config = self.config or BuilderConfig()
+    config = self.config_or_default
 
     # Set up source checkouts.
     self.m.workspace_util.sync_to_commit(staging=self.is_staging)
@@ -174,7 +179,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     _env_info = collections.namedtuple('env_info', ['pointless', 'packages'])
 
     # If we do not have a config, use an empty one.
-    config = self.config or BuilderConfig()
+    config = self.config_or_default
     artifacts = config.artifacts
 
     if with_sysroot:
@@ -237,3 +242,27 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.cros_sdk.mark_sdk_as_dirty()
 
     return self.dep_graph
+
+  def bootstrap_sysroot_and_install_packages(self, config=None, packages=None,
+                                             artifact_build=None,
+                                             timeout_sec='DEFAULT', name=None):
+    """Install packages (possibly fetching Chrome source).
+
+    Args:
+      config (BuilderConfig): The
+      packages (list[PackageInfo]): list of packages to install.  Default: all
+          packages for the build_target.
+      artifact_build (bool): Whether to call update_for_artifact_build.
+      timeout_sec (int): Step timeout, in seconds, or None for default.
+      name (string): step name for install packages, or None for default.
+    """
+    # Make sure we have a valid config
+    config = config or self.config_or_default
+
+    self.m.sysroot_util.bootstrap_sysroot(
+        compile_source=config.build.install_toolchain.compile_source)
+
+    install_packages = config.build.install_packages
+    self.m.sysroot_util.install_packages(config, self.dep_graph, packages,
+                                         artifact_build=artifact_build,
+                                         timeout_sec=timeout_sec, name=name)

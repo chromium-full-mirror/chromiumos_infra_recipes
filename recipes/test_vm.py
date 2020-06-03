@@ -20,16 +20,9 @@ The steps specific to VM testing are:
 
 import os
 
-from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import Path
 from PB.chromiumos.common import UseFlag
-from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
-from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
-from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
-from PB.chromite.api.sysroot import SysrootCreateRequest
-from PB.chromite.api.sysroot import InstallToolchainRequest
-from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import VmTestRequest
 from PB.recipes.chromeos.test_vm import TestVmProperties
 
@@ -41,13 +34,9 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'build_menu',
-    'chrome',
     'cros_build_api',
     'cros_sdk',
-    'failures',
-    'goma',
     'test_util',
-    'workspace_util',
 ]
 
 PROPERTIES = TestVmProperties
@@ -57,8 +46,12 @@ VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
 
 
 def RunSteps(api, properties):
-  with api.build_menu.configure_builder(properties.build_target,
-                                        missing_ok=True):
+  build_target = properties.build_target
+  with api.build_menu.configure_builder(build_target, missing_ok=True):
+    # We expect that we do not have a config, but we do have some non-default
+    # values.  In the event that a config _IS_ present, let that win.
+    config = api.build_menu.config_or_default
+
     # Ensure that the workspace aligns with the image that was built.
     # Though this seems wasteful, it will catch bugs introduced to the build
     # API and any scripts it depends on.
@@ -87,62 +80,13 @@ def RunSteps(api, properties):
             PackageInfo(category='chromeos-base', package_name='autotest-all')
         ]
         api.build_menu.setup_sysroot_and_determine_relevance(packages=packages)
-        sysroot = api.build_menu.sysroot
-
-        failed_packages = api.cros_build_api.SysrootService.InstallToolchain(
-            InstallToolchainRequest(sysroot=sysroot,
-                                    chroot=api.cros_sdk.chroot),
-            name='install toolchain').failed_packages
-        api.failures.set_failed_packages(bap_pres, failed_packages)
-
-        dep_graph = api.build_menu.dep_graph
-
-        with api.step.nest('install packages'):
-
-          def _InstallPackagesRequest():
-            """Helper to make InstallPackagesRequest."""
-            return InstallPackagesRequest(
-                chroot=api.cros_sdk.chroot, sysroot=sysroot, packages=packages,
-                flags=InstallPackagesRequest.Flags(
-                    compile_source=False,
-                    use_goma=api.cros_sdk.has_goma_config(),
-                    toolchain_changed=api.workspace_util.toolchain_cls_applied),
-                use_flags=[UseFlag(flag='chrome_internal')],
-                goma_config=api.cros_sdk.goma_config())
-
-          # TODO(crbug.com/1011011): sync and goma build chrome if needed
-          # because Autotest VM builders are rebuilding chrome.
-          with api.step.nest('check chrome source needed') as cs_pres:
-            if api.chrome.needs_chrome_source(_InstallPackagesRequest(),
-                                              dep_graph, cs_pres):
-
-              chrome_root = api.path['start_dir'].join('chrome')
-              # Internal or external chrome? In build_target.py we take this
-              # from build_config.chrome.internal. Also forced True in the
-              # builds_chrome_from_source call above to match the force True
-              # here.
-              api.chrome.sync(chrome_root, api.cros_sdk.chroot,
-                              properties.build_target, internal=True)
-              api.cros_sdk.configure_goma(chrome_root)
-
-          install_pkg_request = _InstallPackagesRequest()
-          response = api.cros_build_api.SysrootService.InstallPackages(
-              install_pkg_request,
-              response_lambda=api.cros_build_api.failed_pkg_names)
-
-          # Process goma response to upload logs, stats, and counterz.
-          api.goma.process_artifacts(
-              response, install_pkg_request.goma_config.log_dir.dir,
-              properties.build_target.name)
-
-          # Process goma reponse to upload logs, stats, and counterz.
-          api.failures.set_failed_packages(bap_pres, response.failed_packages)
+        api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
 
     # TODO(evanhernandez): Read and present the test results.
     test_harness_name = VmTestRequest.TestHarness.Name(properties.test_harness)
     api.cros_build_api.TestService.VmTest(
         VmTestRequest(
-            build_target=properties.build_target, chroot=api.cros_sdk.chroot,
+            build_target=build_target, chroot=api.cros_sdk.chroot,
             vm_path=Path(path=vm_image_path, location=Path.OUTSIDE),
             ssh_options=VmTestRequest.SshOptions(
                 private_key_path=Path(path=private_key_path,
@@ -157,7 +101,8 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'with-tast',
-      api.test_util.test_build(cq=True).build,
+      api.test_util.test_build(builder='amd64-generic-autotest-vm',
+                               cq=True).build,
       api.properties(
           build_target={'name': 'amd64-generic'},
           test_harness=VmTestRequest.TAST, build_payload={
@@ -168,7 +113,8 @@ def GenTests(api):
 
   yield api.test(
       'with-autotest',
-      api.test_util.test_build(cq=True).build,
+      api.test_util.test_build(builder='amd64-generic-autotest-vm',
+                               cq=True).build,
       api.properties(
           build_target={'name': 'amd64-generic'},
           test_harness=VmTestRequest.AUTOTEST, build_payload={

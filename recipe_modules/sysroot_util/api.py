@@ -14,6 +14,7 @@ from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import CreateImageResult
 from PB.chromite.api.image import Image
 from PB.chromite.api.image import TestImageRequest
+from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import Profile
 from PB.chromite.api.sysroot import Sysroot
@@ -136,6 +137,83 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           test_output_data=test_data)
       self.m.failures.set_failed_packages(pres, response.failed_packages)
 
+  def install_packages(self, config, dep_graph, packages=None,
+                       artifact_build=False, timeout_sec='DEFAULT', name=None):
+    """Install packages (possibly fetching Chrome source).
+
+    Args:
+      config (BuilderConfig): The builder config.
+      dep_graph: The dependency graph from cros_relevance.get_dependency_graph.
+      packages (list[PackageInfo]): list of packages to install.  Default: all
+          packages for the build_target.
+      artifact_build (bool): Whether to call update_for_artifact_build.
+      timeout_sec (int): Step timeout, in seconds, or None for default.
+      name (str): Step name to use, or None for default name.
+    """
+    packages = packages or []
+    install_packages = config.build.install_packages
+
+    name = name or 'install packages'
+    if timeout_sec == 'DEFAULT':
+      timeout_sec = None if self.m.cros_sdk.long_timeouts else 8 * 60 * 60
+      with self.m.step.nest(name) as presentation:
+
+        def _InstallPackagesRequest():
+          """Helper to make InstallPackagesRequest."""
+          return InstallPackagesRequest(
+              chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
+              packages=packages, flags=InstallPackagesRequest.Flags(
+                  compile_source=install_packages.compile_source,
+                  use_goma=self.m.cros_sdk.has_goma_config(),
+                  toolchain_changed=self.m.workspace_util.toolchain_cls_applied
+              ), use_flags=config.build.use_flags,
+              goma_config=self.m.cros_sdk.goma_config())
+
+        # Final round of preparation to build artifacts.  Some artifacts need
+        with self.m.step.nest('check chrome source needed') as check_pres:
+          if self.m.chrome.needs_chrome_source(_InstallPackagesRequest(),
+                                               dep_graph, check_pres):
+            # This will change the return from _InstallPackagesRequest().
+            chrome_root = self.m.path['start_dir'].join('chrome')
+            self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
+                               self.sysroot.build_target,
+                               config.chrome.internal)
+            if not install_packages.disable_goma:
+              self.m.cros_sdk.configure_goma(chrome_root)
+
+        # to use portage (or a chroot and/or sysroot) in order to fully prepare,
+        # so they have to finish preparation inside the SDK.
+        #
+        # We don't care what the return value is, since we're committed to
+        # running at least install packages at this point.  Let the module know
+        # that we are forcing relevance.
+        if artifact_build:
+          self.m.sysroot_util.update_for_artifact_build(
+              self.m.cros_sdk.chroot, config.artifacts, force_relevance=True,
+              name='prepare artifacts final')
+        install_pkg_request = _InstallPackagesRequest()
+        response = self.m.cros_build_api.SysrootService.InstallPackages(
+            install_pkg_request,
+            response_lambda=self.m.cros_build_api.failed_pkg_names,
+            timeout=timeout_sec)
+
+        # Process goma response to upload logs, stats, and counterz.
+        self.m.goma.process_artifacts(
+            response, install_pkg_request.goma_config.log_dir.dir,
+            self.sysroot.build_target.name, self.m.cros_infra_config.is_staging)
+
+        step_name = (
+            '{}|call chromite.api.SysrootService/InstallPackages|{}'.format(
+                name,
+                self.m.cros_build_api.response_step_name(
+                    response, self.m.cros_build_api.failed_pkg_names)))
+
+        self.m.cros_bisect.set_compile_failures(response.failed_packages,
+                                                step_name,
+                                                config.general.critical)
+        self.m.failures.set_failed_packages(presentation,
+                                            response.failed_packages)
+
   def build_images(self, image_types, builder_path, disable_rootfs_verification,
                    disk_layout, timeout_sec=45 * 60, build_test_data=None,
                    test_test_data=None, name=None):
@@ -151,7 +229,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           call, or None.
       test_test_data (str): test response (JSON) from the ImageService/Test
           call, or None.
-      name (str): name for the step.
+      name (str): Step name to use, or None for default name.
     """
     if image_types:
       build_test_data = build_test_data or json_format.MessageToJson(

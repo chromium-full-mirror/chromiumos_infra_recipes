@@ -27,7 +27,6 @@ DEPS = [
     'cros_version',
     'failures',
     'gerrit',
-    'goma',
     'sysroot_util',
     'workspace_util',
 ]
@@ -39,7 +38,6 @@ from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
-from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
@@ -60,7 +58,6 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
 
 # All step timeouts are in seconds.  All are moving to modules.
 STEP_TIMEOUTS = {
-    'install_packages': 8 * 60 * 60,
     'build_image': 45 * 60,
     'unit_tests': 2 * 60 * 60,
 }
@@ -93,67 +90,10 @@ def DoRunSteps(api, config, build_target, properties):
     return
   packages = env_info.packages
 
-  api.sysroot_util.bootstrap_sysroot(
-      compile_source=config.build.install_toolchain.compile_source)
-
   install_packages = config.build.install_packages
-
   if api.cros_infra_config.should_run(install_packages.run_spec):
-    with api.step.nest('install packages') as ip_step:
-
-      def _InstallPackagesRequest():
-        """Helper to make InstallPackagesRequest."""
-        return InstallPackagesRequest(
-            chroot=api.cros_sdk.chroot, sysroot=api.sysroot_util.sysroot,
-            packages=packages, flags=InstallPackagesRequest.Flags(
-                compile_source=install_packages.compile_source,
-                use_goma=api.cros_sdk.has_goma_config(),
-                toolchain_changed=api.workspace_util.toolchain_cls_applied),
-            use_flags=config.build.use_flags,
-            goma_config=api.cros_sdk.goma_config())
-
-      with api.step.nest('check chrome source needed') as cs_pres:
-        if api.chrome.needs_chrome_source(_InstallPackagesRequest(),
-                                          api.build_menu.dep_graph, cs_pres):
-          # This will change the return from _InstallPackagesRequest().
-          chrome_root = api.path['start_dir'].join('chrome')
-          api.chrome.sync(chrome_root, api.cros_sdk.chroot, build_target,
-                          config.chrome.internal)
-          if not install_packages.disable_goma:
-            api.cros_sdk.configure_goma(chrome_root)
-
-      # Final round of preparation to build artifacts.  Some artifacts need
-      # to use portage (or a chroot and/or sysroot) in order to fully prepare,
-      # so they have to finish preparation inside the SDK.
-      #
-      # We don't care what the return value is, since we're committed to
-      # running at least install packages at this point.  Let the module know
-      # that we are forcing relevance.
-      api.sysroot_util.update_for_artifact_build(api.cros_sdk.chroot,
-                                                 config.artifacts,
-                                                 force_relevance=True,
-                                                 name='prepare artifacts final')
-      install_pkg_request = _InstallPackagesRequest()
-      response = api.cros_build_api.SysrootService.InstallPackages(
-          install_pkg_request,
-          response_lambda=api.cros_build_api.failed_pkg_names,
-          timeout=(STEP_TIMEOUTS['install_packages']
-                   if not api.cros_sdk.long_timeouts else None))
-
-      # Process goma response to upload logs, stats, and counterz.
-      api.goma.process_artifacts(response,
-                                 install_pkg_request.goma_config.log_dir.dir,
-                                 build_target.name, api.build_menu.is_staging)
-
-      step_name = ('install packages|'
-                   'call chromite.api.SysrootService/InstallPackages|'
-                   '{}'.format(
-                       api.cros_build_api.response_step_name(
-                           response, api.cros_build_api.failed_pkg_names)))
-
-      api.cros_bisect.set_compile_failures(response.failed_packages, step_name,
-                                           config.general.critical.value)
-      api.failures.set_failed_packages(ip_step, response.failed_packages)
+    api.build_menu.bootstrap_sysroot_and_install_packages(
+        config, packages, artifact_build=artifact_build)
     if api.cros_infra_config.should_exit(install_packages.run_spec):
       return
 

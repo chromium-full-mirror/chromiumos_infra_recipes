@@ -23,8 +23,10 @@ def RunSteps(api, properties):
 
   with api.build_menu.configure_builder(
       build_target, missing_ok=properties.missing_config_ok) as config:
+    api.assertions.assertEqual(config, api.build_menu.config)
     if not config:
       api.assertions.assertTrue(properties.expect_missing_config)
+      api.assertions.assertIsNotNone(api.build_menu.config_or_default)
       return
 
     relevance = api.build_menu.setup_workspace_and_chroot(
@@ -36,6 +38,8 @@ def RunSteps(api, properties):
 
     if properties.no_sysroot:
       api.assertions.assertIsNone(api.build_menu.sysroot)
+    else:
+      api.build_menu.bootstrap_sysroot_and_install_packages()
 
     api.assertions.assertEqual(env_info.packages, properties.expected_packages)
 

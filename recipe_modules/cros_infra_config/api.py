@@ -13,6 +13,7 @@ from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -85,6 +86,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     return self.get_builder_config(self.m.buildbucket.build.builder.builder,
                                    missing_ok=True)
+
+  @property
+  def config_or_default(self):
+    return self.config or BuilderConfig(
+        chrome=BuilderConfig.Chrome(internal=True),
+        build=BuilderConfig.Build(use_flags=[UseFlag(flag='chrome_internal')]))
 
   @property
   def is_staging(self):

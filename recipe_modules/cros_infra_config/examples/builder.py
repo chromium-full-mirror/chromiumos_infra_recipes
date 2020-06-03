@@ -37,6 +37,7 @@ def RunSteps(api, properties):
   builder = config.id.name if config else 'nosuch-cq'
   api.assertions.assertEqual(properties.builder, builder)
   if not config:
+    api.assertions.assertIsNotNone(api.cros_infra_config.config_or_default)
     return
 
   if not commit.project:

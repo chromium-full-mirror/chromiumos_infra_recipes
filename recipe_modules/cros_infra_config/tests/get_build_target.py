@@ -11,9 +11,10 @@ DEPS = [
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+
 def RunSteps(api):
-  api.assertions.assertIsNone(api.cros_infra_config.get_build_target_name(
-      build_pb2.Build()))
+  api.assertions.assertIsNone(
+      api.cros_infra_config.get_build_target_name(build_pb2.Build()))
 
 
 def GenTests(api):
