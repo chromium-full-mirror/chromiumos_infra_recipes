@@ -603,6 +603,7 @@
       "--root",
       "[START_DIR]/chromiumos_workspace",
       "create",
+      "--ack-deprecation",
       "--release",
       "--file",
       "[START_DIR]/chromiumos_workspace/src/manifest-internal/default.xml",
