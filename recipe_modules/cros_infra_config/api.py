@@ -378,3 +378,19 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       self._determine_repo_state(config, commit, changes)
 
     return config
+
+  @staticmethod
+  def get_build_target_name(build):
+    """Return the build target name from input properties.
+
+    Args:
+      build (Build): A buildbucket build, which is expected to have a
+          'build_target' input property.
+
+    Returns:
+      (str) The name of the build target.
+    """
+    try:
+      return build.input.properties['build_target']['name']
+    except ValueError:
+      return None

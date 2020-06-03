@@ -142,7 +142,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         with self.m.step.nest('run baseline tests'):
           with self.m.step.nest('find baseline builds'):
             for build in need_tests_builds:
-              build_target = self.m.cros_history.get_build_target(build)
+              build_target = self.m.cros_infra_config.get_build_target_name(
+                  build)
               if build_target and build_target in build_targets_to_verify:
                 baseline_builds += self.m.cros_history.get_snapshot_builds(
                     build.input.gitiles_commit, [build_target + '-snapshot'],

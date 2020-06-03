@@ -88,7 +88,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
                              test_data='some start time')
     }
 
-    build_target = self.m.cros_history.get_build_target(build)
+    build_target = self.m.cros_infra_config.get_build_target_name(build)
     self._metadata['boards'] = [build_target]
     config = self.m.cros_infra_config.config
     self._metadata['unibuild'] = config.general.unibuild

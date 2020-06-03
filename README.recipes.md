@@ -146,6 +146,7 @@
   * [cros_infra_config:examples/no_builder_config](#recipes-cros_infra_config_examples_no_builder_config)
   * [cros_infra_config:examples/specify_branch](#recipes-cros_infra_config_examples_specify_branch)
   * [cros_infra_config:tests/configure_builder](#recipes-cros_infra_config_tests_configure_builder)
+  * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
@@ -1429,6 +1430,17 @@ Get BotPolicies as defined in infra/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
+&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#382)(build):**
+
+Return the build target name from input properties.
+
+Args:
+  build (Build): A buildbucket build, which is expected to have a
+      'build_target' input property.
+
+Returns:
+  (str) The name of the build target.
+
 &mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#161)(self, builder_name, missing_ok=False):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
@@ -2097,7 +2109,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#278)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#279)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -3154,7 +3166,7 @@ Raises:
   matching predicate.
 ### *recipe_modules* / [metadata\_json](/recipe_modules/metadata_json)
 
-[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -4668,7 +4680,7 @@ Used to create sweeping changes by creating CLs in many repos.
 
 [DEPS](/recipe_modules/cros_infra_config/examples/builder.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/builder.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/builder.py#24)(api, properties):**
 ### *recipes* / [cros\_infra\_config:examples/config\_ref](/recipe_modules/cros_infra_config/examples/config_ref.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/config_ref.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4709,6 +4721,11 @@ Used to create sweeping changes by creating CLs in many repos.
 [DEPS](/recipe_modules/cros_infra_config/tests/configure_builder.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/configure_builder.py#23)(api, properties):**
+### *recipes* / [cros\_infra\_config:tests/get\_build\_target](/recipe_modules/cros_infra_config/tests/get_build_target.py)
+
+[DEPS](/recipe_modules/cros_infra_config/tests/get_build_target.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/get_build_target.py#14)(api):**
 ### *recipes* / [cros\_infra\_config:tests/utils](/recipe_modules/cros_infra_config/tests/utils.py)
 
 [DEPS](/recipe_modules/cros_infra_config/tests/utils.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

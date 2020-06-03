@@ -218,7 +218,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     # add all of them to dict: build_target -> build proto
     build_map = defaultdict(list)
     for b in builds:
-      bt = self.m.cros_history.get_build_target(b)
+      bt = self.m.cros_infra_config.get_build_target_name(b)
       if bt:
         build_map[bt].append(b)
 
