@@ -250,7 +250,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       if group_key:
         predicates.append(
             rpc_pb2.BuildPredicate(
-                builder=builder, gerrit_changes=patches, tags=[
+                builder=builder, tags=[
                     common_pb2.StringPair(key='cq_equivalent_cl_group_key',
                                           value=group_key)
                 ], create_time=create_time, build=build_range))
