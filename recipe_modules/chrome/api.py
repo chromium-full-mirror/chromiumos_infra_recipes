@@ -301,7 +301,8 @@ class ChromeApi(recipe_api.RecipeApi):
       response = _type()
       chroot = request.chroot
       target = request.sysroot.build_target
-      ignore_prebuilts = request.flags.compile_source
+      ignore_prebuilts = (
+          request.flags.compile_source or request.flags.toolchain_changed)
 
       # Only bother to do these checks if the build target needs chrome src.
       if self.needs_chrome(target, chroot, packages=request.packages):
