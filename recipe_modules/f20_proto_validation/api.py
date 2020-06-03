@@ -20,7 +20,7 @@ from PB.chromiumos.config.api.test.metadata.v1.metadata import (
     RemoteTestDriver, Test)
 from PB.chromiumos.config.api.test.metadata.v1.metadata import (Specification as
                                                                 MetadataSpec)
-from PB.test.plan.v1.plan import Plan, TestCondition, Unit
+from PB.test.plan.v1.plan import Plan, TestConstraint, Unit
 from PB.test.plan.v1.plan import Specification as PlanSpec
 
 
@@ -57,7 +57,7 @@ class F20ProtoValidationAPI(recipe_api.RecipeApi):
                     units=[
                         Unit(
                             name='plans/fake_plan/units/fake_unit',
-                            test_condition=TestCondition(
+                            test_constraint=TestConstraint(
                                 expression="true",
                             ),
                         )

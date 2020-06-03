@@ -8,7 +8,7 @@ from recipe_engine import recipe_test_api
 from PB.chromiumos.bot_scaling import BotPolicy, BotPolicyCfg, BotType, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.gce.api.config.v1.config import Amount, Config, Configs
+from PB.go.chromium.org.luci.gce.api.config.v1.config import Amount, Config, Configs, Disk, VM
 
 
 class BotScalingTestApi(recipe_test_api.RecipeTestApi):
@@ -17,26 +17,29 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
   def gce_provider_config(self):
     return Configs(vms=[
         Config(prefix='prefix-first', amount=Amount(min=5, max=30),
-               current_amount=19),
+               current_amount=19, attributes=self._get_disk()),
         Config(prefix='prefix-second', amount=Amount(min=5, max=45),
-               current_amount=23),
+               current_amount=23, attributes=self._get_disk()),
         Config(prefix='prefix-third', amount=Amount(min=5, max=30),
-               current_amount=18),
+               current_amount=18, attributes=self._get_disk()),
         Config(prefix='prefix-fourth', amount=Amount(min=5, max=45),
-               current_amount=25),
+               current_amount=25, attributes=self._get_disk()),
     ])
 
   def gce_provider_config_ceiling(self):
     return Configs(vms=[
         Config(prefix='prefix-first', amount=Amount(min=5, max=30),
-               current_amount=29),
+               current_amount=29, attributes=self._get_disk()),
         Config(prefix='prefix-second', amount=Amount(min=5, max=45),
-               current_amount=44),
+               current_amount=44, attributes=self._get_disk()),
         Config(prefix='prefix-third', amount=Amount(min=5, max=30),
-               current_amount=25),
+               current_amount=25, attributes=self._get_disk()),
         Config(prefix='prefix-fourth', amount=Amount(min=5, max=45),
-               current_amount=42),
+               current_amount=42, attributes=self._get_disk()),
     ])
+
+  def _get_disk(self):
+    return VM(disk=[Disk(size=750)])
 
   def get_bot_type(self):
     return BotType(

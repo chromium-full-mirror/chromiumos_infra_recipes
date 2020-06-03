@@ -299,7 +299,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     config_map = self._get_prefix_to_gce_config(configs)
     resource_utilization = {}
     global_usage = ResourceUtilization(region='global', vms=0, cpus=0,
-                                       memory_gb=0)
+                                       memory_gb=0, disk_gb=0, max_cpus=0)
     for action in scaling_actions:
       for regional_action in action.regional_actions:
         config = config_map.get(regional_action.prefix, None)
@@ -307,19 +307,27 @@ class BotScalingApi(recipe_api.RecipeApi):
           region_util = resource_utilization.get(
               regional_action.region,
               ResourceUtilization(region=regional_action.region, vms=0, cpus=0,
-                                  memory_gb=0))
+                                  memory_gb=0, disk_gb=0, max_cpus=0))
           region_util.vms += config.current_amount
           region_util.memory_gb += config.current_amount * action.bot_type.memory_gb
           region_util.cpus += config.current_amount * action.bot_type.cores_per_bot
+          for disk in config.attributes.disk:
+            region_util.disk_gb += config.current_amount * disk.size
+          region_util.max_cpus += config.amount.max * action.bot_type.cores_per_bot
           if action.actionable == ScalingAction.NO:
             global_usage.vms += config.current_amount
             global_usage.cpus += config.current_amount * action.bot_type.cores_per_bot
             global_usage.memory_gb += config.current_amount * action.bot_type.memory_gb
+            for disk in config.attributes.disk:
+              global_usage.disk_gb += config.current_amount * disk.size
           resource_utilization[regional_action.region] = region_util
+          global_usage.max_cpus += config.amount.max * action.bot_type.cores_per_bot
       if action.actionable == ScalingAction.YES:
         global_usage.vms += action.bots_requested
         global_usage.cpus += action.bots_requested * action.bot_type.cores_per_bot
         global_usage.memory_gb += action.bots_requested * action.bot_type.memory_gb
+        for disk in config.attributes.disk:
+          global_usage.disk_gb += action.bots_requested * disk.size
     resource_utilization['global'] = global_usage
     return resource_utilization.values()
 

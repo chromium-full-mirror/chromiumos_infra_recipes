@@ -38,7 +38,7 @@
       "@@@STEP_LOG_LINE@serialized F20 data@      \"units\": [@@@",
       "@@@STEP_LOG_LINE@serialized F20 data@        {@@@",
       "@@@STEP_LOG_LINE@serialized F20 data@          \"name\": \"plans/fake_plan/units/fake_unit\", @@@",
-      "@@@STEP_LOG_LINE@serialized F20 data@          \"testCondition\": {@@@",
+      "@@@STEP_LOG_LINE@serialized F20 data@          \"testConstraint\": {@@@",
       "@@@STEP_LOG_LINE@serialized F20 data@            \"expression\": \"true\"@@@",
       "@@@STEP_LOG_LINE@serialized F20 data@          }@@@",
       "@@@STEP_LOG_LINE@serialized F20 data@        }@@@",
