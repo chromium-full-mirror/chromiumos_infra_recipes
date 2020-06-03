@@ -9,4 +9,7 @@ package recipes.chromeos.star_doctor;
 message StarDoctorProperties {
   // Whether to commit changes.
   bool commit_changes = 1;
+
+  // GoldenEye bucket to copy configs from.
+  string ge_bucket = 2;
 }

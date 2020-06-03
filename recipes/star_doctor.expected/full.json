@@ -37,7 +37,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-build-release-console/build_config.ToT.json",
+      "gs:///build_config.ToT.json",
       "[CLEANUP]/tmp_tmp_1/goldeneye/ge_build_config.json"
     ],
     "infra_step": true,

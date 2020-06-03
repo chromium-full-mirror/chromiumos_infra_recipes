@@ -26,7 +26,6 @@ DEPS = [
 
 INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
 CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
-GE_BUCKET = 'chromeos-build-release-console'
 
 PROPERTIES = StarDoctorProperties
 
@@ -41,7 +40,7 @@ def RunSteps(api, properties):
       try:
         # Trying to debug this.
         ge_path = workdir.join('goldeneye')
-        api.gsutil.download(GE_BUCKET, 'build_config.ToT.json',
+        api.gsutil.download(properties.ge_bucket, 'build_config.ToT.json',
                             ge_path.join('ge_build_config.json'))
       except api.step.InfraFailure:  # pragma:nocover
         # Will remove this once stable & debugged.
