@@ -631,9 +631,27 @@
   },
   {
     "cmd": [],
-    "name": "collect results.ensure swarming",
+    "name": "collect results.install infra/tools/luci/swarming",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cipd/infra/tools/luci/swarming/swarming_module_pin"
+    ],
+    "infra_step": true,
+    "name": "collect results.install infra/tools/luci/swarming.ensure package directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -641,7 +659,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[CACHE]/swarming_client",
+      "[CACHE]/cipd/infra/tools/luci/swarming/swarming_module_pin",
       "-ensure-file",
       "infra/tools/luci/swarming/${platform} swarming_module_pin",
       "-max-threads",
@@ -650,7 +668,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "collect results.ensure swarming.ensure_installed",
+    "name": "collect results.install infra/tools/luci/swarming.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -668,7 +686,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/swarming_client/swarming",
+      "[CACHE]/cipd/infra/tools/luci/swarming/swarming_module_pin/swarming",
       "collect",
       "-server",
       "chromium-swarm.appspot.com",

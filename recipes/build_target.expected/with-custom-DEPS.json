@@ -3368,7 +3368,7 @@
   },
   {
     "cmd": [],
-    "name": "check chrome source needed.sync chrome.install isolated",
+    "name": "check chrome source needed.sync chrome.install infra/tools/luci/isolated",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3387,7 +3387,7 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "infra_step": true,
-    "name": "check chrome source needed.sync chrome.install isolated.ensure package directory",
+    "name": "check chrome source needed.sync chrome.install infra/tools/luci/isolated.ensure package directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -3407,7 +3407,7 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "infra_step": true,
-    "name": "check chrome source needed.sync chrome.install isolated.ensure_installed",
+    "name": "check chrome source needed.sync chrome.install infra/tools/luci/isolated.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
