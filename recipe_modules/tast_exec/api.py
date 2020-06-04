@@ -97,7 +97,7 @@ class TastExecApi(recipe_api.RecipeApi):
         '-waituntilready', \
         '-continueafterfailure', \
         '-extrauseflags=tast_vm', \
-        '-defaultvarsdir={}'.format(str(tast_dir.join('vars', 'private'))), \
+        '-defaultvarsdir={}'.format(str(tast_dir.join('vars'))), \
         '-resultsdir', str(test_results_dir), \
         '-keyfile={}'.format(private_key_path), \
         '-remotebundledir={}'.format(
