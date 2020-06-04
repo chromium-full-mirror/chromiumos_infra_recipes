@@ -37,6 +37,8 @@ def RunSteps(api, properties):
     if properties.no_sysroot:
       api.assertions.assertIsNone(api.build_menu.sysroot)
 
+    api.assertions.assertEqual(env_info.packages, properties.expected_packages)
+
 
 def GenTests(api):
 
@@ -62,7 +64,10 @@ def GenTests(api):
       api.properties(
           FullProperties(
               build_target=common.BuildTarget(name='chell'),
-              artifact_build=True, forced_relevant=True)))
+              artifact_build=True, forced_relevant=True, expected_packages=[
+                  common.PackageInfo(category='chromeos-base',
+                                     package_name='chromeos-chrome')
+              ])))
 
   yield api.test(
       'pointless-artifact-build',
@@ -74,7 +79,10 @@ def GenTests(api):
       api.properties(
           FullProperties(
               build_target=common.BuildTarget(name='chell'),
-              artifact_build=True)))
+              artifact_build=True, expected_packages=[
+                  common.PackageInfo(category='chromeos-base',
+                                     package_name='chromeos-chrome')
+              ])))
 
   yield api.test('no-sysroot',
                  api.test_util.test_build().build,

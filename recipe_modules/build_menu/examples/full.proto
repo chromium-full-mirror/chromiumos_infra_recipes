@@ -27,4 +27,7 @@ message FullProperties {
 
   // Whether we expect to find no config.
   bool expect_missing_config = 6;
+
+  // Expected packages.
+  repeated chromiumos.PackageInfo expected_packages = 7;
 }

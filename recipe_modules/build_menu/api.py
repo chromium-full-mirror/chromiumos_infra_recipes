@@ -8,9 +8,12 @@
 import collections
 import contextlib
 
+from google.protobuf import json_format
+
 from recipe_engine import recipe_api
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
+from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.builder_config import BuilderConfig
 
@@ -172,10 +175,24 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     # If we do not have a config, use an empty one.
     config = self.config or BuilderConfig()
+    artifacts = config.artifacts
 
     if with_sysroot:
       self.m.sysroot_util.create_sysroot(self.build_target,
                                          config.build.portage_profile.profile)
+
+      # Set the target_versions output property, and upload metatdata.
+      # This requires a sysroot for at least the package versions.
+      target_versions = json_format.MessageToDict(
+          self.m.cros_build_api.PackageService.GetTargetVersions(
+              GetTargetVersionsRequest(chroot=self.m.cros_sdk.chroot,
+                                       build_target=self.build_target)),
+          including_default_value_fields=True)
+      self.m.easy.set_property_step('target_versions', target_versions)
+      if self.m.cros_artifacts.has_output_artifacts(artifacts.artifacts_info):
+        self.m.metadata_json.add_version_entries(target_versions)
+        self.m.metadata_json.upload_to_gs(config, self.build_target,
+                                          partial=True)
 
     # TODO(crbug/1053703): After 2020-11-12, if there is no sysroot, that's ok.
     # Note: the dependency graph requires a sysroot prior to

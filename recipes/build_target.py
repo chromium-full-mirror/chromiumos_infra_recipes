@@ -25,11 +25,9 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'cros_version',
-    'easy',
     'failures',
     'gerrit',
     'goma',
-    'metadata_json',
     'sysroot_util',
     'workspace_util',
 ]
@@ -37,13 +35,10 @@ DEPS = [
 import hashlib
 import json
 
-from google.protobuf import json_format as json_pb
-
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
-from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -97,15 +92,6 @@ def DoRunSteps(api, config, build_target, properties):
   if env_info.pointless:
     return
   packages = env_info.packages
-
-  target_versions = get_target_versions(api, build_target)
-  api.easy.set_property_step('target_versions', target_versions)
-  try:
-    if api.cros_artifacts.has_output_artifacts(config.artifacts.artifacts_info):
-      api.metadata_json.add_version_entries(target_versions)
-      api.metadata_json.upload_to_gs(config, build_target, partial=True)
-  except:  # pragma: no cover # pylint: disable=bare-except
-    pass
 
   api.sysroot_util.bootstrap_sysroot(
       compile_source=config.build.install_toolchain.compile_source)
@@ -208,26 +194,6 @@ def DoRunSteps(api, config, build_target, properties):
     api.cros_prebuilts.upload_target_prebuilts(
         build_target, config.id.type, config.artifacts.prebuilts_gs_bucket,
         private=(config.artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
-
-
-def get_target_versions(api, build_target):
-  """Returns 'target_versions' in dict form.
-
-  Returns the 'target_versions' values for this build in a dict form
-  suitable for output as a build property. Note that this cannot be
-  called until after the creation of the sysroot is finished.
-
-  Args:
-    api (RecipeApi): See RunSteps.
-    build_target (chromiumos.BuildTarget): The BuildTarget being built.
-
-  Returns:
-    dict of target versions
-  """
-  response = api.cros_build_api.PackageService.GetTargetVersions(
-      GetTargetVersionsRequest(chroot=api.cros_sdk.chroot,
-                               build_target=build_target))
-  return json_pb.MessageToDict(response)
 
 
 def GenTests(api):

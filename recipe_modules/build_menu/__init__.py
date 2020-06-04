@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/step',
     'bot_cost',
+    'cros_artifacts',
     'cros_bisect',
     'cros_build_api',
     'cros_infra_config',
