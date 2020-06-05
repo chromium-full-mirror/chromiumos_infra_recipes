@@ -10,7 +10,9 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"result\": \"good\", \"ye_unknown_field\": \"foobar\"}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_END@response@@@",
+      "@@@STEP_LOG_LINE@tee_script_cmd@RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh@@@",
+      "@@@STEP_LOG_END@tee_script_cmd@@@"
     ]
   },
   {
@@ -38,6 +40,8 @@
   },
   {
     "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh",
+      "[CLEANUP]/build_api_messages_tmp_1/build_log.txt",
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
@@ -45,8 +49,6 @@
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "--log-level",
       "debug",
-      "--tee-log",
-      "[CLEANUP]/build_api_messages_tmp_1/build_log.txt",
       "chromite.api.TestApiService/InputOutputMethod"
     ],
     "env_suffixes": {
@@ -233,7 +235,9 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"artifacts\": [{\"path\": \"[START_DIR]/tmp/artifact.tar.gz\"}]}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_END@response@@@",
+      "@@@STEP_LOG_LINE@tee_script_cmd@RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh@@@",
+      "@@@STEP_LOG_END@tee_script_cmd@@@"
     ]
   },
   {
@@ -261,6 +265,8 @@
   },
   {
     "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh",
+      "[CLEANUP]/build_api_messages_tmp_2/build_log.txt",
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
@@ -268,8 +274,6 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "--log-level",
       "debug",
-      "--tee-log",
-      "[CLEANUP]/build_api_messages_tmp_2/build_log.txt",
       "chromite.api.ArtifactsService/BundleFirmware"
     ],
     "env_suffixes": {
@@ -394,7 +398,9 @@
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"version\": {\"major\": 1, \"bug\": 0, \"minor\": 1}}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_END@response@@@",
+      "@@@STEP_LOG_LINE@tee_script_cmd@RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh@@@",
+      "@@@STEP_LOG_END@tee_script_cmd@@@"
     ]
   },
   {
@@ -418,6 +424,8 @@
   },
   {
     "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh",
+      "[CLEANUP]/build_api_messages_tmp_3/build_log.txt",
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
@@ -425,8 +433,6 @@
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "--log-level",
       "debug",
-      "--tee-log",
-      "[CLEANUP]/build_api_messages_tmp_3/build_log.txt",
       "chromite.api.VersionService/Get"
     ],
     "env_suffixes": {

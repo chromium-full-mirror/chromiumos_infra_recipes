@@ -1185,7 +1185,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#369)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#376)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -1212,7 +1212,7 @@ Args:
 Returns:
   bool, whether the version is a least the required value.
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#366)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#373)(self, output_proto, response_lambda):**
 
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#190)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)

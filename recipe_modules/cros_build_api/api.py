@@ -293,14 +293,21 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       presentation.logs['request'] = [input_json]
       presentation.logs['response'] = ['{}']
 
-      cmd = [
+      cmd = []
+      if self._capture_stdout_stderr:
+        tee_script = self.repo_resource('recipe_scripts/tee_wrapper.sh')
+        presentation.logs['tee_script_cmd'] = [str(tee_script)]
+        # Make the tee_script and logfile path be the first arguments.
+        # The tee_script will execute the arguments after logfile path and
+        # tee the output into the logfile path.
+        cmd.append(str(tee_script))
+        cmd.append(logfile_path)
+
+      cmd.extend([
           self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
           '--input-json', input_path, '--output-json', output_path,
-          '--log-level', self._log_level
-      ]
-      if self._capture_stdout_stderr:
-        cmd.extend(['--tee-log', logfile_path])
-      cmd.append(endpoint)
+          '--log-level', self._log_level, endpoint
+      ])
       file_contents = None
 
       # build_api needs to invoke other chromite/bin binaries, hence this dir
