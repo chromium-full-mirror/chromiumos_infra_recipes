@@ -1,0 +1,18 @@
+{
+  "policies": [
+    {
+      "name": "atlas",
+      "dimensions": [
+        {
+          "name": "label-board",
+          "value": "atlas"
+        }
+      ],
+      "modes": [
+        "TASK_BOT_COUNT",
+        "MAX_PEND_TIME"
+      ],
+      "lookbackHours": -24
+    }
+  ]
+}

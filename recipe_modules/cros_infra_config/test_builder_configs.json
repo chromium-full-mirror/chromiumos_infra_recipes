@@ -1,0 +1,1050 @@
+{
+  "builderConfigs": [
+    {
+      "id": {
+        "name": "amd64-generic-postsubmit",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": true
+      },
+      "artifacts": {
+        "prebuilts": "PRIVATE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "portageProfile": {
+          "profile": "generic_build"
+        },
+        "buildImages": {
+          "imageTypes": [
+            "BASE",
+            "TEST"
+          ]
+        },
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "packageBlacklist": [],
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "amd64-generic-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "packageBlacklist": [
+          {
+            "packageName": "chromite",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ],
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "staging-amd64-generic-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": false,
+        "environment": "STAGING",
+        "sdkCacheVersion": "2"
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "installPackages": {
+          "runSpec": "RUN"
+        }
+      },
+      "unitTests": {
+        "packageBlacklist": [
+          {
+            "packageName": "chromite",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ],
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "amd64-generic-snapshot",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": false
+      },
+      "artifacts": {
+        "prebuilts": "PUBLIC",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuiltsGsBucket": "chromeos-prebuilt",
+        "artifactsGsBucket": "chromeos-image-archive"
+      },
+      "chrome": {
+        "internal": false
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "installToolchain": {
+          "compileSource": false
+        },
+        "applyGerritChanges": true
+      },
+      "unitTests": {
+        "packageBlacklist": [],
+        "ebuildsRunSpec": "RUN",
+        "emptySysroot": false
+      }
+    },
+    {
+      "id": {
+        "name": "arm-generic-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": false
+      },
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        }
+      },
+      "unitTests": {
+        "packageBlacklist": [
+          {
+            "packageName": "chromite",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ],
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "arm-generic-pointless-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": false
+      },
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        }
+      },
+      "unitTests": {
+        "packageBlacklist": [
+          {
+            "packageName": "chromite",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ],
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "staging-arm-generic-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": false,
+        "environment": "STAGING"
+      },
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        }
+      },
+      "unitTests": {
+        "packageBlacklist": [
+          {
+            "packageName": "chromite",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ],
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "bisecting-orchestrator",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "buildImages": {
+          "imageTypes": [
+            "TEST",
+            "BASE"
+          ]
+        },
+        "installPackages": {
+          "runSpec": "RUN"
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "amd64-generic-bisect",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": true
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN_EXIT"
+        },
+        "applyGerritChanges": false
+      }
+    },
+    {
+      "id": {
+        "name": "arm-generic-postsubmit",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": false
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        }
+      }
+    },
+    {
+      "id": {
+        "name": "arm-generic-v42-buildtest-postsubmit",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": false
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN_EXIT",
+          "packages": [
+            {
+              "packageName": "chromeos-kernel",
+              "category": "syskernel",
+              "version": "4.19"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": {
+        "name": "atlas-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true,
+        "brokenBefore": "2019-11-01T00:00:00Z"
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "applyGerritChanges": true
+      },
+      "unitTests": {
+        "packageBlacklist": [
+          {
+            "packageName": "chromite",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ],
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "target-baseline",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": false
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "applyGerritChanges": false
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "grunt-postsubmit",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": false
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "applyGerritChanges": false
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "grunt-unittest-only-postsubmit",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": false
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "applyGerritChanges": false
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN_EXIT"
+      }
+    },
+    {
+      "id": {
+        "name": "toolchain-orchestrator",
+        "branch": "master",
+        "type": "TOOLCHAIN"
+      },
+      "general": {
+        "critical": true
+      },
+      "orchestrator": {
+        "child_specs": [],
+        "gitilesCommit": {
+          "host": "chrome-internal",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/snapshot"
+        },
+        "gerritChanges": [
+          {
+            "host": "chromium-review.googlesource.com",
+            "project": "chromiumos/overlays/chromiumos-overlay",
+            "change": 1394249,
+            "patchset": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "clang-tidy-toolchain",
+        "branch": "master",
+        "type": "TOOLCHAIN"
+      },
+      "general": {
+        "critical": false,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "EBUILD_LOGS"
+                ]
+              }
+            ]
+          },
+          "toolchain": {
+            "inputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CHROME_CLANG_WARNINGS_FILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/clang-tidy-1"
+                ]
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CHROME_CLANG_WARNINGS_FILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/clang-tidy-1"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          },
+          {
+            "flag": "strict_toolchain_checks"
+          },
+          {
+            "flag": "-afdo_use"
+          },
+          {
+            "flag": "thinlto"
+          },
+          {
+            "flag": "clang_tidy"
+          }
+        ],
+        "installPackages": {
+          "runSpec": "RUN",
+          "compileSource": true,
+          "packages": [
+            {
+              "packageName": "chromeos-chrome",
+              "category": "chromeos-base"
+            }
+          ],
+          "disableGoma": true
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "orderfile-generate-orchestrator",
+        "branch": "master",
+        "type": "TOOLCHAIN"
+      },
+      "general": {
+        "critical": true
+      },
+      "orchestrator": {
+        "child_specs": [
+          {
+            "name": "orderfile-generate-toolchain"
+          }
+        ],
+        "followOnOrchestrator": {
+          "name": "orderfile-verify-orchestrator",
+          "awaitCompletion": true
+        },
+        "gitilesCommit": {
+          "host": "chrome-internal",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/snapshot"
+        },
+        "gerritChanges": [
+          {
+            "host": "chromium-review.googlesource.com",
+            "project": "chromiumos/overlays/chromiumos-overlay",
+            "change": 1394249,
+            "patchset": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "benchmark-afdo-process",
+        "branch": "master",
+        "type": "TOOLCHAIN"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "toolchain": {
+            "inputArtifacts": [
+              {
+                "artifactTypes": [
+                  "UNVERIFIED_CHROME_BENCHMARK_PERF_FILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/afdo/unvetted/benchmark",
+                  "chromeos-prebuilt/afdo-job/llvm"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/afdo/unvetted/benchmark",
+                  "chromeos-prebuilt/afdo-job/llvm"
+                ]
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/afdo/unvetted/benchmark",
+                  "chromeos-prebuilt/afdo-job/llvm"
+                ],
+                "aclName": "public-read"
+              }
+            ]
+          },
+          "profileInfo": {
+            "afdoRelease": {
+              "chromeCwpProfile": "silvermont"
+            }
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "installPackages": {
+          "compileSource": true,
+          "runSpec": "RUN"
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "atlas-llvm-next",
+        "branch": "master",
+        "type": "TOOLCHAIN"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          },
+          {
+            "flag": "strict_toolchain_checks"
+          },
+          {
+            "flag": "llvm-next"
+          },
+          {
+            "flag": "thinlto"
+          }
+        ],
+        "sdkUpdate": {
+          "compileSource": true
+        },
+        "installToolchain": {
+          "compileSource": true
+        },
+        "installPackages": {
+          "runSpec": "RUN",
+          "compileSource": true
+        },
+        "buildImages": {
+          "imageTypes": [
+            "TEST",
+            "BASE"
+          ]
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "orderfile-generate-toolchain",
+        "branch": "master",
+        "type": "TOOLCHAIN"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "EBUILD_LOGS"
+                ]
+              }
+            ]
+          },
+          "toolchain": {
+            "inputArtifacts": [
+              {
+                "artifactTypes": [
+                  "UNVERIFIED_CHROME_LLVM_ORDERFILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/orderfile/unvetted",
+                  "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
+                ]
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "UNVERIFIED_CHROME_LLVM_ORDERFILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/orderfile/unvetted",
+                  "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
+                ]
+              }
+            ]
+          },
+          "profileInfo": {
+            "chromeCwpProfile": "silvermont"
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          },
+          {
+            "flag": "strict_toolchain_checks"
+          },
+          {
+            "flag": "-orderfile_use"
+          },
+          {
+            "flag": "orderfile_generate"
+          },
+          {
+            "flag": "-strict_toolchain_checks"
+          }
+        ],
+        "applyGerritChanges": true,
+        "prepareForBuild": {
+          "additionalArgs": {
+            "chromeCwpProfile": "silvermont"
+          }
+        },
+        "installPackages": {
+          "compileSource": true,
+          "runSpec": "RUN",
+          "packages": [
+            {
+              "packageName": "chromeos-chrome",
+              "category": "chromeos-base"
+            }
+          ]
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "orderfile-verify-toolchain",
+        "branch": "master",
+        "type": "TOOLCHAIN"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "EBUILD_LOGS"
+                ]
+              }
+            ]
+          },
+          "toolchain": {
+            "inputArtifacts": [
+              {
+                "artifactTypes": [
+                  "UNVERIFIED_CHROME_LLVM_ORDERFILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/orderfile/unvetted",
+                  "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "VERIFIED_CHROME_LLVM_ORDERFILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/orderfile/vetted",
+                  "chromeos-prebuilt/afdo-job/orderfiles/vetted"
+                ]
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "VERIFIED_CHROME_LLVM_ORDERFILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/orderfile/vetted",
+                  "chromeos-prebuilt/afdo-job/orderfiles/vetted"
+                ],
+                "aclName": "public-read"
+              }
+            ]
+          },
+          "profileInfo": {
+            "chromeCwpProfile": "silvermont"
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          },
+          {
+            "flag": "strict_toolchain_checks"
+          },
+          {
+            "flag": "orderfile_verify"
+          },
+          {
+            "flag": "-reorder_text_sections"
+          }
+        ],
+        "prepareForBuild": {
+          "additionalArgs": {
+            "chromeCwpProfile": "silvermont"
+          }
+        },
+        "installPackages": {
+          "compileSource": true,
+          "runSpec": "RUN",
+          "packages": [
+            {
+              "packageName": "bash",
+              "category": "app-shells"
+            },
+            {
+              "packageName": "chromeos-chrome",
+              "category": "chromeos-base"
+            }
+          ]
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "postsubmit-orchestrator",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": true
+      },
+      "orchestrator": {
+        "child_specs": [
+          {
+            "name": "amd64-generic-postsubmit"
+          },
+          {
+            "name": "arm-generic-postsubmit"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "cq-orchestrator",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true
+      },
+      "orchestrator": {
+        "child_specs": [
+          {
+            "name": "amd64-generic-cq"
+          },
+          {
+            "name": "arm-generic-cq"
+          },
+          {
+            "name": "arm-generic-pointless-cq"
+          },
+          {
+            "name": "atlas-cq"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "chromite-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true
+      },
+      "build": {
+        "applyGerritChanges": true
+      }
+    }
+  ]
+}

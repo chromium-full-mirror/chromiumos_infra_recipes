@@ -1,0 +1,51 @@
+{
+  "botPolicies": [
+    {
+      "botGroup": "cq",
+      "botType": {
+        "botSize": "large",
+        "coresPerBot": 32,
+        "memoryGb": 64
+      },
+      "regionRestrictions": [
+        {
+          "region": "us-central1-b",
+          "prefix": "prefix-first",
+          "weight": 0.245
+        },
+        {
+          "region": "us-central2-d",
+          "prefix": "prefix-second",
+          "weight": 0.31
+        },
+        {
+          "region": "us-east1-d",
+          "prefix": "prefix-third",
+          "weight": 0.245
+        },
+        {
+          "region": "us-west1-b",
+          "prefix": "prefix-fourth",
+          "weight": 0.2
+        }
+      ],
+      "swarmingDimensions": [
+        {
+          "name": "role",
+          "value": "cq",
+          "values": [
+            "cq",
+            "bar"
+          ]
+        },
+        {
+          "name": "bot_size",
+          "value": "large",
+          "values": [
+            "large"
+          ]
+        }
+      ]
+    }
+  ]
+}
