@@ -210,7 +210,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
         self.m.cros_bisect.set_compile_failures(response.failed_packages,
                                                 step_name,
-                                                config.general.critical)
+                                                config.general.critical.value)
         self.m.failures.set_failed_packages(presentation,
                                             response.failed_packages)
 
