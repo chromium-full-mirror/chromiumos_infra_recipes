@@ -199,6 +199,12 @@ class CrosSdkApi(recipe_api.RecipeApi):
     cmd += args
     return self.m.step(name, cmd, **kwargs)
 
+  def _remove_chroot(self, name=None):
+    with self.m.step.nest(name or 'remove sdk'):
+      self.cleanup_sysroot()
+      self.unmount_chroot()
+      self._delete_chroot()
+
   def _delete_chroot(self, name=None):
     """Call SdkService.Delete.
 
@@ -266,7 +272,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
 
       except self.m.step.StepFailure:
         # Invalidate the cache if the InitSDK call fails.
-        self._delete_chroot(name='InitSDK failure')
+        self._remove_chroot(name='InitSDK failure')
         raise
 
     return self.chroot
@@ -331,7 +337,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
             timeout=timeout_sec)
       except self.m.step.StepFailure:
         # If the update fails, also delete the SDK.
-        self._delete_chroot(name='UpdateSDK failure')
+        self._remove_chroot(name='UpdateSDK failure')
         raise
 
   @contextlib.contextmanager
@@ -348,12 +354,13 @@ class CrosSdkApi(recipe_api.RecipeApi):
       self.mark_sdk_as_dirty()
       raise
     finally:
-      if self._sdk_is_dirty:
-        self._delete_chroot(name='Invalidating SDK due to dirty state')
-
       with self.m.step.nest('clean up SDK chroot'):
         self.cleanup_sysroot()
         self.unmount_chroot()
+
+        if self._sdk_is_dirty:
+          self._delete_chroot(name='Invalidating SDK due to dirty state')
+
         self.unlink_chroot(checkout_path or self.m.cros_source.workspace_path)
         self.swarming_chmod_chroot()
 
