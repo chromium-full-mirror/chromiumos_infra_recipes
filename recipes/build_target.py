@@ -17,6 +17,7 @@ DEPS = [
     'cros_bisect',
     'cros_infra_config',
     'sysroot_util',
+    'test_util',
     'workspace_util',
 ]
 
@@ -24,6 +25,7 @@ import json
 
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
@@ -88,94 +90,49 @@ def DoRunSteps(api, config, build_target, properties):
 
 
 def GenTests(api):
-  mock_CLs = [
-      common_pb2.GerritChange(change=1234),
-      common_pb2.GerritChange(change=2341),
-  ]
 
-  def cq_build(builder='amd64-generic-cq', build_target='amd64-generic',
-               gerrit_changes=True, no_toolchain=True):
-    """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                             builder=builder)
-    if gerrit_changes:
-      build.input.gerrit_changes.extend(mock_CLs)
-    ret = api.buildbucket.build(build)
-    if no_toolchain:
-      ret += no_toolchain_change()
-    if build_target:
-      ret += api.properties(build_target={'name': build_target})
+  def test_build(cq=True, build_target=None, toolchain_cls=False,
+                 pointless=False, properties=None, **kwargs):
+    """A test build, with BuildTargetProperties,
+
+    Args:
+      cq (bool): Whether this is a CQ build.
+      build_target (str): The name of the build target.
+      toolchain_cls (bool): Whether there is a toolchain change.
+      pointless (bool): Whether the build is pointless.
+      properties (dict): Additional input properties for the build.
+      kwargs (dict): Arguments to pass to test_util.test_build.
+
+    Returns:
+      A step_data object with both the build and the recipe input properties.
+    """
+    ret = api.test_util.test_child_build(build_target or 'amd64-generic', cq=cq,
+                                         input_properties=properties,
+                                         **kwargs).build
+    if toolchain_cls:
+      ret += api.build_menu.set_toolchain_cls_return(True)
+    if pointless:
+      ret += api.build_menu.set_pointless_return(True)
     return ret
 
-  def toolchain_build(builder='orderfile-generate-toolchain',
-                      build_target='eve'):
-    """Generate a test build proto."""
-    build_msg = api.buildbucket.ci_build_message(
-        project='chromeos', bucket='toolchain', builder=builder, tags=[{
-            'key': 'parent_buildbucket_id',
-            'value': 'parent_id'
-        }])
-    ret = api.buildbucket.build(build_msg)
-    if build_target:
-      ret += api.properties(build_target={'name': build_target})
-    return ret
+  # Normal CQ build, with one gerrit_change.
+  yield api.test('basic', test_build())
 
-  def make_build_pointless():
-    resp = PointlessBuildCheckResponse()
-    resp.build_is_pointless.value = True
-    serialized = resp.SerializeToString()
-    return api.step_data(
-        'pointless build check.depgraph relevance check.read output file',
-        api.file.read_raw(content=serialized))
-
-  def make_build_not_pointless():
-    resp = PointlessBuildCheckResponse()
-    resp.build_is_pointless.value = False
-    serialized = resp.SerializeToString()
-    return api.step_data(
-        'pointless build check.depgraph relevance check.read output file',
-        api.file.read_raw(content=serialized))
-
-  def no_toolchain_change():
-    resp = PointlessBuildCheckResponse()
-    resp.build_is_pointless.value = True
-    serialized = resp.SerializeToString()
-    return api.step_data(
-        'init sdk.detect toolchain change.path relevancy check.'
-        'read output file', api.file.read_raw(content=serialized))
-
-  def force_toolchain_change():
-    resp = PointlessBuildCheckResponse()
-    resp.build_is_pointless.value = False
-    serialized = resp.SerializeToString()
-    return api.step_data(
-        'init sdk.detect toolchain change.path relevancy check.'
-        'read output file', api.file.read_raw(content=serialized))
-
-  yield api.test(
-      'basic',
-      cq_build(build_target=None),
-      api.properties(build_target={'name': 'amd64-generic'}),
-  )
+  yield api.test('postsubmit', test_build(cq=False))
 
   yield api.test(
       'forced',
-      cq_build(build_target=None),
-      api.properties(build_target={'name': 'amd64-generic'},
-                     force_relevant_build=True),
-  )
+      test_build(
+          properties=BuildTargetProperties(
+              build_target=BuildTarget(
+                  name='amd64-generic'), force_relevant_build=True)))
+
+  yield api.test('pointless-build-check', test_build(pointless=True))
+
+  yield api.test('toolchain-change-test', test_build(toolchain_cls=True))
 
   yield api.test(
-      'forced-pointless',
-      cq_build(builder='amd64-generic-cq', build_target=None),
-      api.properties(build_target={'name': 'amd64-generic'},
-                     force_relevant_build=True),
-  )
-
-  yield api.test(
-      'with-goma-props',
-      cq_build(build_target=None),
-      api.properties(build_target={'name': 'amd64-generic'}),
+      'with-goma-props', test_build(),
       api.properties(
           **{
               '$chromeos/goma':
@@ -183,65 +140,43 @@ def GenTests(api):
                       client_version='staging',
                       goma_approach=common.GomaConfig.RBE_PROD,
                   )
-          }),
-  )
+          }))
 
   yield api.test(
-      'no-needs-chrome',
-      cq_build(),
-      make_build_not_pointless(),
-      api.step_data(
-          'install packages.check chrome source needed.'
-          'call chromite.api.PackageService/NeedsChromeSource.read output file',
-          api.file.read_raw(content='{"needs_chrome_source": false}')),
-  )
+      'no-needs-chrome', test_build(),
+      api.build_menu.set_build_api_return(
+          'install packages.check chrome source needed',
+          'PackageService/NeedsChromeSource', '{"needs_chrome_source": false}'))
 
   yield api.test(
-      'fails_install_with_many_packages',
-      cq_build(),
-      api.step_data(
-          'install packages'
-          '.call chromite.api.SysrootService/InstallPackages'
-          '.read output file',
-          api.file.read_raw(
-              content=json.dumps(
-                  dict(
-                      failedPackages=[{
-                          "category": "chromeos-base",
-                          "packageName": "thislongpackagenameomg",
-                          "version": "0.0.1-r199",
-                      }, {
-                          "category": "safari-base",
-                          "packageName": "thisisanexceedinglylongpackage",
-                          "version": "0.0.1-r129",
-                      }, {
-                          "category": "edge-base",
-                          "packageName": "shortpackagename",
-                          "version": "0.0.1-r197",
-                      }],
-                  )))),
-  )
+      'fails_install_with_many_packages', test_build(),
+      api.build_menu.set_build_api_return(
+          'install packages', 'SysrootService/InstallPackages',
+          json.dumps(
+              dict(failedPackages=[{
+                  "category": "chromeos-base",
+                  "packageName": "thislongpackagenameomg",
+                  "version": "0.0.1-r199",
+              }, {
+                  "category": "safari-base",
+                  "packageName": "thisotherexceedinglylongpackage",
+                  "version": "0.0.1-r129",
+              }, {
+                  "category": "edge-base",
+                  "packageName": "shortpackagename",
+                  "version": "0.0.1-r197",
+              }]))))
 
   yield api.test(
-      'install_package_no_goma',
-      cq_build(),
-      api.step_data(
-          'install packages'
-          '.call chromite.api.SysrootService/InstallPackages'
-          '.read output file',
-          api.file.read_raw(
-              content=json.dumps(
-                  dict(
-                      events=[{
-                          "name":
-                              "fake_package-path/fake-package-name-0.0.1-r2",
-                          "durationMilliseconds":
-                              "1523",
-                          "timestampMilliseconds":
-                              "1580481610805"
-                      }],
-                  )))),
-  )
+      'install_package_no_goma', test_build(),
+      api.build_menu.set_build_api_return(
+          'install packages', 'SysrootService/InstallPackages',
+          json.dumps(
+              dict(events=[{
+                  "name": "fake_package-path/fake-package-name-0.0.1-r2",
+                  "durationMilliseconds": "1523",
+                  "timestampMilliseconds": "1580481610805"
+              }]))))
 
   goma_artifacts = dict(
       gomaArtifacts={
@@ -250,41 +185,30 @@ def GenTests(api):
           "statsFile":
               "stats.binaryproto",
           "logFiles": [
-              "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131"
-              ".84.gz", "compiler_proxy.chromeos-ci.log.INFO.20200131-063322"
-              ".81.gz", "gomacc.chromeos-ci.log.INFO.20200131-073921.1717"
-              ".tar.gz", "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005"
-              ".8.gz"
+              "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
+              "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
+              "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
+              "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"
           ]
-      },
-      events=[{
+      }, events=[{
           "name": "fake_package-path/fake-package-name-0.0.1-r2",
           "durationMilliseconds": "1523",
           "timestampMilliseconds": "1580481610805"
-      }],
-  )
+      }])
   yield api.test(
-      'install_package_with_goma',
-      cq_build(),
-      api.step_data(
-          'install packages'
-          '.call chromite.api.SysrootService/InstallPackages'
-          '.read output file',
-          api.file.read_raw(content=json.dumps(goma_artifacts))),
-  )
+      'install_package_with_goma', test_build(),
+      api.build_menu.set_build_api_return('install packages',
+                                          'SysrootService/InstallPackages',
+                                          json.dumps(goma_artifacts)))
 
   yield api.test(
-      'prepare-for-build',
-      toolchain_build(),
-      api.step_data(
-          'prepare artifacts.call chromite.api.ArtifactsService/'
-          'PrepareForBuild.read output file',
-          api.file.read_raw(content='{"build_relevance": "POINTLESS"}')),
-  )
+      'prepare-for-build-needless', test_build(),
+      api.build_menu.set_build_api_return('prepare artifacts',
+                                          'ArtifactsService/PrepareForBuild',
+                                          '{"build_relevance": "POINTLESS"}'))
 
   yield api.test(
-      'with-findit-bisect',
-      cq_build(),
+      'with-findit-bisect', test_build(),
       api.properties(
           **{
               '$chromeos/cros_bisect':
@@ -299,56 +223,27 @@ def GenTests(api):
                                   'baz', 'cat2', '3'),
                           ]
                       })
-          }),
-  )
-
-  yield api.test('with-gerrit-changes', cq_build())
+          }))
 
   yield api.test(
       'run-exit-install-packages',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='amd64-generic-bisect'),
-      api.properties(build_target={'name': 'amd64-generic'}),
-  )
+      test_build(bucket='postsubmit', builder='amd64-generic-bisect'))
 
   yield api.test(
-      'run-ebuild-tests',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='amd64-generic-postsubmit'),
-      api.properties(build_target={'name': 'amd64-generic'}),
-  )
+      'fail-image-tests', test_build(cq=False),
+      api.build_menu.set_build_api_return('build images.test images',
+                                          'ImageService/Test',
+                                          '{"success": false}'))
 
-  yield api.test(
-      'fail-image-tests',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='amd64-generic-postsubmit'),
-      api.properties(build_target={'name': 'amd64-generic'}),
-      api.step_data(
-          'build images.test images.call chromite.api.ImageService/Test.read output file',
-          api.file.read_raw(content='{"success": false}')),
-  )
-
-  yield api.test(
-      'no-run-ebuild-tests',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='grunt-postsubmit'),
-      api.properties(build_target={'name': 'grunt'}),
-  )
+  yield api.test('no-run-ebuild-tests',
+                 test_build(cq=False, build_target='grunt'))
 
   yield api.test(
       'run-exit-ebuild-tests',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='grunt-unittest-only-postsubmit'),
-      api.properties(build_target={'name': 'grunt'}),
-  )
+      test_build(cq=False, build_target='grunt',
+                 builder='grunt-unittest-only-postsubmit'))
 
-  yield api.test('pointless-build-check', cq_build(), make_build_pointless())
+  yield api.test('with-builder-config-limited-packages',
+                 test_build(builder='orderfile-verify-toolchain'))
 
-  yield api.test('toolchain-change-test', cq_build(), force_toolchain_change())
-
-  yield api.test(
-      'with-builder-config-limited-packages',
-      cq_build(builder='orderfile-verify-toolchain',
-               build_target='arm-generic'))
-
-  yield api.test('builder-no-longer-exists')
+  yield api.test('builder-no-longer-exists', test_build(build_target='no-such'))
