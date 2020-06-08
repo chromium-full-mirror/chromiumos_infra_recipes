@@ -12,40 +12,23 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
-    'recipe_engine/step',
-    'bot_cost',
     'build_menu',
-    'chrome',
     'cros_artifacts',
     'cros_bisect',
-    'cros_build_api',
     'cros_infra_config',
-    'cros_prebuilts',
-    'cros_relevance',
-    'cros_sdk',
-    'cros_source',
-    'cros_version',
-    'failures',
-    'gerrit',
     'sysroot_util',
     'workspace_util',
 ]
 
-import hashlib
 import json
 
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
-from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
-from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
-from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
@@ -56,12 +39,6 @@ UPLOADABLE_PREBUILTS_CONFIGS = [
     BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
 ]
 
-# All step timeouts are in seconds.  All are moving to modules.
-STEP_TIMEOUTS = {
-    'build_image': 45 * 60,
-    'unit_tests': 2 * 60 * 60,
-}
-
 
 def RunSteps(api, properties):
   build_target = properties.build_target
@@ -71,12 +48,9 @@ def RunSteps(api, properties):
 
 
 def DoRunSteps(api, config, build_target, properties):
-  # Short versions of several variables that may have been altered in RunSteps.
-  gitiles_commit = api.cros_infra_config.gitiles_commit
-  gerrit_changes = api.cros_infra_config.gerrit_changes
-
   # TODO(crbug/1053703): artifact_build is something that we can remove when we
-  # split up build_target.py into individual builders.
+  # split up build_target.py into individual builders, since we will know
+  # whether it is True or False based on what recipe we are.
   artifact_build = api.cros_artifacts.has_output_artifacts(
       config.artifacts.artifacts_info)
 
@@ -90,6 +64,8 @@ def DoRunSteps(api, config, build_target, properties):
     return
   packages = env_info.packages
 
+  # TODO(crbug/1053703): All of the following if statements should be removed as
+  # we break build_target.py into the various builders.
   install_packages = config.build.install_packages
   if api.cros_infra_config.should_run(install_packages.run_spec):
     api.build_menu.bootstrap_sysroot_and_install_packages(
@@ -97,44 +73,18 @@ def DoRunSteps(api, config, build_target, properties):
     if api.cros_infra_config.should_exit(install_packages.run_spec):
       return
 
-  disable_rootfs_verification = config.build.build_images.disable_rootfs_verification
-  disk_layout = config.build.build_images.disk_layout
-  image_types = config.build.build_images.image_types
-
-  builder_path = api.cros_artifacts.artifacts_gs_path(config.id.name,
-                                                      build_target,
-                                                      config.id.type)
-
-  api.sysroot_util.build_images(image_types, builder_path,
-                                disable_rootfs_verification, disk_layout)
-
   ebuilds_run_spec = config.unit_tests.ebuilds_run_spec
-  if api.cros_infra_config.should_run(ebuilds_run_spec):
-    with api.step.nest('run ebuild tests') as reb_step:
-      flags = BuildTargetUnitTestRequest.Flags(
-          empty_sysroot=config.unit_tests.empty_sysroot)
-      response = api.cros_build_api.TestService.BuildTargetUnitTest(
-          BuildTargetUnitTestRequest(
-              build_target=build_target, chroot=api.cros_sdk.chroot,
-              result_path=str(api.path.mkdtemp()),
-              package_blacklist=config.unit_tests.package_blacklist,
-              flags=flags), timeout=STEP_TIMEOUTS['unit_tests'],
-          response_lambda=api.cros_build_api.failed_pkg_names)
-      api.failures.set_failed_packages(reb_step, response.failed_packages)
-    if api.cros_infra_config.should_exit(ebuilds_run_spec):
-      return
+  api.build_menu.build_and_test_images(
+      config=config,
+      run_tests=api.cros_infra_config.should_run(ebuilds_run_spec))
+  if api.cros_infra_config.should_exit(ebuilds_run_spec):
+    return
 
-  if api.cros_artifacts.has_output_artifacts(config.artifacts.artifacts_info):
-    api.cros_artifacts.upload_artifacts(
-        config.id.name, build_target, config.id.type,
-        config.artifacts.artifacts_gs_bucket, sysroot=api.sysroot_util.sysroot,
-        chroot=api.cros_sdk.chroot,
-        artifacts_info=config.artifacts.artifacts_info)
+  if artifact_build:
+    api.build_menu.upload_artifacts(config)
 
   if config.artifacts.prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
-    api.cros_prebuilts.upload_target_prebuilts(
-        build_target, config.id.type, config.artifacts.prebuilts_gs_bucket,
-        private=(config.artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
+    api.build_menu.upload_prebuilts(config)
 
 
 def GenTests(api):

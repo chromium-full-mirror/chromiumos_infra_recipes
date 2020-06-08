@@ -15,6 +15,7 @@ from recipe_engine import recipe_api
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
+from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.builder_config import BuilderConfig
 
@@ -249,7 +250,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     """Install packages (possibly fetching Chrome source).
 
     Args:
-      config (BuilderConfig): The
+      config (BuilderConfig): The Builder Config for the build.
       packages (list[PackageInfo]): list of packages to install.  Default: all
           packages for the build_target.
       artifact_build (bool): Whether to call update_for_artifact_build.
@@ -266,3 +267,60 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self.m.sysroot_util.install_packages(config, self.dep_graph, packages,
                                          artifact_build=artifact_build,
                                          timeout_sec=timeout_sec, name=name)
+
+  def build_and_test_images(self, config=None, run_tests=True):
+    """Build the image and optionally run ebuild tests.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+      run_tests (bool): Whether to run ebuild tests.
+    """
+    config = config or self.config_or_default
+    build_images = config.build.build_images
+    unit_tests = config.unit_tests
+
+    builder_path = self.m.cros_artifacts.artifacts_gs_path(
+        config.id.name, self.build_target, config.id.type)
+    self.m.sysroot_util.build_images(build_images.image_types, builder_path,
+                                     build_images.disable_rootfs_verification,
+                                     build_images.disk_layout)
+
+    if run_tests:
+      with self.m.step.nest('run ebuild tests') as presentation:
+        response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
+            BuildTargetUnitTestRequest(
+                build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
+                result_path=str(self.m.path.mkdtemp()),
+                package_blacklist=unit_tests.package_blacklist,
+                flags=BuildTargetUnitTestRequest.Flags(
+                    empty_sysroot=unit_tests.empty_sysroot)),
+            timeout=2 * 60 * 60,
+            response_lambda=self.m.cros_build_api.failed_pkg_names)
+        self.m.failures.set_failed_packages(presentation,
+                                            response.failed_packages)
+
+  def upload_artifacts(self, config=None):
+    """Upload artifacts from the build.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+    """
+    config = config or self.config_or_default
+
+    self.m.cros_artifacts.upload_artifacts(
+        config.id.name, self.build_target, config.id.type,
+        config.artifacts.artifacts_gs_bucket, sysroot=self.sysroot,
+        chroot=self.chroot, artifacts_info=config.artifacts.artifacts_info)
+
+  def upload_prebuilts(self, config=None):
+    """Upload prebuilts from the build.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+    """
+    config = config or self.config
+    artifacts = config.artifacts
+
+    self.m.cros_prebuilts.upload_target_prebuilts(
+        self.build_target, config.id.type, artifacts.prebuilts_gs_bucket,
+        private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))

@@ -40,14 +40,21 @@ def RunSteps(api, properties):
       api.assertions.assertIsNone(api.build_menu.sysroot)
     else:
       api.build_menu.bootstrap_sysroot_and_install_packages()
+      api.build_menu.build_and_test_images()
+      api.build_menu.upload_artifacts()
+      if properties.upload_prebuilts:
+        api.build_menu.upload_prebuilts()
 
     api.assertions.assertEqual(env_info.packages, properties.expected_packages)
 
 
 def GenTests(api):
 
-  yield api.test('postsubmit-build',
-                 api.test_util.test_child_build('amd64-generic').build)
+  yield api.test(
+      'postsubmit-build',
+      api.test_util.test_child_build('amd64-generic').build,
+      api.properties(
+          FullProperties(artifact_build=True, upload_prebuilts=True)))
 
   yield api.test('cq-build',
                  api.test_util.test_child_build('amd64-generic', cq=True).build)

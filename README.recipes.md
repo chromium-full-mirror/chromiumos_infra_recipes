@@ -537,36 +537,44 @@ Returns:
   A list[Path] of symbolicated files written.
 ### *recipe_modules* / [build\_menu](/recipe_modules/build_menu)
 
-[DEPS](/recipe_modules/build_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [metadata\_json](#recipe_modules-metadata_json), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/build_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata\_json](#recipe_modules-metadata_json), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API providing a menu for build steps
 
-#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by image builders.
 
 Image builders do not call other recipe modules directly: they always get
 there via this module, and be a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#246)(self, config=None, packages=None, artifact_build=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#247)(self, config=None, packages=None, artifact_build=None, timeout_sec='DEFAULT', name=None):**
 
 Install packages (possibly fetching Chrome source).
 
 Args:
-  config (BuilderConfig): The
+  config (BuilderConfig): The Builder Config for the build.
   packages (list[PackageInfo]): list of packages to install.  Default: all
       packages for the build_target.
   artifact_build (bool): Whether to call update_for_artifact_build.
   timeout_sec (int): Step timeout, in seconds, or None for default.
   name (string): step name for install packages, or None for default.
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#58)(self):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#271)(self, config=None, run_tests=True):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#34)(self):**
+Build the image and optionally run ebuild tests.
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#38)(self):**
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
+  run_tests (bool): Whether to run ebuild tests.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#66)(self, build_target, is_staging=False, missing_ok=False):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#59)(self):**
+
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#35)(self):**
+
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#39)(self):**
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#67)(self, build_target, is_staging=False, missing_ok=False):**
 
 Initial setup steps for the builder.
 
@@ -584,17 +592,17 @@ Args:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#62)(self):**
+&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#63)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#46)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#47)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#42)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#43)(self):**
 
-&mdash; **def [initialize](/recipe_modules/build_menu/api.py#31)(self):**
+&mdash; **def [initialize](/recipe_modules/build_menu/api.py#32)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#50)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#51)(self):**
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#164)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#165)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -609,7 +617,7 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#112)(self, artifact_build=False, forced_relevant=False):**
+&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#113)(self, artifact_build=False, forced_relevant=False):**
 
 Setup the workspace and chroot for the builder.
 
@@ -621,7 +629,21 @@ Args:
 Returns:
   PrepareForBuildResponse.BuildRelevance
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#54)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#55)(self):**
+
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#302)(self, config=None):**
+
+Upload artifacts from the build.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
+
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#315)(self, config=None):**
+
+Upload prebuilts from the build.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
 ### *recipe_modules* / [build\_plan](/recipe_modules/build_plan)
 
 [DEPS](/recipe_modules/build_plan/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -1406,7 +1428,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#90)(self):**
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#332)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#333)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1426,11 +1448,11 @@ Args:
 Returns:
   BuilderConfig or None
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#218)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#219)(self):**
 
 Force a reload of the config map from ToT.
 
-&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#100)(self):**
+&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#101)(self):**
 
 Return a freshly loaded config for this builder.
 
@@ -1439,14 +1461,14 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#73)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#228)(self):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#229)(self):**
 
 Get BotPolicies as defined in infra/config.
 
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#389)(build):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#390)(build):**
 
 Return the build target name from input properties.
 
@@ -1457,7 +1479,7 @@ Args:
 Returns:
   (str) The name of the build target.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#168)(self, builder_name, missing_ok=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#169)(self, builder_name, missing_ok=False):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -1480,14 +1502,14 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#248)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#249)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#238)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#239)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
@@ -1498,17 +1520,17 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#56)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#96)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#97)(self):**
 
 &emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#65)(self):**
 
-&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#112)(self):**
+&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#113)(self):**
 
 Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#196)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#197)(self, builder_names):**
 
 Gets the BuilderConfigs for the specified builder names from master.
 
@@ -1522,9 +1544,9 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#225)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#226)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#222)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#223)(self, run_spec):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4481,13 +4503,13 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#20)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#73)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#50)(api, config, build_target, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#66)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#43)(api, properties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

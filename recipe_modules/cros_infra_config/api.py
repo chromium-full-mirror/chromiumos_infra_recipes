@@ -90,6 +90,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   @property
   def config_or_default(self):
     return self.config or BuilderConfig(
+        id=BuilderConfig.Id(name=self.m.buildbucket.build.builder.builder),
         chrome=BuilderConfig.Chrome(internal=True),
         build=BuilderConfig.Build(use_flags=[UseFlag(flag='chrome_internal')]))
 

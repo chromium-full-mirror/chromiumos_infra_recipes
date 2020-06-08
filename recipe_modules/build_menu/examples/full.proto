@@ -30,4 +30,7 @@ message FullProperties {
 
   // Expected packages.
   repeated chromiumos.PackageInfo expected_packages = 7;
+
+  // Whether to call upload_prebuilts.
+  bool upload_prebuilts = 8;
 }
