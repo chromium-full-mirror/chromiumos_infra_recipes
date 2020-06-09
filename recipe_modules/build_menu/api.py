@@ -214,8 +214,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     pointless = self.m.cros_relevance.is_build_pointless(
         self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
         force_relevant=self._forced_relevant)
-    # TODO(crrev.com/c/1913895): When it becomes possible to add tags from the
-    # build itself set: "hide-in-gerrit": "pointless".
+    if pointless:
+      self.m.buildbucket.hide_current_build_in_gerrit()
 
     return _env_info(pointless, packages)
 
