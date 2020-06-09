@@ -73,3 +73,15 @@ class CrosTagsApi(recipe_api.RecipeApi):
       # CQ (or more likely, our tests) did not set a value.
       pass
     return None
+
+  def tags(self, **tags):
+    """Helper for generating a list of StringPair messages.
+
+    Args:
+      tags (dict): Dict mapping keys to values.  If the value is a list,
+          multiple tags for the same key will be created.
+
+    Returns:
+      (list[StringPair]) tags.
+    """
+    return self.m.buildbucket.tags(**tags)

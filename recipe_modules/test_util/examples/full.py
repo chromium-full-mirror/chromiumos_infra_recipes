@@ -10,10 +10,13 @@ DEPS = [
     'test_util',
 ]
 
+from google.protobuf import json_format
+
 from PB.chromite.api.depgraph import DepGraph
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.test_util.examples.full import TestProperties
+from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 PROPERTIES = TestProperties
 
@@ -25,6 +28,14 @@ def RunSteps(api, properties):
                              properties.expected_bucket)
   api.assertions.assertEqual(api.buildbucket.build.builder.builder,
                              properties.expected_builder)
+
+  props = json_format.MessageToDict(api.buildbucket.build.input.properties)
+  props_name = props.get('build_target', {}).get('name')
+  api.assertions.assertEqual(properties.expected_build_target or None,
+                             props_name)
+  api.assertions.assertEqual(properties.expected_force_relevant_build,
+                             props.get('force_relevant_build', False))
+
   # Check host for "True"-ness to see if it is set.  We do not care what the
   # value is for the purposes of testing, since we do not want to hard code the
   # answer that buildbucket defaults to.
@@ -50,39 +61,106 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   yield api.test(
-      'postsubmit-build',
-      api.test_util.test_build().build,
+      'postsubmit-child',
+      api.test_util.test_child_build('amd64-generic').build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
+                         expect_commit=True, expected_cl_count=0)))
+
+  yield api.test(
+      'with-build_target',
+      api.test_util.test_child_build('myboard').build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='myboard-postsubmit',
+                         expect_commit=True, expected_cl_count=0,
+                         expected_build_target='myboard')))
+
+  yield api.test(
+      'child-with-properties-message',
+      api.test_util.test_child_build(
+          'amd64-generic', input_properties=BuildTargetProperties(
+              force_relevant_build=True)).build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
+                         expect_commit=True, expected_cl_count=0,
+                         expected_force_relevant_build=True)))
+
+  yield api.test(
+      'child-with-properties-dict',
+      api.test_util.test_child_build(
+          'amd64-generic',
+          input_properties=dict(force_relevant_build=True)).build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
+                         expect_commit=True, expected_cl_count=0,
+                         expected_force_relevant_build=True)))
+
+  yield api.test(
+      'with-properties-message',
+      api.test_util.test_build(
+          builder='amd64-generic-postsubmit',
+          input_properties=BuildTargetProperties(
+              build_target=common.BuildTarget(name='amd64-generic'))).build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
+                         expect_commit=True, expected_cl_count=0)))
+
+  yield api.test(
+      'with-properties-dict',
+      api.test_util.test_build(
+          builder='amd64-generic-postsubmit',
+          input_properties=dict(build_target=dict(name='amd64-generic'))).build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
                          expect_commit=True, expected_cl_count=0)))
 
   # Also verify that project and bucket are handled correctly.
   yield api.test(
       'cq-build',
-      api.test_util.test_build(project='myproject', bucket='bucket',
-                               cq=True).build,
+      api.test_util.test_child_build('amd64-generic', cq=True,
+                                     project='myproject',
+                                     bucket='bucket').build,
       api.properties(
           TestProperties(expected_project='myproject', expected_bucket='bucket',
                          expected_builder='amd64-generic-bucket',
+                         expected_build_target='amd64-generic',
                          expected_cl_count=1)))
 
-  # Also verify that builder is handled correctly.
+  # Also verify that builder is handled correctly, and that None yields no
+  # build_target.
   yield api.test(
       'cq-build-multiple-changes',
-      api.test_util.test_build(
-          cq=True, builder='my-builder',
+      api.test_util.test_child_build(
+          'amd64-generic', cq=True, builder='my-builder',
           extra_changes=[common_pb2.GerritChange(change=5555)]).build,
       api.properties(
           TestProperties(expected_project='chromeos', expected_bucket='cq',
-                         expected_builder='my-builder', expected_cl_count=2)))
+                         expected_builder='my-builder',
+                         expected_build_target='amd64-generic',
+                         expected_cl_count=2)))
 
   # If we want a specific commit on a specific branch, and specific CLs, this is
   # how.
   yield api.test(
       'specific-commit-and-changes',
-      api.test_util.test_build(
+      api.test_util.test_orchestrator(
           bucket='cq', extra_changes=[
               common_pb2.GerritChange(change=5555),
               common_pb2.GerritChange(change=8888),
@@ -90,27 +168,42 @@ def GenTests(api):
           ], git_ref='refs/heads/mybranch', revision='deadbeefdeadbeef').build,
       api.properties(
           TestProperties(expected_project='chromeos', expected_bucket='cq',
-                         expected_builder='amd64-generic-cq',
-                         expect_commit=True, expected_cl_count=3)))
+                         expected_builder='cq-orchestrator', expect_commit=True,
+                         expected_build_target='', expected_cl_count=3)))
 
   yield api.test(
-      'with-times',
-      api.test_util.test_build(create_time=1, start_time=2, update_time=3,
-                               end_time=4).build,
+      'no-commit-and-no-changes',
+      api.test_util.test_child_build(
+          'amd64-generic', revision=None,
+          tags=api.test_util.tags(my_tag='foo')).build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
+                         expected_cl_count=0)))
+
+  yield api.test(
+      'with-times',
+      api.test_util.test_child_build('amd64-generic', create_time=1,
+                                     start_time=2, update_time=3,
+                                     end_time=4).build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
                          expect_commit=True, expected_cl_count=0)))
 
   executable = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
                                      cipd_version='version')
   yield api.test(
       'with-executable',
-      api.test_util.test_build(exe=executable).build,
+      api.test_util.test_child_build('amd64-generic', exe=executable).build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
                          expect_commit=True, expected_executable=executable,
                          expected_cl_count=0)))

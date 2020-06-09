@@ -21,22 +21,19 @@ PROPERTIES = TestInputProperties
 
 def RunSteps(api, properties):
   snapshot = bbcommon_pb2.GitilesCommit(id='deadbeef')
-  expected_tags = [
-      bbcommon_pb2.StringPair(key='parent_buildbucket_id',
-                              value=str(api.buildbucket.build.id)),
-      bbcommon_pb2.StringPair(key='snapshot', value=snapshot.id),
-      bbcommon_pb2.StringPair(key='commit_position',
-                              value=str(snapshot.position)),
-  ]
+  expected_tags = api.cros_tags.tags(
+      parent_buildbucket_id=str(api.buildbucket.build.id),
+      snapshot=snapshot.id,
+      commit_position=str(snapshot.position),
+  )
   if properties.cq_cl_group_key:
-    expected_tags.append(
-        bbcommon_pb2.StringPair(key='cq_cl_group_key',
-                                value=str(properties.cq_cl_group_key)))
+    expected_tags.extend(
+        api.cros_tags.tags(cq_cl_group_key=str(properties.cq_cl_group_key)))
   if properties.cq_equivalent_cl_group_key:
-    expected_tags.append(
-        bbcommon_pb2.StringPair(
-            key='cq_equivalent_cl_group_key',
-            value=str(properties.cq_equivalent_cl_group_key)))
+    expected_tags.extend(
+        api.cros_tags.tags(
+            cq_equivalent_cl_group_key=str(
+                properties.cq_equivalent_cl_group_key)))
 
   tags = api.cros_tags.make_schedule_tags(snapshot)
 

@@ -10,11 +10,6 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
 DEPS = [
     'recipe_engine/buildbucket',
-    'recipe_engine/context',
-    'recipe_engine/file',
-    'recipe_engine/raw_io',
-    'recipe_engine/step',
-    'bot_cost',
     'build_menu',
     'cros_build_api',
     'cros_sdk',
@@ -37,10 +32,18 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('no-gerrit-changes', api.test_util.test_build().build)
+  yield api.test(
+      'no-gerrit-changes',
+      api.test_util.test_child_build('amd64-generic',
+                                     input_properties={}).build)
 
-  yield api.test('one-gerrit-change',
-                 api.test_util.test_build(cq=True, builder='chromite-cq').build)
+  yield api.test(
+      'one-gerrit-change',
+      api.test_util.test_child_build('amd64-generic', cq=True,
+                                     builder='chromite-cq',
+                                     input_properties={}).build)
 
-  yield api.test('builder-no-longer-exists',
-                 api.test_util.test_build(builder='none').build)
+  yield api.test(
+      'builder-no-longer-exists',
+      api.test_util.test_child_build('amd64-generic', builder='none',
+                                     input_properties={}).build)

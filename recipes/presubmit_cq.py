@@ -84,12 +84,14 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
+  props = PresubmitCqProperties(runhooks=True, timeout_s=3)
+
   # This is the normal case
   yield api.test('normal_one_change', api.test_util.test_build(cq=True).build)
 
-  yield api.test('normal_one_change_and_props',
-                 api.test_util.test_build(cq=True).build,
-                 api.properties(runhooks=True, timeout_s=3))
+  yield api.test(
+      'normal_one_change_and_props',
+      api.test_util.test_build(cq=True, input_properties=props).build)
 
   yield api.test(
       'normal_two_changes',

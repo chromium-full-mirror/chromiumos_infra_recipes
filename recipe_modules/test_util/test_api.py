@@ -9,32 +9,94 @@ This module provides helpers to make testing Chrome OS recipes simpler and more
 consistent.
 """
 
+from google.protobuf import json_format
+
 from collections import namedtuple
+
 from recipe_engine import recipe_test_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 
 class TestUtilApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing Chrome OS Recipes."""
 
+  def test_child_build(self, build_target_name, input_properties=None,
+                       **kwargs):
+    """Return buildbucket step_data for a typical child builder.
+
+    The build will be created with input properties that have
+    build_target.name=|build_target_name|.  Defaults are always provided for
+    bucket and, when build_target_name is given, builder.
+
+    Args:
+      build_target_name (str): Name of the build_target, or None for no
+          build_target.
+      input_properties (BuildTargetProperties or dict): input properties, or
+          None.
+      kwargs (dict): see test_build()
+
+    Returns:
+      An object with attributes:
+        message: buildbucket.Build message.
+        build: Step_data for the build.
+    """
+    input_dict = input_properties or {}
+    if not isinstance(input_dict, dict):
+      input_dict = json_format.MessageToDict(input_dict,
+                                             preserving_proto_field_name=True)
+    kwargs.setdefault('bucket', 'cq' if kwargs.get('cq') else 'postsubmit')
+    if build_target_name:
+      kwargs.setdefault('builder',
+                        '%s-%s' % (build_target_name, kwargs['bucket']))
+      input_dict['build_target'] = {'name': build_target_name}
+
+    return self.test_build(input_properties=input_dict, **kwargs)
+
+  def test_orchestrator(self, **kwargs):
+    """Return buildbucket step_data for a typical orchestrator.
+
+    Defaults are provided for bucket and builder.
+
+    Args:
+      kwargs (dict): see test_build()
+
+    Returns:
+      An object with attributes:
+        message: buildbucket.Build message.
+        build: Step_data for the build.
+    """
+    kwargs.setdefault('bucket', 'cq' if kwargs.get('cq') else 'postsubmit')
+    kwargs.setdefault('builder', '%s-orchestrator' % kwargs['bucket'])
+    return self.test_build(**kwargs)
+
   def test_build(self, cq=False, dry_run=False, bot_size='large',
                  extra_changes=None, exe=None, input_properties=None,
                  create_time=None, start_time=None, update_time=None,
                  end_time=None, **kwargs):
-    """Return a buildbucket step_data for a typical build.
+    """Return a buildbucket step_data for a typical test build.
+
+    In general, test_orchestrator() should be called for orchestrators, and
+    test_child_build should be called for children of an orchestrator.
 
     This differs from the buildbucket/test_api.py ci_build() and try_build() in
-    that we tweak things to reflect chromeos.
+    that we tweak things to reflect chromeos:
+      - project defaults to 'chromeos'.
+      - bucket defaults to 'cq' or 'postsubmit, depending on |cq|.
+      - git_repo defaults to the Chrome OS internal manifest.
 
     Args:
-      cq (bool): whether this is a CQ triggered job, vs scheduled.
+      cq (bool): whether this is a CQ triggered job, vs scheduled.  This also
+          adds a default gerrit_change, and sets CQ properties.
       dry_run (bool): Whether this is a dry_run (used only when |cq|=True).
       bot_size (str): Chrome OS bot_size dimension for the builder.
       extra_changes (list[GerritChange]): additional changes to add.
       exe (common_pb2.Executable): Executable for the build.  (passed to
           buildbucket.build)
-      input_properties: dictionary of input properties, or None.
+      input_properties: A protobuf input properties message, a dictionary of
+          input properties, or None.  If used, the dictionary may be a superset
+          of protobufs.
       create_time (seconds): Create time (passed to buildbucket.build).
       start_time (seconds): Start time (only in the returned message).
       update_time (seconds): Update time (only in the returned message).
@@ -46,19 +108,26 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
         message: buildbucket.Build message.
         build: Step_data for the build.
     """
-    input_properties = input_properties or {}
     _test_build_return = namedtuple('_test_build_return', ['message', 'build'])
+
     kwargs.setdefault('project', 'chromeos')
     kwargs.setdefault('bucket', 'cq' if cq else 'postsubmit')
-    kwargs.setdefault('builder', 'amd64-generic-' + kwargs['bucket'])
     kwargs.setdefault(
         'git_repo',
         'https://chrome-internal.googlesource.com/chromeos/manifest-internal')
+
+    input_dict = input_properties or {}
+    if not isinstance(input_dict, dict):
+      input_dict = json_format.MessageToDict(input_dict,
+                                             preserving_proto_field_name=True)
     func = (
         self.m.buildbucket.try_build_message
         if cq else self.m.buildbucket.ci_build_message)
 
     msg = func(**kwargs)
+    # If we were passed revision=None, clear the gitiles_commit.
+    if not cq and 'revision' in kwargs and not kwargs['revision']:
+      msg.input.gitiles_commit.Clear()
     msg.input.gerrit_changes.extend(extra_changes or [])
     if bot_size:
       msg.infra.swarming.bot_dimensions.extend(
@@ -69,8 +138,10 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     if exe:
       msg.exe.cipd_package = exe.cipd_package
       msg.exe.cipd_version = exe.cipd_version
-    msg.input.properties.update(input_properties)
+    msg.input.properties.update(input_dict)
     ret = self.m.buildbucket.build(msg)
+    if input_dict:
+      ret += self.m.properties(**input_dict)
     if cq:
       ret += self.m.cq(dry_run=dry_run, full_run=not dry_run)
 
@@ -84,3 +155,15 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       msg.end_time.seconds = end_time
 
     return _test_build_return(msg, ret)
+
+  def tags(self, **tags):
+    """Helper for generating a list of StringPair messages.
+
+    Args:
+      tags (dict): Dict mapping keys to values.  If the value is a list,
+          multiple tags for the same key will be created.
+
+    Returns:
+      (list[StringPair]) tags.
+    """
+    return self.m.buildbucket.tags(**tags)

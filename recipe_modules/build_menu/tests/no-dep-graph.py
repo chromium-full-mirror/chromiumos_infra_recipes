@@ -25,4 +25,5 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  yield api.test('cq-build', api.test_util.test_build(cq=True).build)
+  yield api.test('cq-build',
+                 api.test_util.test_child_build('amd64-generic', cq=True).build)

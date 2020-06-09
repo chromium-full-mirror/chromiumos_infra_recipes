@@ -19,7 +19,8 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  yield api.test('basic', api.metadata_json.test_builder(cq=True))
+  yield api.test('basic',
+                 api.metadata_json.test_builder('amd64-generic', cq=True))
 
   # The build_id below must match the build_id used for led launched jobs in
   # api.py.
@@ -29,6 +30,6 @@ def GenTests(api):
           **{'$recipe_engine/led': {
               'led_run_id': 'chromeos/led/email/hash'
           }}),
-      api.metadata_json.test_builder(cq=True,
+      api.metadata_json.test_builder('amd64-generic', cq=True,
                                      build_id=api.metadata_json.led_build_id),
   )

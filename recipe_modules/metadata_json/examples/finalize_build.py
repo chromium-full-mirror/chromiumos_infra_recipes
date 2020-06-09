@@ -26,4 +26,5 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic', api.metadata_json.test_builder(cq=True))
+  yield api.test('basic',
+                 api.metadata_json.test_builder('amd64-generic', cq=True))

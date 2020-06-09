@@ -35,5 +35,5 @@ def GenTests(api):
                       config_ref='refs/changes/45/12345/3',
                   )
           }),
-      api.test_util.test_build(bucket='toolchain',
-                               builder='clang-tidy-toolchain').build)
+      api.test_util.test_child_build('amd64-generic', bucket='toolchain',
+                                     builder='clang-tidy-toolchain').build)

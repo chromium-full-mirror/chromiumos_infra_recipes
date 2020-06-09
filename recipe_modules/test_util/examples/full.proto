@@ -26,4 +26,10 @@ message TestProperties {
 
   // Executable for the builder.
   buildbucket.v2.Executable expected_executable = 6;
+
+  // Expected build_target
+  string expected_build_target = 7;
+
+  // Expected value for force_relevant_build.
+  bool expected_force_relevant_build = 8;
 }

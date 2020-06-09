@@ -46,22 +46,25 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  yield api.test('postsubmit-build', api.test_util.test_build().build)
+  yield api.test('postsubmit-build',
+                 api.test_util.test_child_build('amd64-generic').build)
 
-  yield api.test('cq-build', api.test_util.test_build(cq=True).build)
+  yield api.test('cq-build',
+                 api.test_util.test_child_build('amd64-generic', cq=True).build)
 
   yield api.test('toolchain-cq-build',
-                 api.test_util.test_build(cq=True).build,
+                 api.test_util.test_child_build('amd64-generic', cq=True).build,
                  api.build_menu.set_toolchain_cls_return(True))
 
   yield api.test('pointless-cq-build',
-                 api.test_util.test_build(cq=True).build,
+                 api.test_util.test_child_build('amd64-generic', cq=True).build,
                  api.build_menu.set_pointless_return(True))
 
   yield api.test(
       'forced-pointless-artifact-build',
-      api.test_util.test_build(bucket='toolchain',
-                               builder='orderfile-generate-toolchain').build,
+      api.test_util.test_child_build(
+          'amd64-generic', bucket='toolchain',
+          builder='orderfile-generate-toolchain').build,
       api.build_menu.set_build_api_return('prepare artifacts',
                                           'ArtifactsService/PrepareForBuild',
                                           '{"build_relevance": "POINTLESS"}'),
@@ -75,8 +78,9 @@ def GenTests(api):
 
   yield api.test(
       'pointless-artifact-build',
-      api.test_util.test_build(bucket='toolchain',
-                               builder='orderfile-generate-toolchain').build,
+      api.test_util.test_child_build(
+          'amd64-generic', bucket='toolchain',
+          builder='orderfile-generate-toolchain').build,
       api.build_menu.set_build_api_return('prepare artifacts',
                                           'ArtifactsService/PrepareForBuild',
                                           '{"build_relevance": "POINTLESS"}'),
@@ -89,19 +93,17 @@ def GenTests(api):
               ])))
 
   yield api.test('no-sysroot',
-                 api.test_util.test_build().build,
-                 api.properties(FullProperties(no_sysroot=True)))
+                 api.test_util.test_child_build(
+                     'amd64-generic',
+                 ).build, api.properties(FullProperties(no_sysroot=True)))
 
   yield api.test(
       'no-config',
-      api.test_util.test_build(builder='no-config').build,
-      api.properties(
-          FullProperties(build_target=common.BuildTarget(name='no-config'))))
+      api.test_util.test_child_build('no-config', builder='no-config').build)
 
   yield api.test(
       'missing-ok-config',
-      api.test_util.test_build(builder='no-config').build,
+      api.test_util.test_child_build('amd64-generic',
+                                     builder='no-config').build,
       api.properties(
-          FullProperties(
-              build_target=common.BuildTarget(name='no-config'),
-              missing_config_ok=True, expect_missing_config=True)))
+          FullProperties(missing_config_ok=True, expect_missing_config=True)))

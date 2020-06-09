@@ -15,6 +15,7 @@ from google.protobuf import json_format
 
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.recipe_modules.chromeos.cros_infra_config.examples.builder import (
     BuilderProperties)
 
@@ -64,11 +65,7 @@ def GenTests(api):
               expected_is_staging=False, **kwargs):
     kwargs['exe'] = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
                                           cipd_version='prod')
-    input_properties = dict(
-        build_target=json_format.MessageToDict(
-            common.BuildTarget(name=build_target)))
-    build = api.test_util.test_build(input_properties=input_properties,
-                                     **kwargs)
+    build = api.test_util.test_child_build(build_target, **kwargs)
     props = BuilderProperties(
         builder=build.message.builder.builder,
         build_target=common.BuildTarget(name=build_target),
@@ -77,21 +74,29 @@ def GenTests(api):
       props.is_staging.value = is_staging
     return build.build + api.properties(props)
 
+  # This has a commit and no changes.
   yield api.test('basic', builder())
 
+  # This has (default) changes, and no commit.
   yield api.test('cq-build', builder(cq=True))
 
+  # This has (default) changes, and our commit.
   yield api.test(
-      'apply_gerrit_changes_false',
-      builder(build_target='grunt', builder='grunt-postsubmit',
-              extra_changes=[common_pb2.GerritChange(change=1234)]))
+      'has_commit_and_changes',
+      builder(cq=True, revision='993335c91267d304d44f712209139e8b84a87d8c'))
 
+  # This has specified changes only, and no commit.
   yield api.test(
       'has_changes_and_no_commit',
       builder(revision=None,
               extra_changes=[common_pb2.GerritChange(change=1234)]))
 
   yield api.test('has_no_commit_and_no_changes', builder(revision=None))
+
+  yield api.test(
+      'apply_gerrit_changes_false',
+      builder(build_target='grunt', builder='grunt-postsubmit',
+              extra_changes=[common_pb2.GerritChange(change=1234)]))
 
   yield api.test(
       'has_parent',

@@ -6,4 +6,5 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
+    'recipe_engine/properties',
 ]

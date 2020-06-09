@@ -101,10 +101,9 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'with-tast',
-      api.test_util.test_build(builder='amd64-generic-autotest-vm',
-                               cq=True).build,
+      api.test_util.test_child_build('amd64-generic', cq=True,
+                                     builder='amd64-generic-autotest-vm').build,
       api.properties(
-          build_target={'name': 'amd64-generic'},
           test_harness=VmTestRequest.TAST, build_payload={
               'artifacts_gs_bucket': 'gs://chromeos-image-archive',
               'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',
@@ -113,10 +112,9 @@ def GenTests(api):
 
   yield api.test(
       'with-autotest',
-      api.test_util.test_build(builder='amd64-generic-autotest-vm',
-                               cq=True).build,
+      api.test_util.test_child_build('amd64-generic', cq=True,
+                                     builder='amd64-generic-autotest-vm').build,
       api.properties(
-          build_target={'name': 'amd64-generic'},
           test_harness=VmTestRequest.AUTOTEST, build_payload={
               'artifacts_gs_bucket': 'gs://chromeos-image-archive',
               'artifacts_gs_path': 'amd64-generic-cq/R12-3.4.5-6',

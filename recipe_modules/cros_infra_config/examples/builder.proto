@@ -22,4 +22,3 @@ message BuilderProperties {
   // Expected value for is_staging.
   bool expected_is_staging = 4;
 }
-

@@ -36,7 +36,7 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.test_util.test_build(builder='postsubmit-orchestrator').build,
+      api.test_util.test_orchestrator().build,
       api.properties(
           FullProperties(children_names=[
               'amd64-generic-postsubmit', 'arm-generic-postsubmit'

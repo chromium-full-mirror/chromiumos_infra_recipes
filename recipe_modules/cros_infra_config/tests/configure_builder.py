@@ -53,21 +53,23 @@ def GenTests(api):
     return api.properties(TestInputProperties(expected_change_count=count))
 
   yield api.test('basic',
-                 api.test_util.test_build(cq=True).build, expected_changes(1))
+                 api.test_util.test_child_build('amd64-generic', cq=True).build,
+                 expected_changes(1))
 
-  yield api.test('postsubmit', api.test_util.test_build().build)
+  yield api.test('postsubmit',
+                 api.test_util.test_child_build('amd64-generic').build)
 
   yield api.test(
       'with_changes',
-      api.test_util.test_build(
-          bucket='toolchain', builder='toolchain-orchestrator',
+      api.test_util.test_orchestrator(
+          bucket='toolchain',
           extra_changes=[common_pb2.GerritChange(change=1234)]).build,
       expected_changes(2))
 
   yield api.test(
       'with_duplicate_change',
-      api.test_util.test_build(
-          bucket='toolchain', builder='toolchain-orchestrator', extra_changes=[
+      api.test_util.test_orchestrator(
+          bucket='toolchain', extra_changes=[
               common_pb2.GerritChange(
                   host='chromium-review.googlesource.com',
                   project='chromiumos/overlays/chromiumos-overlay',
