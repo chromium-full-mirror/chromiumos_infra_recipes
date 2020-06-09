@@ -99,15 +99,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
           else:
             # No config, and missing_ok is true.
             yield None
+
+          # If we have applied patches and the SDK was not validated, then we
+          # need to do so before leaving the context.
+          if not self._dep_graph and self.m.workspace_util.patch_sets:
+            self._get_dep_graph([])
       else:
         # No config, and missing_ok is False.
         raise self.m.step.StepFailure('Missing configuration for {}'.format(
             self.m.buildbucket.build.builder.builder))
-
-      # If we have applied patches and the SDK was not validated, then we need
-      # to do so before leaving the context.
-      if not self._dep_graph and self.m.workspace_util.patch_sets:
-        self._get_dep_graph([])
 
   def setup_workspace_and_chroot(self, artifact_build=False,
                                  forced_relevant=False):
