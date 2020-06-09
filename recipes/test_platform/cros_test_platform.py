@@ -1198,16 +1198,15 @@ def GenTests(api):
                                   skylab_request=_test_request(
                                       tag='foo',
                                       scheduling=Request.Params.Scheduling(
-managed_pool=Request.Params.Scheduling.MANAGED_POOL_CTS,
-qs_account='foo-qs-account',
+                                          managed_pool=Request.Params.Scheduling
+                                          .MANAGED_POOL_CTS,
+                                          qs_account='foo-qs-account',
                                       ),
                                   ),
                               ),
                       })))) +  #
-      api.step_data(
-          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-              _test_single_enumeration('foo')))
-  )
+      api.step_data('enumerate tests.call binary.enumerate',
+                    stdout=api.raw_io.output(_test_single_enumeration('foo'))))
 
   yield (
       api.test('test_runer redirection unmanaged pool match') +  #
@@ -1323,8 +1322,7 @@ qs_account='foo-qs-account',
               request=_test_request('foo'),
               config=Config(
                   test_runner_migration=_test_migration_config(
-                      quota_account='bar-qs-account'
-                  ),
+                      quota_account='bar-qs-account'),
               ),
           ),
       ) +  #
@@ -1339,57 +1337,55 @@ qs_account='foo-qs-account',
                                   skylab_request=_test_request(
                                       tag='foo',
                                       scheduling=Request.Params.Scheduling(
-managed_pool=Request.Params.Scheduling.MANAGED_POOL_CTS,
+                                          managed_pool=Request.Params.Scheduling
+                                          .MANAGED_POOL_CTS,
                                           qs_account='foo-qs-account',
                                       ),
                                   ),
                               ),
                       })))) +  #
-      api.step_data(
-          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-              _test_single_enumeration('foo')))
-  )
+      api.step_data('enumerate tests.call binary.enumerate',
+                    stdout=api.raw_io.output(_test_single_enumeration('foo'))))
 
-  yield (
-      api.test('test_runer redirection crash') +  #
-      api.properties(
-          CrosTestPlatformProperties(
-              requests={
-                  'foo': _test_request('foo'),
-                  'bar': _test_request('bar'),
-              },
-              config=Config(
-                  test_runner_migration=_test_migration_config(
-                      quota_account='foo-qs-account'
-                  ),
-              ),
-          ),
-      ) +  #
-      api.step_data(
-          'traffic split.call binary.scheduler-traffic-split',
-          stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  SchedulerTrafficSplitResponses(
-                      tagged_responses={
-                          'foo':
-                              SchedulerTrafficSplitResponse(
-                                  skylab_request=_test_request(
-                                      tag='foo',
-                                      scheduling=Request.Params.Scheduling(
-managed_pool=Request.Params.Scheduling.MANAGED_POOL_CTS,
-                                          qs_account='foo-qs-account',
-                                      ),
-                                  ),
-                              ),
-                          'bar':
-                              SchedulerTrafficSplitResponse(
-                                  skylab_request=_test_request(
-                                      tag='bar',
-                                      scheduling=Request.Params.Scheduling(
-managed_pool=Request.Params.Scheduling.MANAGED_POOL_CTS,
-                                          qs_account='bar-qs-account',
-                                      ),
-                                  ),
-                              ),
-                      }))))
-  )
+  yield (api.test('test_runer redirection crash') +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 requests={
+                     'foo': _test_request('foo'),
+                     'bar': _test_request('bar'),
+                 },
+                 config=Config(
+                     test_runner_migration=_test_migration_config(
+                         quota_account='foo-qs-account'),
+                 ),
+             ),
+         ) +  #
+         api.step_data(
+             'traffic split.call binary.scheduler-traffic-split',
+             stdout=api.raw_io.output(
+                 json_format.MessageToJson(
+                     SchedulerTrafficSplitResponses(
+                         tagged_responses={
+                             'foo':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request(
+                                         tag='foo',
+                                         scheduling=Request.Params.Scheduling(
+                                             managed_pool=Request.Params
+                                             .Scheduling.MANAGED_POOL_CTS,
+                                             qs_account='foo-qs-account',
+                                         ),
+                                     ),
+                                 ),
+                             'bar':
+                                 SchedulerTrafficSplitResponse(
+                                     skylab_request=_test_request(
+                                         tag='bar',
+                                         scheduling=Request.Params.Scheduling(
+                                             managed_pool=Request.Params
+                                             .Scheduling.MANAGED_POOL_CTS,
+                                             qs_account='bar-qs-account',
+                                         ),
+                                     ),
+                                 ),
+                         })))))
