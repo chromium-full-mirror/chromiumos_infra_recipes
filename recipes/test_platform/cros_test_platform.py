@@ -232,7 +232,7 @@ def _probability_percentage_of_redirecting(api, requests, config):
     matches = set(_matches_constraint(request, instruction.constraint)
                   for request in requests.values())
     if len(matches) > 1:
-      raise api.step.StepFailure(
+      raise api.step.InfraFailure(
           'Found requests disagreeing whether to redirect to test_runner')
     # There's always at least one request, since an empty multi-request would
     # fail validation and would not get this far.

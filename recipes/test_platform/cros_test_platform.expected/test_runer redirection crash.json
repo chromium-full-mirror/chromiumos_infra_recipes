@@ -201,12 +201,11 @@
     "cmd": [],
     "name": "redirect to test_runner if applicable",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "failure": {
-      "failure": {},
       "humanReason": "Found requests disagreeing whether to redirect to test_runner"
     },
     "name": "$result"
