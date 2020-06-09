@@ -39,7 +39,7 @@ def RunSteps(api):
 
     api.repo.sync_manifest('http://manifest_url', '<manifest></manifest>')
 
-  infos = api.repo.project_infos()
+  infos = api.repo.project_infos(regexes=['src/program/galaxy'])
   api.assertions.assertEqual(len(infos), 3)
   api.assertions.assertEqual(infos[0].path, 'src/a')
 

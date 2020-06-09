@@ -9,8 +9,10 @@ package recipes.chromeos.cl_factory;
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
 message ClFactoryProperties {
-  // Regex specifying repos to operate on.
-  repeated string repo_regex = 1;
+  // Regex specifying repos to operate on. The matching is the same
+  // as in `repo forall --regex regexes...`, for example,
+  // 'src/project/galaxy' will match all galaxy projects.
+  repeated string repo_regexes = 1;
 
   // TODO: WIP, figure out approach.
   // Command to execute on the repos to create the CL.

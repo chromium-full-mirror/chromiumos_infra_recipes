@@ -224,12 +224,18 @@ class RepoApi(recipe_api.RecipeApi):
       cmd.append('--all')
     self._step(cmd)
 
-  def project_infos(self, projects=[]):
+  def project_infos(self, projects=[], regexes=[]):
     """Uses 'repo forall' to gather project information.
+
+    Note that if both projects and regexes are specified the resultant
+    ProjectInfos are the union, without duplicates, of what each would
+    return separately.
 
     Args:
       projects (List[str]): Project names or paths to return info for. Defaults
         to all projects.
+      regexes (List[str]): list of regexes for matching projects. The matching
+        is the same as in `repo forall --regex regexes...`.
 
     Returns:
       List[ProjectInfo]: Requested project infos.
@@ -241,6 +247,8 @@ class RepoApi(recipe_api.RecipeApi):
       return self.m.raw_io.test_api.stream_output(data)
 
     cmd = ['forall'] + projects
+    if regexes:
+      cmd += ['--regex'] + regexes
     cmd += ['-c', 'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV\|$REPO_UPSTREAM']
     step_data = self._step(cmd,
                            stdout=self.m.raw_io.output(add_output_log=True),

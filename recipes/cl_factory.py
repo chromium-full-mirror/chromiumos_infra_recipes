@@ -14,8 +14,12 @@ PROPERTIES = ClFactoryProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'cros_sdk',
+    'cros_source',
+    'repo',
 ]
 
 
@@ -24,10 +28,10 @@ def RunSteps(api, properties):
   if not gerrit_changes:
     raise ValueError('Gerrit changes to apply must be specified.')
 
-  if not properties.repo_regex:
+  if not properties.repo_regexes:
     raise ValueError(
         'Projects to operate on must be specified by the '
-        'repo_regex property.')
+        'repo_regexes property.')
 
   if not properties.command:
     raise ValueError('A command property must specify how to modify the repos.')
@@ -37,9 +41,14 @@ def RunSteps(api, properties):
         'A message_template property must specify how to create '
         'commit messages')
 
-  with api.step.nest('running...') as pres:
-    pres.step_text = 'yes I ran'
+  with api.cros_source.checkout_overlays_context(), \
+    api.context(cwd=api.cros_source.workspace_path):
+    infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
 
+    with api.step.nest('dump projects') as pres:
+      pres.logs['projects'] = [
+          i.name + '|' + i.path for i in infos
+      ]
 
 def GenTests(api):
   cls = [
@@ -64,7 +73,7 @@ def GenTests(api):
       'basic',
       build(),
       api.properties(ClFactoryProperties(
-          repo_regex = ['src/project/galaxy'],
+          repo_regexes = ['src/project/galaxy'],
           reviewers = ['johndoe@google.com'],
           hashtags = ['refactor-audio-config'],
           command = 'echo "hello world"',
@@ -76,7 +85,7 @@ def GenTests(api):
       'no_gerrit_changes_specified',
       build(changes=False),
       api.properties(ClFactoryProperties(
-          repo_regex = ['src/project/galaxy'],
+          repo_regexes = ['src/project/galaxy'],
           reviewers = ['johndoe@google.com'],
           hashtags = ['refactor-audio-config'],
           command = 'echo "hello world"',
@@ -109,7 +118,7 @@ def GenTests(api):
       'no_command_specified',
       build(),
       api.properties(ClFactoryProperties(
-          repo_regex = ['src/project/galaxy'],
+          repo_regexes = ['src/project/galaxy'],
           reviewers = ['johndoe@google.com'],
           hashtags = ['refactor-audio-config'],
           message_template = 'Fix audio config',
@@ -124,7 +133,7 @@ def GenTests(api):
       'no_message_template_specified',
       build(),
       api.properties(ClFactoryProperties(
-          repo_regex = ['src/project/galaxy'],
+          repo_regexes = ['src/project/galaxy'],
           reviewers = ['johndoe@google.com'],
           hashtags = ['refactor-audio-config'],
           command = 'echo "hello world"',
