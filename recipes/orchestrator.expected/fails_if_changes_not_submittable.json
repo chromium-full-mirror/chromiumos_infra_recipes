@@ -263,7 +263,7 @@
     ],
     "infra_step": true,
     "name": "check for merge conflicts.git-test-submit",
-    "stdin": "{\"gerrit_changes\": [{\"change_number\": 1234, \"host\": \"\", \"patch_set\": 0}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
+    "stdin": "{\"gerrit_changes\": [{\"change_number\": 123456, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 7}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

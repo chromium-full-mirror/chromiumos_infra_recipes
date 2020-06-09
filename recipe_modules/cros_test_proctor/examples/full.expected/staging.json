@@ -25,7 +25,12 @@
       "@@@STEP_LOG_LINE@planner_input@  }, @@@",
       "@@@STEP_LOG_LINE@planner_input@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNGtpKubruDoexIYGhZzdGFnaW5nLWFybS1nZW5lcmljLWNxYAJ6LQorCikKDGJ1aWxkX3RhcmdldBIZKhcKFQoEbmFtZRINGgthcm0tZ2VuZXJpYw==\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNGtpKubruDoexIYGhZzdGFnaW5nLWFybS1nZW5lcmljLWNxYAJ6egorCikKDGJ1aWxkX3RhcmdldBIZKhcKFQoEbmFtZRINGgthcm0tZ2VuZXJpYxpLCidjaHJvbWUtaW50ZXJuYWwtcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20SGmNocm9tZW9zL21hbmlmZXN0LWludGVybmFsGMDEByAH\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    }@@@",
+      "@@@STEP_LOG_LINE@planner_input@  ], @@@",
+      "@@@STEP_LOG_LINE@planner_input@  \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@planner_input@    {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CidjaHJvbWUtaW50ZXJuYWwtcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20SGmNocm9tZW9zL21hbmlmZXN0LWludGVybmFsGMDEByAH\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@  ]@@@",
       "@@@STEP_LOG_LINE@planner_input@}@@@",
@@ -1720,21 +1725,24 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*W\nU\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\u001a\u0016staging-arm-generic-cq`\u0002z-\n+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic:\bdeadbeefJ_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
+      "*\ufffd\u0001\n\ufffd\u0001\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\u001a\u0016staging-arm-generic-cq`\u0002zz\n+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\u001aK\n'chrome-internal-review.googlesource.com\u0012\u001achromeos/manifest-internal\u0018\ufffd\ufffd\u0007 \u0007:\bdeadbeefBM\nK\n'chrome-internal-review.googlesource.com\u0012\u001achromeos/manifest-internal\u0018\ufffd\ufffd\u0007 \u0007J_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@*W@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@U\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\u001a\u0016staging-arm-generic-cq`\u0002z-@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@*\ufffd\u0001@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\ufffd\u0001\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\u001a\u0016staging-arm-generic-cq`\u0002zz@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@+@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@)@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\fbuild_target\u0012\u0019*\u0017@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0015@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0004name\u0012@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u001a\u000barm-generic:\bdeadbeefJ_@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u001a\u000barm-generic\u001aK@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@'chrome-internal-review.googlesource.com\u0012\u001achromeos/manifest-internal\u0018\ufffd\ufffd\u0007 \u0007:\bdeadbeefBM@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@K@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@'chrome-internal-review.googlesource.com\u0012\u001achromeos/manifest-internal\u0018\ufffd\ufffd\u0007 \u0007J_@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@]@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
@@ -1796,6 +1804,43 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.get change test history",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found no previously passed tests@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.get change test history.find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.get change test history.find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

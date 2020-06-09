@@ -36,9 +36,11 @@ DEPS = [
 
 from PB.chromite.api.test import VmTestRequest
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
+from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 from PB.recipes.chromeos.test_moblab_vm import TestMoblabVmProperties
 from PB.recipes.chromeos.test_vm import TestVmProperties
@@ -468,6 +470,11 @@ def maybe_push_commit(api, repo_name, repo_url, repo_path, ref, commit):
 
 def GenTests(api):
 
+  def gerrit_changes(**kwargs):
+    """Generate a GerritChange."""
+    return api.test_util.test_build(cq=True,
+                                    **kwargs).message.input.gerrit_changes
+
   def postsubmit_orchestrator_build():
     """Generate a test build proto for the postsubmit orchestrator."""
     return api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
@@ -496,7 +503,7 @@ def GenTests(api):
     if not gitiles:
       build.input.gitiles_commit.Clear()
     if changes:
-      build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
+      build.input.gerrit_changes.extend(gerrit_changes())
     return api.buildbucket.build(build)
 
   def cq_orchestrator_build_with_gerrit_change(tags=None):
@@ -504,7 +511,7 @@ def GenTests(api):
     build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
                                              builder='cq-orchestrator',
                                              tags=tags)
-    build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
+    build.input.gerrit_changes.extend(gerrit_changes())
     return api.buildbucket.build(build)
 
   def bisecting_orchestrator_build():
@@ -524,20 +531,13 @@ def GenTests(api):
       * snapshot(GitilesCommit): The snapshot of the build.
       * build_target (str): The name of the build target.
     """
-    msg = build_pb2.Build.Input(
-        gerrit_changes=[common_pb2.GerritChange(change=1234)],
-        gitiles_commit=snapshot)
-    msg.properties.update(
-        api.test_util.build_target_properties(build_target_name=build_target))
-    return msg
+    return api.test_util.test_build(
+        cq=True, revision=snapshot, input_properties=BuildTargetProperties(
+            build_target=BuildTarget(name=build_target))).message.input
 
-  vm_tests = [
-      vm_test_build('vm-test'),
-  ]
+  vm_tests = [vm_test_build('vm-test')]
 
-  moblab_vm_tests = [
-      vm_test_build('moblab-vm-test'),
-  ]
+  moblab_vm_tests = [vm_test_build('moblab-vm-test')]
 
   cros_test_platforms = [
       build_pb2.Build(id=1234, builder={'builder': 'cros_test_platform'},

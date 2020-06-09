@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
@@ -11,6 +11,7 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import (
     ProctorProperties)
+from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.test_platform.taskstate import TaskState
 from recipe_engine.recipe_api import Property
 
@@ -45,7 +46,8 @@ def RunSteps(api, need_tests_builds_serialized):
   # Deserialized Build protos. The serialization is to get around the recipes
   # requirement that all properties be hashable, and proto messages are not
   # hashable.
-  need_tests_builds = map(Build.FromString, need_tests_builds_serialized)
+  need_tests_builds = map(build_pb2.Build.FromString,
+                          need_tests_builds_serialized)
   gerrit_changes = []
   if need_tests_builds:
     gerrit_changes = need_tests_builds[0].input.gerrit_changes
@@ -72,14 +74,12 @@ def GenTests(api):
       * build_target (str): The name of the build target.
       * gerrit_changes list(GerritChange): Changes being tested in the build.
     """
-    msg = build_pb2.Build.Input(gitiles_commit=snapshot,
-                                gerrit_changes=gerrit_changes)
-    msg.properties.update(
-        api.test_util.build_target_properties(build_target_name=build_target))
-    return msg
+    return api.test_util.test_build(
+        cq=True, revision=snapshot, input_properties=BuildTargetProperties(
+            build_target=BuildTarget(name=build_target))).message.input
 
   def serialize_builds(builds):
-    return [Build.SerializeToString(b) for b in builds]
+    return [build_pb2.Build.SerializeToString(b) for b in builds]
 
   vm_tests = [
       vm_test_build('vm-test'),
@@ -162,7 +162,7 @@ def GenTests(api):
       build_pb2.Build(
           id=8922054662172514001, builder={'builder': 'arm-generic-postsubmit'},
           status=common_pb2.FAILURE, critical=common_pb2.NO,
-          input=input_proto(common_pb2.GitilesCommit(), 'target',
+          input=input_proto('COMMIT_SHA', 'target',
                             [common_pb2.GerritChange(change=123)])),
   ]
 
