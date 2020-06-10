@@ -6,30 +6,15 @@
 """Recipe for building a BuildTarget image."""
 
 DEPS = [
-    'recipe_engine/properties',
     'build_menu',
     'cros_artifacts',
-    'cros_bisect',
     'cros_infra_config',
     'test_util',
 ]
 
-import json
-
-from PB.chromiumos import common
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget
 from PB.recipes.chromeos.build_target import BuildTargetProperties
-from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
-    CrosBisectProperties)
-
-from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 
 PROPERTIES = BuildTargetProperties
-
-UPLOADABLE_PREBUILTS_CONFIGS = [
-    BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
-]
 
 
 def RunSteps(api, properties):
@@ -88,170 +73,58 @@ def DoRunSteps(api, config, build_target, properties):
         done = True
 
     if not done:
-      if config.artifacts.prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
+      if config.artifacts.prebuilts in api.build_menu.UPLOADABLE_PREBUILTS:
         api.build_menu.upload_prebuilts(config)
 
   finally:
-    # If the builder has artifacts, always upload them.
-    if artifact_build:
-      api.build_menu.upload_artifacts(config)
+    # Always try to upload artifacts.  If there are none, it is a noop.
+    api.build_menu.upload_artifacts(config)
 
 
 def GenTests(api):
 
-  def test_build(cq=True, build_target=None, toolchain_cls=False,
-                 pointless=False, properties=None, **kwargs):
+  def test(name, cq=True, build_target=None, artifact_pointless=False,
+           pointless=False, **kwargs):
     """A test build, with BuildTargetProperties,
 
     Args:
-      cq (bool): Whether this is a CQ build.
-      build_target (str): The name of the build target.
-      toolchain_cls (bool): Whether there is a toolchain change.
+      cq (bool): Whether this is a CQ build. Default: True
+      build_target (str): The name of the build target, or None.
+      artifact_pointless (bool): Whether the artifact prepare step replies
+          POINTLESS.
       pointless (bool): Whether the build is pointless.
-      properties (dict): Additional input properties for the build.
       kwargs (dict): Arguments to pass to test_util.test_build.
 
     Returns:
       A step_data object with both the build and the recipe input properties.
     """
-    ret = api.test_util.test_child_build(build_target or 'amd64-generic', cq=cq,
-                                         input_properties=properties,
-                                         **kwargs).build
-    if toolchain_cls:
-      ret += api.build_menu.set_toolchain_cls_return(True)
+    kwargs['cq'] = cq
+    build_target = build_target or 'amd64-generic'
+    ret = api.test_util.test_child_build(build_target, **kwargs).build
+    if artifact_pointless:
+      ret += api.build_menu.set_build_api_return(
+          'prepare artifacts', 'ArtifactsService/PrepareForBuild',
+          '{"build_relevance": "POINTLESS"}')
     if pointless:
       ret += api.build_menu.set_pointless_return(True)
-    return ret
+    return api.test(name, ret)
 
   # Normal CQ build, with one gerrit_change.
-  yield api.test('basic', test_build())
+  yield test('basic')
 
-  yield api.test('postsubmit', test_build(cq=False))
+  # This covers the Relevance check.
+  yield test('prepare-for-build-pointless', artifact_pointless=True)
 
-  yield api.test(
-      'forced',
-      test_build(
-          properties=BuildTargetProperties(
-              build_target=BuildTarget(
-                  name='amd64-generic'), force_relevant_build=True)))
+  # This covers the env_info.pointless check.
+  yield test('pointless-build-check', pointless=True)
 
-  yield api.test('pointless-build-check', test_build(pointless=True))
+  yield test('run-exit-install', cq=False,
+             builder='arm64-generic-kernel-v5_4-buildtest-postsubmit')
 
-  yield api.test('toolchain-change-test', test_build(toolchain_cls=True))
+  yield test('no-run-tests', build_target='grunt')
 
-  yield api.test(
-      'with-goma-props', test_build(),
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      client_version='staging',
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                  )
-          }))
+  yield test('run-exit-tests', cq=False,
+             builder='amd64-generic-exit-after-unittests')
 
-  yield api.test(
-      'no-needs-chrome', test_build(),
-      api.build_menu.set_build_api_return(
-          'install packages.check chrome source needed',
-          'PackageService/NeedsChromeSource', '{"needs_chrome_source": false}'))
-
-  yield api.test(
-      'fails_install_with_many_packages', test_build(),
-      api.build_menu.set_build_api_return(
-          'install packages', 'SysrootService/InstallPackages',
-          json.dumps(
-              dict(failedPackages=[{
-                  "category": "chromeos-base",
-                  "packageName": "thislongpackagenameomg",
-                  "version": "0.0.1-r199",
-              }, {
-                  "category": "safari-base",
-                  "packageName": "thisotherexceedinglylongpackage",
-                  "version": "0.0.1-r129",
-              }, {
-                  "category": "edge-base",
-                  "packageName": "shortpackagename",
-                  "version": "0.0.1-r197",
-              }]))))
-
-  yield api.test(
-      'install_package_no_goma', test_build(),
-      api.build_menu.set_build_api_return(
-          'install packages', 'SysrootService/InstallPackages',
-          json.dumps(
-              dict(events=[{
-                  "name": "fake_package-path/fake-package-name-0.0.1-r2",
-                  "durationMilliseconds": "1523",
-                  "timestampMilliseconds": "1580481610805"
-              }]))))
-
-  goma_artifacts = dict(
-      gomaArtifacts={
-          "counterzFile":
-              "counterz.binaryproto",
-          "statsFile":
-              "stats.binaryproto",
-          "logFiles": [
-              "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
-              "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
-              "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
-              "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"
-          ]
-      }, events=[{
-          "name": "fake_package-path/fake-package-name-0.0.1-r2",
-          "durationMilliseconds": "1523",
-          "timestampMilliseconds": "1580481610805"
-      }])
-  yield api.test(
-      'install_package_with_goma', test_build(),
-      api.build_menu.set_build_api_return('install packages',
-                                          'SysrootService/InstallPackages',
-                                          json.dumps(goma_artifacts)))
-
-  yield api.test(
-      'prepare-for-build-needless', test_build(),
-      api.build_menu.set_build_api_return('prepare artifacts',
-                                          'ArtifactsService/PrepareForBuild',
-                                          '{"build_relevance": "POINTLESS"}'))
-
-  yield api.test(
-      'with-findit-bisect', test_build(),
-      api.properties(
-          **{
-              '$chromeos/cros_bisect':
-                  CrosBisectProperties(
-                      compile={
-                          'targets': [
-                              api.cros_bisect.serialized_package_info(
-                                  'foo', 'cat1', '1'),
-                              api.cros_bisect.serialized_package_info(
-                                  'bar', 'cat1', '2'),
-                              api.cros_bisect.serialized_package_info(
-                                  'baz', 'cat2', '3'),
-                          ]
-                      })
-          }))
-
-  yield api.test(
-      'run-exit-install-packages',
-      test_build(bucket='postsubmit',
-                 builder='arm64-generic-kernel-v5_4-buildtest-postsubmit'))
-
-  yield api.test(
-      'fail-image-tests', test_build(cq=False),
-      api.build_menu.set_build_api_return('build images.test images',
-                                          'ImageService/Test',
-                                          '{"success": false}'))
-
-  yield api.test('no-run-ebuild-tests',
-                 test_build(cq=False, build_target='grunt'))
-
-  yield api.test(
-      'run-exit-ebuild-tests',
-      test_build(cq=False, builder='amd64-generic-exit-after-unittests'))
-
-  yield api.test('with-builder-config-limited-packages',
-                 test_build(builder='orderfile-verify-toolchain'))
-
-  yield api.test('builder-no-longer-exists', test_build(build_target='no-such'))
+  # Postsubmit builders upload prebuilts.
+  yield test('postsubmit', cq=False)

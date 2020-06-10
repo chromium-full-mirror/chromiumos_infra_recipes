@@ -29,6 +29,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   # TODO(crbug/1053703): Make the above statement true.
 
+  UPLOADABLE_PREBUILTS = [
+      BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
+  ]
+
   def initialize(self):
     self._dep_graph = None
 

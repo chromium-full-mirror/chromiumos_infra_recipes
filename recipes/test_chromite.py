@@ -31,18 +31,14 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'no-gerrit-changes',
-      api.test_util.test_child_build('amd64-generic',
-                                     input_properties={}).build)
 
-  yield api.test(
-      'one-gerrit-change',
-      api.test_util.test_child_build('amd64-generic', cq=True,
-                                     builder='chromite-cq',
-                                     input_properties={}).build)
+  def test(name, **kwargs):
+    return api.test(
+        name,
+        api.test_util.test_child_build('amd64-generic', **kwargs).build)
 
-  yield api.test(
-      'builder-no-longer-exists',
-      api.test_util.test_child_build('amd64-generic', builder='none',
-                                     input_properties={}).build)
+  yield test('no-gerrit-changes')
+
+  yield test('one-gerrit-change', cq=True, builder='chromite-cq')
+
+  yield test('builder-no-longer-exists', builder='none')

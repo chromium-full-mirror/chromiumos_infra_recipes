@@ -147,7 +147,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Missing configuration for no-such-cq"
+      "humanReason": "Missing configuration for grunt-cq"
     },
     "name": "$result"
   }

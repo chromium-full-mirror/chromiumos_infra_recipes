@@ -7,11 +7,14 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'build_menu',
+    'cros_bisect',
     'test_util',
 ]
 
 from PB.chromiumos import common
 from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
+from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
+    CrosBisectProperties)
 
 PROPERTIES = FullProperties
 
@@ -51,28 +54,26 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
+  def test_build(build_target='amd64-generic', **kwargs):
+    """Helper for creating build."""
+    return api.test_util.test_child_build(build_target, **kwargs).build
+
   yield api.test(
-      'postsubmit-build',
-      api.test_util.test_child_build('amd64-generic').build,
+      'postsubmit-build', test_build(),
       api.properties(
           FullProperties(artifact_build=True, upload_prebuilts=True)))
 
-  yield api.test('cq-build',
-                 api.test_util.test_child_build('amd64-generic', cq=True).build)
+  yield api.test('cq-build', test_build(cq=True))
 
-  yield api.test('toolchain-cq-build',
-                 api.test_util.test_child_build('amd64-generic', cq=True).build,
+  yield api.test('toolchain-cq-build', test_build(cq=True),
                  api.build_menu.set_toolchain_cls_return(True))
 
-  yield api.test('pointless-cq-build',
-                 api.test_util.test_child_build('amd64-generic', cq=True).build,
+  yield api.test('pointless-cq-build', test_build(cq=True),
                  api.build_menu.set_pointless_return(True))
 
   yield api.test(
       'forced-pointless-artifact-build',
-      api.test_util.test_child_build(
-          'amd64-generic', bucket='toolchain',
-          builder='orderfile-generate-toolchain').build,
+      test_build(bucket='toolchain', builder='orderfile-generate-toolchain'),
       api.build_menu.set_build_api_return('prepare artifacts',
                                           'ArtifactsService/PrepareForBuild',
                                           '{"build_relevance": "POINTLESS"}'),
@@ -86,9 +87,7 @@ def GenTests(api):
 
   yield api.test(
       'pointless-artifact-build',
-      api.test_util.test_child_build(
-          'amd64-generic', bucket='toolchain',
-          builder='orderfile-generate-toolchain').build,
+      test_build(bucket='toolchain', builder='orderfile-generate-toolchain'),
       api.build_menu.set_build_api_return('prepare artifacts',
                                           'ArtifactsService/PrepareForBuild',
                                           '{"build_relevance": "POINTLESS"}'),
@@ -100,18 +99,39 @@ def GenTests(api):
                                      package_name='chromeos-chrome')
               ])))
 
-  yield api.test('no-sysroot',
-                 api.test_util.test_child_build(
-                     'amd64-generic',
-                 ).build, api.properties(FullProperties(no_sysroot=True)))
+  yield api.test('no-sysroot', test_build(),
+                 api.properties(FullProperties(no_sysroot=True)))
+
+  yield api.test('no-config', test_build('no_config', builder='no-config'))
 
   yield api.test(
-      'no-config',
-      api.test_util.test_child_build('no-config', builder='no-config').build)
+      'with-findit-bisect', test_build(),
+      api.properties(
+          FullProperties(expected_packages=[
+              common.PackageInfo(category='cat1', package_name='foo',
+                                 version='1'),
+              common.PackageInfo(category='cat1', package_name='bar',
+                                 version='2'),
+              common.PackageInfo(category='cat2', package_name='baz',
+                                 version='3')
+          ])),
+      api.properties(
+          **{
+              '$chromeos/cros_bisect':
+                  CrosBisectProperties(
+                      compile={
+                          'targets': [
+                              api.cros_bisect.serialized_package_info(
+                                  'foo', 'cat1', '1'),
+                              api.cros_bisect.serialized_package_info(
+                                  'bar', 'cat1', '2'),
+                              api.cros_bisect.serialized_package_info(
+                                  'baz', 'cat2', '3'),
+                          ]
+                      })
+          }))
 
   yield api.test(
-      'missing-ok-config',
-      api.test_util.test_child_build('amd64-generic',
-                                     builder='no-config').build,
+      'missing-ok-config', test_build(builder='no-config'),
       api.properties(
           FullProperties(missing_config_ok=True, expect_missing_config=True)))

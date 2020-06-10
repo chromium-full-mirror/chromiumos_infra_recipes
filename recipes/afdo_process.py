@@ -13,8 +13,6 @@ DEPS = [
     'test_util',
 ]
 
-from google.protobuf import json_format as json_pb
-
 from PB.chromiumos.common import ArtifactsByService
 from PB.chromiumos.common import BuildTarget
 from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
@@ -57,52 +55,29 @@ def DoRunSteps(api, config, build_target, properties):
 
 def GenTests(api):
 
-  def my_props(input_artifacts=None):
-    """Return input properties for the build.
-
-    The build_target is specified in the builder config (currently chell).
-
-    Args:
-      input_artifacts (ArtifactInfo): input artifacts for the build, or None.
-
-    Returns:
-      (AfdoProcessProperties): The input properties to use for the build.
-    """
-    return AfdoProcessProperties(
-        build_target=BuildTarget(name='chell'), input_artifacts=input_artifacts)
-
-  yield api.test(
-      'basic',
-      api.test_util.test_child_build(my_props().build_target.name,
-                                     builder='benchmark-afdo-process',
-                                     input_properties=my_props()).build)
-
-  yield api.test(
-      'changes',
-      api.test_util.test_child_build(my_props().build_target.name, cq=True,
-                                     builder='benchmark-afdo-process',
-                                     input_properties=my_props()).build)
-
-  yield api.test(
-      'pointless',
-      api.test_util.test_child_build(my_props().build_target.name,
-                                     builder='benchmark-afdo-process',
-                                     input_properties=my_props()).build,
-      api.build_menu.set_build_api_return('prepare artifacts',
-                                          'ArtifactsService/PrepareForBuild',
-                                          '{"build_relevance": "POINTLESS"}'))
+  def test(name, builder='benchmark-afdo-process', input_artifacts=None,
+           artifact_pointless=False, **kwargs):
+    kwargs['builder'] = builder
+    if input_artifacts:
+      kwargs['input_properties'] = AfdoProcessProperties(
+          input_artifacts=input_artifacts)
+    ret = api.test_util.test_child_build('chell', **kwargs).build
+    if artifact_pointless:
+      ret += api.build_menu.set_build_api_return(
+          'prepare artifacts', 'ArtifactsService/PrepareForBuild',
+          '{"build_relevance": "POINTLESS"}')
+    return api.test(name, ret)
 
   input_artifact = ArtifactsByService.Toolchain.ArtifactInfo(
       artifact_types=[ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
       gs_locations=['chromeos-image-archive/BUILDER/VERSION-BUILD_ID'])
-  yield api.test(
-      'with-input-artifacts',
-      api.test_util.test_child_build(
-          my_props().build_target.name, builder='benchmark-afdo-process',
-          input_properties=my_props(input_artifacts=[input_artifact])).build)
 
-  yield api.test(
-      'builder-no-longer-exists',
-      api.test_util.test_child_build(my_props().build_target.name,
-                                     builder='no-such-builder',
-                                     input_properties=my_props()).build)
+  yield test('basic')
+
+  yield test('changes', cq=True)
+
+  yield test('pointless', artifact_pointless=True)
+
+  yield test('with-input-artifacts', input_artifacts=[input_artifact])
+
+  yield test('builder-no-longer-exists', builder='no-such-builder')

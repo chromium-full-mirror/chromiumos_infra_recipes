@@ -6,10 +6,14 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
+    'cros_build_api',
     'cros_infra_config',
     'cros_relevance',
     'sysroot_util',
+    'test_util',
 ]
+
+import json
 
 from PB.chromiumos import common
 from PB.recipe_modules.chromeos.sysroot_util.examples.full import (
@@ -38,13 +42,78 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield api.test('basic')
 
-  yield api.test('artifact-build',
+  def test_build(build_target='amd64-generic', **kwargs):
+    """Helper for creating build."""
+    return api.test_util.test_child_build(build_target, **kwargs).build
+
+  def goma_artifacts(with_goma=False):
+    ret = dict(events=[{
+        "name": "fake_package-path/fake-package-name-0.0.1-r2",
+        "durationMilliseconds": "1523",
+        "timestampMilliseconds": "1580481610805"
+    }])
+    if with_goma:
+      ret['gomaArtifacts'] = {
+          "counterzFile":
+              "counterz.binaryproto",
+          "statsFile":
+              "stats.binaryproto",
+          "logFiles": [
+              "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
+              "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
+              "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
+              "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"
+          ]
+      }
+    return json.dumps(ret)
+
+  yield api.test('basic', test_build())
+
+  yield api.test('cq-build', test_build(cq=True))
+
+  yield api.test('artifact-build', test_build(),
                  api.properties(FullTestProperties(artifact_build=True)))
 
-  yield api.test('failed-image-test',
+  yield api.test(
+      'cq-build-no-chrome-source', test_build(cq=True),
+      api.cros_build_api.set_api_return(
+          'install packages.check chrome source needed',
+          'PackageService/NeedsChromeSource', '{"needs_chrome_source": false}'))
+
+  yield api.test(
+      'fails_install_with_many_packages', test_build(cq=True),
+      api.cros_build_api.set_api_return(
+          'install packages', 'SysrootService/InstallPackages',
+          json.dumps(
+              dict(failedPackages=[{
+                  "category": "chromeos-base",
+                  "packageName": "thislongpackagenameomg",
+                  "version": "0.0.1-r199",
+              }, {
+                  "category": "safari-base",
+                  "packageName": "thisotherexceedinglylongpackage",
+                  "version": "0.0.1-r129",
+              }, {
+                  "category": "edge-base",
+                  "packageName": "shortpackagename",
+                  "version": "0.0.1-r197",
+              }]))))
+
+  yield api.test(
+      'no_goma', test_build(),
+      api.cros_build_api.set_api_return('install packages',
+                                        'SysrootService/InstallPackages',
+                                        goma_artifacts(False)))
+
+  yield api.test(
+      'with_goma', test_build(),
+      api.cros_build_api.set_api_return('install packages',
+                                        'SysrootService/InstallPackages',
+                                        goma_artifacts(True)))
+
+  yield api.test('failed-image-test', test_build(),
                  api.properties(FullTestProperties(image_test_json='{}')))
 
-  yield api.test('no-base-image',
+  yield api.test('no-base-image', test_build(),
                  api.properties(FullTestProperties(image_types=[common.TEST])))
