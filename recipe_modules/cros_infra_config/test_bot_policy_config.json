@@ -45,7 +45,8 @@
             "large"
           ]
         }
-      ]
+      ],
+      "swarmingInstance": "chromeos-swarming.appspot.com"
     }
   ]
 }

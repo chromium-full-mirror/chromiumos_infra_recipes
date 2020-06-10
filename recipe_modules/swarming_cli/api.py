@@ -9,8 +9,6 @@ from datetime import timedelta
 
 from recipe_engine import recipe_api
 
-CHROMEOS_SWARMING_URL = 'chromeos-swarming.appspot.com'
-
 
 class SwarmingCli(recipe_api.RecipeApi):
   """A module that queries Swarming via the CLI."""
@@ -45,10 +43,12 @@ class SwarmingCli(recipe_api.RecipeApi):
         name,
         [self._client] + list(cmd), test_stdout=test_stdout, infra_step=True)
 
-  def get_bot_counts(self, dimensions=None):
+  def get_bot_counts(self, swarming_instance, dimensions=None):
     """Retrieves the count of bots from Swarming based on dimensions.
 
     Args:
+      swarming_instance(str): string containing the name of the Swarming
+        instance to query.
       dimensions (tuple): string containing key, value dimensions to query swarming.
     """
     dim_args = []
@@ -56,7 +56,7 @@ class SwarmingCli(recipe_api.RecipeApi):
       dim_args.append('dimensions={}'.format(dim))
 
     cmd = [
-        'query', '--swarming', CHROMEOS_SWARMING_URL,
+        'query', '--swarming', swarming_instance,
         'bots/count?' + '&'.join(dim_args)
     ]
     step = self._run(
@@ -69,18 +69,20 @@ class SwarmingCli(recipe_api.RecipeApi):
     format_str = '%Y-%m-%dT%H:%M:%S.%f'
     return datetime.strptime(time_str, format_str)
 
-  def get_max_pending_time(self, dimensions, lookback_hours):
+  def get_max_pending_time(self, dimensions, lookback_hours, swarming_instance):
     """Retrieves the list of tasks from Swarming based on dimensions.
 
     Args:
       dimensions (str): string containing key, value dimensions to query swarming.
       lookback_hours (int): Number of hours to query swarming on.
+      swarming_instance(str): string containing the name of the Swarming
+        instance to query.
 
     Returns:
       (float) Max pending time in hours.
     """
     task_list = self.get_task_list(dimensions, 'PENDING', lookback_hours,
-                                   limit=1000)
+                                   swarming_instance, limit=1000)
     now = self._swarming_time_to_datetime(task_list['now'])
     oldest_time = now
     items = task_list.get('items', [])
@@ -89,13 +91,16 @@ class SwarmingCli(recipe_api.RecipeApi):
     # Hopefully there won't be tasks pending for days.
     return (now - oldest_time).seconds / 3600.0
 
-  def get_task_list(self, dimensions, state, lookback_hours, limit=None):
+  def get_task_list(self, dimensions, state, lookback_hours, swarming_instance,
+                    limit=None):
     """Retrieves the list of tasks from Swarming based on dimensions.
 
     Args:
       dimensions (str): string containing key, value dimensions to query swarming.
       state (str): state of the tasks to query
       lookback_hours (int): Number of hours to query swarming on.
+      swarming_instance(str): string containing the name of the Swarming
+        instance to query.
       limit (int): Number of tasks to return.
     """
     dim_args = ['state={}'.format(state)]
@@ -104,7 +109,7 @@ class SwarmingCli(recipe_api.RecipeApi):
     dim_args.append('start={}'.format(
         self._calculate_epoch_start(lookback_hours)))
     cmd = [
-        'query', '--swarming', CHROMEOS_SWARMING_URL,
+        'query', '--swarming', swarming_instance,
         'tasks/list?' + '&'.join(dim_args)
     ]
     if limit:
@@ -114,13 +119,16 @@ class SwarmingCli(recipe_api.RecipeApi):
         swarming_task_list_test_data(dimensions))
     return step
 
-  def get_task_counts(self, dimensions, state, lookback_hours):
+  def get_task_counts(self, dimensions, state, lookback_hours,
+                      swarming_instance):
     """Retrieves the count of tasks from Swarming based on dimensions.
 
     Args:
       dimensions (str): string containing key, value dimensions to query swarming.
       state (str): state of the tasks to query
       lookback_hours (int): Number of hours to query swarming on.
+      swarming_instance(str): string containing the name of the Swarming
+        instance to query.
     """
     dim_args = ['state={}'.format(state)]
     for dim in dimensions:
@@ -128,7 +136,7 @@ class SwarmingCli(recipe_api.RecipeApi):
     dim_args.append('start={}'.format(
         self._calculate_epoch_start(lookback_hours)))
     cmd = [
-        'query', '--swarming', CHROMEOS_SWARMING_URL,
+        'query', '--swarming', swarming_instance,
         'tasks/count?' + '&'.join(dim_args)
     ]
     step = self._run(

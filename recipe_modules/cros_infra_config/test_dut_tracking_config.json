@@ -12,7 +12,8 @@
         "TASK_BOT_COUNT",
         "MAX_PEND_TIME"
       ],
-      "lookbackHours": -24
+      "lookbackHours": -24,
+      "swarmingInstance": "chromeos-swarming.appspot.com"
     }
   ]
 }

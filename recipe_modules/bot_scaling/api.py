@@ -179,12 +179,14 @@ class BotScalingApi(recipe_api.RecipeApi):
         # therefore we only need to count the first returned count.
         if not bot_stats_hold:
           bot_stats_hold = self._bot_swarming_stats(
-              policy.bot_group, self.m.swarming_cli.get_bot_counts(dim))
+              policy.bot_group,
+              self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim))
         for state in TASK_STATES:
           task_stats_hold = self._task_swarming_stats(
               policy.bot_group, state, task_stats_hold,
               self.m.swarming_cli.get_task_counts(dim, state,
-                                                  policy.lookback_hours))
+                                                  policy.lookback_hours,
+                                                  policy.swarming_instance))
       bot_stats.append(bot_stats_hold)
       task_stats.extend(task_stats_hold)
     return SwarmingStats(bot_stats, task_stats)

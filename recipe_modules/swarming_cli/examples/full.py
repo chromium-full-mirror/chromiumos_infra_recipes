@@ -18,8 +18,9 @@ def RunSteps(api):
       SwarmingDimension(name="bot_size", value="large", values=["large"])
   ]
   query_dim = api.bot_scaling.unpack_policy_dimensions(dimensions)
+  swarming_instance = 'chromeos-swarming.appspot.com'
   for dim in query_dim:
-    bot_count = api.swarming_cli.get_bot_counts(dim)
+    bot_count = api.swarming_cli.get_bot_counts(swarming_instance, dim)
   api.assertions.assertEqual(int(bot_count.get('busy'), 0), 21)
   api.assertions.assertEqual(int(bot_count.get('count'), 0), 23)
 
@@ -29,7 +30,7 @@ def RunSteps(api):
   ]
   query_dim = api.bot_scaling.unpack_policy_dimensions(dimensions)
   for dim in query_dim:
-    bot_count = api.swarming_cli.get_bot_counts(dim)
+    bot_count = api.swarming_cli.get_bot_counts(swarming_instance, dim)
   api.assertions.assertEqual(int(bot_count.get('busy', 0)), 0)
 
   dimensions = [
@@ -40,10 +41,12 @@ def RunSteps(api):
   TASK_STATES = ['RUNNING', 'PENDING']
   for dim in query_dim:
     for state in TASK_STATES:
-      task_count = api.swarming_cli.get_task_counts(dim, state, -48)
+      task_count = api.swarming_cli.get_task_counts(dim, state, -48,
+                                                    swarming_instance)
   api.assertions.assertEqual(int(task_count.get('busy', 0)), 0)
 
-  pend_time = api.swarming_cli.get_max_pending_time(query_dim, -48)
+  pend_time = api.swarming_cli.get_max_pending_time(query_dim, -48,
+                                                    swarming_instance)
   api.assertions.assertTrue(pend_time < 5.3)
   api.assertions.assertTrue(pend_time > 5.2)
 

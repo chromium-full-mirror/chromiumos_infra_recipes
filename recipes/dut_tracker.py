@@ -35,20 +35,23 @@ def RunSteps(api):
       with api.step.nest('querying ' + policy.name):
         dims = _bind_dimensions(policy.dimensions)
         task_dims = _bind_dimensions(policy.task_dimensions)
-        bot_count = api.swarming_cli.get_bot_counts(dims)
+        bot_count = api.swarming_cli.get_bot_counts(policy.swarming_instance,
+                                                    dims)
         bot_count['name'] = policy.name
         task_count = {'name': policy.name}
         for state in TASK_STATES:
           task_count[state] = api.swarming_cli.get_task_counts(
-              dims + task_dims, state, policy.lookback_hours)
+              dims + task_dims, state, policy.lookback_hours,
+              policy.swarming_instance)
 
         if MAX_PEND_TIME in policy.modes:
           pend_time = {
               'name':
                   policy.name,
               'pend':
-                  api.swarming_cli.get_max_pending_time(dims + task_dims,
-                                                        policy.lookback_hours)
+                  api.swarming_cli.get_max_pending_time(
+                      dims + task_dims, policy.lookback_hours,
+                      policy.swarming_instance)
           }
           pend_stats.append(pend_time)
         bot_stats.append(bot_count)
