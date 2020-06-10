@@ -82,11 +82,11 @@ def DoRunSteps(api, config, build_target, properties):
   if api.cros_infra_config.should_exit(ebuilds_run_spec):
     return
 
-  if artifact_build:
-    api.build_menu.upload_artifacts(config)
-
   if config.artifacts.prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
     api.build_menu.upload_prebuilts(config)
+
+  if artifact_build:
+    api.build_menu.upload_artifacts(config)
 
 
 def GenTests(api):
