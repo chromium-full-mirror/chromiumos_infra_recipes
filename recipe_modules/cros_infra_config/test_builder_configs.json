@@ -200,6 +200,58 @@
     },
     {
       "id": {
+        "name": "amd64-generic-exit-after-unittests",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": true
+      },
+      "artifacts": {
+        "prebuilts": "PRIVATE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "portageProfile": {
+          "profile": "generic_build"
+        },
+        "buildImages": {
+          "imageTypes": [
+            "BASE",
+            "TEST"
+          ]
+        },
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "packageBlacklist": [],
+        "ebuildsRunSpec": "RUN_EXIT"
+      }
+    },
+    {
+      "id": {
         "name": "arm-generic-cq",
         "branch": "master",
         "type": "CQ"
@@ -1044,6 +1096,72 @@
       },
       "build": {
         "applyGerritChanges": true
+      }
+    },
+    {
+      "id": {
+        "name": "arm64-generic-kernel-v5_4-buildtest-postsubmit",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdkCacheVersion": 1
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "portageProfile": {
+          "profile": "kernel-5_4-buildtest"
+        },
+        "installPackages": {
+          "runSpec": "RUN_EXIT",
+          "packages": [
+            {
+              "packageName": "linux-sources",
+              "category": "virtual"
+            }
+          ]
+        },
+        "buildImages": {
+          "imageTypes": [
+            "TEST",
+            "BASE"
+          ]
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN"
       }
     }
   ]

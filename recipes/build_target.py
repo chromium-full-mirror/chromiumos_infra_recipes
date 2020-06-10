@@ -227,7 +227,8 @@ def GenTests(api):
 
   yield api.test(
       'run-exit-install-packages',
-      test_build(bucket='postsubmit', builder='amd64-generic-bisect'))
+      test_build(bucket='postsubmit',
+                 builder='arm64-generic-kernel-v5_4-buildtest-postsubmit'))
 
   yield api.test(
       'fail-image-tests', test_build(cq=False),
@@ -240,8 +241,7 @@ def GenTests(api):
 
   yield api.test(
       'run-exit-ebuild-tests',
-      test_build(cq=False, build_target='grunt',
-                 builder='grunt-unittest-only-postsubmit'))
+      test_build(cq=False, builder='amd64-generic-exit-after-unittests'))
 
   yield api.test('with-builder-config-limited-packages',
                  test_build(builder='orderfile-verify-toolchain'))
