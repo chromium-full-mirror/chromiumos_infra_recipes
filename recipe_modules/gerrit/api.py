@@ -348,7 +348,7 @@ class GerritApi(recipe_api.RecipeApi):
       presentation.step_text = 'confirmed no merge conflicts'
       return
 
-  def create_change(self, project, reviewers=None, topic=None):
+  def create_change(self, project, reviewers=None, topic=None, hashtags=None):
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
@@ -359,6 +359,7 @@ class GerritApi(recipe_api.RecipeApi):
       reviewers (list[str]): List of reviewer emails. If specified, gerrit will
           email the reviewers.
       topic (str): Topic to set for the CL.
+      hashtags (list[str]): List of hashtags to set for the CL.
 
     Returns:
       GerritChange: The newly created change.
@@ -369,7 +370,8 @@ class GerritApi(recipe_api.RecipeApi):
 
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
-        self.m.git_cl.upload(reviewers=reviewers, topic=topic, send_mail=True)
+        self.m.git_cl.upload(reviewers=reviewers, topic=topic,
+                             hashtags=hashtags, send_mail=True)
         gerrit_change_url = self.m.git_cl.status(
             field='url', fast=True,
             step_test_data=functools.partial(

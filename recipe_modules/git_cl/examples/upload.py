@@ -10,8 +10,9 @@ DEPS = [
 
 
 def RunSteps(api):
-  output = api.git_cl.upload(
-      topic='tensorflow', reviewers=['jeff@google.com'], send_mail=True)
+  output = api.git_cl.upload(topic='tensorflow', reviewers=['jeff@google.com'],
+                             hashtags=['foo-refactoring',
+                                       'bar-feature'], send_mail=True)
   api.assertions.assertEqual(output, 'pytorch forever')
 
 def GenTests(api):

@@ -37,7 +37,8 @@ class GitClApi(recipe_api.RecipeApi):
 
     return wrapper
 
-  def upload(self, topic=None, reviewers=None, send_mail=False, **kwargs):
+  def upload(self, topic=None, reviewers=None, hashtags=None, send_mail=False,
+             **kwargs):
     """Run `git cl upload`.
 
     --force and --bypass-hooks are always set to remove the need to enter
@@ -46,6 +47,7 @@ class GitClApi(recipe_api.RecipeApi):
     Args:
       topic (str): Optional --topic to set.
       reviewers (list[str]): Optional list of --reviewers to set.
+      hashtags (list[str]): Optional list of --hashtags to set.
       send_mail (bool): If true, set --send-mail.
       kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
 
@@ -62,6 +64,11 @@ class GitClApi(recipe_api.RecipeApi):
       for reviewer in reviewers:
         args.append('--reviewers')
         args.append(reviewer)
+
+    if hashtags is not None:
+      for hashtag in hashtags:
+        args.append('--hashtag')
+        args.append(hashtag)
 
     if send_mail:
       args.append('--send-mail')

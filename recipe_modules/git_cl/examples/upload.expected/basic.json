@@ -11,6 +11,10 @@
       "tensorflow",
       "--reviewers",
       "jeff@google.com",
+      "--hashtag",
+      "foo-refactoring",
+      "--hashtag",
+      "bar-feature",
       "--send-mail"
     ],
     "env_suffixes": {
