@@ -70,11 +70,9 @@ def GenTests(api):
                               cq_equivalent_cl_group_key=equiv)),
       api.buildbucket.ci_build(
           project='chromeos', bucket='postsubmit',
-          builder='postsubmit-orchestrator', tags=[
-              bbcommon_pb2.StringPair(key='cq_cl_group_key', value=group),
-              bbcommon_pb2.StringPair(key='cq_equivalent_cl_group_key',
-                                      value=equiv)
-          ]))
+          builder='postsubmit-orchestrator',
+          tags=api.cros_tags.tags(cq_cl_group_key=group,
+                                  cq_equivalent_cl_group_key=equiv)))
 
   yield api.test(
       'no_group_key_tags', api.cq(full_run=True),
@@ -85,7 +83,5 @@ def GenTests(api):
       'cq-inactive',
       api.buildbucket.ci_build(
           project='chromeos', bucket='postsubmit',
-          builder='postsubmit-orchestrator', tags=[
-              bbcommon_pb2.StringPair(key='cq_equivalent_cl_group_key',
-                                      value=equiv)
-          ]))
+          builder='postsubmit-orchestrator',
+          tags=api.cros_tags.tags(cq_equivalent_cl_group_key=equiv)))

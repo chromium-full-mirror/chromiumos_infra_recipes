@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'bot_cost',
+    'cros_tags',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -20,13 +21,12 @@ from google.protobuf import timestamp_pb2
 def RunSteps(api):
   output = build_pb2.Build.Output()
   output.properties['build_cost'] = 10.0
-  tags = api.buildbucket.tags(
-      parent_buildbucket_id=str(api.buildbucket.build.id))
+  tags = api.cros_tags.tags(parent_buildbucket_id=str(api.buildbucket.build.id))
   child_builds = [
       build_pb2.Build(id=124, tags=tags, output=output),
       build_pb2.Build(id=125, tags=tags),
       build_pb2.Build(id=126, output=output,
-                      tags=api.buildbucket.tags(parent_buildbucket_id='122'))
+                      tags=api.cros_tags.tags(parent_buildbucket_id='122'))
   ]
   with api.step.nest('calculate cq run cost') as test_step:
     cq_run_cost = api.bot_cost._calculate_cq_run_cost(child_builds, test_step)
@@ -42,6 +42,6 @@ def GenTests(api):
                                start_time=timestamp_pb2.Timestamp(seconds=0),
                                update_time=timestamp_pb2.Timestamp(seconds=0))
   orch_build.infra.swarming.bot_dimensions.extend(
-      [common_pb2.StringPair(key='bot_size', value='small')])
+      api.cros_tags.tags(bot_size='small'))
 
   yield api.test('basic', api.buildbucket.build(orch_build))

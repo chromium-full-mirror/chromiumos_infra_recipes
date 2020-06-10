@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'cros_tags',
     'test_util',
 ]
 
@@ -187,7 +188,7 @@ def GenTests(api):
       'no-commit-and-no-changes',
       api.test_util.test_child_build(
           'amd64-generic', revision=None,
-          tags=api.test_util.tags(my_tag='foo')).build,
+          tags=api.cros_tags.tags(my_tag='foo')).build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',

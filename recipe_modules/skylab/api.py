@@ -7,7 +7,6 @@ import json
 
 from collections import namedtuple
 from google.protobuf import json_format
-from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
@@ -81,7 +80,9 @@ class SkylabApi(recipe_api.RecipeApi):
         reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
 
       bb_request = self.m.buildbucket.schedule_request(
-          'cros_test_platform', bucket='testplatform', properties={
+          'cros_test_platform',
+          bucket='testplatform',
+          properties={
               'requests': reqs,
           },
           gerrit_changes=[],
@@ -138,10 +139,6 @@ class SkylabApi(recipe_api.RecipeApi):
 
       tags = self._get_ctp_tags(test, unit, image_path)
       request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
-      bb_tags = [
-          common_pb2.StringPair(key=key, value=value)
-          for key, value in tags.items()
-      ]
       req.params.decorations.tags.extend(request_tags)
       self._enable_test_retries(req)
 
@@ -152,7 +149,7 @@ class SkylabApi(recipe_api.RecipeApi):
           properties={
               'request': request_dict,
           },
-          tags=bb_tags,
+          tags=self.m.cros_tags.tags(**tags),
           gerrit_changes=[],
           swarming_parent_run_id=self.m.swarming.task_id,
           # Disable inheriting the version from the parent builder.
@@ -293,6 +290,7 @@ class SkylabApi(recipe_api.RecipeApi):
       status = common_pb2.FAILURE
     return self.SkylabResult(task=task, status=status,
                              child_results=result.task_results)
+
 
 def _request_tag(hw_test):
   return hw_test.common.display_name

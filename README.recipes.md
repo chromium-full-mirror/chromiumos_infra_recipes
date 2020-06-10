@@ -3688,13 +3688,13 @@ Args:
 Prints the current version information of repo.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
-[DEPS](/recipe_modules/skylab/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#110)(self, test, unit, timeout, name=None):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#111)(self, test, unit, timeout, name=None):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -3707,7 +3707,7 @@ Args:
 Returns:
   SkylabTask: with buildbucket_id of the recipe launched.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#42)(self, unit_hw_tests, timeout, name=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#41)(self, unit_hw_tests, timeout, name=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -3719,11 +3719,11 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#38)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#37)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#231)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#228)(self, tasks, timeout):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -3734,7 +3734,7 @@ Args:
 Returns:
   list[SkylabResult]: The results for each suite.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#185)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#182)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -4043,7 +4043,7 @@ Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 ### *recipe_modules* / [test\_util](/recipe_modules/test_util)
 
-[DEPS](/recipe_modules/test_util/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/test_util/__init__.py#6): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 API to simpify testing Chrome OS recipes.
 
@@ -4405,17 +4405,17 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/autotest_status_parser/examples/full.py#16)(api):**
 ### *recipes* / [bot\_cost:examples/calculate\_build\_cost](/recipe_modules/bot_cost/examples/calculate_build_cost.py)
 
-[DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#6): [bot\_cost](#recipe_modules-bot_cost), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#23)(api, properties):**
 ### *recipes* / [bot\_cost:examples/calculate\_cq\_run\_cost](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py)
 
-[DEPS](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#6): [bot\_cost](#recipe_modules-bot_cost), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#21)(api):**
 ### *recipes* / [bot\_cost:tests/bot\_size](/recipe_modules/bot_cost/tests/bot_size.py)
 
-[DEPS](/recipe_modules/bot_cost/tests/bot_size.py#6): [bot\_cost](#recipe_modules-bot_cost), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/bot_cost/tests/bot_size.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/bot_cost/tests/bot_size.py#16)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_bot\_request](/recipe_modules/bot_scaling/examples/get_bot_request.py)
@@ -5844,9 +5844,9 @@ Tests a recipe CL by running ChromeOS builders.
 &mdash; **def [RunSteps](/recipes/test_recipes.py#332)(api, properties):**
 ### *recipes* / [test\_util:examples/full](/recipe_modules/test_util/examples/full.py)
 
-[DEPS](/recipe_modules/test_util/examples/full.py#6): [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/test_util/examples/full.py#6): [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/test_util/examples/full.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/test_util/examples/full.py#24)(api, properties):**
 ### *recipes* / [test\_util:tests/build\_target\_properties](/recipe_modules/test_util/tests/build_target_properties.py)
 
 [DEPS](/recipe_modules/test_util/tests/build_target_properties.py#6): [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

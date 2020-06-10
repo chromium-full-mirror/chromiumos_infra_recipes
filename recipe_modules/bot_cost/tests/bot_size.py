@@ -7,10 +7,10 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'bot_cost',
+    'cros_tags',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 
 def RunSteps(api):
@@ -23,7 +23,7 @@ def GenTests(api):
   def test(name, status, bot_size):
     bld_msg = build_pb2.Build(id=123, status=status)
     bld_msg.infra.swarming.bot_dimensions.extend(
-        [common_pb2.StringPair(key='bot_size', value=bot_size)])
+        api.cros_tags.tags(bot_size=bot_size))
     return api.test(name, api.buildbucket.build(bld_msg))
 
   yield test('bad-size', status='STARTED', bot_size='bad')

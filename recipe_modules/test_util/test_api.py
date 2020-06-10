@@ -129,7 +129,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     msg.input.gerrit_changes.extend(extra_changes or [])
     if bot_size:
       msg.infra.swarming.bot_dimensions.extend(
-          self.m.buildbucket.tags(bot_size=bot_size))
+          self.m.cros_tags.tags(bot_size=bot_size))
 
     if create_time:
       msg.create_time.seconds = create_time
@@ -154,18 +154,6 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       ret += self.m.cq(dry_run=dry_run, full_run=not dry_run)
 
     return _test_build_return(msg, ret)
-
-  def tags(self, **tags):
-    """Helper for generating a list of StringPair messages.
-
-    Args:
-      tags (dict): Dict mapping keys to values.  If the value is a list,
-          multiple tags for the same key will be created.
-
-    Returns:
-      (list[StringPair]) tags.
-    """
-    return self.m.buildbucket.tags(**tags)
 
   def build_target_properties(self, build_target_name=None, **kwargs):
     """Helper for updating input.properties in a Build message.

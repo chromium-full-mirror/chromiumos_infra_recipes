@@ -924,10 +924,9 @@ def GenTests(api):
 
   yield api.test(
       'quota_scheduler_override',
-      cq_orchestrator_build_with_gerrit_change(tags=[
-          common_pb2.StringPair(key='cq_cl_tag',
-                                value='pupr:chromeos-base/chromeos-chrome')
-      ]),
+      cq_orchestrator_build_with_gerrit_change(
+          tags=api.cros_tags.tags(
+              cq_cl_tag='pupr:chromeos-base/chromeos-chrome')),
       api.cq(full_run=True),
       api.properties(enable_history=True),
       api.buildbucket.simulated_search_results(

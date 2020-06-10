@@ -229,9 +229,9 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     if snapshot is not None:
       # we can't use the snapshot directly because output_gitiles_commit
       # is not currently implemented, TODO(crbug/990539)
-      buildset_tag = common_pb2.StringPair(
-          key='buildset', value=self._buildset_tag_from_snapshot(snapshot))
-      tags.append(buildset_tag)
+      tags.extend(
+          self.m.cros_tags.tags(
+              buildset=self._buildset_tag_from_snapshot(snapshot)))
 
     predicates = [
         rpc_pb2.BuildPredicate(builder=builder, gerrit_changes=patches,
@@ -250,10 +250,9 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       if group_key:
         predicates.append(
             rpc_pb2.BuildPredicate(
-                builder=builder, tags=[
-                    common_pb2.StringPair(key='cq_equivalent_cl_group_key',
-                                          value=group_key)
-                ], create_time=create_time, build=build_range))
+                builder=builder, tags=self.m.cros_tags.tags(
+                    cq_equivalent_cl_group_key=group_key),
+                create_time=create_time, build=build_range))
 
     # buildbucket.search returns at most |limit| builds, so we need to ask for
     # more to be sure that we can detect overflow.  Ask for 2 extra, since we
