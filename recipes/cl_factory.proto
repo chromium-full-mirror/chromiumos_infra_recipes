@@ -19,9 +19,13 @@ message ClFactoryProperties {
   string command = 2;
 
   // Template for forming commit messages. Variables interpolated in the
-  // template include those available to 'repo forall' which include
-  // $REPO_PROJECT, $REPO_PATH, $REPO_REMOTE, $REPO_LREV, $REPO_RREV,
-  // $REPO_COUNT. See `repo help forall`.
+  // template include:
+  //
+  //   project - the name of the project
+  //   path    - the path within the repo checkout to the project
+  //   remote  - the gerrit instance for the project
+  //
+  // Interpolation is done with curly bracket syntax as in {project}.
   string message_template = 3;
 
   // Reviewers to add to the created CLs.

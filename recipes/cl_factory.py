@@ -66,6 +66,7 @@ def RunSteps(api, properties):
 
         if api.git.diff_check(api.context.cwd):
           pres.step_text = 'diff'
+          _make_cl(api, info, api.context.cwd, properties, gerrit_changes)
         else:
           pres.step_text = 'no diff'
 
@@ -93,14 +94,46 @@ def _gen_config(api):
   api.step('run gen_config config.star', [gen_config_path, config_path])
 
 
+def _make_cl(api, info, project_path, properties, gerrit_changes):
+  commit_message = _make_commit_message(api, info, properties, gerrit_changes)
+  api.git.add([project_path])
+  api.git.commit(commit_message)
+  api.gerrit.create_change(
+      project=project_path,
+      reviewers=list(properties.reviewers),
+      hashtags=list(properties.hashtags),
+  )
+
+
+def _make_commit_message(api, info, properties, gerrit_changes):
+  replacements = {
+      'project': info.name,
+      'path': info.path,
+      'remote': info.remote,
+  }
+  try:
+    message = properties.message_template.format(**replacements)
+  except KeyError:
+    # Unrecognized key in template. Use the template without interpolation.
+    message = properties.message_template
+  # TODO: add Cq-Depend.
+  return message
+
+
 def GenTests(api):
+  message_template = """Regenerate audio config in project {project}.
+
+Regenerate the audio config in project {project}
+per the changes in program galaxy.
+
+BUG=https://crbug.com/1087514
+TEST=CQ
+"""
   cls = [
-      common_pb2.GerritChange(host='chromium.googlesource.com',
-                              project='chromiumos/config',
-                              change=1234),
-      common_pb2.GerritChange(host='chrome-internal.googlesource.com',
-                              project='chromeos/program/galaxy',
-                              change=1234),
+      common_pb2.GerritChange(host='chromium-review.googlesource.com',
+                              project='chromiumos/config', change=1234),
+      common_pb2.GerritChange(host='chrome-internal-review.googlesource.com',
+                              project='chromeos/program/galaxy', change=1234),
   ]
 
   def build(changes=True):
@@ -113,7 +146,7 @@ def GenTests(api):
     return api.buildbucket.build(build_message)
 
   yield api.test(
-      'basic_with_diff',
+      'with_diff',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -121,13 +154,13 @@ def GenTests(api):
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
               command='echo "hello world"',
-              message_template='Fix audio config',
+              message_template=message_template,
           )),
       api.git.diff_check(True),
   )
 
   yield api.test(
-      'basic_without_diff',
+      'without_diff',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -135,55 +168,70 @@ def GenTests(api):
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
               command='echo "hello world"',
-              message_template='Fix audio config',
+              message_template=message_template,
           )),
+  )
+
+  yield api.test(
+      'invalid_message_template_interpolation',
+      build(),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              command='echo "hello world"',
+              message_template='No such {interpolation}.',
+          )),
+      api.git.diff_check(True),
   )
 
   yield api.test(
       'no_gerrit_changes_specified',
       build(changes=False),
-      api.properties(ClFactoryProperties(
-          repo_regexes = ['src/project/galaxy'],
-          reviewers = ['johndoe@google.com'],
-          hashtags = ['refactor-audio-config'],
-          command = 'echo "hello world"',
-          message_template = 'Fix audio config',
-      )),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              command='echo "hello world"',
+              message_template=message_template,
+          )),
       api.expect_exception('ValueError'),
-      api.post_process(
-          post_process.ResultReasonRE,
-          '.*Gerrit changes to apply must be specified.*'),
+      api.post_process(post_process.ResultReasonRE,
+                       '.*Gerrit changes to apply must be specified.*'),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'no_repos_specified',
       build(),
-      api.properties(ClFactoryProperties(
-          reviewers = ['johndoe@google.com'],
-          hashtags = ['refactor-audio-config'],
-          command = 'echo "hello world"',
-          message_template = 'Fix audio config',
-      )),
+      api.properties(
+          ClFactoryProperties(
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              command='echo "hello world"',
+              message_template=message_template,
+          )),
       api.expect_exception('ValueError'),
-      api.post_process(
-          post_process.ResultReasonRE,
-          '.*Projects to operate on must be specified.*'),
+      api.post_process(post_process.ResultReasonRE,
+                       '.*Projects to operate on must be specified.*'),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'no_command_specified',
       build(),
-      api.properties(ClFactoryProperties(
-          repo_regexes = ['src/project/galaxy'],
-          reviewers = ['johndoe@google.com'],
-          hashtags = ['refactor-audio-config'],
-          message_template = 'Fix audio config',
-      )),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              message_template=message_template,
+          )),
       api.expect_exception('ValueError'),
-      api.post_process(
-          post_process.ResultReasonRE, '.*A command property must specify.*'),
+      api.post_process(post_process.ResultReasonRE,
+                       '.*A command property must specify.*'),
       api.post_process(post_process.DropExpectation),
   )
 
