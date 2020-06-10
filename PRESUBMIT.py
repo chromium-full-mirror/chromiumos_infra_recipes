@@ -18,7 +18,7 @@ def CommonChecks(input_api, output_api):
 
   # Python formatting issues are errors.
   results += input_api.canned_checks.CheckPatchFormatted(
-      input_api, output_api, check_python=True,
+      input_api, output_api, check_python=True, check_clang_format=False,
       result_factory=output_api.PresubmitError)
 
   return results
