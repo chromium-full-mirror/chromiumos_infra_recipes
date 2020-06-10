@@ -15,10 +15,14 @@ PROPERTIES = ClFactoryProperties
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_sdk',
     'cros_source',
+    'gerrit',
+    'git',
     'repo',
 ]
 
@@ -43,12 +47,51 @@ def RunSteps(api, properties):
 
   with api.cros_source.checkout_overlays_context(), \
     api.context(cwd=api.cros_source.workspace_path):
+    # TODO: add ability to do a more targeted sync.
+    api.cros_source.ensure_synced_cache()
+    with api.step.nest('cherry-pick gerrit changes'):
+      patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
+      api.cros_source.apply_gerrit_patch_sets(patch_sets)
+
     infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
 
-    with api.step.nest('dump projects') as pres:
-      pres.logs['projects'] = [
-          i.name + '|' + i.path for i in infos
-      ]
+    # Start development branches for each project.
+    api.repo.start('cl-factory', projects=[info.name for info in infos])
+
+    for info in infos:
+      with api.step.nest('working on project {}'.format(info.name)) as pres, \
+          api.context(cwd=api.cros_source.workspace_path.join(info.path)):
+
+        _gen_config(api)
+
+        if api.git.diff_check(api.context.cwd):
+          pres.step_text = 'diff'
+        else:
+          pres.step_text = 'no diff'
+
+
+def _gen_config(api):
+  """Executes gen_config within cwd boxster repo.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+  """
+  gen_config_path = api.context.cwd.join('config', 'bin', 'gen_config')
+  config_path = api.context.cwd.join('config.star')
+
+  api.path.mock_add_paths(gen_config_path)
+  api.path.mock_add_paths(config_path)
+
+  if not api.path.exists(gen_config_path):  # pragma: nocover
+    raise api.step.InfraFailure('gen_config not found. Expected at %s' %
+                                gen_config_path)
+
+  if not api.path.exists(config_path):  # pragma: nocover
+    raise api.step.InfraFailure('config.star not found. Expected at %s' %
+                                config_path)
+
+  api.step('run gen_config config.star', [gen_config_path, config_path])
+
 
 def GenTests(api):
   cls = [
@@ -70,15 +113,30 @@ def GenTests(api):
     return api.buildbucket.build(build_message)
 
   yield api.test(
-      'basic',
+      'basic_with_diff',
       build(),
-      api.properties(ClFactoryProperties(
-          repo_regexes = ['src/project/galaxy'],
-          reviewers = ['johndoe@google.com'],
-          hashtags = ['refactor-audio-config'],
-          command = 'echo "hello world"',
-          message_template = 'Fix audio config',
-      )),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              command='echo "hello world"',
+              message_template='Fix audio config',
+          )),
+      api.git.diff_check(True),
+  )
+
+  yield api.test(
+      'basic_without_diff',
+      build(),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              command='echo "hello world"',
+              message_template='Fix audio config',
+          )),
   )
 
   yield api.test(
