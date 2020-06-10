@@ -29,6 +29,7 @@ DEPS = [
     'easy',
     'gerrit',
     'skylab',
+    'test_util',
 ]
 
 PROPERTIES = {
@@ -71,9 +72,11 @@ def GenTests(api):
       * build_target (str): The name of the build target.
       * gerrit_changes list(GerritChange): Changes being tested in the build.
     """
-    return build_pb2.Build.Input(
-        properties=api.cros_history.build_target_property(build_target),
-        gitiles_commit=snapshot, gerrit_changes=gerrit_changes)
+    msg = build_pb2.Build.Input(gitiles_commit=snapshot,
+                                gerrit_changes=gerrit_changes)
+    msg.properties.update(
+        api.test_util.build_target_properties(build_target_name=build_target))
+    return msg
 
   def serialize_builds(builds):
     return [Build.SerializeToString(b) for b in builds]

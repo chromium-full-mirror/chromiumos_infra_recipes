@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'cros_history',
+    'test_util',
 ]
 
 
@@ -29,20 +30,18 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  build_targets = ['bob', 'eve']
-  build_target_props = {
-      bt: api.cros_history.build_target_property(bt) for bt in build_targets
-  }
+
+  def build(build_id, builder, build_target):
+    ret = build_pb2.Build(id=build_id,
+                          builder=build_pb2.BuilderID(builder=builder))
+    ret.input.properties.update(
+        api.test_util.build_target_properties(build_target_name=build_target))
+    return ret
 
   yield api.test(
       'basic',
       api.buildbucket.simulated_search_results([
-          build_pb2.Build(id=123,
-                          builder=build_pb2.BuilderID(builder='eve-snapshot'),
-                          input=dict(properties=build_target_props['eve'])),
-          build_pb2.Build(id=231,
-                          builder=build_pb2.BuilderID(builder='bob-snapshot'),
-                          input=dict(properties=build_target_props['bob'])),
-          build_pb2.Build(
-              id=312, builder=build_pb2.BuilderID(builder='cq-orchestrator')),
+          build(123, 'eve-snapshot', 'eve'),
+          build(231, 'bob-snapshot', 'bob'),
+          build(312, 'cq-orchestrator', None)
       ], 'get snapshot builds.buildbucket.search'))

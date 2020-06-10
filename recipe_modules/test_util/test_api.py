@@ -15,6 +15,7 @@ from collections import namedtuple
 
 from recipe_engine import recipe_test_api
 
+from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 
@@ -167,3 +168,23 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       (list[StringPair]) tags.
     """
     return self.m.buildbucket.tags(**tags)
+
+  def build_target_properties(self, build_target_name=None, **kwargs):
+    """Helper for updating input.properties in a Build message.
+
+    Args:
+      build_target_name (str): The name to use for the build_target, or None.
+      kwargs (dict): Other key value pairs for BuildTargetProperties.
+
+    Raises:
+      ValueError if build_target_name and build_target are both set.
+
+    Returns:
+      (dict) Dictionary to pass to message.input.properties.update()
+    """
+    if build_target_name:
+      if kwargs.get('build_target'):
+        raise ValueError('Both build_target and build_target_name given.')
+      kwargs['build_target'] = BuildTarget(name=build_target_name)
+    return json_format.MessageToDict(
+        BuildTargetProperties(**kwargs), preserving_proto_field_name=True)

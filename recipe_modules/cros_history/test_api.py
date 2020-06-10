@@ -28,19 +28,3 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     build.output.properties.update({'passed_tests': tests})
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return build
-
-  @staticmethod
-  def build_target_property(build_target):
-    """Generate a struct for the 'build_target' property.
-
-    Args:
-      * build_target (str): The name of the build target.
-    """
-    return struct_pb2.Struct(
-        fields={
-            'build_target':
-                struct_pb2.Value(
-                    struct_value=struct_pb2.Struct(fields={
-                        'name': struct_pb2.Value(string_value=build_target)
-                    }))
-        })

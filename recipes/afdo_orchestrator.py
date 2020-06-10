@@ -29,6 +29,7 @@ DEPS = [
     'git_footers',
     'naming',
     'skylab',
+    'test_util',
 ]
 
 from PB.chromiumos.builder_config import BuilderConfig
@@ -432,10 +433,12 @@ def GenTests(api):
       * snapshot(GitilesCommit): The snapshot of the build.
       * build_target (str): The name of the build target.
     """
-    return build_pb2.Build.Input(
-        properties=api.cros_history.build_target_property(build_target),
+    msg = build_pb2.Build.Input(
         gerrit_changes=[common_pb2.GerritChange(change=1234)],
         gitiles_commit=snapshot)
+    msg.properties.update(
+        api.test_util.build_target_properties(build_target_name=build_target))
+    return msg
 
   vm_tests = [
       vm_test_build('vm-test'),

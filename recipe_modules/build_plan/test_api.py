@@ -8,8 +8,6 @@ from recipe_engine import recipe_test_api
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
-from google.protobuf import struct_pb2
-
 
 class BuildPlanTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the build_plan module."""
@@ -21,7 +19,10 @@ class BuildPlanTestApi(recipe_test_api.RecipeTestApi):
       * snapshot(GitilesCommit): The snapshot of the build.
       * build_target (str): The name of the build target.
     """
-    return build_pb2.Build.Input(
-        properties=self.m.cros_history.build_target_property(build_target),
+    msg = build_pb2.Build.Input(
         gerrit_changes=[common_pb2.GerritChange(change=1234)],
         gitiles_commit=snapshot)
+    msg.properties.update(
+        self.m.test_util.build_target_properties(
+            build_target_name=build_target))
+    return msg

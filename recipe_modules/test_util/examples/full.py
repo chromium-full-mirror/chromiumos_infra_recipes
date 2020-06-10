@@ -131,6 +131,18 @@ def GenTests(api):
                          expected_build_target='amd64-generic',
                          expect_commit=True, expected_cl_count=0)))
 
+  props = api.test_util.build_target_properties(build_target_name='myboard')
+  yield api.test(
+      'with-properties-dict-from-build-target-properties',
+      api.test_util.test_child_build('myboard', input_properties=props,
+                                     builder='amd64-generic-postsubmit').build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expect_commit=True, expected_cl_count=0,
+                         expected_build_target='myboard')))
+
   # Also verify that project and bucket are handled correctly.
   yield api.test(
       'cq-build',

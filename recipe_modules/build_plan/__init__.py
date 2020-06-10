@@ -12,4 +12,5 @@ DEPS = [
     'cros_history',
     'cros_relevance',
     'cros_tags',
+    'test_util',
 ]
