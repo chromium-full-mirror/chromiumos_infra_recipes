@@ -96,8 +96,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
       passed_tests = []
       with self.m.step.nest('collect tests'):
-        test_results = self._collect_tests(
-            test_tasks, timeout=self._timeout, multi_req=multi_req)
+        test_results = self._collect_tests(test_tasks, timeout=self._timeout,
+                                           multi_req=multi_req)
         # Record test results.
         passed_tests = [
             self.m.naming.get_test_title(test_result)
@@ -114,8 +114,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           if self.m.failures.is_critical_test_failure(test_result)
       ])
       needs_baseline_validation = self._needs_validation(
-          failed_test_names, test_plan,
-          self._baseline_validation_percent,
+          failed_test_names, test_plan, self._baseline_validation_percent,
           self._baseline_validation_count)
 
       if needs_baseline_validation:
@@ -151,9 +150,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           with self.m.step.nest('schedule baseline tests'):
             baseline_test_plan = self.m.cros_test_plan.generate(
                 baseline_builds, gerrit_changes, snapshot)
-            baseline_tasks = self._schedule_tests(
-                baseline_test_plan, passed_tests, self._timeout,
-                snapshot=snapshot, multi_req=multi_req, dev=dev)
+            baseline_tasks = self._schedule_tests(baseline_test_plan,
+                                                  passed_tests, self._timeout,
+                                                  snapshot=snapshot,
+                                                  multi_req=multi_req, dev=dev)
 
           with self.m.step.nest('collect baseline tests'):
             baseline_results = self._collect_tests(baseline_tasks,
@@ -163,9 +163,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             # Add failures here to passed_tests.
             passed_tests.extend([
                 self.m.naming.get_test_title(test_result)
-                for test_result in (
-                    baseline_results.skylab + baseline_results.autotest_vm +
-                    baseline_results.tast_vm)
+                for test_result in (baseline_results.skylab +
+                                    baseline_results.autotest_vm +
+                                    baseline_results.tast_vm)
                 if self.m.failures.is_critical_test_failure(test_result)
             ])
 
@@ -208,8 +208,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return build_target.name + '-direct-tast-vm'
 
   def _schedule_tests(self, test_plan, passed_tests, timeout,
-                      test_to_build_map=None, snapshot=None,
-                      dev=False, multi_req=False):
+                      test_to_build_map=None, snapshot=None, dev=False,
+                      multi_req=False):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -227,19 +227,21 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       MetaTestTuple of lists of the tests scheduled.
     """
-    skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests,
-                                               timeout,test_to_build_map,
-                                               dev=dev, multi_req=multi_req)
+    skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests, timeout,
+                                               test_to_build_map, dev=dev,
+                                               multi_req=multi_req)
     autotest_vm_tests = self._schedule_autotest_vm_tests(
-       test_plan, passed_tests, snapshot, test_to_build_map)
+        test_plan, passed_tests, snapshot, test_to_build_map)
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
                                                  snapshot, test_to_build_map)
 
-    moblab_vm_tests = self._schedule_moblab_vm_tests(
-        test_plan, passed_tests, snapshot, test_to_build_map)
-    return self.MetaTestTuple(
-        skylab=skylab_tasks or [], autotest_vm=autotest_vm_tests or [],
-        tast_vm=tast_vm_tests or [], moblab_vm=moblab_vm_tests or [])
+    moblab_vm_tests = self._schedule_moblab_vm_tests(test_plan, passed_tests,
+                                                     snapshot,
+                                                     test_to_build_map)
+    return self.MetaTestTuple(skylab=skylab_tasks or [],
+                              autotest_vm=autotest_vm_tests or [],
+                              tast_vm=tast_vm_tests or [],
+                              moblab_vm=moblab_vm_tests or [])
 
   def _collect_tests(self, test_tasks, timeout, multi_req=False):
     """Collect on all tests from test_tasks.
@@ -265,16 +267,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         step_name='collect autotest vm tests',
         timeout=int(timeout.seconds)).values()
     tast_vm_results = self.m.buildbucket.collect_builds(
-        [vt.id for vt in test_tasks.tast_vm],
-        step_name='collect tast vm tests',
+        [vt.id for vt in test_tasks.tast_vm], step_name='collect tast vm tests',
         timeout=int(timeout.seconds)).values()
     moblab_vm_results = self.m.buildbucket.collect_builds(
         [mvt.id for mvt in test_tasks.moblab_vm],
         step_name='collect moblab vm tests',
         timeout=int(timeout.seconds)).values()
-    return self.MetaTestTuple(
-        skylab=hw_results, autotest_vm=autotest_vm_results,
-        tast_vm=tast_vm_results, moblab_vm=moblab_vm_results)
+    return self.MetaTestTuple(skylab=hw_results,
+                              autotest_vm=autotest_vm_results,
+                              tast_vm=tast_vm_results,
+                              moblab_vm=moblab_vm_results)
 
   def get_test_failures(self, test_results, baseline_results):
     """Logs all test failures to the UI and raises on failed tests.
@@ -328,11 +330,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             tests_to_run.append(
                 self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
             if not multi_req:
-              skylab_tasks.append(self.m.skylab.create_recipe(
-                  test, unit, timeout))
+              skylab_tasks.append(
+                  self.m.skylab.create_recipe(test, unit, timeout))
       if multi_req and tests_to_run:
-        skylab_tasks.extend(self.m.skylab.schedule_suites(
-            tests_to_run, timeout))
+        skylab_tasks.extend(
+            self.m.skylab.schedule_suites(tests_to_run, timeout))
     return skylab_tasks
 
   def _schedule_autotest_vm_tests(self, test_plan, passed_tests, snapshot,
@@ -362,8 +364,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           requests.append(
               self.m.buildbucket.schedule_request(
                   gitiles_commit=snapshot,
-                  builder=self._autotest_vm_test(build_target), bucket=self._vm_bucket,
-                  critical=test.common.critical.value,
+                  builder=self._autotest_vm_test(build_target),
+                  bucket=self._vm_bucket, critical=test.common.critical.value,
                   properties=self._with_props_for_child_build(
                       json_format.MessageToDict(
                           TestVmProperties(
@@ -404,8 +406,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           requests.append(
               self.m.buildbucket.schedule_request(
                   gitiles_commit=snapshot,
-                  builder=self._tast_vm_test(build_target), bucket=self._vm_bucket,
-                  critical=test.common.critical.value,
+                  builder=self._tast_vm_test(build_target),
+                  bucket=self._vm_bucket, critical=test.common.critical.value,
                   properties=self._with_props_for_child_build(
                       json_format.MessageToDict(
                           TestVmProperties(
@@ -426,8 +428,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
               self.m.buildbucket.schedule_request(
                   gitiles_commit=snapshot,
                   builder=self._direct_tast_vm_test(build_target),
-                  bucket=self._vm_bucket,
-                  critical=test.common.critical.value,
+                  bucket=self._vm_bucket, critical=test.common.critical.value,
                   properties=self._with_props_for_child_build(
                       json_format.MessageToDict(
                           TastVmProperties(
@@ -481,8 +482,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         url_title_fn=self.m.naming.get_build_title)
     return moblab_vm_tests
 
-  def _needs_validation(self, failed_results, test_plan,
-                        percent_threshold, count_threshold):
+  def _needs_validation(self, failed_results, test_plan, percent_threshold,
+                        count_threshold):
     """Check if we need validation.
 
     Check if we need validation of the results per the validation constraints.
@@ -499,15 +500,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       validation.
     """
     test_count = (
-        self._critical_test_count(test_plan.hw_test_units,
-                                  lambda unit: unit.hw_test_cfg,
-                                  lambda cfg: cfg.hw_test) +  #
-        self._critical_test_count(test_plan.vm_test_units,
-                                  lambda unit: unit.vm_test_cfg,
-                                  lambda cfg: cfg.vm_test) +  #
-        self._critical_test_count(test_plan.tast_vm_test_units,
-                                  lambda unit: unit.tast_vm_test_cfg,
-                                  lambda cfg: cfg.tast_vm_test))
+        self._critical_test_count(test_plan.hw_test_units, lambda unit: unit.
+                                  hw_test_cfg, lambda cfg: cfg.hw_test) +
+        self._critical_test_count(test_plan.vm_test_units, lambda unit: unit.
+                                  vm_test_cfg, lambda cfg: cfg.vm_test) +
+        self._critical_test_count(
+            test_plan.tast_vm_test_units, lambda unit: unit.tast_vm_test_cfg,
+            lambda cfg: cfg.tast_vm_test))
     failure_ratio = 0
     if test_count != 0 and failed_results:
       failure_ratio = float(len(failed_results)) / test_count
