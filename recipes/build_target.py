@@ -66,27 +66,45 @@ def DoRunSteps(api, config, build_target, properties):
     return
   packages = env_info.packages
 
-  # TODO(crbug/1053703): All of the following if statements should be removed as
-  # we break build_target.py into the various builders.
-  install_packages = config.build.install_packages
-  if api.cros_infra_config.should_run(install_packages.run_spec):
-    api.build_menu.bootstrap_sysroot_and_install_packages(
-        config, packages, artifact_build=artifact_build)
-    if api.cros_infra_config.should_exit(install_packages.run_spec):
-      return
+  # Artifacts are frequently of use even if the build failed.  For example, it
+  # is likely that the developer will want to see the ebuild logs from install
+  # packages when that step fails, or even if build images fail afterward. See
+  # also crbug/1086630.
+  #
+  # TODO(crbug/1053703): The if statements from here to the end should be
+  # removed as we break build_target.py into the various builders.  In
+  # particular, RUN_EXIT now means "run through this step, and then upload
+  # any artifacts and exit."
+  #
+  # In the case of install_packages.run_spec saying to not run, there are likely
+  # to be no artifacts to upload, in which case the upload_artifacts call should
+  # "bundle everything", and then "upload all none" of the artifacts.
 
-  ebuilds_run_spec = config.unit_tests.ebuilds_run_spec
-  api.build_menu.build_and_test_images(
-      config=config,
-      run_tests=api.cros_infra_config.should_run(ebuilds_run_spec))
-  if api.cros_infra_config.should_exit(ebuilds_run_spec):
-    return
+  try:
+    done = False
+    install_spec = config.build.install_packages.run_spec
+    ebuilds_spec = config.unit_tests.ebuilds_run_spec
+    if api.cros_infra_config.should_run(install_spec):
+      api.build_menu.bootstrap_sysroot_and_install_packages(
+          config, packages, artifact_build=artifact_build)
+      if api.cros_infra_config.should_exit(install_spec):
+        done = True
 
-  if config.artifacts.prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
-    api.build_menu.upload_prebuilts(config)
+    if not done:
+      api.build_menu.build_and_test_images(
+          config=config,
+          run_tests=api.cros_infra_config.should_run(ebuilds_spec))
+      if api.cros_infra_config.should_exit(ebuilds_spec):
+        done = True
 
-  if artifact_build:
-    api.build_menu.upload_artifacts(config)
+    if not done:
+      if config.artifacts.prebuilts in UPLOADABLE_PREBUILTS_CONFIGS:
+        api.build_menu.upload_prebuilts(config)
+
+  finally:
+    # If the builder has artifacts, always upload them.
+    if artifact_build:
+      api.build_menu.upload_artifacts(config)
 
 
 def GenTests(api):
