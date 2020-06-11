@@ -83,7 +83,8 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
   def ensure_synced_cache(self, manifest_url=INTERNAL_MANIFEST_URL,
                           init_opts=None, sync_opts=None,
-                          cache_path_override=None, is_staging=False):
+                          cache_path_override=None, is_staging=False,
+                          projects=None):
     """Ensure the configured repo cache exists and is synced.
 
     Args:
@@ -93,11 +94,14 @@ class CrosSourceApi(recipe_api.RecipeApi):
       * cache_path_override (Path): Path to sync into. If None, the cache_path
       property is used.
       * is_staging (bool): Flag to indicate canary staging environment
+      * projects (List[str]): Projects to limit the sync to, or None to sync
+      all projects.
     """
     init_opts = init_opts or {}
     if is_staging:
       init_opts.update(STAGING_INIT_OPTS)
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
+    sync_opts['projects'] = projects
     cache_path = cache_path_override or self.cache_path
     self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
                                        init_opts=init_opts, sync_opts=sync_opts)

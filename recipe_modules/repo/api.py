@@ -154,7 +154,7 @@ class RepoApi(recipe_api.RecipeApi):
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,
            optimized_fetch=False, cache_dir=None, timeout=None,
-           retry_fetches=None):
+           retry_fetches=None, projects=None):
     """Executes 'repo sync' with the given arguments.
 
     Args:
@@ -167,6 +167,8 @@ class RepoApi(recipe_api.RecipeApi):
       * optimized_fetch (bool): Only fetch projects if revision doesn't exist.
       * cache_dir (Path): Use git-cache with this cache directory.
       * retry_fetches (int): The number of times to retry retriable fetches.
+      * projects (List[str]): Projects to limit the sync to, or None to sync
+      all projects.
     """
     assert _kwonly is (), 'sync accepts no positional args'
     cmd = ['sync']
@@ -188,6 +190,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--cache-dir', cache_dir]
     if retry_fetches:
       cmd += ['--retry-fetches', '%d' % retry_fetches]
+    if projects:
+      cmd += projects
     self._step(cmd, name=None, timeout=timeout)
 
   def sync_manifest(self, manifest_url, manifest_data, **kwargs):

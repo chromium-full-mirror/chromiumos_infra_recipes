@@ -186,7 +186,9 @@
       "--cache-dir",
       "/tmp/cache",
       "--retry-fetches",
-      "8"
+      "8",
+      "chromiumos/config",
+      "chromeos/project/puff/duffy"
     ],
     "infra_step": true,
     "name": "repo sync (2)"
