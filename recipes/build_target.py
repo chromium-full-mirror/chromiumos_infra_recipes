@@ -12,6 +12,7 @@ DEPS = [
     'test_util',
 ]
 
+from recipe_engine.recipe_api import StepFailure
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 PROPERTIES = BuildTargetProperties
@@ -55,8 +56,8 @@ def DoRunSteps(api, config, build_target, properties):
   # to be no artifacts to upload, in which case the upload_artifacts call should
   # "bundle everything", and then "upload all none" of the artifacts.
 
+  done = False
   try:
-    done = False
     install_spec = config.build.install_packages.run_spec
     ebuilds_spec = config.unit_tests.ebuilds_run_spec
     if api.cros_infra_config.should_run(install_spec):
@@ -78,13 +79,20 @@ def DoRunSteps(api, config, build_target, properties):
 
   finally:
     # Always try to upload artifacts.  If there are none, it is a noop.
-    api.build_menu.upload_artifacts(config)
+    try:
+      api.build_menu.upload_artifacts(config)
+    except StepFailure:
+      # TODO(crbug/1086630): We do not need to catch StepFailure here after
+      # 2020-12-31.
+      # Do not fail if we already did.  See also crrev.com/c/2241753.
+      if not done:
+        raise
 
 
 def GenTests(api):
 
   def test(name, cq=True, build_target=None, artifact_pointless=False,
-           pointless=False, **kwargs):
+           pointless=False, args=None, **kwargs):
     """A test build, with BuildTargetProperties,
 
     Args:
@@ -93,11 +101,13 @@ def GenTests(api):
       artifact_pointless (bool): Whether the artifact prepare step replies
           POINTLESS.
       pointless (bool): Whether the build is pointless.
+      args (list):  Arguments to pass to api.test.
       kwargs (dict): Arguments to pass to test_util.test_build.
 
     Returns:
       A step_data object with both the build and the recipe input properties.
     """
+    args = args or []
     kwargs['cq'] = cq
     build_target = build_target or 'amd64-generic'
     ret = api.test_util.test_child_build(build_target, **kwargs).build
@@ -107,7 +117,7 @@ def GenTests(api):
           '{"build_relevance": "POINTLESS"}')
     if pointless:
       ret += api.build_menu.set_pointless_return(True)
-    return api.test(name, ret)
+    return api.test(name, ret, *args)
 
   # Normal CQ build, with one gerrit_change.
   yield test('basic')
@@ -128,3 +138,10 @@ def GenTests(api):
 
   # Postsubmit builders upload prebuilts.
   yield test('postsubmit', cq=False)
+
+  yield test(
+      'bundle-fail', args=[
+          api.build_menu.set_build_api_return(
+              'upload artifacts', 'ArtifactsService/BundleArtifacts', '',
+              retcode=1)
+      ])

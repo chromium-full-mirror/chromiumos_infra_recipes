@@ -4516,9 +4516,9 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#27)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#28)(api, config, build_target, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#21)(api, properties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
