@@ -70,27 +70,32 @@ class RepoApi(recipe_api.RecipeApi):
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, [self.repo_path] + args, **kwargs)
 
-  def _clear_git_locks(self):
-    """Removes any git locks found in the entire repo checkout."""
+  def _clear_git_locks(self, projects=None):
+    """Removes git locks found in the repo checkout.
 
+    Removes git locks in the repo checkout. The specifying of projects
+    is provided as an optimization for applications that are dealing with
+    a subset of the projects. The speedup can be substantial.
+
+    Args:
+      * projects (List[str]): Projects to limit the repo forall deleting of
+      locks to, or None to clear all project locks.
+    """
     repo_cmd = [
         'find', '.repo/', '-type', 'f', '-name', '*.lock', '-print', '-delete'
     ]
     self.m.step('clear repo locks', repo_cmd, infra_step=True)
 
+    git_cmd = ['forall'] + (projects or [])
+    base_args = [
+        '-j', '32', '-c', 'find', '.', '-type', 'f', '-path', './.git/*.lock',
+        '-print', '-delete'
+    ]
+
     try:
-      git_cmd = [
-          'forall', '--ignore-missing', '-j', '32', '-c', 'find', '.',
-          '-type', 'f', '-path', './.git/*.lock', '-print', '-delete'
-      ]
-      self._step(git_cmd, 'clear git locks')
+      self._step(git_cmd + ['--ignore-missing'] + base_args, 'clear git locks')
     except recipe_api.StepFailure: # pragma: nocover
-      # try again without the --ignore-missing
-      git_cmd = [
-          'forall', '-j', '32', '-c', 'find', '.',
-          '-type', 'f', '-path', './.git/*.lock', '-print', '-delete'
-      ]
-      self._step(git_cmd, 'retry clear git locks')
+      self._step(git_cmd + base_args, 'retry clear git locks')
 
   def version(self):
     """Prints the current version information of repo."""
@@ -98,7 +103,7 @@ class RepoApi(recipe_api.RecipeApi):
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
-           local_manifest=None, manifest_name=None):
+           local_manifest=None, manifest_name=None, projects=None):
     """Executes 'repo init' with the given arguments.
 
     Args:
@@ -112,6 +117,9 @@ class RepoApi(recipe_api.RecipeApi):
       * local_manifest (LocalManifest): Local manifest to add. See
       https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.md#local-manifests.
       * manifest_name (str): Name of manifest file to use.
+      * projects (List[str]): Projects of concern or None if all projects are of
+      concern. Used to limit work where possible such as only clearing git locks
+      in these projects.
     """
     assert _kwonly is (), 'init accepts only 1 positional arg'
     cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
@@ -131,7 +139,7 @@ class RepoApi(recipe_api.RecipeApi):
     if manifest_name:
       cmd += ['--manifest-name', manifest_name]
     self._step(cmd, timeout=15 * 60)
-    self._clear_git_locks()
+    self._clear_git_locks(projects)
 
     if self.m.context.cwd:
       self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))
@@ -409,24 +417,24 @@ class RepoApi(recipe_api.RecipeApi):
     ]
     self._step(cmd, name=name)
 
-  def _git_clean_checkout(self, root_path):
+  def _git_clean_checkout(self, root_path, projects=None):
     """Ensure the given repo does not contain untracked files or directories.
 
     We're assuming that the root path provided has already been validated.
 
     Args:
       * root_path (Path): Path to the repo root.
+      * projects (List[str]): Projects to clean or None to clean all projects.
     """
     with self.m.step.nest('ensure clean checkout'):
       with self.m.context(cwd=root_path, infra_steps=True):
-        cmd = [
-            'forall', '--ignore-missing', '-j', '32', '-c', 'git', 'clean',
-            '-d', '-f'
-        ]
+        cmd = ['forall'] + (projects or [])
+        cmd.extend(
+            ['--ignore-missing', '-j', '32', '-c', 'git', 'clean', '-d', '-f'])
         self._step(cmd, stdout=self.m.raw_io.output(add_output_log=True))
 
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
-                             sync_opts=None):
+                             sync_opts=None, projects=None):
     """Ensure the given repo checkout exists and is synced.
 
     Args:
@@ -434,6 +442,9 @@ class RepoApi(recipe_api.RecipeApi):
       * manifest_url (str): Manifest URL for 'repo.init`.
       * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+      * projects (List[str]): Projects of concern or None if all projects
+      are of concern. Used to perform optimizations where possible to only
+      operate on the given projects.
     """
     with self.m.step.nest('ensure synced checkout'):
       self.m.file.ensure_directory('ensure root path', root_path)
@@ -446,10 +457,14 @@ class RepoApi(recipe_api.RecipeApi):
               self.m.file.rmtree('remove .repo/%s' % manifest_dir,
                                  root_path.join('.repo', manifest_dir))
 
-            self.init(manifest_url, **(init_opts or {}))
-            self._git_clean_checkout(root_path)
+            opts = init_opts or {}
+            opts['projects'] = projects
+            self.init(manifest_url, **opts)
+            self._git_clean_checkout(root_path, projects)
             self._binary_selfupdate(root_path)
-            self.sync(**(sync_opts or {}))
+            opts = sync_opts or {}
+            opts['projects'] = projects
+            self.sync(**opts)
             break
           except recipe_api.StepFailure:
             if retries >= 1:

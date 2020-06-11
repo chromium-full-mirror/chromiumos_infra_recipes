@@ -101,10 +101,10 @@ class CrosSourceApi(recipe_api.RecipeApi):
     if is_staging:
       init_opts.update(STAGING_INIT_OPTS)
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
-    sync_opts['projects'] = projects
     cache_path = cache_path_override or self.cache_path
     self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
-                                       init_opts=init_opts, sync_opts=sync_opts)
+                                       init_opts=init_opts, sync_opts=sync_opts,
+                                       projects=projects)
 
   @contextlib.contextmanager
   def checkout_overlays_context(self):

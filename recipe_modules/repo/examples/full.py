@@ -30,6 +30,7 @@ def RunSteps(api):
             repo='https://chrome-internal.googlesource.com/testproject1',
             path='local_manifest.xml',
         ),
+        projects=['chromiumos/config', 'chromeos/project/puff/duffy'],
     )
     api.repo.sync()
     api.repo.sync(force_sync=True, detach=True, current_branch=True, jobs=99,
