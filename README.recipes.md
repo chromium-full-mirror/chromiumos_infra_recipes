@@ -89,6 +89,7 @@
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [build_menu:examples/full](#recipes-build_menu_examples_full)
+  * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
   * [build_menu:tests/no-dep-graph](#recipes-build_menu_tests_no-dep-graph)
   * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan)
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
@@ -575,7 +576,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#43)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#71)(self, build_target, is_staging=False, missing_ok=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#71)(self, build_target, is_staging=None, missing_ok=False):**
 
 Initial setup steps for the builder.
 
@@ -585,9 +586,9 @@ needs to have when it runs, for cleanup to happen properly.
 Args:
   build_target (BuildTarget): build_target for the build, or None if the
       builder is build_target agnostic.
-  is_staging (bool): Whether this is definitely a staging builder.  By
-      default, anything in the 'staging' bucket is considered a staging
-      builder.  Use this to cause other builders to be considered staging.
+  is_staging (bool): Whether this is a staging builder.  Use this to
+      override auto-detection. By default, anything in the 'staging' bucket
+      is considered a staging builder.
   missing_ok (bool): Whether it is OK if no config is found.
 
 Returns:
@@ -4482,6 +4483,11 @@ Renames a branch using `cros branch rename`.
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#22)(api, properties):**
+### *recipes* / [build\_menu:tests/is\_staging](/recipe_modules/build_menu/tests/is_staging.py)
+
+[DEPS](/recipe_modules/build_menu/tests/is_staging.py#6): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/is_staging.py#22)(api, properties):**
 ### *recipes* / [build\_menu:tests/no-dep-graph](/recipe_modules/build_menu/tests/no-dep-graph.py)
 
 [DEPS](/recipe_modules/build_menu/tests/no-dep-graph.py#6): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
