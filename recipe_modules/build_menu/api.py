@@ -319,12 +319,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def upload_prebuilts(self, config=None):
     """Upload prebuilts from the build.
 
+    Upload prebuilts if the configuration has uploadable prebuilts.
+
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
     """
     config = config or self.config
     artifacts = config.artifacts
 
-    self.m.cros_prebuilts.upload_target_prebuilts(
-        self.build_target, config.id.type, artifacts.prebuilts_gs_bucket,
-        private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
+    if artifacts.prebuilts in self.UPLOADABLE_PREBUILTS:
+      self.m.cros_prebuilts.upload_target_prebuilts(
+          self.build_target, config.id.type, artifacts.prebuilts_gs_bucket,
+          private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))

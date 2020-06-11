@@ -643,6 +643,8 @@ Args:
 
 Upload prebuilts from the build.
 
+Upload prebuilts if the configuration has uploadable prebuilts.
+
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 ### *recipe_modules* / [build\_plan](/recipe_modules/build_plan)

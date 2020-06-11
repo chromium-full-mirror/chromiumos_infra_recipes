@@ -74,8 +74,7 @@ def DoRunSteps(api, config, build_target, properties):
         done = True
 
     if not done:
-      if config.artifacts.prebuilts in api.build_menu.UPLOADABLE_PREBUILTS:
-        api.build_menu.upload_prebuilts(config)
+      api.build_menu.upload_prebuilts(config)
 
   finally:
     # Always try to upload artifacts.  If there are none, it is a noop.
@@ -135,9 +134,6 @@ def GenTests(api):
 
   yield test('run-exit-tests', cq=False,
              builder='amd64-generic-exit-after-unittests')
-
-  # Postsubmit builders upload prebuilts.
-  yield test('postsubmit', cq=False)
 
   yield test(
       'bundle-fail', args=[
