@@ -347,7 +347,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
 
     return responses_by_service[service][method]
 
-  def set_api_return(self, step, endpoint, data, iteration=1):
+  def set_api_return(self, step, endpoint, data, iteration=1, retcode=0):
     """Set the return from a Build API call.
 
     Args:
@@ -355,12 +355,14 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       endpoint (str): Endpoint name, such as 'ImageService/Create'
       data (str): Build API response to return (JSON string).
       iteration (int): Which call this applies to for this step/endpoint.
+      retcode (int): Return code for the Build API call.
 
     Returns:
       Step_data for the test.
     """
     # Calls after the first one have the iteration number appended.
     endpoint = endpoint if iteration == 1 else '%s (%d)' % (endpoint, iteration)
+    substep = ('call build API script' if retcode else 'read output file')
     return self.step_data(
-        '%s.call chromite.api.%s.read output file' % (step, endpoint),
-        self.m.file.read_raw(content=data))
+        '%s.call chromite.api.%s.%s' % (step, endpoint, substep),
+        self.m.file.read_raw(content=data), retcode=retcode)

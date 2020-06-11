@@ -5,27 +5,44 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'cros_build_api',
 ]
 
-from PB.chromite.api import api as meta_api
+from google.protobuf import json_format
+
+from PB.chromite.api.api import VersionGetRequest
+from PB.chromite.api.api import VersionGetResponse
+from PB.recipe_modules.chromeos.cros_build_api.examples.set_api_return import (
+    SetReturnProperties as PROPERTIES)
 
 
-def RunSteps(api):
-  # Create expected = version 0.5555.5555.
-  expected = meta_api.VersionGetResponse()
-  expected.version.minor = 5555
-  expected.version.bug = 5555
+def RunSteps(api, properties):
   with api.step.nest('test step'):
-    api.assertions.assertEqual(
-        api.cros_build_api.VersionService.Get(meta_api.VersionGetRequest()),
-        expected)
+    if properties.expect_assertion:
+      api.assertions.assertRaises(api.step.StepFailure,
+                                  api.cros_build_api.VersionService.Get,
+                                  VersionGetRequest())
+    else:
+      api.assertions.assertEqual(
+          api.cros_build_api.VersionService.Get(VersionGetRequest()),
+          json_format.Parse(properties.expected_response_json,
+                            VersionGetResponse(), ignore_unknown_fields=True))
 
 
 def GenTests(api):
+  resp = VersionGetResponse()
+  resp.version.minor = 5555
+  resp.version.bug = 5555
+  resp_json = json_format.MessageToJson(resp, preserving_proto_field_name=True)
+
   yield api.test(
-      'basic',
-      api.cros_build_api.set_api_return(
-          'test step', 'VersionService/Get',
-          '{"version":{"minor":5555,"bug":5555}}'))
+      'basic', api.properties(expected_response_json=resp_json),
+      api.cros_build_api.set_api_return('test step', 'VersionService/Get',
+                                        resp_json))
+
+  yield api.test(
+      'step-failure', api.properties(expect_assertion=True),
+      api.cros_build_api.set_api_return('test step', 'VersionService/Get', '',
+                                        retcode=1))

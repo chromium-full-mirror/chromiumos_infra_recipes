@@ -4667,9 +4667,9 @@ Used to create sweeping changes by creating CLs in many repos.
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/publish_events.py#14)(api):**
 ### *recipes* / [cros\_build\_api:examples/set\_api\_return](/recipe_modules/cros_build_api/examples/set_api_return.py)
 
-[DEPS](/recipe_modules/cros_build_api/examples/set_api_return.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_build_api/examples/set_api_return.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/set_api_return.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/set_api_return.py#21)(api, properties):**
 ### *recipes* / [cros\_build\_api:tests/bad\_retcodes](/recipe_modules/cros_build_api/tests/bad_retcodes.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/bad_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
