@@ -19,6 +19,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'cros_cq_depends',
     'cros_sdk',
     'cros_source',
     'gerrit',
@@ -116,7 +117,7 @@ def _make_commit_message(api, info, properties, gerrit_changes):
   except KeyError:
     # Unrecognized key in template. Use the template without interpolation.
     message = properties.message_template
-  # TODO: add Cq-Depend.
+  message += '\n\n{}'.format(api.cros_cq_depends.get_cq_depend(gerrit_changes))
   return message
 
 
