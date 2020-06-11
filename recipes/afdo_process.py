@@ -6,26 +6,18 @@
 """Recipe for building an AFDO benchmark profile."""
 
 DEPS = [
-    'recipe_engine/properties',
     'build_menu',
     'cros_artifacts',
     'cros_sdk',
-    'cros_version',
-    'easy',
     'sysroot_util',
     'test_util',
 ]
 
 from google.protobuf import json_format as json_pb
 
-from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ArtifactsByService
 from PB.chromiumos.common import BuildTarget
-from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
-from PB.chromite.api.packages import GetTargetVersionsRequest
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
-from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 PROPERTIES = AfdoProcessProperties
 
@@ -43,9 +35,8 @@ def DoRunSteps(api, config, build_target, properties):
   config.artifacts.artifacts_info.toolchain.input_artifacts.extend(
       properties.input_artifacts or [])
 
-  relevance = api.build_menu.setup_workspace_and_chroot(
-      artifact_build=True, forced_relevant=properties.force_relevant_build)
-  if relevance == Relevance.POINTLESS:
+  if not api.build_menu.setup_workspace_and_chroot(
+      artifact_build=True, forced_relevant=properties.force_relevant_build):
     return
 
   # This update_for_artifact_build call will download the input artifacts into

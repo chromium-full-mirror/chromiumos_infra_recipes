@@ -9,7 +9,6 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
 DEPS = [
-    'recipe_engine/buildbucket',
     'build_menu',
     'cros_build_api',
     'cros_sdk',

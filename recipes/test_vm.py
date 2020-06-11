@@ -22,7 +22,6 @@ import os
 
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import Path
-from PB.chromiumos.common import UseFlag
 from PB.chromite.api.test import VmTestRequest
 from PB.recipes.chromeos.test_vm import TestVmProperties
 

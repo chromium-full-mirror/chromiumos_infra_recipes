@@ -6,19 +6,12 @@
 """Recipe for building a BuildTarget image."""
 
 DEPS = [
-    'recipe_engine/buildbucket',
-    'recipe_engine/context',
-    'recipe_engine/file',
-    'recipe_engine/path',
     'recipe_engine/properties',
-    'recipe_engine/raw_io',
     'build_menu',
     'cros_artifacts',
     'cros_bisect',
     'cros_infra_config',
-    'sysroot_util',
     'test_util',
-    'workspace_util',
 ]
 
 import json
@@ -26,12 +19,9 @@ import json
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
-from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
-from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 
@@ -56,9 +46,9 @@ def DoRunSteps(api, config, build_target, properties):
   artifact_build = api.cros_artifacts.has_output_artifacts(
       config.artifacts.artifacts_info)
 
-  if api.build_menu.setup_workspace_and_chroot(
+  if not api.build_menu.setup_workspace_and_chroot(
       artifact_build=artifact_build,
-      forced_relevant=properties.force_relevant_build) == Relevance.POINTLESS:
+      forced_relevant=properties.force_relevant_build):
     return
 
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()

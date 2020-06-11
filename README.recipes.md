@@ -628,7 +628,7 @@ Args:
   forced_relevant (bool): Whether to force relevance for artifact_builds.
 
 Returns:
-  PrepareForBuildResponse.BuildRelevance
+  (bool): Whether the build is relevant.
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#55)(self):**
 
@@ -4289,13 +4289,13 @@ Args:
 Returns: A bool whether to collect the build.
 ### *recipes* / [afdo\_process](/recipes/afdo_process.py)
 
-[DEPS](/recipes/afdo_process.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/afdo_process.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)
 
 Recipe for building an AFDO benchmark profile.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_process.py#40)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/afdo_process.py#32)(api, config, build_target, properties):**
 
-&mdash; **def [RunSteps](/recipes/afdo_process.py#33)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_process.py#25)(api, properties):**
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
 
 [DEPS](/recipe_modules/analysis_service/examples/full.py#6): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4471,7 +4471,7 @@ Renames a branch using `cros branch rename`.
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#19)(api, properties):**
 ### *recipes* / [build\_menu:tests/no-dep-graph](/recipe_modules/build_menu/tests/no-dep-graph.py)
 
 [DEPS](/recipe_modules/build_menu/tests/no-dep-graph.py#6): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -4504,13 +4504,13 @@ Renames a branch using `cros branch rename`.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#20)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#52)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#42)(api, config, build_target, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#45)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#35)(api, properties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -5523,13 +5523,13 @@ use tast executable from build_artifacts.
 &mdash; **def [RunSteps](/recipes/tast_vm.py#41)(api, properties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
-[DEPS](/recipes/test_chromite.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipes/test_chromite.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)
 
 Recipe that tests chromite.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/test_chromite.py#22)(api):**
+&mdash; **def [RunSteps](/recipes/test_chromite.py#21)(api):**
 ### *recipes* / [test\_config](/recipes/test_config.py)
 
 [DEPS](/recipes/test_config.py#8): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5822,7 +5822,7 @@ Tests a recipe CL by running ChromeOS builders.
 &mdash; **def [RunSteps](/recipe_modules/test_util/tests/build_target_properties.py#14)(api):**
 ### *recipes* / [test\_vm](/recipes/test_vm.py)
 
-[DEPS](/recipes/test_vm.py#29): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_vm.py#28): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for running VM tests.
 
@@ -5838,7 +5838,7 @@ The steps specific to VM testing are:
   3. If the VM tests run within the autotest harness, build autotest.
   4. Call the build API to run VM tests.
 
-&mdash; **def [RunSteps](/recipes/test_vm.py#48)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_vm.py#47)(api, properties):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
 [DEPS](/recipes/uprev_guest_vm_pin.py#23): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

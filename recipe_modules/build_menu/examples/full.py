@@ -10,10 +10,8 @@ DEPS = [
     'test_util',
 ]
 
-from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromiumos import common
 from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
-from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 PROPERTIES = FullProperties
 
@@ -29,12 +27,12 @@ def RunSteps(api, properties):
       api.assertions.assertIsNotNone(api.build_menu.config_or_default)
       return
 
-    relevance = api.build_menu.setup_workspace_and_chroot(
+    relevant = api.build_menu.setup_workspace_and_chroot(
         properties.artifact_build, properties.forced_relevant)
     env_info = api.build_menu.setup_sysroot_and_determine_relevance(
         not properties.no_sysroot)
     if properties.forced_relevant:
-      api.assertions.assertEqual(relevance, Relevance.NEEDED)
+      api.assertions.assertTrue(relevant)
 
     if properties.no_sysroot:
       api.assertions.assertIsNone(api.build_menu.sysroot)
@@ -45,7 +43,10 @@ def RunSteps(api, properties):
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
 
-    api.assertions.assertEqual(env_info.packages, properties.expected_packages)
+    # Sometimes these are RepeatedCompositeFieldContainter, sometimes they are
+    # list.  Cast them.
+    api.assertions.assertEqual(
+        list(env_info.packages), list(properties.expected_packages))
 
 
 def GenTests(api):

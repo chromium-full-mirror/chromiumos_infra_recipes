@@ -120,7 +120,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       forced_relevant (bool): Whether to force relevance for artifact_builds.
 
     Returns:
-      PrepareForBuildResponse.BuildRelevance
+      (bool): Whether the build is relevant.
     """
     self._artifact_build = artifact_build
     self._forced_relevant = forced_relevant
@@ -160,7 +160,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           toolchain_targets=[self.build_target],
           build_source=config.build.sdk_update.compile_source)
 
-    return relevance
+    return relevance != Relevance.POINTLESS
 
   def setup_sysroot_and_determine_relevance(self, with_sysroot=True,
                                             packages=None):
