@@ -65,12 +65,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         if gc.change in self._multi_request_ctp_cl_allowlist
     ]
     multi_req = multi_req_cls or self._multi_request_ctp_full_enable
-    # If pupr, don't use multi_req. Use crbug.com/1072892.
-    is_pupr = self.m.cros_tags.has_entry('cq_cl_tag',
-                                         'pupr:chromeos-base/chromeos-chrome',
-                                         self.m.buildbucket.build.tags)
-    if is_pupr:  # pragma: nocover
-      multi_req = False
     with self.m.step.nest('run tests') as pres:
       with self.m.step.nest('schedule tests'):
         test_plan = self._get_test_plan(need_tests_builds, gerrit_changes,

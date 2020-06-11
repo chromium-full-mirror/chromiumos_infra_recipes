@@ -11,7 +11,6 @@ DEPS = [
     'cros_bisect',
     'cros_history',
     'cros_infra_config',
-    'cros_tags',
     'cros_test_plan',
     'gerrit',
     'failures',
