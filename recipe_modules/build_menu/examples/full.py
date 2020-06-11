@@ -42,9 +42,9 @@ def RunSteps(api, properties):
     else:
       api.build_menu.bootstrap_sysroot_and_install_packages()
       api.build_menu.build_and_test_images()
-      api.build_menu.upload_artifacts()
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
+      api.build_menu.upload_artifacts()
 
     # Sometimes these are RepeatedCompositeFieldContainter, sometimes they are
     # list.  Cast them.

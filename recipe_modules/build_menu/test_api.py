@@ -31,7 +31,7 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
     return self.depgraph_relevance_return(
         'init sdk.detect toolchain change.path relevancy check', not value)
 
-  def set_build_api_return(self, step, endpoint, data, iteration=1):
+  def set_build_api_return(self, step, endpoint, data, iteration=1, retcode=0):
     """Set the return from a Build API call.
 
     Args:
@@ -39,8 +39,10 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
       endpoint (str): Endpoint name, such as 'ImageService/Create'
       data (str): Build API response to return (JSON string).
       iteration (int): Which call this applies to for this step/endpoint.
+      retcode (int): Return code for the Build API call.
 
     Returns:
       Step_data for the test.
     """
-    return self.m.cros_build_api.set_api_return(step, endpoint, data, iteration)
+    return self.m.cros_build_api.set_api_return(step, endpoint, data, iteration,
+                                                retcode)
