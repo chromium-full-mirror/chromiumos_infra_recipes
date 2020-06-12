@@ -211,25 +211,6 @@
     ]
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--regex",
-      "chromeos/program",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "repo forall (3)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@a|src/a|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@b|src/b|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@c|src/c|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "ensure synced checkout"
   },
@@ -325,11 +306,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "a",
-      "c",
-      "b",
-      "chromeos/program/galaxy",
-      "chromiumos/config",
       "--ignore-missing",
       "-j",
       "32",
@@ -361,11 +337,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "a",
-      "c",
-      "b",
-      "chromeos/program/galaxy",
-      "chromiumos/config",
       "--ignore-missing",
       "-j",
       "32",
@@ -438,12 +409,7 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "a",
-      "c",
-      "b",
-      "chromeos/program/galaxy",
-      "chromiumos/config"
+      "8"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
@@ -821,7 +787,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "No such {interpolation}.\n\nCq-Depend: chromium:1234,chrome-internal:1234",
+      "Regenerate audio config in project a.\n\nRegenerate the audio config in project a\nper the changes in program galaxy.\n\nBUG=https://crbug.com/1087514\nTEST=CQ\n\n\nCq-Depend: chromium:1234,chrome-internal:1234",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/a",
@@ -829,7 +795,14 @@
     "name": "working on project a.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@No such {interpolation}.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Regenerate audio config in project a.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Regenerate the audio config in project a@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@per the changes in program galaxy.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@BUG=https://crbug.com/1087514@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@TEST=CQ@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Depend: chromium:1234,chrome-internal:1234@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
@@ -966,7 +939,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "No such {interpolation}.\n\nCq-Depend: chromium:1234,chrome-internal:1234",
+      "Regenerate audio config in project b.\n\nRegenerate the audio config in project b\nper the changes in program galaxy.\n\nBUG=https://crbug.com/1087514\nTEST=CQ\n\n\nCq-Depend: chromium:1234,chrome-internal:1234",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/b",
@@ -974,7 +947,14 @@
     "name": "working on project b.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@No such {interpolation}.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Regenerate audio config in project b.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Regenerate the audio config in project b@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@per the changes in program galaxy.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@BUG=https://crbug.com/1087514@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@TEST=CQ@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cq-Depend: chromium:1234,chrome-internal:1234@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
@@ -1111,7 +1091,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "No such {interpolation}.\n\nCq-Depend: chromium:1234,chrome-internal:1234",
+      "Regenerate audio config in project c.\n\nRegenerate the audio config in project c\nper the changes in program galaxy.\n\nBUG=https://crbug.com/1087514\nTEST=CQ\n\n\nCq-Depend: chromium:1234,chrome-internal:1234",
       "[CLEANUP]/commit_msg_tmp_3"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/c",
@@ -1119,7 +1099,14 @@
     "name": "working on project c.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@No such {interpolation}.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Regenerate audio config in project c.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Regenerate the audio config in project c@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@per the changes in program galaxy.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@BUG=https://crbug.com/1087514@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@TEST=CQ@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cq-Depend: chromium:1234,chrome-internal:1234@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_3@@@"

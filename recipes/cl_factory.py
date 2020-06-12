@@ -27,6 +27,8 @@ DEPS = [
     'repo',
 ]
 
+_CHROMIOUS_CONFIG_PROJECT = 'chromiumos/config'
+
 
 def RunSteps(api, properties):
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
@@ -48,18 +50,24 @@ def RunSteps(api, properties):
 
   with api.cros_source.checkout_overlays_context(), \
     api.context(cwd=api.cros_source.workspace_path):
-    # TODO: add ability to do a more targeted sync.
-    api.cros_source.ensure_synced_cache()
+
+    # The project infos for the the input gerrit changes and the projects infos
+    # for the repos we are attempting to make changelists for.
+    gc_infos = api.repo.project_infos([gc.project for gc in gerrit_changes])
+    cl_infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
+
+    sync_projects = _determine_sync_projects(api, gc_infos, cl_infos,
+                                             properties)
+    api.cros_source.ensure_synced_cache(projects=sync_projects)
+
     with api.step.nest('cherry-pick gerrit changes'):
       patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
       api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-    infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
-
     # Start development branches for each project.
-    api.repo.start('cl-factory', projects=[info.name for info in infos])
+    api.repo.start('cl-factory', projects=[info.name for info in cl_infos])
 
-    for info in infos:
+    for info in cl_infos:
       with api.step.nest('working on project {}'.format(info.name)) as pres, \
           api.context(cwd=api.cros_source.workspace_path.join(info.path)):
 
@@ -70,6 +78,32 @@ def RunSteps(api, properties):
           _make_cl(api, info, api.context.cwd, properties, gerrit_changes)
         else:
           pres.step_text = 'no diff'
+
+
+def _determine_sync_projects(api, gc_infos, cl_infos, properties):
+  """Determines projects needing to be synced and returns them.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    gc_infos (List[ProjectInfo]): List of infos for the gerrit changes.
+    cl_infos (List[ProjectInfo]}: List of infos for the projects CLs are being
+      made in. Corresponds to that found via repo_regexes.
+    properties (ClFactoryProperties): Input properties to the recipe.
+
+  Returns:
+    List([str]) of projects to sync, returning an empty list to sync all.
+  """
+  if properties.full_repo_sync:
+    return []
+  # For now since this only does gen_config we are assuming as such.
+  # Thus make sure that all projects that could be involved in config generation
+  # are up to date even when not specified by gerrit changes or repos to make
+  # CLs in. This would include chromiumos/config and all program repos.
+  projects = set([i.name for i in gc_infos + cl_infos])
+  projects.add(_CHROMIOUS_CONFIG_PROJECT)
+  program_infos = api.repo.project_infos(regexes=['chromeos/program'])
+  projects.update(set([i.name for i in program_infos]))
+  return list(projects)
 
 
 def _gen_config(api):
@@ -146,6 +180,11 @@ TEST=CQ
 
     return api.buildbucket.build(build_message)
 
+  def forall_output(*projects):
+    return '\n'.join(
+        '{0}|src/{0}|cros|refs/heads/master|refs/heads/master'.format(p)
+        for p in projects)
+
   yield api.test(
       'with_diff',
       build(),
@@ -171,6 +210,46 @@ TEST=CQ
               command='echo "hello world"',
               message_template=message_template,
           )),
+  )
+
+  yield api.test(
+      'with_full_sync',
+      build(),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              command='echo "hello world"',
+              message_template=message_template,
+              full_repo_sync=True,
+          )),
+      api.git.diff_check(True),
+  )
+
+  # Here we replace the canned forall return to exercise the set logic
+  # that determines repos to sync in a partial sync.
+  yield api.test(
+      'with_partial_sync_set_logic',
+      build(),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              command='echo "hello world"',
+              message_template=message_template,
+          )),
+      # Gerrit changes repos.
+      api.step_data('repo forall',
+                    stdout=api.raw_io.output(forall_output('a', 'b'))),
+      # repo_regexes repos.
+      api.step_data('repo forall (2)',
+                    stdout=api.raw_io.output(forall_output('c', 'd'))),
+      # Common boxster repos.
+      api.step_data('repo forall (3)',
+                    stdout=api.raw_io.output(forall_output('c', 'e'))),
+      api.git.diff_check(True),
   )
 
   yield api.test(

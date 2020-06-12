@@ -33,4 +33,8 @@ message ClFactoryProperties {
 
   // Hashtags to add to the created CLs.
   repeated string hashtags = 5;
+
+  // Whether you want to force a full repo sync. Typically a targeted
+  // sync of only the involved repos per repo_regexes should suffice.
+  bool full_repo_sync = 6;
 }

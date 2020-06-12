@@ -174,6 +174,62 @@
     ]
   },
   {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/config",
+      "chromeos/program/galaxy",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "repo forall",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/config|src/chromiumos/config|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/galaxy|src/chromeos/program/galaxy|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--regex",
+      "src/project/galaxy",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "repo forall (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@a|src/a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@b|src/b|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@c|src/c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--regex",
+      "chromeos/program",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "repo forall (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@a|src/a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@b|src/b|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@c|src/c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "ensure synced checkout"
   },
@@ -269,6 +325,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "a",
+      "c",
+      "b",
+      "chromeos/program/galaxy",
+      "chromiumos/config",
       "--ignore-missing",
       "-j",
       "32",
@@ -300,6 +361,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "a",
+      "c",
+      "b",
+      "chromeos/program/galaxy",
+      "chromiumos/config",
       "--ignore-missing",
       "-j",
       "32",
@@ -372,7 +438,12 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "a",
+      "c",
+      "b",
+      "chromeos/program/galaxy",
+      "chromiumos/config"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
@@ -689,25 +760,6 @@
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--regex",
-      "src/project/galaxy",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "repo forall",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@a|src/a|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@b|src/b|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@c|src/c|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
