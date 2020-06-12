@@ -44,4 +44,8 @@ def GenTests(api):
   orch_build.infra.swarming.bot_dimensions.extend(
       api.cros_tags.tags(bot_size='small'))
 
-  yield api.test('basic', api.buildbucket.build(orch_build))
+  yield api.test(
+      'basic', api.buildbucket.build(orch_build),
+      api.buildbucket.simulated_get(
+          orch_build, step_name='calculate cq run cost'
+          '.calculate build cost.buildbucket.get'))

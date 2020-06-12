@@ -80,6 +80,10 @@ class BotCostApi(recipe_api.RecipeApi):
       build.start_time.seconds = int(self._start_time)
       build.update_time.seconds = int(self.m.time.time())
       build.status = common_pb2.STARTED
+    else:
+      # Refresh the build information.
+      build = self.m.buildbucket.get(
+          build.id, step_name='calculate build cost.buildbucket.get')
 
     if build.status & common_pb2.ENDED_MASK:
       # Cases that take this path:

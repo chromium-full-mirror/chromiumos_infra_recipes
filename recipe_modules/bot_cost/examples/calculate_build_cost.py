@@ -44,11 +44,13 @@ def GenTests(api):
                               end_time=end_time, update_time=update_time)
     bld_msg.infra.swarming.bot_dimensions.extend(
         api.cros_tags.tags(bot_size=bot_size))
-    return api.test(
-        name, api.buildbucket.build(bld_msg),
-        api.properties(
-            TestProperties(name=name, bot_size=bot_size,
-                           expect_cost=expect_cost)), *(extra or []))
+    build = api.buildbucket.build(bld_msg)
+    if status != 'STATUS_UNSPECIFIED':
+      build += api.buildbucket.simulated_get(
+          bld_msg, step_name='%s.calculate build cost.buildbucket.get' % name)
+    build += api.properties(
+        TestProperties(name=name, bot_size=bot_size, expect_cost=expect_cost))
+    return api.test(name, build, *(extra or []))
 
   yield test('terminal-build', status='SUCCESS', start_time=5000,
              end_time=15000)

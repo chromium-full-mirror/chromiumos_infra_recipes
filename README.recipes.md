@@ -370,7 +370,7 @@ Wrapper function to calculate and set the cost of creating the build.
 Calculate the cost of creating the build and set it as a build output
 property.
 
-&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#101)(self, child_builds):**
+&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#105)(self, child_builds):**
 
 Wrapper function to calculate and set the cost of the cq run.
 
