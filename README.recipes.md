@@ -5846,7 +5846,7 @@ Tests a recipe CL by running ChromeOS builders.
 
 [DEPS](/recipe_modules/test_util/examples/full.py#6): [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/test_util/examples/full.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/test_util/examples/full.py#23)(api, properties):**
 ### *recipes* / [test\_util:tests/build\_target\_properties](/recipe_modules/test_util/tests/build_target_properties.py)
 
 [DEPS](/recipe_modules/test_util/tests/build_target_properties.py#6): [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

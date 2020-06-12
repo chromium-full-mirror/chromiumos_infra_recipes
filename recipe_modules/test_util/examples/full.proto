@@ -32,4 +32,16 @@ message TestProperties {
 
   // Expected value for force_relevant_build.
   bool expected_force_relevant_build = 8;
+
+  // Expected value for create_time, if non-zero (seconds since epoch).
+  int64 expected_create_time = 9;
+
+  // Expected value for start_time (seconds since epoch).
+  int64 expected_start_time = 10;
+
+  // Expected value for update_time (seconds since epoch).
+  int64 expected_update_time = 11;
+
+  // Expected value for end_time (seconds since epoch).
+  int64 expected_end_time = 12;
 }

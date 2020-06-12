@@ -9,14 +9,13 @@ This module provides helpers to make testing Chrome OS recipes simpler and more
 consistent.
 """
 
-from google.protobuf import json_format
+from google.protobuf.json_format import MessageToDict
 
 from collections import namedtuple
 
 from recipe_engine import recipe_test_api
 
 from PB.chromiumos.common import BuildTarget
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 
@@ -45,8 +44,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     """
     input_dict = input_properties or {}
     if not isinstance(input_dict, dict):
-      input_dict = json_format.MessageToDict(input_dict,
-                                             preserving_proto_field_name=True)
+      input_dict = MessageToDict(input_dict, preserving_proto_field_name=True)
     kwargs.setdefault('bucket', 'cq' if kwargs.get('cq') else 'postsubmit')
     if build_target_name:
       kwargs.setdefault('builder',
@@ -98,10 +96,10 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       input_properties: A protobuf input properties message, a dictionary of
           input properties, or None.  If used, the dictionary may be a superset
           of protobufs.
-      create_time (seconds): Create time (passed to buildbucket.build).
-      start_time (seconds): Start time (only in the returned message).
-      update_time (seconds): Update time (only in the returned message).
-      end_time (seconds): End time (only in the returned message).
+      create_time (seconds): Create time, in seconds since epoch.
+      start_time (seconds): Start time, in seconds since epoch.
+      update_time (seconds): Update time, in seconds since epoch.
+      end_time (seconds): End time, in seconds since epoch.
       **kwargs: see buildbucket/test_api.py
 
     Returns:
@@ -119,8 +117,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
 
     input_dict = input_properties or {}
     if not isinstance(input_dict, dict):
-      input_dict = json_format.MessageToDict(input_dict,
-                                             preserving_proto_field_name=True)
+      input_dict = MessageToDict(input_dict, preserving_proto_field_name=True)
     func = (
         self.m.buildbucket.try_build_message
         if cq else self.m.buildbucket.ci_build_message)
@@ -132,7 +129,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     msg.input.gerrit_changes.extend(extra_changes or [])
     if bot_size:
       msg.infra.swarming.bot_dimensions.extend(
-          [common_pb2.StringPair(key='bot_size', value=bot_size)])
+          self.m.buildbucket.tags(bot_size=bot_size))
 
     if create_time:
       msg.create_time.seconds = create_time
@@ -140,20 +137,21 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       msg.exe.cipd_package = exe.cipd_package
       msg.exe.cipd_version = exe.cipd_version
     msg.input.properties.update(input_dict)
-    ret = self.m.buildbucket.build(msg)
-    if input_dict:
-      ret += self.m.properties(**input_dict)
-    if cq:
-      ret += self.m.cq(dry_run=dry_run, full_run=not dry_run)
 
-    # These fields only go in the message since they are not present in
-    # api.buildbucket.build.
+    # These fields show up in buildbucket.build as the build progresses.  Let
+    # the user add them for testing.
     if start_time:
       msg.start_time.seconds = start_time
     if update_time:
       msg.update_time.seconds = update_time
     if end_time:
       msg.end_time.seconds = end_time
+
+    ret = self.m.buildbucket.build(msg)
+    if input_dict:
+      ret += self.m.properties(**input_dict)
+    if cq:
+      ret += self.m.cq(dry_run=dry_run, full_run=not dry_run)
 
     return _test_build_return(msg, ret)
 
@@ -186,5 +184,5 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       if kwargs.get('build_target'):
         raise ValueError('Both build_target and build_target_name given.')
       kwargs['build_target'] = BuildTarget(name=build_target_name)
-    return json_format.MessageToDict(
+    return MessageToDict(
         BuildTargetProperties(**kwargs), preserving_proto_field_name=True)

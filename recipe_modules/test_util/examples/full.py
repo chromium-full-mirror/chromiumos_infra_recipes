@@ -10,10 +10,9 @@ DEPS = [
     'test_util',
 ]
 
-from google.protobuf import json_format
+from google.protobuf.json_format import MessageToDict
 
-from PB.chromite.api.depgraph import DepGraph
-from PB.chromiumos import common
+from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.test_util.examples.full import TestProperties
 from PB.recipes.chromeos.build_target import BuildTargetProperties
@@ -22,14 +21,12 @@ PROPERTIES = TestProperties
 
 
 def RunSteps(api, properties):
-  api.assertions.assertEqual(api.buildbucket.build.builder.project,
-                             properties.expected_project)
-  api.assertions.assertEqual(api.buildbucket.build.builder.bucket,
-                             properties.expected_bucket)
-  api.assertions.assertEqual(api.buildbucket.build.builder.builder,
-                             properties.expected_builder)
+  build = api.buildbucket.build
+  api.assertions.assertEqual(build.builder.project, properties.expected_project)
+  api.assertions.assertEqual(build.builder.bucket, properties.expected_bucket)
+  api.assertions.assertEqual(build.builder.builder, properties.expected_builder)
 
-  props = json_format.MessageToDict(api.buildbucket.build.input.properties)
+  props = MessageToDict(build.input.properties)
   props_name = props.get('build_target', {}).get('name')
   api.assertions.assertEqual(properties.expected_build_target or None,
                              props_name)
@@ -39,19 +36,24 @@ def RunSteps(api, properties):
   # Check host for "True"-ness to see if it is set.  We do not care what the
   # value is for the purposes of testing, since we do not want to hard code the
   # answer that buildbucket defaults to.
-  if properties.expect_commit:
-    api.assertions.assertTrue(api.buildbucket.gitiles_commit.host)
-  else:
-    api.assertions.assertFalse(api.buildbucket.gitiles_commit.host)
+  api.assertions.assertEqual(properties.expect_commit,
+                             api.buildbucket.gitiles_commit.host != '')
 
   api.assertions.assertEqual(
-      len(api.buildbucket.build.input.gerrit_changes),
-      properties.expected_cl_count)
+      len(build.input.gerrit_changes), properties.expected_cl_count)
 
-  api.assertions.assertNotEqual(0, api.buildbucket.build.create_time.seconds)
-  api.assertions.assertEqual(0, api.buildbucket.build.start_time.seconds)
-  api.assertions.assertEqual(0, api.buildbucket.build.update_time.seconds)
-  api.assertions.assertEqual(0, api.buildbucket.build.end_time.seconds)
+  if properties.expected_create_time:
+    api.assertions.assertEqual(properties.expected_create_time,
+                               build.create_time.seconds)
+  else:
+    # Buildbucket has a default for create time.
+    api.assertions.assertNotEqual(0, build.create_time.seconds)
+  api.assertions.assertEqual(properties.expected_start_time,
+                             build.start_time.seconds)
+  api.assertions.assertEqual(properties.expected_update_time,
+                             build.update_time.seconds)
+  api.assertions.assertEqual(properties.expected_end_time,
+                             build.end_time.seconds)
 
   if properties.expected_executable:
     api.assertions.assertEqual(api.buildbucket.build.exe,
@@ -68,7 +70,7 @@ def GenTests(api):
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
                          expected_build_target='amd64-generic',
-                         expect_commit=True, expected_cl_count=0)))
+                         expect_commit=True)))
 
   yield api.test(
       'with-build_target',
@@ -77,8 +79,7 @@ def GenTests(api):
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
                          expected_builder='myboard-postsubmit',
-                         expect_commit=True, expected_cl_count=0,
-                         expected_build_target='myboard')))
+                         expect_commit=True, expected_build_target='myboard')))
 
   yield api.test(
       'child-with-properties-message',
@@ -90,7 +91,7 @@ def GenTests(api):
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
                          expected_build_target='amd64-generic',
-                         expect_commit=True, expected_cl_count=0,
+                         expect_commit=True,
                          expected_force_relevant_build=True)))
 
   yield api.test(
@@ -103,7 +104,7 @@ def GenTests(api):
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
                          expected_build_target='amd64-generic',
-                         expect_commit=True, expected_cl_count=0,
+                         expect_commit=True,
                          expected_force_relevant_build=True)))
 
   yield api.test(
@@ -111,13 +112,13 @@ def GenTests(api):
       api.test_util.test_build(
           builder='amd64-generic-postsubmit',
           input_properties=BuildTargetProperties(
-              build_target=common.BuildTarget(name='amd64-generic'))).build,
+              build_target=BuildTarget(name='amd64-generic'))).build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
                          expected_build_target='amd64-generic',
-                         expect_commit=True, expected_cl_count=0)))
+                         expect_commit=True)))
 
   yield api.test(
       'with-properties-dict',
@@ -129,7 +130,7 @@ def GenTests(api):
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
                          expected_build_target='amd64-generic',
-                         expect_commit=True, expected_cl_count=0)))
+                         expect_commit=True)))
 
   props = api.test_util.build_target_properties(build_target_name='myboard')
   yield api.test(
@@ -140,8 +141,7 @@ def GenTests(api):
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
-                         expect_commit=True, expected_cl_count=0,
-                         expected_build_target='myboard')))
+                         expect_commit=True, expected_build_target='myboard')))
 
   # Also verify that project and bucket are handled correctly.
   yield api.test(
@@ -192,8 +192,7 @@ def GenTests(api):
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
-                         expected_build_target='amd64-generic',
-                         expected_cl_count=0)))
+                         expected_build_target='amd64-generic')))
 
   yield api.test(
       'with-times',
@@ -201,11 +200,17 @@ def GenTests(api):
                                      start_time=2, update_time=3,
                                      end_time=4).build,
       api.properties(
-          TestProperties(expected_project='chromeos',
-                         expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
-                         expected_build_target='amd64-generic',
-                         expect_commit=True, expected_cl_count=0)))
+          TestProperties(
+              expected_project='chromeos',
+              expected_bucket='postsubmit',
+              expected_builder='amd64-generic-postsubmit',
+              expected_build_target='amd64-generic',
+              expect_commit=True,
+              expected_create_time=1,
+              expected_start_time=2,
+              expected_update_time=3,
+              expected_end_time=4,
+          )))
 
   executable = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
                                      cipd_version='version')
@@ -217,5 +222,4 @@ def GenTests(api):
                          expected_bucket='postsubmit',
                          expected_builder='amd64-generic-postsubmit',
                          expected_build_target='amd64-generic',
-                         expect_commit=True, expected_executable=executable,
-                         expected_cl_count=0)))
+                         expect_commit=True, expected_executable=executable)))
