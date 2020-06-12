@@ -97,6 +97,7 @@
   * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
   * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
+  * [build_with_unittest](#recipes-build_with_unittest) &mdash; Recipe for building a BuildTarget image with unit tests.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
@@ -4538,6 +4539,15 @@ Recipe for building a BuildTarget image.
 &mdash; **def [DoRunSteps](/recipes/build_target.py#28)(api, config, build_target, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#21)(api, properties):**
+### *recipes* / [build\_with\_unittest](/recipes/build_with_unittest.py)
+
+[DEPS](/recipes/build_with_unittest.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
+
+Recipe for building a BuildTarget image with unit tests.
+
+&mdash; **def [DoRunSteps](/recipes/build_with_unittest.py#26)(api, config, build_target, properties):**
+
+&mdash; **def [RunSteps](/recipes/build_with_unittest.py#19)(api, properties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
