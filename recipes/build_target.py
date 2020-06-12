@@ -56,26 +56,26 @@ def DoRunSteps(api, config, build_target, properties):
   # to be no artifacts to upload, in which case the upload_artifacts call should
   # "bundle everything", and then "upload all none" of the artifacts.
 
-  done = False
+  forgive_upload_failure = False
   try:
     install_spec = config.build.install_packages.run_spec
     ebuilds_spec = config.unit_tests.ebuilds_run_spec
     if api.cros_infra_config.should_run(install_spec):
       api.build_menu.bootstrap_sysroot_and_install_packages(
           config, packages, artifact_build=artifact_build)
-      if api.cros_infra_config.should_exit(install_spec):
-        done = True
 
-    if not done:
+    if not api.cros_infra_config.should_exit(install_spec):
       api.build_menu.build_and_test_images(
           config=config,
           run_tests=api.cros_infra_config.should_run(ebuilds_spec))
-      if api.cros_infra_config.should_exit(ebuilds_spec):
-        done = True
 
-    if not done:
+    if (not api.cros_infra_config.should_exit(install_spec) and
+        not api.cros_infra_config.should_exit(ebuilds_spec)):
       api.build_menu.upload_prebuilts(config)
-
+  except StepFailure:
+    # A StepFailure means build failed, we want to forgive an upload failure.
+    forgive_upload_failure = True
+    raise
   finally:
     # Always try to upload artifacts.  If there are none, it is a noop.
     try:
@@ -84,7 +84,7 @@ def DoRunSteps(api, config, build_target, properties):
       # TODO(crbug/1086630): We do not need to catch StepFailure here after
       # 2020-12-31.
       # Do not fail if we already did.  See also crrev.com/c/2241753.
-      if not done:
+      if not forgive_upload_failure:
         raise
 
 
@@ -134,6 +134,13 @@ def GenTests(api):
 
   yield test('run-exit-tests', cq=False,
              builder='amd64-generic-exit-after-unittests')
+
+  yield test(
+      'install-packages-fail', args=[
+          api.build_menu.set_build_api_return('install packages',
+                                              'SysrootService/InstallPackages',
+                                              '', retcode=1)
+      ])
 
   yield test(
       'bundle-fail', args=[
