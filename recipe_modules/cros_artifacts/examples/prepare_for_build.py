@@ -67,14 +67,14 @@ def RunSteps(api, properties):
 
   # API Version 1.0.0 has more logic in the module.
   if not api.cros_build_api.is_at_least_version(1, 1, 0):
-    # An artifact with only EBUILD_LOGS, should always return POINTLESS.
+    # An artifact with only EBUILD_LOGS, should always return UNKNOWN.
     resp = api.cros_artifacts.prepare_for_build(
         chroot=chroot, sysroot=sysroot,
         artifacts_info=common.ArtifactsByService(
             legacy=Legacy(output_artifacts=[
                 Legacy.ArtifactInfo(artifact_types=['EBUILD_LOGS'])
             ])), test_data=properties.api_response)
-    api.assertions.assertEqual(PrepareForBuildResponse.POINTLESS, resp)
+    api.assertions.assertEqual(PrepareForBuildResponse.UNKNOWN, resp)
 
     # An artifact with no prepare service, should always return UNKNOWN
     resp = api.cros_artifacts.prepare_for_build(

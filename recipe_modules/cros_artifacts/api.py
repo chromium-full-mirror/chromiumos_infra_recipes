@@ -88,26 +88,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         files_by_artifact[name] = [art.path for art in response.artifacts]
     return files_by_artifact
 
-  def _prepare_pointless(self, _chroot, _sysroot, _artifact_types,
-                         _input_artifacts, _artifact_profile_info, test_data):
-    """Declare the build necessity POINTLESS from this artifact's perspective.
-
-    Use this prepare_for_build handler for any artifact type which should not
-    affect the build decision in the prepare step.  It returns "POINTLESS".
-
-    Args:
-      _chroot (Chroot): The chroot to use, or None if not yet created.
-      _sysroot (Sysroot): The sysroot to use, or None if not yet created.
-      _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
-      _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
-      _artifact_profile_info (ArtifactProfileInfo): profile information.
-      _test_data (str): JSON data to use for build API calls.
-
-    Returns:
-      (artifacts.PrepareForBuildResponse.build_relevance) POINTLESS.
-    """
-    return artifacts.PrepareForBuildResponse.POINTLESS
-
   def _prepare_unknown(self, _chroot, _sysroot, _artifact_types,
                        _input_artifacts, _artifact_profile_info, test_data):
     """Declare the build necessity UNKNOWN from this artifact's perspective.
@@ -629,7 +609,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     # By default, artifacts will get 'UNKNOWN'.
     # EBUILD_LOGS are not relevant.
     atype = BuilderConfig.Artifacts
-    _POINTLESS_ARTIFACT_TYPES = [atype.EBUILD_LOGS]
+    _IGNORE_ARTIFACT_TYPES = [atype.EBUILD_LOGS]
 
     funcs = collections.defaultdict(list)
     input_artifacts = []
@@ -641,9 +621,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           # If it's not Toolchain, then it's legacy.  1.0.0 only supports those
           # two services having artifacts.
           for art in art_info.artifact_types:
-            if art in _POINTLESS_ARTIFACT_TYPES:
-              funcs[self._prepare_pointless].append(art)
-            else:
+            if art not in _IGNORE_ARTIFACT_TYPES:
               funcs[self._prepare_unknown].append(art)
 
       # input_artifacts is the list of input_artifacts, rewritten into the

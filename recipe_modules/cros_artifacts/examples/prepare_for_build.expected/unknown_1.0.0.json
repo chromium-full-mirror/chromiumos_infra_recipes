@@ -252,16 +252,7 @@
     "cmd": [],
     "name": "prepare artifacts (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Build is POINTLESS@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "prepare artifacts (2).call prepare funcs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@_prepare_pointless@['EBUILD_LOGS'] => POINTLESS@@@",
-      "@@@STEP_LOG_END@_prepare_pointless@@@"
+      "@@@STEP_TEXT@Build need is UNKNOWN@@@"
     ]
   },
   {
@@ -269,7 +260,7 @@
     "name": "prepare artifacts (2).set artifact_prep",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_prep@{\"buildRelevance\": \"POINTLESS\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_prep@{\"buildRelevance\": \"UNKNOWN\"}@@@"
     ]
   },
   {
